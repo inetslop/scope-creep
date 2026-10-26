@@ -4,12 +4,10 @@ title: Add the Ostinato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-26T20:55:07Z
-claimed_at: 2026-10-26T21:01:53Z
-designer: desktop
 ---
 
 ## Goal
@@ -26,3 +24,39 @@ A rare build card combining pierce and fire rate — the backbone of a pierce bu
 - [ ] The level-up menu offers Ostinato up to 2 times; each level adds +1 pierce and multiplies fire rate by 1.10 (2 levels = +2 pierce, ≈ ×1.21 fire rate)
 - [ ] It stacks with Vector and Rhythm normally
 - [ ] `npm run check` and `npm run smoke` pass
+
+## Design (architect, desktop)
+
+### Files
+- edit `src/content/upgrades/index.ts` — append one `UpgradeDef` entry to the end of the `UPGRADES` array, after the `allegro` entry (the last entry, before the `];` at line 195). No other file changes.
+
+### Interfaces
+None. Pure data entry using the existing `UpgradeDef` (`src/content/types.ts:126`); both stats already exist in `PlayerStats` (`extraPierce`, `fireRateMul` in `src/core/stats.ts`) and are already read by `src/systems/WeaponSystem.ts:37,71`.
+
+### Steps
+1. In `src/content/upgrades/index.ts`, insert this entry between the closing `},` of `allegro` and the `];`:
+```ts
+  {
+    id: 'ostinato',
+    name: 'Ostinato',
+    description: '+1 pierce, +10% fire rate',
+    maxLevel: 2,
+    weight: 3,
+    mods: [
+      { stat: 'extraPierce', op: 'add', value: 1 },
+      { stat: 'fireRateMul', op: 'mul', value: 1.10 },
+    ],
+    color: PALETTE.ink,
+  },
+```
+2. Run `npm run check` (typecheck + lint + tests; `tests/content.test.ts` validates the new entry automatically).
+3. Run `npm run smoke`.
+
+### Pitfalls
+- Keep the array syntax intact: entry ends with `},` and the array still closes with `];`. Do not touch any other entry.
+- `value: 1.10` is intentional and lint-safe (verified against `no-loss-of-precision`); do not "fix" it.
+- Do not add `requires`, `requiresWeapon`, or `grantsWeapon` — not part of this card.
+- No new system, so no `hook.addInvariant()`, no pooling, no scene listeners, no art/layout work.
+
+### Tests
+- none (content test auto-validates; behavior is covered by the existing roll/stats code paths).
