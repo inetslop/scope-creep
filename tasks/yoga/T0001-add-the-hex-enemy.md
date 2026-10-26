@@ -4,9 +4,11 @@ title: Add the Hex enemy
 assignee: yoga
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
+claimed_at: 2026-10-26T17:34:10Z
+designer: asus
 ---
 
 ## Goal
