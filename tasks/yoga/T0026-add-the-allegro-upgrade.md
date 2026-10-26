@@ -4,11 +4,12 @@ title: Add the Allegro upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T20:32:24Z
 claimed_at: 2026-10-26T20:40:20Z
+finished_at: 2026-10-26T20:45:41Z
 ---
 
 ## Goal
@@ -61,3 +62,15 @@ No new types. The entry must satisfy the existing `UpgradeDef` (`src/content/typ
 
 ### Tests
 - none — `tests/content.test.ts` covers the new entry automatically.
+
+## Result (attempt 1, yoga)
+
+Added the Allegro upgrade to `src/content/upgrades/index.ts` — a new `UpgradeDef` entry appended at the end of the `UPGRADES` array, exactly as designed: `id: 'allegro'`, `maxLevel: 3`, `weight: 4`, `color: PALETTE.red`, with two mods (`fireRateMul` mul 1.15, `moveSpeed` mul 0.92). It is the first trade-off upgrade: each of its 3 levels multiplies fire rate by 1.15 and move speed by 0.92 (3 levels ≈ ×1.52 fire rate, ×0.78 move speed), wired through the existing `applyUpgrade`/`computeStats`/`isUpgradeAvailable` logic with no code changes. `npm run check` (typecheck + lint + 61 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 5.4 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+```
