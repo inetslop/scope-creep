@@ -4,10 +4,12 @@ title: Add the Dynamics upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T21:07:50Z
+claimed_at: 2026-10-26T21:07:52Z
+designer: desktop
 ---
 
 ## Goal
