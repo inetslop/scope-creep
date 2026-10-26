@@ -4,12 +4,10 @@ title: Add the Turret enemy
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-26T21:23:27Z
-claimed_at: 2026-10-26T21:23:31Z
-designer: desktop
 ---
 
 ## Goal
@@ -30,3 +28,76 @@ A new enemy archetype — something that holds its ground and punishes you for w
 - [ ] Its projectile is faster and hits harder than the Sentry's (speed 220 vs 150, 10 vs 8 damage)
 - [ ] On its first appearance in a run, the marginalia label "HOLDS STILL, SHOTS FAST" fades in above it for 2 s
 - [ ] `npm run check` and `npm run smoke` pass
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/enemies/turret.ts` - new `EnemyDef` for the Turret (copy `sentry.ts`, change values)
+- edit `src/content/types.ts` - add optional `shoot` tuning to `EnemyDef`
+- edit `src/content/enemies/index.ts` - import + register `turret`
+- edit `src/entities/Enemy.ts` - use per-enemy fire period (2 lines + 1 getter)
+- edit `src/systems/SpawnSystem.ts` - use per-enemy shot speed/damage in `fireShot()`
+- edit `tests/content.test.ts` - allow `speed: 0`, validate `shoot` tuning
+
+### Interfaces
+Add to `EnemyDef` in `src/content/types.ts` (after `splitsInto`, before `look`):
+```ts
+  /** Tuning for behavior 'shoot'; omit for the defaults (2.4 s period, speed 150, damage 8). */
+  shoot?: {
+    /** Seconds between shots. */
+    periodSec: number;
+    /** Projectile speed, world units per second. */
+    speed: number;
+    /** Projectile damage. */
+    damage: number;
+  };
+```
+Also change the `'shoot'` behavior doc comment to: `/** Holds 240-300 units from the player, strafes, fires ink points (speed 0 = holds its ground). */`
+
+### Steps
+1. `src/content/types.ts`: add the `shoot` field above; update the `'shoot'` doc comment.
+2. Create `src/content/enemies/turret.ts` exactly:
+```ts
+import { PALETTE } from '../palette';
+import type { EnemyDef } from '../types';
+
+/** Static enemy: a small orange square that never moves and fires fast ink points. */
+export const turret: EnemyDef = {
+  id: 'turret',
+  name: 'Turret',
+  note: 'HOLDS STILL, SHOTS FAST',
+  hp: 50,
+  speed: 0,
+  contactDamage: 10,
+  xp: 4,
+  threat: 3,
+  spawnWeight: 3,
+  unlockAtSec: 150,
+  behavior: 'shoot',
+  knockbackResist: 0.9,
+  shoot: { periodSec: 1.2, speed: 220, damage: 10 },
+  look: { shape: 'square', radius: 18, body: PALETTE.orange, accent: PALETTE.ink, spin: 0.5 },
+};
+```
+3. `src/content/enemies/index.ts`: add `import { turret } from './turret';` between the `tile` and `wedge` imports (alphabetical); change the array to `[wedge, dart, block, hex, sentry, splitter, splinter, mote, boulder, tile, slab, spike, turret]` (append — 150 s is the latest unlock).
+4. `src/entities/Enemy.ts`: add a private getter to the class: `private get shootPeriod(): number { return this.def.shoot?.periodSec ?? SHOOT_PERIOD; }`. Replace line 59 `rng.range(0.8, SHOOT_PERIOD)` with `rng.range(0.8, this.shootPeriod)` and line 120 `this.shootTimer = SHOOT_PERIOD;` with `this.shootTimer = this.shootPeriod;`. Do NOT touch `SHOOT_BAND_*` or the strafe math.
+5. `src/systems/SpawnSystem.ts` `fireShot()`: before `p.fire(...)`, add `const speed = e.def.shoot?.speed ?? ENEMY_SHOT_SPEED;` and `const damage = e.def.shoot?.damage ?? ENEMY_SHOT_DAMAGE;`, and pass `speed, damage` instead of the constants (keep `ENEMY_SHOT_LIFE`).
+6. `tests/content.test.ts`: change line 30 to `expect(nonNegative(e.speed), 'speed >= 0').toBe(true);`. After the `splitsInto` test add:
+```ts
+  it.each(ENEMIES.filter((e) => e.shoot).map((e) => [e.id, e] as const))('%s shoot tuning is sane', (_id, e) => {
+    const s = e.shoot!;
+    expect(positive(s.periodSec) && positive(s.speed) && positive(s.damage), 'shoot numbers > 0').toBe(true);
+  });
+```
+7. Run `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- The content test currently asserts `speed > 0` for every enemy — with step 6's change it passes; without it, `npm run check` fails.
+- Stationarity is free: in `steer()`'s `'shoot'` case both radial and strafe terms are multiplied by `this.def.speed`, so `speed: 0` means it never moves; knockback still slides it 10% (`knockbackResist: 0.9`). Do not add band/strafe options.
+- Marginalia is automatic: `SpawnSystem.spawn()` already calls `run.firstSighting()` + `marginalia.note()` which reads `def.note` (2 s life, above the enemy). Do not wire anything extra. Texture is generated automatically from `look` at boot (ink outline + paper-cut shadow included).
+- Import order in `index.ts` is alphabetical (lint enforced); `note` must stay all caps (tested).
+- No new pooled objects, listeners, or systems → no invariants or shutdown cleanup needed.
+- T0030 (in progress, same assignee) also edits `tests/content.test.ts`; if it is uncommitted when you start, commit/rebase first — your edit there is one line plus one appended test.
+
+### Tests
+- `tests/content.test.ts`: the two changes in step 6 (auto-validated by the existing `it.each(ENEMIES)` loops). No `core/` unit tests — all changed logic is Phaser-dependent (entities/systems).
