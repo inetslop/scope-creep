@@ -75,4 +75,20 @@ describe('rollUpgradeChoices', () => {
     expect(run.upgradeLevel('sweep')).toBe(3);
     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
   });
+
+  it('trill offers 2 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('trill')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'extraProjectiles', op: 'add', value: 1 },
+      { stat: 'fireRateMul', op: 'mul', value: 1.08 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('trill')).toBe(2);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
 });

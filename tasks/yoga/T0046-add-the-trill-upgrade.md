@@ -4,11 +4,12 @@ title: Add the Trill upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0042]
 attempts: 1
 created: 2026-10-26T23:43:51Z
 claimed_at: 2026-10-26T23:53:31Z
+finished_at: 2026-10-27T00:00:08Z
 ---
 
 ## Goal
@@ -82,3 +83,16 @@ None new. Uses existing `UpgradeDef` (`src/content/types.ts:137`) and `StatMod` 
 ### Tests
 - `tests/core/upgrades.test.ts`: the `trill` test above (mirrors the `pulse`/`presto` pattern; covers "never offered after 2 levels").
 - `tests/content.test.ts`: no changes needed; it validates the new entry (unique kebab-case id, known stats, weight > 0).
+
+## Result (attempt 1, yoga)
+
+Added the Trill upgrade to `src/content/upgrades/index.ts` — a rare (weight 3) red card, max level 2, granting +1 projectile per volley and ×1.08 fire rate per pick (≈×1.166 at max, stacking with Repetition/Rhythm/Tempo). WeaponSystem already reads both stats, so no system/scene changes were needed. Added the `trill offers 2 levels, then stops` test in `tests/core/upgrades.test.ts`; the content test validates the new entry automatically. `npm run check` (typecheck + lint + 133 tests) and `npm run smoke` (desktop + mobile browser play) both pass.
+
+- Self-review: APPROVE
+- Time: 6.6 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
