@@ -4,11 +4,12 @@ title: Add the Pulse upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T23:09:26Z
 claimed_at: 2026-10-26T23:39:46Z
+finished_at: 2026-10-26T23:46:30Z
 ---
 
 ## Goal
@@ -85,3 +86,23 @@ No new types or signatures. The entry must be exactly:
 
 ### Tests
 - `tests/core/upgrades.test.ts`: the `pulse` test above. `tests/content.test.ts` validates the new entry automatically (id, stats, weight).
+
+## Result (attempt 1, yoga)
+
+- **`src/content/upgrades/index.ts`** — appended the `pulse` `UpgradeDef` as the last element of `UPGRADES` (after `presto`, before `];`), exactly per the design: `id: 'pulse'`, `name: 'Pulse'`, `description: '+10% fire rate, +5% crit chance'`, `maxLevel: 3`, `weight: 4`, mods `[{ stat: 'fireRateMul', op: 'mul', value: 1.10 }, { stat: 'critChance', op: 'add', value: 0.05 }]`, `color: PALETTE.red`. No other entry touched; `UPGRADE_BY_ID` derives automatically.
+- **`tests/core/upgrades.test.ts`** — added `it('pulse offers 3 levels, then stops', ...)` after the `presto` test, asserting the exact two mods, applying the upgrade 3 times via `RunState.applyUpgrade`, and asserting it's offered 3 times then stops.
+- **`npm run check`** — typecheck + lint + 129/129 unit tests pass (including the new pulse test and the automatic content validation in `tests/content.test.ts`).
+- **`npm run smoke`** — PASS on desktop (525 frames) and mobile (728 frames).
+
+Stacking with Rhythm (fire rate mul) and Contrast/Accent (crit add) is automatic: `applyUpgrade` pushes the mods and refolds `computeStats`, so the same stat/ops combine with no code change; `critChance` is clamped at 0.5 in `computeStats`. At 3 levels: ×1.331 fire rate, +15% crit chance.
+
+SUMMARY: Added the "Pulse" upgrade to `src/content/upgrades/index.ts` — a red, weight-4, 3-level card granting +10% fire rate (mul 1.10) and +5% crit chance (add 0.05) per level, giving the crit build (Contrast/Accent) its missing tempo; it stacks with…
+
+- Self-review: APPROVE
+- Time: 6.7 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
