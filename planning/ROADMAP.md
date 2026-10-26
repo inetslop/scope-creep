@@ -22,7 +22,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Enemies: Hex (T0001) ✅, Mote swarm (T0010) ✅, Sentry ranged (T0007) ✅, Splitter (T0009) ✅, Boulder heavy chaser (T0017) ✅, Tile mid chaser (T0023) ✅, Slab slow wall (T0025) ✅, Spike small fast punisher (T0028, todo, yoga)
 - Enemy projectiles now exist (Sentry) — boss dart-burst patterns unblocked
 - Weapons: Orbit (T0008) ✅, Arc chain beam (T0022) ✅; backlog: stamp, counterpoint, negative-space bomb
-- Upgrades: Tempo (T0002) ✅, Draft (T0012) ✅, Contrast crit (T0013) ✅, Plate armor (T0016) ✅, Staccato speed combo (T0018) ✅, Emphasis damage ramp (T0020) ✅, Allegro fire-rate-for-speed trade-off (T0026) ✅, Ostinato pierce + fire-rate build card (T0029, todo, yoga); backlog: weapon-specific lines, evolutions, Kerning (projectile size + knockback)
+- Upgrades: Tempo (T0002) ✅, Draft (T0012) ✅, Contrast crit (T0013) ✅, Plate armor (T0016) ✅, Staccato speed combo (T0018) ✅, Emphasis damage ramp (T0020) ✅, Allegro fire-rate-for-speed trade-off (T0026) ✅, Ostinato pierce + fire-rate build card (T0029, todo, yoga), Dynamics damage-for-mobility trade-off (T0031, todo, yoga); backlog: weapon-specific lines, evolutions, Kerning (projectile size + knockback)
 - Actives: Understudy decoy — drop a blue decoy that taunts enemies for 3 s, 8 s cooldown (T0015, todo, asus)
 
 ## M3 — Bosses (started)
@@ -35,7 +35,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 
 ## Quality
 - Seeded RNG determinism tests (T0021) ✅
-- Crit chance clamp tests (T0024, todo, yoga)
+- Crit chance clamp tests (T0024) ✅
 - Spawn unlock timing tests: every enemy absent before its unlockAtSec, present at/after (T0030, todo, yoga)
 
 ## Later

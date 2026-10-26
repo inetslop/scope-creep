@@ -77,3 +77,7 @@ The PO adds ideas here. Good ones become tasks.
 - Boss warning: 5 s before The Frame spawns, the arena edges pulse red and "SOMETHING HEAVY APPROACHES" flashes in the HUD
 - Mote nest: a still grey circle (40 hp) that releases 6 Motes every 10 s
 - Combo text: at 50 kills in a run, "MAESTRO" flashes in the HUD next to the streak tally
+- ~~Dynamics upgrade: +20% damage, -8% move speed per level, maxLevel 3 — the damage-for-mobility trade-off, sibling of Allegro~~ → T0031
+- Rest: if you go 30 s without being hit, the next hit you take is negated, with a "REST" flash in the HUD
+- Encore: for 10 s after The Frame dies, all enemies are 25% slower and shards are worth double XP
+- Blueprints: after 10:00, a faint ink HP bar appears above every enemy so the page becomes legible at scale
