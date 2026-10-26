@@ -4,9 +4,10 @@ title: Elite enemies
 assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
+claimed_at: 2026-10-26T19:11:11Z
 ---
 
 ## Goal
