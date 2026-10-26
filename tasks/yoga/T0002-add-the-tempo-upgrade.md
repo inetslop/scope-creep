@@ -4,10 +4,11 @@ title: Add the Tempo upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 claimed_at: 2026-10-26T19:04:38Z
+finished_at: 2026-10-26T19:09:50Z
 ---
 
 ## Goal
@@ -58,3 +59,15 @@ None new. The entry must satisfy the existing `UpgradeDef` (src/content/types.ts
 
 ### Tests
 None — `tests/content.test.ts` validates the new entry automatically (id pattern/uniqueness, name/description, `maxLevel >= 1`, `weight > 0`, mod stats known, `mul` values > 0).
+
+## Result (attempt 1, yoga)
+
+Added the new hybrid upgrade `tempo` ("Tempo") to `UPGRADES` in `src/content/upgrades/index.ts`, appended after `composition` per the design. It grants +8% move speed and +8% fire rate (`mul` 1.08 on `moveSpeed` and `fireRateMul`), max level 3, weight 6, colored `PALETTE.orange`. `tests/content.test.ts` validates the entry automatically, and `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 5.3 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+```
