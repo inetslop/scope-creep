@@ -4,10 +4,12 @@ title: "Crit sting: sound and ring on crits"
 assignee: desktop
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T20:02:05Z
+claimed_at: 2026-10-26T20:02:09Z
+designer: desktop
 ---
 
 ## Goal
