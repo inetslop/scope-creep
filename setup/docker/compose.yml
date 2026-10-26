@@ -38,3 +38,4 @@ services:
     environment:
       SC_HOST_NAME: ${HOST_NAME:-}
       SC_HOST_GPU: ${HOST_GPU:-}
+      SC_HOST_VRAM_OTHER_MIB: ${HOST_VRAM_OTHER_MIB:-}

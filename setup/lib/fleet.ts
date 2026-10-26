@@ -12,6 +12,8 @@ export interface Hardware {
   gpu: string;
   vramGb: number;
   ramGb: number;
+  /** VRAM (GiB) other programs use, e.g. the desktop and a browser; undefined when unknown. */
+  vramOtherGb?: number;
 }
 
 /** What a GGUF file name says about the model, e.g. "Qwen3.8-27B-UD-IQ3_XXS.gguf". */

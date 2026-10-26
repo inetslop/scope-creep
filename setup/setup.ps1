@@ -308,13 +308,16 @@ if ($mode -eq 'managed') {
     # (never below 32k); the runner reads the real value from the server before every agent session.
     $ctxDefault = 'auto'
     if ($existing -and $existing.llama.ctxSize) { $ctxDefault = [string]$existing.llama.ctxSize }
+    # How each context size splits this model between GPU and CPU (estimate; informational only)
+    & node (Join-Path $Repo 'setup\models.ts') context --model-file $model.FullName --cache q8_0
     $ctxAnswer = Read-Default 'Context size: "auto" = largest that fits in memory (recommended), or a number of tokens' $ctxDefault
     $ctx = 0
     if ($ctxAnswer -ne 'auto') { $ctx = [int]$ctxAnswer }
     $port = Read-Default 'Port for llama-server' '8080'
     # Model id the API serves, e.g. qwen3.8-27b-ud-q4_k_xl
     $modelId = ([IO.Path]::GetFileNameWithoutExtension($model.Name) -replace '-00001-of-\d{5}$', '').ToLower()
-    $extraArgs = @('--cache-type-k', 'q8_0', '--cache-type-v', 'q8_0', '--temp', '0.6', '--top-p', '0.95', '--top-k', '20', '--min-p', '0')
+    # One request slot: the runner runs one agent session at a time, and every extra slot costs VRAM.
+    $extraArgs = @('-np', '1', '--cache-type-k', 'q8_0', '--cache-type-v', 'q8_0', '--temp', '0.6', '--top-p', '0.95', '--top-k', '20', '--min-p', '0')
     if ($existing -and $existing.llama.extraArgs) { $extraArgs = @($existing.llama.extraArgs) }
     $llama = [ordered]@{
         mode       = 'managed'

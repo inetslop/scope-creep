@@ -1,6 +1,6 @@
 /**
  * What this machine has, for naming it and picking a model. Inside the Docker agent the host's
- * name and GPU come from SC_HOST_* variables (the container sees the host's CPU and RAM itself).
+ * name, GPU and VRAM use come from SC_HOST_* variables (the container sees the host's CPU and RAM).
  */
 import { spawnSync } from 'node:child_process';
 import os from 'node:os';
@@ -19,17 +19,44 @@ export function parseNvidiaSmi(out: string, ramGb: number): { gpu: string; vramG
   return { gpu: name, vramGb: Math.round(vram * 10) / 10 };
 }
 
+/**
+ * VRAM other programs use: total used minus any llama-server (which setup may be about to restart).
+ * `apps` is nvidia-smi's "process_name, used_memory" list; Windows often reports [N/A] per process.
+ */
+export function parseVramOther(usedMib: string, apps: string): number | undefined {
+  const used = usedMib
+    .split(/\r?\n/)
+    .map(Number)
+    .filter((n) => Number.isFinite(n))
+    .reduce((s, n) => s + n, 0);
+  if (!(used >= 0) || !usedMib.trim()) return undefined;
+  const llama = apps
+    .split(/\r?\n/)
+    .filter((l) => /llama-server/i.test(l))
+    .reduce((s, l) => s + (Number(l.split(',').pop()) || 0), 0);
+  return Math.round((Math.max(0, used - llama) / 1024) * 10) / 10;
+}
+
+function nvidiaSmi(args: string[]): string | undefined {
+  const r = spawnSync('nvidia-smi', args, { encoding: 'utf8', windowsHide: true });
+  return r.status === 0 ? r.stdout : undefined;
+}
+
 export function detectHardware(): Hardware {
   const ramGb = Math.round((Number(process.env.SC_HOST_RAM_GB) || os.totalmem() / 1024 ** 3) * 10) / 10;
-  let smi = process.env.SC_HOST_GPU ?? '';
-  if (!smi) {
-    const r = spawnSync('nvidia-smi', ['--query-gpu=name,memory.total', '--format=csv,noheader,nounits'], { encoding: 'utf8', windowsHide: true });
-    if (r.status === 0) smi = r.stdout;
+  const smi = process.env.SC_HOST_GPU || nvidiaSmi(['--query-gpu=name,memory.total', '--format=csv,noheader,nounits']) || '';
+  const otherMib = Number(process.env.SC_HOST_VRAM_OTHER_MIB);
+  let vramOtherGb = Number.isFinite(otherMib) && process.env.SC_HOST_VRAM_OTHER_MIB ? Math.round((otherMib / 1024) * 10) / 10 : undefined;
+  if (vramOtherGb === undefined && smi) {
+    const used = nvidiaSmi(['--query-gpu=memory.used', '--format=csv,noheader,nounits']);
+    const apps = nvidiaSmi(['--query-compute-apps=process_name,used_memory', '--format=csv,noheader,nounits']) ?? '';
+    if (used) vramOtherGb = parseVramOther(used, apps);
   }
   return {
     hostname: process.env.SC_HOST_NAME || os.hostname(),
     cpu: process.env.SC_HOST_CPU || os.cpus()[0]?.model || '',
     ramGb,
     ...parseNvidiaSmi(smi, ramGb),
+    vramOtherGb,
   };
 }

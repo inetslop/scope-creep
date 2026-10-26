@@ -16,21 +16,12 @@ import type { MachineConfig, Role } from '../loop/config.ts';
 import { REPO } from '../loop/paths.ts';
 import { TASK_SIZES, type TaskSize } from '../loop/tasks.ts';
 import { addMachine, hardwareLabel, parseModelFile, setPaused, sizeForTier, suggestCapabilities, suggestMachineId, suggestNotes, validateMachineId, type Hardware } from './lib/fleet.ts';
+import { modelBytes } from './lib/gguf.ts';
 import { detectHardware } from './lib/hardware.ts';
 import { ask, askValid, closePrompts, flag, note, ok, step, yesNo } from './lib/prompt.ts';
 import { readFleet, updateFleetAndPush } from './lib/publish.ts';
 
 const ROLES: Role[] = ['po', 'architect', 'dev'];
-
-/** Total size of a GGUF, counting every part of a split model. */
-export function modelBytes(file: string): number {
-  const m = /^(.*)-00001-of-(\d{5})\.gguf$/i.exec(path.basename(file));
-  if (!m) return fs.statSync(file).size;
-  return fs
-    .readdirSync(path.dirname(file))
-    .filter((f) => f.startsWith(`${m[1]}-`) && f.endsWith(`-of-${m[2]}.gguf`))
-    .reduce((sum, f) => sum + fs.statSync(path.join(path.dirname(file), f)).size, 0);
-}
 
 /**
  * Asks for the new machine's details (with suggestions), then pushes it as a paused machine. Returns its id.

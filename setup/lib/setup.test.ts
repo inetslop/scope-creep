@@ -5,7 +5,8 @@ import { describe, it } from 'node:test';
 import { REPO } from '../../loop/paths.ts';
 import { parseEnv, updateEnvText } from '../docker/env.ts';
 import { addMachine, formatFleetJson, hardwareLabel, parseModelFile, setPaused, sizeForTier, suggestCapabilities, suggestMachineId, suggestNotes, validateMachineId, type FleetFile, type Hardware } from './fleet.ts';
-import { parseNvidiaSmi } from './hardware.ts';
+import { gpuSplit, kvElementsPerToken, parseGgufMetadata } from './gguf.ts';
+import { parseNvidiaSmi, parseVramOther } from './hardware.ts';
 import { defaultChoice, fitOf, modelChoices, type HfFile } from './hf.ts';
 
 const HW: Hardware = { hostname: 'Matt-Desktop.local', cpu: 'AMD Ryzen 7 7800X3D 8-Core Processor', gpu: 'NVIDIA GeForce RTX 4070 SUPER', vramGb: 12, ramGb: 31 };
@@ -123,5 +124,69 @@ describe('docker .env', () => {
       LLAMA_ARGS: '--fit-ctx 32768 --temp 0.6',
       HOST_GPU: 'RTX "4070", 12282',
     });
+  });
+});
+
+/** A minimal GGUF header: magic, version, tensor count, then typed key/values. */
+function gguf(kv: [string, number, unknown][]): Buffer {
+  const parts: Buffer[] = [Buffer.from('GGUF'), u32(3), u64(0), u64(kv.length)];
+  const str = (s: string): Buffer => Buffer.concat([u64(Buffer.byteLength(s)), Buffer.from(s)]);
+  for (const [key, type, value] of kv) {
+    parts.push(str(key), u32(type));
+    if (type === 4) parts.push(u32(value as number));
+    else if (type === 8) parts.push(str(value as string));
+    else if (type === 9) parts.push(u32(8), u64((value as string[]).length), ...(value as string[]).map(str));
+  }
+  return Buffer.concat(parts);
+}
+function u32(n: number): Buffer {
+  const b = Buffer.alloc(4);
+  b.writeUInt32LE(n);
+  return b;
+}
+function u64(n: number): Buffer {
+  const b = Buffer.alloc(8);
+  b.writeBigUInt64LE(BigInt(n));
+  return b;
+}
+
+describe('context planning', () => {
+  // Qwen3.8-27B: 64 layers + 1 multi-token-prediction layer, full attention every 4th layer.
+  const qwen = gguf([
+    ['general.architecture', 8, 'qwen35'],
+    ['tokenizer.ggml.tokens', 9, Array.from({ length: 300 }, (_, i) => `t${i}`)],
+    ['qwen35.block_count', 4, 65],
+    ['qwen35.nextn_predict_layers', 4, 1],
+    ['qwen35.full_attention_interval', 4, 4],
+    ['qwen35.attention.head_count', 4, 24],
+    ['qwen35.attention.head_count_kv', 4, 4],
+    ['qwen35.attention.key_length', 4, 256],
+    ['qwen35.attention.value_length', 4, 256],
+  ]);
+
+  it('reads the model layout from the GGUF header, skipping the vocabulary', () => {
+    const meta = parseGgufMetadata(qwen);
+    assert.equal(meta['tokenizer.ggml.tokens'], '<300 items>');
+    assert.equal(kvElementsPerToken(meta), 16 * 4 * 512);
+    assert.equal(kvElementsPerToken({ 'general.architecture': 'llama', 'llama.block_count': 32, 'llama.attention.head_count': 32, 'llama.attention.head_count_kv': 8, 'llama.embedding_length': 4096 }), 32 * 8 * 256);
+    assert.equal(kvElementsPerToken({}), undefined);
+  });
+
+  it('estimates the GPU share close to what llama.cpp chose on an RTX 4070 SUPER', () => {
+    // Measured: 12 GiB card, ~1.1 GiB used by the desktop, 10.9 GB model. At 64k with a q4_0 cache
+    // llama-server held 9.47 GiB, about 75% of the weights; at 100k with q8_0 about half.
+    const base = { modelBytes: 10.9e9, kvElementsPerToken: 16 * 4 * 512, vramGib: 12, vramOtherGib: 1.1 };
+    const at64q4 = gpuSplit({ ...base, ctx: 65_536, cache: 'q4_0' });
+    assert.ok(Math.abs(at64q4.cacheGib - 1.125) < 0.01, String(at64q4.cacheGib));
+    assert.ok(at64q4.onGpu > 0.72 && at64q4.onGpu < 0.82, String(at64q4.onGpu));
+    const at100q8 = gpuSplit({ ...base, ctx: 100_000, cache: 'q8_0' });
+    assert.ok(at100q8.onGpu > 0.45 && at100q8.onGpu < 0.6, String(at100q8.onGpu));
+    assert.equal(gpuSplit({ ...base, modelBytes: 5e9, ctx: 32_768, cache: 'q8_0' }).onGpu, 1);
+  });
+
+  it('counts VRAM used by other programs, not by a running llama-server', () => {
+    assert.equal(parseVramOther('11102\n', 'brave, 604\n/app/llama-server, 9466\nsunshine, 187\n'), 1.6);
+    assert.equal(parseVramOther('900\n', 'C:\\llama\\llama-server.exe, [N/A]\n'), 0.9);
+    assert.equal(parseVramOther('', ''), undefined);
   });
 });

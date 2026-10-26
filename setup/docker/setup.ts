@@ -14,20 +14,21 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { LOCAL_CONFIG_FILE, type LocalConfig } from '../../loop/config.ts';
 import { run } from '../../loop/exec.ts';
-import { MIN_CONTEXT } from '../../loop/llama.ts';
 import { GAME_DIR, REPO } from '../../loop/paths.ts';
 import { detectHardware } from '../lib/hardware.ts';
-import { askValid, choose, closePrompts, note, ok, problem, step } from '../lib/prompt.ts';
+import { MIN_CONTEXT } from '../../loop/llama.ts';
+import { modelBytes, type CacheType } from '../lib/gguf.ts';
+import { choose, closePrompts, note, ok, problem, step } from '../lib/prompt.ts';
 import { readFleet } from '../lib/publish.ts';
-import { modelBytes, registerMachine } from '../machine.ts';
-import { DEFAULT_REPO, pickAndDownload } from '../models.ts';
+import { registerMachine } from '../machine.ts';
+import { askCacheAndContext, DEFAULT_REPO, pickAndDownload } from '../models.ts';
 import { readEnv, writeEnv } from './env.ts';
 
 const DATA = '/data';
 const MODELS = path.join(DATA, 'models');
 const ENV_FILE = path.join(DATA, '.env');
-/** Same sampling and KV-cache settings the Windows machines use (setup.ps1). */
-const DEFAULT_LLAMA_EXTRA = '--cache-type-k q8_0 --cache-type-v q8_0 --temp 0.6 --top-p 0.95 --top-k 20 --min-p 0';
+/** Same sampling settings the Windows machines use (setup.ps1). */
+const SAMPLING = '--temp 0.6 --top-p 0.95 --top-k 20 --min-p 0';
 
 function localGgufs(): string[] {
   if (!fs.existsSync(MODELS)) return [];
@@ -68,13 +69,12 @@ async function main(): Promise<void> {
   if (picked === 'download') ({ modelPath, repo: hfRepo } = await pickAndDownload(MODELS, hfRepo, hw));
   const alias = path.basename(modelPath).replace(/(-00001-of-\d{5})?\.gguf$/i, '').toLowerCase();
 
-  const ctxAnswer = await askValid(
-    'Context size: "auto" = largest that fits in memory (recommended), or a number of tokens',
-    existing?.llama.ctxSize ? String(existing.llama.ctxSize) : 'auto',
-    (v) => (v === 'auto' || (Number.isInteger(Number(v)) && Number(v) >= MIN_CONTEXT) ? null : `"auto" or at least ${MIN_CONTEXT}`),
-  );
-  const ctxSize = ctxAnswer === 'auto' ? 0 : Number(ctxAnswer);
-  ok(`model ${path.basename(modelPath)} served as "${alias}", context ${ctxAnswer}`);
+  ok(`model ${path.basename(modelPath)} served as "${alias}"`);
+  const previousCache = (env.LLAMA_CACHE_TYPE || /--cache-type-k (\S+)/.exec(env.LLAMA_ARGS ?? '')?.[1]) as CacheType | undefined;
+  const { ctxSize, cache } = await askCacheAndContext(modelPath, hw, {
+    ctxSize: modelPath === current ? existing?.llama.ctxSize : undefined,
+    cache: previousCache === 'q4_0' || previousCache === 'q8_0' ? previousCache : undefined,
+  });
 
   // ------------------------------------------------------------ identity
   step('Machine identity');
@@ -102,13 +102,16 @@ async function main(): Promise<void> {
   };
   fs.mkdirSync(path.dirname(LOCAL_CONFIG_FILE), { recursive: true });
   fs.writeFileSync(LOCAL_CONFIG_FILE, JSON.stringify(config, null, 2));
+  // One request slot: the runner runs one agent session at a time, and every extra slot costs VRAM.
+  // LLAMA_CUSTOM_ARGS in .env is appended as is, for anything else.
   const ctxArgs = ctxSize ? `-c ${ctxSize}` : `--fit-ctx ${MIN_CONTEXT}`;
   writeEnv(ENV_FILE, {
     MACHINE_ID: machineId,
     MODEL_FILE: path.relative(MODELS, modelPath),
     MODEL_ALIAS: alias,
     HF_REPO: hfRepo,
-    LLAMA_ARGS: `${ctxArgs} ${env.LLAMA_EXTRA_ARGS || DEFAULT_LLAMA_EXTRA}`,
+    LLAMA_CACHE_TYPE: cache,
+    LLAMA_ARGS: [ctxArgs, '-np 1', `--cache-type-k ${cache} --cache-type-v ${cache}`, SAMPLING, env.LLAMA_CUSTOM_ARGS ?? ''].filter(Boolean).join(' '),
   });
   ok(`wrote ${LOCAL_CONFIG_FILE} and ${ENV_FILE}`);
 

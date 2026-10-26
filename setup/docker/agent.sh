@@ -97,6 +97,10 @@ cmd_setup() {
   set_env AGENT_GID "$(id -g)"
   set_env HOST_NAME "$(hostname)"
   set_env HOST_GPU "$gpu"
+  local used llama_mib
+  used=$(nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits 2>/dev/null | awk '{s+=$1} END {print s+0}')
+  llama_mib=$(nvidia-smi --query-compute-apps=process_name,used_memory --format=csv,noheader,nounits 2>/dev/null | awk -F', *' '/llama-server/ {s+=$2} END {print s+0}')
+  set_env HOST_VRAM_OTHER_MIB "$((used - llama_mib))"
   set_env PLAYWRIGHT_VERSION "$(sed -n 's/.*"playwright": *"\([^"]*\)".*/\1/p' "$REPO_DIR/package.json" | head -1)"
 
   step 'Docker images (first build and pull take a few minutes)'
