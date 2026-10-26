@@ -12,6 +12,7 @@ import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { Player } from '../entities/Player';
 import { Controls } from '../input/Controls';
+import { ArcSystem } from '../systems/ArcSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { DamageNumbers } from '../systems/DamageNumbers';
 import { FxSystem } from '../systems/FxSystem';
@@ -43,6 +44,7 @@ export class GameScene extends Phaser.Scene {
   private weapons!: WeaponSystem;
   private combat!: CombatSystem;
   private orbit!: OrbitSystem;
+  private arc!: ArcSystem;
   private spawns!: SpawnSystem;
   private pickups!: PickupSystem;
   private bounds!: Phaser.Geom.Rectangle;
@@ -78,6 +80,7 @@ export class GameScene extends Phaser.Scene {
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds);
     this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.spawns);
     this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
+    this.arc = new ArcSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
 
     this.controls = new Controls(this);
     this.registry.set('controls', this.controls);
@@ -109,6 +112,7 @@ export class GameScene extends Phaser.Scene {
     this.player.aimAngle = Math.atan2(input.aim.y, input.aim.x);
 
     this.weapons.update(dt, input.firing);
+    this.arc.update(dt, input.firing);
     this.orbit.update(dt);
     this.spawns.update(dt);
     this.pickups.update(dt);
@@ -261,6 +265,7 @@ export class GameScene extends Phaser.Scene {
       for (const c of this.orbit.circles) if (!Number.isFinite(c.x) || !Number.isFinite(c.y)) return `orbit circle at (${c.x}, ${c.y})`;
       return null;
     });
+    hook.addInvariant('arc-lines', () => (this.arc.lines.length <= 4 ? null : `${this.arc.lines.length} arc lines alive`));
     // Finiteness only: nextBeatTime is legitimately stale while the scene is paused.
     hook.addInvariant('music-scheduler', () =>
       Number.isFinite(this.music.nextBeatTime) && this.music.nextBeatTime >= 0 ? null : `music nextBeatTime ${this.music.nextBeatTime}`,
@@ -268,4 +273,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'music-scheduler'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler'];

@@ -83,6 +83,20 @@ export interface OrbitSpec {
   hitCooldownSec: number;
 }
 
+/** Tuning for an arc weapon: a jagged bolt that snaps toward the aim and chains between nearby enemies. */
+export interface ArcSpec {
+  /** First-hit search distance from the muzzle, world units. */
+  range: number;
+  /** FULL cone angle around the aim for the first hit. */
+  coneDeg: number;
+  /** Chained jumps after the first hit (hits = maxJumps + 1). */
+  maxJumps: number;
+  /** Search radius around the enemy just hit, world units. */
+  chainRadius: number;
+  /** Ink line visible duration. */
+  fadeMs: number;
+}
+
 export interface WeaponDef {
   id: string;
   name: string;
@@ -105,6 +119,8 @@ export interface WeaponDef {
   look: ProjectileLook;
   /** Orbit weapon (handled by src/systems/OrbitSystem); projectile fields unused. */
   orbit?: OrbitSpec;
+  /** Arc weapon (handled by src/systems/ArcSystem); projectile fields unused. */
+  arc?: ArcSpec;
 }
 
 export interface UpgradeDef {

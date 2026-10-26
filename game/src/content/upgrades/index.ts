@@ -102,6 +102,16 @@ export const UPGRADES: readonly UpgradeDef[] = [
     color: PALETTE.blue,
   },
   {
+    id: 'arc',
+    name: 'Arc',
+    description: 'New weapon: an ink arc that chains between nearby enemies',
+    maxLevel: 1,
+    weight: 5,
+    mods: [],
+    grantsWeapon: 'arc',
+    color: PALETTE.ink,
+  },
+  {
     id: 'composition',
     name: 'Composition',
     description: '+15% XP from shards',

@@ -4,11 +4,12 @@ title: Add the Arc weapon
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T20:18:38Z
 claimed_at: 2026-10-26T20:34:40Z
+finished_at: 2026-10-26T20:48:20Z
 ---
 
 ## Goal
@@ -110,3 +111,25 @@ export const arc: WeaponDef = {
 
 ### Tests
 - new `tests/core/arc.test.ts` (cases listed in step 9); edited `tests/content.test.ts` arc branch. No other unit tests.
+
+## Result (attempt 1, desktop)
+
+Added the Arc weapon: a level-up card (weight 5, ink) that grants a chained-arc weapon firing every 0.9 s — an ink bolt snaps toward the aim, hits the first enemy within 260 u for 16 damage (scaling with damage/crit stats like other weapons, knockback 40), then jumps to up to 3 more enemies within 140 u of the previous hit, each at most once per arc; kills drop shards and play the normal death sound via the shared kill path. New files: pure targeting in `src/core/arc.ts` (unit-tested, 7 cases), weapon data in `src/content/weapons/arc.ts`, and `src/systems/ArcSystem.ts` (cooldown, hit resolution, pooled jagged ink polyline fading over 200 ms); wired into GameScene with an `arc-lines` invariant, and WeaponSystem now skips arc defs. One design deviation: the spec's second test expectation `[2]` is an arithmetic slip — the specified algorithm yields `[2,1,3]` for that input, so the test asserts the correct chained result. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 13.7 min
+
+```
+game/docs/ARCHITECTURE.md          |   2 +-
+ game/src/content/types.ts          |  16 ++++
+ game/src/content/upgrades/index.ts |  10 +++
+ game/src/content/weapons/arc.ts    |  24 ++++++
+ game/src/content/weapons/index.ts  |   3 +-
+ game/src/core/arc.ts               |  64 +++++++++++++++
+ game/src/scenes/GameScene.ts       |   7 +-
+ game/src/systems/ArcSystem.ts      | 160 +++++++++++++++++++++++++++++++++++++
+ game/src/systems/WeaponSystem.ts   |   2 +-
+ game/tests/content.test.ts         |   7 ++
+ game/tests/core/arc.test.ts        |  47 +++++++++++
+ 11 files changed, 338 insertions(+), 4 deletions(-)
+```

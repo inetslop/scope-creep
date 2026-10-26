@@ -61,6 +61,13 @@ describe('weapons', () => {
       expect(positive(o.radius) && positive(o.speed) && positive(o.circleRadius) && positive(o.hitCooldownSec), 'orbit numbers > 0').toBe(true);
       return;
     }
+    if (w.arc) {
+      const a = w.arc;
+      expect(positive(a.range) && positive(a.chainRadius) && positive(a.coneDeg), 'arc range/chain/cone > 0').toBe(true);
+      expect(Number.isInteger(a.maxJumps) && a.maxJumps >= 1, 'arc.maxJumps >= 1').toBe(true);
+      expect(positive(a.fadeMs), 'arc.fadeMs > 0').toBe(true);
+      return;
+    }
     for (const key of ['fireRate', 'count', 'speed', 'lifetimeSec'] as const) expect(positive(w[key]), `${key} > 0`).toBe(true);
     for (const key of ['spreadDeg', 'jitterDeg', 'pierce'] as const) expect(nonNegative(w[key]), `${key} >= 0`).toBe(true);
     expect(Number.isInteger(w.count) && Number.isInteger(w.pierce), 'count and pierce are integers').toBe(true);
