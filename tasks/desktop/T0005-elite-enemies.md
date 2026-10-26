@@ -4,9 +4,10 @@ title: Elite enemies
 assignee: desktop
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
+claimed_at: 2026-10-26T21:28:00Z
 ---
 
 ## Goal
