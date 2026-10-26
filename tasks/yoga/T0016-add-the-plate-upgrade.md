@@ -4,11 +4,12 @@ title: Add the Plate upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0013]
 attempts: 1
 created: 2026-10-26T19:20:22Z
 claimed_at: 2026-10-26T19:59:49Z
+finished_at: 2026-10-26T20:05:49Z
 ---
 
 ## Goal
@@ -54,3 +55,15 @@ No new types or functions. The entry must be exactly (field order matches the ot
 - `armor` is already clamped 0–50 in `STAT_LIMITS`; with `maxLevel: 2` plate alone can never exceed it, so no limit change is needed.
 ### Tests
 - none — `tests/content.test.ts` auto-validates the new entry (unique kebab-case id, `maxLevel ≥ 1`, `weight > 0`, `armor` is a known stat), and `tests/core/core.test.ts` already applies every upgrade to `maxLevel` generically.
+
+## Result (attempt 1, yoga)
+
+Added the `plate` upgrade to `UPGRADES` in `src/content/upgrades/index.ts` — a pure defensive option (`+1 armor`, maxLevel 2, weight 5, PALETTE.yellow) that mirrors the armor mod from the `mass` entry. One deviation from the design: its insertion point said "after the `draft` entry (line 133)", but `draft` is no longer the last entry (`contrast` and `staccato` were added since), so per the task goal I appended at the true end of the array instead. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 6.0 min
+
+```
+game/src/content/upgrades/index.ts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+```
