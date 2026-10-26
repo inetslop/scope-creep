@@ -4,10 +4,11 @@ title: Add the Contrast crit upgrade
 assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-26T18:15:01Z
+claimed_at: 2026-10-26T19:53:40Z
 ---
 
 ## Goal
