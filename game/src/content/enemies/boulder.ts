@@ -5,6 +5,7 @@ import type { EnemyDef } from '../types';
 export const boulder: EnemyDef = {
   id: 'boulder',
   name: 'Boulder',
+  note: 'SLOW BUT HEAVY',
   hp: 60,
   speed: 60,
   contactDamage: 15,

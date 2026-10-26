@@ -5,6 +5,7 @@ import type { EnemyDef } from '../types';
 export const hex: EnemyDef = {
   id: 'hex',
   name: 'Hex',
+  note: 'GREEN CLOSING IN',
   hp: 20,
   speed: 115,
   contactDamage: 10,

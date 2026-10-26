@@ -15,6 +15,7 @@ import { Controls } from '../input/Controls';
 import { ArcSystem } from '../systems/ArcSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { DamageNumbers } from '../systems/DamageNumbers';
+import { Marginalia } from '../systems/Marginalia';
 import { FxSystem } from '../systems/FxSystem';
 import { OrbitSystem } from '../systems/OrbitSystem';
 import { PickupSystem } from '../systems/PickupSystem';
@@ -39,6 +40,7 @@ export class GameScene extends Phaser.Scene {
   private controls!: Controls;
   private fx!: FxSystem;
   private damageNumbers!: DamageNumbers;
+  private marginalia!: Marginalia;
   private sfx!: Sfx;
   private music!: Music;
   private weapons!: WeaponSystem;
@@ -73,11 +75,12 @@ export class GameScene extends Phaser.Scene {
     this.player = new Player(this, 0, 0);
     this.fx = new FxSystem(this);
     this.damageNumbers = new DamageNumbers(this);
+    this.marginalia = new Marginalia(this, this.bounds);
     this.sfx = new Sfx(this);
     this.music = new Music(this, this.sfx);
     this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx);
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
-    this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds);
+    this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia);
     this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.spawns);
     this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
     this.arc = new ArcSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
@@ -115,6 +118,7 @@ export class GameScene extends Phaser.Scene {
     this.arc.update(dt, input.firing);
     this.orbit.update(dt);
     this.spawns.update(dt);
+    this.marginalia.update(dt);
     this.pickups.update(dt);
     if (run.stats.regenPerSec > 0) run.heal(run.stats.regenPerSec * dt);
 
@@ -210,6 +214,7 @@ export class GameScene extends Phaser.Scene {
     const onPostUpdate = (): void => {
       this.player.syncBarrel();
       this.orbit.pinToPlayer();
+      this.marginalia.pin();
     };
     this.events.on(Phaser.Scenes.Events.POST_UPDATE, onPostUpdate);
     this.events.on(Phaser.Scenes.Events.RESUME, onResume);
@@ -266,6 +271,7 @@ export class GameScene extends Phaser.Scene {
       return null;
     });
     hook.addInvariant('arc-lines', () => (this.arc.lines.length <= 4 ? null : `${this.arc.lines.length} arc lines alive`));
+    hook.addInvariant('marginalia-labels', () => (this.marginalia.activeCount <= 16 ? null : `${this.marginalia.activeCount} marginalia labels active`));
     // Finiteness only: nextBeatTime is legitimately stale while the scene is paused.
     hook.addInvariant('music-scheduler', () =>
       Number.isFinite(this.music.nextBeatTime) && this.music.nextBeatTime >= 0 ? null : `music nextBeatTime ${this.music.nextBeatTime}`,
@@ -273,4 +279,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels'];

@@ -5,6 +5,7 @@ import type { EnemyDef } from '../types';
 export const splitter: EnemyDef = {
   id: 'splitter',
   name: 'Splitter',
+  note: 'IT SPLITS WHEN IT DIES',
   hp: 35,
   speed: 70,
   contactDamage: 10,

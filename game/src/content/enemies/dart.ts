@@ -5,6 +5,7 @@ import type { EnemyDef } from '../types';
 export const dart: EnemyDef = {
   id: 'dart',
   name: 'Dart',
+  note: 'BLACK AND QUICK',
   hp: 9,
   speed: 150,
   contactDamage: 6,

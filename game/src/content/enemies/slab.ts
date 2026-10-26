@@ -5,6 +5,7 @@ import type { EnemyDef } from '../types';
 export const slab: EnemyDef = {
   id: 'slab',
   name: 'Slab',
+  note: 'A WALL THAT CRAWLS',
   hp: 140,
   speed: 45,
   contactDamage: 18,

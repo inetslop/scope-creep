@@ -69,6 +69,15 @@ export class RunState {
     return this.upgradeLevels[id] ?? 0;
   }
 
+  private readonly seenEnemyIds = new Set<string>();
+
+  /** True exactly once per enemy id per run (first-encounter notes). */
+  firstSighting(id: string): boolean {
+    if (this.seenEnemyIds.has(id)) return false;
+    this.seenEnemyIds.add(id);
+    return true;
+  }
+
   /** Applies an upgrade: stat mods, granted weapon, and heals by any max HP gained. */
   applyUpgrade(def: UpgradeDef): void {
     const prevMax = this.stats.maxHp;

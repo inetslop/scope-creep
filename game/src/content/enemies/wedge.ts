@@ -5,6 +5,7 @@ import type { EnemyDef } from '../types';
 export const wedge: EnemyDef = {
   id: 'wedge',
   name: 'Wedge',
+  note: 'RED RUSHES',
   hp: 14,
   speed: 95,
   contactDamage: 8,

@@ -41,6 +41,8 @@ export interface EnemyLook {
 export interface EnemyDef {
   id: string;
   name: string;
+  /** First-encounter annotation (all caps); omit for the "IT'S NEW." fallback. */
+  note?: string;
   hp: number;
   /** World units per second. */
   speed: number;

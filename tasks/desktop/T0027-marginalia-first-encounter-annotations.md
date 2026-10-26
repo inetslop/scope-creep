@@ -4,11 +4,12 @@ title: "Marginalia: first-encounter annotations"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T20:55:07Z
 claimed_at: 2026-10-26T21:08:49Z
+finished_at: 2026-10-26T21:18:58Z
 ---
 
 ## Goal
@@ -185,4 +186,35 @@ it.each(ENEMIES.map((e) => [e.id, e] as const))('%s note is non-empty all-caps w
   if (e.note === undefined) return;
   expect(e.note.length > 0 && e.note === e.note.toUpperCase(), 'note must be non-empty all-caps').toBe(true);
 });
+```
+
+## Result (attempt 1, desktop)
+
+Added first-encounter marginalia: each enemy type now carries an all-caps `note` in its content file, `RunState.firstSighting()` tracks seen ids per run, and a new pooled `Marginalia` system shows a small ink label above the first enemy of each type for 2 s (fade in 200 ms / fade out 500 ms, arena-clamped, dies with its enemy), wired into `SpawnSystem` and `GameScene` with a `marginalia-labels` invariant. Also added unit tests for `firstSighting` and note validation, and a line in `docs/ARCHITECTURE.md`. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 10.2 min
+- Self-review made fixes (kept; checks pass).
+
+```
+game/docs/ARCHITECTURE.md            |  2 +-
+ game/src/content/enemies/block.ts    |  1 +
+ game/src/content/enemies/boulder.ts  |  1 +
+ game/src/content/enemies/dart.ts     |  1 +
+ game/src/content/enemies/hex.ts      |  1 +
+ game/src/content/enemies/mote.ts     |  1 +
+ game/src/content/enemies/sentry.ts   |  1 +
+ game/src/content/enemies/slab.ts     |  1 +
+ game/src/content/enemies/splinter.ts |  1 +
+ game/src/content/enemies/splitter.ts |  1 +
+ game/src/content/enemies/tile.ts     |  1 +
+ game/src/content/enemies/wedge.ts    |  1 +
+ game/src/content/types.ts            |  2 +
+ game/src/core/run.ts                 |  9 +++++
+ game/src/scenes/GameScene.ts         | 10 ++++-
+ game/src/systems/Marginalia.ts       | 74 ++++++++++++++++++++++++++++++++++++
+ game/src/systems/SpawnSystem.ts      |  6 ++-
+ game/tests/content.test.ts           |  5 +++
+ game/tests/core/core.test.ts         |  7 ++++
+ 19 files changed, 122 insertions(+), 4 deletions(-)
 ```

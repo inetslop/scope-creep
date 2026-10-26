@@ -5,6 +5,7 @@ import type { EnemyDef } from '../types';
 export const sentry: EnemyDef = {
   id: 'sentry',
   name: 'Sentry',
+  note: 'THE PENTAGON SHOTS',
   hp: 30,
   speed: 85,
   contactDamage: 8,

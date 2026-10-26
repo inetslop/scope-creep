@@ -8,6 +8,7 @@ import { hook } from '../debug/testHook';
 import { Enemy } from '../entities/Enemy';
 import { EnemyBullet } from '../entities/EnemyBullet';
 import type { Player } from '../entities/Player';
+import { Marginalia } from './Marginalia';
 
 const MAX_ENEMIES = 260;
 const MAX_ENEMY_SHOTS = 200;
@@ -24,12 +25,14 @@ export class SpawnSystem {
   private readonly run: RunState;
   private readonly player: Player;
   private readonly bounds: Phaser.Geom.Rectangle;
+  private readonly marginalia: Marginalia;
 
-  constructor(scene: Phaser.Scene, run: RunState, player: Player, bounds: Phaser.Geom.Rectangle) {
+  constructor(scene: Phaser.Scene, run: RunState, player: Player, bounds: Phaser.Geom.Rectangle, marginalia: Marginalia) {
     this.scene = scene;
     this.run = run;
     this.player = player;
     this.bounds = bounds;
+    this.marginalia = marginalia;
     this.enemies = scene.physics.add.group({ classType: Enemy, maxSize: MAX_ENEMIES, runChildUpdate: false });
     this.enemyShots = scene.physics.add.group({ classType: EnemyBullet, maxSize: MAX_ENEMY_SHOTS, runChildUpdate: false });
   }
@@ -73,6 +76,7 @@ export class SpawnSystem {
     const enemy = this.enemies.get(pos.x, pos.y) as Enemy | null;
     if (!enemy) return null;
     enemy.spawn(def, pos.x, pos.y, enemyHpScale(this.run.timeSec), this.run.rng);
+    if (this.run.firstSighting(def.id)) this.marginalia.note(enemy, def);
     hook.stats.enemiesSpawned += 1;
     return enemy;
   }

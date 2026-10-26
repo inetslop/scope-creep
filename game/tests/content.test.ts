@@ -41,6 +41,11 @@ describe('enemies', () => {
     expect(ENEMIES.some((e) => e.unlockAtSec === 0 && e.spawnWeight > 0)).toBe(true);
   });
 
+  it.each(ENEMIES.map((e) => [e.id, e] as const))('%s note is non-empty all-caps when present', (_id, e) => {
+    if (e.note === undefined) return;
+    expect(e.note.length > 0 && e.note === e.note.toUpperCase(), 'note must be non-empty all-caps').toBe(true);
+  });
+
   it.each(ENEMIES.filter((e) => e.splitsInto).map((e) => [e.id, e] as const))('%s splitsInto a real enemy', (_id, e) => {
     const spec = e.splitsInto!;
     expect(Number.isInteger(spec.count) && spec.count >= 1, 'count is an integer >= 1').toBe(true);

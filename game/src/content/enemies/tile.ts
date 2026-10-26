@@ -5,6 +5,7 @@ import type { EnemyDef } from '../types';
 export const tile: EnemyDef = {
   id: 'tile',
   name: 'Tile',
+  note: 'PLAIN AND PERSISTENT',
   hp: 35,
   speed: 95,
   contactDamage: 12,

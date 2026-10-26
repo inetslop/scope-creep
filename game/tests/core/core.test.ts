@@ -95,6 +95,13 @@ describe('RunState', () => {
     run.applyUpgrade(UPGRADE_BY_ID.get('line')!);
     expect(run.weapons).toContain('line');
   });
+
+  it('reports each enemy id as a first sighting exactly once', () => {
+    const run = new RunState(1);
+    expect(run.firstSighting('wedge')).toBe(true);
+    expect(run.firstSighting('wedge')).toBe(false);
+    expect(run.firstSighting('dart')).toBe(true);
+  });
 });
 
 describe('upgrades', () => {

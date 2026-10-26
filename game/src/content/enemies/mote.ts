@@ -5,6 +5,7 @@ import type { EnemyDef } from '../types';
 export const mote: EnemyDef = {
   id: 'mote',
   name: 'Mote',
+  note: 'THEY COME IN FLOCKS',
   hp: 6,
   speed: 150,
   contactDamage: 4,

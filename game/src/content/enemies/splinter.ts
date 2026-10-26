@@ -5,6 +5,7 @@ import type { EnemyDef } from '../types';
 export const splinter: EnemyDef = {
   id: 'splinter',
   name: 'Splinter',
+  note: 'BORN ALREADY FAST',
   hp: 8,
   speed: 130,
   contactDamage: 6,
