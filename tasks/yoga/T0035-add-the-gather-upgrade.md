@@ -4,10 +4,11 @@ title: Add the Gather upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0034]
-attempts: 0
+attempts: 1
 created: 2026-10-26T21:54:06Z
+claimed_at: 2026-10-26T22:01:02Z
 ---
 
 ## Goal
