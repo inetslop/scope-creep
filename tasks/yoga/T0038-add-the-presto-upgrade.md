@@ -4,11 +4,12 @@ title: Add the Presto upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0037]
 attempts: 1
 created: 2026-10-26T22:44:02Z
 claimed_at: 2026-10-26T22:51:42Z
+finished_at: 2026-10-26T22:57:31Z
 ---
 
 ## Goal
@@ -79,3 +80,16 @@ No new types or functions. Pure data using the existing `UpgradeDef` (`src/conte
 
 ### Tests
 - `tests/core/upgrades.test.ts`: the presto test above (exact values + offered exactly 3 times). `tests/content.test.ts` already auto-validates the new entry (unique kebab-case id, real stats, mul > 0).
+
+## Result (attempt 1, yoga)
+
+Added the Presto upgrade to `src/content/upgrades/index.ts` — a 3-level, weight-4, orange entry that multiplies both `projectileSpeedMul` and `moveSpeed` by 1.10 per level (×1.33 at max), stacking multiplicatively with Draft and Momentum. Added a unit test in `tests/core/upgrades.test.ts` verifying the exact mods and that Presto is offered exactly 3 times. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 5.8 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 18 +++++++++++++++++-
+ 2 files changed, 29 insertions(+), 1 deletion(-)
+```

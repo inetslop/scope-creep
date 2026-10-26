@@ -264,6 +264,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     ],
     color: PALETTE.red,
   },
+  {
+    id: 'presto',
+    name: 'Presto',
+    description: '+10% projectile speed, +10% move speed',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'projectileSpeedMul', op: 'mul', value: 1.10 },
+      { stat: 'moveSpeed', op: 'mul', value: 1.10 },
+    ],
+    color: PALETTE.orange,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));
