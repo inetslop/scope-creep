@@ -4,10 +4,11 @@ title: Add the Slab enemy
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0023]
-attempts: 0
+attempts: 1
 created: 2026-10-26T20:32:24Z
+claimed_at: 2026-10-26T20:34:07Z
 ---
 
 ## Goal
