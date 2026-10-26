@@ -4,10 +4,11 @@ title: Unit tests for critChance clamping
 assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-26T20:18:38Z
+claimed_at: 2026-10-26T20:45:46Z
 ---
 
 ## Goal
