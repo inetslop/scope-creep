@@ -4,10 +4,12 @@ title: Understudy active — decoy circle
 assignee: asus
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T19:20:22Z
+claimed_at: 2026-10-26T19:26:34Z
+designer: desktop
 ---
 
 ## Goal
