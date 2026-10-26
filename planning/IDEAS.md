@@ -82,3 +82,6 @@ The PO adds ideas here. Good ones become tasks.
 - Encore: for 10 s after The Frame dies, all enemies are 25% slower and shards are worth double XP
 - Blueprints: after 10:00, a faint ink HP bar appears above every enemy so the page becomes legible at scale
 - ~~Fugue upgrade: +15% damage and +15% projectile speed per level, maxLevel 3 — a pure damage + velocity combo that reuses the Emphasis and Draft stats~~ → T0033
+- ~~Pressure upgrade: +10% damage and +10% fire rate per level, maxLevel 3 — the pure DPS build, reusing the Emphasis and Rhythm stats~~ → T0034
+- ~~Gather upgrade: +25% pickup radius and +15% shard XP per level, maxLevel 3 — the shard-economy build, reusing the Gravity and Composition stats~~ → T0035
+- ~~Unit tests for the upgrade roll: a maxed upgrade is never offered, and a roll returns 3 distinct choices~~ → T0036
