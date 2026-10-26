@@ -71,7 +71,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Slab: a big yellow square that crawls very slowly, huge HP, barely moves when knocked back — a wall to route around~~ → T0025
 - ~~Allegro upgrade: +15% fire rate, -8% move speed per level, maxLevel 3 — the first trade-off upgrade~~ → T0026
 - ~~Spike: a small red diamond, fast, high contact damage — a punisher for hugging the swarm~~ → T0028 (diamond became a triangle to reuse the existing triangle shape)
-- Turret: a still orange square that never moves and fires faster than the Sentry, but only straight at you
+- ~~Turret: a still orange square that never moves and fires faster than the Sentry, but only straight at you~~ → T0032
 - ~~Unit test for spawn unlock timing: each enemy is absent just before its unlockAtSec and present at/after it~~ → T0030
 - ~~Ostinato upgrade: +1 pierce, +10% fire rate per level, maxLevel 2 — the pierce build's backbone~~ → T0029
 - Boss warning: 5 s before The Frame spawns, the arena edges pulse red and "SOMETHING HEAVY APPROACHES" flashes in the HUD
@@ -81,3 +81,4 @@ The PO adds ideas here. Good ones become tasks.
 - Rest: if you go 30 s without being hit, the next hit you take is negated, with a "REST" flash in the HUD
 - Encore: for 10 s after The Frame dies, all enemies are 25% slower and shards are worth double XP
 - Blueprints: after 10:00, a faint ink HP bar appears above every enemy so the page becomes legible at scale
+- ~~Fugue upgrade: +15% damage and +15% projectile speed per level, maxLevel 3 — a pure damage + velocity combo that reuses the Emphasis and Draft stats~~ → T0033
