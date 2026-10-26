@@ -2,13 +2,14 @@ import type { EnemyDef } from '../types';
 import { block } from './block';
 import { dart } from './dart';
 import { hex } from './hex';
+import { mote } from './mote';
 import { sentry } from './sentry';
 import { splinter } from './splinter';
 import { splitter } from './splitter';
 import { wedge } from './wedge';
 
 /** Every enemy in the game. To add one: create a file next to this one and add it here. */
-export const ENEMIES: readonly EnemyDef[] = [wedge, dart, block, hex, sentry, splitter, splinter];
+export const ENEMIES: readonly EnemyDef[] = [wedge, dart, block, hex, sentry, splitter, splinter, mote];
 
 export const ENEMY_BY_ID: ReadonlyMap<string, EnemyDef> = new Map(ENEMIES.map((e) => [e.id, e]));
 

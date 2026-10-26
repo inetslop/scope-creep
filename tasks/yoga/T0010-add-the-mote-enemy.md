@@ -4,11 +4,12 @@ title: Add the Mote enemy
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T17:40:33Z
 claimed_at: 2026-10-26T19:11:59Z
+finished_at: 2026-10-26T19:20:29Z
 ---
 
 ## Goal
@@ -77,3 +78,16 @@ export const mote: EnemyDef = {
 
 ### Tests
 - none — `tests/content.test.ts` validates every entry of `ENEMIES` automatically (id kebab-case, hp/speed/threat > 0, radius in [4,80], knockbackResist in [0,1]); all mote values pass.
+
+## Result (attempt 1, yoga)
+
+Added the Mote enemy — a tiny fast ink circle (radius 7, paper-light eye, `spin: 0` so it never rotates) with hp 6, speed 150, contactDamage 4, threat 1, spawnWeight 8, unlocking at 45 s for mid-game swarm pressure. Created `src/content/enemies/mote.ts` as pure data and registered it last in `ENEMIES` in `src/content/enemies/index.ts`. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 8.5 min
+
+```
+game/src/content/enemies/index.ts |  3 ++-
+ game/src/content/enemies/mote.ts  | 24 ++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+), 1 deletion(-)
+```
