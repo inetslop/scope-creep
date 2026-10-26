@@ -4,11 +4,12 @@ title: Add the Gather upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0034]
 attempts: 1
 created: 2026-10-26T21:54:06Z
 claimed_at: 2026-10-26T22:01:02Z
+finished_at: 2026-10-26T22:07:39Z
 ---
 
 ## Goal
@@ -61,3 +62,15 @@ No new types or functions. `pickupRadius` and `xpMul` already exist in `PlayerSt
 
 ### Tests
 - none — `tests/content.test.ts` already validates every `UPGRADES` entry generically (unique id, valid stats, mul > 0, maxLevel/weight, "must do something").
+
+## Result (attempt 1, yoga)
+
+Added the Gather upgrade to `UPGRADES` in `src/content/upgrades/index.ts` — a size-S level-up card (maxLevel 3, weight 4, yellow) that multiplies shard pickup radius by 1.25 and shard XP by 1.15 per level, reaching ×1.95 / ×1.52 at max. It stacks with Gravity and Composition automatically since both share the same stats and `computeStats()` folds all mods. The entry was appended after the existing `pressure` entry (T0034 had already landed, per the design's pitfall note). `npm run check` (typecheck + lint + 110 tests) and `npm run smoke` (desktop + mobile browser play) both pass.
+
+- Self-review: APPROVE
+- Time: 6.6 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+```

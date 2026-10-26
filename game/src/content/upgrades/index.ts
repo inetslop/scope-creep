@@ -240,6 +240,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     ],
     color: PALETTE.orange,
   },
+  {
+    id: 'gather',
+    name: 'Gather',
+    description: '+25% pickup radius, +15% shard XP',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'pickupRadius', op: 'mul', value: 1.25 },
+      { stat: 'xpMul', op: 'mul', value: 1.15 },
+    ],
+    color: PALETTE.yellow,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));
