@@ -3,21 +3,21 @@
     "asus": {
       "label": "ASUS RTX Spark (128 GB unified)",
       "model": "Qwen 3.8 UD-Q8_K_XL",
-      "roles": ["po", "architect", "dev"],
+      "roles": ["architect", "dev"],
       "tier": "strong",
       "maxTaskSize": "L",
       "targetQueue": 2,
-      "notes": "Best reasoning in the fleet, but slower; it also plans and designs, so it develops in between. Give it the hardest design-heavy work: new systems, tricky bugs, cross-cutting changes."
+      "notes": "Best reasoning in the fleet, but the slowest; it also designs every task first, so it develops in between. Give it the hardest design-heavy work: new systems, tricky bugs, cross-cutting changes."
     },
     "desktop": {
       "label": "Ryzen 9800X3D + RTX 5090",
       "model": "Qwen 3.8 UD-Q4_K_XL",
-      "roles": ["dev", "architect"],
+      "roles": ["po", "dev", "architect"],
       "architectMode": "idle",
       "tier": "fast",
       "maxTaskSize": "L",
       "targetQueue": 4,
-      "notes": "Fastest machine. The workhorse for medium features: new mechanics, scenes, UI, juice, audio."
+      "notes": "Fastest machine; it also runs the planning between its own tasks. The workhorse for medium features: new mechanics, scenes, UI, juice, audio."
     },
     "yoga": {
       "label": "Lenovo Yoga RTX Spark (32 GB unified)",
