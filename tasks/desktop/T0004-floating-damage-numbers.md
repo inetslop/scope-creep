@@ -4,9 +4,10 @@ title: Floating damage numbers
 assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
+claimed_at: 2026-10-26T17:45:12Z
 ---
 
 ## Goal
