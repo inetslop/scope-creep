@@ -18,7 +18,7 @@ The PO adds ideas here. Good ones become tasks.
 - Haptics on mobile (navigator.vibrate) for hits and level-ups
 - Arena hazards: ink lines that sweep across the page, rotating compasses
 - Run summary screen with a damage-by-weapon breakdown
-- Second boss "The Grid": a rotating compass that sweeps ink arms across the arena
+- ~~Second boss "The Grid": a rotating compass that sweeps ink arms across the arena~~ → T0044
 - ~~The Frame gains a radial ink-dart burst once enemy projectiles exist~~ → folded into T0006 (Sentry's shots exist now)
 - Weapon evolution line: Point at level 3 becomes "Bullet" (faster, +1 pierce)
 - ~~Streak counter: consecutive kills without being hit, shown as a small tally in the HUD~~ → T0014
@@ -35,7 +35,7 @@ The PO adds ideas here. Good ones become tasks.
 - The Eraser: a slow white rectangle that, on contact, erases your most recent upgrade with a small "ERASED" flash in the HUD
 - Ink well: a rare pickup from elites and bosses that restores 3 HP
 - Weapon: the Stamp — a heavy yellow square that slams down ahead of you and knocks enemies back
-- Screen shake: the camera jolts when a heavy enemy (Block, elite, boss) dies (The Frame task likely adds the boss case; generalize after)
+- ~~Screen shake: the camera jolts when a heavy enemy (Block, elite, boss) dies (The Frame task likely adds the boss case; generalize after)~~ → T0040
 - Ink splat decals: a dead enemy leaves a faint ink splat on the paper that fades over 3 s
 - Run timer (mm:ss) in the top-left of the HUD
 - Ring enemy: a large hollow ink circle that slowly chases; its rim hurts, its center is safe
@@ -44,7 +44,7 @@ The PO adds ideas here. Good ones become tasks.
 - Counterpoint weapon: fires a point that bounces off arena walls up to 2 times, losing 25% damage per bounce
 - "Overprint" upgrade: +5% damage per 30 s survived — the longer you last, the harder you hit
 - ~~Understudy active: drop a decoy blue circle that taunts every enemy for 3 s; 8 s cooldown~~ → T0015
-- Crop marks: after 12:00 the arena's safe area slowly shrinks, marked by crop-mark corners; the boundary burns for 5 damage/s
+- ~~Crop marks: after 12:00 the arena's safe area slowly shrinks, marked by crop-mark corners; the boundary burns for 5 damage/s~~ → T0045
 - Palette drift: every 90 s the page shifts to a new palette variant (cooler paper, Constructivist red-black)
 - Ghost run: a faint outline of your last run's player traces the same path; survive past where it stopped and a "PAST YOU" flash
 - "Second wind": the first time you drop to 1 HP in a run, heal 25% of max HP with a "SECOND WIND" flash
@@ -88,6 +88,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Accent upgrade: +5% crit chance and +10% damage per level, maxLevel 3 — the crit build, reusing the Contrast and Emphasis stats~~ → T0037
 - ~~Presto upgrade: +10% projectile speed and +10% move speed per level, maxLevel 3 — the everything-fast build, reusing the Draft and Momentum stats~~ → T0038
 - ~~Pinwheel: a red square that spins fast while chasing — a spinning late-run chaser that reads as "spinning danger"~~ → T0039
-- Pulse upgrade: +10% fire rate and +5% crit chance per level, maxLevel 3 — the crit-shred build, reusing the Rhythm and Contrast stats
+- ~~Pulse upgrade: +10% fire rate and +5% crit chance per level, maxLevel 3 — the crit-shred build, reusing the Rhythm and Contrast stats~~ → T0041
+- ~~Sweep upgrade: +10% move speed and +10% pickup radius per level, maxLevel 3 — the shard-sweeping mobility build, reusing the Momentum and Gravity stats~~ → T0042
 - Cinder: a black circle that, on death, leaves a slow-fading ink scorch on the paper that damages you if you stand in it
 - Enemy ink trails: fast enemies (Dart, Spike, Mote) leave a faint fading line behind them so their path is readable at speed
