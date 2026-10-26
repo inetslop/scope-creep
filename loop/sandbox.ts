@@ -45,7 +45,7 @@ export async function enforceWritable(git: Git, profile: Profile): Promise<strin
 const rule = (tool: string, absPath: string, glob = '/**'): string => `${tool}(${permissionPath(absPath)}${glob})`;
 
 /** Root-level loop folders/files no agent may touch. */
-const LOOP_AREAS = [path.join(REPO, 'loop'), path.join(REPO, 'setup'), AGENTS_DIR, AGENT_DIR, path.join(REPO, '.github'), path.join(REPO, 'node_modules')];
+const LOOP_AREAS = [path.join(REPO, 'loop'), path.join(REPO, 'setup'), path.join(REPO, 'site'), AGENTS_DIR, AGENT_DIR, path.join(REPO, '.github'), path.join(REPO, 'node_modules')];
 const ROOT_FILES = ['package.json', 'package-lock.json', 'tsconfig.json', '.gitignore', 'README.md'].map((f) => path.join(REPO, f));
 
 const READ_ONLY_TOOLS = ['Read', 'Glob', 'Grep', 'LS', 'TodoWrite'];

@@ -24,6 +24,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # full history: the build log reads who built what, and when
 
       - name: Skip if this commit is already live
         id: live
@@ -50,6 +52,13 @@ jobs:
           npm ci --no-audit --no-fund
           npm run check
           npm run build
+
+      # The public build log (site/), built from runner-written records. Agents can't edit site/ or
+      # this workflow. If it fails, the game still deploys, just without the page and its link.
+      - name: Build log page
+        if: steps.live.outputs.skip != 'true'
+        continue-on-error: true
+        run: node site/build-log.ts game/dist
 
       - uses: actions/configure-pages@v6
         if: steps.live.outputs.skip != 'true'

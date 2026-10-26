@@ -4,6 +4,7 @@ An abstract, Bauhaus-style twin-stick roguelite for desktop and mobile browsers,
 
 - **The game** lives in [`game/`](game/): Phaser 3 + TypeScript + Vite. Deployed to GitHub Pages every 10 minutes.
 - **The loop** around it: a Product Owner agent writes tasks, an architect agent designs each one against the real code, developer agents on three machines implement them, a browser smoke test gates every change.
+- **The build log** ([`site/`](site/)): a public page next to the game (`/build-log/`, linked from the menu) listing every feature, which machine built it and how long it took. The deploy workflow generates it from runner-written records, so the agents can't change it.
 
 ```
   ┌────────────┐ design  ┌─────────────────┐  todo   ┌──────────────────────────┐
@@ -26,7 +27,7 @@ An abstract, Bauhaus-style twin-stick roguelite for desktop and mobile browsers,
 | `game/` (except `game/CLAUDE.md`) | **write** | read | no access (gets a generated inventory) | commits it | ✔ |
 | `tasks/<machine>/` | no access | no access (gets its task in the prompt) | **write** new / `design` / `todo` tasks | status, designs, results | ✔ |
 | `planning/` | no access | no access | **write** | — | ✔ |
-| `loop/`, `agents/`, `setup/`, `.github/`, root files | no access | no access | no access | — | ✔ |
+| `loop/`, `agents/`, `setup/`, `site/`, `.github/`, root files | no access | no access | no access | — | ✔ |
 
 Enforced twice: Claude Code permission rules (generated per run with absolute paths), and after every agent session the runner reverts any change outside the allowed paths and only ever stages those paths when it commits. The smoke test lives in `loop/`, so agents can run it but cannot weaken it.
 
@@ -114,6 +115,7 @@ game/            the game (agents' sandbox) — see game/CLAUDE.md
 loop/            runner, supervisor, smoke test, doctor, status
 agents/          machines.json (fleet + loop tuning) and prompt templates
 setup/           setup.ps1
+site/            the public build log page (generated at deploy time, humans only)
 tasks/           <machine>/ queues and archive/ — PO + runner only
 planning/        VISION, ROADMAP, IDEAS, CHANGELOG — PO-owned (the runner appends to CHANGELOG)
 .github/         Pages deployment

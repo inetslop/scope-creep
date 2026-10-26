@@ -13,7 +13,7 @@
     "doctor": "node loop/doctor.ts",
     "smoke": "node loop/smoke/smoke.ts",
     "typecheck": "tsc -p tsconfig.json",
-    "test": "node --test \"loop/**/*.test.ts\"",
+    "test": "node --test \"loop/**/*.test.ts\" \"site/**/*.test.ts\"",
     "check": "npm run typecheck && npm run test"
   },
   "devDependencies": {

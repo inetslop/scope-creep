@@ -23,6 +23,18 @@ describe('isWritable', () => {
   });
 });
 
+describe('the public build log', () => {
+  it('no agent may change it or the workflow that publishes it', () => {
+    for (const profile of ['dev', 'po', 'architect'] as const) {
+      for (const p of ['site/build-log.ts', 'site/log-data.ts', '.github/workflows/deploy.yml']) assert.equal(isWritable(profile, p), false, `${profile} ${p}`);
+    }
+    for (const profile of ['dev', 'po'] as const) {
+      const s = claudeSettings(profile, {}) as { permissions: { deny: string[] } };
+      assert.ok(s.permissions.deny.some((r) => r.startsWith('Edit(') && r.includes('/site/**')), profile);
+    }
+  });
+});
+
 describe('architect profile', () => {
   it('may change nothing at all', () => {
     for (const p of ['game/src/main.ts', 'tasks/asus/T0001-x.md', 'planning/IDEAS.md', 'loop/runner.ts']) {
