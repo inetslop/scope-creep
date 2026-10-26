@@ -4,12 +4,10 @@ title: Add the Draft upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-26T17:58:28Z
-claimed_at: 2026-10-26T19:14:19Z
-designer: desktop
 ---
 
 ## Goal
@@ -24,3 +22,38 @@ A new upgrade that makes projectiles fly faster — a third axis for weapon buil
 - [ ] The new upgrade is in `UPGRADES` with exactly these values
 - [ ] Picking Draft makes all projectiles visibly faster
 - [ ] `npm run check` and `npm run smoke` pass
+
+## Design (architect, desktop)
+
+### Files
+- edit `src/content/upgrades/index.ts` - append one entry to the end of the `UPGRADES` array (after the `tempo` entry, before the closing `];` at line 125)
+
+### Interfaces
+No new types. `UpgradeDef` (`src/content/types.ts:110`) already covers all required fields; the mod uses the existing stat `projectileSpeedMul` from `PlayerStats` (`src/core/stats.ts:24`).
+
+### Steps
+1. In `src/content/upgrades/index.ts`, insert this entry after the `tempo` entry (line 124), keeping the 2-space indent style of the array:
+
+```ts
+  {
+    id: 'draft',
+    name: 'Draft',
+    description: '+25% projectile speed',
+    maxLevel: 3,
+    weight: 5,
+    mods: [{ stat: 'projectileSpeedMul', op: 'mul', value: 1.25 }],
+    color: PALETTE.ink,
+  },
+```
+
+2. Run `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- The stat is `projectileSpeedMul`, NOT `fireRateMul` (that is Rhythm's stat). It is actually read at `src/systems/WeaponSystem.ts:69` (`speed: def.speed * stats.projectileSpeedMul`), so picking Draft makes all projectiles visibly faster — no other code changes needed.
+- Do not touch the `UPGRADE_BY_ID` line (line 127); it is derived from `UPGRADES` automatically.
+- `draft` is a unique kebab-case id (verified: no clash in the array); `PALETTE.ink` already exists (used by `weight`).
+- Max stack 3×1.25 = 1.95, under the `projectileSpeedMul` limit of 4 in `STAT_LIMITS` — no clamping surprises.
+- No new system, no pooling, no listeners: nothing to clean up on shutdown.
+
+### Tests
+- none — `tests/content.test.ts` automatically validates the new entry (unique id, valid stat, mul > 0, does something).
