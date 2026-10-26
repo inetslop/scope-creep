@@ -155,6 +155,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     return this.hp <= 0;
   }
 
+  /** One-shot outward velocity (e.g. a split burst). Decays like knockback. */
+  burst(dir: Vec2, speed: number): void {
+    this.knock = { x: dir.x * speed, y: dir.y * speed };
+  }
+
   despawn(): void {
     this.disableBody(true, true);
   }

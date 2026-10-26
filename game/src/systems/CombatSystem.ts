@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 import type { Sfx } from '../audio/Sfx';
+import { getEnemy } from '../content/enemies';
 import { PLAYER_INVULN_MS } from '../config';
 import type { RunState } from '../core/run';
 import { hook } from '../debug/testHook';
@@ -10,9 +11,13 @@ import type { Projectile } from '../entities/Projectile';
 import type { DamageNumbers } from './DamageNumbers';
 import type { FxSystem } from './FxSystem';
 import type { PickupSystem } from './PickupSystem';
+import type { SpawnSystem } from './SpawnSystem';
 
 /** Arcade overlap callbacks hand us loosely typed objects; our groups only contain these classes. */
 const as = <T>(obj: unknown): T => obj as T;
+
+/** Outward speed of split children when they burst apart. */
+const SPLIT_BURST_SPEED = 320;
 
 /** Wires physics overlaps: projectiles vs enemies, enemies vs player, enemies vs enemies. */
 export class CombatSystem {
@@ -23,6 +28,7 @@ export class CombatSystem {
   private readonly pickups: PickupSystem;
   private readonly sfx: Sfx;
   private readonly damageNumbers: DamageNumbers;
+  private readonly spawns: SpawnSystem;
 
   constructor(
     scene: Phaser.Scene,
@@ -33,6 +39,7 @@ export class CombatSystem {
     pickups: PickupSystem,
     sfx: Sfx,
     damageNumbers: DamageNumbers,
+    spawns: SpawnSystem,
   ) {
     this.scene = scene;
     this.run = run;
@@ -41,6 +48,7 @@ export class CombatSystem {
     this.pickups = pickups;
     this.sfx = sfx;
     this.damageNumbers = damageNumbers;
+    this.spawns = spawns;
     scene.physics.add.overlap(groups.projectiles, groups.enemies, (p, e) => this.onProjectileHit(as<Projectile>(p), as<Enemy>(e)));
     scene.physics.add.overlap(player, groups.enemies, (_p, e) => this.onPlayerTouched(as<Enemy>(e)));
     scene.physics.add.overlap(player, groups.enemyShots, (_p, s) => this.onPlayerShot(as<EnemyBullet>(s)));
@@ -86,6 +94,20 @@ export class CombatSystem {
     this.pickups.drop(e.x, e.y, e.def.xp);
     this.run.kills += 1;
     hook.stats.enemiesKilled += 1;
+    if (e.def.splitsInto) this.split(e);
     e.despawn();
+  }
+
+  /** Spawns a dead enemy's split children: they burst apart along a random axis, then chase. */
+  private split(e: Enemy): void {
+    const spec = e.def.splitsInto;
+    if (!spec) return;
+    const childDef = getEnemy(spec.id);
+    const angle = this.run.rng.range(0, Math.PI * 2);
+    for (let i = 0; i < spec.count; i++) {
+      const a = angle + (i / spec.count) * Math.PI * 2;
+      const child = this.spawns.spawn(childDef, { x: e.x, y: e.y });
+      if (child) child.burst({ x: Math.cos(a), y: Math.sin(a) }, SPLIT_BURST_SPEED);
+    }
   }
 }

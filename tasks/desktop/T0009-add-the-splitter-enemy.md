@@ -4,11 +4,12 @@ title: Add the Splitter enemy
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T17:40:33Z
 claimed_at: 2026-10-26T18:42:39Z
+finished_at: 2026-10-26T18:49:30Z
 ---
 
 ## Goal
@@ -91,3 +92,22 @@ Content (exact values): `splitter` — hp 35, speed 70, contactDamage 10, xp 4, 
 
 ### Tests
 - `tests/content.test.ts`: the `splitsInto` reference test above (data validation). No new `tests/core/` tests — no pure logic was added to `core/`.
+
+## Result (attempt 1, desktop)
+
+Added the Splitter enemy (slow spinning red square, unlocks at 75 s) that splits into two fast Splinter triangles on death via a new data-driven `splitsInto` field on `EnemyDef`, a `burst()` method on `Enemy` reusing knockback decay, and `CombatSystem.split()` spawning children through `SpawnSystem` (GameScene now passes `this.spawns` into the CombatSystem constructor). Content lives in new files `src/content/enemies/splitter.ts` and `splinter.ts`, registered in `ENEMIES`; `tests/content.test.ts` now validates `splitsInto` references. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 6.9 min
+
+```
+game/src/content/enemies/index.ts    |  4 +++-
+ game/src/content/enemies/splinter.ts | 23 +++++++++++++++++++++++
+ game/src/content/enemies/splitter.ts | 25 +++++++++++++++++++++++++
+ game/src/content/types.ts            |  2 ++
+ game/src/entities/Enemy.ts           |  5 +++++
+ game/src/scenes/GameScene.ts         |  2 +-
+ game/src/systems/CombatSystem.ts     | 22 ++++++++++++++++++++++
+ game/tests/content.test.ts           |  9 ++++++++-
+ 8 files changed, 89 insertions(+), 3 deletions(-)
+```

@@ -57,6 +57,8 @@ export interface EnemyDef {
   behavior: EnemyBehavior;
   /** 0 = full knockback, 1 = immovable. */
   knockbackResist: number;
+  /** If set, dying also spawns this many enemies of this id at the death spot. They burst outward first. */
+  splitsInto?: { id: string; count: number };
   look: EnemyLook;
 }
 

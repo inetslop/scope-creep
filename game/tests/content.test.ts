@@ -3,7 +3,7 @@
  * fails, the message tells you which field is wrong.
  */
 import { describe, expect, it } from 'vitest';
-import { ENEMIES } from '../src/content/enemies';
+import { ENEMIES, ENEMY_BY_ID } from '../src/content/enemies';
 import { UPGRADES } from '../src/content/upgrades';
 import { WEAPON_BY_ID, WEAPONS } from '../src/content/weapons';
 import { BASE_STATS } from '../src/core/stats';
@@ -39,6 +39,13 @@ describe('enemies', () => {
 
   it('at least one enemy is available at time 0', () => {
     expect(ENEMIES.some((e) => e.unlockAtSec === 0 && e.spawnWeight > 0)).toBe(true);
+  });
+
+  it.each(ENEMIES.filter((e) => e.splitsInto).map((e) => [e.id, e] as const))('%s splitsInto a real enemy', (_id, e) => {
+    const spec = e.splitsInto!;
+    expect(Number.isInteger(spec.count) && spec.count >= 1, 'count is an integer >= 1').toBe(true);
+    expect(spec.id !== e.id, 'no self-split').toBe(true);
+    expect(ENEMY_BY_ID.has(spec.id), `unknown split child "${spec.id}"`).toBe(true);
   });
 });
 
