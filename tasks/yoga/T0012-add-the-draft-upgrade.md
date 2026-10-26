@@ -4,11 +4,12 @@ title: Add the Draft upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T17:58:28Z
 claimed_at: 2026-10-26T19:20:34Z
+finished_at: 2026-10-26T19:24:57Z
 ---
 
 ## Goal
@@ -58,3 +59,15 @@ No new types. `UpgradeDef` (`src/content/types.ts:110`) already covers all requi
 
 ### Tests
 - none — `tests/content.test.ts` automatically validates the new entry (unique id, valid stat, mul > 0, does something).
+
+## Result (attempt 1, yoga)
+
+Added the "Draft" upgrade to `UPGRADES` in `src/content/upgrades/index.ts` — a size-S, max-3, weight-5, ink-colored upgrade whose single `projectileSpeedMul` ×1.25 mod makes all weapon projectiles 25% faster per level (stat read at `WeaponSystem.ts:69`), giving a third build axis alongside Rhythm and Weight. No other code changes were needed; `npm run check` (typecheck + lint + 44 tests) and `npm run smoke` (desktop + mobile browser play) both pass.
+
+- Self-review: APPROVE
+- Time: 4.4 min
+
+```
+game/src/content/upgrades/index.ts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+```
