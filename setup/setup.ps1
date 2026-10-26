@@ -76,6 +76,7 @@ function Add-UserPath([string]$Dir) {
 }
 
 function Get-Zip([string]$Url, [string]$Destination) {
+    if (-not ($Url -match '^https://')) { throw "No download URL found (got '$Url'). GitHub's release list may have changed or be rate-limited; try again in a few minutes." }
     $zip = Join-Path $env:TEMP ([IO.Path]::GetFileName($Url))
     Write-Note "downloading $Url"
     Invoke-WebRequest -Uri $Url -OutFile $zip -UseBasicParsing
@@ -85,7 +86,9 @@ function Get-Zip([string]$Url, [string]$Destination) {
 }
 
 function Get-GitHubReleases([string]$RepoName, [int]$Count = 10) {
-    return Invoke-RestMethod -Uri "https://api.github.com/repos/$RepoName/releases?per_page=$Count" -Headers @{ 'User-Agent' = 'scope-creep-setup' }
+    $releases = Invoke-RestMethod -Uri "https://api.github.com/repos/$RepoName/releases?per_page=$Count" -Headers @{ 'User-Agent' = 'scope-creep-setup' }
+    # Windows PowerShell 5.1 passes a JSON array down the pipeline as ONE object; emit the releases one by one.
+    foreach ($release in $releases) { $release }
 }
 
 function Write-JsonNoBom([string]$Path, $Object) {
