@@ -4,10 +4,12 @@ title: Add the Spike enemy
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T20:55:07Z
+claimed_at: 2026-10-26T21:00:51Z
+designer: desktop
 ---
 
 ## Goal
