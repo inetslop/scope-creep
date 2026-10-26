@@ -3,7 +3,7 @@
 The PO adds ideas here. Good ones become tasks.
 
 - ~~Orbiting circles that damage enemies on contact~~ → T0008
-- Arc weapon that chains between nearby enemies as an ink line
+- ~~Arc weapon that chains between nearby enemies as an ink line~~ → T0022
 - ~~Splitter: a square that breaks into two triangles on death~~ → T0009
 - ~~Ranged enemy: a pentagon that fires slow black points~~ → T0007 (Sentry)
 - ~~Swarm: tiny circles that arrive in a flock~~ → T0010 (Mote)
@@ -65,3 +65,6 @@ The PO adds ideas here. Good ones become tasks.
 - Ink meter: firing fills a meter; at full, your next volley becomes a heavy ink burst (3× projectiles, big knockback)
 - Game over lists your kill count per enemy type (a small bestiary tally)
 - Shard trails: shards leave a faint fading trail so you can see where they came from
+- ~~Tile: a green square that chases at medium speed and never splits~~ → T0023
+- The Mine: a still ink circle with a red core; when killed it explodes for 20 damage in a 60-unit radius and leaves a scorch decal
+- Warm-up: the first 10 s of a run, fire rate +50%, with a "WARM-UP" flash in the HUD

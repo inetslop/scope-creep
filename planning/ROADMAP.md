@@ -14,14 +14,14 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Elite enemies: marked, tougher, high-value variants every 45 s (T0005, in progress)
 - Generative background music: a slow pulse that speeds up as the run goes on (T0011) ✅
 - Kill-streak tally in the HUD: consecutive kills without being hit, "RHYTHM" flash at 8, best streak on game over (T0014, todo)
-- Crit sting: higher-pitched hit sound + small ink ring when a crit lands (T0019, todo, desktop)
+- Crit sting: higher-pitched hit sound + small ink ring when a crit lands (T0019) ✅
 - Next: screen shake on heavy deaths (wait for T0006 to land so the boss shares the same shake)
 
 ## M2 — Variety (in progress)
-- Enemies: Hex (T0001) ✅, Mote swarm (T0010) ✅, Sentry ranged (T0007) ✅, Splitter (T0009) ✅, Boulder heavy chaser (T0017) ✅
+- Enemies: Hex (T0001) ✅, Mote swarm (T0010) ✅, Sentry ranged (T0007) ✅, Splitter (T0009) ✅, Boulder heavy chaser (T0017) ✅, Tile mid chaser (T0023, todo, yoga)
 - Enemy projectiles now exist (Sentry) — boss dart-burst patterns unblocked
-- Weapons: Orbit (T0008) ✅; backlog: arc, stamp, counterpoint, negative-space bomb
-- Upgrades: Tempo (T0002) ✅, Draft (T0012) ✅, Contrast crit (T0013) ✅, Plate armor (T0016, todo), Staccato speed combo (T0018, in progress), Emphasis damage ramp (T0020, todo, yoga); backlog: weapon-specific lines, evolutions, Kerning (projectile size + knockback)
+- Weapons: Orbit (T0008) ✅, Arc chain beam (T0022, todo, desktop); backlog: stamp, counterpoint, negative-space bomb
+- Upgrades: Tempo (T0002) ✅, Draft (T0012) ✅, Contrast crit (T0013) ✅, Plate armor (T0016) ✅, Staccato speed combo (T0018) ✅, Emphasis damage ramp (T0020, in progress, yoga); backlog: weapon-specific lines, evolutions, Kerning (projectile size + knockback)
 - Actives: Understudy decoy — drop a blue decoy that taunts enemies for 3 s, 8 s cooldown (T0015, todo, asus)
 
 ## M3 — Bosses (started)
@@ -34,6 +34,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 
 ## Quality
 - Seeded RNG determinism tests (T0021, todo, yoga)
+- Crit chance clamp tests (T0024, todo, yoga)
 
 ## Later
 - Alternate "paper" palettes (De Stijl, Constructivist), run modifiers, daily seed, achievements, PWA install
