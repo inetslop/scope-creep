@@ -4,10 +4,11 @@ title: Add the Hex enemy
 assignee: yoga
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 claimed_at: 2026-10-26T17:40:32Z
+finished_at: 2026-10-26T17:46:50Z
 ---
 
 ## Goal
@@ -76,3 +77,16 @@ In `index.ts`: add `import { hex } from './hex';` (between the `dart` and `wedge
 
 ### Tests
 - none — `tests/content.test.ts` already validates every entry in `ENEMIES` automatically, and no pure logic in `src/core` changes.
+
+## Result (attempt 1, yoga)
+
+Added the Hex enemy as a new data file `src/content/enemies/hex.ts` — a green hexagon (hp 20, speed 115, contact damage 10, 2 XP, threat 2, weight 4, unlocks at 20s, chase behavior, knockbackResist 0.2, radius 15, spin -1.5) — and registered it in `ENEMIES` in `src/content/enemies/index.ts` with the import kept alphabetical. The texture and spawn director pick it up automatically via `ENEMIES` iteration, so no other files changed. `npm run check` (typecheck + lint + 35 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 6.3 min
+
+```
+game/src/content/enemies/hex.ts   | 24 ++++++++++++++++++++++++
+ game/src/content/enemies/index.ts |  3 ++-
+ 2 files changed, 26 insertions(+), 1 deletion(-)
+```
