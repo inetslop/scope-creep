@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { FRAME } from '../content/bosses/frame';
 import { PALETTE } from '../content/palette';
 import { formatTime } from '../core/progression';
 import { flags } from '../debug/flags';
@@ -20,6 +21,12 @@ export class HudScene extends Phaser.Scene {
   private killText!: Phaser.GameObjects.Text;
   private fpsText?: Phaser.GameObjects.Text;
   private pauseButton!: Phaser.GameObjects.Container;
+  /** Boss health bar: its own Graphics, so the 0.5 s death fade can lower alpha without clearing the main HUD. */
+  private bossG!: Phaser.GameObjects.Graphics;
+  private bossName!: Phaser.GameObjects.Text;
+  private bossWarnText!: Phaser.GameObjects.Text;
+  /** Boss bar alpha while fading out after a kill. */
+  private bossFade = 1;
   /** HP fraction the yellow "just lost" chunk reaches to. */
   private hpGhost = 1;
   /** Seconds since the player was last hit. */
@@ -37,7 +44,11 @@ export class HudScene extends Phaser.Scene {
     this.killText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5);
     this.pauseButton = makeButton(this, 0, 0, 'II', () => this.scene.get(SCENES.game).events.emit(GAME_EVENTS.pauseRequest), { width: 44, height: 44, fontSize: 18 });
     if (flags.debug) this.fpsText = this.add.text(PAD, 0, '', textStyle(12, PALETTE.green));
+    this.bossG = this.add.graphics();
+    this.bossName = this.add.text(0, 0, '', textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0);
+    this.bossWarnText = this.add.text(0, 0, FRAME.name, textStyle(48, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0.5).setAlpha(0);
 
+    this.bossFade = 1;
     this.hpGhost = 1;
     this.sinceHit = Number.POSITIVE_INFINITY;
     const gameEvents = this.scene.get(SCENES.game).events;
@@ -64,16 +75,36 @@ export class HudScene extends Phaser.Scene {
     else if (this.sinceHit > HP_HIT.holdSec) this.hpGhost += (hpFrac - this.hpGhost) * (1 - Math.exp(-HP_HIT.drainRate * dt));
     const t = this.sinceHit / HP_HIT.nudgeSec;
     const nudge = t < 1 ? Math.sin(this.sinceHit * 70) * HP_HIT.nudgePx * (1 - t) : 0;
-    this.drawBar(PAD + nudge, PAD, barW, 18, hpFrac, hpFrac > 0.3 ? PALETTE.red : PALETTE.redDark, this.hpGhost);
+    this.drawBar(this.g, PAD + nudge, PAD, barW, 18, hpFrac, hpFrac > 0.3 ? PALETTE.red : PALETTE.redDark, this.hpGhost);
     this.hpText.setPosition(PAD + 8 + nudge, PAD + 9).setText(`${Math.ceil(run.hp)} / ${Math.round(run.stats.maxHp)}`);
 
     // XP bar + level
-    this.drawBar(PAD, PAD + 24, barW, 8, Phaser.Math.Clamp(run.xp / run.xpToNext, 0, 1), PALETTE.blue);
+    this.drawBar(this.g, PAD, PAD + 24, barW, 8, Phaser.Math.Clamp(run.xp / run.xpToNext, 0, 1), PALETTE.blue);
     this.levelText.setPosition(PAD + barW + 10, PAD + 18).setText(`LV ${run.level}`);
 
     // On narrow (phone) screens the bars + level label reach the center, so the timer drops below them.
     const narrow = PAD + barW + 80 > width / 2 - 30;
     this.timeText.setPosition(width / 2, narrow ? PAD + 40 : PAD).setText(formatTime(run.timeSec));
+
+    // Boss: the center warning, and the health bar below the top-center timer.
+    this.bossWarnText.setPosition(width / 2, height / 2).setAlpha(run.bossWarning ? 1 : 0);
+    if (run.bossAlive) {
+      this.bossFade = 1;
+      const top = (narrow ? PAD + 40 : PAD) + 26;
+      this.bossName.setPosition(width / 2, top).setAlpha(1).setText(FRAME.name);
+      this.bossG.clear().setAlpha(1);
+      this.drawBar(this.bossG, (width - width * 0.6) / 2, top + 18, width * 0.6, 12, Phaser.Math.Clamp(run.bossHp / run.bossMaxHp, 0, 1), PALETTE.red);
+    } else if (this.bossFade > 0) {
+      // Fade out over 0.5 s without clearing: lower the alpha of the last-drawn pixels.
+      this.bossFade = Math.max(0, this.bossFade - dt / 0.5);
+      this.bossG.setAlpha(this.bossFade);
+      this.bossName.setAlpha(this.bossFade);
+      if (this.bossFade === 0) {
+        this.bossG.clear();
+        this.bossG.setAlpha(1);
+      }
+    }
+
     this.pauseButton.setPosition(width - PAD - 22, PAD + 22);
     this.killText.setPosition(width - PAD - 54, PAD + 22).setText(`${run.kills} kills`);
     this.fpsText?.setPosition(PAD, height - 24).setText(`${Math.round(this.game.loop.actualFps)} fps`);
@@ -86,8 +117,7 @@ export class HudScene extends Phaser.Scene {
   }
 
   /** `ghost` > `frac` draws the span between them in yellow (HP just lost). */
-  private drawBar(x: number, y: number, w: number, h: number, frac: number, color: number, ghost = 0): void {
-    const g = this.g;
+  private drawBar(g: Phaser.GameObjects.Graphics, x: number, y: number, w: number, h: number, frac: number, color: number, ghost = 0): void {
     g.fillStyle(PALETTE.paperLight, 1);
     g.fillRect(x, y, w, h);
     if (ghost > frac) {

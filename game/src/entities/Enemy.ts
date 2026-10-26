@@ -5,8 +5,7 @@ import { PALETTE } from '../content/palette';
 import type { EnemyDef } from '../content/types';
 import type { Rng } from '../core/rng';
 import { distance, normalize, sub, type Vec2 } from '../core/vec';
-
-let nextSerial = 1;
+import { takeSerial } from './serial';
 
 /** 'shoot' tuning: preferred distance band, fire period, telegraph window, strafe amplitude. */
 const SHOOT_BAND_NEAR = 240;
@@ -66,7 +65,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   spawn(def: EnemyDef, x: number, y: number, hpScale: number, rng: Rng, elite: boolean = false): void {
     this.def = def;
     this.elite = elite;
-    this.serial = nextSerial++;
+    this.serial = takeSerial();
     this.setTexture(enemyTextureKey(def.id));
     this.enableBody(true, x, y, true, true);
     const r = def.look.radius;

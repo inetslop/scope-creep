@@ -25,6 +25,12 @@ export class RunState {
   weapons: string[] = ['point'];
   /** Upgrade id -> times taken. */
   upgradeLevels: Record<string, number> = {};
+  /** Boss encounter state; BossSystem (src/systems/BossSystem.ts) owns the writes. */
+  bossAlive = false;
+  bossWarning = false;
+  bossHp = 0;
+  bossMaxHp = 0;
+  bossKills = 0;
   private mods: StatMod[] = [];
 
   constructor(seed: number) {

@@ -104,6 +104,12 @@ export class FxSystem {
     this.scene.events.emit(GAME_EVENTS.playerHit);
   }
 
+  /** Boss death: a shower of ink fragments. */
+  shatter(x: number, y: number, count: number): void {
+    this.fragments.setParticleTint(PALETTE.ink);
+    this.fragments.explode(count, x, y);
+  }
+
   shake(durationMs: number, intensity: number): void {
     this.scene.cameras.main.shake(durationMs, intensity);
   }

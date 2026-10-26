@@ -126,6 +126,13 @@ export class Sfx {
     this.tone('triangle', 783.99, 783.99, 0.1, 0.2, 0.18);
   }
 
+  /** Two low sawtooth notes for the boss warning. */
+  bossWarn(): void {
+    if (!this.canPlay()) return;
+    this.tone('sawtooth', 98, 98, 0.3, 0.28, 0);
+    this.tone('sawtooth', 73.42, 73.42, 0.45, 0.28, 0.32);
+  }
+
   /** False until the context exists and is unlocked by the first user gesture. Never resume() ourselves. */
   private canPlay(): boolean {
     return this.ctx !== null && this.master !== null && !this.muted && this.ctx.state === 'running';

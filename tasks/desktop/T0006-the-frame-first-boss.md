@@ -4,11 +4,12 @@ title: The Frame — first boss
 assignee: desktop
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: [T0005]
 attempts: 1
 created: 2026-10-26T17:40:33Z
 claimed_at: 2026-10-26T21:56:56Z
+finished_at: 2026-10-26T22:36:10Z
 ---
 
 ## Goal
@@ -119,3 +120,31 @@ fireDart(x: number, y: number, angle: number): void; // one EnemyBullet at the e
 ### Tests
 - `tests/core/boss.test.ts`: first boss due at exactly 300 s (not at 299.9, never while one is alive); due 300 s after each `onBossKilled` (300→600→900); a custom `BossSchedule`; `bossHpMultiplier` 1/1.5/2.25 → 1200/1800/2700.
 - `tests/content.test.ts` validates `frame-wedge` automatically; no changes needed.
+
+## Result (attempt 1, desktop)
+
+Added the first boss, The Frame: pure `BossTimer`/`bossHpMultiplier` in `src/core/boss.ts` (unit-tested in `tests/core/boss.ts`), all boss numbers in `src/content/bosses/frame.ts`, a `frame-wedge` minion enemy, the `Boss` entity and `BossSystem` encounter state machine (warning → slide-in → fight with charge/ring/burst cycling every 4 s with a 0.6 s telegraph, 1.5× HP per kill), a top-center health bar + name + center warning with 0.5 s death fade in `HudScene`, `bossKills` in the test hook, and a `boss-state` invariant. Two minimal deviations from the design: `SpawnSystem.spawn()` keeps the existing `elite` param and takes `hpScale` as a 4th argument (the design's 3-arg signature would have dropped elite spawning), and the red core is a separate image pinned in POST_UPDATE because Phaser 3.90 sprites have no `addChild` (matching the existing barrel/orbit pinning pattern). Verified with `npm run check`, `npm run smoke`, and temporary in-browser runs of the full encounter and kill paths.
+
+- Self-review: APPROVE
+- Time: 39.2 min
+
+```
+game/src/art/textures.ts               |  26 ++++
+ game/src/audio/Sfx.ts                  |   7 +
+ game/src/content/bosses/frame.ts       |  74 +++++++++++
+ game/src/content/enemies/frameWedge.ts |  23 ++++
+ game/src/content/enemies/index.ts      |   3 +-
+ game/src/core/boss.ts                  |  39 ++++++
+ game/src/core/run.ts                   |   6 +
+ game/src/debug/testHook.ts             |   2 +
+ game/src/entities/Boss.ts              |  69 ++++++++++
+ game/src/entities/Enemy.ts             |   5 +-
+ game/src/entities/serial.ts            |   9 ++
+ game/src/scenes/GameScene.ts           |  15 ++-
+ game/src/scenes/HudScene.ts            |  38 +++++-
+ game/src/systems/BossSystem.ts         | 234 +++++++++++++++++++++++++++++++++
+ game/src/systems/FxSystem.ts           |   6 +
+ game/src/systems/SpawnSystem.ts        |  22 +++-
+ game/tests/core/boss.test.ts           |  49 +++++++
+ 17 files changed, 613 insertions(+), 14 deletions(-)
+```

@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 import { PLAYER_RADIUS } from '../config';
+import { FRAME } from '../content/bosses/frame';
 import { ENEMIES } from '../content/enemies';
 import { PALETTE } from '../content/palette';
 import type { EnemyDef, WeaponDef } from '../content/types';
@@ -32,6 +33,10 @@ export const TEX = {
   /** Small red square; the badge riding on an elite's ring. */
   badge: 'badge',
   floor: 'floor',
+  /** The Frame boss: the ink square outline. */
+  bossFrame: 'bossFrame',
+  /** The Frame boss: the red square core. */
+  bossCore: 'bossCore',
 } as const;
 
 export const enemyTextureKey = (enemyId: string): string => `enemy:${enemyId}`;
@@ -61,6 +66,7 @@ export function generateTextures(scene: Phaser.Scene): void {
   graphicsTexture(scene, TEX.shard, 18, 18, (g) => drawShape(g, 'diamond', 8, 8, 7, PALETTE.yellow, { outlineWidth: 2, shadow: true }));
   drawFloor(scene);
   for (const enemy of ENEMIES) drawEnemy(scene, enemy);
+  drawBoss(scene);
   graphicsTexture(scene, TEX.enemyShot, 24, 24, (g) => drawShape(g, 'circle', 10.5, 10.5, 6, PALETTE.ink, { outlineWidth: 0 }));
   graphicsTexture(scene, TEX.badge, 28, 28, (g) => drawShape(g, 'square', 12.5, 12.5, 8, PALETTE.red, { outlineWidth: 2 }));
   for (const weapon of WEAPONS) {
@@ -115,6 +121,26 @@ function drawEnemy(scene: Phaser.Scene, def: EnemyDef): void {
   graphicsTexture(scene, enemyTextureKey(def.id), size, size, (g) => {
     drawShape(g, look.shape, c, c, look.radius, look.body, { points: look.points });
     drawShape(g, 'circle', c, c, Math.max(2.5, look.radius * 0.22), look.accent, { outlineWidth: look.accent === PALETTE.ink ? 0 : 1.5, shadow: false });
+  });
+}
+
+/** The Frame boss: an ink square outline with a paper-cut shadow, plus its red core. */
+function drawBoss(scene: Phaser.Scene): void {
+  const s = FRAME.frameSize;
+  const t = FRAME.frameThickness;
+  const size = s + t + SHADOW_OFFSET * 2;
+  const c = size / 2;
+  graphicsTexture(scene, TEX.bossFrame, size, size, (g) => {
+    g.lineStyle(t, PALETTE.ink, 0.18);
+    g.strokeRect(c - s / 2 + SHADOW_OFFSET, c - s / 2 + SHADOW_OFFSET, s, s);
+    g.lineStyle(t, PALETTE.ink, 1);
+    g.strokeRect(c - s / 2, c - s / 2, s, s);
+  });
+  const r = FRAME.coreSize / Math.SQRT2;
+  const coreSize = Math.ceil((r + PAD) * 2);
+  const coreC = coreSize / 2 - SHADOW_OFFSET / 2;
+  graphicsTexture(scene, TEX.bossCore, coreSize, coreSize, (g) => {
+    drawShape(g, 'square', coreC, coreC, r, FRAME.look.core, { outlineWidth: 3 });
   });
 }
 

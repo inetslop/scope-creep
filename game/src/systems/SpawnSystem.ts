@@ -54,9 +54,14 @@ export class SpawnSystem {
   }
 
   update(dt: number): void {
-    const { ids, elites } = this.director.update(dt, this.run.timeSec, this.activeCount, this.run.rng);
-    for (const id of ids) this.spawn(getEnemy(id));
-    for (const id of elites) this.spawn(getEnemy(id), undefined, true);
+    // The director pauses while the boss is alive. The gate must wrap both the
+    // director tick and the spawn loop, or the threat budget accumulates during
+    // the fight and bursts on resume.
+    if (!this.run.bossAlive) {
+      const { ids, elites } = this.director.update(dt, this.run.timeSec, this.activeCount, this.run.rng);
+      for (const id of ids) this.spawn(getEnemy(id));
+      for (const id of elites) this.spawn(getEnemy(id), undefined, true);
+    }
     const target = { x: this.player.x, y: this.player.y };
     for (const obj of this.enemies.getChildren()) {
       const e = obj as Enemy;
@@ -72,15 +77,22 @@ export class SpawnSystem {
     }
   }
 
-  spawn(def: EnemyDef, at?: { x: number; y: number }, elite?: boolean): Enemy | null {
+  spawn(def: EnemyDef, at?: { x: number; y: number }, elite?: boolean, hpScale?: number): Enemy | null {
     const pos = at ?? this.pickSpawnPoint();
     const enemy = this.enemies.get(pos.x, pos.y) as Enemy | null;
     if (!enemy) return null;
-    enemy.spawn(def, pos.x, pos.y, enemyHpScale(this.run.timeSec), this.run.rng, elite ?? false);
+    enemy.spawn(def, pos.x, pos.y, hpScale ?? enemyHpScale(this.run.timeSec), this.run.rng, elite ?? false);
     if (this.run.firstSighting(def.id)) this.marginalia.note(enemy, def);
     hook.stats.enemiesSpawned += 1;
     if (elite) hook.stats.elitesSpawned += 1;
     return enemy;
+  }
+
+  /** Fires one slow ink dart from (x, y) at `angle` (The Frame's burst). Reuses the enemy-shot pool. */
+  fireDart(x: number, y: number, angle: number): void {
+    const p = this.enemyShots.get(x, y) as EnemyBullet | null;
+    if (!p) return;
+    p.fire(x, y, angle, ENEMY_SHOT_SPEED, ENEMY_SHOT_DAMAGE, ENEMY_SHOT_LIFE);
   }
 
   /** Fires one slow ink point from `e` at the player's current position. */
