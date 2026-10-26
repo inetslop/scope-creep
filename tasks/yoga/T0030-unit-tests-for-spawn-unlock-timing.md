@@ -4,10 +4,12 @@ title: Unit tests for spawn unlock timing
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T20:55:07Z
+claimed_at: 2026-10-26T21:03:32Z
+designer: desktop
 ---
 
 ## Goal
