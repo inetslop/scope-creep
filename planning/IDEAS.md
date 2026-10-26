@@ -21,7 +21,7 @@ The PO adds ideas here. Good ones become tasks.
 - Second boss "The Grid": a rotating compass that sweeps ink arms across the arena
 - The Frame gains a radial ink-dart burst once enemy projectiles exist
 - Weapon evolution line: Point at level 3 becomes "Bullet" (faster, +1 pierce)
-- Streak counter: consecutive kills without being hit, shown as a small tally in the HUD
+- ~~Streak counter: consecutive kills without being hit, shown as a small tally in the HUD~~ → T0014
 - Gold shards: elites drop a rare gold shard worth 5 xp
 - Settings page in pause: volume slider, screen-shake toggle, auto-fire toggle
 - Generative background music: a quiet pulse that speeds up as the run goes on → T0011
@@ -30,9 +30,13 @@ The PO adds ideas here. Good ones become tasks.
 - "Plate" upgrade: +1 armor, maxLevel 2
 - Dash enemy: a small red square that dashes at the player in a straight line, then stops
 - Boss sting: a low hit plus a music swell when The Frame spawns
-- Kill-streak text: "RHYTHM" flashes in the HUD at 8 kills without being hit
+- ~~Kill-streak text: "RHYTHM" flashes in the HUD at 8 kills without being hit~~ → T0014
 - Crit sting: a short higher-pitched hit sound when a crit lands (follows T0013)
 - The Eraser: a slow white rectangle that, on contact, erases your most recent upgrade with a small "ERASED" flash in the HUD
 - Ink well: a rare pickup from elites and bosses that restores 3 HP
 - Weapon: the Stamp — a heavy yellow square that slams down ahead of you and knocks enemies back
 - Screen shake: the camera jolts when a heavy enemy (Block, elite, boss) dies (The Frame task likely adds the boss case; generalize after)
+- Ink splat decals: a dead enemy leaves a faint ink splat on the paper that fades over 3 s
+- Run timer (mm:ss) in the top-left of the HUD
+- Ring enemy: a large hollow ink circle that slowly chases; its rim hurts, its center is safe
+- Shard value escalation: every 60 s shard XP is +1, with a small "VALUE UP" flash in the HUD

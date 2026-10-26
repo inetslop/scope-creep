@@ -13,11 +13,12 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Floating damage numbers ✅ (T0004)
 - Elite enemies: marked, tougher, high-value variants every 45 s (T0005, designing)
 - Generative background music: a slow pulse that speeds up as the run goes on (T0011, design)
-- Next: screen shake on heavy deaths, kill-streak tally in the HUD
+- Kill-streak tally in the HUD: consecutive kills without being hit, "RHYTHM" flash at 8, best streak on game over (T0014, design)
+- Next: screen shake on heavy deaths (wait for T0006 to land so the boss shares the same shake)
 
 ## M2 — Variety (in progress)
 - Enemies: Hex (T0001) ✅, Mote swarm (T0010), Sentry ranged (T0007) ✅, Splitter (T0009)
-- Weapons: Orbit (T0008); backlog: arc, bouncing squares
+- Weapons: Orbit (T0008) ✅; backlog: arc, stamp, negative-space bomb
 - Upgrades: Tempo (T0002), Draft (T0012), Contrast crit (T0013); backlog: weapon-specific lines, evolutions
 
 ## M3 — Bosses (started)
