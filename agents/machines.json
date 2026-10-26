@@ -35,10 +35,11 @@
       "label": "Ryzen 7 5800X + RTX 4070 SUPER (12 GB)",
       "model": "Qwen 3.8 27B UD-IQ3_XXS",
       "roles": ["dev", "architect"],
+      "architectMode": "idle",
       "tier": "strong",
       "maxTaskSize": "L",
       "targetQueue": 2,
-      "notes": "Heavily quantized (IQ3_XXS). Partly offloaded to CPU, so slow. Only small, precisely specified tasks: new content data files copied from an existing example, tuning numbers, small unit tests, tiny single-function changes. Always name the exact file and the example to copy."
+      "notes": "Heavily quantized (IQ3_XXS): expect more mistakes. Partly offloaded to CPU, so slow. Give it the hardest, design-heavy work: new systems, tricky bugs, cross-cutting changes."
     }
   },
   "sizes": {

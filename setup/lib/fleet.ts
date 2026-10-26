@@ -92,35 +92,45 @@ export interface Suggestion {
   notes: string;
 }
 
+/** What the PO is told to give a machine, by the biggest task size it may get. */
+const WORK: Record<TaskSize, string> = {
+  L: 'Give it the hardest, design-heavy work: new systems, tricky bugs, cross-cutting changes.',
+  M: 'Give it medium features: new mechanics, scenes, UI, juice, audio.',
+  S: 'Only small, precisely specified tasks: new content data files copied from an existing example, tuning numbers, small unit tests, tiny single-function changes. Always name the exact file and the example to copy.',
+};
+
+/** Rough fit: the weights plus ~3 GB for a 32k context. A model size of 0 (not on this machine) counts as fitting. */
+const fitsInVram = (modelGb: number, hw: Hardware): boolean => hw.vramGb > 0 && modelGb + 3 <= hw.vramGb;
+
+/** The size that goes with a tier, when the tier is one of the usual words. */
+export function sizeForTier(tier: string): TaskSize | undefined {
+  if (/strong/i.test(tier)) return 'L';
+  if (/medium/i.test(tier)) return 'M';
+  if (/weak/i.test(tier)) return 'S';
+  return undefined;
+}
+
+/** Notes for the PO: what the model is like, how fast it runs here, and the work that fits the chosen size. */
+export function suggestNotes(size: TaskSize, model: ModelInfo, modelGb: number, hw: Hardware): string {
+  const quality =
+    model.bits >= 6
+      ? `High-precision quant (${model.quant || '8-bit'}): good reasoning.`
+      : model.bits >= 4
+        ? `Mid quant (${model.quant || '4-bit'}).`
+        : `Heavily quantized (${model.quant || `${model.bits}-bit`}): expect more mistakes.`;
+  const speed = fitsInVram(modelGb, hw) ? '' : hw.vramGb > 0 ? 'Partly offloaded to CPU, so slow.' : 'Runs on the CPU, so very slow.';
+  return [quality, speed, WORK[size]].filter(Boolean).join(' ');
+}
+
 /**
  * Starting point for the PO's view of a new machine, from the quant and whether the model fits
- * in VRAM (with ~3 GB for a 32k context). The person running setup confirms or edits each value.
+ * in VRAM. The person running setup confirms or edits each value; the notes follow their choice.
  */
 export function suggestCapabilities(model: ModelInfo, modelGb: number, hw: Hardware): Suggestion {
-  const fitsGpu = hw.vramGb > 0 && modelGb + 3 <= hw.vramGb;
-  const speed = fitsGpu ? '' : hw.vramGb > 0 ? ' Partly offloaded to CPU, so slow.' : ' Runs on the CPU, so very slow.';
-  if (model.bits >= 6) {
-    return {
-      tier: fitsGpu ? 'strong' : 'strong-slow',
-      maxTaskSize: 'L',
-      targetQueue: 2,
-      notes: `${model.quant || 'High-precision'} quant: good reasoning.${speed} Give it the harder design-heavy work: new systems, tricky bugs, cross-cutting changes.`,
-    };
-  }
-  if (model.bits >= 4) {
-    return {
-      tier: fitsGpu ? 'fast' : 'medium',
-      maxTaskSize: fitsGpu ? 'L' : 'M',
-      targetQueue: 2,
-      notes: `${model.quant || '4-bit'} quant.${speed} Give it medium features: new mechanics, scenes, UI, juice, audio.`,
-    };
-  }
-  return {
-    tier: 'weak',
-    maxTaskSize: 'S',
-    targetQueue: model.bits >= 3 ? 2 : 3,
-    notes: `Heavily quantized (${model.quant || `${model.bits}-bit`}).${speed} Only small, precisely specified tasks: new content data files copied from an existing example, tuning numbers, small unit tests, tiny single-function changes. Always name the exact file and the example to copy.`,
-  };
+  const fits = fitsInVram(modelGb, hw);
+  const [tier, maxTaskSize]: [string, TaskSize] = model.bits >= 6 ? [fits ? 'strong' : 'strong-slow', 'L'] : model.bits >= 4 ? (fits ? ['fast', 'L'] : ['medium', 'M']) : ['weak', 'S'];
+  const targetQueue = maxTaskSize === 'S' && model.bits < 3 ? 3 : 2;
+  return { tier, maxTaskSize, targetQueue, notes: suggestNotes(maxTaskSize, model, modelGb, hw) };
 }
 
 export interface FleetFile {

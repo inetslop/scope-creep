@@ -15,7 +15,7 @@ import path from 'node:path';
 import type { MachineConfig, Role } from '../loop/config.ts';
 import { REPO } from '../loop/paths.ts';
 import { TASK_SIZES, type TaskSize } from '../loop/tasks.ts';
-import { addMachine, hardwareLabel, parseModelFile, setPaused, suggestCapabilities, suggestMachineId, validateMachineId, type Hardware } from './lib/fleet.ts';
+import { addMachine, hardwareLabel, parseModelFile, setPaused, sizeForTier, suggestCapabilities, suggestMachineId, suggestNotes, validateMachineId, type Hardware } from './lib/fleet.ts';
 import { detectHardware } from './lib/hardware.ts';
 import { ask, askValid, closePrompts, flag, note, ok, step, yesNo } from './lib/prompt.ts';
 import { readFleet, updateFleetAndPush } from './lib/publish.ts';
@@ -51,18 +51,28 @@ export async function registerMachine(model: string, hw: Hardware = detectHardwa
   const s = suggestCapabilities(info, sizeGb, hw);
   note(`suggested from the quant (${info.quant || '?'}, ~${info.bits} bits)${sizeGb ? ` and a ${sizeGb.toFixed(1)} GB model on ${hw.vramGb} GB VRAM` : ''}; press Enter to accept`);
   const tier = await ask('Tier (free text the PO sees, e.g. strong / fast / weak)', s.tier);
-  const maxTaskSize = (await askValid('Biggest task size it may get (S, M or L)', s.maxTaskSize, (v) => (TASK_SIZES.includes(v.toUpperCase() as TaskSize) ? null : 'S, M or L'))).toUpperCase() as TaskSize;
-  const targetQueue = Number(await askValid('Tasks to keep queued for it', String(s.targetQueue), (v) => (/^[1-9]$/.test(v) ? null : 'a number from 1 to 9')));
-  console.log(`   Suggested notes for the PO:\n     ${s.notes}`);
-  const notes = await ask('Notes (Enter keeps the suggestion)', s.notes);
+  const sizeDefault = tier === s.tier ? s.maxTaskSize : (sizeForTier(tier) ?? s.maxTaskSize);
+  const maxTaskSize = (await askValid('Biggest task size it may get (S, M or L)', sizeDefault, (v) => (TASK_SIZES.includes(v.toUpperCase() as TaskSize) ? null : 'S, M or L'))).toUpperCase() as TaskSize;
+  const targetQueue = Number(await askValid('Tasks to keep queued for it', String(maxTaskSize === s.maxTaskSize ? s.targetQueue : 2), (v) => (/^[1-9]$/.test(v) ? null : 'a number from 1 to 9')));
   const roles = (await askValid('Roles (comma-separated: dev, architect, po)', 'dev', (v) => {
     const list = v.split(',').map((r) => r.trim());
     return list.length && list.every((r) => ROLES.includes(r as Role)) ? null : `only ${ROLES.join(', ')}`;
   }))
     .split(',')
     .map((r) => r.trim() as Role);
+  let architectMode: MachineConfig['architectMode'];
+  if (roles.includes('architect') && roles.includes('dev')) {
+    architectMode = (await askValid(
+      'When should it design tasks? "idle" = only when it has nothing to build (own tasks first), "always" = every cycle, before building',
+      'idle',
+      (v) => (v === 'idle' || v === 'always' ? null : 'idle or always'),
+    )) as MachineConfig['architectMode'];
+  }
+  const suggestedNotes = suggestNotes(maxTaskSize, info, sizeGb, hw);
+  console.log(`   Suggested notes for the PO (from the model and the size you chose):\n     ${suggestedNotes}`);
+  const notes = await ask('Notes (Enter keeps the suggestion)', suggestedNotes);
 
-  const entry: Omit<MachineConfig, 'paused'> = { label, model: modelLabel, roles, tier, maxTaskSize, targetQueue, notes };
+  const entry: Omit<MachineConfig, 'paused'> = { label, model: modelLabel, roles, ...(architectMode ? { architectMode } : {}), tier, maxTaskSize, targetQueue, notes };
   console.log(`\n   ${id}: ${JSON.stringify(entry, null, 2).replace(/\n/g, '\n   ')}`);
   if (!(await yesNo('Add it to agents/machines.json and push (paused until its health check passes)?', true))) throw new Error('registration cancelled');
   await updateFleetAndPush(REPO, `agent-${id}`, (f) => addMachine(f, id, entry), `Register machine "${id}": ${label}, ${modelLabel} (paused until its health check passes)`);

@@ -4,7 +4,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import { REPO } from '../../loop/paths.ts';
 import { parseEnv, updateEnvText } from '../docker/env.ts';
-import { addMachine, formatFleetJson, hardwareLabel, parseModelFile, setPaused, suggestCapabilities, suggestMachineId, validateMachineId, type FleetFile, type Hardware } from './fleet.ts';
+import { addMachine, formatFleetJson, hardwareLabel, parseModelFile, setPaused, sizeForTier, suggestCapabilities, suggestMachineId, suggestNotes, validateMachineId, type FleetFile, type Hardware } from './fleet.ts';
 import { parseNvidiaSmi } from './hardware.ts';
 import { defaultChoice, fitOf, modelChoices, type HfFile } from './hf.ts';
 
@@ -53,6 +53,17 @@ describe('machine registration', () => {
     assert.deepEqual([q4.tier, q4.maxTaskSize], ['fast', 'L']);
     const q8 = suggestCapabilities(parseModelFile('Qwen3.8-27B-UD-Q8_K_XL.gguf'), 31.5, { ...HW, vramGb: 108 });
     assert.deepEqual([q8.tier, q8.maxTaskSize], ['strong', 'L']);
+  });
+
+  it('writes the notes for the size that was chosen, not just the quant', () => {
+    const iq3 = parseModelFile('Qwen3.8-27B-UD-IQ3_XXS.gguf');
+    assert.equal(
+      suggestNotes('L', iq3, 10.9, HW),
+      'Heavily quantized (IQ3_XXS): expect more mistakes. Partly offloaded to CPU, so slow. Give it the hardest, design-heavy work: new systems, tricky bugs, cross-cutting changes.',
+    );
+    assert.match(suggestNotes('S', iq3, 10.9, HW), /Only small, precisely specified tasks/);
+    assert.equal(suggestNotes('M', parseModelFile('Qwen3.8-27B-UD-Q4_K_XL.gguf'), 17.6, { ...HW, vramGb: 32 }), 'Mid quant (Q4_K_XL). Give it medium features: new mechanics, scenes, UI, juice, audio.');
+    assert.deepEqual(['strong', 'strong-slow', 'medium', 'weak', 'fast', 'x'].map(sizeForTier), ['L', 'L', 'M', 'S', undefined, undefined]);
   });
 
   it('reads nvidia-smi, including several GPUs and unified memory', () => {
