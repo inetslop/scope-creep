@@ -4,10 +4,12 @@ title: Add the Pinwheel enemy
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T22:44:02Z
+claimed_at: 2026-10-26T22:47:02Z
+designer: desktop
 ---
 
 ## Goal
