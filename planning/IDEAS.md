@@ -40,7 +40,7 @@ The PO adds ideas here. Good ones become tasks.
 - Run timer (mm:ss) in the top-left of the HUD
 - Ring enemy: a large hollow ink circle that slowly chases; its rim hurts, its center is safe
 - Shard value escalation: every 60 s shard XP is +1, with a small "VALUE UP" flash in the HUD
-- Marginalia: when a new enemy type first appears in a run, a small dry ink annotation fades in beside it for 2 s ("RED RUSHES", "HEAVY HITS HARD", "THE PENTAGON SHOTS")
+- ~~Marginalia: when a new enemy type first appears in a run, a small dry ink annotation fades in beside it for 2 s ("RED RUSHES", "HEAVY HITS HARD", "THE PENTAGON SHOTS")~~ → T0027
 - Counterpoint weapon: fires a point that bounces off arena walls up to 2 times, losing 25% damage per bounce
 - "Overprint" upgrade: +5% damage per 30 s survived — the longer you last, the harder you hit
 - ~~Understudy active: drop a decoy blue circle that taunts every enemy for 3 s; 8 s cooldown~~ → T0015
@@ -70,6 +70,10 @@ The PO adds ideas here. Good ones become tasks.
 - Warm-up: the first 10 s of a run, fire rate +50%, with a "WARM-UP" flash in the HUD
 - ~~Slab: a big yellow square that crawls very slowly, huge HP, barely moves when knocked back — a wall to route around~~ → T0025
 - ~~Allegro upgrade: +15% fire rate, -8% move speed per level, maxLevel 3 — the first trade-off upgrade~~ → T0026
-- Spike: a small red diamond, fast, high contact damage — a punisher for hugging the swarm
+- ~~Spike: a small red diamond, fast, high contact damage — a punisher for hugging the swarm~~ → T0028 (diamond became a triangle to reuse the existing triangle shape)
 - Turret: a still orange square that never moves and fires faster than the Sentry, but only straight at you
-- Unit test for spawn unlock timing: each enemy is absent just before its unlockAtSec and present at/after it
+- ~~Unit test for spawn unlock timing: each enemy is absent just before its unlockAtSec and present at/after it~~ → T0030
+- ~~Ostinato upgrade: +1 pierce, +10% fire rate per level, maxLevel 2 — the pierce build's backbone~~ → T0029
+- Boss warning: 5 s before The Frame spawns, the arena edges pulse red and "SOMETHING HEAVY APPROACHES" flashes in the HUD
+- Mote nest: a still grey circle (40 hp) that releases 6 Motes every 10 s
+- Combo text: at 50 kills in a run, "MAESTRO" flashes in the HUD next to the streak tally
