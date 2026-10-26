@@ -49,8 +49,13 @@ The PO adds ideas here. Good ones become tasks.
 - Ghost run: a faint outline of your last run's player traces the same path; survive past where it stopped and a "PAST YOU" flash
 - "Second wind": the first time you drop to 1 HP in a run, heal 25% of max HP with a "SECOND WIND" flash
 - "Kerning" upgrade: +10% projectile size and knockback per level, maxLevel 3
+- ~~Staccato upgrade: +12% fire rate and +12% projectile speed per level, maxLevel 3~~ → T0018
 - ~~Boulder: a heavy yellow circle that slowly chases and shrugs off knockback~~ → T0017
 - The Frame's corpse: after the first boss dies, a faint frame outline stays on the paper as a permanent decal
 - Card-flip level-up: the three upgrade choices are dealt in like cards with a card-flip SFX
 - Aim snap (mobile): while the right stick is held, shots snap to the nearest enemy within 40 units
 - Bestiary on the pause screen: the enemy shapes met this run, each with a one-line note
+- Shard vacuum: the moment a level-up card is picked, every shard on screen is pulled to you
+- Echo: every 5th volley is fired twice (stacks with Repetition)
+- Wedge ghost: a pale blue wedge that mirrors your position with a 1 s delay, unlocks at 90 s
+- Score: kills give points (elite ×5, boss ×50); game over shows score and best score
