@@ -32,7 +32,7 @@ The PO adds ideas here. Good ones become tasks.
 - Boss sting: a low hit plus a music swell when The Frame spawns
 - ~~Kill-streak text: "RHYTHM" flashes in the HUD at 8 kills without being hit~~ → T0014
 - ~~Crit sting: a short higher-pitched hit sound when a crit lands (follows T0013)~~ → T0019 (sound + small ink ring)
-- The Eraser: a slow white rectangle that, on contact, erases your most recent upgrade with a small "ERASED" flash in the HUD
+- ~~The Eraser: a slow white rectangle that, on contact, erases your most recent upgrade with a small "ERASED" flash in the HUD~~ → T0047
 - Ink well: a rare pickup from elites and bosses that restores 3 HP
 - Weapon: the Stamp — a heavy yellow square that slams down ahead of you and knocks enemies back
 - ~~Screen shake: the camera jolts when a heavy enemy (Block, elite, boss) dies (The Frame task likely adds the boss case; generalize after)~~ → T0040
@@ -90,5 +90,10 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Pinwheel: a red square that spins fast while chasing — a spinning late-run chaser that reads as "spinning danger"~~ → T0039
 - ~~Pulse upgrade: +10% fire rate and +5% crit chance per level, maxLevel 3 — the crit-shred build, reusing the Rhythm and Contrast stats~~ → T0041
 - ~~Sweep upgrade: +10% move speed and +10% pickup radius per level, maxLevel 3 — the shard-sweeping mobility build, reusing the Momentum and Gravity stats~~ → T0042
+- ~~Trill upgrade: +1 projectile per volley and +8% fire rate per level, maxLevel 2, weight 3 — a rare repeat-fire build, reusing the Repetition and Rhythm stats~~ → T0046
 - Cinder: a black circle that, on death, leaves a slow-fading ink scorch on the paper that damages you if you stand in it
 - Enemy ink trails: fast enemies (Dart, Spike, Mote) leave a faint fading line behind them so their path is readable at speed
+- Sforzando: for 6 s after you take a hit, your volleys deal +50% damage, with a small "SFORZANDO" flash — a comeback window
+- Tessitura upgrade: +10 max HP per level, maxLevel 5 — a pure survival ramp between Mass and Plate
+- Glissando upgrade: +15% shard XP and +10% fire rate per level, maxLevel 3 — the economy-DPS hybrid, reusing the Composition and Rhythm stats
+- The Critic: every 200 kills, the arena border flashes ink and every enemy on screen takes 15 damage ("THE CRITIC ARRIVES")
