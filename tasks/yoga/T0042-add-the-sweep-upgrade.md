@@ -4,10 +4,11 @@ title: Add the Sweep upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0041]
-attempts: 0
+attempts: 1
 created: 2026-10-26T23:09:26Z
+claimed_at: 2026-10-26T23:46:38Z
 ---
 
 ## Goal
