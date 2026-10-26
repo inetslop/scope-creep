@@ -31,7 +31,7 @@ The PO adds ideas here. Good ones become tasks.
 - Dash enemy: a small red square that dashes at the player in a straight line, then stops
 - Boss sting: a low hit plus a music swell when The Frame spawns
 - ~~Kill-streak text: "RHYTHM" flashes in the HUD at 8 kills without being hit~~ → T0014
-- Crit sting: a short higher-pitched hit sound when a crit lands (follows T0013)
+- ~~Crit sting: a short higher-pitched hit sound when a crit lands (follows T0013)~~ → T0019 (sound + small ink ring)
 - The Eraser: a slow white rectangle that, on contact, erases your most recent upgrade with a small "ERASED" flash in the HUD
 - Ink well: a rare pickup from elites and bosses that restores 3 HP
 - Weapon: the Stamp — a heavy yellow square that slams down ahead of you and knocks enemies back
@@ -59,3 +59,9 @@ The PO adds ideas here. Good ones become tasks.
 - Echo: every 5th volley is fired twice (stacks with Repetition)
 - Wedge ghost: a pale blue wedge that mirrors your position with a 1 s delay, unlocks at 90 s
 - Score: kills give points (elite ×5, boss ×50); game over shows score and best score
+- ~~Emphasis upgrade: +15% damage per level, maxLevel 5 — a slower damage ramp alongside Weight~~ → T0020
+- Second active "Still Life": a 5 s bubble that slows enemies to 50% speed around you, 12 s cooldown (reuses the Understudy active system)
+- The Curator: at 8:00 every enemy freezes for 2 s, then a spiral wave of 20 Motes sweeps in
+- Ink meter: firing fills a meter; at full, your next volley becomes a heavy ink burst (3× projectiles, big knockback)
+- Game over lists your kill count per enemy type (a small bestiary tally)
+- Shard trails: shards leave a faint fading trail so you can see where they came from
