@@ -69,10 +69,10 @@ export class FxSystem {
     this.critRings.explode(1, x, y);
   }
 
-  /** Enemy destroyed: a ring and fragments in its color. */
-  death(x: number, y: number, body: number, accent: number, size: number): void {
+  /** Enemy destroyed: a ring and fragments in its color. `extraRings` adds rings (elites). */
+  death(x: number, y: number, body: number, accent: number, size: number, extraRings = 0): void {
     this.rings.setParticleTint(body);
-    this.rings.explode(size >= 24 ? 2 : 1, x, y);
+    this.rings.explode((size >= 24 ? 2 : 1) + extraRings, x, y);
     this.fragments.setParticleTint(body);
     this.fragments.explode(Math.min(14, 4 + Math.round(size / 4)), x, y);
     this.fragments.setParticleTint(accent);

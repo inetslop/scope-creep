@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { ENEMIES } from '../../src/content/enemies';
+import { ELITE } from '../../src/config';
+import { ENEMIES, getEnemy } from '../../src/content/enemies';
 import { UPGRADE_BY_ID, UPGRADES } from '../../src/content/upgrades';
 import { SpawnDirector } from '../../src/core/director';
 import { enemyHpScale, formatTime, xpToNextLevel } from '../../src/core/progression';
@@ -122,10 +123,32 @@ describe('upgrades', () => {
 describe('SpawnDirector', () => {
   it('spawns only unlocked enemies and respects maxAlive', () => {
     const director = new SpawnDirector(ENEMIES, { baseBudgetPerSec: 100, budgetGrowthPerMin: 0, maxAlive: 5, maxSpawnsPerTick: 50 });
-    const ids = director.update(1, 0, 0, new Rng(1));
+    const { ids } = director.update(1, 0, 0, new Rng(1));
     expect(ids.length).toBe(5);
     const unlockedAtZero = new Set(ENEMIES.filter((e) => e.unlockAtSec <= 0).map((e) => e.id));
     for (const id of ids) expect(unlockedAtZero.has(id)).toBe(true);
+  });
+
+  it('reports one elite every 45 s, picked from unlocked enemies', () => {
+    const director = new SpawnDirector(ENEMIES, { baseBudgetPerSec: 0, budgetGrowthPerMin: 0, maxAlive: 10, maxSpawnsPerTick: 10 });
+    const rng = new Rng(123);
+    const eliteTimes: number[] = [];
+    const eliteIds: string[] = [];
+    for (let t = 1; t <= 135; t++) {
+      const { ids, elites } = director.update(1, t, 0, rng);
+      expect(ids).toHaveLength(0);
+      expect(elites.length).toBeLessThanOrEqual(1);
+      for (const id of elites) {
+        eliteTimes.push(t);
+        eliteIds.push(id);
+      }
+    }
+    expect(eliteTimes).toEqual([ELITE.intervalSec, ELITE.intervalSec * 2, ELITE.intervalSec * 3]);
+    for (let i = 0; i < eliteIds.length; i++) {
+      const def = getEnemy(eliteIds[i]!);
+      expect(def.unlockAtSec <= eliteTimes[i]!).toBe(true);
+      expect(def.spawnWeight).toBeGreaterThan(0);
+    }
   });
 });
 

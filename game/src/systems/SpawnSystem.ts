@@ -54,8 +54,9 @@ export class SpawnSystem {
   }
 
   update(dt: number): void {
-    const ids = this.director.update(dt, this.run.timeSec, this.activeCount, this.run.rng);
+    const { ids, elites } = this.director.update(dt, this.run.timeSec, this.activeCount, this.run.rng);
     for (const id of ids) this.spawn(getEnemy(id));
+    for (const id of elites) this.spawn(getEnemy(id), undefined, true);
     const target = { x: this.player.x, y: this.player.y };
     for (const obj of this.enemies.getChildren()) {
       const e = obj as Enemy;
@@ -71,13 +72,14 @@ export class SpawnSystem {
     }
   }
 
-  spawn(def: EnemyDef, at?: { x: number; y: number }): Enemy | null {
+  spawn(def: EnemyDef, at?: { x: number; y: number }, elite?: boolean): Enemy | null {
     const pos = at ?? this.pickSpawnPoint();
     const enemy = this.enemies.get(pos.x, pos.y) as Enemy | null;
     if (!enemy) return null;
-    enemy.spawn(def, pos.x, pos.y, enemyHpScale(this.run.timeSec), this.run.rng);
+    enemy.spawn(def, pos.x, pos.y, enemyHpScale(this.run.timeSec), this.run.rng, elite ?? false);
     if (this.run.firstSighting(def.id)) this.marginalia.note(enemy, def);
     hook.stats.enemiesSpawned += 1;
+    if (elite) hook.stats.elitesSpawned += 1;
     return enemy;
   }
 

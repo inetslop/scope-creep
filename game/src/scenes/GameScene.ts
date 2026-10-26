@@ -10,6 +10,7 @@ import { rollUpgradeChoices } from '../core/upgrades';
 import { length } from '../core/vec';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
+import type { Enemy } from '../entities/Enemy';
 import { Player } from '../entities/Player';
 import { Controls } from '../input/Controls';
 import { ArcSystem } from '../systems/ArcSystem';
@@ -264,6 +265,14 @@ export class GameScene extends Phaser.Scene {
     });
     hook.addInvariant('enemy-count', () => (this.spawns.activeCount <= this.spawns.maxEnemies ? null : `${this.spawns.activeCount} enemies alive`));
     hook.addInvariant('enemy-shot-count', () => (this.spawns.activeShotCount <= this.spawns.maxEnemyShots ? null : `${this.spawns.activeShotCount} enemy shots alive`));
+    hook.addInvariant('elite-markers', () => {
+      for (const obj of this.spawns.enemies.getChildren()) {
+        const e = obj as Enemy;
+        if (!e.active) continue;
+        if (e.elite !== e.ring.visible || e.elite !== e.badge.visible) return `elite marker mismatch on ${e.def.id}`;
+      }
+      return null;
+    });
     hook.addInvariant('projectile-count', () => (this.weapons.activeCount <= 400 ? null : `${this.weapons.activeCount} projectiles alive`));
     hook.addInvariant('damage-numbers-pool', () => (this.damageNumbers.activeCount <= 60 ? null : `${this.damageNumbers.activeCount} damage numbers active`));
     hook.addInvariant('orbit-circles', () => {
@@ -279,4 +288,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels'];

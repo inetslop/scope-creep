@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import { ELITE } from '../config';
 import type { Sfx } from '../audio/Sfx';
 import { getEnemy } from '../content/enemies';
 import type { RunState } from '../core/run';
@@ -76,7 +77,7 @@ export class CombatSystem {
   private onPlayerTouched(e: Enemy): void {
     const now = this.scene.time.now;
     if (!e.active || this.player.isInvulnerable(now) || this.run.isDead) return;
-    this.run.takeDamage(e.def.contactDamage);
+    this.run.takeDamage(e.contactDamage);
     this.player.hurt(now);
     e.hit(0, this.player, 320); // shove the enemy back so contact isn't continuous
     this.fx.playerHit(this.player.x, this.player.y);
@@ -94,10 +95,20 @@ export class CombatSystem {
 
   killEnemy(e: Enemy): void {
     const look = e.def.look;
-    this.fx.death(e.x, e.y, look.body, look.accent, look.radius);
-    this.sfx.enemyDeath(look.radius);
-    if (look.radius >= 24) this.fx.shake(90, 0.003);
-    this.pickups.drop(e.x, e.y, e.def.xp);
+    const size = look.radius * (e.elite ? ELITE.scale : 1);
+    this.fx.death(e.x, e.y, look.body, look.accent, size, e.elite ? ELITE.extraDeathRings : 0);
+    this.sfx.enemyDeath(size);
+    if (size >= 24) this.fx.shake(90, 0.003);
+    if (e.elite) {
+      // A pile of shards: the elite's 6x XP split evenly around the death point.
+      for (let i = 0; i < ELITE.shardCount; i++) {
+        const a = (i / ELITE.shardCount) * Math.PI * 2;
+        this.pickups.drop(e.x + Math.cos(a) * ELITE.shardSpread, e.y + Math.sin(a) * ELITE.shardSpread, e.def.xp * (ELITE.xpMul / ELITE.shardCount));
+      }
+      hook.stats.elitesKilled += 1;
+    } else {
+      this.pickups.drop(e.x, e.y, e.def.xp);
+    }
     this.run.kills += 1;
     hook.stats.enemiesKilled += 1;
     if (e.def.splitsInto) this.split(e);

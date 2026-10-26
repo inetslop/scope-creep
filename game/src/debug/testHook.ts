@@ -11,6 +11,8 @@ export interface HookStats {
   deaths: number;
   enemiesSpawned: number;
   enemiesKilled: number;
+  elitesSpawned: number;
+  elitesKilled: number;
   shotsFired: number;
   shardsCollected: number;
   upgradesTaken: number;
@@ -39,6 +41,8 @@ export class TestHook {
     deaths: 0,
     enemiesSpawned: 0,
     enemiesKilled: 0,
+    elitesSpawned: 0,
+    elitesKilled: 0,
     shotsFired: 0,
     shardsCollected: 0,
     upgradesTaken: 0,

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { enemyTextureKey, TEX } from '../art/textures';
-import { DEPTH } from '../config';
+import { DEPTH, ELITE } from '../config';
 import { PALETTE } from '../content/palette';
 import type { EnemyDef } from '../content/types';
 import type { Rng } from '../core/rng';
@@ -15,6 +15,11 @@ const SHOOT_PERIOD = 2.4;
 const SHOOT_TELEGRAPH = 0.4;
 const SHOOT_STRAFE = 0.75;
 
+/** Elite marker: an ink ring just outside the body with a red badge riding on it. */
+const RING_RADIUS_PX = 28; // radius the ring is drawn at inside TEX.ring (64x64 texture)
+const RING_CLEARANCE = 1.2; // ring world radius = body radius * elite scale * this
+const RING_SPIN = 1; // radians per second
+
 /**
  * Pooled enemy. One class serves every EnemyDef; behavior is chosen by
  * `def.behavior` in steer(). To add a behavior: extend EnemyBehavior in
@@ -22,10 +27,21 @@ const SHOOT_STRAFE = 0.75;
  */
 export class Enemy extends Phaser.Physics.Arcade.Sprite {
   def!: EnemyDef;
+  /** True while this spawn is an elite; set in spawn(), read by CombatSystem and the marker invariant. */
+  elite = false;
+  /** Contact damage on the player, after the elite multiplier. Set in spawn(). */
+  contactDamage = 0;
+  /** Knockback resist, after the elite bonus and clamped to 1. Set in spawn(). */
+  knockbackResist = 0;
   hp = 0;
   maxHp = 0;
   /** Unique per spawn (pooled objects are reused), used by pierce bookkeeping. */
   serial = 0;
+  /** Elite ring and badge: separate display objects, hidden while pooled. */
+  readonly ring: Phaser.GameObjects.Image;
+  readonly badge: Phaser.GameObjects.Image;
+  private baseScale = 1;
+  private ringAngle = 0;
   private knock: Vec2 = { x: 0, y: 0 };
   private phase = 0;
   private age = 0;
@@ -43,16 +59,23 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, TEX.dot);
+    this.ring = scene.add.image(0, 0, TEX.ring).setTint(PALETTE.ink).setDepth(DEPTH.enemies + 1).setVisible(false);
+    this.badge = scene.add.image(0, 0, TEX.badge).setDepth(DEPTH.enemies + 2).setVisible(false);
   }
 
-  spawn(def: EnemyDef, x: number, y: number, hpScale: number, rng: Rng): void {
+  spawn(def: EnemyDef, x: number, y: number, hpScale: number, rng: Rng, elite: boolean = false): void {
     this.def = def;
+    this.elite = elite;
     this.serial = nextSerial++;
     this.setTexture(enemyTextureKey(def.id));
     this.enableBody(true, x, y, true, true);
     const r = def.look.radius;
     (this.body as Phaser.Physics.Arcade.Body).setCircle(r, this.width / 2 - r, this.height / 2 - r);
-    this.hp = this.maxHp = Math.max(1, Math.round(def.hp * hpScale));
+    // The Arcade circle body resyncs from the sprite scale every frame, so never resize the body here.
+    this.baseScale = elite ? ELITE.scale : 1;
+    this.hp = this.maxHp = Math.max(1, Math.round(def.hp * hpScale * (elite ? ELITE.hpMul : 1)));
+    this.contactDamage = def.contactDamage * (elite ? ELITE.contactDamageMul : 1);
+    this.knockbackResist = Math.min(1, def.knockbackResist + (elite ? ELITE.knockbackResistBonus : 0));
     this.knock = { x: 0, y: 0 };
     this.phase = rng.range(0, Math.PI * 2);
     this.age = 0;
@@ -61,7 +84,28 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.stateTimer = rng.range(1.5, 3.5);
     this.shootTimer = rng.range(0.8, this.shootPeriod);
     this.shotPending = false;
-    this.setRotation(0).setAlpha(1).setScale(1).clearTint().setDepth(DEPTH.enemies);
+    this.ringAngle = rng.range(0, Math.PI * 2);
+    this.ring.setVisible(elite);
+    this.badge.setVisible(elite);
+    if (elite) {
+      this.ring.setScale((r * ELITE.scale * RING_CLEARANCE) / RING_RADIUS_PX);
+      this.syncEliteMarker();
+    }
+    this.setRotation(0).setAlpha(1).setScale(this.baseScale).clearTint().setDepth(DEPTH.enemies);
+  }
+
+  /** Spins the elite ring and keeps ring + badge pinned to the body. Elite only. */
+  private syncEliteMarker(): void {
+    const R = RING_RADIUS_PX * this.ring.scale;
+    this.ring.setPosition(this.x, this.y).setRotation(this.ringAngle);
+    this.badge.setPosition(this.x + Math.cos(this.ringAngle) * R, this.y + Math.sin(this.ringAngle) * R).setRotation(this.ringAngle);
+  }
+
+  protected preUpdate(_time: number, delta: number): void {
+    super.preUpdate(_time, delta);
+    if (!this.active || !this.elite) return;
+    this.ringAngle += (delta / 1000) * RING_SPIN;
+    this.syncEliteMarker();
   }
 
   /** Sets velocity toward `target` according to the behavior. Called every frame by SpawnSystem. */
@@ -92,12 +136,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
             this.stateTimer = 0.6;
           }
         } else if (this.chargeState === 'windup') {
-          this.setScale(1 + Math.sin(this.age * 40) * 0.05);
+          // Route through baseScale: a plain setScale(1) would shrink an elite block back to normal.
+          this.setScale(this.baseScale * (1 + Math.sin(this.age * 40) * 0.05));
           if (this.stateTimer <= 0) {
             this.chargeState = 'dash';
             this.stateTimer = 0.45;
             this.dashDir = toTarget;
-            this.setScale(1);
+            this.setScale(this.baseScale);
           }
         } else {
           vx = this.dashDir.x * this.def.speed * 5;
@@ -151,7 +196,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   hit(damage: number, from: Vec2, knockback: number): boolean {
     this.hp -= damage;
     const dir = normalize(sub(this, from));
-    const k = knockback * (1 - this.def.knockbackResist);
+    const k = knockback * (1 - this.knockbackResist);
     this.knock = { x: this.knock.x + dir.x * k, y: this.knock.y + dir.y * k };
     this.setTintFill(PALETTE.ink); // a black silhouette flash reads best on paper
     this.flashMs = 60;
@@ -165,5 +210,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
   despawn(): void {
     this.disableBody(true, true);
+    this.ring.setVisible(false);
+    this.badge.setVisible(false);
+  }
+
+  destroy(fromScene?: boolean): void {
+    this.ring.destroy();
+    this.badge.destroy();
+    super.destroy(fromScene);
   }
 }

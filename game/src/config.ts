@@ -11,6 +11,12 @@ export const PLAYER_RADIUS = 16;
 /** Invulnerability after the player is hit, in ms. */
 export const PLAYER_INVULN_MS = 650;
 
+/** Tuning for elite enemies: one of a random unlocked type, on a fixed timer. */
+export const ELITE = {
+  intervalSec: 45, scale: 1.8, hpMul: 5, contactDamageMul: 1.5,
+  knockbackResistBonus: 0.5, xpMul: 6, shardCount: 6, shardSpread: 26, extraDeathRings: 2,
+} as const;
+
 /** Draw order. Higher is on top. */
 export const DEPTH = {
   floor: 0,

@@ -4,10 +4,11 @@ title: Elite enemies
 assignee: desktop
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 claimed_at: 2026-10-26T21:28:00Z
+finished_at: 2026-10-26T21:46:41Z
 ---
 
 ## Goal
@@ -100,3 +101,25 @@ death(x: number, y: number, body: number, accent: number, size: number, extraRin
 ## Moved from asus
 
 The asus went down while building this (claimed 2026-10-26T19:11:11Z, never finished). None of that attempt's work reached main. Moved to desktop and requeued with attempts reset.
+
+## Result (attempt 1, desktop)
+
+Added elite enemies per the architect's design: `SpawnDirector.update()` now returns `{ ids, elites }` with a seeded elite every 45 s (first at 0:45), `Enemy.spawn()` takes an `elite` flag (1.8x scale with hitbox, 5x HP, 1.5x contact damage, +0.5 knockback resist) and shows a rotating ink ring with a red square badge (new `TEX.badge`, flat style), elites drop their 6x XP as 6 shards in a circle plus 2 extra death rings, and `hook.stats` gained `elitesSpawned`/`elitesKilled` with a new `elite-markers` invariant guarding pooled-enemy marker state. Charger windup/dash scale now routes through `baseScale` so elite blocks don't shrink mid-run, and all elite fields reset on `spawn()`/`despawn()`. Verified with `npm run check` (90 tests pass, including the new elite-timing test) and `npm run smoke` (desktop + mobile pass).
+
+- Self-review: NO VERDICT
+- Time: 18.7 min
+
+```
+game/docs/ARCHITECTURE.md        |  2 +-
+ game/src/art/textures.ts         |  3 ++
+ game/src/config.ts               |  6 ++++
+ game/src/core/director.ts        | 47 ++++++++++++++++++++--------
+ game/src/debug/testHook.ts       |  4 +++
+ game/src/entities/Enemy.ts       | 67 +++++++++++++++++++++++++++++++++++-----
+ game/src/scenes/GameScene.ts     | 11 ++++++-
+ game/src/systems/CombatSystem.ts | 21 ++++++++++---
+ game/src/systems/FxSystem.ts     |  6 ++--
+ game/src/systems/SpawnSystem.ts  |  8 +++--
+ game/tests/core/core.test.ts     | 27 ++++++++++++++--
+ 11 files changed, 167 insertions(+), 35 deletions(-)
+```

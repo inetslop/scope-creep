@@ -26,7 +26,7 @@ Boot -> Menu -> Game ──launch──> Hud (overlay, runs in parallel)
 2. `controls.read()` -> `ControlState { move, aim, firing, device }`.
 3. Player velocity from `move * stats.moveSpeed`; barrel angle from `aim`.
 4. `WeaponSystem.update` fires volleys for every owned projectile weapon on cooldown while firing and ages projectiles; `ArcSystem.update` snaps chained arcs on its own cooldown; `OrbitSystem.update` spins the orbit circles and applies contact damage.
-5. `SpawnSystem.update` asks the `SpawnDirector` (pure) what to spawn, places enemies on a ring just outside the view, steers every enemy. `Marginalia.update` ages first-encounter notes (one ink label per enemy type per run, pinned in POST_UPDATE).
+5. `SpawnSystem.update` asks the `SpawnDirector` (pure) what to spawn, places enemies on a ring just outside the view, steers every enemy. The director also reports one elite every 45 s (bigger, tougher, ringed, 6x XP in 6 shards). `Marginalia.update` ages first-encounter notes (one ink label per enemy type per run, pinned in POST_UPDATE).
 6. `PickupSystem.update` magnets shards inside `pickupRadius`, collects on touch (XP).
 7. Regen; movement trail; hook stats.
 8. Death -> GameOver after a short delay. Pending level-ups -> LevelUp overlay.

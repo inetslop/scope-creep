@@ -29,6 +29,8 @@ export const TEX = {
   enemyShot: 'enemyShot',
   /** Orbit weapon circle. */
   orbit: 'orbit',
+  /** Small red square; the badge riding on an elite's ring. */
+  badge: 'badge',
   floor: 'floor',
 } as const;
 
@@ -60,6 +62,7 @@ export function generateTextures(scene: Phaser.Scene): void {
   drawFloor(scene);
   for (const enemy of ENEMIES) drawEnemy(scene, enemy);
   graphicsTexture(scene, TEX.enemyShot, 24, 24, (g) => drawShape(g, 'circle', 10.5, 10.5, 6, PALETTE.ink, { outlineWidth: 0 }));
+  graphicsTexture(scene, TEX.badge, 28, 28, (g) => drawShape(g, 'square', 12.5, 12.5, 8, PALETTE.red, { outlineWidth: 2 }));
   for (const weapon of WEAPONS) {
     if (weapon.orbit) drawOrbit(scene, weapon);
     else drawProjectile(scene, weapon);
