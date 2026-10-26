@@ -216,6 +216,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     ],
     color: PALETTE.yellow,
   },
+  {
+    id: 'fugue',
+    name: 'Fugue',
+    description: '+15% damage, +15% projectile speed',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'damageMul', op: 'mul', value: 1.15 },
+      { stat: 'projectileSpeedMul', op: 'mul', value: 1.15 },
+    ],
+    color: PALETTE.ink,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));

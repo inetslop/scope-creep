@@ -4,11 +4,12 @@ title: Add the Fugue upgrade
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T21:23:27Z
 claimed_at: 2026-10-26T21:44:00Z
+finished_at: 2026-10-26T21:50:19Z
 ---
 
 ## Goal
@@ -63,3 +64,15 @@ No new types. Uses existing `UpgradeDef` (`src/content/types.ts:128`), existing 
 
 ### Tests
 - none (the existing `tests/content.test.ts` upgrade validation covers the new entry: id, name/description, maxLevel, weight, and that both mod stats exist with `mul` values > 0).
+
+## Result (attempt 1, yoga)
+
+Added the Fugue level-up card to `UPGRADES` in `src/content/upgrades/index.ts` (appended after the `dynamics` entry): a max-level-3, weight-4, ink-colored card granting +15% damage and +15% projectile speed per level (1.15 mul on `damageMul` and `projectileSpeedMul`, ≈×1.52 each at 3 levels). No other files changed — the existing upgrade roll/fold machinery handles offering it up to 3 times and stacking with Weight/Emphasis and Draft/Staccato. Verified with `npm run check` and `npm run smoke`, both pass.
+
+- Self-review: APPROVE
+- Time: 6.3 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+```
