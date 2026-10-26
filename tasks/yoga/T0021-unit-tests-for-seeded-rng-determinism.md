@@ -4,11 +4,12 @@ title: Unit tests for seeded RNG determinism
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T20:02:05Z
 claimed_at: 2026-10-26T20:12:55Z
+finished_at: 2026-10-26T20:17:28Z
 ---
 
 ## Goal
@@ -90,3 +91,15 @@ describe('Rng determinism', () => {
 - `tests/core/rng.test.ts` as above (3 tests: same-seed equality over 10 draws, different-seed divergence within 10 draws, `next()` bounds over 1000 draws).
 
 DEP: none
+
+## Result (attempt 1, yoga)
+
+Added `tests/core/rng.test.ts` locking down the seeded `Rng` (mulberry32) determinism per the design: same-seed equality over the first 10 draws, different-seed (1234 vs 4321) divergence within the first 10 draws, and `next()` bounds in [0, 1) over 1000 draws — written in the same vitest style as `tests/core/music.test.ts`. `npm run check` passes (58 tests, 4 files) and `npm run smoke` passes on both desktop and mobile; no game source files were modified.
+
+- Self-review: APPROVE
+- Time: 4.6 min
+
+```
+game/tests/core/rng.test.ts | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
+```
