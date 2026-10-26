@@ -4,11 +4,12 @@ title: Add the Emphasis upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0016]
 attempts: 1
 created: 2026-10-26T20:02:05Z
 claimed_at: 2026-10-26T20:06:26Z
+finished_at: 2026-10-26T20:12:17Z
 ---
 
 ## Goal
@@ -56,3 +57,15 @@ No new types or signatures. The entry is an existing `UpgradeDef` (src/content/t
 
 ### Tests
 - none — `tests/content.test.ts` already validates every entry in `UPGRADES` (unique kebab-case id, maxLevel ≥ 1, weight > 0, stat exists in `BASE_STATS`, mul value > 0, does something), and it runs as part of `npm run check`.
+
+## Result (attempt 1, yoga)
+
+Added the Emphasis upgrade to the end of the `UPGRADES` array in `src/content/upgrades/index.ts` — a size-S damage ramp (`+15% damage` per level, max 5 levels, roll weight 5, ink color) that multiplies the same `damageMul` stat as the existing Weight upgrade, so 5 levels stack to ≈×2.01 damage. `UPGRADE_BY_ID` picks it up automatically and the content tests validate it; `npm run check` (typecheck + lint + 55 tests) and `npm run smoke` (desktop + mobile browser play) both pass.
+
+- Self-review: APPROVE
+- Time: 5.9 min
+
+```
+game/src/content/upgrades/index.ts | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+```
