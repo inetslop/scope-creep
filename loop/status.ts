@@ -21,7 +21,7 @@ for (const id of ids) {
   const mine = tasks.filter((t) => path.basename(path.dirname(t.file)) === id);
   const count = (s: string): number => mine.filter((t) => t.status === s).length;
   console.log(
-    `  ${id.padEnd(9)} ${m.model.padEnd(24)} design ${count('design') + count('designing')}  todo ${count('todo')}  in-progress ${count('in-progress')}  done ${count('done')}  failed ${count('failed')}`,
+    `  ${id.padEnd(9)} ${(m.paused ? 'PAUSED' : m.model).padEnd(24)} design ${count('design') + count('designing')}  todo ${count('todo')}  in-progress ${count('in-progress')}  done ${count('done')}  failed ${count('failed')}`,
   );
   const marks: Record<string, string> = { 'in-progress': '▶', todo: '·', design: '✎', designing: '✍' };
   for (const t of mine.filter((x) => x.status in marks).sort((a, b) => a.id.localeCompare(b.id))) {

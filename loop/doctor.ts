@@ -35,7 +35,7 @@ async function main(): Promise<void> {
   const local = loadLocalConfig();
   const fleet = loadFleet();
   const machine = fleet.machines[local.machineId];
-  if (machine) pass(`machine "${local.machineId}": ${machine.label} (${machine.roles.join(' + ')})`);
+  if (machine) pass(`machine "${local.machineId}": ${machine.label} (${machine.roles.join(' + ')})${machine.paused ? ' — paused in agents/machines.json: the runner will idle' : ''}`);
   else fail(`machine "${local.machineId}" is not in agents/machines.json`, 'Re-run setup and pick a listed machine.');
 
   const git = await run('git', ['remote', 'get-url', 'origin'], { cwd: REPO });

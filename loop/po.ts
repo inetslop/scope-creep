@@ -42,8 +42,8 @@ export function poDue(fleet: FleetConfig, listing: TaskListing): string | null {
 }
 
 function describeMachines(fleet: FleetConfig): string {
-  return Object.entries(fleet.machines)
-    .filter(([, m]) => m.roles.includes('dev'))
+  return devMachineIds(fleet)
+    .map((id) => [id, fleet.machines[id]!] as const)
     .map(([id, m]) => `- **${id}**: ${m.label}, model ${m.model} (tier: ${m.tier}). Max task size **${m.maxTaskSize}**. Keep ${m.targetQueue} tasks queued. ${m.notes}`)
     .join('\n');
 }

@@ -23,7 +23,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Enemy projectiles now exist (Sentry) — boss dart-burst patterns unblocked
 - Weapons: Orbit (T0008) ✅, Arc chain beam (T0022) ✅; backlog: stamp, counterpoint, negative-space bomb
 - Upgrades: Tempo (T0002) ✅, Draft (T0012) ✅, Contrast crit (T0013) ✅, Plate armor (T0016) ✅, Staccato speed combo (T0018) ✅, Emphasis damage ramp (T0020) ✅, Allegro fire-rate-for-speed trade-off (T0026) ✅, Ostinato pierce + fire-rate build card (T0029, todo, yoga), Dynamics damage-for-mobility trade-off (T0031, todo, yoga); backlog: weapon-specific lines, evolutions, Kerning (projectile size + knockback)
-- Actives: Understudy decoy — drop a blue decoy that taunts enemies for 3 s, 8 s cooldown (T0015, todo, asus)
+- Actives: Understudy decoy — drop a blue decoy that taunts enemies for 3 s, 8 s cooldown (T0015, todo, desktop)
 
 ## M3 — Bosses (started)
 - The Frame at 5:00: health bar, charge + wedge ring + radial dart burst, +50% HP per respawn (T0006, todo, after T0005)

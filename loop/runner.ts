@@ -59,6 +59,7 @@ async function main(): Promise<number> {
   const startHead = await git.head();
   await recover(git, local.machineId);
   await releaseOwnDesignClaims({ git, local }, Object.keys(loadFleet().machines));
+  let pausedLogged = false;
 
   for (;;) {
     if (fs.existsSync(STOP_FILE)) {
@@ -75,6 +76,15 @@ async function main(): Promise<number> {
       info('loop code changed upstream; restarting to pick it up');
       return EXIT_RESTART;
     }
+    // Paused in agents/machines.json: no model server, no work, but keep syncing so un-pausing applies.
+    if (machine.paused) {
+      if (!pausedLogged) info(`"${local.machineId}" is paused in agents/machines.json; idling until it is unpaused`);
+      pausedLogged = true;
+      if (once) return 0;
+      await sleep(fleet.loop.pollSeconds * 1000);
+      continue;
+    }
+    pausedLogged = false;
     if (!(await ensureLlama(local))) return EXIT_NO_MODEL;
 
     const ctx: RunContext = { local, fleet, git };

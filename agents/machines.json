@@ -1,6 +1,7 @@
 {
   "machines": {
     "asus": {
+      "paused": true,
       "label": "ASUS RTX Spark (128 GB unified)",
       "model": "Qwen 3.8 UD-Q8_K_XL",
       "roles": ["dev"],

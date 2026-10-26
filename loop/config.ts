@@ -41,6 +41,12 @@ export interface MachineConfig {
    * architect role full time too (architectMode is then ignored). Default "always".
    */
   devMode?: 'always' | 'idle';
+  /**
+   * Takes the machine out of the loop, e.g. while it's down: its runner keeps syncing but starts
+   * no model server and does no work, and nobody plans, designs or assigns anything for it. Move
+   * its open tasks to another machine's folder when pausing it. Default false.
+   */
+  paused?: boolean;
 }
 
 export interface SizeLimits {
@@ -122,21 +128,27 @@ export function loadFleet(): FleetConfig {
   return JSON.parse(fs.readFileSync(FLEET_FILE, 'utf8')) as FleetConfig;
 }
 
+/** Machines taking part in the loop (not `paused`). */
+function activeMachines(fleet: FleetConfig): [string, MachineConfig][] {
+  return Object.entries(fleet.machines).filter(([, m]) => !m.paused);
+}
+
 export function poMachineId(fleet: FleetConfig): string | undefined {
-  return Object.entries(fleet.machines).find(([, m]) => m.roles.includes('po'))?.[0];
+  return activeMachines(fleet).find(([, m]) => m.roles.includes('po'))?.[0];
 }
 
 /** True if some machine designs tasks; otherwise PO tasks go straight to the devs. */
 export function hasArchitect(fleet: FleetConfig): boolean {
-  return Object.values(fleet.machines).some((m) => m.roles.includes('architect'));
+  return activeMachines(fleet).some(([, m]) => m.roles.includes('architect'));
 }
 
 export function effortFor(fleet: FleetConfig, machineId: string, role: Role): Effort {
   return fleet.machines[machineId]?.effort?.[role] ?? fleet.loop.effort[role];
 }
 
+/** Machines the PO plans for: dev role, not paused. */
 export function devMachineIds(fleet: FleetConfig): string[] {
-  return Object.entries(fleet.machines)
+  return activeMachines(fleet)
     .filter(([, m]) => m.roles.includes('dev'))
     .map(([id]) => id);
 }

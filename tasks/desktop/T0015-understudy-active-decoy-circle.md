@@ -1,7 +1,7 @@
 ---
 id: T0015
 title: Understudy active — decoy circle
-assignee: asus
+assignee: desktop
 size: L
 priority: 2
 status: todo

@@ -1,13 +1,12 @@
 ---
 id: T0005
 title: Elite enemies
-assignee: asus
+assignee: desktop
 size: M
 priority: 1
-status: in-progress
+status: todo
 depends_on: []
-attempts: 1
-claimed_at: 2026-10-26T19:11:11Z
+attempts: 0
 ---
 
 ## Goal
@@ -96,3 +95,7 @@ death(x: number, y: number, body: number, accent: number, size: number, extraRin
 
 ### Tests
 - `tests/core/core.test.ts`: fix existing SpawnDirector test to destructure `{ ids }`; add "reports one elite every 45 s, picked from unlocked enemies": config `{ baseBudgetPerSec: 0, budgetGrowthPerMin: 0, maxAlive: 10, maxSpawnsPerTick: 10 }`, `Rng(123)`, step `t = 1..135` with `dt = 1`, assert `ids` always empty and elite times exactly `[ELITE.intervalSec, ELITE.intervalSec * 2, ELITE.intervalSec * 3]`, and each elite id was unlocked (`unlockAtSec <= t && spawnWeight > 0`) at its time.
+
+## Moved from asus
+
+The asus went down while building this (claimed 2026-10-26T19:11:11Z, never finished). None of that attempt's work reached main. Moved to desktop and requeued with attempts reset.

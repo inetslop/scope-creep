@@ -1,7 +1,7 @@
 ---
 id: T0006
 title: The Frame — first boss
-assignee: asus
+assignee: desktop
 size: L
 priority: 1
 status: todo

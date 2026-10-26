@@ -62,6 +62,7 @@ npm run agent          # runs forever; restarts itself when loop code changes
 | `npm run status` | queues per machine (✎ waiting for design, ✍ being designed, · ready, ▶ in progress), recent commits, model server health |
 | `npm run doctor` | health check (`-- --gate` also runs the merge gate) |
 | `New-Item .agent\STOP` | stop after the current task |
+| `"paused": true` in `agents/machines.json` | take a machine out of the loop while it's down: its runner idles (no model server, no work) and nobody plans or assigns tasks for it. Move its open tasks to another machine's `tasks/<machine>/` folder (an `in-progress` one back to `todo`) |
 | `cd game; npm run dev` | play the latest local code |
 
 Logs: `.agent\logs\` (runner, supervisor, llama-server). Full agent transcripts: `.agent\runs\*.jsonl`. Smoke screenshots: `.agent\smoke\`.
