@@ -4,10 +4,12 @@ title: Add the Fugue upgrade
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T21:23:27Z
+claimed_at: 2026-10-26T21:27:20Z
+designer: desktop
 ---
 
 ## Goal
