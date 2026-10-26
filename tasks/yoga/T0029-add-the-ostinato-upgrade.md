@@ -4,10 +4,11 @@ title: Add the Ostinato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-26T20:55:07Z
+claimed_at: 2026-10-26T21:09:05Z
 ---
 
 ## Goal
