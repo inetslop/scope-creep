@@ -4,10 +4,12 @@ title: Add the Tile enemy
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T20:18:38Z
+claimed_at: 2026-10-26T20:27:12Z
+designer: desktop
 ---
 
 ## Goal
