@@ -85,3 +85,9 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Pressure upgrade: +10% damage and +10% fire rate per level, maxLevel 3 — the pure DPS build, reusing the Emphasis and Rhythm stats~~ → T0034
 - ~~Gather upgrade: +25% pickup radius and +15% shard XP per level, maxLevel 3 — the shard-economy build, reusing the Gravity and Composition stats~~ → T0035
 - ~~Unit tests for the upgrade roll: a maxed upgrade is never offered, and a roll returns 3 distinct choices~~ → T0036
+- ~~Accent upgrade: +5% crit chance and +10% damage per level, maxLevel 3 — the crit build, reusing the Contrast and Emphasis stats~~ → T0037
+- ~~Presto upgrade: +10% projectile speed and +10% move speed per level, maxLevel 3 — the everything-fast build, reusing the Draft and Momentum stats~~ → T0038
+- ~~Pinwheel: a red square that spins fast while chasing — a spinning late-run chaser that reads as "spinning danger"~~ → T0039
+- Pulse upgrade: +10% fire rate and +5% crit chance per level, maxLevel 3 — the crit-shred build, reusing the Rhythm and Contrast stats
+- Cinder: a black circle that, on death, leaves a slow-fading ink scorch on the paper that damages you if you stand in it
+- Enemy ink trails: fast enemies (Dart, Spike, Mote) leave a faint fading line behind them so their path is readable at speed
