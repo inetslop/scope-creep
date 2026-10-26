@@ -4,9 +4,10 @@ title: Add the Hex enemy
 assignee: yoga
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
+claimed_at: 2026-10-26T17:40:32Z
 ---
 
 ## Goal
