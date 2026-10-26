@@ -4,10 +4,11 @@ title: Unit tests for spawn unlock timing
 assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-26T20:55:07Z
+claimed_at: 2026-10-26T21:21:18Z
 ---
 
 ## Goal
