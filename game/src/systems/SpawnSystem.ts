@@ -6,13 +6,19 @@ import { enemyHpScale } from '../core/progression';
 import type { RunState } from '../core/run';
 import { hook } from '../debug/testHook';
 import { Enemy } from '../entities/Enemy';
+import { EnemyBullet } from '../entities/EnemyBullet';
 import type { Player } from '../entities/Player';
 
 const MAX_ENEMIES = 260;
+const MAX_ENEMY_SHOTS = 200;
+const ENEMY_SHOT_SPEED = 150;
+const ENEMY_SHOT_DAMAGE = 8;
+const ENEMY_SHOT_LIFE = 12;
 
 /** Spawns enemies just outside the view (director decides what/when) and steers them. */
 export class SpawnSystem {
   readonly enemies: Phaser.Physics.Arcade.Group;
+  readonly enemyShots: Phaser.Physics.Arcade.Group;
   private readonly director = new SpawnDirector(ENEMIES);
   private readonly scene: Phaser.Scene;
   private readonly run: RunState;
@@ -25,6 +31,7 @@ export class SpawnSystem {
     this.player = player;
     this.bounds = bounds;
     this.enemies = scene.physics.add.group({ classType: Enemy, maxSize: MAX_ENEMIES, runChildUpdate: false });
+    this.enemyShots = scene.physics.add.group({ classType: EnemyBullet, maxSize: MAX_ENEMY_SHOTS, runChildUpdate: false });
   }
 
   get maxEnemies(): number {
@@ -35,13 +42,29 @@ export class SpawnSystem {
     return this.enemies.countActive(true);
   }
 
+  get activeShotCount(): number {
+    return this.enemyShots.countActive(true);
+  }
+
+  get maxEnemyShots(): number {
+    return MAX_ENEMY_SHOTS;
+  }
+
   update(dt: number): void {
     const ids = this.director.update(dt, this.run.timeSec, this.activeCount, this.run.rng);
     for (const id of ids) this.spawn(getEnemy(id));
     const target = { x: this.player.x, y: this.player.y };
     for (const obj of this.enemies.getChildren()) {
       const e = obj as Enemy;
-      if (e.active) e.steer(target, dt);
+      if (!e.active) continue;
+      e.steer(target, dt);
+      if (e.consumeShot()) this.fireShot(e);
+    }
+    for (const obj of this.enemyShots.getChildren()) {
+      const p = obj as EnemyBullet;
+      if (!p.active) continue;
+      p.lifeLeft -= dt;
+      if (p.lifeLeft <= 0 || !this.bounds.contains(p.x, p.y)) p.despawn();
     }
   }
 
@@ -52,6 +75,14 @@ export class SpawnSystem {
     enemy.spawn(def, pos.x, pos.y, enemyHpScale(this.run.timeSec), this.run.rng);
     hook.stats.enemiesSpawned += 1;
     return enemy;
+  }
+
+  /** Fires one slow ink point from `e` at the player's current position. */
+  private fireShot(e: Enemy): void {
+    const p = this.enemyShots.get(e.x, e.y) as EnemyBullet | null;
+    if (!p) return;
+    const angle = Math.atan2(this.player.y - e.y, this.player.x - e.x);
+    p.fire(e.x, e.y, angle, ENEMY_SHOT_SPEED, ENEMY_SHOT_DAMAGE, ENEMY_SHOT_LIFE);
   }
 
   /** A point on a ring just outside the camera view, inside the arena. */

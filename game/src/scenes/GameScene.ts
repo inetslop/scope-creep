@@ -70,7 +70,7 @@ export class GameScene extends Phaser.Scene {
     this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx);
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds);
-    new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles }, this.fx, this.pickups, this.sfx, this.damageNumbers);
+    new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers);
 
     this.controls = new Controls(this);
     this.registry.set('controls', this.controls);
@@ -235,9 +235,10 @@ export class GameScene extends Phaser.Scene {
       return bad.length > 0 ? `non-finite stats: ${bad.map(([k]) => k).join(', ')}` : null;
     });
     hook.addInvariant('enemy-count', () => (this.spawns.activeCount <= this.spawns.maxEnemies ? null : `${this.spawns.activeCount} enemies alive`));
+    hook.addInvariant('enemy-shot-count', () => (this.spawns.activeShotCount <= this.spawns.maxEnemyShots ? null : `${this.spawns.activeShotCount} enemy shots alive`));
     hook.addInvariant('projectile-count', () => (this.weapons.activeCount <= 400 ? null : `${this.weapons.activeCount} projectiles alive`));
     hook.addInvariant('damage-numbers-pool', () => (this.damageNumbers.activeCount <= 60 ? null : `${this.damageNumbers.activeCount} damage numbers active`));
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'projectile-count', 'damage-numbers-pool'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'projectile-count', 'damage-numbers-pool'];

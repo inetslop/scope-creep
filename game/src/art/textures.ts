@@ -23,6 +23,8 @@ export const TEX = {
   barrel: 'barrel',
   /** XP pickup. */
   shard: 'shard',
+  /** Enemy ink point (Sentry). */
+  enemyShot: 'enemyShot',
   floor: 'floor',
 } as const;
 
@@ -53,6 +55,7 @@ export function generateTextures(scene: Phaser.Scene): void {
   graphicsTexture(scene, TEX.shard, 18, 18, (g) => drawShape(g, 'diamond', 8, 8, 7, PALETTE.yellow, { outlineWidth: 2, shadow: true }));
   drawFloor(scene);
   for (const enemy of ENEMIES) drawEnemy(scene, enemy);
+  graphicsTexture(scene, TEX.enemyShot, 24, 24, (g) => drawShape(g, 'circle', 10.5, 10.5, 6, PALETTE.ink, { outlineWidth: 0 }));
   for (const weapon of WEAPONS) drawProjectile(scene, weapon);
 }
 

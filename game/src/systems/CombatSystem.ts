@@ -4,6 +4,7 @@ import { PLAYER_INVULN_MS } from '../config';
 import type { RunState } from '../core/run';
 import { hook } from '../debug/testHook';
 import type { Enemy } from '../entities/Enemy';
+import type { EnemyBullet } from '../entities/EnemyBullet';
 import type { Player } from '../entities/Player';
 import type { Projectile } from '../entities/Projectile';
 import type { DamageNumbers } from './DamageNumbers';
@@ -27,7 +28,7 @@ export class CombatSystem {
     scene: Phaser.Scene,
     run: RunState,
     player: Player,
-    groups: { enemies: Phaser.Physics.Arcade.Group; projectiles: Phaser.Physics.Arcade.Group },
+    groups: { enemies: Phaser.Physics.Arcade.Group; projectiles: Phaser.Physics.Arcade.Group; enemyShots: Phaser.Physics.Arcade.Group },
     fx: FxSystem,
     pickups: PickupSystem,
     sfx: Sfx,
@@ -42,6 +43,7 @@ export class CombatSystem {
     this.damageNumbers = damageNumbers;
     scene.physics.add.overlap(groups.projectiles, groups.enemies, (p, e) => this.onProjectileHit(as<Projectile>(p), as<Enemy>(e)));
     scene.physics.add.overlap(player, groups.enemies, (_p, e) => this.onPlayerTouched(as<Enemy>(e)));
+    scene.physics.add.overlap(player, groups.enemyShots, (_p, s) => this.onPlayerShot(as<EnemyBullet>(s)));
     scene.physics.add.collider(groups.enemies, groups.enemies);
   }
 
@@ -65,6 +67,15 @@ export class CombatSystem {
     e.hit(0, this.player, 320); // shove the enemy back so contact isn't continuous
     this.fx.playerHit();
     this.sfx.playerHurt();
+  }
+
+  private onPlayerShot(p: EnemyBullet): void {
+    if (!p.active || this.player.isInvulnerable(this.scene.time.now) || this.run.isDead) return;
+    this.run.takeDamage(p.damage);
+    this.player.invulnerableUntil = this.scene.time.now + PLAYER_INVULN_MS;
+    this.fx.playerHit();
+    this.sfx.playerHurt();
+    p.despawn();
   }
 
   killEnemy(e: Enemy): void {

@@ -4,11 +4,12 @@ title: Add the Sentry enemy
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T17:40:33Z
 claimed_at: 2026-10-26T17:58:30Z
+finished_at: 2026-10-26T18:11:54Z
 ---
 
 ## Goal
@@ -108,3 +109,23 @@ private onPlayerShot(p: EnemyBullet): void {
 
 ### Tests
 - none (content.test.ts validates the new enemy automatically; behavior code lives in engine-side Enemy.ts, matching existing behaviors which have no unit tests)
+
+## Result (attempt 1, desktop)
+
+Added the Sentry enemy — an orange pentagon (30 hp, threat 3, unlocks at 60 s) with a new `shoot` behavior: it holds a 240–300 unit distance band, strafes sideways, and every 2.4 s fires a slow ink point (speed 150, 8 damage) at the player after a 0.4 s paperLight telegraph flash. New pooled `EnemyBullet` entity and `enemyShot` texture; `SpawnSystem` owns the shot pool (fire + age, despawn at arena edge, pass through enemies), `CombatSystem` resolves player↔shot overlap with normal hit feedback, and `GameScene` wires the group plus a new `enemy-shot-count` invariant. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 13.4 min
+
+```
+game/src/art/textures.ts           |  3 +++
+ game/src/content/enemies/index.ts  |  3 ++-
+ game/src/content/enemies/sentry.ts | 24 ++++++++++++++++++++++++
+ game/src/content/types.ts          |  4 +++-
+ game/src/entities/Enemy.ts         | 38 +++++++++++++++++++++++++++++++++++++-
+ game/src/entities/EnemyBullet.ts   | 26 ++++++++++++++++++++++++++
+ game/src/scenes/GameScene.ts       |  5 +++--
+ game/src/systems/CombatSystem.ts   | 13 ++++++++++++-
+ game/src/systems/SpawnSystem.ts    | 33 ++++++++++++++++++++++++++++++++-
+ 9 files changed, 142 insertions(+), 7 deletions(-)
+```

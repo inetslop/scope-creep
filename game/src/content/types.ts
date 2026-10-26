@@ -16,7 +16,9 @@ export type EnemyBehavior =
   /** Chases, then periodically stops, winds up and dashes at the player. */
   | 'charger'
   /** Chases while weaving side to side. */
-  | 'weaver';
+  | 'weaver'
+  /** Holds 240-300 units from the player, strafes, fires slow ink points. */
+  | 'shoot';
 
 /** Flat geometric shapes, drawn by src/art/shapes.ts. Pointed shapes point to the right (angle 0). */
 export type ShapeKind = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'star';

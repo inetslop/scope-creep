@@ -4,9 +4,16 @@ import { DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
 import type { EnemyDef } from '../content/types';
 import type { Rng } from '../core/rng';
-import { normalize, sub, type Vec2 } from '../core/vec';
+import { distance, normalize, sub, type Vec2 } from '../core/vec';
 
 let nextSerial = 1;
+
+/** 'shoot' tuning: preferred distance band, fire period, telegraph window, strafe amplitude. */
+const SHOOT_BAND_NEAR = 240;
+const SHOOT_BAND_FAR = 300;
+const SHOOT_PERIOD = 2.4;
+const SHOOT_TELEGRAPH = 0.4;
+const SHOOT_STRAFE = 0.75;
 
 /**
  * Pooled enemy. One class serves every EnemyDef; behavior is chosen by
@@ -27,6 +34,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private chargeState: 'chase' | 'windup' | 'dash' = 'chase';
   private stateTimer = 0;
   private dashDir: Vec2 = { x: 0, y: 0 };
+  // 'shoot' state machine
+  private shootTimer = 0;
+  private shotPending = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, TEX.dot);
@@ -46,6 +56,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.flashMs = 0;
     this.chargeState = 'chase';
     this.stateTimer = rng.range(1.5, 3.5);
+    this.shootTimer = rng.range(0.8, SHOOT_PERIOD);
+    this.shotPending = false;
     this.setRotation(0).setAlpha(1).setScale(1).clearTint().setDepth(DEPTH.enemies);
   }
 
@@ -94,6 +106,23 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
         break;
       }
+      case 'shoot': {
+        const dist = distance(target, this);
+        const radial = dist < SHOOT_BAND_NEAR ? -1 : dist > SHOOT_BAND_FAR ? 1 : 0; // back off / hold / approach
+        const strafe = Math.sin(this.age * 1.1 + this.phase) * SHOOT_STRAFE;
+        vx = (toTarget.x * radial + toTarget.y * strafe) * this.def.speed;
+        vy = (toTarget.y * radial - toTarget.x * strafe) * this.def.speed;
+        this.shootTimer -= dt;
+        if (this.shootTimer <= SHOOT_TELEGRAPH) {
+          this.setTintFill(PALETTE.paperLight); // telegraph: flash before the shot
+          if (this.shootTimer <= 0) {
+            this.shotPending = true;
+            this.shootTimer = SHOOT_PERIOD;
+            this.clearTint();
+          }
+        }
+        break;
+      }
     }
     const decay = Math.exp(-8 * dt);
     this.knock = { x: this.knock.x * decay, y: this.knock.y * decay };
@@ -106,6 +135,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       this.flashMs -= dt * 1000;
       if (this.flashMs <= 0) this.clearTint();
     }
+  }
+
+  /** True exactly once, the frame after a 'shoot' enemy decided to fire. SpawnSystem consumes it. */
+  consumeShot(): boolean {
+    const pending = this.shotPending;
+    this.shotPending = false;
+    return pending;
   }
 
   /** Applies damage and knockback. Returns true if this hit killed it. */
