@@ -4,12 +4,10 @@ title: Add the Sweep upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
-depends_on: []
+status: todo
+depends_on: [T0041]
 attempts: 0
 created: 2026-10-26T23:09:26Z
-claimed_at: 2026-10-26T23:39:09Z
-designer: desktop
 ---
 
 ## Goal
@@ -29,3 +27,62 @@ A shard-sweeping mobility build card: "Sweep" raises move speed and shard pickup
 - [ ] It stacks with Momentum (move speed) and Gravity/Gather (pickup radius) normally
 - [ ] The new unit test in `tests/core/upgrades.test.ts` passes
 - [ ] `npm run check` and `npm run smoke` pass
+
+## Design (architect, desktop)
+
+### Files
+- edit `src/content/upgrades/index.ts` — append one `UpgradeDef` entry to the end of the `UPGRADES` array (after the `presto` entry, before the closing `];` at line 279). No other line changes.
+- edit `tests/core/upgrades.test.ts` — append one `it(...)` block inside the existing `describe('rollUpgradeChoices', ...)` block, after the `presto` test (after line 45). No new imports needed — all imports already exist.
+
+### Interfaces
+None. Data only; `UpgradeDef` (`src/content/types.ts:137`) unchanged.
+
+### Steps
+1. In `src/content/upgrades/index.ts`, append exactly this entry as the last element of `UPGRADES` (copy the `fugue` entry's two-mod shape; move-speed mod from `momentum` line 42, pickup mod from `gravity` line 63, both with value `1.10`):
+
+```ts
+  {
+    id: 'sweep',
+    name: 'Sweep',
+    description: '+10% move speed, +10% pickup radius',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'moveSpeed', op: 'mul', value: 1.10 },
+      { stat: 'pickupRadius', op: 'mul', value: 1.10 },
+    ],
+    color: PALETTE.green,
+  },
+```
+
+2. In `tests/core/upgrades.test.ts`, append exactly this test (a copy of the `presto` test at lines 31–45 with `sweep` substituted):
+
+```ts
+  it('sweep offers 3 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('sweep')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'moveSpeed', op: 'mul', value: 1.10 },
+      { stat: 'pickupRadius', op: 'mul', value: 1.10 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('sweep')).toBe(3);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
+```
+
+3. Run `npm run check`, then `npm run smoke`. Both must pass.
+
+### Pitfalls
+- T0041 (Pulse) appends to the same array and test file — do this task after T0041 lands and re-read both files first; never assume `presto` is still the last entry.
+- `toEqual` is order-sensitive: `moveSpeed` first, `pickupRadius` second, exactly as written.
+- Do not touch `UPGRADE_BY_ID` (line 281) — it is derived from `UPGRADES` automatically.
+- Do not modify any existing entry or reformat the file.
+- No pooling, listeners, art, or input changes: pure content data, so no mobile/cleanup concerns. Stacking with Momentum/Gravity/Gather is automatic via `computeStats` (all `mul` mods multiply).
+
+### Tests
+- `tests/core/upgrades.test.ts`: the `sweep offers 3 levels, then stops` test above (already specified in Step 2). `tests/content.test.ts` validates the new entry automatically — no edit needed there.
