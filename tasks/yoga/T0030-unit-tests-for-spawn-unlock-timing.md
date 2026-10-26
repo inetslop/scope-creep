@@ -4,11 +4,12 @@ title: Unit tests for spawn unlock timing
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T20:55:07Z
 claimed_at: 2026-10-26T21:21:18Z
+finished_at: 2026-10-26T21:28:36Z
 ---
 
 ## Goal
@@ -87,3 +88,15 @@ Note for the product owner: the per-enemy "present at unlockAtSec" assertion app
 
 ### Tests
 - `tests/content/spawn.test.ts` (the file itself, as above). No other tests.
+
+## Result (attempt 1, yoga)
+
+Added `tests/content/spawn.test.ts`, which locks down spawn unlock timing for the whole roster via the existing pure `SpawnDirector.unlocked()` API: every director-spawnable enemy is asserted absent at `unlockAtSec - 1` s and present at/after its unlock (and at 600 s), split children (`splinter`, `spawnWeight: 0`) are asserted absent from the director pool at all times, and the available set is asserted monotone over 0–600 s. No game code changed — the pure function already existed in `src/core/director.ts`, so in-play unlock times are unchanged. `npm run check` (102 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 7.3 min
+
+```
+game/tests/content/spawn.test.ts | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+```
