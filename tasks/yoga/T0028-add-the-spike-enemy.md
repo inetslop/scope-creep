@@ -4,11 +4,12 @@ title: Add the Spike enemy
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T20:55:07Z
 claimed_at: 2026-10-26T21:02:42Z
+finished_at: 2026-10-26T21:08:26Z
 ---
 
 ## Goal
@@ -78,3 +79,16 @@ export const spike: EnemyDef = {
 
 ### Tests
 - none (the existing `tests/content.test.ts` iterates `ENEMIES` and validates spike's numbers, id, and kebab-case automatically; there is no new pure logic in `core/`).
+
+## Result (attempt 1, yoga)
+
+Added the Spike enemy — a small, fast red spinning triangle (radius 10, spin 1.5) that chases the player, deals 14 contact damage, and unlocks at 75 s. Created `src/content/enemies/spike.ts` (data only, copied from the hex pattern, no `splitsInto`) and registered it in `ENEMIES` in `src/content/enemies/index.ts` with the import in alphabetical position. `npm run check` (typecheck + lint + 74 tests) and `npm run smoke` (desktop + mobile, real browser) both pass.
+
+- Self-review: APPROVE
+- Time: 5.7 min
+
+```
+game/src/content/enemies/index.ts |  3 ++-
+ game/src/content/enemies/spike.ts | 24 ++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+), 1 deletion(-)
+```
