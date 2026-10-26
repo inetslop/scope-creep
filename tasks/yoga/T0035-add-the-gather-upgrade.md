@@ -4,10 +4,12 @@ title: Add the Gather upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T21:54:06Z
+claimed_at: 2026-10-26T21:55:00Z
+designer: desktop
 ---
 
 ## Goal
