@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { Sfx } from '../audio/Sfx';
 import { TEX } from '../art/textures';
 import { ARENA_SIZE, DEPTH, VIEW_SHORT_SIDE } from '../config';
 import { PALETTE } from '../content/palette';
@@ -33,6 +34,7 @@ export class GameScene extends Phaser.Scene {
   private player!: Player;
   private controls!: Controls;
   private fx!: FxSystem;
+  private sfx!: Sfx;
   private weapons!: WeaponSystem;
   private spawns!: SpawnSystem;
   private pickups!: PickupSystem;
@@ -61,10 +63,11 @@ export class GameScene extends Phaser.Scene {
 
     this.player = new Player(this, 0, 0);
     this.fx = new FxSystem(this);
-    this.pickups = new PickupSystem(this, this.run, this.player, this.fx);
-    this.weapons = new WeaponSystem(this, this.run, this.player, this.fx);
+    this.sfx = new Sfx(this);
+    this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx);
+    this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds);
-    new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles }, this.fx, this.pickups);
+    new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles }, this.fx, this.pickups, this.sfx);
 
     this.controls = new Controls(this);
     this.registry.set('controls', this.controls);
@@ -127,6 +130,7 @@ export class GameScene extends Phaser.Scene {
     hook.overlay = SCENES.levelUp;
     this.scene.launch(SCENES.levelUp, { choices: choices.map((c) => c.id) });
     this.scene.pause();
+    this.sfx.levelUp();
   }
 
   private endRun(): void {
@@ -134,6 +138,7 @@ export class GameScene extends Phaser.Scene {
     hook.stats.deaths += 1;
     this.physics.pause();
     this.fx.death(this.player.x, this.player.y, PALETTE.blue, PALETTE.yellow, 40);
+    this.sfx.enemyDeath(40);
     this.fx.shake(400, 0.012);
     this.player.setVisible(false);
     const summary: RunSummary = { timeSec: this.run.timeSec, level: this.run.level, kills: this.run.kills, seed: this.run.seed };
@@ -180,10 +185,14 @@ export class GameScene extends Phaser.Scene {
     };
     const onPauseRequest = (): void => this.openPause();
     const onHidden = (): void => this.openPause();
+    const onMute = (): void => {
+      this.sfx.toggleMute();
+    };
     this.events.on(Phaser.Scenes.Events.RESUME, onResume);
     this.events.on(GAME_EVENTS.pauseRequest, onPauseRequest);
     this.input.keyboard?.on('keydown-ESC', onPauseRequest);
     this.input.keyboard?.on('keydown-P', onPauseRequest);
+    this.input.keyboard?.on('keydown-M', onMute);
     // Auto-pause when the tab/app is backgrounded (important on mobile). Not in smoke mode.
     if (!flags.smoke) this.game.events.on(Phaser.Core.Events.HIDDEN, onHidden);
 
@@ -192,6 +201,8 @@ export class GameScene extends Phaser.Scene {
       this.events.off(GAME_EVENTS.pauseRequest, onPauseRequest);
       this.input.keyboard?.off('keydown-ESC', onPauseRequest);
       this.input.keyboard?.off('keydown-P', onPauseRequest);
+      this.input.keyboard?.off('keydown-M', onMute);
+      this.sfx.dispose();
       this.game.events.off(Phaser.Core.Events.HIDDEN, onHidden);
       for (const name of INVARIANTS) hook.removeInvariant(name);
       this.registry.remove('controls');

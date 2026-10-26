@@ -4,10 +4,11 @@ title: Procedural sound effects
 assignee: desktop
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 claimed_at: 2026-10-26T16:44:33Z
+finished_at: 2026-10-26T17:35:29Z
 ---
 
 ## Goal
@@ -78,3 +79,20 @@ WeaponSystem / CombatSystem / PickupSystem: append one final constructor param `
 
 ### Tests
 - none (engine-side Web Audio; `npm run smoke` exercises the wiring in a real browser)
+
+## Result (attempt 1, desktop)
+
+Added `src/audio/Sfx.ts`, which synthesizes all six SFX (shoot, hit, enemyDeath, pickup with combo pitch-rise, playerHurt, levelUp) on Phaser's WebAudio context using oscillators, filtered noise and gain envelopes — no audio files, master volume 0.35, 40 ms throttles on hit/pickup, and silent no-ops when the sound manager isn't WebAudio or the context isn't unlocked. Wired it into GameScene (created in `create()`, passed to Weapon/Combat/Pickup systems, `levelUp()` on overlay open, `enemyDeath(40)` on player death) with an `M` mute toggle persisted to `localStorage` under `scope-creep:muted`, listener removal and `dispose()` on shutdown; documented the new Audio section in `docs/ARCHITECTURE.md`.
+
+- Self-review: APPROVE
+- Time: 50.9 min
+
+```
+game/docs/ARCHITECTURE.md        |   4 +
+ game/src/audio/Sfx.ts            | 168 +++++++++++++++++++++++++++++++++++++++
+ game/src/scenes/GameScene.ts     |  17 +++-
+ game/src/systems/CombatSystem.ts |   7 ++
+ game/src/systems/PickupSystem.ts |   6 +-
+ game/src/systems/WeaponSystem.ts |   6 +-
+ 6 files changed, 203 insertions(+), 5 deletions(-)
+```

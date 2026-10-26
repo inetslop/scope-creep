@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import type { Sfx } from '../audio/Sfx';
 import { PLAYER_INVULN_MS } from '../config';
 import type { RunState } from '../core/run';
 import { hook } from '../debug/testHook';
@@ -18,6 +19,7 @@ export class CombatSystem {
   private readonly player: Player;
   private readonly fx: FxSystem;
   private readonly pickups: PickupSystem;
+  private readonly sfx: Sfx;
 
   constructor(
     scene: Phaser.Scene,
@@ -26,12 +28,14 @@ export class CombatSystem {
     groups: { enemies: Phaser.Physics.Arcade.Group; projectiles: Phaser.Physics.Arcade.Group },
     fx: FxSystem,
     pickups: PickupSystem,
+    sfx: Sfx,
   ) {
     this.scene = scene;
     this.run = run;
     this.player = player;
     this.fx = fx;
     this.pickups = pickups;
+    this.sfx = sfx;
     scene.physics.add.overlap(groups.projectiles, groups.enemies, (p, e) => this.onProjectileHit(as<Projectile>(p), as<Enemy>(e)));
     scene.physics.add.overlap(player, groups.enemies, (_p, e) => this.onPlayerTouched(as<Enemy>(e)));
     scene.physics.add.collider(groups.enemies, groups.enemies);
@@ -42,6 +46,7 @@ export class CombatSystem {
     p.hitSerials.add(e.serial);
     const died = e.hit(p.damage, p, p.knockback);
     this.fx.hit(p.x, p.y, e.def.look.body);
+    this.sfx.hit();
     if (died) this.killEnemy(e);
     p.pierceLeft -= 1;
     if (p.pierceLeft < 0) p.despawn();
@@ -54,11 +59,13 @@ export class CombatSystem {
     this.player.invulnerableUntil = now + PLAYER_INVULN_MS;
     e.hit(0, this.player, 320); // shove the enemy back so contact isn't continuous
     this.fx.playerHit();
+    this.sfx.playerHurt();
   }
 
   killEnemy(e: Enemy): void {
     const look = e.def.look;
     this.fx.death(e.x, e.y, look.body, look.accent, look.radius);
+    this.sfx.enemyDeath(look.radius);
     if (look.radius >= 24) this.fx.shake(90, 0.003);
     this.pickups.drop(e.x, e.y, e.def.xp);
     this.run.kills += 1;

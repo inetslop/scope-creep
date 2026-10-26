@@ -45,6 +45,10 @@ The arena is `ARENA_SIZE` square, centered on (0,0). Camera zoom = short screen 
 
 `TouchSticks` turns touches on the left/right half of the screen into floating sticks (state only; HudScene draws them). `Controls` merges gamepad > touch > keyboard+mouse into one `ControlState`. Touches starting in the top 72 px are ignored (HUD buttons).
 
+## Audio
+
+`Sfx` (`src/audio/Sfx.ts`) synthesizes every sound effect on Phaser's WebAudio context — oscillators, filtered noise and gain envelopes; there are no audio files. Master volume is 0.35. `M` toggles mute, persisted in `localStorage` (`scope-creep:muted`). Sounds only play once the first input unlocks the context; before that (or with a non-WebAudio sound manager) every call is a silent no-op.
+
 ## Test hook contract (`debug/testHook.ts`)
 
 The browser smoke test (owned by the loop, outside this folder) fails the build if:

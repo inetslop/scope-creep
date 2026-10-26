@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import type { Sfx } from '../audio/Sfx';
 import type { RunState } from '../core/run';
 import { hook } from '../debug/testHook';
 import type { Player } from '../entities/Player';
@@ -15,11 +16,13 @@ export class PickupSystem {
   private readonly run: RunState;
   private readonly player: Player;
   private readonly fx: FxSystem;
+  private readonly sfx: Sfx;
 
-  constructor(scene: Phaser.Scene, run: RunState, player: Player, fx: FxSystem) {
+  constructor(scene: Phaser.Scene, run: RunState, player: Player, fx: FxSystem, sfx: Sfx) {
     this.run = run;
     this.player = player;
     this.fx = fx;
+    this.sfx = sfx;
     this.shards = scene.add.group({ classType: Shard, maxSize: MAX_SHARDS });
   }
 
@@ -49,6 +52,7 @@ export class PickupSystem {
       if (dist < COLLECT_DISTANCE) {
         this.collect(s.value);
         this.fx.pickup(s.x, s.y);
+        this.sfx.pickup();
         s.despawn();
         continue;
       }

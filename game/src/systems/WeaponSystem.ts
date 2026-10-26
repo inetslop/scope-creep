@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import type { Sfx } from '../audio/Sfx';
 import { getWeapon } from '../content/weapons';
 import type { WeaponDef } from '../content/types';
 import type { RunState } from '../core/run';
@@ -16,11 +17,13 @@ export class WeaponSystem {
   private readonly run: RunState;
   private readonly player: Player;
   private readonly fx: FxSystem;
+  private readonly sfx: Sfx;
 
-  constructor(scene: Phaser.Scene, run: RunState, player: Player, fx: FxSystem) {
+  constructor(scene: Phaser.Scene, run: RunState, player: Player, fx: FxSystem, sfx: Sfx) {
     this.run = run;
     this.player = player;
     this.fx = fx;
+    this.sfx = sfx;
     this.projectiles = scene.physics.add.group({ classType: Projectile, maxSize: 400, runChildUpdate: false });
   }
 
@@ -69,5 +72,6 @@ export class WeaponSystem {
       hook.stats.shotsFired += 1;
     }
     this.fx.muzzle(muzzle.x, muzzle.y, def.look.color);
+    this.sfx.shoot();
   }
 }
