@@ -4,10 +4,11 @@ title: The Frame — first boss
 assignee: desktop
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: [T0005]
-attempts: 0
+attempts: 1
 created: 2026-10-26T17:40:33Z
+claimed_at: 2026-10-26T21:56:56Z
 ---
 
 ## Goal
