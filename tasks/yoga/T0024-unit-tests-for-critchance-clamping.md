@@ -4,11 +4,12 @@ title: Unit tests for critChance clamping
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T20:18:38Z
 claimed_at: 2026-10-26T20:45:46Z
+finished_at: 2026-10-26T20:51:52Z
 ---
 
 ## Goal
@@ -82,3 +83,15 @@ describe('critChance clamping', () => {
 
 ### Tests
 - `tests/core/critChance.test.ts` (the file itself): fresh-run 0, clamp at 0.5 via direct mod and stacked `contrast` upgrades, clamp at 0 via negative mod.
+
+## Result (attempt 1, yoga)
+
+Added `tests/core/critChance.test.ts` locking the `critChance` clamp in `src/core/stats.ts`: a fresh run reads 0, stacking the `contrast` upgrade 10 times (via `RunState.applyUpgrade`, which doesn't enforce maxLevel) plus a +99 direct mod both read exactly 0.5, and negative mods read exactly 0. No game source files changed; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 6.1 min
+
+```
+game/tests/core/critChance.test.ts | 28 ++++++++++++++++++++++++++++
+ 1 file changed, 28 insertions(+)
+```
