@@ -1,6 +1,20 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { run, runOk, type ExecResult } from './exec.ts';
+import { run, runOk, sleep, tail, type ExecResult } from './exec.ts';
+import { warn } from './log.ts';
+
+/**
+ * git errors that mean the network blinked (a DNS lookup or connection failed), not that the
+ * command was wrong. A rejected push or a merge conflict never matches.
+ */
+export function isTransientGitError(stderr: string): boolean {
+  return /Could not resolve host|Couldn't resolve host|Failed to connect|Connection (timed out|reset|refused)|Operation timed out|Recv failure|early EOF|remote end hung up unexpectedly|gnutls_handshake|SSL_(read|connect|ERROR)|HTTP\/2 stream \d+ was not closed|Temporary failure in name resolution/i.test(
+    stderr,
+  );
+}
+
+/** Waits between retries of a git command that hit a network error. */
+const NETWORK_RETRY_MS = [5_000, 15_000, 30_000, 60_000];
 
 export interface ChangedPath {
   /** Repo-relative POSIX path. */
@@ -100,8 +114,24 @@ export class Git {
     await this.ok(['-c', `user.name=${who}`, '-c', `user.email=${who}@scope-creep.local`, 'commit', '-q', '--no-verify', '--amend', '--no-edit']);
   }
 
+  /**
+   * A git command that talks to GitHub, retried while it fails with a network error, so a flaky
+   * DNS server or a dropped connection doesn't crash the runner or throw away finished work.
+   */
+  private async network(args: readonly string[]): Promise<ExecResult> {
+    let r = await this.raw(args);
+    for (const wait of NETWORK_RETRY_MS) {
+      if (r.code === 0 || !isTransientGitError(r.stderr)) break;
+      warn(`git ${args[0]}: network error (${r.stderr.trim().split('\n').pop()}); retrying in ${wait / 1000}s`);
+      await sleep(wait);
+      r = await this.raw(args);
+    }
+    return r;
+  }
+
   async fetch(): Promise<void> {
-    await this.ok(['fetch', '--quiet', '--prune', 'origin']);
+    const r = await this.network(['fetch', '--quiet', '--prune', 'origin']);
+    if (r.code !== 0) throw new Error(`git fetch --quiet --prune origin failed (exit ${r.code}):\n${tail(r.stderr || r.stdout, 30)}`);
   }
 
   /** Commits on HEAD that are not on origin/main. */
@@ -146,7 +176,7 @@ export class Git {
   }
 
   async push(): Promise<ExecResult> {
-    return this.raw(['push', '--quiet', 'origin', 'HEAD:main']);
+    return this.network(['push', '--quiet', 'origin', 'HEAD:main']);
   }
 
   async resetHard(ref: string): Promise<void> {
