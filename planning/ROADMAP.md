@@ -17,12 +17,13 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Next: screen shake on heavy deaths (wait for T0006 to land so the boss shares the same shake)
 
 ## M2 — Variety (in progress)
-- Enemies: Hex (T0001) ✅, Mote swarm (T0010), Sentry ranged (T0007) ✅, Splitter (T0009)
+- Enemies: Hex (T0001) ✅, Mote swarm (T0010), Sentry ranged (T0007) ✅, Splitter (T0009) ✅
+- Enemy projectiles now exist (Sentry) — boss dart-burst patterns unblocked
 - Weapons: Orbit (T0008) ✅; backlog: arc, stamp, negative-space bomb
 - Upgrades: Tempo (T0002), Draft (T0012), Contrast crit (T0013); backlog: weapon-specific lines, evolutions
 
 ## M3 — Bosses (started)
-- The Frame at 5:00: health bar, charge + radial wedge ring, +50% HP per respawn (T0006, design)
+- The Frame at 5:00: health bar, charge + wedge ring + radial dart burst, +50% HP per respawn (T0006, design)
 - Later: second boss, projectile-based patterns
 
 ## M4 — Meta-progression
