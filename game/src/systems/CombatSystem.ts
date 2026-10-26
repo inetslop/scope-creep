@@ -6,6 +6,7 @@ import { hook } from '../debug/testHook';
 import type { Enemy } from '../entities/Enemy';
 import type { Player } from '../entities/Player';
 import type { Projectile } from '../entities/Projectile';
+import type { DamageNumbers } from './DamageNumbers';
 import type { FxSystem } from './FxSystem';
 import type { PickupSystem } from './PickupSystem';
 
@@ -20,6 +21,7 @@ export class CombatSystem {
   private readonly fx: FxSystem;
   private readonly pickups: PickupSystem;
   private readonly sfx: Sfx;
+  private readonly damageNumbers: DamageNumbers;
 
   constructor(
     scene: Phaser.Scene,
@@ -29,6 +31,7 @@ export class CombatSystem {
     fx: FxSystem,
     pickups: PickupSystem,
     sfx: Sfx,
+    damageNumbers: DamageNumbers,
   ) {
     this.scene = scene;
     this.run = run;
@@ -36,6 +39,7 @@ export class CombatSystem {
     this.fx = fx;
     this.pickups = pickups;
     this.sfx = sfx;
+    this.damageNumbers = damageNumbers;
     scene.physics.add.overlap(groups.projectiles, groups.enemies, (p, e) => this.onProjectileHit(as<Projectile>(p), as<Enemy>(e)));
     scene.physics.add.overlap(player, groups.enemies, (_p, e) => this.onPlayerTouched(as<Enemy>(e)));
     scene.physics.add.collider(groups.enemies, groups.enemies);
@@ -45,6 +49,7 @@ export class CombatSystem {
     if (!p.active || !e.active || p.hitSerials.has(e.serial)) return;
     p.hitSerials.add(e.serial);
     const died = e.hit(p.damage, p, p.knockback);
+    this.damageNumbers.show(e.x, e.y, p.damage);
     this.fx.hit(p.x, p.y, e.def.look.body);
     this.sfx.hit();
     if (died) this.killEnemy(e);

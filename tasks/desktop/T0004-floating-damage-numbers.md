@@ -4,10 +4,11 @@ title: Floating damage numbers
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 claimed_at: 2026-10-26T17:45:12Z
+finished_at: 2026-10-26T17:49:36Z
 ---
 
 ## Goal
@@ -109,3 +110,17 @@ export class DamageNumbers {
 
 ### Tests
 none (Phaser-dependent system; no pure logic in `core/`).
+
+## Result (attempt 1, desktop)
+
+Added floating damage numbers: new `src/systems/DamageNumbers.ts` owns a lazy pool of at most 60 `Text` objects that pop up 24 world units and fade over 450 ms (bold ink, red+bigger for the reserved crit path, `paperLight` stroke, `DEPTH.fx + 1`), with a small random jitter so numbers don't stack. `CombatSystem` now takes the system as its last constructor param and calls `show()` with the dealt damage on every projectile hit, and `GameScene` constructs it, wires it in, and registers the `damage-numbers-pool` invariant (≤60 active) that is removed on shutdown. `npm run check` and `npm run smoke` (desktop + phone) both pass.
+
+- Self-review: APPROVE
+- Time: 4.4 min
+
+```
+game/src/scenes/GameScene.ts      |  8 ++++--
+ game/src/systems/CombatSystem.ts  |  5 ++++
+ game/src/systems/DamageNumbers.ts | 55 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 66 insertions(+), 2 deletions(-)
+```

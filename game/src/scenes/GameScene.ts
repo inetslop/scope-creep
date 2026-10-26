@@ -12,6 +12,7 @@ import { hook } from '../debug/testHook';
 import { Player } from '../entities/Player';
 import { Controls } from '../input/Controls';
 import { CombatSystem } from '../systems/CombatSystem';
+import { DamageNumbers } from '../systems/DamageNumbers';
 import { FxSystem } from '../systems/FxSystem';
 import { PickupSystem } from '../systems/PickupSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
@@ -34,6 +35,7 @@ export class GameScene extends Phaser.Scene {
   private player!: Player;
   private controls!: Controls;
   private fx!: FxSystem;
+  private damageNumbers!: DamageNumbers;
   private sfx!: Sfx;
   private weapons!: WeaponSystem;
   private spawns!: SpawnSystem;
@@ -63,11 +65,12 @@ export class GameScene extends Phaser.Scene {
 
     this.player = new Player(this, 0, 0);
     this.fx = new FxSystem(this);
+    this.damageNumbers = new DamageNumbers(this);
     this.sfx = new Sfx(this);
     this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx);
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds);
-    new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles }, this.fx, this.pickups, this.sfx);
+    new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles }, this.fx, this.pickups, this.sfx, this.damageNumbers);
 
     this.controls = new Controls(this);
     this.registry.set('controls', this.controls);
@@ -233,7 +236,8 @@ export class GameScene extends Phaser.Scene {
     });
     hook.addInvariant('enemy-count', () => (this.spawns.activeCount <= this.spawns.maxEnemies ? null : `${this.spawns.activeCount} enemies alive`));
     hook.addInvariant('projectile-count', () => (this.weapons.activeCount <= 400 ? null : `${this.weapons.activeCount} projectiles alive`));
+    hook.addInvariant('damage-numbers-pool', () => (this.damageNumbers.activeCount <= 60 ? null : `${this.damageNumbers.activeCount} damage numbers active`));
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'projectile-count'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'projectile-count', 'damage-numbers-pool'];
