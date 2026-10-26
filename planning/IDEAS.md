@@ -68,3 +68,8 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Tile: a green square that chases at medium speed and never splits~~ → T0023
 - The Mine: a still ink circle with a red core; when killed it explodes for 20 damage in a 60-unit radius and leaves a scorch decal
 - Warm-up: the first 10 s of a run, fire rate +50%, with a "WARM-UP" flash in the HUD
+- ~~Slab: a big yellow square that crawls very slowly, huge HP, barely moves when knocked back — a wall to route around~~ → T0025
+- ~~Allegro upgrade: +15% fire rate, -8% move speed per level, maxLevel 3 — the first trade-off upgrade~~ → T0026
+- Spike: a small red diamond, fast, high contact damage — a punisher for hugging the swarm
+- Turret: a still orange square that never moves and fires faster than the Sentry, but only straight at you
+- Unit test for spawn unlock timing: each enemy is absent just before its unlockAtSec and present at/after it
