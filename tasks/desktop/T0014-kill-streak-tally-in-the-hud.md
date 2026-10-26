@@ -4,10 +4,11 @@ title: Kill-streak tally in the HUD
 assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0005, T0006]
-attempts: 0
+attempts: 1
 created: 2026-10-26T18:39:20Z
+claimed_at: 2026-10-26T22:48:26Z
 ---
 
 ## Goal
