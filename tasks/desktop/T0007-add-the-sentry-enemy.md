@@ -4,10 +4,12 @@ title: Add the Sentry enemy
 assignee: desktop
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T17:40:33Z
+claimed_at: 2026-10-26T17:50:08Z
+designer: desktop
 ---
 
 ## Goal
