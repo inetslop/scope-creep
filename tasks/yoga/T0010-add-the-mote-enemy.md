@@ -4,10 +4,12 @@ title: Add the Mote enemy
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T17:40:33Z
+claimed_at: 2026-10-26T19:04:28Z
+designer: asus
 ---
 
 ## Goal
