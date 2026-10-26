@@ -4,9 +4,10 @@ title: Add the Tempo upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
+claimed_at: 2026-10-26T19:04:38Z
 ---
 
 ## Goal
