@@ -13,6 +13,7 @@ export class FxSystem {
   private readonly sparks: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly fragments: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly rings: Phaser.GameObjects.Particles.ParticleEmitter;
+  private readonly critRings: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly trail: Phaser.GameObjects.Particles.ParticleEmitter;
 
   constructor(scene: Phaser.Scene) {
@@ -37,6 +38,13 @@ export class FxSystem {
       alpha: { start: 0.9, end: 0 },
       emitting: false,
     });
+    this.critRings = scene.add.particles(0, 0, TEX.ring, {
+      lifespan: 300,
+      scale: { start: 0.5, end: 0.75 },
+      alpha: { start: 1, end: 0 },
+      tint: PALETTE.ink,
+      emitting: false,
+    });
     this.trail = scene.add.particles(0, 0, TEX.dot, {
       lifespan: { min: 400, max: 700 },
       speed: { min: 0, max: 12 },
@@ -46,13 +54,18 @@ export class FxSystem {
       emitting: false,
     });
     this.trail.setDepth(DEPTH.pickups - 1);
-    for (const e of [this.fragments, this.sparks, this.rings]) e.setDepth(DEPTH.fx);
+    for (const e of [this.fragments, this.sparks, this.rings, this.critRings]) e.setDepth(DEPTH.fx);
   }
 
   /** Small burst where a projectile hits. */
   hit(x: number, y: number, color: number): void {
     this.sparks.setParticleTint(color);
     this.sparks.explode(4, x, y);
+  }
+
+  /** Small ink ring at a crit impact point. */
+  critRing(x: number, y: number): void {
+    this.critRings.explode(1, x, y);
   }
 
   /** Enemy destroyed: a ring and fragments in its color. */

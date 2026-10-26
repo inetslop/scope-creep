@@ -63,7 +63,12 @@ export class CombatSystem {
     const died = e.hit(dmg, p, p.knockback);
     this.damageNumbers.show(e.x, e.y, dmg, crit);
     this.fx.hit(p.x, p.y, e.def.look.body);
-    this.sfx.hit();
+    if (crit) {
+      this.sfx.critHit();
+      this.fx.critRing(p.x, p.y);
+    } else {
+      this.sfx.hit();
+    }
     if (died) this.killEnemy(e);
     p.pierceLeft -= 1;
     if (p.pierceLeft < 0) p.despawn();

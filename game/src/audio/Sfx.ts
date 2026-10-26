@@ -18,6 +18,7 @@ export class Sfx {
   private readonly noiseBuffer: AudioBuffer | null;
   private muted: boolean;
   private lastHitAt = 0;
+  private lastCritHitAt = 0;
   private lastPickupAt = 0;
   private lastPickupCallAt = 0;
   private comboStep = 0;
@@ -78,6 +79,16 @@ export class Sfx {
     this.lastHitAt = now;
     this.noise(0.07, 0.22, 2400, 'bandpass');
     this.tone('sine', 220, 160, 0.08, 0.18);
+  }
+
+  /** Higher-pitched knock for crits: same envelope and gain as hit(), pitch doubled. */
+  critHit(): void {
+    if (!this.canPlay()) return;
+    const now = performance.now();
+    if (now - this.lastCritHitAt < THROTTLE_MS) return;
+    this.lastCritHitAt = now;
+    this.noise(0.07, 0.22, 2400, 'bandpass');
+    this.tone('sine', 440, 320, 0.08, 0.18);
   }
 
   /** Low pluck that drops in pitch with enemy size. */

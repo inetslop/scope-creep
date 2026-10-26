@@ -4,11 +4,12 @@ title: "Crit sting: sound and ring on crits"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T20:02:05Z
 claimed_at: 2026-10-26T20:05:20Z
+finished_at: 2026-10-26T20:09:10Z
 ---
 
 ## Goal
@@ -99,3 +100,18 @@ if (crit) {
 
 ### Tests
 none
+
+## Result (attempt 1, desktop)
+
+Crits now land as events: added `Sfx.critHit()` (a ~80 ms knock at 2× the hit pitch, same envelope/gain, own `lastCritHitAt` throttle so it never blocks a normal hit) and `FxSystem.critRing()` (a small ink ring via a dedicated `critRings` emitter, 300 ms fade, ~14–21 unit radius). Both crit branches — projectile hits in `CombatSystem.onProjectileHit` and Orbit weapon contact in `OrbitSystem.update` — play the sting and ring at the impact point; non-crit hits are byte-for-byte unchanged, so runs without Contrast produce no new audio or FX. `npm run check` and `npm run smoke` pass on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 3.8 min
+
+```
+game/src/audio/Sfx.ts            | 11 +++++++++++
+ game/src/systems/CombatSystem.ts |  7 ++++++-
+ game/src/systems/FxSystem.ts     | 15 ++++++++++++++-
+ game/src/systems/OrbitSystem.ts  |  7 ++++++-
+ 4 files changed, 37 insertions(+), 3 deletions(-)
+```
