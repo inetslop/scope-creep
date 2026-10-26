@@ -4,10 +4,11 @@ title: Unit tests for seeded RNG determinism
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-26T20:02:05Z
+claimed_at: 2026-10-26T20:12:55Z
 ---
 
 ## Goal
