@@ -4,12 +4,10 @@ title: Unit tests for spawn unlock timing
 assignee: yoga
 size: S
 priority: 3
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-26T20:55:07Z
-claimed_at: 2026-10-26T21:03:32Z
-designer: desktop
 ---
 
 ## Goal
@@ -26,3 +24,65 @@ Lock down the promise that every enemy is absent just before its unlock time and
 - [ ] Each enemy is asserted absent at `unlockAtSec - 1` s and present at `unlockAtSec` s (or the data fallback above is used)
 - [ ] If a helper is extracted, in-play unlock times are unchanged
 - [ ] `npm run check` (including the new test) and `npm run smoke` pass
+
+## Design (architect, desktop)
+
+### Files
+- create `tests/content/spawn.test.ts` - unit test for spawn unlock timing. No other files change (the pure function already exists; do NOT touch `src/`).
+
+### Interfaces
+Nothing new. The test uses the existing public API:
+```ts
+new SpawnDirector(ENEMIES)               // src/core/director.ts, config defaults
+director.unlocked(timeSec: number): EnemyDef[]  // pure: unlockAtSec <= timeSec && spawnWeight > 0
+```
+
+### Steps
+1. Create `tests/content/spawn.test.ts` with exactly this content:
+```ts
+/**
+ * Locks down spawn unlock timing: every director-spawnable enemy is absent just
+ * before its `unlockAtSec` and present at/after it. Enemies with spawnWeight 0
+ * (split children) must never appear in the director pool at any time.
+ */
+import { describe, expect, it } from 'vitest';
+import { ENEMIES } from '../../src/content/enemies';
+import { SpawnDirector } from '../../src/core/director';
+
+const director = new SpawnDirector(ENEMIES);
+const idsAt = (t: number): Set<string> => new Set(director.unlocked(t).map((e) => e.id));
+
+describe('spawn unlock timing', () => {
+  it.each(ENEMIES.map((e) => [e.id, e] as const))('%s unlocks exactly at unlockAtSec', (_id, e) => {
+    if (e.spawnWeight === 0) {
+      expect(idsAt(0).has(e.id), 'never in the director pool').toBe(false);
+      expect(idsAt(600).has(e.id), 'never in the director pool').toBe(false);
+      return;
+    }
+    expect(idsAt(e.unlockAtSec - 1).has(e.id), 'absent just before unlock').toBe(false);
+    expect(idsAt(e.unlockAtSec).has(e.id), 'present at unlock').toBe(true);
+    expect(idsAt(600).has(e.id), 'present well past unlock').toBe(true);
+  });
+
+  it('the available set never shrinks as time grows', () => {
+    let prev = idsAt(0);
+    for (let t = 5; t <= 600; t += 5) {
+      const cur = idsAt(t);
+      for (const id of prev) expect(cur.has(id), `"${id}" disappears at ${t}s`).toBe(true);
+      prev = cur;
+    }
+  });
+});
+```
+2. Run `npm run check` (typecheck + lint + vitest picks up the new file via `tests/**/*.test.ts`), then `npm run smoke`.
+
+Note for the product owner: the per-enemy "present at unlockAtSec" assertion applies to director-spawnable enemies (`spawnWeight > 0`). `splinter` has `spawnWeight: 0` by design (it only appears via splits), so for that class the test asserts absence at 0 s and 600 s — the actual contract per `types.ts`. This also covers enemies added later (e.g. T0028's Spike) automatically, since `it.each` iterates `ENEMIES` at run time.
+
+### Pitfalls
+- Do not "fix" the test to make splinter pass at its unlock time — `unlocked()` intentionally filters `spawnWeight > 0`; changing that would alter spawn behavior.
+- Do not extract or modify `SpawnDirector` — it is already pure and already the function the spawn system uses; any `src/` edit risks in-play behavior changes.
+- Import paths are `../../src/...` (two levels up from `tests/content/`); the flat `tests/content.test.ts` uses `../src/...` — don't copy that.
+- `unlockAtSec - 1` is -1 for `wedge` (unlocks at 0); `unlocked(-1)` correctly excludes it, so no special-casing needed.
+
+### Tests
+- `tests/content/spawn.test.ts` (the file itself, as above). No other tests.
