@@ -23,6 +23,27 @@ function Write-Log([string]$Message) {
     Add-Content -Path (Join-Path $AgentDir 'logs\supervisor.log') -Value $line
 }
 
+# Clicking inside a classic console window starts a QuickEdit selection, which pauses every
+# program writing to that window until Enter/Esc is pressed: the runner, and the agent and model
+# waiting on it, would silently freeze. Turn QuickEdit off for this window.
+function Disable-QuickEdit {
+    try {
+        Add-Type -Namespace ScopeCreep -Name ConsoleMode -ErrorAction Stop -MemberDefinition @'
+[DllImport("kernel32.dll", SetLastError = true)] public static extern IntPtr GetStdHandle(int nStdHandle);
+[DllImport("kernel32.dll", SetLastError = true)] public static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
+[DllImport("kernel32.dll", SetLastError = true)] public static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
+'@
+        $stdin = [ScopeCreep.ConsoleMode]::GetStdHandle(-10)
+        $mode = [uint32]0
+        if (-not [ScopeCreep.ConsoleMode]::GetConsoleMode($stdin, [ref]$mode)) { return } # not a console (e.g. redirected)
+        # Clear ENABLE_QUICK_EDIT_MODE (0x40); ENABLE_EXTENDED_FLAGS (0x80) must be set for that to stick.
+        $newMode = [uint32](($mode -band 0xFFBF) -bor 0x80)
+        if ([ScopeCreep.ConsoleMode]::SetConsoleMode($stdin, $newMode)) { Write-Log 'QuickEdit is off: clicking in this window will not pause the agent' }
+    } catch {
+        Write-Log "could not turn off QuickEdit ($($_.Exception.Message)); avoid clicking in this window"
+    }
+}
+
 function Sync-RootDeps {
     $hash = (Get-FileHash (Join-Path $Repo 'package-lock.json')).Hash
     $old = ''
@@ -35,6 +56,7 @@ function Sync-RootDeps {
     Set-Content -Path $DepsStamp -Value $hash -Encoding ascii
 }
 
+Disable-QuickEdit
 $backoff = 15
 while ($true) {
     if ((Get-FileHash $PSCommandPath).Hash -ne $SelfHash) {

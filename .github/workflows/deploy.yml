@@ -4,7 +4,7 @@ name: Deploy game to GitHub Pages
 
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '3,13,23,33,43,53 * * * *' # 6x/hour, off the top of the hour (GitHub drops busy-time runs)
   workflow_dispatch:
 
 permissions:
@@ -23,7 +23,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Skip if this commit is already live
         id: live
@@ -36,7 +36,7 @@ jobs:
             echo "skip=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         if: steps.live.outputs.skip != 'true'
         with:
           node-version: 24
@@ -51,14 +51,14 @@ jobs:
           npm run check
           npm run build
 
-      - uses: actions/configure-pages@v5
+      - uses: actions/configure-pages@v6
         if: steps.live.outputs.skip != 'true'
 
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v5
         if: steps.live.outputs.skip != 'true'
         with:
           path: game/dist
 
       - id: deployment
         if: steps.live.outputs.skip != 'true'
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
