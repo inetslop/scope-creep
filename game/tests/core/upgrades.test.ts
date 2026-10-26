@@ -59,4 +59,20 @@ describe('rollUpgradeChoices', () => {
     expect(run.upgradeLevel('pulse')).toBe(3);
     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
   });
+
+  it('sweep offers 3 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('sweep')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'moveSpeed', op: 'mul', value: 1.10 },
+      { stat: 'pickupRadius', op: 'mul', value: 1.10 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('sweep')).toBe(3);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
 });

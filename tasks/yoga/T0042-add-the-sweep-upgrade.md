@@ -4,11 +4,12 @@ title: Add the Sweep upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0041]
 attempts: 1
 created: 2026-10-26T23:09:26Z
 claimed_at: 2026-10-26T23:46:38Z
+finished_at: 2026-10-26T23:52:24Z
 ---
 
 ## Goal
@@ -87,3 +88,16 @@ None. Data only; `UpgradeDef` (`src/content/types.ts:137`) unchanged.
 
 ### Tests
 - `tests/core/upgrades.test.ts`: the `sweep offers 3 levels, then stops` test above (already specified in Step 2). `tests/content.test.ts` validates the new entry automatically — no edit needed there.
+
+## Result (attempt 1, yoga)
+
+Added the "Sweep" upgrade to `UPGRADES` in `src/content/upgrades/index.ts` — a max-3-level, weight-4, green card that multiplies move speed and shard pickup radius by 1.10 each level (×1.33 at 3), so it stacks naturally with Momentum, Gravity and Gather. Added the matching unit test in `tests/core/upgrades.test.ts` asserting the exact two mods and 3-level availability. `npm run check` (131 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 5.8 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
