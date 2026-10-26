@@ -1,0 +1,8 @@
+node_modules/
+
+# Per-machine agent state: local config, logs, transcripts, smoke output, isolated Claude Code home
+.agent/
+
+*.log
+.DS_Store
+Thumbs.db

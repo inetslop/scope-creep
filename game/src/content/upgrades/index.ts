@@ -1,0 +1,105 @@
+import { PALETTE } from '../palette';
+import type { UpgradeDef } from '../types';
+
+/**
+ * Every level-up upgrade. Small upgrades live in this list; if one grows large
+ * (custom logic, many fields) give it its own file and import it here.
+ */
+export const UPGRADES: readonly UpgradeDef[] = [
+  {
+    id: 'rhythm',
+    name: 'Rhythm',
+    description: '+20% fire rate',
+    maxLevel: 5,
+    weight: 10,
+    mods: [{ stat: 'fireRateMul', op: 'mul', value: 1.2 }],
+    color: PALETTE.red,
+  },
+  {
+    id: 'weight',
+    name: 'Weight',
+    description: '+25% damage',
+    maxLevel: 5,
+    weight: 10,
+    mods: [{ stat: 'damageMul', op: 'mul', value: 1.25 }],
+    color: PALETTE.ink,
+  },
+  {
+    id: 'repetition',
+    name: 'Repetition',
+    description: '+1 projectile per volley',
+    maxLevel: 4,
+    weight: 6,
+    mods: [{ stat: 'extraProjectiles', op: 'add', value: 1 }],
+    color: PALETTE.blue,
+  },
+  {
+    id: 'momentum',
+    name: 'Momentum',
+    description: '+12% move speed',
+    maxLevel: 4,
+    weight: 8,
+    mods: [{ stat: 'moveSpeed', op: 'mul', value: 1.12 }],
+    color: PALETTE.green,
+  },
+  {
+    id: 'mass',
+    name: 'Mass',
+    description: '+25 max HP, +1 armor',
+    maxLevel: 5,
+    weight: 8,
+    mods: [
+      { stat: 'maxHp', op: 'add', value: 25 },
+      { stat: 'armor', op: 'add', value: 1 },
+    ],
+    color: PALETTE.inkSoft,
+  },
+  {
+    id: 'gravity',
+    name: 'Gravity',
+    description: '+40% shard pickup radius',
+    maxLevel: 4,
+    weight: 6,
+    mods: [{ stat: 'pickupRadius', op: 'mul', value: 1.4 }],
+    color: PALETTE.blueLight,
+  },
+  {
+    id: 'vector',
+    name: 'Vector',
+    description: 'Projectiles pierce +1 enemy',
+    maxLevel: 3,
+    weight: 5,
+    mods: [{ stat: 'extraPierce', op: 'add', value: 1 }],
+    color: PALETTE.orange,
+  },
+  {
+    id: 'balance',
+    name: 'Balance',
+    description: 'Regenerate 1 HP per second',
+    maxLevel: 3,
+    weight: 5,
+    mods: [{ stat: 'regenPerSec', op: 'add', value: 1 }],
+    color: PALETTE.green,
+  },
+  {
+    id: 'line',
+    name: 'Line',
+    description: 'New weapon: piercing lines',
+    maxLevel: 1,
+    weight: 4,
+    mods: [],
+    grantsWeapon: 'line',
+    color: PALETTE.blue,
+  },
+  {
+    id: 'composition',
+    name: 'Composition',
+    description: '+15% XP from shards',
+    maxLevel: 3,
+    weight: 5,
+    mods: [{ stat: 'xpMul', op: 'mul', value: 1.15 }],
+    color: PALETTE.yellow,
+  },
+];
+
+export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));

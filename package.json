@@ -1,0 +1,24 @@
+{
+  "name": "scope-creep",
+  "private": true,
+  "description": "Multi-agent loop (runner, setup, tasks) around the game in ./game.",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "agent": "powershell -NoProfile -ExecutionPolicy Bypass -File loop/start-agent.ps1",
+    "agent:once": "node loop/runner.ts --once",
+    "status": "node loop/status.ts",
+    "doctor": "node loop/doctor.ts",
+    "smoke": "node loop/smoke/smoke.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "node --test \"loop/**/*.test.ts\"",
+    "check": "npm run typecheck && npm run test"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.2",
+    "playwright": "1.64.1",
+    "typescript": "6.0.3"
+  }
+}

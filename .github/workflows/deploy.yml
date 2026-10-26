@@ -1,0 +1,64 @@
+# Builds game/ and deploys it to GitHub Pages every 10 minutes (only when main changed).
+# One-time setup: repo Settings -> Pages -> Source: "GitHub Actions".
+name: Deploy game to GitHub Pages
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Skip if this commit is already live
+        id: live
+        run: |
+          site="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/version.json"
+          live=$(curl -fsSL "$site" 2>/dev/null | jq -r '.sha // empty' || true)
+          head=$(git rev-parse HEAD)
+          echo "live=${live:-none} head=$head"
+          if [ -n "$live" ] && [[ "$head" == "$live"* ]] && [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v5
+        if: steps.live.outputs.skip != 'true'
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: game/package-lock.json
+
+      - name: Install, check and build
+        if: steps.live.outputs.skip != 'true'
+        working-directory: game
+        run: |
+          npm ci --no-audit --no-fund
+          npm run check
+          npm run build
+
+      - uses: actions/configure-pages@v5
+        if: steps.live.outputs.skip != 'true'
+
+      - uses: actions/upload-pages-artifact@v4
+        if: steps.live.outputs.skip != 'true'
+        with:
+          path: game/dist
+
+      - id: deployment
+        if: steps.live.outputs.skip != 'true'
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,21 @@
+{
+  // The loop runs WITHOUT a build step: Node 24 strips the types natively.
+  // So: relative imports end in ".ts", type-only imports use `import type`,
+  // and no enums / namespaces / constructor parameter properties.
+  "compilerOptions": {
+    "target": "ES2023",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2023", "DOM"],
+    "types": ["node"],
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "erasableSyntaxOnly": true,
+    "skipLibCheck": true,
+    "noEmit": true
+  },
+  "include": ["loop/**/*.ts"]
+}

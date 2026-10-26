@@ -1,0 +1,48 @@
+{
+  "machines": {
+    "asus": {
+      "label": "ASUS RTX Spark (128 GB unified)",
+      "model": "Qwen 3.8 UD-Q8_K_XL",
+      "roles": ["po", "dev"],
+      "tier": "strong",
+      "maxTaskSize": "L",
+      "targetQueue": 2,
+      "notes": "Best reasoning in the fleet, but slower and also runs the PO, so it develops between planning cycles. Give it the hardest design-heavy work: new systems, tricky bugs, cross-cutting changes."
+    },
+    "desktop": {
+      "label": "Ryzen 9800X3D + RTX 5090",
+      "model": "Qwen 3.8 UD-Q4_K_XL",
+      "roles": ["dev"],
+      "tier": "fast",
+      "maxTaskSize": "L",
+      "targetQueue": 4,
+      "notes": "Fastest machine. The workhorse for medium features: new mechanics, scenes, UI, juice, audio."
+    },
+    "yoga": {
+      "label": "Lenovo Yoga RTX Spark (32 GB unified)",
+      "model": "Qwen 3.8 UD-Q2_K_XL",
+      "roles": ["dev"],
+      "tier": "weak",
+      "maxTaskSize": "S",
+      "targetQueue": 3,
+      "notes": "Heavily quantized and small context. Only small, precisely specified tasks: new content data files copied from an existing example, tuning numbers, small unit tests, tiny single-function changes. Always name the exact file and the example to copy."
+    }
+  },
+  "sizes": {
+    "S": { "maxTurns": 40, "timeoutMin": 30 },
+    "M": { "maxTurns": 90, "timeoutMin": 60 },
+    "L": { "maxTurns": 150, "timeoutMin": 100 }
+  },
+  "loop": {
+    "pollSeconds": 60,
+    "maxAttempts": 3,
+    "fixRounds": 2,
+    "review": true,
+    "reviewMaxTurns": 40,
+    "poMaxTurns": 80,
+    "poTimeoutMin": 45,
+    "poMinGapMinutes": 10,
+    "poMaxGapMinutes": 90,
+    "smokeSeconds": 24
+  }
+}

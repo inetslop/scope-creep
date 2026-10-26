@@ -1,0 +1,49 @@
+/**
+ * Quick overview for humans: `npm run status` (from the repo root).
+ * Shows each machine's queue, recently finished tasks and the local model server.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { LOCAL_CONFIG_FILE, loadFleet, loadLocalConfig } from './config.ts';
+import { run } from './exec.ts';
+import { detectContextSize, isHealthy } from './llama.ts';
+import { ARCHIVE_DIR, REPO } from './paths.ts';
+import { loadState } from './state.ts';
+import { listTasks } from './tasks.ts';
+
+const fleet = loadFleet();
+const ids = Object.keys(fleet.machines);
+const { tasks, invalid } = listTasks(ids, true);
+
+console.log('\nQUEUES');
+for (const id of ids) {
+  const m = fleet.machines[id]!;
+  const mine = tasks.filter((t) => path.basename(path.dirname(t.file)) === id);
+  const count = (s: string): number => mine.filter((t) => t.status === s).length;
+  console.log(`  ${id.padEnd(9)} ${m.model.padEnd(24)} todo ${count('todo')}  in-progress ${count('in-progress')}  done ${count('done')}  failed ${count('failed')}`);
+  for (const t of mine.filter((x) => x.status === 'in-progress' || x.status === 'todo').sort((a, b) => a.id.localeCompare(b.id))) {
+    console.log(`      ${t.id} ${t.status === 'in-progress' ? '▶' : '·'} [${t.size}] ${t.title}`);
+  }
+}
+
+const archived = tasks.filter((t) => path.dirname(t.file) === ARCHIVE_DIR);
+console.log(`\nARCHIVE  ${archived.filter((t) => t.status === 'done').length} done, ${archived.filter((t) => t.status === 'failed').length} failed`);
+if (invalid.size) {
+  console.log('\nINVALID TASK FILES');
+  for (const [f, e] of invalid) console.log(`  ${path.relative(REPO, f)}: ${e}`);
+}
+
+const log = await run('git', ['log', '-12', '--format=%h %ar  %an: %s'], { cwd: REPO });
+console.log(`\nRECENT COMMITS\n${log.stdout.replace(/^/gm, '  ').trimEnd()}`);
+
+if (fs.existsSync(LOCAL_CONFIG_FILE)) {
+  const local = loadLocalConfig();
+  const state = loadState();
+  console.log(`\nTHIS MACHINE  ${local.machineId}`);
+  const healthy = await isHealthy(local);
+  console.log(`  model server ${local.llama.baseUrl} (${local.llama.model}): ${healthy ? `healthy, context ${await detectContextSize(local)}` : 'NOT RESPONDING'}`);
+  if (state.lastPoRunAt) console.log(`  last PO cycle: ${state.lastPoRunAt} (#${state.poCycles})`);
+} else {
+  console.log('\nTHIS MACHINE  not set up (no .agent/local.json)');
+}
+console.log('');

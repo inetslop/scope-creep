@@ -1,0 +1,108 @@
+/**
+ * Data definitions for everything the game spawns or offers. Content files are
+ * plain data: adding an enemy, weapon or upgrade should normally mean adding one
+ * file and registering it in the folder's index.ts. tests/content.test.ts checks
+ * every definition, so run `npm run test` after editing content.
+ */
+import type { StatMod } from '../core/stats';
+
+/** Hex color as a number, e.g. 0xc9a227. Use colors from src/art/palette.ts where possible. */
+export type Color = number;
+
+/** How an enemy moves. Implemented in src/entities/Enemy.ts (steer()). */
+export type EnemyBehavior =
+  /** Walks straight at the player. */
+  | 'chase'
+  /** Chases, then periodically stops, winds up and dashes at the player. */
+  | 'charger'
+  /** Chases while weaving side to side. */
+  | 'weaver';
+
+/** Flat geometric shapes, drawn by src/art/shapes.ts. Pointed shapes point to the right (angle 0). */
+export type ShapeKind = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'star';
+
+/** Procedural look, drawn once into a texture by src/art/textures.ts (ink outline + paper-cut shadow added automatically). */
+export interface EnemyLook {
+  shape: ShapeKind;
+  /** Body radius in world units (also the hitbox radius). */
+  radius: number;
+  /** Fill color of the shape. */
+  body: Color;
+  /** Color of the small dot in the middle (the "eye"). */
+  accent: Color;
+  /** Number of points for 'star' (default 5). */
+  points?: number;
+  /** Radians per second the sprite spins. If omitted, the enemy turns to face where it is moving. */
+  spin?: number;
+}
+
+export interface EnemyDef {
+  id: string;
+  name: string;
+  hp: number;
+  /** World units per second. */
+  speed: number;
+  /** Damage per contact hit on the player. */
+  contactDamage: number;
+  /** XP value of the shard it drops. */
+  xp: number;
+  /** Spawn cost for the director. Stronger enemies cost more. */
+  threat: number;
+  /** Relative spawn chance among unlocked enemies. 0 = never spawned by the director. */
+  spawnWeight: number;
+  /** Seconds into the run before the director can spawn it. */
+  unlockAtSec: number;
+  behavior: EnemyBehavior;
+  /** 0 = full knockback, 1 = immovable. */
+  knockbackResist: number;
+  look: EnemyLook;
+}
+
+export interface ProjectileLook {
+  /** Length and thickness in world units. Equal values make a round point. */
+  length: number;
+  width: number;
+  color: Color;
+}
+
+export interface WeaponDef {
+  id: string;
+  name: string;
+  description: string;
+  /** Volleys per second before player modifiers. */
+  fireRate: number;
+  /** Projectiles per volley before player modifiers. */
+  count: number;
+  /** Total spread angle of a volley in degrees. */
+  spreadDeg: number;
+  /** Random inaccuracy per projectile in degrees. */
+  jitterDeg: number;
+  damage: number;
+  speed: number;
+  /** Seconds before the projectile disappears. */
+  lifetimeSec: number;
+  /** Enemies a projectile passes through before disappearing. */
+  pierce: number;
+  knockback: number;
+  look: ProjectileLook;
+}
+
+export interface UpgradeDef {
+  id: string;
+  name: string;
+  /** One short line shown on the level-up card. */
+  description: string;
+  /** Times it can be taken per run. */
+  maxLevel: number;
+  /** Relative chance to be offered. */
+  weight: number;
+  mods: StatMod[];
+  /** Upgrade ids that must have been taken at least once first. */
+  requires?: string[];
+  /** Only offered if the player owns this weapon. */
+  requiresWeapon?: string;
+  /** Adds this weapon id to the player's loadout. */
+  grantsWeapon?: string;
+  /** Card accent color. */
+  color: Color;
+}
