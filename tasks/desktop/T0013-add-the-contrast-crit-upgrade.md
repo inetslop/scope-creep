@@ -4,11 +4,12 @@ title: Add the Contrast crit upgrade
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T18:15:01Z
 claimed_at: 2026-10-26T19:53:40Z
+finished_at: 2026-10-26T19:57:18Z
 ---
 
 ## Goal
@@ -95,3 +96,19 @@ In `tests/core/core.test.ts`, inside `describe('stats')` (imports for `BASE_STAT
   });
 ```
 `tests/content.test.ts` validates the new upgrade automatically (kebab-case id, `critChance` in BASE_STATS, weight > 0).
+
+## Result (attempt 1, desktop)
+
+Added the Contrast upgrade (id `contrast`, maxLevel 3, +10% crit chance per level, weight 4, red) to `src/content/upgrades/index.ts`, backed by a new `critChance` stat (base 0, clamped 0–0.5) in `src/core/stats.ts`. Both player weapon damage paths now roll the seeded rng per hit — `CombatSystem.onProjectileHit` for projectiles and `OrbitSystem.update` for orbit contact — doubling damage exactly and passing the `crit` flag to `DamageNumbers.show` for the reserved red 28px style; the `critChance > 0` guard keeps runs without Contrast byte-identical. Added a stats unit test for the per-level scaling; `npm run check` (typecheck + lint + 52 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 3.6 min
+
+```
+game/src/content/upgrades/index.ts | 9 +++++++++
+ game/src/core/stats.ts             | 4 ++++
+ game/src/systems/CombatSystem.ts   | 6 ++++--
+ game/src/systems/OrbitSystem.ts    | 5 +++--
+ game/tests/core/core.test.ts       | 8 ++++++++
+ 5 files changed, 28 insertions(+), 4 deletions(-)
+```

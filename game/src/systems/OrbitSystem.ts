@@ -68,9 +68,10 @@ export class OrbitSystem {
         const last = this.lastHit.get(e.serial);
         if (last !== undefined && now - last < cooldownMs) continue; // at most one orbit hit per enemy per 0.6 s
         this.lastHit.set(e.serial, now);
-        const dmg = def.damage * this.run.stats.damageMul;
+        const crit = this.run.stats.critChance > 0 && this.run.rng.chance(this.run.stats.critChance);
+        const dmg = (crit ? 2 : 1) * def.damage * this.run.stats.damageMul;
         const died = e.hit(dmg, { x: cx, y: cy }, def.knockback);
-        this.damageNumbers.show(e.x, e.y, dmg);
+        this.damageNumbers.show(e.x, e.y, dmg, crit);
         this.fx.hit(cx, cy, e.def.look.body);
         this.sfx.hit();
         if (died) this.kill(e);

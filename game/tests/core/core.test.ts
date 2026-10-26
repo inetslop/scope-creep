@@ -55,6 +55,14 @@ describe('stats', () => {
     expect(s.maxHp).toBe((BASE_STATS.maxHp + 50) * 2);
     expect(s.extraProjectiles).toBe(12);
   });
+
+  it('contrast adds 10% crit chance per level', () => {
+    expect(BASE_STATS.critChance).toBe(0);
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('contrast')!;
+    for (let i = 0; i < 3; i++) run.applyUpgrade(def);
+    expect(run.stats.critChance).toBeCloseTo(0.3); // 0.1*3 is not exact in float
+  });
 });
 
 describe('RunState', () => {

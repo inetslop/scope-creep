@@ -28,6 +28,8 @@ export interface PlayerStats {
   extraPierce: number;
   /** Multiplies XP gained from shards. */
   xpMul: number;
+  /** Chance (0-0.5) that a player weapon hit deals double damage. */
+  critChance: number;
 }
 
 export type StatKey = keyof PlayerStats;
@@ -50,6 +52,7 @@ export const BASE_STATS: Readonly<PlayerStats> = {
   extraProjectiles: 0,
   extraPierce: 0,
   xpMul: 1,
+  critChance: 0,
 };
 
 /** Hard limits so stacking upgrades can never break the game. */
@@ -65,6 +68,7 @@ export const STAT_LIMITS: Partial<Record<StatKey, { min?: number; max?: number; 
   extraProjectiles: { min: 0, max: 12, integer: true },
   extraPierce: { min: 0, max: 20, integer: true },
   xpMul: { min: 0.1, max: 10 },
+  critChance: { min: 0, max: 0.5 },
 };
 
 export function computeStats(mods: readonly StatMod[], base: Readonly<PlayerStats> = BASE_STATS): PlayerStats {

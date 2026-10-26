@@ -58,8 +58,10 @@ export class CombatSystem {
   private onProjectileHit(p: Projectile, e: Enemy): void {
     if (!p.active || !e.active || p.hitSerials.has(e.serial)) return;
     p.hitSerials.add(e.serial);
-    const died = e.hit(p.damage, p, p.knockback);
-    this.damageNumbers.show(e.x, e.y, p.damage);
+    const crit = this.run.stats.critChance > 0 && this.run.rng.chance(this.run.stats.critChance);
+    const dmg = crit ? p.damage * 2 : p.damage;
+    const died = e.hit(dmg, p, p.knockback);
+    this.damageNumbers.show(e.x, e.y, dmg, crit);
     this.fx.hit(p.x, p.y, e.def.look.body);
     this.sfx.hit();
     if (died) this.killEnemy(e);
