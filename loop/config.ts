@@ -34,6 +34,13 @@ export interface MachineConfig {
    * when the machine has nothing ready to build. Default "always".
    */
   architectMode?: 'always' | 'idle';
+  /**
+   * For machines with the dev role: "always" builds a task every iteration (after planning and
+   * designing); "idle" builds only when the iteration had nothing to plan or design, so a
+   * PO/architect machine does that full time and develops in its downtime. "idle" makes the
+   * architect role full time too (architectMode is then ignored). Default "always".
+   */
+  devMode?: 'always' | 'idle';
 }
 
 export interface SizeLimits {
@@ -61,7 +68,7 @@ export interface FleetConfig {
     poMaxGapMinutes: number;
     architectMaxTurns: number;
     architectTimeoutMin: number;
-    /** Designs per runner iteration, so the architect machine still gets to develop. */
+    /** Designs per runner iteration, so the architect machine still gets to develop (or, as an idle dev, to plan). */
     architectMaxPerPass: number;
     /** Design attempts before a task is failed back to the PO. */
     architectMaxAttempts: number;

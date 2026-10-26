@@ -92,10 +92,14 @@ async function main(): Promise<number> {
     // New tasks are designed before any dev may pick them up. "always" architects design every
     // iteration; "idle" architects only when they have nothing to build (see below).
     const architect = machine.roles.includes('architect');
-    const idleArchitect = architect && machine.architectMode === 'idle' && machine.roles.includes('dev');
+    const dev = machine.roles.includes('dev');
+    // "idle" devs plan and design full time and only build when neither had anything to do.
+    const idleDev = dev && machine.devMode === 'idle';
+    const idleArchitect = architect && dev && !idleDev && machine.architectMode === 'idle';
     if (architect && !idleArchitect && (await runArchitectPass(ctx, { max: fleet.loop.architectMaxPerPass, preferOwn: false })) > 0) worked = true;
 
-    if (machine.roles.includes('dev')) {
+    // An idle dev that just planned or designed loops straight back (no sleep) to look for more.
+    if (dev && !(idleDev && worked)) {
       const listing = listTasks(allIds, true);
       const mineDir = path.join(TASKS_DIR, local.machineId);
       const task = pickNextTask(

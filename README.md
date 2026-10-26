@@ -8,8 +8,8 @@ An abstract, Bauhaus-style twin-stick roguelite for desktop and mobile browsers,
 ```
   ┌────────────┐ design  ┌─────────────────┐  todo   ┌──────────────────────────┐
   │ PO agent   │───────▶ │ architect agent │───────▶ │ dev agents (one/machine) │
-  │ desktop,Q4 │ (what,  │ asus Q8 always, │ (+ ##   │ asus Q8 · desktop Q4 ·   │
-  │ planning/  │  why)   │ desktop if idle │ Design) │ yoga Q2                  │
+  │ desktop,Q4 │ (what,  │ desktop Q4,     │ (+ ##   │ asus Q8 · yoga Q2 ·      │
+  │ planning/  │  why)   │ read-only       │ Design) │ desktop Q4 when idle     │
   └─────▲──────┘         └───────┬─────────┘         └────────────┬─────────────┘
         │   rejections / results │ (the runner writes             │ edit game/ only
         └────────────────────────┴──  every status change)        ▼
@@ -74,7 +74,7 @@ Each machine runs `loop/start-agent.ps1`, a supervisor that keeps `loop/runner.t
 2. **Ensures the model server** is up (starts `llama-server` detached so the model stays loaded across restarts).
 3. **PO cycle** (on the PO machine, see *Pacing* below): runs the PO agent in the repo root with write access to `tasks/` and `planning/` only. The PO never reads the game's code — it plans from the vision, roadmap, ideas, `planning/CHANGELOG.md` and a game inventory the runner generates from the content files and source tree (enemies, weapons, upgrades, scenes, systems). The runner then validates every task file (format, unique ids, size vs. machine capability, the PO may only edit `design`/`todo` tasks), sets new tasks to `design`, appends finished tasks to the changelog, archives the tasks the PO just reviewed, commits and pushes.
 4. **Architect pass**: a read-only agent in `game/` reads the code and answers with a design — files to create/edit, exact interfaces, steps, pitfalls, tests, and dependencies on other open tasks. The runner appends it to the task as `## Design`, adds the dependencies and moves the task to `todo`. If the task can't be built as written, the architect rejects it and it goes back to the PO as `failed` with the reason.
-   - **Who designs** (`architectMode` in `agents/machines.json`): the ASUS is an `always` architect (up to 4 designs every iteration, best priority first). The desktop is an `idle` architect: only when it has nothing ready to build, one design at a time, its own tasks first — so it unblocks itself while the ASUS is busy with other designs or its own code. (The desktop is also the PO: the fastest machine plans, the strongest one designs.)
+   - **Who designs** (`architectMode` / `devMode` in `agents/machines.json`): the desktop is the only architect and, like planning, does it full time (`devMode: "idle"`): every iteration it plans if the PO is due, then designs every waiting task (best priority first, up to 4 before re-checking the PO), and only builds a task of its own when there is nothing to plan or design. The ASUS and the yoga just develop. (`architectMode: "idle"` still exists for an architect that should build first and design only when it has nothing ready.)
    - **Claims**: before designing, an architect pushes `status: designing` + `designer: <machine>`, so two architects never design the same task. A runner releases its own claims when it restarts, and a claim older than the architect timeout + 30 min is taken over by anyone (the claimer probably died).
 5. **Dev task** (if this machine has a `todo` task in `tasks/<machine>/` whose dependencies are done):
    - claim it (status `in-progress`, pushed so everyone sees it);
@@ -87,7 +87,7 @@ Each machine runs `loop/start-agent.ps1`, a supervisor that keeps `loop/runner.t
 
 ### Pacing: how much the PO plans
 
-The PO doesn't generate tasks continuously. It works by backpressure: every dev machine has a `targetQueue` in `agents/machines.json` (asus 2, desktop 4, yoga 3), counting its `design` + `todo` tasks. The PO runs when:
+The PO doesn't generate tasks continuously. It works by backpressure: every dev machine has a `targetQueue` in `agents/machines.json` (asus 2, desktop 2, yoga 3), counting its `design` + `todo` tasks. The PO runs when:
 
 - some machine's queue is below its target — and it writes exactly enough tasks to refill it;
 - tasks finished (done, failed or rejected) and need reviewing;
