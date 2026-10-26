@@ -4,9 +4,11 @@ title: Add the Tempo upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
+claimed_at: 2026-10-26T18:59:22Z
+designer: asus
 ---
 
 ## Goal
