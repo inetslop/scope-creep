@@ -3,7 +3,7 @@
 An abstract, Bauhaus-style twin-stick roguelite for desktop and mobile browsers, built continuously by a fleet of local LLM agents.
 
 - **The game** lives in [`game/`](game/): Phaser 3 + TypeScript + Vite. Deployed to GitHub Pages every 10 minutes.
-- **The loop** around it: a Product Owner agent writes tasks, an architect agent designs each one against the real code, developer agents on three machines implement them, a browser smoke test gates every change.
+- **The loop** around it: a Product Owner agent writes tasks, an architect agent designs each one against the real code, developer agents on several machines (Windows, or Linux in Docker) implement them, a browser smoke test gates every change.
 - **The build log** ([`site/`](site/)): a public page next to the game (`/build-log/`, linked from the menu) listing every feature, which machine built it and how long it took. The deploy workflow generates it from runner-written records, so the agents can't change it.
 
 ```
@@ -33,7 +33,7 @@ Enforced twice: Claude Code permission rules (generated per run with absolute pa
 
 ## Setting up a machine
 
-On each of the three Windows machines:
+### Windows
 
 ```powershell
 git clone https://github.com/inetslop/scope-creep.git
@@ -43,17 +43,37 @@ powershell -NoProfile -ExecutionPolicy Bypass -File setup\setup.ps1
 
 Setup is interactive and safe to re-run. It:
 1. checks Git, installs **Node.js 24**, **GitHub CLI** (and logs you in), **Claude Code** — per user, no admin;
-2. asks **which machine** this is (`asus`, `desktop`, `yoga` from `agents/machines.json`);
-3. sets up the **model server**: picks a `llama-server.exe` already on the machine (Unsloth, LM Studio, earlier setup) or downloads the latest llama.cpp build for your GPU/arch, then searches a folder for `.gguf` files, filters by name (e.g. `qwen`) and lets you pick one. Context defaults to **auto** — or point it at an existing Anthropic-compatible server instead;
+2. asks **which machine** this is: one already in `agents/machines.json`, or **a new machine** (see *Adding a machine* below);
+3. sets up the **model server**: picks a `llama-server.exe` already on the machine (Unsloth, LM Studio, earlier setup) or downloads the latest llama.cpp build for your GPU/arch, then either searches a folder for `.gguf` files or **downloads a model from Hugging Face** (it lists the repo's quants with their size and how well each fits this PC; resumable, checksum-verified). Context defaults to **auto** — or point it at an existing Anthropic-compatible server instead;
 4. installs npm packages and Playwright Chromium;
 5. optionally registers a logon task to start the loop automatically;
-6. runs `npm run doctor`, which starts the model and checks git push, the Messages API, a Claude Code round trip and the full merge gate.
+6. runs `npm run doctor`, which starts the model and checks git push, the Messages API, a Claude Code round trip and the full merge gate. A paused machine is unpaused when it passes (asked first for machines that were already registered).
 
 Then start the loop:
 
 ```powershell
 npm run agent          # runs forever; restarts itself when loop code changes
 ```
+
+### Linux (Docker)
+
+Needs Docker with Compose v2, an NVIDIA GPU and the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) (setup checks and tells you what is missing). From any checkout:
+
+```bash
+setup/docker/agent.sh setup
+```
+
+It creates `~/scope-creep-agent/` (override with `SCOPE_CREEP_AGENT_HOME`) with the agent's **own clone** of the repo (the runner resets and pushes `main`, so it never uses your working copy), a `models/` folder and the container's home. Two containers run from `setup/docker/compose.yml`: **agent** (Node 24, git, GitHub CLI, Claude Code and Chromium's libraries; the repo is mounted, so the runner still updates itself with git) and **llama** (the official `llama.cpp:server-cuda` image, reachable only from the agent). Setup builds the image, checks the GPU works inside Docker, logs the container in to GitHub (device code), asks which machine this is (or registers it), lets you pick a GGUF in `models/` or download one, waits for the model, runs the doctor with the merge gate, unpauses a new machine and starts it. Both containers restart with Docker, so after a reboot too.
+
+| `setup/docker/agent.sh …` | |
+| --- | --- |
+| `start` / `stop` / `down` | start (also after a stop) / stop after the current task / stop now (the task is requeued) |
+| `logs [agent\|llama]`, `status`, `doctor [--gate]`, `shell` | watch and inspect |
+| `update` | rebuild the agent image (new Claude Code) and pull the latest llama.cpp server |
+
+### Adding a machine
+
+Machines aren't hard-coded: choose **a new machine** in either setup. It detects the CPU, GPU, VRAM and RAM, and suggests an id (from the hostname), a label and, from the model's quant and whether it fits in VRAM, a tier, the biggest task size, a queue target and notes for the PO; press Enter to accept or type over each. It then commits the entry to `agents/machines.json` and pushes it as **`"paused": true`**, so the PO plans nothing for it, and the running machines carry on undisturbed, until the doctor has passed on the new machine; setup then unpauses it. By hand: `node setup/machine.ts register --model-file <gguf>`, `node setup/machine.ts unpause <id>`.
 
 ## Day-to-day
 

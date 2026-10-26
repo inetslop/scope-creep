@@ -1,0 +1,40 @@
+# A Scope Creep agent machine on Linux: the runner (agent) and its model server (llama).
+# Managed by setup/docker/agent.sh; settings come from the .env in the agent's folder, which
+# `agent.sh setup` writes. The model server is only reachable from the agent, not the network.
+name: scope-creep-agent
+
+services:
+  llama:
+    image: ${LLAMA_IMAGE:-ghcr.io/ggml-org/llama.cpp:server-cuda}
+    restart: unless-stopped
+    volumes:
+      - ${AGENT_HOME:?run agent.sh setup first}/models:/models:ro
+    command: -m /models/${MODEL_FILE:-none.gguf} --alias ${MODEL_ALIAS:-none} --host 0.0.0.0 --port 8080 ${LLAMA_ARGS:-}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  agent:
+    build:
+      context: .
+      args:
+        UID: ${AGENT_UID:-1000}
+        GID: ${AGENT_GID:-1000}
+        PLAYWRIGHT_VERSION: ${PLAYWRIGHT_VERSION:-1.64.1}
+    image: scope-creep-agent
+    restart: unless-stopped
+    init: true
+    hostname: ${MACHINE_ID:-scope-creep-agent}
+    depends_on: [llama]
+    # Chromium (smoke test) needs more shared memory than Docker's 64 MB default.
+    shm_size: 1gb
+    volumes:
+      - ${AGENT_HOME:?run agent.sh setup first}:/data
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      SC_HOST_NAME: ${HOST_NAME:-}
+      SC_HOST_GPU: ${HOST_GPU:-}

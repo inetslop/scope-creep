@@ -190,12 +190,27 @@ Write-Ok "$claudePath ($(& $claudePath --version))"
 Write-Step 'Machine identity'
 $ids = @($fleet.machines.PSObject.Properties.Name)
 if ($MachineId -eq '' -and $existing) { $MachineId = $existing.machineId }
-$defaultIndex = [Math]::Max(0, [Array]::IndexOf($ids, $MachineId))
-$MachineId = Select-Item 'Which machine is this?' $ids { param($id) "$id - $($fleet.machines.$id.label) ($($fleet.machines.$id.model))" } $defaultIndex
-$machine = $fleet.machines.$MachineId
-& git -C $Repo config user.name "agent-$MachineId"
-& git -C $Repo config user.email "agent-$MachineId@scope-creep.local"
-Write-Ok "this is '$MachineId' - roles: $($machine.roles -join ', ')"
+$machineChoices = @($ids) + @('+new')
+$defaultIndex = [Array]::IndexOf($ids, $MachineId)
+if ($defaultIndex -lt 0) { $defaultIndex = $machineChoices.Count - 1 } # not set up before: suggest registering it
+$MachineId = Select-Item 'Which machine is this?' $machineChoices {
+    param($id)
+    if ($id -eq '+new') { 'A new machine: register this PC (name, label and capabilities are suggested for you)' }
+    else {
+        $flag = ''
+        if ($fleet.machines.$id.paused) { $flag = ' [paused]' }
+        "$id - $($fleet.machines.$id.label) ($($fleet.machines.$id.model))$flag"
+    }
+} $defaultIndex
+$isNewMachine = $MachineId -eq '+new'
+if ($isNewMachine) {
+    Write-Ok 'new machine: it is registered after the model is chosen (the model shapes the suggestions)'
+} else {
+    $machine = $fleet.machines.$MachineId
+    & git -C $Repo config user.name "agent-$MachineId"
+    & git -C $Repo config user.email "agent-$MachineId@scope-creep.local"
+    Write-Ok "this is '$MachineId' - roles: $($machine.roles -join ', ')"
+}
 
 # ---------------------------------------------------------------- 6. model server
 
@@ -255,24 +270,40 @@ if ($mode -eq 'managed') {
             if (Test-Path $candidate) { $modelDirDefault = $candidate; break }
         }
     }
-    $models = @()
-    while ($models.Count -eq 0) {
-        $modelsDir = Read-Default 'Folder that contains your GGUF models (searched recursively)' $modelDirDefault
-        $filter = Read-Default 'Filter model names by' 'qwen'
-        Write-Note "searching $modelsDir ..."
-        $models = @(Get-ChildItem -Path $modelsDir -Recurse -Filter '*.gguf' -ErrorAction SilentlyContinue |
-            Where-Object { $_.Name -like "*$filter*" -and $_.Name -notmatch '^(mmproj|mtp-|dflash-)' -and ($_.Name -notmatch '-\d{5}-of-\d{5}\.gguf$' -or $_.Name -match '-00001-of-\d{5}\.gguf$') } |
-            Sort-Object FullName)
-        if ($models.Count -eq 0) { Write-Problem "no .gguf files matching '$filter' under $modelsDir" }
-    }
-    $model = Select-Item 'Which model should this machine run?' $models {
-        param($f)
-        $size = $f.Length
-        if ($f.Name -match '-00001-of-(\d{5})\.gguf$') {
-            $size = (Get-ChildItem $f.DirectoryName -Filter ($f.Name -replace '-00001-of-', '-*-of-') | Measure-Object Length -Sum).Sum
-        }
-        '{0}  ({1:N1} GB)' -f $f.Name, ($size / 1GB)
+    $source = Select-Item 'Where is the model?' @('disk', 'download') {
+        param($s)
+        if ($s -eq 'disk') { 'A GGUF file already on this machine (search a folder)' }
+        else { 'Download one from Hugging Face (lists the quants and how well each fits this PC)' }
     } 0
+    if ($source -eq 'download') {
+        $downloadDefault = $modelDirDefault
+        if (-not $downloadDefault) { $downloadDefault = Join-Path $env:USERPROFILE 'models' }
+        $modelsDir = Read-Default 'Folder to download the model into' $downloadDefault
+        $downloadResult = Join-Path $AgentDir 'download-result.json'
+        Remove-Item $downloadResult -ErrorAction SilentlyContinue
+        & node (Join-Path $Repo 'setup\models.ts') download --dir $modelsDir --out $downloadResult
+        if ($LASTEXITCODE -ne 0 -or -not (Test-Path $downloadResult)) { throw 'model download failed (run setup again to resume it)' }
+        $model = Get-Item (Get-Content $downloadResult -Raw | ConvertFrom-Json).modelPath
+    } else {
+        $models = @()
+        while ($models.Count -eq 0) {
+            $modelsDir = Read-Default 'Folder that contains your GGUF models (searched recursively)' $modelDirDefault
+            $filter = Read-Default 'Filter model names by' 'qwen'
+            Write-Note "searching $modelsDir ..."
+            $models = @(Get-ChildItem -Path $modelsDir -Recurse -Filter '*.gguf' -ErrorAction SilentlyContinue |
+                Where-Object { $_.Name -like "*$filter*" -and $_.Name -notmatch '^(mmproj|mtp-|dflash-)' -and ($_.Name -notmatch '-\d{5}-of-\d{5}\.gguf$' -or $_.Name -match '-00001-of-\d{5}\.gguf$') } |
+                Sort-Object FullName)
+            if ($models.Count -eq 0) { Write-Problem "no .gguf files matching '$filter' under $modelsDir" }
+        }
+        $model = Select-Item 'Which model should this machine run?' $models {
+            param($f)
+            $size = $f.Length
+            if ($f.Name -match '-00001-of-(\d{5})\.gguf$') {
+                $size = (Get-ChildItem $f.DirectoryName -Filter ($f.Name -replace '-00001-of-', '-*-of-') | Measure-Object Length -Sum).Sum
+            }
+            '{0}  ({1:N1} GB)' -f $f.Name, ($size / 1GB)
+        } 0
+    }
     # Context: "auto" lets llama-server start from the model's maximum and --fit it to free memory
     # (never below 32k); the runner reads the real value from the server before every agent session.
     $ctxDefault = 'auto'
@@ -321,6 +352,18 @@ if ($mode -eq 'managed') {
     }
 }
 
+if ($isNewMachine) {
+    $registerResult = Join-Path $AgentDir 'register-result.json'
+    Remove-Item $registerResult -ErrorAction SilentlyContinue
+    if ($mode -eq 'managed') { & node (Join-Path $Repo 'setup\machine.ts') register --model-file $model.FullName --out $registerResult }
+    else { & node (Join-Path $Repo 'setup\machine.ts') register --model-name $modelId --out $registerResult }
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path $registerResult)) { throw 'registering the machine failed (see above); run setup again' }
+    $MachineId = (Get-Content $registerResult -Raw | ConvertFrom-Json).machineId
+    & git -C $Repo config user.name "agent-$MachineId"
+    & git -C $Repo config user.email "agent-$MachineId@scope-creep.local"
+    Write-Ok "this is '$MachineId' (new; paused in agents/machines.json until the health check passes)"
+}
+
 $local = [ordered]@{
     machineId  = $MachineId
     claudePath = $claudePath
@@ -358,10 +401,21 @@ if (Read-YesNo 'Start the agent loop automatically when you log in to Windows?' 
 
 # ---------------------------------------------------------------- 9. doctor
 
+$fleetNow = Get-Content (Join-Path $Repo 'agents\machines.json') -Raw | ConvertFrom-Json
+$isPaused = [bool]$fleetNow.machines.$MachineId.paused
 if (-not $SkipDoctor) {
     Write-Step 'Health check (starts the model server; first load can take a few minutes)'
     Push-Location $Repo
-    try { & node loop/doctor.ts --gate } finally { Pop-Location }
+    try { & node loop/doctor.ts --gate; $doctorOk = ($LASTEXITCODE -eq 0) } finally { Pop-Location }
+    if ($isPaused -and $doctorOk) {
+        if ($isNewMachine -or (Read-YesNo "'$MachineId' is paused in agents/machines.json. Unpause it now that it works?" $true)) {
+            & node (Join-Path $Repo 'setup\machine.ts') unpause $MachineId
+        }
+    } elseif ($isPaused) {
+        Write-Problem "'$MachineId' stays paused in agents/machines.json until the health check passes (run setup again)"
+    }
+} elseif ($isPaused) {
+    Write-Problem "'$MachineId' is paused. Once npm run doctor passes: node setup/machine.ts unpause $MachineId"
 }
 
 Write-Host ''
