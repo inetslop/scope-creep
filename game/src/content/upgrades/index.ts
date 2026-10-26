@@ -140,6 +140,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     mods: [{ stat: 'critChance', op: 'add', value: 0.1 }],
     color: PALETTE.red,
   },
+  {
+    id: 'staccato',
+    name: 'Staccato',
+    description: '+12% fire rate, +12% projectile speed',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'fireRateMul', op: 'mul', value: 1.12 },
+      { stat: 'projectileSpeedMul', op: 'mul', value: 1.12 },
+    ],
+    color: PALETTE.orange,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));

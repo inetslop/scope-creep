@@ -4,11 +4,12 @@ title: Add the Staccato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T19:44:48Z
 claimed_at: 2026-10-26T19:49:48Z
+finished_at: 2026-10-26T19:58:08Z
 ---
 
 ## Goal
@@ -58,3 +59,15 @@ No new types or functions. The entry uses the existing `UpgradeDef` (`src/conten
 
 ### Tests
 - none — `tests/content.test.ts` (unique kebab-case ids, valid stats, `mul > 0`) and `tests/core/core.test.ts:102-103` (applies every upgrade to maxLevel, expects the offer pool to exhaust) already cover the new entry.
+
+## Result (attempt 1, yoga)
+
+Added the Staccato upgrade to `UPGRADES` in `src/content/upgrades/index.ts` — a size-S speed build that gives +12% fire rate and +12% projectile speed per level, up to 3 levels (weight 4, orange, matching the `tempo`/`draft` entry style). It's the missing link between Rhythm (fire rate only) and Draft (projectile speed only), and both stats were already wired into `WeaponSystem`, so no other file needed changes. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 8.3 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+```
