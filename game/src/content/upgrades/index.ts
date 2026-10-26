@@ -92,6 +92,16 @@ export const UPGRADES: readonly UpgradeDef[] = [
     color: PALETTE.blue,
   },
   {
+    id: 'orbit',
+    name: 'Orbit',
+    description: 'New weapon: 3 circles that orbit you and damage enemies on contact',
+    maxLevel: 1,
+    weight: 5,
+    mods: [],
+    grantsWeapon: 'orbit',
+    color: PALETTE.blue,
+  },
+  {
     id: 'composition',
     name: 'Composition',
     description: '+15% XP from shards',

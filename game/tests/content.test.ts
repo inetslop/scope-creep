@@ -46,8 +46,16 @@ describe('weapons', () => {
   it('have unique kebab-case ids', () => expectUniqueIds(WEAPONS));
 
   it.each(WEAPONS.map((w) => [w.id, w] as const))('%s has sane numbers', (_id, w) => {
-    for (const key of ['fireRate', 'count', 'damage', 'speed', 'lifetimeSec'] as const) expect(positive(w[key]), `${key} > 0`).toBe(true);
-    for (const key of ['spreadDeg', 'jitterDeg', 'pierce', 'knockback'] as const) expect(nonNegative(w[key]), `${key} >= 0`).toBe(true);
+    expect(positive(w.damage), 'damage > 0').toBe(true);
+    expect(nonNegative(w.knockback), 'knockback >= 0').toBe(true);
+    if (w.orbit) {
+      const o = w.orbit;
+      expect(Number.isInteger(o.count) && o.count >= 1, 'orbit.count >= 1').toBe(true);
+      expect(positive(o.radius) && positive(o.speed) && positive(o.circleRadius) && positive(o.hitCooldownSec), 'orbit numbers > 0').toBe(true);
+      return;
+    }
+    for (const key of ['fireRate', 'count', 'speed', 'lifetimeSec'] as const) expect(positive(w[key]), `${key} > 0`).toBe(true);
+    for (const key of ['spreadDeg', 'jitterDeg', 'pierce'] as const) expect(nonNegative(w[key]), `${key} >= 0`).toBe(true);
     expect(Number.isInteger(w.count) && Number.isInteger(w.pierce), 'count and pierce are integers').toBe(true);
   });
 

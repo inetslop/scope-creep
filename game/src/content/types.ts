@@ -67,6 +67,20 @@ export interface ProjectileLook {
   color: Color;
 }
 
+/** Tuning for an orbit weapon: circles that revolve around the player and hit what they touch. */
+export interface OrbitSpec {
+  /** Circles, evenly spaced (120° apart for 3). */
+  count: number;
+  /** Orbit radius, world units. */
+  radius: number;
+  /** Radians per second. */
+  speed: number;
+  /** Each circle's radius, world units. */
+  circleRadius: number;
+  /** Per-enemy immunity after an orbit hit. */
+  hitCooldownSec: number;
+}
+
 export interface WeaponDef {
   id: string;
   name: string;
@@ -87,6 +101,8 @@ export interface WeaponDef {
   pierce: number;
   knockback: number;
   look: ProjectileLook;
+  /** Orbit weapon (handled by src/systems/OrbitSystem); projectile fields unused. */
+  orbit?: OrbitSpec;
 }
 
 export interface UpgradeDef {

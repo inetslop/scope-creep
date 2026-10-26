@@ -4,11 +4,12 @@ title: Add the Orbit weapon
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T17:40:33Z
 claimed_at: 2026-10-26T18:26:49Z
+finished_at: 2026-10-26T18:37:02Z
 ---
 
 ## Goal
@@ -165,3 +166,23 @@ expect(Number.isInteger(w.count) && Number.isInteger(w.pierce), 'count and pierc
 
 ### Tests
 None new (no new pure `core/` logic); the step-8 `content.test.ts` change validates the new weapon and upgrade.
+
+## Result (attempt 1, desktop)
+
+Added the Orbit weapon: new data file `src/content/weapons/orbit.ts` (3 circles, radius 70, 2.5 rad/s, 12 dmg, knockback 90, 0.6 s per-enemy cooldown), `OrbitSpec` + optional `orbit` field in `content/types.ts`, the `orbit` upgrade in `UPGRADES`, a `TEX.orbit` texture with `drawOrbit()` in `art/textures.ts`, a new `src/systems/OrbitSystem.ts` doing per-frame orbiting and manual contact hits (kills routed through `combat.killEnemy`), a fire-loop skip for orbit weapons in `WeaponSystem`, GameScene wiring plus an `orbit-circles` invariant, and updated content tests. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 10.2 min
+
+```
+game/src/art/textures.ts           | 15 ++++++-
+ game/src/content/types.ts          | 16 +++++++
+ game/src/content/upgrades/index.ts | 10 +++++
+ game/src/content/weapons/index.ts  |  3 +-
+ game/src/content/weapons/orbit.ts  | 24 ++++++++++
+ game/src/scenes/GameScene.ts       | 13 +++++-
+ game/src/systems/OrbitSystem.ts    | 89 ++++++++++++++++++++++++++++++++++++++
+ game/src/systems/WeaponSystem.ts   |  3 +-
+ game/tests/content.test.ts         | 12 ++++-
+ 9 files changed, 178 insertions(+), 7 deletions(-)
+```

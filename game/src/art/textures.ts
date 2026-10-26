@@ -25,6 +25,8 @@ export const TEX = {
   shard: 'shard',
   /** Enemy ink point (Sentry). */
   enemyShot: 'enemyShot',
+  /** Orbit weapon circle. */
+  orbit: 'orbit',
   floor: 'floor',
 } as const;
 
@@ -56,7 +58,10 @@ export function generateTextures(scene: Phaser.Scene): void {
   drawFloor(scene);
   for (const enemy of ENEMIES) drawEnemy(scene, enemy);
   graphicsTexture(scene, TEX.enemyShot, 24, 24, (g) => drawShape(g, 'circle', 10.5, 10.5, 6, PALETTE.ink, { outlineWidth: 0 }));
-  for (const weapon of WEAPONS) drawProjectile(scene, weapon);
+  for (const weapon of WEAPONS) {
+    if (weapon.orbit) drawOrbit(scene, weapon);
+    else drawProjectile(scene, weapon);
+  }
 }
 
 function graphicsTexture(scene: Phaser.Scene, key: string, w: number, h: number, draw: (g: Phaser.GameObjects.Graphics) => void): void {
@@ -101,6 +106,14 @@ function drawEnemy(scene: Phaser.Scene, def: EnemyDef): void {
     drawShape(g, look.shape, c, c, look.radius, look.body, { points: look.points });
     drawShape(g, 'circle', c, c, Math.max(2.5, look.radius * 0.22), look.accent, { outlineWidth: look.accent === PALETTE.ink ? 0 : 1.5, shadow: false });
   });
+}
+
+/** One orbit circle: a flat primary-color disc with ink outline and paper-cut shadow. */
+function drawOrbit(scene: Phaser.Scene, def: WeaponDef): void {
+  const r = def.orbit?.circleRadius ?? 8;
+  const size = Math.ceil((r + PAD) * 2);
+  const c = size / 2 - SHADOW_OFFSET / 2;
+  graphicsTexture(scene, TEX.orbit, size, size, (g) => drawShape(g, 'circle', c, c, r, def.look.color, { outlineWidth: 2 }));
 }
 
 function drawProjectile(scene: Phaser.Scene, def: WeaponDef): void {

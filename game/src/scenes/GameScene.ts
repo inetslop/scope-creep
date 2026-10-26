@@ -14,6 +14,7 @@ import { Controls } from '../input/Controls';
 import { CombatSystem } from '../systems/CombatSystem';
 import { DamageNumbers } from '../systems/DamageNumbers';
 import { FxSystem } from '../systems/FxSystem';
+import { OrbitSystem } from '../systems/OrbitSystem';
 import { PickupSystem } from '../systems/PickupSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
@@ -38,6 +39,8 @@ export class GameScene extends Phaser.Scene {
   private damageNumbers!: DamageNumbers;
   private sfx!: Sfx;
   private weapons!: WeaponSystem;
+  private combat!: CombatSystem;
+  private orbit!: OrbitSystem;
   private spawns!: SpawnSystem;
   private pickups!: PickupSystem;
   private bounds!: Phaser.Geom.Rectangle;
@@ -70,7 +73,8 @@ export class GameScene extends Phaser.Scene {
     this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx);
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds);
-    new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers);
+    this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers);
+    this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
 
     this.controls = new Controls(this);
     this.registry.set('controls', this.controls);
@@ -100,6 +104,7 @@ export class GameScene extends Phaser.Scene {
     this.player.aimAngle = Math.atan2(input.aim.y, input.aim.x);
 
     this.weapons.update(dt, input.firing);
+    this.orbit.update(dt);
     this.spawns.update(dt);
     this.pickups.update(dt);
     if (run.stats.regenPerSec > 0) run.heal(run.stats.regenPerSec * dt);
@@ -238,7 +243,11 @@ export class GameScene extends Phaser.Scene {
     hook.addInvariant('enemy-shot-count', () => (this.spawns.activeShotCount <= this.spawns.maxEnemyShots ? null : `${this.spawns.activeShotCount} enemy shots alive`));
     hook.addInvariant('projectile-count', () => (this.weapons.activeCount <= 400 ? null : `${this.weapons.activeCount} projectiles alive`));
     hook.addInvariant('damage-numbers-pool', () => (this.damageNumbers.activeCount <= 60 ? null : `${this.damageNumbers.activeCount} damage numbers active`));
+    hook.addInvariant('orbit-circles', () => {
+      for (const c of this.orbit.circles) if (!Number.isFinite(c.x) || !Number.isFinite(c.y)) return `orbit circle at (${c.x}, ${c.y})`;
+      return null;
+    });
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'projectile-count', 'damage-numbers-pool'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'projectile-count', 'damage-numbers-pool', 'orbit-circles'];

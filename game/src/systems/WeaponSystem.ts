@@ -29,9 +29,10 @@ export class WeaponSystem {
 
   update(dt: number, firing: boolean): void {
     for (const id of this.run.weapons) {
+      const def = getWeapon(id);
+      if (def.orbit) continue; // orbit weapons never fire volleys
       let cd = (this.cooldowns.get(id) ?? 0) - dt;
       if (firing && cd <= 0) {
-        const def = getWeapon(id);
         this.fireVolley(def);
         cd += 1 / (def.fireRate * this.run.stats.fireRateMul);
       }

@@ -1,9 +1,10 @@
 import type { WeaponDef } from '../types';
 import { line } from './line';
+import { orbit } from './orbit';
 import { point } from './point';
 
 /** Every weapon in the game. To add one: create a file next to this one and add it here. */
-export const WEAPONS: readonly WeaponDef[] = [point, line];
+export const WEAPONS: readonly WeaponDef[] = [point, line, orbit];
 
 export const WEAPON_BY_ID: ReadonlyMap<string, WeaponDef> = new Map(WEAPONS.map((w) => [w.id, w]));
 
