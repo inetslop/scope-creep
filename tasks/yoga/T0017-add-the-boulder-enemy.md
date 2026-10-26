@@ -4,11 +4,12 @@ title: Add the Boulder enemy
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T19:20:22Z
 claimed_at: 2026-10-26T19:42:23Z
+finished_at: 2026-10-26T19:49:42Z
 ---
 
 ## Goal
@@ -76,3 +77,16 @@ export const boulder: EnemyDef = {
 
 ### Tests
 - none — `tests/content.test.ts` already validates every `ENEMIES` entry automatically.
+
+## Result (attempt 1, yoga)
+
+Added the Boulder enemy as a new data file `src/content/enemies/boulder.ts` (id `boulder`, hp 60, speed 60, contactDamage 15, xp 4, threat 3, spawnWeight 3, unlockAtSec 90, behavior `chase`, knockbackResist 0.6, big yellow circle look with radius 22, ink accent, spin 0) and registered it in `ENEMIES` in `src/content/enemies/index.ts` with the import in alphabetical position. It is a data-only change: the director, `Enemy.steer()`, knockback handling and texture generation all pick it up automatically, so after 90 s a large yellow circle can appear that slowly chases and barely flinches when hit. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 7.3 min
+
+```
+game/src/content/enemies/boulder.ts | 24 ++++++++++++++++++++++++
+ game/src/content/enemies/index.ts   |  3 ++-
+ 2 files changed, 26 insertions(+), 1 deletion(-)
+```
