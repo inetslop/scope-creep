@@ -4,11 +4,12 @@ title: Unit tests for the upgrade roll
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T21:54:06Z
 claimed_at: 2026-10-26T22:07:44Z
+finished_at: 2026-10-26T22:14:54Z
 ---
 
 ## Goal
@@ -78,3 +79,15 @@ describe('rollUpgradeChoices', () => {
 - Tests must stay robust to T0034/T0035 adding upgrades: they only assert "3 distinct" and "maxed ids absent", never the pool size.
 ### Tests
 - `tests/core/upgrades.test.ts` as above: (1) fresh run, 50 seeds → exactly 3 distinct ids; (2) max out `contrast`/`vector`/`plate` via `run.applyUpgrade`, 200 seeds → length 3 and none of the maxed ids present.
+
+## Result (attempt 1, yoga)
+
+Added `tests/core/upgrades.test.ts`, locking down the level-up roll in `src/core/upgrades.ts`: across 50 seeded rolls on a fresh run the roll returns exactly 3 distinct upgrades, and with `contrast`/`vector`/`plate` maxed via `run.applyUpgrade`, 200 seeded rolls never offer a maxed upgrade while still yielding 3 choices. `npm run check` (typecheck + lint + 112 unit tests) and `npm run smoke` (desktop + mobile browser play) both pass.
+
+- Self-review: APPROVE
+- Time: 7.2 min
+
+```
+game/tests/core/upgrades.test.ts | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+```
