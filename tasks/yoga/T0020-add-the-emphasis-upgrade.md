@@ -4,10 +4,12 @@ title: Add the Emphasis upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T20:02:05Z
+claimed_at: 2026-10-26T20:03:55Z
+designer: desktop
 ---
 
 ## Goal
