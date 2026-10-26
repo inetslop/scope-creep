@@ -204,6 +204,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     ],
     color: PALETTE.ink,
   },
+  {
+    id: 'dynamics',
+    name: 'Dynamics',
+    description: '+20% damage, -8% move speed',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'damageMul', op: 'mul', value: 1.2 },
+      { stat: 'moveSpeed', op: 'mul', value: 0.92 },
+    ],
+    color: PALETTE.yellow,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));

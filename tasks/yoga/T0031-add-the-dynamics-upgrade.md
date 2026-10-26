@@ -4,11 +4,12 @@ title: Add the Dynamics upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T21:07:50Z
 claimed_at: 2026-10-26T21:15:28Z
+finished_at: 2026-10-26T21:20:40Z
 ---
 
 ## Goal
@@ -63,3 +64,15 @@ No new types. The entry must satisfy the existing `UpgradeDef` (`src/content/typ
 
 ### Tests
 - none — `tests/content.test.ts` validates the new entry automatically (id, maxLevel, weight, stats, mul > 0); per-level math is already covered by the existing `computeStats`/`applyUpgrade` behavior.
+
+## Result (attempt 1, yoga)
+
+Added the Dynamics upgrade to the end of `UPGRADES` in `src/content/upgrades/index.ts` (after the Ostinato entry from T0029): a size-S trade-off card (maxLevel 3, weight 4, yellow) that multiplies damage by 1.2 and move speed by 0.92 per level, giving damage builds a glass-cannon option alongside Allegro. `npm run check` (typecheck + lint + 76 unit tests) and `npm run smoke` (desktop + mobile browser play) both pass.
+
+- Self-review: APPROVE
+- Time: 5.2 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+```
