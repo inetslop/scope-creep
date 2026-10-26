@@ -26,8 +26,13 @@ The PO adds ideas here. Good ones become tasks.
 - Settings page in pause: volume slider, screen-shake toggle, auto-fire toggle
 - Generative background music: a quiet pulse that speeds up as the run goes on → T0011
 - Projectile speed upgrade ("Draft"): +25% per level → T0012
-- Crit chance upgrade: 10% chance of double damage (the crit style in damage numbers is already reserved)
+- ~~Crit chance upgrade: 10% chance of double damage~~ → T0013 (Contrast)
 - "Plate" upgrade: +1 armor, maxLevel 2
 - Dash enemy: a small red square that dashes at the player in a straight line, then stops
 - Boss sting: a low hit plus a music swell when The Frame spawns
 - Kill-streak text: "RHYTHM" flashes in the HUD at 8 kills without being hit
+- Crit sting: a short higher-pitched hit sound when a crit lands (follows T0013)
+- The Eraser: a slow white rectangle that, on contact, erases your most recent upgrade with a small "ERASED" flash in the HUD
+- Ink well: a rare pickup from elites and bosses that restores 3 HP
+- Weapon: the Stamp — a heavy yellow square that slams down ahead of you and knocks enemies back
+- Screen shake: the camera jolts when a heavy enemy (Block, elite, boss) dies (The Frame task likely adds the boss case; generalize after)
