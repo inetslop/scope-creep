@@ -4,11 +4,12 @@ title: Add the Tile enemy
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T20:18:38Z
 claimed_at: 2026-10-26T20:28:47Z
+finished_at: 2026-10-26T20:34:02Z
 ---
 
 ## Goal
@@ -76,3 +77,16 @@ export const tile: EnemyDef = {
 
 ### Tests
 - none (the existing `tests/content.test.ts` validates `tile` automatically: id, numbers, radius bounds)
+
+## Result (attempt 1, yoga)
+
+Added the Tile enemy — a mid-tier green square chaser (hp 35, speed 95, contact 12, xp 3, threat 2, weight 4, unlock at 105 s, knockbackResist 0.3, radius 16, ink accent, spin 0.4) in `src/content/enemies/tile.ts`, registered at the end of `ENEMIES` in `src/content/enemies/index.ts`. It never splits on death (no `splitsInto` field), sits between the fast Hex and slow Boulder in pressure, and needs no engine changes — `Enemy.steer()` already handles `'chase'` and Boot generates its texture automatically. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 5.3 min
+
+```
+game/src/content/enemies/index.ts |  3 ++-
+ game/src/content/enemies/tile.ts  | 24 ++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+), 1 deletion(-)
+```
