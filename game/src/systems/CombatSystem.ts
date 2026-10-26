@@ -110,6 +110,7 @@ export class CombatSystem {
       this.pickups.drop(e.x, e.y, e.def.xp);
     }
     this.run.kills += 1;
+    this.run.registerKill();
     hook.stats.enemiesKilled += 1;
     if (e.def.splitsInto) this.split(e);
     e.despawn();

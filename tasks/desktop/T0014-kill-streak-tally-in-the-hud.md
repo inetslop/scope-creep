@@ -4,11 +4,12 @@ title: Kill-streak tally in the HUD
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0005, T0006]
 attempts: 1
 created: 2026-10-26T18:39:20Z
 claimed_at: 2026-10-26T22:48:26Z
+finished_at: 2026-10-26T22:58:36Z
 ---
 
 ## Goal
@@ -128,3 +129,20 @@ it('tracks kill streak and best streak, reset by damage', () => {
 
 ### Tests
 - `tests/core/core.test.ts`: the `RunState` streak test above (kill increments, damage resets, best streak survives reset).
+
+## Result (attempt 1, desktop)
+
+Added a kill-streak tally: `RunState` now tracks `streak`/`bestStreak` (kills via `registerKill()` in `CombatSystem.killEnemy()` cover every kill source; any dealt damage in `takeDamage()` resets it), the HUD shows an ink "×N" top-right from ×2 up with a 0.3 s fade-out on reset and a 0.8 s red "RHYTHM" flash at every 8th consecutive kill, and the GameOver screen reports "Best streak ×N". Also registered a `streak` invariant in GameScene, added a unit test in `tests/core/core.test.ts`, and — one deviation from the design — reset the HUD's streak fields in `create()` because Phaser reuses the scene instance across runs (verified in `SceneManager.getScene`), which otherwise would leak `lastStreak` and skip the RHYTHM flash at 8 in a new run. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 10.2 min
+
+```
+game/src/core/run.ts             | 11 ++++++++
+ game/src/scenes/GameOverScene.ts |  2 +-
+ game/src/scenes/GameScene.ts     |  6 +++--
+ game/src/scenes/HudScene.ts      | 58 +++++++++++++++++++++++++++++++++++++++-
+ game/src/systems/CombatSystem.ts |  1 +
+ game/tests/core/core.test.ts     | 14 ++++++++++
+ 6 files changed, 88 insertions(+), 4 deletions(-)
+```

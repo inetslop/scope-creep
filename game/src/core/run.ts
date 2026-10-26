@@ -19,6 +19,10 @@ export class RunState {
   /** Level-ups earned but not yet spent on an upgrade choice. */
   pendingLevelUps = 0;
   kills = 0;
+  /** Consecutive kills without taking damage. */
+  streak = 0;
+  /** Highest streak reached this run. */
+  bestStreak = 0;
   hp: number;
   stats: PlayerStats;
   /** Weapon ids the player currently has (see src/content/weapons). */
@@ -63,12 +67,19 @@ export class RunState {
     if (amount <= 0 || this.isDead) return 0;
     const dealt = Math.max(1, amount - this.stats.armor);
     this.hp = Math.max(0, this.hp - dealt);
+    this.streak = 0;
     return dealt;
   }
 
   heal(amount: number): void {
     if (this.isDead) return;
     this.hp = Math.min(this.stats.maxHp, this.hp + Math.max(0, amount));
+  }
+
+  /** One kill from any source: extends the streak and the run's best. */
+  registerKill(): void {
+    this.streak += 1;
+    this.bestStreak = Math.max(this.bestStreak, this.streak);
   }
 
   upgradeLevel(id: string): number {

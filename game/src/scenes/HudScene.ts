@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
 import { FRAME } from '../content/bosses/frame';
-import { PALETTE } from '../content/palette';
+import { cssColor, PALETTE } from '../content/palette';
 import { formatTime } from '../core/progression';
+import type { RunState } from '../core/run';
 import { flags } from '../debug/flags';
 import type { StickState } from '../input/TouchSticks';
 import { makeButton } from '../ui/button';
@@ -19,6 +20,8 @@ export class HudScene extends Phaser.Scene {
   private levelText!: Phaser.GameObjects.Text;
   private timeText!: Phaser.GameObjects.Text;
   private killText!: Phaser.GameObjects.Text;
+  private streakText!: Phaser.GameObjects.Text;
+  private rhythmText!: Phaser.GameObjects.Text;
   private fpsText?: Phaser.GameObjects.Text;
   private pauseButton!: Phaser.GameObjects.Container;
   /** Boss health bar: its own Graphics, so the 0.5 s death fade can lower alpha without clearing the main HUD. */
@@ -31,6 +34,12 @@ export class HudScene extends Phaser.Scene {
   private hpGhost = 1;
   /** Seconds since the player was last hit. */
   private sinceHit = Number.POSITIVE_INFINITY;
+  /** Kill-streak tally state. The scene instance survives stop/launch, so reset in create(). */
+  private streakShown = false;
+  private lastStreak = 0;
+  private flashUntil = 0;
+  private rhythmUntil = 0;
+  private flashRed = false;
 
   constructor() {
     super(SCENES.hud);
@@ -42,6 +51,8 @@ export class HudScene extends Phaser.Scene {
     this.levelText = this.add.text(0, 0, '', textStyle(18, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
     this.timeText = this.add.text(0, 0, '', textStyle(22, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0);
     this.killText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5);
+    this.streakText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5).setVisible(false);
+    this.rhythmText = this.add.text(0, 0, 'RHYTHM', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
     this.pauseButton = makeButton(this, 0, 0, 'II', () => this.scene.get(SCENES.game).events.emit(GAME_EVENTS.pauseRequest), { width: 44, height: 44, fontSize: 18 });
     if (flags.debug) this.fpsText = this.add.text(PAD, 0, '', textStyle(12, PALETTE.green));
     this.bossG = this.add.graphics();
@@ -51,6 +62,11 @@ export class HudScene extends Phaser.Scene {
     this.bossFade = 1;
     this.hpGhost = 1;
     this.sinceHit = Number.POSITIVE_INFINITY;
+    this.streakShown = false;
+    this.lastStreak = 0;
+    this.flashUntil = 0;
+    this.rhythmUntil = 0;
+    this.flashRed = false;
     const gameEvents = this.scene.get(SCENES.game).events;
     const onPlayerHit = (): void => {
       this.sinceHit = 0;
@@ -107,6 +123,7 @@ export class HudScene extends Phaser.Scene {
 
     this.pauseButton.setPosition(width - PAD - 22, PAD + 22);
     this.killText.setPosition(width - PAD - 54, PAD + 22).setText(`${run.kills} kills`);
+    this.updateStreak(run, width);
     this.fpsText?.setPosition(PAD, height - 24).setText(`${Math.round(this.game.loop.actualFps)} fps`);
 
     const controls = getControls(this);
@@ -114,6 +131,45 @@ export class HudScene extends Phaser.Scene {
       this.drawStick(controls.touch.left, width * 0.18, height * 0.8, controls.touch.radius);
       this.drawStick(controls.touch.right, width * 0.82, height * 0.8, controls.touch.radius);
     }
+  }
+
+  /** "×N" kill-streak tally top-right; a red "RHYTHM" flash at every 8th consecutive kill. */
+  private updateStreak(run: RunState, width: number): void {
+    const s = run.streak;
+    const now = this.time.now;
+    if (s >= 2 && !this.streakShown) {
+      this.streakShown = true;
+      this.tweens.killTweensOf(this.streakText); // cancel a fade-out still running
+      this.streakText.setVisible(true).setAlpha(1);
+    } else if (s < 2 && this.streakShown) {
+      this.streakShown = false;
+      this.rhythmUntil = 0;
+      this.tweens.killTweensOf(this.streakText);
+      this.tweens.add({ targets: this.streakText, alpha: 0, duration: 300, ease: 'Linear', onComplete: () => this.streakText.setVisible(false) });
+    }
+    if (s > this.lastStreak && Math.floor(s / 8) > Math.floor(this.lastStreak / 8)) {
+      this.flashUntil = now + 800;
+      this.rhythmUntil = now + 800;
+      this.tweens.killTweensOf(this.streakText);
+      this.streakText.setAlpha(1);
+      this.tweens.add({ targets: this.streakText, alpha: 0.3, duration: 200, yoyo: true, repeat: 1, ease: 'Sine.easeInOut' });
+      this.tweens.killTweensOf(this.rhythmText);
+      this.rhythmText.setScale(1).setAlpha(1);
+      this.tweens.add({ targets: this.rhythmText, alpha: 0.35, scale: 1.2, duration: 200, yoyo: true, repeat: 1, ease: 'Sine.easeInOut' });
+    }
+    this.lastStreak = s;
+    if (s >= 2) {
+      this.streakText.setText(`×${s}`);
+      const red = now < this.flashUntil;
+      if (red !== this.flashRed) {
+        this.flashRed = red;
+        this.streakText.setColor(cssColor(red ? PALETTE.red : PALETTE.ink));
+      }
+    }
+    const y = PAD + 60;
+    this.streakText.setPosition(width - PAD, y);
+    this.rhythmText.setPosition(width - PAD - this.streakText.width - 8, y);
+    this.rhythmText.setVisible(s >= 2 && now < this.rhythmUntil);
   }
 
   /** `ghost` > `frac` draws the span between them in yellow (HP just lost). */

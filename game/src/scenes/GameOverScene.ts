@@ -25,7 +25,7 @@ export class GameOverScene extends Phaser.Scene {
 
     this.add.tileSprite(0, 0, width, height, TEX.floor).setOrigin(0);
     this.add.text(width / 2, height * 0.2, 'ERASED', titleStyle(Math.min(72, short * 0.14), PALETTE.red, PALETTE.ink)).setOrigin(0.5);
-    const lines = [`Survived  ${formatTime(summary.timeSec)}`, `Level  ${summary.level}`, `${summary.kills} shapes erased`];
+    const lines = [`Survived  ${formatTime(summary.timeSec)}`, `Level  ${summary.level}`, `${summary.kills} shapes erased`, `Best streak  ×${summary.bestStreak}`];
     this.add.text(width / 2, height * 0.42, lines.join('\n'), textStyle(Math.min(26, short * 0.055), PALETTE.ink, { align: 'center', lineSpacing: 10 })).setOrigin(0.5);
 
     const restart = (): void => {

@@ -103,6 +103,20 @@ describe('RunState', () => {
     expect(run.firstSighting('wedge')).toBe(false);
     expect(run.firstSighting('dart')).toBe(true);
   });
+
+  it('tracks kill streak and best streak, reset by damage', () => {
+    const run = new RunState(1);
+    run.registerKill();
+    run.registerKill();
+    expect(run.streak).toBe(2);
+    expect(run.bestStreak).toBe(2);
+    run.takeDamage(5);
+    expect(run.streak).toBe(0);
+    expect(run.bestStreak).toBe(2);
+    for (let i = 0; i < 5; i++) run.registerKill();
+    expect(run.streak).toBe(5);
+    expect(run.bestStreak).toBe(5);
+  });
 });
 
 describe('upgrades', () => {

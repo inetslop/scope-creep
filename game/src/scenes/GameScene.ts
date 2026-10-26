@@ -29,6 +29,7 @@ export interface RunSummary {
   timeSec: number;
   level: number;
   kills: number;
+  bestStreak: number;
   seed: number;
 }
 
@@ -167,7 +168,7 @@ export class GameScene extends Phaser.Scene {
     this.sfx.enemyDeath(40);
     this.fx.shake(400, 0.012);
     this.player.setVisible(false);
-    const summary: RunSummary = { timeSec: this.run.timeSec, level: this.run.level, kills: this.run.kills, seed: this.run.seed };
+    const summary: RunSummary = { timeSec: this.run.timeSec, level: this.run.level, kills: this.run.kills, bestStreak: this.run.bestStreak, seed: this.run.seed };
     this.time.delayedCall(700, () => {
       this.scene.stop(SCENES.hud);
       this.scene.start(SCENES.gameOver, summary);
@@ -298,7 +299,8 @@ export class GameScene extends Phaser.Scene {
     hook.addInvariant('music-scheduler', () =>
       Number.isFinite(this.music.nextBeatTime) && this.music.nextBeatTime >= 0 ? null : `music nextBeatTime ${this.music.nextBeatTime}`,
     );
+    hook.addInvariant('streak', () => (this.run.streak >= 0 && this.run.bestStreak >= this.run.streak ? null : `streak ${this.run.streak} / best ${this.run.bestStreak}`));
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels', 'boss-state'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels', 'boss-state', 'streak'];
