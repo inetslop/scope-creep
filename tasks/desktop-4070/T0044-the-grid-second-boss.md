@@ -4,10 +4,11 @@ title: The Grid — second boss
 assignee: desktop-4070
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: [T0006]
-attempts: 0
+attempts: 1
 created: 2026-10-26T23:09:26Z
+claimed_at: 2026-10-26T23:37:11Z
 ---
 
 ## Goal
