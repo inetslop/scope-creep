@@ -4,10 +4,12 @@ title: Unit tests for the upgrade roll
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T21:54:06Z
+claimed_at: 2026-10-26T21:55:46Z
+designer: desktop
 ---
 
 ## Goal
