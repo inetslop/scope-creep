@@ -85,7 +85,8 @@ export class GameScene extends Phaser.Scene {
     const cam = this.cameras.main;
     cam.setBackgroundColor(PALETTE.paperDark); // outside the arena
     cam.setBounds(this.bounds.x - 200, this.bounds.y - 200, this.bounds.width + 400, this.bounds.height + 400);
-    cam.startFollow(this.player, true, 0.15, 0.15);
+    // No roundPixels: zoom is fractional, so snapping the scroll to whole world units jitters it against the player.
+    cam.startFollow(this.player, false, 0.15, 0.15);
     this.applyZoom(this.scale.width, this.scale.height);
     onResize(this, (w, h) => this.applyZoom(w, h));
 
@@ -200,6 +201,13 @@ export class GameScene extends Phaser.Scene {
     const onMute = (): void => {
       this.sfx.toggleMute();
     };
+    // Physics writes body positions back to sprites in POST_UPDATE (after update()), so anything pinned
+    // to the player is placed here, or it trails the player by a frame and wobbles.
+    const onPostUpdate = (): void => {
+      this.player.syncBarrel();
+      this.orbit.pinToPlayer();
+    };
+    this.events.on(Phaser.Scenes.Events.POST_UPDATE, onPostUpdate);
     this.events.on(Phaser.Scenes.Events.RESUME, onResume);
     this.events.on(GAME_EVENTS.pauseRequest, onPauseRequest);
     this.input.keyboard?.on('keydown-ESC', onPauseRequest);
@@ -209,6 +217,7 @@ export class GameScene extends Phaser.Scene {
     if (!flags.smoke) this.game.events.on(Phaser.Core.Events.HIDDEN, onHidden);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.events.off(Phaser.Scenes.Events.POST_UPDATE, onPostUpdate);
       this.events.off(Phaser.Scenes.Events.RESUME, onResume);
       this.events.off(GAME_EVENTS.pauseRequest, onPauseRequest);
       this.input.keyboard?.off('keydown-ESC', onPauseRequest);

@@ -5,6 +5,7 @@ import { DEPTH } from '../config';
 import type { WeaponDef } from '../content/types';
 import { WEAPON_BY_ID } from '../content/weapons';
 import type { RunState } from '../core/run';
+import type { Vec2 } from '../core/vec';
 import type { Enemy } from '../entities/Enemy';
 import type { Player } from '../entities/Player';
 import type { DamageNumbers } from './DamageNumbers';
@@ -54,9 +55,7 @@ export class OrbitSystem {
     const cooldownMs = hitCooldownSec * 1000;
     for (const [serial, t] of this.lastHit) if (now - t > cooldownMs) this.lastHit.delete(serial); // keep the map tiny
     for (let i = 0; i < count; i++) {
-      const a = this.angle + (i / count) * Math.PI * 2;
-      const cx = this.player.x + Math.cos(a) * radius;
-      const cy = this.player.y + Math.sin(a) * radius;
+      const { x: cx, y: cy } = this.circlePos(i, count, radius);
       this.circles[i].setVisible(true).setPosition(cx, cy);
       for (const obj of this.enemies.getChildren()) {
         const e = obj as Enemy;
@@ -77,6 +76,21 @@ export class OrbitSystem {
         if (died) this.kill(e);
       }
     }
+  }
+
+  /** Re-places the circles around the player after physics has moved it this frame (visual only, hits stay in update()). */
+  pinToPlayer(): void {
+    const orbit = this.activeDef()?.orbit;
+    if (!orbit) return;
+    for (let i = 0; i < orbit.count && i < this.circles.length; i++) {
+      const { x, y } = this.circlePos(i, orbit.count, orbit.radius);
+      this.circles[i].setPosition(x, y);
+    }
+  }
+
+  private circlePos(i: number, count: number, radius: number): Vec2 {
+    const a = this.angle + (i / count) * Math.PI * 2;
+    return { x: this.player.x + Math.cos(a) * radius, y: this.player.y + Math.sin(a) * radius };
   }
 
   /** The orbit weapon the player owns, if any (found by field, not by id). */

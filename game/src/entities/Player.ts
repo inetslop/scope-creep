@@ -37,9 +37,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     return now < this.invulnerableUntil;
   }
 
+  /** Called by GameScene after physics has moved the player this frame. */
+  syncBarrel(): void {
+    this.barrel.setPosition(this.x, this.y).setRotation(this.aimAngle);
+  }
+
   protected preUpdate(time: number, delta: number): void {
     super.preUpdate(time, delta);
-    this.barrel.setPosition(this.x, this.y).setRotation(this.aimAngle);
     const flicker = this.isInvulnerable(time) && Math.floor(time / 70) % 2 === 0;
     this.setAlpha(flicker ? 0.35 : 1);
     this.barrel.setAlpha(this.alpha).setVisible(this.visible);

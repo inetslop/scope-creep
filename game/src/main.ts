@@ -23,7 +23,9 @@ const game = new Phaser.Game({
   },
   physics: {
     default: 'arcade',
-    arcade: { debug: flags.debug, gravity: { x: 0, y: 0 } },
+    // One physics step per rendered frame. The default fixed 60 Hz step moves bodies 0 or 2 times on
+    // some frames (always on 120/144 Hz screens), which makes everything judder against the camera.
+    arcade: { debug: flags.debug, gravity: { x: 0, y: 0 }, fixedStep: false },
   },
   input: { activePointers: 3, gamepad: true },
   render: { antialias: true, powerPreference: 'high-performance' },
