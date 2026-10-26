@@ -4,9 +4,11 @@ title: Elite enemies
 assignee: asus
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
+claimed_at: 2026-10-26T17:39:57Z
+designer: asus
 ---
 
 ## Goal
