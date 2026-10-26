@@ -64,7 +64,8 @@ const DEV_BASH = [
   'Bash(git show *)',
 ];
 
-const PO_BASH = ['Bash(git status)', 'Bash(git status *)', 'Bash(git log *)', 'Bash(git show *)', 'Bash(git diff *)'];
+/** Read-only git for the architect. (The PO gets no shell: its git log is in the prompt.) */
+const GIT_READ_BASH = ['Bash(git status)', 'Bash(git status *)', 'Bash(git log *)', 'Bash(git show *)', 'Bash(git diff *)'];
 
 const ALWAYS_DENY = [
   'WebFetch',
@@ -103,7 +104,7 @@ export function claudeSettings(profile: Profile, env: Record<string, string>): o
     return {
       ...common,
       permissions: {
-        allow: [...READ_ONLY_TOOLS, ...PO_BASH],
+        allow: [...READ_ONLY_TOOLS, ...GIT_READ_BASH],
         deny: [...ALWAYS_DENY, ...devReadDenies, 'Edit', 'Write'],
       },
       env,
@@ -130,9 +131,10 @@ export function claudeSettings(profile: Profile, env: Record<string, string>): o
   return {
     ...common,
     permissions: {
-      // The PO reads everything except the loop internals, and writes only tasks/ and planning/.
-      allow: [...READ_ONLY_TOOLS, rule('Edit', TASKS_DIR), rule('Edit', PLANNING_DIR), ...PO_BASH],
-      deny: [...ALWAYS_DENY, ...loopReads, ...loopEdits, rule('Edit', GAME_DIR), rule('Edit', path.join(TASKS_DIR, 'archive'))],
+      // The PO plans from planning/ and tasks/ only. It never reads the game's code (that is the
+      // architect's job); it gets a generated inventory and planning/CHANGELOG.md instead.
+      allow: [...READ_ONLY_TOOLS, rule('Edit', TASKS_DIR), rule('Edit', PLANNING_DIR)],
+      deny: [...ALWAYS_DENY, 'Bash', rule('Read', GAME_DIR), ...loopReads, ...loopEdits, rule('Edit', GAME_DIR), rule('Edit', path.join(TASKS_DIR, 'archive'))],
     },
     env,
   };

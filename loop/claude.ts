@@ -85,7 +85,8 @@ function processEnv(agent: Record<string, string>): NodeJS.ProcessEnv {
 /** The only built-in tools agents get. New Claude Code tools stay off unless added here. */
 const TOOLS: Record<Profile, string> = {
   dev: 'Bash,Read,Edit,Write,Glob,Grep',
-  po: 'Bash,Read,Edit,Write,Glob,Grep',
+  // The PO plans from files in planning/ and tasks/; it needs no shell.
+  po: 'Read,Edit,Write,Glob,Grep',
   // Designs come back in the final message; the architect never edits files.
   architect: 'Bash,Read,Glob,Grep',
 };

@@ -4,7 +4,8 @@ import { runAgent } from './claude.ts';
 import { devMachineIds, effortFor, hasArchitect, SIZE_ORDER, type FleetConfig } from './config.ts';
 import type { RunContext } from './dev.ts';
 import { info, step, warn } from './log.ts';
-import { ARCHIVE_DIR, REPO, TASKS_DIR, rel } from './paths.ts';
+import { buildInventory, CHANGELOG_HEADER, changelogLine } from './inventory.ts';
+import { ARCHIVE_DIR, GAME_DIR, PLANNING_DIR, REPO, TASKS_DIR, rel } from './paths.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { loadState, saveState } from './state.ts';
@@ -91,6 +92,7 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
     FEEDBACK: state.poFeedback.length ? state.poFeedback.map((f) => `- ${f}`).join('\n') : '(none)',
     INVALID: listing.invalid.size ? [...listing.invalid].map(([f, e]) => `- ${rel(f)}: ${e}`).join('\n') : '(none)',
     GIT_LOG: (await git.logOneline(20, ['game/'])) || '(no game commits yet)',
+    INVENTORY: buildInventory(GAME_DIR),
     NEXT_IDS: ids.join(', '),
     MACHINE_IDS: devMachineIds(fleet).join(', '),
   });
@@ -110,7 +112,14 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
   if (reverted.length) feedback.push(`You may only write in tasks/<machine>/ and planning/. Reverted: ${reverted.join(', ')}`);
   const created = await validateTaskChanges(ctx, listing, first, feedback);
 
-  // Archive what the PO has now seen, so the next cycle only shows new results.
+  // Record what got built (the PO's memory of the game, since it doesn't read code), then archive
+  // what the PO has now seen, so the next cycle only shows new results.
+  const built = finished.filter((t) => t.status === 'done' && fs.existsSync(t.file));
+  if (built.length) {
+    const changelog = path.join(PLANNING_DIR, 'CHANGELOG.md');
+    const current = fs.existsSync(changelog) ? fs.readFileSync(changelog, 'utf8') : CHANGELOG_HEADER;
+    fs.writeFileSync(changelog, `${current.trimEnd()}\n${built.map(changelogLine).join('\n')}\n`);
+  }
   fs.mkdirSync(ARCHIVE_DIR, { recursive: true });
   let archived = 0;
   for (const t of finished) {

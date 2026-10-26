@@ -61,6 +61,13 @@ describe('claudeSettings', () => {
     assert.equal(edits.length, 2);
     assert.ok(s.permissions.deny.some((r) => r.startsWith('Edit(') && r.includes('/game/**')));
   });
+
+  it('the po cannot read the game code or use a shell', () => {
+    const s = claudeSettings('po', {}) as { permissions: { allow: string[]; deny: string[] } };
+    assert.ok(s.permissions.deny.some((r) => r.startsWith('Read(') && r.includes('/game/**')));
+    assert.ok(s.permissions.deny.includes('Bash'));
+    assert.ok(!s.permissions.allow.some((r) => r.startsWith('Bash')));
+  });
 });
 
 describe('needsRestart', () => {

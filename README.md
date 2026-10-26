@@ -23,7 +23,7 @@ An abstract, Bauhaus-style twin-stick roguelite for desktop and mobile browsers,
 
 | Path | Dev agents | Architect | PO agent | Runner | Humans |
 | --- | --- | --- | --- | --- | --- |
-| `game/` (except `game/CLAUDE.md`) | **write** | read | read | commits it | ✔ |
+| `game/` (except `game/CLAUDE.md`) | **write** | read | no access (gets a generated inventory) | commits it | ✔ |
 | `tasks/<machine>/` | no access | no access (gets its task in the prompt) | **write** new / `design` / `todo` tasks | status, designs, results | ✔ |
 | `planning/` | no access | no access | **write** | — | ✔ |
 | `loop/`, `agents/`, `setup/`, `.github/`, root files | no access | no access | no access | — | ✔ |
@@ -72,7 +72,7 @@ Each machine runs `loop/start-agent.ps1`, a supervisor that keeps `loop/runner.t
 
 1. **Syncs** with `origin/main`. If anything under `loop/` or the root `package*.json` changed, it exits with code 75 and the supervisor reinstalls dependencies and restarts it on the new code. (The supervisor also relaunches itself if `start-agent.ps1` changes.)
 2. **Ensures the model server** is up (starts `llama-server` detached so the model stays loaded across restarts).
-3. **PO cycle** (on the PO machine, see *Pacing* below): runs the PO agent in the repo root with write access to `tasks/` and `planning/` only. The runner then validates every task file (format, unique ids, size vs. machine capability, the PO may only edit `design`/`todo` tasks), sets new tasks to `design`, archives the tasks the PO just reviewed, commits and pushes.
+3. **PO cycle** (on the PO machine, see *Pacing* below): runs the PO agent in the repo root with write access to `tasks/` and `planning/` only. The PO never reads the game's code — it plans from the vision, roadmap, ideas, `planning/CHANGELOG.md` and a game inventory the runner generates from the content files and source tree (enemies, weapons, upgrades, scenes, systems). The runner then validates every task file (format, unique ids, size vs. machine capability, the PO may only edit `design`/`todo` tasks), sets new tasks to `design`, appends finished tasks to the changelog, archives the tasks the PO just reviewed, commits and pushes.
 4. **Architect pass**: a read-only agent in `game/` reads the code and answers with a design — files to create/edit, exact interfaces, steps, pitfalls, tests, and dependencies on other open tasks. The runner appends it to the task as `## Design`, adds the dependencies and moves the task to `todo`. If the task can't be built as written, the architect rejects it and it goes back to the PO as `failed` with the reason.
    - **Who designs** (`architectMode` in `agents/machines.json`): the ASUS is an `always` architect (up to 4 designs every iteration, best priority first). The desktop is an `idle` architect: only when it has nothing ready to build, one design at a time, its own tasks first — so it unblocks itself while the ASUS is busy planning or coding.
    - **Claims**: before designing, an architect pushes `status: designing` + `designer: <machine>`, so two architects never design the same task. A runner releases its own claims when it restarts, and a claim older than the architect timeout + 30 min is taken over by anyone (the claimer probably died).
@@ -114,7 +114,7 @@ loop/            runner, supervisor, smoke test, doctor, status
 agents/          machines.json (fleet + loop tuning) and prompt templates
 setup/           setup.ps1
 tasks/           <machine>/ queues and archive/ — PO + runner only
-planning/        VISION, ROADMAP, IDEAS — PO-owned
+planning/        VISION, ROADMAP, IDEAS, CHANGELOG — PO-owned (the runner appends to CHANGELOG)
 .github/         Pages deployment
 ```
 
