@@ -4,10 +4,11 @@ title: Add the Presto upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0037]
-attempts: 0
+attempts: 1
 created: 2026-10-26T22:44:02Z
+claimed_at: 2026-10-26T22:51:42Z
 ---
 
 ## Goal
