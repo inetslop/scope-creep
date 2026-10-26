@@ -4,11 +4,12 @@ title: Add the Pinwheel enemy
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T22:44:02Z
 claimed_at: 2026-10-26T22:57:36Z
+finished_at: 2026-10-26T23:04:23Z
 ---
 
 ## Goal
@@ -83,3 +84,16 @@ export const ENEMIES: readonly EnemyDef[] = [wedge, dart, block, hex, sentry, sp
 
 ### Tests
 None to add. The generic `it.each(ENEMIES)` suites in `tests/content.test.ts` (sane numbers, note caps) and `tests/content/spawn.test.ts` (absent at 164 s, present at 165 s and 600 s) pick up the new enemy automatically.
+
+## Result (attempt 1, yoga)
+
+Added the Pinwheel enemy — a late-run red square chaser (hp 24, speed 112, contact 11, xp 2, threat 2, weight 4, unlocks at 165 s, knockbackResist 0.3) that spins fast at 2.4 rad/s while chasing, in `src/content/enemies/pinwheel.ts`. Registered it in `ENEMIES` in `src/content/enemies/index.ts` at its unlock position between `turret` and `frameWedge`, with the import in alphabetical order. Its first-encounter marginalia "SPINS AS IT CHASES" and texture generation are handled automatically by the existing systems. `npm run check` (126 tests, including the spawn-unlock timing test) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 6.8 min
+
+```
+game/src/content/enemies/index.ts    |  3 ++-
+ game/src/content/enemies/pinwheel.ts | 25 +++++++++++++++++++++++++
+ 2 files changed, 27 insertions(+), 1 deletion(-)
+```
