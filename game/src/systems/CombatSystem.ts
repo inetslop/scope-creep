@@ -1,7 +1,6 @@
 import type Phaser from 'phaser';
 import type { Sfx } from '../audio/Sfx';
 import { getEnemy } from '../content/enemies';
-import { PLAYER_INVULN_MS } from '../config';
 import type { RunState } from '../core/run';
 import { hook } from '../debug/testHook';
 import type { Enemy } from '../entities/Enemy';
@@ -78,17 +77,17 @@ export class CombatSystem {
     const now = this.scene.time.now;
     if (!e.active || this.player.isInvulnerable(now) || this.run.isDead) return;
     this.run.takeDamage(e.def.contactDamage);
-    this.player.invulnerableUntil = now + PLAYER_INVULN_MS;
+    this.player.hurt(now);
     e.hit(0, this.player, 320); // shove the enemy back so contact isn't continuous
-    this.fx.playerHit();
+    this.fx.playerHit(this.player.x, this.player.y);
     this.sfx.playerHurt();
   }
 
   private onPlayerShot(p: EnemyBullet): void {
     if (!p.active || this.player.isInvulnerable(this.scene.time.now) || this.run.isDead) return;
     this.run.takeDamage(p.damage);
-    this.player.invulnerableUntil = this.scene.time.now + PLAYER_INVULN_MS;
-    this.fx.playerHit();
+    this.player.hurt(this.scene.time.now);
+    this.fx.playerHit(this.player.x, this.player.y);
     this.sfx.playerHurt();
     p.despawn();
   }

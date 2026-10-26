@@ -16,6 +16,8 @@ export const SCENES = {
 /** Custom events emitted on GameScene's `events` emitter by other scenes. */
 export const GAME_EVENTS = {
   pauseRequest: 'pause-request',
+  /** The player took damage. HudScene shows the hurt frame. */
+  playerHit: 'player-hit',
 } as const;
 
 /** Typed access to objects GameScene shares through the game registry. */

@@ -8,6 +8,8 @@ import { textStyle } from '../ui/text';
 import { GAME_EVENTS, getControls, getRun, SCENES } from './keys';
 
 const PAD = 12;
+/** After a hit the HP just lost shows as a yellow chunk that waits, then drains, while the bar gives a small shake. */
+const HP_HIT = { holdSec: 0.25, drainRate: 7, nudgeSec: 0.22, nudgePx: 4 } as const;
 
 /** Overlay drawn above GameScene: bars, timer, kills, pause button, touch sticks. Read-only view of RunState. */
 export class HudScene extends Phaser.Scene {
@@ -18,6 +20,10 @@ export class HudScene extends Phaser.Scene {
   private killText!: Phaser.GameObjects.Text;
   private fpsText?: Phaser.GameObjects.Text;
   private pauseButton!: Phaser.GameObjects.Container;
+  /** HP fraction the yellow "just lost" chunk reaches to. */
+  private hpGhost = 1;
+  /** Seconds since the player was last hit. */
+  private sinceHit = Number.POSITIVE_INFINITY;
 
   constructor() {
     super(SCENES.hud);
@@ -31,20 +37,35 @@ export class HudScene extends Phaser.Scene {
     this.killText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5);
     this.pauseButton = makeButton(this, 0, 0, 'II', () => this.scene.get(SCENES.game).events.emit(GAME_EVENTS.pauseRequest), { width: 44, height: 44, fontSize: 18 });
     if (flags.debug) this.fpsText = this.add.text(PAD, 0, '', textStyle(12, PALETTE.green));
+
+    this.hpGhost = 1;
+    this.sinceHit = Number.POSITIVE_INFINITY;
+    const gameEvents = this.scene.get(SCENES.game).events;
+    const onPlayerHit = (): void => {
+      this.sinceHit = 0;
+    };
+    gameEvents.on(GAME_EVENTS.playerHit, onPlayerHit);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => gameEvents.off(GAME_EVENTS.playerHit, onPlayerHit));
   }
 
-  update(): void {
+  update(_time: number, delta: number): void {
     const run = getRun(this);
     if (!run) return;
     const { width, height } = this.scale;
     const g = this.g;
     g.clear();
+    const dt = delta / 1000;
+    this.sinceHit += dt;
 
     // HP bar
     const barW = Math.min(260, width * 0.42);
     const hpFrac = Phaser.Math.Clamp(run.hp / run.stats.maxHp, 0, 1);
-    this.drawBar(PAD, PAD, barW, 18, hpFrac, hpFrac > 0.3 ? PALETTE.red : PALETTE.redDark);
-    this.hpText.setPosition(PAD + 8, PAD + 9).setText(`${Math.ceil(run.hp)} / ${Math.round(run.stats.maxHp)}`);
+    if (hpFrac >= this.hpGhost - 0.002) this.hpGhost = hpFrac;
+    else if (this.sinceHit > HP_HIT.holdSec) this.hpGhost += (hpFrac - this.hpGhost) * (1 - Math.exp(-HP_HIT.drainRate * dt));
+    const t = this.sinceHit / HP_HIT.nudgeSec;
+    const nudge = t < 1 ? Math.sin(this.sinceHit * 70) * HP_HIT.nudgePx * (1 - t) : 0;
+    this.drawBar(PAD + nudge, PAD, barW, 18, hpFrac, hpFrac > 0.3 ? PALETTE.red : PALETTE.redDark, this.hpGhost);
+    this.hpText.setPosition(PAD + 8 + nudge, PAD + 9).setText(`${Math.ceil(run.hp)} / ${Math.round(run.stats.maxHp)}`);
 
     // XP bar + level
     this.drawBar(PAD, PAD + 24, barW, 8, Phaser.Math.Clamp(run.xp / run.xpToNext, 0, 1), PALETTE.blue);
@@ -64,10 +85,15 @@ export class HudScene extends Phaser.Scene {
     }
   }
 
-  private drawBar(x: number, y: number, w: number, h: number, frac: number, color: number): void {
+  /** `ghost` > `frac` draws the span between them in yellow (HP just lost). */
+  private drawBar(x: number, y: number, w: number, h: number, frac: number, color: number, ghost = 0): void {
     const g = this.g;
     g.fillStyle(PALETTE.paperLight, 1);
     g.fillRect(x, y, w, h);
+    if (ghost > frac) {
+      g.fillStyle(PALETTE.yellow, 1);
+      g.fillRect(x, y, w * ghost, h);
+    }
     if (frac > 0) {
       g.fillStyle(color, 1);
       g.fillRect(x, y, w * frac, h);

@@ -20,6 +20,8 @@ export const TEX = {
   /** Small white triangle; tint it. Debris when something is destroyed. */
   fragment: 'fragment',
   player: 'player',
+  /** The player in red, shown for a moment after a hit. */
+  playerHurt: 'playerHurt',
   barrel: 'barrel',
   /** XP pickup. */
   shard: 'shard',
@@ -75,10 +77,15 @@ function graphicsTexture(scene: Phaser.Scene, key: string, w: number, h: number,
 function drawPlayer(scene: Phaser.Scene): void {
   const size = 64;
   const c = size / 2 - SHADOW_OFFSET / 2;
-  graphicsTexture(scene, TEX.player, size, size, (g) => {
-    drawShape(g, 'circle', c, c, PLAYER_RADIUS + 2, PALETTE.blue, { outlineWidth: 3 });
-    drawShape(g, 'circle', c, c, 7, PALETTE.yellow, { outlineWidth: 2, shadow: false });
-  });
+  for (const [key, body] of [
+    [TEX.player, PALETTE.blue],
+    [TEX.playerHurt, PALETTE.red],
+  ] as const) {
+    graphicsTexture(scene, key, size, size, (g) => {
+      drawShape(g, 'circle', c, c, PLAYER_RADIUS + 2, body, { outlineWidth: 3 });
+      drawShape(g, 'circle', c, c, 7, PALETTE.yellow, { outlineWidth: 2, shadow: false });
+    });
+  }
 }
 
 /** Graph paper: faint lines every 32 units, a stronger line every 128. */

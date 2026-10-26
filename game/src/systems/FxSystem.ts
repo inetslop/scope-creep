@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import { TEX } from '../art/textures';
 import { DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
+import { GAME_EVENTS } from '../scenes/keys';
 
 /**
  * Visual juice: particles, rings, screen shake. Purely cosmetic — gameplay code
@@ -93,9 +94,14 @@ export class FxSystem {
     this.sparks.explode(2, x, y);
   }
 
-  playerHit(): void {
+  /** Player took damage: blue chips knocked off it, a red ring, a small shake. No full-screen flash: it's hard on the eyes. */
+  playerHit(x: number, y: number): void {
+    this.rings.setParticleTint(PALETTE.red);
+    this.rings.explode(1, x, y);
+    this.fragments.setParticleTint(PALETTE.blue);
+    this.fragments.explode(6, x, y);
     this.scene.cameras.main.shake(140, 0.006);
-    this.scene.cameras.main.flash(90, 215, 54, 43, false);
+    this.scene.events.emit(GAME_EVENTS.playerHit);
   }
 
   shake(durationMs: number, intensity: number): void {

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { TEX } from '../art/textures';
-import { DEPTH, PLAYER_RADIUS } from '../config';
+import { DEPTH, PLAYER_INVULN_MS, PLAYER_RADIUS } from '../config';
 import type { Vec2 } from '../core/vec';
 
 /** The player: a blue circle with an ink barrel. Movement/aim come from GameScene; stats from RunState. */
@@ -9,6 +9,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   aimAngle = 0;
   /** scene.time.now until which contact damage is ignored. */
   invulnerableUntil = 0;
+  /** scene.time.now until which the player is drawn red after a hit. */
+  private hurtUntil = 0;
   private readonly barrel: Phaser.GameObjects.Image;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
@@ -33,6 +35,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     return { x: this.x + Math.cos(this.aimAngle) * 30, y: this.y + Math.sin(this.aimAngle) * 30 };
   }
 
+  /** Took a hit: briefly red, then the invulnerability flicker. */
+  hurt(now: number): void {
+    this.invulnerableUntil = now + PLAYER_INVULN_MS;
+    this.hurtUntil = now + 110;
+  }
+
   isInvulnerable(now: number): boolean {
     return now < this.invulnerableUntil;
   }
@@ -44,7 +52,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   protected preUpdate(time: number, delta: number): void {
     super.preUpdate(time, delta);
-    const flicker = this.isInvulnerable(time) && Math.floor(time / 70) % 2 === 0;
+    const hurt = time < this.hurtUntil;
+    const texture = hurt ? TEX.playerHurt : TEX.player;
+    if (this.texture.key !== texture) this.setTexture(texture);
+    const flicker = !hurt && this.isInvulnerable(time) && Math.floor(time / 70) % 2 === 0;
     this.setAlpha(flicker ? 0.35 : 1);
     this.barrel.setAlpha(this.alpha).setVisible(this.visible);
   }
