@@ -41,9 +41,14 @@ async function main(): Promise<void> {
   const git = await run('git', ['remote', 'get-url', 'origin'], { cwd: REPO });
   if (git.code === 0) pass(`git remote ${git.stdout.trim()}`);
   else fail('no git remote "origin"', 'Clone the repo with git clone instead of downloading a zip.');
-  const push = await run('git', ['push', '--dry-run', '--quiet', 'origin', 'HEAD:main'], { cwd: REPO, env: { ...process.env, GIT_TERMINAL_PROMPT: '0' } });
+  // Push origin's own main onto itself: that needs push access, but not an up-to-date checkout
+  // (pushing HEAD fails as non-fast-forward whenever another machine pushed since the last pull).
+  const gitEnv = { ...process.env, GIT_TERMINAL_PROMPT: '0' };
+  await run('git', ['fetch', '--quiet', 'origin'], { cwd: REPO, env: gitEnv });
+  const push = await run('git', ['push', '--dry-run', '--quiet', 'origin', 'refs/remotes/origin/main:refs/heads/main'], { cwd: REPO, env: gitEnv });
+  const pushError = push.stderr.split('\n').filter((l) => l.trim() && !l.startsWith('hint:') && !l.startsWith('To ')).pop()?.trim();
   if (push.code === 0) pass('git can push to origin');
-  else fail('git cannot push to origin', `Run "gh auth login" then "gh auth setup-git". (${push.stderr.trim().split('\n')[0]})`);
+  else fail('git cannot push to origin', `Run "gh auth login" then "gh auth setup-git". (${pushError ?? `exit ${push.code}`})`);
 
   const version = await run(local.claudePath, ['--version'], { shell: /\.(cmd|bat)$/i.test(local.claudePath) });
   if (version.code === 0) pass(`Claude Code ${version.stdout.trim()}`);
