@@ -27,7 +27,7 @@ describe('enemies', () => {
 
   it.each(ENEMIES.map((e) => [e.id, e] as const))('%s has sane numbers', (_id, e) => {
     expect(positive(e.hp), 'hp > 0').toBe(true);
-    expect(positive(e.speed), 'speed > 0').toBe(true);
+    expect(nonNegative(e.speed), 'speed >= 0').toBe(true);
     expect(nonNegative(e.contactDamage), 'contactDamage >= 0').toBe(true);
     expect(nonNegative(e.xp), 'xp >= 0').toBe(true);
     expect(positive(e.threat), 'threat > 0').toBe(true);
@@ -51,6 +51,11 @@ describe('enemies', () => {
     expect(Number.isInteger(spec.count) && spec.count >= 1, 'count is an integer >= 1').toBe(true);
     expect(spec.id !== e.id, 'no self-split').toBe(true);
     expect(ENEMY_BY_ID.has(spec.id), `unknown split child "${spec.id}"`).toBe(true);
+  });
+
+  it.each(ENEMIES.filter((e) => e.shoot).map((e) => [e.id, e] as const))('%s shoot tuning is sane', (_id, e) => {
+    const s = e.shoot!;
+    expect(positive(s.periodSec) && positive(s.speed) && positive(s.damage), 'shoot numbers > 0').toBe(true);
   });
 });
 

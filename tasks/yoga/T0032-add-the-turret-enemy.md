@@ -4,11 +4,12 @@ title: Add the Turret enemy
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T21:23:27Z
 claimed_at: 2026-10-26T21:28:41Z
+finished_at: 2026-10-26T21:43:55Z
 ---
 
 ## Goal
@@ -102,3 +103,20 @@ export const turret: EnemyDef = {
 
 ### Tests
 - `tests/content.test.ts`: the two changes in step 6 (auto-validated by the existing `it.each(ENEMIES)` loops). No `core/` unit tests — all changed logic is Phaser-dependent (entities/systems).
+
+## Result (attempt 1, yoga)
+
+Added the Turret enemy — a static small orange square (hp 50, threat 3, xp 4) that holds its ground and fires fast ink points at the player every 1.2 s (speed 220, damage 10 vs the Sentry's 150/8), unlocking at 150 s with the first-encounter marginalia "HOLDS STILL, SHOTS FAST". It is a data-only addition (`src/content/enemies/turret.ts`, registered in `ENEMIES`) plus a small opt-in `shoot` tuning field on `EnemyDef` that `Enemy.ts` (fire period) and `SpawnSystem.ts` (shot speed/damage) read, with `speed: 0` making it immovable and `knockbackResist: 0.9` so it barely slides. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 15.2 min
+
+```
+game/src/content/enemies/index.ts  |  3 ++-
+ game/src/content/enemies/turret.ts | 20 ++++++++++++++++++++
+ game/src/content/types.ts          | 11 ++++++++++-
+ game/src/entities/Enemy.ts         |  7 +++++--
+ game/src/systems/SpawnSystem.ts    |  4 +++-
+ game/tests/content.test.ts         |  7 ++++++-
+ 6 files changed, 46 insertions(+), 6 deletions(-)
+```

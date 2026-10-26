@@ -37,6 +37,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   // 'shoot' state machine
   private shootTimer = 0;
   private shotPending = false;
+  private get shootPeriod(): number {
+    return this.def.shoot?.periodSec ?? SHOOT_PERIOD;
+  }
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, TEX.dot);
@@ -56,7 +59,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.flashMs = 0;
     this.chargeState = 'chase';
     this.stateTimer = rng.range(1.5, 3.5);
-    this.shootTimer = rng.range(0.8, SHOOT_PERIOD);
+    this.shootTimer = rng.range(0.8, this.shootPeriod);
     this.shotPending = false;
     this.setRotation(0).setAlpha(1).setScale(1).clearTint().setDepth(DEPTH.enemies);
   }
@@ -117,7 +120,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
           this.setTintFill(PALETTE.paperLight); // telegraph: flash before the shot
           if (this.shootTimer <= 0) {
             this.shotPending = true;
-            this.shootTimer = SHOOT_PERIOD;
+            this.shootTimer = this.shootPeriod;
             this.clearTint();
           }
         }

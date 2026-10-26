@@ -86,7 +86,9 @@ export class SpawnSystem {
     const p = this.enemyShots.get(e.x, e.y) as EnemyBullet | null;
     if (!p) return;
     const angle = Math.atan2(this.player.y - e.y, this.player.x - e.x);
-    p.fire(e.x, e.y, angle, ENEMY_SHOT_SPEED, ENEMY_SHOT_DAMAGE, ENEMY_SHOT_LIFE);
+    const speed = e.def.shoot?.speed ?? ENEMY_SHOT_SPEED;
+    const damage = e.def.shoot?.damage ?? ENEMY_SHOT_DAMAGE;
+    p.fire(e.x, e.y, angle, speed, damage, ENEMY_SHOT_LIFE);
   }
 
   /** A point on a ring just outside the camera view, inside the arena. */

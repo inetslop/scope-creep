@@ -17,7 +17,7 @@ export type EnemyBehavior =
   | 'charger'
   /** Chases while weaving side to side. */
   | 'weaver'
-  /** Holds 240-300 units from the player, strafes, fires slow ink points. */
+  /** Holds 240-300 units from the player, strafes, fires ink points (speed 0 = holds its ground). */
   | 'shoot';
 
 /** Flat geometric shapes, drawn by src/art/shapes.ts. Pointed shapes point to the right (angle 0). */
@@ -61,6 +61,15 @@ export interface EnemyDef {
   knockbackResist: number;
   /** If set, dying also spawns this many enemies of this id at the death spot. They burst outward first. */
   splitsInto?: { id: string; count: number };
+  /** Tuning for behavior 'shoot'; omit for the defaults (2.4 s period, speed 150, damage 8). */
+  shoot?: {
+    /** Seconds between shots. */
+    periodSec: number;
+    /** Projectile speed, world units per second. */
+    speed: number;
+    /** Projectile damage. */
+    damage: number;
+  };
   look: EnemyLook;
 }
 
