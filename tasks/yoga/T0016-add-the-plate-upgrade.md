@@ -4,10 +4,12 @@ title: Add the Plate upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T19:20:22Z
+claimed_at: 2026-10-26T19:40:35Z
+designer: desktop
 ---
 
 ## Goal
