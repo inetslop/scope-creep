@@ -14,7 +14,7 @@ import { formatTaskId, listTasks, maxTaskNumber, parseTask, taskFileName, writeT
 const isArchived = (t: Task): boolean => path.dirname(t.file) === ARCHIVE_DIR;
 const isFinished = (t: Task): boolean => !isArchived(t) && (t.status === 'done' || t.status === 'failed');
 /** Waiting for a dev: still being designed, or designed and ready. */
-const isQueued = (t: Task): boolean => t.status === 'design' || t.status === 'todo';
+const isQueued = (t: Task): boolean => t.status === 'design' || t.status === 'designing' || t.status === 'todo';
 /** Statuses the PO may still edit or delete. */
 const PO_EDITABLE = new Set<string>(['design', 'todo']);
 

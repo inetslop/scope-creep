@@ -28,6 +28,12 @@ export interface MachineConfig {
   notes: string;
   /** Per-machine override of loop.effort, e.g. { "dev": "medium" } for a weak machine. */
   effort?: Partial<Record<Role, Effort>>;
+  /**
+   * For machines with the architect role: "always" designs every iteration (up to
+   * loop.architectMaxPerPass); "idle" designs one task at a time, own tasks first, only
+   * when the machine has nothing ready to build. Default "always".
+   */
+  architectMode?: 'always' | 'idle';
 }
 
 export interface SizeLimits {

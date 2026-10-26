@@ -16,15 +16,16 @@ import { ARCHIVE_DIR, TASKS_DIR } from './paths.ts';
  *   ---
  *   ## Goal ... ## Acceptance criteria ... (free markdown)
  *
- * Lifecycle: design -> todo -> in-progress -> done | failed
- *   design       written by the PO, waiting for the architect
+ * Lifecycle: design -> designing -> todo -> in-progress -> done | failed
+ *   design       written by the PO, waiting for an architect
+ *   designing    claimed by an architect (frontmatter `designer`), being designed
  *   todo         has an architect's "## Design" section; devs may pick it up
  *   in-progress  claimed by the assignee's runner
  *   done/failed  result written by the runner; the PO reviews it, then it is archived
  * The PO writes tasks. Only the runner changes status/attempts and appends designs and results.
  */
 
-export const TASK_STATUSES = ['design', 'todo', 'in-progress', 'done', 'failed'] as const;
+export const TASK_STATUSES = ['design', 'designing', 'todo', 'in-progress', 'done', 'failed'] as const;
 export type TaskStatus = (typeof TASK_STATUSES)[number];
 export const TASK_SIZES = ['S', 'M', 'L'] as const;
 export type TaskSize = (typeof TASK_SIZES)[number];

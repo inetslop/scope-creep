@@ -12,7 +12,8 @@
     "desktop": {
       "label": "Ryzen 9800X3D + RTX 5090",
       "model": "Qwen 3.8 UD-Q4_K_XL",
-      "roles": ["dev"],
+      "roles": ["dev", "architect"],
+      "architectMode": "idle",
       "tier": "fast",
       "maxTaskSize": "L",
       "targetQueue": 4,

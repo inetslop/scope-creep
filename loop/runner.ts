@@ -11,7 +11,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { runArchitectPass } from './architect.ts';
+import { releaseOwnDesignClaims, runArchitectPass } from './architect.ts';
 import { loadFleet, loadLocalConfig } from './config.ts';
 import { runDevTask, type RunContext } from './dev.ts';
 import { sleep } from './exec.ts';
@@ -58,6 +58,7 @@ async function main(): Promise<number> {
   // sync (recovery, task pushes that reset to origin/main), not just the one at the top of the loop.
   const startHead = await git.head();
   await recover(git, local.machineId);
+  await releaseOwnDesignClaims({ git, local }, Object.keys(loadFleet().machines));
 
   for (;;) {
     if (fs.existsSync(STOP_FILE)) {
@@ -88,8 +89,11 @@ async function main(): Promise<number> {
       }
     }
 
-    // New tasks are designed before any dev may pick them up.
-    if (machine.roles.includes('architect') && (await runArchitectPass(ctx)) > 0) worked = true;
+    // New tasks are designed before any dev may pick them up. "always" architects design every
+    // iteration; "idle" architects only when they have nothing to build (see below).
+    const architect = machine.roles.includes('architect');
+    const idleArchitect = architect && machine.architectMode === 'idle' && machine.roles.includes('dev');
+    if (architect && !idleArchitect && (await runArchitectPass(ctx, { max: fleet.loop.architectMaxPerPass, preferOwn: false })) > 0) worked = true;
 
     if (machine.roles.includes('dev')) {
       const listing = listTasks(allIds, true);
@@ -100,6 +104,9 @@ async function main(): Promise<number> {
       );
       if (task) {
         await runDevTask(ctx, task);
+        worked = true;
+      } else if (idleArchitect && (await runArchitectPass(ctx, { max: 1, preferOwn: true })) > 0) {
+        // Nothing to build: design one task (own first), then look for dev work again.
         worked = true;
       }
     }
