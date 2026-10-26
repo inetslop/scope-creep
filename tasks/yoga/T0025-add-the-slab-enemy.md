@@ -4,11 +4,12 @@ title: Add the Slab enemy
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0023]
 attempts: 1
 created: 2026-10-26T20:32:24Z
 claimed_at: 2026-10-26T20:34:07Z
+finished_at: 2026-10-26T20:40:14Z
 ---
 
 ## Goal
@@ -76,3 +77,16 @@ export const slab: EnemyDef = {
 
 ### Tests
 - None. `tests/content.test.ts` validates `slab` automatically (all values are within its checked ranges).
+
+## Result (attempt 1, yoga)
+
+Added the Slab enemy as a pure data file: `src/content/enemies/slab.ts` (big yellow square, `shape: 'square'` like tile, radius 24, hp 140, speed 45, contactDamage 18, xp 6, threat 4, spawnWeight 2, `unlockAtSec: 120`, `behavior: 'chase'`, `knockbackResist: 0.8`, spin 0.1) and registered it in `ENEMIES` in `src/content/enemies/index.ts` with the import in alphabetical position. Texture and behavior are fully data-driven, so no other files changed. It unlocks at 2:00, crawls slower than Boulder, shrugs off knockback almost completely, and hurts more on contact (18 vs 15). `npm run check` (typecheck + lint + 60 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 6.1 min
+
+```
+game/src/content/enemies/index.ts |  3 ++-
+ game/src/content/enemies/slab.ts  | 24 ++++++++++++++++++++++++
+ 2 files changed, 26 insertions(+), 1 deletion(-)
+```
