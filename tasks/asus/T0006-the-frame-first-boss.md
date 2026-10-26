@@ -4,10 +4,12 @@ title: The Frame — first boss
 assignee: asus
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: [T0005]
 attempts: 0
 created: 2026-10-26T17:40:33Z
+claimed_at: 2026-10-26T18:52:00Z
+designer: desktop
 ---
 
 ## Goal
