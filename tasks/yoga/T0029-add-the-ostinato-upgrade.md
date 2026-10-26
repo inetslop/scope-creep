@@ -4,11 +4,12 @@ title: Add the Ostinato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T20:55:07Z
 claimed_at: 2026-10-26T21:09:05Z
+finished_at: 2026-10-26T21:15:19Z
 ---
 
 ## Goal
@@ -61,3 +62,15 @@ None. Pure data entry using the existing `UpgradeDef` (`src/content/types.ts:126
 
 ### Tests
 - none (content test auto-validates; behavior is covered by the existing roll/stats code paths).
+
+## Result (attempt 1, yoga)
+
+Added the Ostinato upgrade to `src/content/upgrades/index.ts` — a rare (weight 3), max-2-level card that adds +1 pierce and ×1.10 fire rate per level (2 levels = +2 pierce, ≈×1.21 fire rate), using the same `extraPierce`/`fireRateMul` stats and ops as the existing Vector and Rhythm entries so it stacks with them normally. The content test auto-validates the new entry, `npm run check` passes (typecheck + lint + 75 tests), and `npm run smoke` passes on both desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 6.2 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+```
