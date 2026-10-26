@@ -4,10 +4,12 @@ title: Add the Trill upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T23:43:51Z
+claimed_at: 2026-10-26T23:50:56Z
+designer: desktop
 ---
 
 ## Goal
