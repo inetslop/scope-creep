@@ -4,11 +4,12 @@ title: Add the Pressure upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T21:54:06Z
 claimed_at: 2026-10-26T21:55:05Z
+finished_at: 2026-10-26T22:00:56Z
 ---
 
 ## Goal
@@ -62,3 +63,15 @@ No new types or functions. The entry must be a valid `UpgradeDef` (already impor
 
 ### Tests
 - none — `tests/content.test.ts` already validates every `UPGRADES` entry (unique kebab-case id, maxLevel ≥ 1, weight > 0, known stats, mul > 0) and runs as part of `npm run check`.
+
+## Result (attempt 1, yoga)
+
+Added the Pressure upgrade to `UPGRADES` in `src/content/upgrades/index.ts` — a max-level-3, weight-4 card (orange) that multiplies damage and fire rate by 1.10 each, reaching ≈×1.33 at max level. It reuses the existing `damageMul`/`fireRateMul` stats, so it stacks normally with Weight/Emphasis and Rhythm/Allegro with no new code. Verified with `npm run check` (typecheck, lint, 109 unit tests) and `npm run smoke` (desktop + mobile), both passing.
+
+- Self-review: APPROVE
+- Time: 5.9 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+```
