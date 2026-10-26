@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { runAgent } from './claude.ts';
-import { devMachineIds, SIZE_ORDER, type FleetConfig } from './config.ts';
+import { devMachineIds, effortFor, hasArchitect, SIZE_ORDER, type FleetConfig } from './config.ts';
 import type { RunContext } from './dev.ts';
 import { info, step, warn } from './log.ts';
 import { ARCHIVE_DIR, REPO, TASKS_DIR, rel } from './paths.ts';
@@ -13,8 +13,16 @@ import { formatTaskId, listTasks, maxTaskNumber, parseTask, taskFileName, writeT
 
 const isArchived = (t: Task): boolean => path.dirname(t.file) === ARCHIVE_DIR;
 const isFinished = (t: Task): boolean => !isArchived(t) && (t.status === 'done' || t.status === 'failed');
+/** Waiting for a dev: still being designed, or designed and ready. */
+const isQueued = (t: Task): boolean => t.status === 'design' || t.status === 'todo';
+/** Statuses the PO may still edit or delete. */
+const PO_EDITABLE = new Set<string>(['design', 'todo']);
 
-/** Returns why the PO should plan now, or null if it shouldn't. */
+/**
+ * Returns why the PO should plan now, or null if it shouldn't. Planning is driven by
+ * backpressure: each dev machine has a targetQueue, and the PO only tops queues up to it,
+ * so fast machines (that drain their queue sooner) trigger planning more often.
+ */
 export function poDue(fleet: FleetConfig, listing: TaskListing): string | null {
   const state = loadState();
   const last = state.lastPoRunAt ? Date.parse(state.lastPoRunAt) : 0;
@@ -23,8 +31,8 @@ export function poDue(fleet: FleetConfig, listing: TaskListing): string | null {
   if (minutes < fleet.loop.poMinGapMinutes) return null;
   if (minutes >= fleet.loop.poMaxGapMinutes) return 'scheduled review';
   for (const id of devMachineIds(fleet)) {
-    const todo = listing.tasks.filter((t) => !isArchived(t) && path.basename(path.dirname(t.file)) === id && t.status === 'todo').length;
-    if (todo < fleet.machines[id]!.targetQueue) return `queue for ${id} is low (${todo}/${fleet.machines[id]!.targetQueue})`;
+    const queued = queueSize(listing, id);
+    if (queued < fleet.machines[id]!.targetQueue) return `queue for ${id} is low (${queued}/${fleet.machines[id]!.targetQueue})`;
   }
   const finished = listing.tasks.filter(isFinished).length;
   if (finished > 0) return `${finished} finished task(s) to review`;
@@ -35,18 +43,18 @@ export function poDue(fleet: FleetConfig, listing: TaskListing): string | null {
 function describeMachines(fleet: FleetConfig): string {
   return Object.entries(fleet.machines)
     .filter(([, m]) => m.roles.includes('dev'))
-    .map(([id, m]) => `- **${id}**: ${m.label}, model ${m.model} (tier: ${m.tier}). Max task size **${m.maxTaskSize}**. Keep ${m.targetQueue} todo tasks queued. ${m.notes}`)
+    .map(([id, m]) => `- **${id}**: ${m.label}, model ${m.model} (tier: ${m.tier}). Max task size **${m.maxTaskSize}**. Keep ${m.targetQueue} tasks queued. ${m.notes}`)
     .join('\n');
 }
 
 function describeQueues(fleet: FleetConfig, listing: TaskListing): string {
   return devMachineIds(fleet)
     .map((id) => {
-      const open = listing.tasks.filter((t) => !isArchived(t) && path.basename(path.dirname(t.file)) === id && (t.status === 'todo' || t.status === 'in-progress'));
-      const todo = open.filter((t) => t.status === 'todo').length;
-      const need = Math.max(0, fleet.machines[id]!.targetQueue - todo);
+      const open = listing.tasks.filter((t) => !isArchived(t) && path.basename(path.dirname(t.file)) === id && (isQueued(t) || t.status === 'in-progress'));
+      const queued = open.filter(isQueued).length;
+      const need = Math.max(0, fleet.machines[id]!.targetQueue - queued);
       const lines = open.map((t) => `  - ${t.id} [${t.status}, size ${t.size}, priority ${t.priority}] ${t.title}`);
-      return [`### ${id} — ${todo} todo, needs ${need} more`, ...(lines.length ? lines : ['  - (empty)'])].join('\n');
+      return [`### ${id} — ${queued} queued, needs ${need} more`, ...(lines.length ? lines : ['  - (empty)'])].join('\n');
     })
     .join('\n\n');
 }
@@ -55,7 +63,7 @@ function describeFinished(finished: Task[]): string {
   if (finished.length === 0) return '(none since last cycle)';
   return finished
     .map((t) => {
-      const report = t.body.slice(Math.max(0, t.body.search(/\n## (Result|Attempt)/)));
+      const report = t.body.slice(Math.max(0, t.body.search(/\n## (Result|Attempt|Rejected|Architect)/)));
       return `### ${t.id} — ${t.status.toUpperCase()} — ${t.title}\n${report.trim().slice(-1800)}`;
     })
     .join('\n\n');
@@ -92,6 +100,7 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
     prompt,
     cwd: REPO,
     profile: 'po',
+    effort: effortFor(fleet, ctx.local.machineId, 'po'),
     maxTurns: fleet.loop.poMaxTurns,
     timeoutMin: fleet.loop.poTimeoutMin,
   });
@@ -137,18 +146,20 @@ async function validateTaskChanges(ctx: RunContext, before: TaskListing, firstId
     const abs = path.join(REPO, change.path);
     const existedBefore = await git.existsAtHead(change.path);
     let originalId: string | undefined;
+    let originalStatus: Task['status'] | undefined;
     if (existedBefore) {
-      let oldStatus = 'todo';
+      let oldStatus = 'design';
       try {
         const old = parseTask((await git.showAtHead(change.path)) ?? '', abs);
         oldStatus = old.status;
         originalId = old.id;
+        originalStatus = old.status;
       } catch {
         /* unparseable before: let the PO fix it */
       }
-      if (oldStatus !== 'todo') {
+      if (!PO_EDITABLE.has(oldStatus)) {
         await git.revertPath(change);
-        feedback.push(`${change.path} is ${oldStatus}; only todo tasks may be edited or deleted.`);
+        feedback.push(`${change.path} is ${oldStatus}; only design and todo tasks may be edited or deleted.`);
         continue;
       }
     }
@@ -182,6 +193,7 @@ async function validateTaskChanges(ctx: RunContext, before: TaskListing, firstId
       machine = target;
     }
     if (originalId) task.id = originalId; // existing tasks keep their id
+    if (originalStatus) task.status = originalStatus; // and status: only the architect moves design -> todo
     pending.push({ task, abs, isNew: !existedBefore, machine, path: change.path });
   }
 
@@ -204,7 +216,8 @@ async function validateTaskChanges(ctx: RunContext, before: TaskListing, firstId
   for (const { task, abs, isNew, machine } of pending) {
     task.assignee = machine;
     if (isNew) {
-      task.status = 'todo';
+      // Every new task goes through the architect first (if the fleet has one).
+      task.status = hasArchitect(fleet) ? 'design' : 'todo';
       task.attempts = 0;
       task.created = new Date().toISOString().slice(0, 19) + 'Z';
       task.claimedAt = task.finishedAt = task.commit = undefined;
@@ -221,5 +234,5 @@ async function validateTaskChanges(ctx: RunContext, before: TaskListing, firstId
 }
 
 function queueSize(listing: TaskListing, machine: string): number {
-  return listing.tasks.filter((t) => !isArchived(t) && path.basename(path.dirname(t.file)) === machine && t.status === 'todo').length;
+  return listing.tasks.filter((t) => !isArchived(t) && path.basename(path.dirname(t.file)) === machine && isQueued(t)).length;
 }

@@ -4,7 +4,7 @@
  */
 import { runAgent } from './claude.ts';
 import { ensureGameDeps, runGate } from './checks.ts';
-import { loadFleet, loadLocalConfig, type LocalConfig } from './config.ts';
+import { effortFor, loadFleet, loadLocalConfig, type LocalConfig } from './config.ts';
 import { run } from './exec.ts';
 import { detectContextSize, ensureLlama, MIN_CONTEXT } from './llama.ts';
 import { GAME_DIR, REPO } from './paths.ts';
@@ -69,8 +69,9 @@ async function main(): Promise<void> {
     prompt: 'This is a connectivity test. Do not use any tools. Reply with exactly: DOCTOR OK',
     cwd: GAME_DIR,
     profile: 'dev',
+    effort: effortFor(fleet, local.machineId, 'dev'),
     maxTurns: 2,
-    timeoutMin: 10,
+    timeoutMin: 15,
   });
   if (agent.result.includes('DOCTOR OK')) pass(`Claude Code -> local model round trip (${(agent.durationMs / 1000).toFixed(0)}s)`);
   else fail(`Claude Code session did not answer as expected (${agent.subtype}): ${agent.result.slice(0, 200)}`, `See the transcript: ${agent.transcript}`);

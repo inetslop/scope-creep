@@ -4,7 +4,7 @@ title: Procedural sound effects
 assignee: desktop
 size: M
 priority: 1
-status: todo
+status: design
 depends_on: []
 attempts: 0
 ---

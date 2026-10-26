@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { runAgent, type AgentRunResult } from './claude.ts';
 import { ensureGameDeps, runGate } from './checks.ts';
-import type { FleetConfig, LocalConfig } from './config.ts';
+import { effortFor, type Effort, type FleetConfig, type LocalConfig } from './config.ts';
 import type { Git } from './git.ts';
 import { info, step, warn } from './log.ts';
 import { GAME_DIR, REPO, rel } from './paths.ts';
@@ -16,6 +16,9 @@ export interface RunContext {
   fleet: FleetConfig;
   git: Git;
 }
+
+/** Reasoning effort for this machine's dev sessions (agents/machines.json). */
+const devEffort = (ctx: RunContext): Effort => effortFor(ctx.fleet, ctx.local.machineId, 'dev');
 
 const now = (): string => new Date().toISOString().slice(0, 19) + 'Z';
 const GAME = ['game/'];
@@ -70,6 +73,7 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
       }),
       cwd: GAME_DIR,
       profile: 'dev',
+      effort: devEffort(ctx),
       maxTurns: limits.maxTurns,
       timeoutMin: limits.timeoutMin,
     });
@@ -146,8 +150,9 @@ function fixRound(ctx: RunContext, task: Task, session: AgentRunResult, stage: s
     prompt: renderPrompt('fix', { TASK_ID: task.id, TASK_TITLE: task.title, STAGE: stage, OUTPUT: output, ROUND: round }),
     cwd: GAME_DIR,
     profile: 'dev',
+    effort: devEffort(ctx),
     maxTurns: Math.ceil(limits.maxTurns / 2),
-    timeoutMin: Math.ceil(limits.timeoutMin / 2),
+    timeoutMin: limits.timeoutMin,
     resumeSessionId: session.sessionId,
   });
 }
@@ -162,8 +167,9 @@ async function selfReview(ctx: RunContext, task: Task, base: string, notes: stri
     prompt: renderPrompt('review', { TASK_ID: task.id, TASK_TITLE: task.title, TASK_BODY: task.body, DIFF: diff }),
     cwd: GAME_DIR,
     profile: 'dev',
+    effort: devEffort(ctx),
     maxTurns: ctx.fleet.loop.reviewMaxTurns,
-    timeoutMin: Math.ceil(limits.timeoutMin / 2),
+    timeoutMin: limits.timeoutMin,
   });
   await enforce(ctx, notes);
   const match = /VERDICT:\s*(APPROVE|REJECT)\b:?\s*(.*)/i.exec(review.result);
@@ -219,8 +225,9 @@ async function resolveConflicts(ctx: RunContext, task: Task, notes: string[]): P
         prompt: renderPrompt('conflict', { TASK_ID: task.id, TASK_TITLE: task.title, FILES: files.map((f) => `- ${f.replace(/^game\//, '')}`).join('\n') }),
         cwd: GAME_DIR,
         profile: 'dev',
-        maxTurns: 30,
-        timeoutMin: 20,
+        effort: devEffort(ctx),
+        maxTurns: 40,
+        timeoutMin: 60,
       });
       for (const f of files) {
         const abs = path.join(REPO, f);

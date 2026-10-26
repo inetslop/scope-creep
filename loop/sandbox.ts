@@ -1,4 +1,5 @@
 import path from 'node:path';
+import type { Role } from './config.ts';
 import type { ChangedPath, Git } from './git.ts';
 import { AGENT_DIR, AGENTS_DIR, GAME_DIR, PLANNING_DIR, permissionPath, REPO, TASKS_DIR } from './paths.ts';
 
@@ -11,17 +12,20 @@ import { AGENT_DIR, AGENTS_DIR, GAME_DIR, PLANNING_DIR, permissionPath, REPO, TA
  *      e.g. a test script that writes files). The runner also only ever stages
  *      the writable paths when it commits.
  */
-export type Profile = 'dev' | 'po';
+export type Profile = Role;
 
 export const WRITABLE: Record<Profile, readonly string[]> = {
   dev: ['game/'],
   po: ['tasks/', 'planning/'],
+  // The architect only reads; the runner writes its design into the task file.
+  architect: [],
 };
 
 /** Inside writable areas, but still human-owned. */
 export const PROTECTED: Record<Profile, readonly string[]> = {
   dev: ['game/CLAUDE.md'],
   po: ['tasks/archive/'],
+  architect: [],
 };
 
 export function isWritable(profile: Profile, repoPath: string): boolean {
@@ -92,7 +96,19 @@ export function claudeSettings(profile: Profile, env: Record<string, string>): o
 
   // Agents never commit and can't use memory: keep those instructions out of their (small) context.
   const common = { autoMemoryEnabled: false, includeCoAuthoredBy: false, attribution: { commit: '', pr: '' } };
+  // Same view of the repo as a dev (the game, not the queue or the loop).
+  const devReadDenies = [rule('Read', TASKS_DIR), rule('Read', PLANNING_DIR), ...loopReads];
 
+  if (profile === 'architect') {
+    return {
+      ...common,
+      permissions: {
+        allow: [...READ_ONLY_TOOLS, ...PO_BASH],
+        deny: [...ALWAYS_DENY, ...devReadDenies, 'Edit', 'Write'],
+      },
+      env,
+    };
+  }
   if (profile === 'dev') {
     return {
       ...common,
@@ -101,9 +117,7 @@ export function claudeSettings(profile: Profile, env: Record<string, string>): o
         deny: [
           ...ALWAYS_DENY,
           // Devs never see or touch the task queue, planning docs or the loop.
-          rule('Read', TASKS_DIR),
-          rule('Read', PLANNING_DIR),
-          ...loopReads,
+          ...devReadDenies,
           rule('Edit', TASKS_DIR),
           rule('Edit', PLANNING_DIR),
           ...loopEdits,

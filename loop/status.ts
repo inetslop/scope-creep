@@ -20,9 +20,12 @@ for (const id of ids) {
   const m = fleet.machines[id]!;
   const mine = tasks.filter((t) => path.basename(path.dirname(t.file)) === id);
   const count = (s: string): number => mine.filter((t) => t.status === s).length;
-  console.log(`  ${id.padEnd(9)} ${m.model.padEnd(24)} todo ${count('todo')}  in-progress ${count('in-progress')}  done ${count('done')}  failed ${count('failed')}`);
-  for (const t of mine.filter((x) => x.status === 'in-progress' || x.status === 'todo').sort((a, b) => a.id.localeCompare(b.id))) {
-    console.log(`      ${t.id} ${t.status === 'in-progress' ? '▶' : '·'} [${t.size}] ${t.title}`);
+  console.log(
+    `  ${id.padEnd(9)} ${m.model.padEnd(24)} design ${count('design')}  todo ${count('todo')}  in-progress ${count('in-progress')}  done ${count('done')}  failed ${count('failed')}`,
+  );
+  const marks: Record<string, string> = { 'in-progress': '▶', todo: '·', design: '✎' };
+  for (const t of mine.filter((x) => x.status in marks).sort((a, b) => a.id.localeCompare(b.id))) {
+    console.log(`      ${t.id} ${marks[t.status]} [${t.size}] ${t.title}`);
   }
 }
 

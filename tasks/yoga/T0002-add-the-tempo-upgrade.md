@@ -4,7 +4,7 @@ title: Add the Tempo upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: design
 depends_on: []
 attempts: 0
 ---

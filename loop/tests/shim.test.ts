@@ -1,6 +1,20 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { hoistSystemMessages } from '../shim.ts';
+import { hoistSystemMessages, rewriteRequest } from '../shim.ts';
+
+describe('rewriteRequest', () => {
+  it("sets reasoning_effort for the chat template, keeping other kwargs", () => {
+    const body = { messages: [{ role: 'user', content: 'hi' }], chat_template_kwargs: { foo: 1 } };
+    rewriteRequest(body, 'xhigh');
+    assert.deepEqual(body.chat_template_kwargs, { foo: 1, reasoning_effort: 'xhigh' });
+  });
+
+  it('leaves the effort alone when none is configured', () => {
+    const body: Parameters<typeof rewriteRequest>[0] = { messages: [{ role: 'user', content: 'hi' }] };
+    rewriteRequest(body);
+    assert.equal(body.chat_template_kwargs, undefined);
+  });
+});
 
 describe('hoistSystemMessages', () => {
   it('moves mid-conversation system messages into the top-level system prompt', () => {

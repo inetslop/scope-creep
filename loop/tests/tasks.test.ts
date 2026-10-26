@@ -43,6 +43,7 @@ describe('parseTask', () => {
     const t = parseTask('---\ntitle: x\n---\nbody', file);
     assert.equal(t.id, 'T0007');
     assert.equal(t.assignee, 'yoga');
+    assert.equal(t.status, 'design', 'new tasks start in design');
   });
 
   it('handles CRLF and BOM', () => {
@@ -59,7 +60,12 @@ describe('parseTask', () => {
 });
 
 describe('pickNextTask', () => {
-  const mk = (id: string, extra: Partial<Task> = {}): Task => ({ ...parseTask(`---\nid: ${id}\ntitle: ${id}\n---\n`, file), ...extra });
+  const mk = (id: string, extra: Partial<Task> = {}): Task => ({ ...parseTask(`---\nid: ${id}\ntitle: ${id}\n---\n`, file), status: 'todo', ...extra });
+
+  it('never picks tasks still waiting for the architect', () => {
+    const designing = mk('T0001', { status: 'design' });
+    assert.equal(pickNextTask([designing], [designing]), undefined);
+  });
 
   it('picks the best priority, then the lowest id, skipping blocked tasks', () => {
     const done = mk('T0001', { status: 'done' });

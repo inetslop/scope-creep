@@ -4,7 +4,7 @@ title: Add the Hex enemy
 assignee: yoga
 size: S
 priority: 1
-status: todo
+status: design
 depends_on: []
 attempts: 0
 ---

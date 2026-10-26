@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { LocalConfig } from './config.ts';
+import type { Effort, LocalConfig } from './config.ts';
 import { run } from './exec.ts';
 import { detectContextSize, MIN_CONTEXT } from './llama.ts';
 import { info, warn } from './log.ts';
@@ -17,6 +17,8 @@ export interface AgentRunOptions {
   profile: Profile;
   maxTurns: number;
   timeoutMin: number;
+  /** Reasoning effort for the model (see config.Effort). Omit to use the chat template's default. */
+  effort?: Effort;
   /** Continue an earlier session (keeps the agent's context). */
   resumeSessionId?: string;
 }
@@ -54,8 +56,12 @@ export function agentEnv(local: LocalConfig, ctx: number, baseUrl: string = loca
     // Unknown models are assumed to have 200k context; tell Claude Code the truth so it compacts in time.
     CLAUDE_CODE_MAX_CONTEXT_TOKENS: String(ctx),
     CLAUDE_AUTOCOMPACT_PCT_OVERRIDE: '75',
-    CLAUDE_CODE_MAX_OUTPUT_TOKENS: String(Math.min(16384, Math.floor(ctx / 4))),
-    API_TIMEOUT_MS: '1800000',
+    // xhigh effort thinks at length before answering; be patient with a local model.
+    CLAUDE_CODE_MAX_OUTPUT_TOKENS: String(Math.min(32000, Math.floor(ctx / 4))),
+    API_TIMEOUT_MS: String(60 * 60_000),
+    // `npm run smoke` builds and plays the game; Claude Code's default 2 min Bash limit is too tight on slow machines.
+    BASH_DEFAULT_TIMEOUT_MS: String(10 * 60_000),
+    BASH_MAX_TIMEOUT_MS: String(20 * 60_000),
     // The attribution header changes every request and destroys llama.cpp's prompt cache.
     CLAUDE_CODE_ATTRIBUTION_HEADER: '0',
     CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC: '1',
@@ -77,7 +83,15 @@ function processEnv(agent: Record<string, string>): NodeJS.ProcessEnv {
 }
 
 /** The only built-in tools agents get. New Claude Code tools stay off unless added here. */
-const TOOLS = 'Bash,Read,Edit,Write,Glob,Grep';
+const TOOLS: Record<Profile, string> = {
+  dev: 'Bash,Read,Edit,Write,Glob,Grep',
+  po: 'Bash,Read,Edit,Write,Glob,Grep',
+  // Designs come back in the final message; the architect never edits files.
+  architect: 'Bash,Read,Glob,Grep',
+};
+
+/** Claude Code's own --effort levels; it is kept in step with the model's level. */
+const CLAUDE_EFFORTS = new Set(['low', 'medium', 'high', 'xhigh', 'max']);
 
 function quoteForShell(arg: string): string {
   return /[\s"&|<>^]/.test(arg) ? `"${arg.replace(/"/g, '\\"')}"` : arg;
@@ -98,7 +112,7 @@ export async function runAgent(local: LocalConfig, opts: AgentRunOptions): Promi
   const transcript = path.join(RUNS_DIR, `${stamp}-${opts.label}.jsonl`);
   const ctx = await detectContextSize(local);
   if (ctx < MIN_CONTEXT) warn(`model context is only ${ctx} tokens; Claude Code needs at least ${MIN_CONTEXT}. Expect failures.`);
-  const env = agentEnv(local, ctx, await shimFor(local.llama.baseUrl));
+  const env = agentEnv(local, ctx, await shimFor(local.llama.baseUrl, opts.effort));
   const settingsFile = path.join(AGENT_DIR, 'claude', `${opts.profile}.settings.json`);
   fs.mkdirSync(path.dirname(settingsFile), { recursive: true });
   fs.writeFileSync(settingsFile, JSON.stringify(claudeSettings(opts.profile, env), null, 2));
@@ -114,7 +128,7 @@ export async function runAgent(local: LocalConfig, opts: AgentRunOptions): Promi
     '--max-turns',
     String(opts.maxTurns),
     '--tools',
-    TOOLS,
+    TOOLS[opts.profile],
     '--settings',
     settingsFile,
     '--setting-sources',
@@ -127,12 +141,15 @@ export async function runAgent(local: LocalConfig, opts: AgentRunOptions): Promi
     // Not --exclude-dynamic-system-prompt-sections: it moves the environment section into a
     // system message in the middle of the conversation, which Qwen's chat template rejects.
   ];
+  if (opts.effort && CLAUDE_EFFORTS.has(opts.effort)) args.push('--effort', opts.effort);
   if (opts.resumeSessionId) args.push('--resume', opts.resumeSessionId);
 
   const useShell = /\.(cmd|bat)$/i.test(local.claudePath);
   let sessionId: string | undefined;
   let final: Record<string, unknown> | undefined;
-  info(`agent ${opts.label}: ${opts.profile} session in ${path.basename(opts.cwd) || opts.cwd} (max ${opts.maxTurns} turns, ${opts.timeoutMin} min, context ${ctx})`);
+  info(
+    `agent ${opts.label}: ${opts.profile} session in ${path.basename(opts.cwd) || opts.cwd} (effort ${opts.effort ?? 'default'}, max ${opts.maxTurns} turns, ${opts.timeoutMin} min, context ${ctx})`,
+  );
 
   const res = await run(useShell ? quoteForShell(local.claudePath) : local.claudePath, useShell ? args.map(quoteForShell) : args, {
     cwd: opts.cwd,

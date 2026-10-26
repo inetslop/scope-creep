@@ -21,7 +21,11 @@ Developers are LOCAL models, much weaker than you. A task they cannot finish in 
 - Don't give two machines tasks that edit the same files at the same time; they will conflict.
 - Use depends_on when a task needs another task done first.
 
+# The pipeline
+Every task you write starts as `design`. An architect agent then reads the code and adds a "## Design" section (exact files, signatures, steps), and only then (`todo`) does a developer pick it up. So you own the WHAT and the WHY: player-facing goal, exact gameplay values, acceptance criteria, which machine. The architect owns the HOW. Tasks the architect rejects come back to you under "Finished" with its reason.
+
 # Current queues
+(A machine's queue counts its `design` and `todo` tasks.)
 {{QUEUES}}
 
 # Finished since your last cycle
@@ -43,7 +47,8 @@ Learn from these. If a task failed, read why and write a smaller, clearer replac
 2. Update planning/ROADMAP.md and planning/IDEAS.md.
 3. For every machine that "needs N more", write N new task files into tasks/<machine>/ (machine ids: {{MACHINE_IDS}}).
    Use these ids, in order: {{NEXT_IDS}}. File name: tasks/<machine>/<id>-<short-slug>.md
-4. You may edit or delete tasks whose status is todo. Never touch tasks that are in-progress, done or failed; the runner owns them.
+4. Write exactly as many tasks as each machine needs; the queues are kept short on purpose so plans stay fresh.
+5. You may edit or delete tasks whose status is design or todo. Never touch tasks that are in-progress, done or failed; the runner owns them.
 
 # Task file format (exactly this shape)
 
@@ -53,7 +58,7 @@ title: Add the Hex enemy
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: design
 depends_on: []
 ---
 

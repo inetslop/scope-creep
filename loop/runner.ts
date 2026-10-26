@@ -11,6 +11,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { runArchitectPass } from './architect.ts';
 import { loadFleet, loadLocalConfig } from './config.ts';
 import { runDevTask, type RunContext } from './dev.ts';
 import { sleep } from './exec.ts';
@@ -86,6 +87,9 @@ async function main(): Promise<number> {
         worked = true;
       }
     }
+
+    // New tasks are designed before any dev may pick them up.
+    if (machine.roles.includes('architect') && (await runArchitectPass(ctx)) > 0) worked = true;
 
     if (machine.roles.includes('dev')) {
       const listing = listTasks(allIds, true);

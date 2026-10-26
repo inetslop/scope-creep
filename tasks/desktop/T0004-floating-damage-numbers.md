@@ -4,7 +4,7 @@ title: Floating damage numbers
 assignee: desktop
 size: M
 priority: 2
-status: todo
+status: design
 depends_on: []
 attempts: 0
 ---

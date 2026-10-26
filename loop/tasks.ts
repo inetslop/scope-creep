@@ -16,10 +16,15 @@ import { ARCHIVE_DIR, TASKS_DIR } from './paths.ts';
  *   ---
  *   ## Goal ... ## Acceptance criteria ... (free markdown)
  *
- * The PO writes tasks. Only the runner changes status/attempts and appends results.
+ * Lifecycle: design -> todo -> in-progress -> done | failed
+ *   design       written by the PO, waiting for the architect
+ *   todo         has an architect's "## Design" section; devs may pick it up
+ *   in-progress  claimed by the assignee's runner
+ *   done/failed  result written by the runner; the PO reviews it, then it is archived
+ * The PO writes tasks. Only the runner changes status/attempts and appends designs and results.
  */
 
-export const TASK_STATUSES = ['todo', 'in-progress', 'done', 'failed'] as const;
+export const TASK_STATUSES = ['design', 'todo', 'in-progress', 'done', 'failed'] as const;
 export type TaskStatus = (typeof TASK_STATUSES)[number];
 export const TASK_SIZES = ['S', 'M', 'L'] as const;
 export type TaskSize = (typeof TASK_SIZES)[number];
@@ -83,7 +88,7 @@ export function parseTask(text: string, file: string): Task {
   if (!title) throw new TaskFormatError('missing title');
   const size = unquote(fields.size ?? 'M').toUpperCase() as TaskSize;
   if (!TASK_SIZES.includes(size)) throw new TaskFormatError(`size must be S, M or L (got "${size}")`);
-  const status = unquote(fields.status ?? 'todo').toLowerCase() as TaskStatus;
+  const status = unquote(fields.status ?? 'design').toLowerCase() as TaskStatus;
   if (!TASK_STATUSES.includes(status)) throw new TaskFormatError(`invalid status "${status}"`);
   const priority = Number(unquote(fields.priority ?? '2'));
   const extra: Record<string, string> = {};

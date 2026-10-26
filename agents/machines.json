@@ -3,11 +3,11 @@
     "asus": {
       "label": "ASUS RTX Spark (128 GB unified)",
       "model": "Qwen 3.8 UD-Q8_K_XL",
-      "roles": ["po", "dev"],
+      "roles": ["po", "architect", "dev"],
       "tier": "strong",
       "maxTaskSize": "L",
       "targetQueue": 2,
-      "notes": "Best reasoning in the fleet, but slower and also runs the PO, so it develops between planning cycles. Give it the hardest design-heavy work: new systems, tricky bugs, cross-cutting changes."
+      "notes": "Best reasoning in the fleet, but slower; it also plans and designs, so it develops in between. Give it the hardest design-heavy work: new systems, tricky bugs, cross-cutting changes."
     },
     "desktop": {
       "label": "Ryzen 9800X3D + RTX 5090",
@@ -29,9 +29,9 @@
     }
   },
   "sizes": {
-    "S": { "maxTurns": 40, "timeoutMin": 30 },
-    "M": { "maxTurns": 90, "timeoutMin": 60 },
-    "L": { "maxTurns": 150, "timeoutMin": 100 }
+    "S": { "maxTurns": 50, "timeoutMin": 60 },
+    "M": { "maxTurns": 100, "timeoutMin": 120 },
+    "L": { "maxTurns": 160, "timeoutMin": 240 }
   },
   "loop": {
     "pollSeconds": 60,
@@ -40,9 +40,14 @@
     "review": true,
     "reviewMaxTurns": 40,
     "poMaxTurns": 80,
-    "poTimeoutMin": 45,
+    "poTimeoutMin": 120,
     "poMinGapMinutes": 10,
     "poMaxGapMinutes": 90,
-    "smokeSeconds": 24
+    "architectMaxTurns": 60,
+    "architectTimeoutMin": 120,
+    "architectMaxPerPass": 4,
+    "architectMaxAttempts": 2,
+    "smokeSeconds": 24,
+    "effort": { "po": "xhigh", "architect": "xhigh", "dev": "xhigh" }
   }
 }

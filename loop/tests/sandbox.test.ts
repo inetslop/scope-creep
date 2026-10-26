@@ -23,6 +23,22 @@ describe('isWritable', () => {
   });
 });
 
+describe('architect profile', () => {
+  it('may change nothing at all', () => {
+    for (const p of ['game/src/main.ts', 'tasks/asus/T0001-x.md', 'planning/IDEAS.md', 'loop/runner.ts']) {
+      assert.equal(isWritable('architect', p), false, p);
+    }
+  });
+
+  it('settings deny every edit and hide the queue and the loop', () => {
+    const s = claudeSettings('architect', {}) as { permissions: { allow: string[]; deny: string[] } };
+    assert.ok(s.permissions.deny.includes('Edit') && s.permissions.deny.includes('Write'));
+    assert.ok(!s.permissions.allow.some((r) => r.startsWith('Edit')));
+    assert.ok(s.permissions.deny.some((r) => r.startsWith('Read(') && r.includes('/tasks/**')));
+    assert.ok(s.permissions.deny.some((r) => r.startsWith('Read(') && r.includes('/loop/**')));
+  });
+});
+
 describe('permissionPath', () => {
   it('converts Windows paths to the //c/... form', () => {
     if (process.platform !== 'win32') return;

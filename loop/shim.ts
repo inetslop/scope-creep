@@ -5,12 +5,16 @@ import { warn } from './log.ts';
 
 /**
  * Compatibility shim between Claude Code and the local model server, running inside the
- * runner process (agents get its URL as ANTHROPIC_BASE_URL).
+ * runner process (agents get its URL as ANTHROPIC_BASE_URL). One shim per (server, effort).
  *
- * Claude Code sends a `system`-role message INSIDE `messages` (its environment section).
- * Anthropic's API accepts that; local chat templates such as Qwen's raise
- * "System message must be at the beginning". The shim moves such messages into the
- * top-level `system` field. Everything else, including SSE streams, passes through untouched.
+ * 1. Claude Code sends a `system`-role message INSIDE `messages` (its environment section).
+ *    Anthropic's API accepts that; local chat templates such as Qwen's raise
+ *    "System message must be at the beginning". The shim moves such messages into the
+ *    top-level `system` field.
+ * 2. llama.cpp ignores Claude Code's `output_config.effort`, but passes a request's
+ *    `chat_template_kwargs` to the chat template. The shim sets `reasoning_effort` there,
+ *    so each role gets its configured effort per request.
+ * Everything else, including SSE streams, passes through untouched.
  */
 
 interface Block {
@@ -24,6 +28,7 @@ interface Message {
 interface MessagesBody {
   system?: string | Block[];
   messages?: Message[];
+  chat_template_kwargs?: Record<string, unknown>;
 }
 
 /** Moves system/developer messages from `messages` into `system`. Returns true if it changed anything. */
@@ -42,19 +47,26 @@ export function hoistSystemMessages(body: MessagesBody): boolean {
   return true;
 }
 
+/** Everything the shim does to a /v1/messages body. */
+export function rewriteRequest(body: MessagesBody, effort?: string): void {
+  hoistSystemMessages(body);
+  if (effort) body.chat_template_kwargs = { ...(body.chat_template_kwargs ?? {}), reasoning_effort: effort };
+}
+
 const shims = new Map<string, Promise<string>>();
 
-/** Starts (once per upstream) a shim on a random localhost port and returns its base URL. */
-export function shimFor(upstreamBase: string): Promise<string> {
-  let url = shims.get(upstreamBase);
+/** Starts (once per server + effort) a shim on a random localhost port and returns its base URL. */
+export function shimFor(upstreamBase: string, effort?: string): Promise<string> {
+  const key = `${upstreamBase}|${effort ?? ''}`;
+  let url = shims.get(key);
   if (!url) {
-    url = startShim(upstreamBase);
-    shims.set(upstreamBase, url);
+    url = startShim(upstreamBase, effort);
+    shims.set(key, url);
   }
   return url;
 }
 
-function startShim(upstreamBase: string): Promise<string> {
+function startShim(upstreamBase: string, effort?: string): Promise<string> {
   const upstream = new URL(upstreamBase);
   const client = upstream.protocol === 'https:' ? https : http;
   const basePath = upstream.pathname.replace(/\/+$/, '');
@@ -67,7 +79,8 @@ function startShim(upstreamBase: string): Promise<string> {
       if (req.method === 'POST' && req.url?.startsWith('/v1/messages') && body.length > 0) {
         try {
           const parsed = JSON.parse(body.toString('utf8')) as MessagesBody;
-          if (hoistSystemMessages(parsed)) body = Buffer.from(JSON.stringify(parsed));
+          rewriteRequest(parsed, effort);
+          body = Buffer.from(JSON.stringify(parsed));
         } catch {
           /* not JSON: forward as-is */
         }

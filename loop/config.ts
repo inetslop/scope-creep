@@ -3,11 +3,21 @@ import path from 'node:path';
 import { AGENT_DIR, AGENTS_DIR } from './paths.ts';
 import type { TaskSize } from './tasks.ts';
 
+/** What a machine does: plan (po), design tasks (architect), implement them (dev). */
+export type Role = 'po' | 'architect' | 'dev';
+
+/**
+ * Reasoning effort passed to the model's chat template as `reasoning_effort`.
+ * Qwen 3.8 supports exactly low, medium and xhigh ("high" is an alias of xhigh;
+ * anything else makes the template throw). Check the template before using other models.
+ */
+export type Effort = 'low' | 'medium' | 'high' | 'xhigh';
+
 /** One machine in the fleet (agents/machines.json, committed, human-owned). */
 export interface MachineConfig {
   label: string;
   model: string;
-  roles: ('po' | 'dev')[];
+  roles: Role[];
   /** Free-form capability tier shown to the PO, e.g. "strong" / "fast" / "weak". */
   tier: string;
   /** Biggest task size the PO may assign to this machine. */
@@ -16,6 +26,8 @@ export interface MachineConfig {
   targetQueue: number;
   /** Shown to the PO verbatim: strengths, weaknesses, what to assign. */
   notes: string;
+  /** Per-machine override of loop.effort, e.g. { "dev": "medium" } for a weak machine. */
+  effort?: Partial<Record<Role, Effort>>;
 }
 
 export interface SizeLimits {
@@ -41,7 +53,15 @@ export interface FleetConfig {
     poMinGapMinutes: number;
     /** Always run the PO at least this often (to keep the scope creeping). */
     poMaxGapMinutes: number;
+    architectMaxTurns: number;
+    architectTimeoutMin: number;
+    /** Designs per runner iteration, so the architect machine still gets to develop. */
+    architectMaxPerPass: number;
+    /** Design attempts before a task is failed back to the PO. */
+    architectMaxAttempts: number;
     smokeSeconds: number;
+    /** Reasoning effort per role (see Effort). */
+    effort: Record<Role, Effort>;
   };
 }
 
@@ -91,6 +111,15 @@ export function loadFleet(): FleetConfig {
 
 export function poMachineId(fleet: FleetConfig): string | undefined {
   return Object.entries(fleet.machines).find(([, m]) => m.roles.includes('po'))?.[0];
+}
+
+/** True if some machine designs tasks; otherwise PO tasks go straight to the devs. */
+export function hasArchitect(fleet: FleetConfig): boolean {
+  return Object.values(fleet.machines).some((m) => m.roles.includes('architect'));
+}
+
+export function effortFor(fleet: FleetConfig, machineId: string, role: Role): Effort {
+  return fleet.machines[machineId]?.effort?.[role] ?? fleet.loop.effort[role];
 }
 
 export function devMachineIds(fleet: FleetConfig): string[] {

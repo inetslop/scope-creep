@@ -11,7 +11,7 @@ You are reviewing a change to "Scope Creep" (abstract Bauhaus-style twin-stick r
 ```
 
 # Checklist
-1. Does it meet every acceptance criterion?
+1. Does it meet every acceptance criterion, and follow the "## Design" section (files, names, signatures)?
 2. Bugs: wrong logic, listeners or timers not removed on scene shutdown, pooled objects never despawned, NaN/undefined risks, movement not scaled by dt.
 3. Does it work on desktop (mouse + keyboard) and on a phone (touch, 412x915 portrait)? Does UI fit both?
 4. Does it follow CLAUDE.md: the flat Bauhaus art style (ink outlines, no glow), content as data, no Phaser imports in src/core or src/content, palette colors, scene keys from SCENES?
