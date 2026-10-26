@@ -4,10 +4,11 @@ title: Add the Splitter enemy
 assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-26T17:40:33Z
+claimed_at: 2026-10-26T18:42:39Z
 ---
 
 ## Goal
