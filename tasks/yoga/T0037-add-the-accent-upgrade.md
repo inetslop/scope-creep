@@ -4,11 +4,12 @@ title: Add the Accent upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T22:44:02Z
 claimed_at: 2026-10-26T22:45:39Z
+finished_at: 2026-10-26T22:51:34Z
 ---
 
 ## Goal
@@ -65,3 +66,15 @@ No new types or functions. Both stats already exist in `PlayerStats` (`src/core/
 - none — `tests/content.test.ts` (lines 91–108) automatically validates every `UPGRADES` entry: unique kebab-case id, non-empty name/description, integer `maxLevel ≥ 1`, `weight > 0`, stats exist in `BASE_STATS`, mul values > 0.
 
 DEPENS_ON: none
+
+## Result (attempt 1, yoga)
+
+Added the "Accent" upgrade to `src/content/upgrades/index.ts` — one new `UpgradeDef` appended to the end of `UPGRADES` with `id: 'accent'`, `maxLevel: 3`, `weight: 4`, `color: PALETTE.red`, and two mods: +5% crit chance (same stat/op as Contrast) and ×1.10 damage (same stat/op as Emphasis). At 3 levels it grants +15% crit chance and ×1.33 damage, building a real crit stack with Contrast/Weight/Emphasis. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 5.9 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+```

@@ -252,6 +252,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     ],
     color: PALETTE.yellow,
   },
+  {
+    id: 'accent',
+    name: 'Accent',
+    description: '+5% crit chance, +10% damage',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'critChance', op: 'add', value: 0.05 },
+      { stat: 'damageMul', op: 'mul', value: 1.10 },
+    ],
+    color: PALETTE.red,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));
