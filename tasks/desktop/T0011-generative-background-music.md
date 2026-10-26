@@ -4,11 +4,12 @@ title: Generative background music
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T17:58:28Z
 claimed_at: 2026-10-26T19:45:52Z
+finished_at: 2026-10-26T19:53:08Z
 ---
 
 ## Goal
@@ -83,3 +84,20 @@ export class Music {
 
 ### Tests
 - `tests/core/music.test.ts` as in step 5.
+
+## Result (attempt 1, desktop)
+
+Added a quiet generative background score: new pure `src/core/music.ts` (tempo curve 80→120 BPM over 10 min, second-voice threshold at 100 BPM) with unit tests, and new `src/audio/Music.ts` — a lookahead beat scheduler on the shared WebAudio context (low ink pulse per beat, sparse A-minor-pentatonic triangle notes, occasional lowpass noise swells, higher off-beat voice after 5:00) mixed at 25% of the SFX master. `Sfx` now exports `MASTER_VOLUME` and exposes `isMuted`; `GameScene` constructs/updates/disposes Music and registers a finiteness-only `music-scheduler` invariant. Music follows the SFX mute, starts after first input, and stops/resumes with pause and game over; `npm run check` and `npm run smoke` pass on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 7.3 min
+
+```
+game/docs/ARCHITECTURE.md     |   2 +-
+ game/src/audio/Music.ts       | 138 ++++++++++++++++++++++++++++++++++++++++++
+ game/src/audio/Sfx.ts         |   6 +-
+ game/src/core/music.ts        |  14 +++++
+ game/src/scenes/GameScene.ts  |  11 +++-
+ game/tests/core/music.test.ts |  31 ++++++++++
+ 6 files changed, 199 insertions(+), 3 deletions(-)
+```

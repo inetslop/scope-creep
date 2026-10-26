@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { Music } from '../audio/Music';
 import { Sfx } from '../audio/Sfx';
 import { TEX } from '../art/textures';
 import { ARENA_SIZE, DEPTH, VIEW_SHORT_SIDE } from '../config';
@@ -38,6 +39,7 @@ export class GameScene extends Phaser.Scene {
   private fx!: FxSystem;
   private damageNumbers!: DamageNumbers;
   private sfx!: Sfx;
+  private music!: Music;
   private weapons!: WeaponSystem;
   private combat!: CombatSystem;
   private orbit!: OrbitSystem;
@@ -70,6 +72,7 @@ export class GameScene extends Phaser.Scene {
     this.fx = new FxSystem(this);
     this.damageNumbers = new DamageNumbers(this);
     this.sfx = new Sfx(this);
+    this.music = new Music(this, this.sfx);
     this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx);
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds);
@@ -96,6 +99,7 @@ export class GameScene extends Phaser.Scene {
     const dt = Math.min(delta, 50) / 1000; // clamp so a stalled tab doesn't teleport everything
     const run = this.run;
     run.timeSec += dt;
+    this.music.update(run.timeSec);
 
     const cam = this.cameras.main;
     const playerScreen = { x: (this.player.x - cam.worldView.x) * cam.zoom, y: (this.player.y - cam.worldView.y) * cam.zoom };
@@ -211,6 +215,7 @@ export class GameScene extends Phaser.Scene {
       this.input.keyboard?.off('keydown-P', onPauseRequest);
       this.input.keyboard?.off('keydown-M', onMute);
       this.sfx.dispose();
+      this.music.dispose();
       this.game.events.off(Phaser.Core.Events.HIDDEN, onHidden);
       for (const name of INVARIANTS) hook.removeInvariant(name);
       this.registry.remove('controls');
@@ -247,7 +252,11 @@ export class GameScene extends Phaser.Scene {
       for (const c of this.orbit.circles) if (!Number.isFinite(c.x) || !Number.isFinite(c.y)) return `orbit circle at (${c.x}, ${c.y})`;
       return null;
     });
+    // Finiteness only: nextBeatTime is legitimately stale while the scene is paused.
+    hook.addInvariant('music-scheduler', () =>
+      Number.isFinite(this.music.nextBeatTime) && this.music.nextBeatTime >= 0 ? null : `music nextBeatTime ${this.music.nextBeatTime}`,
+    );
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'projectile-count', 'damage-numbers-pool', 'orbit-circles'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'music-scheduler'];

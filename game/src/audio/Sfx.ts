@@ -1,6 +1,6 @@
 import type Phaser from 'phaser';
 
-const MASTER_VOLUME = 0.35;
+export const MASTER_VOLUME = 0.35;
 const MUTE_STORAGE_KEY = 'scope-creep:muted';
 const THROTTLE_MS = 40;
 const COMBO_WINDOW_MS = 350;
@@ -52,6 +52,10 @@ export class Sfx {
     } catch {
       // storage blocked (private mode etc.): the toggle still works for this session
     }
+    return this.muted;
+  }
+
+  get isMuted(): boolean {
     return this.muted;
   }
 
