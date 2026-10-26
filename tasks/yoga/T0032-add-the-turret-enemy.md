@@ -4,10 +4,12 @@ title: Add the Turret enemy
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T21:23:27Z
+claimed_at: 2026-10-26T21:23:31Z
+designer: desktop
 ---
 
 ## Goal
