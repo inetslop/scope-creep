@@ -4,10 +4,12 @@ title: Add the Draft upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T17:58:28Z
+claimed_at: 2026-10-26T19:14:19Z
+designer: desktop
 ---
 
 ## Goal
