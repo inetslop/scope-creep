@@ -24,3 +24,10 @@ The PO adds ideas here. Good ones become tasks.
 - Streak counter: consecutive kills without being hit, shown as a small tally in the HUD
 - Gold shards: elites drop a rare gold shard worth 5 xp
 - Settings page in pause: volume slider, screen-shake toggle, auto-fire toggle
+- Generative background music: a quiet pulse that speeds up as the run goes on → T0011
+- Projectile speed upgrade ("Draft"): +25% per level → T0012
+- Crit chance upgrade: 10% chance of double damage (the crit style in damage numbers is already reserved)
+- "Plate" upgrade: +1 armor, maxLevel 2
+- Dash enemy: a small red square that dashes at the player in a straight line, then stops
+- Boss sting: a low hit plus a music swell when The Frame spawns
+- Kill-streak text: "RHYTHM" flashes in the HUD at 8 kills without being hit

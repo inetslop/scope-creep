@@ -10,16 +10,17 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 
 ## M1 — Feel (in progress)
 - Procedural sound effects ✅ (T0003)
-- Floating damage numbers (T0004, designing)
+- Floating damage numbers ✅ (T0004)
 - Elite enemies: marked, tougher, high-value variants every 45 s (T0005, designing)
+- Generative background music: a slow pulse that speeds up as the run goes on (T0011, design)
 
 ## M2 — Variety (in progress)
 - Enemies: Hex (T0001), Mote swarm (T0010), Sentry ranged (T0007), Splitter (T0009)
 - Weapons: Orbit (T0008); backlog: arc, bouncing squares
-- Upgrades: Tempo (T0002); backlog: weapon-specific lines, evolutions
+- Upgrades: Tempo (T0002), Draft (T0012); backlog: weapon-specific lines, evolutions
 
 ## M3 — Bosses (started)
-- The Frame at 5:00: health bar, charge + radial wedge ring, +50% HP per respawn (T0006)
+- The Frame at 5:00: health bar, charge + radial wedge ring, +50% HP per respawn (T0006, design)
 - Later: second boss, projectile-based patterns
 
 ## M4 — Meta-progression
