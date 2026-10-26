@@ -8,18 +8,19 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - 3 enemies, 2 weapons, 10 upgrades, procedural Bauhaus art
 - Smoke-tested on desktop and mobile on every change
 
-## M1 — Feel (next)
-- Procedural sound effects
-- Damage numbers and stronger hit feedback
-- Elite enemies
+## M1 — Feel (in progress)
+- Procedural sound effects ✅ (T0003)
+- Floating damage numbers (T0004, designing)
+- Elite enemies: marked, tougher, high-value variants every 45 s (T0005, designing)
 
-## M2 — Variety
-- More enemies (ranged shooters, splitters, swarms)
-- More weapons (orbiting circles, arcs, bouncing squares)
-- Weapon-specific upgrades and evolutions
+## M2 — Variety (in progress)
+- Enemies: Hex (T0001), Mote swarm (T0010), Sentry ranged (T0007), Splitter (T0009)
+- Weapons: Orbit (T0008); backlog: arc, bouncing squares
+- Upgrades: Tempo (T0002); backlog: weapon-specific lines, evolutions
 
-## M3 — Bosses
-- A boss composition every 5 minutes with a health bar and attack patterns
+## M3 — Bosses (started)
+- The Frame at 5:00: health bar, charge + radial wedge ring, +50% HP per respawn (T0006)
+- Later: second boss, projectile-based patterns
 
 ## M4 — Meta-progression
 - Persistent currency between runs, a studio to unlock starting options
@@ -27,3 +28,4 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 
 ## Later
 - Alternate "paper" palettes (De Stijl, Constructivist), run modifiers, daily seed, achievements, PWA install
+- Arena hazards, "overtime" after 15 minutes, run summary screen
