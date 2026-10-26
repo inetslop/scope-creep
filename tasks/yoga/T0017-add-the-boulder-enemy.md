@@ -4,10 +4,11 @@ title: Add the Boulder enemy
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-26T19:20:22Z
+claimed_at: 2026-10-26T19:42:23Z
 ---
 
 ## Goal
