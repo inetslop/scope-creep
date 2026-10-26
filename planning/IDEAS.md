@@ -27,7 +27,7 @@ The PO adds ideas here. Good ones become tasks.
 - Generative background music: a quiet pulse that speeds up as the run goes on → T0011
 - Projectile speed upgrade ("Draft"): +25% per level → T0012
 - ~~Crit chance upgrade: 10% chance of double damage~~ → T0013 (Contrast)
-- "Plate" upgrade: +1 armor, maxLevel 2
+- ~~"Plate" upgrade: +1 armor, maxLevel 2~~ → T0016
 - Dash enemy: a small red square that dashes at the player in a straight line, then stops
 - Boss sting: a low hit plus a music swell when The Frame spawns
 - ~~Kill-streak text: "RHYTHM" flashes in the HUD at 8 kills without being hit~~ → T0014
@@ -43,9 +43,14 @@ The PO adds ideas here. Good ones become tasks.
 - Marginalia: when a new enemy type first appears in a run, a small dry ink annotation fades in beside it for 2 s ("RED RUSHES", "HEAVY HITS HARD", "THE PENTAGON SHOTS")
 - Counterpoint weapon: fires a point that bounces off arena walls up to 2 times, losing 25% damage per bounce
 - "Overprint" upgrade: +5% damage per 30 s survived — the longer you last, the harder you hit
-- Understudy active: drop a decoy blue circle that taunts every enemy for 3 s; 8 s cooldown
+- ~~Understudy active: drop a decoy blue circle that taunts every enemy for 3 s; 8 s cooldown~~ → T0015
 - Crop marks: after 12:00 the arena's safe area slowly shrinks, marked by crop-mark corners; the boundary burns for 5 damage/s
 - Palette drift: every 90 s the page shifts to a new palette variant (cooler paper, Constructivist red-black)
 - Ghost run: a faint outline of your last run's player traces the same path; survive past where it stopped and a "PAST YOU" flash
 - "Second wind": the first time you drop to 1 HP in a run, heal 25% of max HP with a "SECOND WIND" flash
 - "Kerning" upgrade: +10% projectile size and knockback per level, maxLevel 3
+- ~~Boulder: a heavy yellow circle that slowly chases and shrugs off knockback~~ → T0017
+- The Frame's corpse: after the first boss dies, a faint frame outline stays on the paper as a permanent decal
+- Card-flip level-up: the three upgrade choices are dealt in like cards with a card-flip SFX
+- Aim snap (mobile): while the right stick is held, shots snap to the nearest enemy within 40 units
+- Bestiary on the pause screen: the enemy shapes met this run, each with a one-line note
