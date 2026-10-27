@@ -4,10 +4,11 @@ title: Tempo change — the score reads your build
 assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T14:14:52Z
+claimed_at: 2026-10-27T17:52:18Z
 ---
 
 ## Goal
