@@ -65,6 +65,16 @@ function stroke(g: Graphics, kind: ShapeKind, cx: number, cy: number, r: number,
   else g.strokeCircle(cx, cy, r);
 }
 
+/** Four corners of a bar (long axis along +X), from its full length and thickness. */
+export function barPoints(cx: number, cy: number, length: number, thickness: number): Point[] {
+  return [
+    { x: cx - length / 2, y: cy - thickness / 2 },
+    { x: cx + length / 2, y: cy - thickness / 2 },
+    { x: cx + length / 2, y: cy + thickness / 2 },
+    { x: cx - length / 2, y: cy + thickness / 2 },
+  ];
+}
+
 export interface ShapeStyle {
   /** Outline color (default ink). */
   outline?: number;
@@ -91,5 +101,20 @@ export function drawShape(g: Graphics, kind: ShapeKind, cx: number, cy: number, 
   if (width > 0) {
     g.lineStyle(width, style.outline ?? PALETTE.ink, 1);
     stroke(g, kind, cx, cy, r - width / 2, style.points);
+  }
+}
+
+/** A long bar: a sharp-cornered rectangle at length x thickness, in the house style. The outline insets by its full width, exactly like drawShape. */
+export function drawBar(g: Graphics, cx: number, cy: number, length: number, thickness: number, color: number, style: ShapeStyle = {}): void {
+  const width = style.outlineWidth ?? Math.max(2, Math.round(thickness * 0.14));
+  if (style.shadow !== false) {
+    g.fillStyle(PALETTE.ink, 0.18);
+    g.fillPoints(barPoints(cx + SHADOW_OFFSET, cy + SHADOW_OFFSET, length, thickness), true);
+  }
+  g.fillStyle(color, 1);
+  g.fillPoints(barPoints(cx, cy, length, thickness), true);
+  if (width > 0) {
+    g.lineStyle(width, style.outline ?? PALETTE.ink, 1);
+    g.strokePoints(barPoints(cx, cy, Math.max(0, length - width), Math.max(0, thickness - width)), true, true);
   }
 }

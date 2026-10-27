@@ -42,6 +42,9 @@ export interface EnemyLook {
   outlineWidth?: number;
   /** Radians per second the sprite spins. If omitted, the enemy turns to face where it is moving. */
   spin?: number;
+  /** Long bar, e.g. 120x16 or 160x12. Drawn as a sharp-cornered rectangle; hit-tested as a capsule along the long axis.
+   *  When set: shape must be 'rect', radius must be length/2 + thickness/2, and length / thickness >= 3. */
+  bar?: { length: number; thickness: number };
 }
 
 export interface EnemyDef {

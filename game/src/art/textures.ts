@@ -7,7 +7,7 @@ import { ENEMIES } from '../content/enemies';
 import { PALETTE } from '../content/palette';
 import type { EnemyDef, WeaponDef } from '../content/types';
 import { WEAPONS } from '../content/weapons';
-import { drawShape, SHADOW_OFFSET } from './shapes';
+import { drawBar, drawShape, SHADOW_OFFSET } from './shapes';
 
 /**
  * All art is procedural: every texture is drawn here once at boot (BootScene).
@@ -150,8 +150,10 @@ function drawEnemy(scene: Phaser.Scene, def: EnemyDef): void {
   const size = Math.ceil((look.radius + PAD) * 2);
   const c = size / 2 - SHADOW_OFFSET / 2;
   graphicsTexture(scene, enemyTextureKey(def.id), size, size, (g) => {
-    drawShape(g, look.shape, c, c, look.radius, look.body, { points: look.points, outlineWidth: look.outlineWidth });
-    drawShape(g, 'circle', c, c, Math.max(2.5, look.radius * 0.22), look.accent, { outlineWidth: look.accent === PALETTE.ink ? 0 : 1.5, shadow: false });
+    if (look.bar) drawBar(g, c, c, look.bar.length, look.bar.thickness, look.body, { outlineWidth: look.outlineWidth });
+    else drawShape(g, look.shape, c, c, look.radius, look.body, { points: look.points, outlineWidth: look.outlineWidth });
+    const eyeR = look.bar ? Math.max(2.5, look.bar.thickness * 0.22) : Math.max(2.5, look.radius * 0.22);
+    drawShape(g, 'circle', c, c, eyeR, look.accent, { outlineWidth: look.accent === PALETTE.ink ? 0 : 1.5, shadow: false });
   });
 }
 

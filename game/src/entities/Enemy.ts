@@ -3,6 +3,7 @@ import { enemyTextureKey, TEX } from '../art/textures';
 import { DEPTH, ELITE } from '../config';
 import { PALETTE } from '../content/palette';
 import type { EnemyDef } from '../content/types';
+import { barContains } from '../core/barHit';
 import { hareSpeed } from '../core/hareSpeed';
 import { SLAM, SlamCycle } from '../core/slam';
 import type { Rng } from '../core/rng';
@@ -237,6 +238,19 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     const pending = this.slamPending;
     this.slamPending = false;
     return pending;
+  }
+
+  /**
+   * Precise hit test for systems that resolve hits manually (projectiles, the
+   * player, orbits): a circle of look.radius for normal shapes, a capsule along
+   * the long axis for bar shapes (halfLength x halfThickness, rotated with the
+   * sprite). `inflate` grows the test by that many world units.
+   */
+  hitTestPoint(px: number, py: number, inflate = 0): boolean {
+    const look = this.def.look;
+    const s = this.scaleX;
+    if (!look.bar) return distance({ x: px, y: py }, this) <= (look.radius + inflate) * s;
+    return barContains(this.x, this.y, this.rotation, (look.bar.length / 2) * s, (look.bar.thickness / 2) * s + inflate, px, py);
   }
 
   /** Applies damage and knockback. Returns true if this hit killed it. */

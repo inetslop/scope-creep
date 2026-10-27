@@ -6,6 +6,7 @@ import { describe, expect, it } from 'vitest';
 import { BOSS_BY_ID, BOSSES, getBoss, type GridBossDef, type PaletteBossDef } from '../src/content/bosses';
 import { ENEMIES, ENEMY_BY_ID } from '../src/content/enemies';
 import { PALETTE } from '../src/content/palette';
+import type { EnemyLook } from '../src/content/types';
 import { UPGRADES } from '../src/content/upgrades';
 import { WEAPON_BY_ID, WEAPONS } from '../src/content/weapons';
 import { BASE_STATS } from '../src/core/stats';
@@ -37,7 +38,8 @@ describe('enemies', () => {
     expect(nonNegative(e.spawnWeight), 'spawnWeight >= 0').toBe(true);
     expect(nonNegative(e.unlockAtSec), 'unlockAtSec >= 0').toBe(true);
     expect(e.knockbackResist >= 0 && e.knockbackResist <= 1, 'knockbackResist in [0,1]').toBe(true);
-    expect(e.look.radius >= 4 && e.look.radius <= 80, 'look.radius in [4,80]').toBe(true);
+    const maxR = e.look.bar ? 96 : 80;
+    expect(e.look.radius >= 4 && e.look.radius <= maxR, `look.radius in [4,${maxR}]`).toBe(true);
   });
 
   it('at least one enemy is available at time 0', () => {
@@ -59,6 +61,29 @@ describe('enemies', () => {
   it.each(ENEMIES.filter((e) => e.shoot).map((e) => [e.id, e] as const))('%s shoot tuning is sane', (_id, e) => {
     const s = e.shoot!;
     expect(positive(s.periodSec) && positive(s.speed) && positive(s.damage), 'shoot numbers > 0').toBe(true);
+  });
+
+  const checkBarLook = (look: EnemyLook): void => {
+    const bar = look.bar!;
+    expect(look.shape === 'rect', 'bar look must be a rect').toBe(true);
+    expect(positive(bar.length) && positive(bar.thickness), 'bar length and thickness > 0').toBe(true);
+    expect(bar.length / bar.thickness >= 3, 'bar aspect length/thickness >= 3').toBe(true);
+    expect(look.radius, 'radius must be length/2 + thickness/2').toBeCloseTo(bar.length / 2 + bar.thickness / 2);
+  };
+
+  it.each(ENEMIES.filter((e) => e.look.bar).map((e) => [e.id, e] as const))('%s bar look is valid', (_id, e) => {
+    checkBarLook(e.look);
+  });
+
+  it('long bars (120x16, 160x12) are expressible in look data', () => {
+    const looks: EnemyLook[] = [
+      { shape: 'rect', radius: 68, body: 0, accent: 0, bar: { length: 120, thickness: 16 } },
+      { shape: 'rect', radius: 86, body: 0, accent: 0, bar: { length: 160, thickness: 12 } },
+    ];
+    for (const look of looks) {
+      checkBarLook(look);
+      expect(look.radius >= 4 && look.radius <= 96, 'bar radius within [4,96]').toBe(true);
+    }
   });
 });
 

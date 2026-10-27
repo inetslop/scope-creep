@@ -4,11 +4,12 @@ title: Shape aspect — long bars can exist
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-10-27T09:43:38Z
 claimed_at: 2026-10-27T14:30:33Z
+finished_at: 2026-10-27T15:11:10Z
 ---
 
 ## Goal
@@ -93,3 +94,23 @@ hitTestPoint(px: number, py: number, inflate = 0): boolean {
 ## Attempt 1 interrupted (asus)
 
 The runner stopped mid-task (crash, restart or reboot). Requeued.
+
+## Result (attempt 2, asus)
+
+Long bars are now expressible in shape/look data: `EnemyLook` gains an optional `bar: { length, thickness }` (e.g. 120×16, 160×12), drawn as a sharp-cornered rectangle in the house style via new `barPoints`/`drawBar` in `src/art/shapes.ts`, and hit-tested as a tight capsule along the long axis via new pure `barContains` in `src/core/barHit.ts` (exactly the spec'd acceptance points, unit-tested in `tests/core/barHit.test.ts`). `Enemy.hitTestPoint()` plus precise capsule gates in CombatSystem (projectiles, player contact) and OrbitSystem make bars hit like their drawn shape; every gate is keyed on `look.bar`, so the current roster is byte-identical and T0096's shape tests stay green. `tests/content.test.ts` validates bar looks and proves 120×16/160×12 are expressible. No new enemy ships; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 40.6 min
+
+```
+game/src/art/shapes.ts           | 25 +++++++++++++++++++++++++
+ game/src/art/textures.ts         |  8 +++++---
+ game/src/content/types.ts        |  3 +++
+ game/src/core/barHit.ts          | 20 ++++++++++++++++++++
+ game/src/entities/Enemy.ts       | 14 ++++++++++++++
+ game/src/systems/CombatSystem.ts |  4 +++-
+ game/src/systems/OrbitSystem.ts  |  1 +
+ game/tests/content.test.ts       | 27 ++++++++++++++++++++++++++-
+ game/tests/core/barHit.test.ts   | 35 +++++++++++++++++++++++++++++++++++
+ 9 files changed, 132 insertions(+), 5 deletions(-)
+```

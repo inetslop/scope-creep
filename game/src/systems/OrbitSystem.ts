@@ -65,6 +65,7 @@ export class OrbitSystem {
         const dy = e.y - cy;
         const r = circleRadius + e.def.look.radius;
         if (dx * dx + dy * dy > r * r) continue;
+        if (e.def.look.bar && !e.hitTestPoint(cx, cy, circleRadius)) continue; // precise capsule gate (the coarse circle is a superset)
         const last = this.lastHit.get(e.serial);
         if (last !== undefined && now - last < cooldownMs) continue; // at most one orbit hit per enemy per 0.6 s
         this.lastHit.set(e.serial, now);

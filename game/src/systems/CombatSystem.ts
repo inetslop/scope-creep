@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { ELITE, SCORE_POINTS } from '../config';
+import { ELITE, PLAYER_RADIUS, SCORE_POINTS } from '../config';
 import type { Sfx } from '../audio/Sfx';
 import { getEnemy } from '../content/enemies';
 import type { RunState } from '../core/run';
@@ -62,6 +62,7 @@ export class CombatSystem {
 
   private onProjectileHit(p: Projectile, e: Enemy): void {
     if (!p.active || !e.active || p.hitSerials.has(e.serial)) return;
+    if (e.def.look.bar && !e.hitTestPoint(p.x, p.y, (p.body as Phaser.Physics.Arcade.Body).width / 2)) return; // precise capsule gate
     p.hitSerials.add(e.serial);
     const crit = this.run.stats.critChance > 0 && this.run.rng.chance(this.run.stats.critChance);
     const wound = underexposureDamage(this.run.stats.woundThreshold, e.hp, e.maxHp, crit ? p.damage * 2 : p.damage);
@@ -83,6 +84,7 @@ export class CombatSystem {
   private onPlayerTouched(e: Enemy): void {
     const now = this.scene.time.now;
     if (!e.active || this.player.isInvulnerable(now) || this.run.isDead) return;
+    if (e.def.look.bar && !e.hitTestPoint(this.player.x, this.player.y, PLAYER_RADIUS)) return; // precise capsule gate
     this.run.takeDamage(e.contactDamage);
     this.player.hurt(now);
     e.hit(0, this.player, 320); // shove the enemy back so contact isn't continuous
