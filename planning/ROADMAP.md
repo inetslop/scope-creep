@@ -21,7 +21,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Card-flip level-ups: the three choices flip in like cards, 150 ms apart, with a flip SFX; input locked until the deal finishes (T0059) ✅
 - Crescendo: while the kill streak is 8 or higher, fire rate +10% and the streak tally turns red (T0065) ✅
 - The Index: the pause screen lists every upgrade picked this run in a narrow ink column — one line per upgrade, pips in the card color, newest pick first, at most 16 lines, "NOTHING PICKED YET" while empty (T0104) ✅
-- Controls card on the pause screen (next, before any new input): every input listed in the Bauhaus style — WASD / mouse / hold click / Esc / M mute on desktop, sticks and buttons on gamepad, left thumb / right thumb / pause button on touch — and the menu hint matches it
+- Controls card on the pause screen (T0123, inet-racing; next, before any new input): every input listed in the Bauhaus style — WASD / mouse / hold click / Esc / M mute on desktop, sticks and buttons on gamepad, left thumb / right thumb / pause button on touch — and the menu hint matches it
 - Weapon SFX timbres: the firing weapons sound like themselves — Point a short high tick, Line a low thud, Arc a sharp snap (T0093) ✅
 - Orbit hum: each Orbit contact plays a soft low hum — the deferred half of T0093, so all four weapons are audible (T0107, waiting on T0098 — in progress, asus)
 - Platemark: the moment you take a hit, a small red × prints on the paper at your position and fades over 2 s (T0094) ✅
