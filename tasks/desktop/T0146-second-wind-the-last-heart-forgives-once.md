@@ -4,10 +4,12 @@ title: Second Wind — the last heart forgives once
 assignee: desktop
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T21:50:56Z
+claimed_at: 2026-10-27T22:11:32Z
+designer: desktop
 ---
 
 ## Goal
