@@ -57,7 +57,7 @@
     "reviewMaxTurns": 40,
     "poMaxTurns": 80,
     "poTimeoutMin": 120,
-    "poMinGapMinutes": 10,
+    "poMinGapMinutes": 5,
     "poMaxGapMinutes": 90,
     "architectMaxTurns": 60,
     "architectTimeoutMin": 120,

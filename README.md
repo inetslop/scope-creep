@@ -118,7 +118,7 @@ The PO doesn't generate tasks continuously. It works by backpressure: every dev 
 - tasks finished (done, failed or rejected) and need reviewing;
 - 90 minutes passed (`poMaxGapMinutes`) — a scheduled review of the roadmap and ideas, even if queues are full;
 
-…but never more often than every 10 minutes (`poMinGapMinutes`). A machine that finishes tasks faster drains its queue faster and so gets refilled more often; a slow machine's queue just stays full. Queues are short on purpose so plans stay fresh. To give a machine more buffer, raise its `targetQueue`.
+…but never more often than every 5 minutes (`poMinGapMinutes`). A machine that finishes tasks faster drains its queue faster and so gets refilled more often; a slow machine's queue just stays full. Queues are short on purpose so plans stay fresh. To give a machine more buffer, raise its `targetQueue`.
 
 ### Agents and the model
 
