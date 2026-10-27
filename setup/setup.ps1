@@ -317,7 +317,8 @@ if ($mode -eq 'managed') {
     # Model id the API serves, e.g. qwen3.8-27b-ud-q4_k_xl
     $modelId = ([IO.Path]::GetFileNameWithoutExtension($model.Name) -replace '-00001-of-\d{5}$', '').ToLower()
     # One request slot: the runner runs one agent session at a time, and every extra slot costs VRAM.
-    $extraArgs = @('-np', '1', '--cache-type-k', 'q8_0', '--cache-type-v', 'q8_0', '--temp', '0.6', '--top-p', '0.95', '--top-k', '20', '--min-p', '0')
+    # Sampling here is only the server default: agent requests carry loop.sampling from agents/machines.json.
+    $extraArgs = @('-np', '1', '--cache-type-k', 'q8_0', '--cache-type-v', 'q8_0', '--temp', '1.0', '--top-p', '0.95', '--top-k', '20', '--min-p', '0')
     if ($existing -and $existing.llama.extraArgs) { $extraArgs = @($existing.llama.extraArgs) }
     $llama = [ordered]@{
         mode       = 'managed'

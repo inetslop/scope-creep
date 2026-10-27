@@ -13,6 +13,20 @@ export type Role = 'po' | 'architect' | 'dev';
  */
 export type Effort = 'low' | 'medium' | 'high' | 'xhigh';
 
+/**
+ * Sampling settings the shim sends with every model request (llama.cpp applies them per request,
+ * over its startup defaults). loop.sampling is the fleet default; a machine's `sampling` overrides
+ * single keys, e.g. a presence penalty for a heavily quantized model that tends to repeat itself.
+ */
+export interface Sampling {
+  temperature?: number;
+  top_p?: number;
+  top_k?: number;
+  min_p?: number;
+  presence_penalty?: number;
+  repeat_penalty?: number;
+}
+
 /** One machine in the fleet (agents/machines.json, committed, human-owned). */
 export interface MachineConfig {
   label: string;
@@ -47,6 +61,8 @@ export interface MachineConfig {
    * strong machine spends its time on big work and a small one designs the small tasks.
    */
   maxDesignSize?: TaskSize;
+  /** Overrides loop.sampling key by key for this machine. */
+  sampling?: Sampling;
   /**
    * Takes the machine out of the loop, e.g. while it's down: its runner keeps syncing but starts
    * no model server and does no work, and nobody plans, designs or assigns anything for it. Move
@@ -92,6 +108,8 @@ export interface FleetConfig {
     smokeSeconds: number;
     /** Reasoning effort per role (see Effort). */
     effort: Record<Role, Effort>;
+    /** Sampling sent with every request (see Sampling). Unset keys use the model server's defaults. */
+    sampling?: Sampling;
   };
 }
 
@@ -151,6 +169,10 @@ export function poMachineId(fleet: FleetConfig): string | undefined {
 /** True if some machine designs tasks; otherwise PO tasks go straight to the devs. */
 export function hasArchitect(fleet: FleetConfig): boolean {
   return activeMachines(fleet).some(([, m]) => m.roles.includes('architect'));
+}
+
+export function samplingFor(fleet: FleetConfig, machineId: string): Sampling {
+  return { ...fleet.loop.sampling, ...fleet.machines[machineId]?.sampling };
 }
 
 export function effortFor(fleet: FleetConfig, machineId: string, role: Role): Effort {

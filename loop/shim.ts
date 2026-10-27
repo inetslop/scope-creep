@@ -1,6 +1,7 @@
 import http from 'node:http';
 import https from 'node:https';
 import type { AddressInfo } from 'node:net';
+import type { Sampling } from './config.ts';
 import { warn } from './log.ts';
 
 /**
@@ -14,6 +15,8 @@ import { warn } from './log.ts';
  * 2. llama.cpp ignores Claude Code's `output_config.effort`, but passes a request's
  *    `chat_template_kwargs` to the chat template. The shim sets `reasoning_effort` there,
  *    so each role gets its configured effort per request.
+ * 3. Sampling (temperature, top_p, presence_penalty...) from agents/machines.json is written
+ *    into every request, so a push changes it without restarting the model servers.
  * Everything else, including SSE streams, passes through untouched.
  */
 
@@ -47,26 +50,29 @@ export function hoistSystemMessages(body: MessagesBody): boolean {
   return true;
 }
 
-/** Everything the shim does to a /v1/messages body. */
-export function rewriteRequest(body: MessagesBody, effort?: string): void {
+/** Everything the shim does to a /v1/messages body. Configured sampling wins over what the client sent. */
+export function rewriteRequest(body: MessagesBody, effort?: string, sampling: Sampling = {}): void {
   hoistSystemMessages(body);
   if (effort) body.chat_template_kwargs = { ...(body.chat_template_kwargs ?? {}), reasoning_effort: effort };
+  for (const [key, value] of Object.entries(sampling)) {
+    if (typeof value === 'number' && Number.isFinite(value)) (body as Record<string, unknown>)[key] = value;
+  }
 }
 
 const shims = new Map<string, Promise<string>>();
 
-/** Starts (once per server + effort) a shim on a random localhost port and returns its base URL. */
-export function shimFor(upstreamBase: string, effort?: string): Promise<string> {
-  const key = `${upstreamBase}|${effort ?? ''}`;
+/** Starts (once per server + effort + sampling) a shim on a random localhost port and returns its base URL. */
+export function shimFor(upstreamBase: string, effort?: string, sampling: Sampling = {}): Promise<string> {
+  const key = `${upstreamBase}|${effort ?? ''}|${JSON.stringify(sampling)}`;
   let url = shims.get(key);
   if (!url) {
-    url = startShim(upstreamBase, effort);
+    url = startShim(upstreamBase, effort, sampling);
     shims.set(key, url);
   }
   return url;
 }
 
-function startShim(upstreamBase: string, effort?: string): Promise<string> {
+function startShim(upstreamBase: string, effort: string | undefined, sampling: Sampling): Promise<string> {
   const upstream = new URL(upstreamBase);
   const client = upstream.protocol === 'https:' ? https : http;
   const basePath = upstream.pathname.replace(/\/+$/, '');
@@ -79,7 +85,7 @@ function startShim(upstreamBase: string, effort?: string): Promise<string> {
       if (req.method === 'POST' && req.url?.startsWith('/v1/messages') && body.length > 0) {
         try {
           const parsed = JSON.parse(body.toString('utf8')) as MessagesBody;
-          rewriteRequest(parsed, effort);
+          rewriteRequest(parsed, effort, sampling);
           body = Buffer.from(JSON.stringify(parsed));
         } catch {
           /* not JSON: forward as-is */

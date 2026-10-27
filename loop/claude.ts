@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { Effort, LocalConfig } from './config.ts';
+import { loadFleet, samplingFor, type Effort, type LocalConfig, type Sampling } from './config.ts';
 import { run } from './exec.ts';
 import { detectContextSize, MIN_CONTEXT } from './llama.ts';
 import { info, warn } from './log.ts';
@@ -98,6 +98,12 @@ function quoteForShell(arg: string): string {
   return /[\s"&|<>^]/.test(arg) ? `"${arg.replace(/"/g, '\\"')}"` : arg;
 }
 
+/** "temperature 1, presence_penalty 1" for the log ("server sampling" when nothing is configured). */
+function describeSampling(sampling: Sampling): string {
+  const set = Object.entries(sampling).filter(([, v]) => v !== undefined && v !== 0);
+  return set.length ? set.map(([k, v]) => `${k} ${v}`).join(', ') : 'server sampling';
+}
+
 /** One-line description of a tool call for the live log, with paths relative to the agent's folder. */
 function describeTool(name: string, input: Record<string, unknown>, cwd: string): string {
   const pick = String(input.file_path ?? input.command ?? input.pattern ?? input.path ?? '');
@@ -113,7 +119,9 @@ export async function runAgent(local: LocalConfig, opts: AgentRunOptions): Promi
   const transcript = path.join(RUNS_DIR, `${stamp}-${opts.label}.jsonl`);
   const ctx = await detectContextSize(local);
   if (ctx < MIN_CONTEXT) warn(`model context is only ${ctx} tokens; Claude Code needs at least ${MIN_CONTEXT}. Expect failures.`);
-  const env = agentEnv(local, ctx, await shimFor(local.llama.baseUrl, opts.effort));
+  // Re-read every session, like the rest of agents/machines.json.
+  const sampling = samplingFor(loadFleet(), local.machineId);
+  const env = agentEnv(local, ctx, await shimFor(local.llama.baseUrl, opts.effort, sampling));
   const settingsFile = path.join(AGENT_DIR, 'claude', `${opts.profile}.settings.json`);
   fs.mkdirSync(path.dirname(settingsFile), { recursive: true });
   fs.writeFileSync(settingsFile, JSON.stringify(claudeSettings(opts.profile, env), null, 2));
@@ -149,7 +157,7 @@ export async function runAgent(local: LocalConfig, opts: AgentRunOptions): Promi
   let sessionId: string | undefined;
   let final: Record<string, unknown> | undefined;
   info(
-    `agent ${opts.label}: ${opts.profile} session in ${path.basename(opts.cwd) || opts.cwd} (effort ${opts.effort ?? 'default'}, max ${opts.maxTurns} turns, ${opts.timeoutMin} min, context ${ctx})`,
+    `agent ${opts.label}: ${opts.profile} session in ${path.basename(opts.cwd) || opts.cwd} (effort ${opts.effort ?? 'default'}, ${describeSampling(sampling)}, max ${opts.maxTurns} turns, ${opts.timeoutMin} min, context ${ctx})`,
   );
 
   const res = await run(useShell ? quoteForShell(local.claudePath) : local.claudePath, useShell ? args.map(quoteForShell) : args, {

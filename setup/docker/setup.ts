@@ -27,8 +27,8 @@ import { readEnv, writeEnv } from './env.ts';
 const DATA = '/data';
 const MODELS = path.join(DATA, 'models');
 const ENV_FILE = path.join(DATA, '.env');
-/** Same sampling settings the Windows machines use (setup.ps1). */
-const SAMPLING = '--temp 0.6 --top-p 0.95 --top-k 20 --min-p 0';
+/** Server defaults (Qwen3.8's thinking-mode recommendation); agent requests carry loop.sampling from machines.json. */
+const SAMPLING = '--temp 1.0 --top-p 0.95 --top-k 20 --min-p 0';
 
 function localGgufs(): string[] {
   if (!fs.existsSync(MODELS)) return [];

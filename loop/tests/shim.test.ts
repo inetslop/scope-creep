@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
+import { samplingFor, type FleetConfig } from '../config.ts';
 import { hoistSystemMessages, rewriteRequest } from '../shim.ts';
 
 describe('rewriteRequest', () => {
@@ -13,6 +14,26 @@ describe('rewriteRequest', () => {
     const body: Parameters<typeof rewriteRequest>[0] = { messages: [{ role: 'user', content: 'hi' }] };
     rewriteRequest(body);
     assert.equal(body.chat_template_kwargs, undefined);
+  });
+});
+
+describe('sampling', () => {
+  it('writes the configured sampling into the request, over what the client sent', () => {
+    const body = { messages: [{ role: 'user', content: 'hi' }], temperature: 0.2, max_tokens: 100 } as Parameters<typeof rewriteRequest>[0] & Record<string, unknown>;
+    rewriteRequest(body, 'xhigh', { temperature: 1, top_k: 20, presence_penalty: 1, min_p: undefined });
+    assert.equal(body.temperature, 1);
+    assert.equal(body.top_k, 20);
+    assert.equal(body.presence_penalty, 1);
+    assert.equal(body.max_tokens, 100);
+    assert.equal('min_p' in body, false);
+    assert.deepEqual(body.chat_template_kwargs, { reasoning_effort: 'xhigh' });
+  });
+
+  it('merges a machine override over the fleet default', () => {
+    const fleet = { machines: { yoga: { sampling: { presence_penalty: 1 } }, desktop: {} }, loop: { sampling: { temperature: 1, presence_penalty: 0 } } } as unknown as FleetConfig;
+    assert.deepEqual(samplingFor(fleet, 'yoga'), { temperature: 1, presence_penalty: 1 });
+    assert.deepEqual(samplingFor(fleet, 'desktop'), { temperature: 1, presence_penalty: 0 });
+    assert.deepEqual(samplingFor({ machines: {}, loop: {} } as unknown as FleetConfig, 'x'), {});
   });
 });
 
