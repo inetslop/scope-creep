@@ -4,10 +4,11 @@ title: Boss nameplate intro
 assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0054]
-attempts: 0
+attempts: 1
 created: 2026-10-27T03:07:33Z
+claimed_at: 2026-10-27T11:42:01Z
 ---
 
 ## Goal
