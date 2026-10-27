@@ -1,7 +1,7 @@
 ---
 id: T0128
 title: Rejection stamp — the run ends with a verdict
-assignee: cachyos-x8664
+assignee: desktop
 size: M
 priority: 2
 status: todo

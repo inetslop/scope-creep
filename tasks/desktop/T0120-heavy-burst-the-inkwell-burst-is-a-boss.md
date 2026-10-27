@@ -1,7 +1,7 @@
 ---
 id: T0120
 title: Heavy burst — the Inkwell burst is a boss tool
-assignee: desktop-4070
+assignee: desktop
 size: M
 priority: 2
 status: todo

@@ -1,7 +1,7 @@
 ---
 id: T0119
 title: The Plumb weapon — the blade that hangs at your aim
-assignee: desktop-4070
+assignee: inet-racing
 size: M
 priority: 2
 status: todo

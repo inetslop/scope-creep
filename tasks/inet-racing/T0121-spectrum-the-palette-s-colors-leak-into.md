@@ -1,7 +1,7 @@
 ---
 id: T0121
 title: "Spectrum — the Palette's colors leak into your fire"
-assignee: cachyos-x8664
+assignee: inet-racing
 size: M
 priority: 2
 status: todo

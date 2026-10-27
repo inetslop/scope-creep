@@ -32,6 +32,7 @@
       "notes": "Heavily quantized and small context. Only small, precisely specified tasks: tuning numbers, one small juice or polish touch (a sound, a flash, a text), small player-facing improvements to things that already exist (clearer feedback, readability, UI), tiny single-function changes; a new content file only when it passes the content bar. Always name the exact file and the closest example."
     },
     "desktop-4070": {
+      "paused": true,
       "label": "Ryzen 7 5800X + RTX 4070 SUPER (12 GB)",
       "model": "Qwen 3.8 27B UD-IQ3_XXS",
       "roles": ["dev", "architect"],
@@ -43,6 +44,7 @@
       "notes": "Heavily quantized (IQ3_XXS): expect more mistakes. Partly offloaded to CPU, so slow. Give it medium features: new mechanics, scenes, UI, juice, audio."
     },
     "cachyos-x8664": {
+      "paused": true,
       "label": "Ryzen 9 7900X3D + RTX 4070 Ti (12 GB)",
       "model": "Qwen 3.8 27B UD-IQ2_S",
       "roles": ["dev", "architect"],

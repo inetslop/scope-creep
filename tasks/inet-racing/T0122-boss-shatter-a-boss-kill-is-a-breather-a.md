@@ -1,7 +1,7 @@
 ---
 id: T0122
 title: Boss shatter — a boss kill is a breather and a payday
-assignee: cachyos-x8664
+assignee: inet-racing
 size: M
 priority: 2
 status: todo
