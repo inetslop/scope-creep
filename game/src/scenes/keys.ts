@@ -20,6 +20,8 @@ export const GAME_EVENTS = {
   pauseRequest: 'pause-request',
   /** The player took damage. HudScene shows the hurt frame. */
   playerHit: 'player-hit',
+  /** The Eraser removed the player's most recent upgrade level. Payload: the erased upgrade id. */
+  upgradeErased: 'upgrade-erased',
 } as const;
 
 /** Typed access to objects GameScene shares through the game registry. */

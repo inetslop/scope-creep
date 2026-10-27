@@ -340,7 +340,11 @@ export class GameScene extends Phaser.Scene {
       return frac < -1e-6 || frac > 1 + 1e-6 ? `still-life cooldownFrac ${frac}` : null;
     });
     hook.addInvariant('crop-damage', () => Number.isFinite(this.crop.totalDamage) && this.crop.totalDamage >= 0 ? null : `crop damage ${this.crop.totalDamage}`);
+    hook.addInvariant('upgrade-history', () => {
+      const levels = Object.values(this.run.upgradeLevels).reduce((a, b) => a + b, 0);
+      return levels === this.run.upgradeHistory.length ? null : `upgrade levels ${levels} but history ${this.run.upgradeHistory.length}`;
+    });
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels', 'boss-state', 'streak', 'decoy', 'still-life', 'crop-damage'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels', 'boss-state', 'streak', 'decoy', 'still-life', 'crop-damage', 'upgrade-history'];

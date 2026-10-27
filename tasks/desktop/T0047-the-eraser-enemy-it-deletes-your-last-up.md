@@ -4,11 +4,12 @@ title: The Eraser enemy — it deletes your last upgrade
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T23:43:51Z
 claimed_at: 2026-10-27T01:56:46Z
+finished_at: 2026-10-27T02:08:28Z
 ---
 
 ## Goal
@@ -112,3 +113,27 @@ if (e.def.contact === 'erase') {
 ### Tests
 - `tests/core/erase.test.ts`: `removeLastUpgrade` returns null with no upgrades; removes the most recent level and recomputes stats (rhythm+weight → weight gone, `damageMul` back to 1); drops one of two levels; removes a granted weapon (`line`) leaving `['point']`; clamps `hp` to reduced max after erasing `mass`; erased upgrade passes `isUpgradeAvailable` again.
 - Existing `tests/content.test.ts` and `tests/content/spawn.test.ts` (it.each over `ENEMIES`) automatically validate the new def and its 180 s unlock — no edits needed there.
+
+## Result (attempt 1, desktop)
+
+Added the Eraser (T0047): a late-run paper-white 2:1 rectangle (new `rect` shape) that unlocks at 180 s and, on contact, deletes the player's most recently picked upgrade level via a new `RunState.removeLastUpgrade()` backed by an `upgradeHistory` — with an "ERASED" HUD flash, a paper-tear SFX, and a crumple-into-paper death that still drops its 6 XP; players with no upgrades take 8 damage instead. Also added a `deathFx` param to `killEnemy`, an `upgrade-history` invariant in GameScene, and unit tests in `tests/core/erase.test.ts`; `npm run check` (191 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 11.7 min
+
+```
+game/src/art/shapes.ts             |  8 +++++
+ game/src/art/textures.ts           |  2 +-
+ game/src/audio/Sfx.ts              |  7 ++++
+ game/src/content/enemies/eraser.ts | 27 +++++++++++++++
+ game/src/content/enemies/index.ts  |  3 +-
+ game/src/content/types.ts          |  6 +++-
+ game/src/core/run.ts               | 23 +++++++++++++
+ game/src/scenes/GameScene.ts       |  6 +++-
+ game/src/scenes/HudScene.ts        | 18 +++++++++-
+ game/src/scenes/keys.ts            |  2 ++
+ game/src/systems/CombatSystem.ts   | 30 ++++++++++++++---
+ game/src/systems/FxSystem.ts       | 10 ++++++
+ game/tests/core/erase.test.ts      | 69 ++++++++++++++++++++++++++++++++++++++
+ 13 files changed, 202 insertions(+), 9 deletions(-)
+```

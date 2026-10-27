@@ -1,3 +1,4 @@
+import { UPGRADE_BY_ID } from '../content/upgrades';
 import type { UpgradeDef } from '../content/types';
 import { xpToNextLevel } from './progression';
 import { Rng } from './rng';
@@ -29,6 +30,8 @@ export class RunState {
   weapons: string[] = ['point'];
   /** Upgrade id -> times taken. */
   upgradeLevels: Record<string, number> = {};
+  /** Upgrade ids in the order applied this run; only applyUpgrade/removeLastUpgrade touch it. */
+  readonly upgradeHistory: string[] = [];
   /** Boss encounter state; BossSystem (src/systems/BossSystem.ts) owns the writes. */
   bossAlive = false;
   bossWarning = false;
@@ -110,6 +113,7 @@ export class RunState {
   applyUpgrade(def: UpgradeDef): void {
     const prevMax = this.stats.maxHp;
     this.upgradeLevels[def.id] = this.upgradeLevel(def.id) + 1;
+    this.upgradeHistory.push(def.id);
     this.mods.push(...def.mods);
     if (def.grantsWeapon && !this.weapons.includes(def.grantsWeapon)) this.weapons.push(def.grantsWeapon);
     this.stats = computeStats(this.mods);
@@ -117,5 +121,24 @@ export class RunState {
     if (gainedMax > 0) this.hp += gainedMax;
     this.hp = Math.min(this.hp, this.stats.maxHp);
     if (this.pendingLevelUps > 0) this.pendingLevelUps -= 1;
+  }
+
+  /** Removes the most recently applied upgrade level (the Eraser). Returns the removed def, or null when the player has no upgrades. */
+  removeLastUpgrade(): UpgradeDef | null {
+    const id = this.upgradeHistory.pop();
+    if (id === undefined) return null;
+    const def = UPGRADE_BY_ID.get(id);
+    if (!def) return null;
+    this.mods.splice(this.mods.length - def.mods.length, def.mods.length);
+    const left = this.upgradeLevel(id) - 1;
+    if (left <= 0) delete this.upgradeLevels[id];
+    else this.upgradeLevels[id] = left;
+    if (def.grantsWeapon && this.upgradeLevel(def.grantsWeapon) === 0) {
+      const i = this.weapons.indexOf(def.grantsWeapon);
+      if (i >= 0) this.weapons.splice(i, 1);
+    }
+    this.stats = computeStats(this.mods);
+    this.hp = Math.min(this.hp, this.stats.maxHp);
+    return def;
   }
 }

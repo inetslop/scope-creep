@@ -21,7 +21,7 @@ export type EnemyBehavior =
   | 'shoot';
 
 /** Flat geometric shapes, drawn by src/art/shapes.ts. Pointed shapes point to the right (angle 0). */
-export type ShapeKind = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'star';
+export type ShapeKind = 'circle' | 'triangle' | 'square' | 'rect' | 'diamond' | 'pentagon' | 'hexagon' | 'star';
 
 /** Procedural look, drawn once into a texture by src/art/textures.ts (ink outline + paper-cut shadow added automatically). */
 export interface EnemyLook {
@@ -34,6 +34,8 @@ export interface EnemyLook {
   accent: Color;
   /** Number of points for 'star' (default 5). */
   points?: number;
+  /** Outline width in pixels; default scales with size. */
+  outlineWidth?: number;
   /** Radians per second the sprite spins. If omitted, the enemy turns to face where it is moving. */
   spin?: number;
 }
@@ -48,6 +50,8 @@ export interface EnemyDef {
   speed: number;
   /** Damage per contact hit on the player. */
   contactDamage: number;
+  /** Contact behavior other than damage. 'erase' removes the player's most recent upgrade on contact (falls back to contactDamage if the player has none). */
+  contact?: 'erase';
   /** XP value of the shard it drops. */
   xp: number;
   /** Spawn cost for the director. Stronger enemies cost more. */

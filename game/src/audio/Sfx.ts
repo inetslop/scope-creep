@@ -139,6 +139,13 @@ export class Sfx {
     this.tone('sine', 540, 180, 0.6, 0.08);
   }
 
+  /** Soft paper-tear when the Eraser crumples. */
+  paperTear(): void {
+    if (!this.canPlay()) return;
+    this.noise(0.16, 0.28, 1400, 'lowpass');
+    this.noise(0.12, 0.18, 700, 'lowpass', 0.06);
+  }
+
   /** Three-note rising arp. */
   levelUp(): void {
     if (!this.canPlay()) return;

@@ -168,7 +168,7 @@ function drawEnemy(scene: Phaser.Scene, def: EnemyDef): void {
   const size = Math.ceil((look.radius + PAD) * 2);
   const c = size / 2 - SHADOW_OFFSET / 2;
   graphicsTexture(scene, enemyTextureKey(def.id), size, size, (g) => {
-    drawShape(g, look.shape, c, c, look.radius, look.body, { points: look.points });
+    drawShape(g, look.shape, c, c, look.radius, look.body, { points: look.points, outlineWidth: look.outlineWidth });
     drawShape(g, 'circle', c, c, Math.max(2.5, look.radius * 0.22), look.accent, { outlineWidth: look.accent === PALETTE.ink ? 0 : 1.5, shadow: false });
   });
 }

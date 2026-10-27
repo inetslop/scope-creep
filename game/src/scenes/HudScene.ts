@@ -23,6 +23,7 @@ export class HudScene extends Phaser.Scene {
   private killText!: Phaser.GameObjects.Text;
   private streakText!: Phaser.GameObjects.Text;
   private rhythmText!: Phaser.GameObjects.Text;
+  private erasedText!: Phaser.GameObjects.Text;
   private cropText!: Phaser.GameObjects.Text;
   private fpsText?: Phaser.GameObjects.Text;
   private pauseButton!: Phaser.GameObjects.Container;
@@ -47,6 +48,7 @@ export class HudScene extends Phaser.Scene {
   private lastStreak = 0;
   private flashUntil = 0;
   private rhythmUntil = 0;
+  private erasedUntil = 0;
   private cropUntil = 0;
   private cropFlashed = false;
   private flashRed = false;
@@ -63,6 +65,7 @@ export class HudScene extends Phaser.Scene {
     this.killText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5);
     this.streakText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5).setVisible(false);
     this.rhythmText = this.add.text(0, 0, 'RHYTHM', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
+    this.erasedText = this.add.text(0, 0, 'ERASED', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
     this.cropText = this.add.text(0, 0, 'CROPPING', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
     this.pauseButton = makeButton(this, 0, 0, 'II', () => this.scene.get(SCENES.game).events.emit(GAME_EVENTS.pauseRequest), { width: 44, height: 44, fontSize: 18 });
     if (flags.debug) this.fpsText = this.add.text(PAD, 0, '', textStyle(12, PALETTE.green));
@@ -86,6 +89,7 @@ export class HudScene extends Phaser.Scene {
     this.lastStreak = 0;
     this.flashUntil = 0;
     this.rhythmUntil = 0;
+    this.erasedUntil = 0;
     this.cropUntil = 0;
     this.cropFlashed = false;
     this.flashRed = false;
@@ -93,8 +97,18 @@ export class HudScene extends Phaser.Scene {
     const onPlayerHit = (): void => {
       this.sinceHit = 0;
     };
+    const onUpgradeErased = (): void => {
+      this.erasedUntil = this.time.now + 800;
+      this.tweens.killTweensOf(this.erasedText);
+      this.erasedText.setScale(1).setAlpha(1);
+      this.tweens.add({ targets: this.erasedText, alpha: 0.35, scale: 1.2, duration: 200, yoyo: true, repeat: 1, ease: 'Sine.easeInOut' });
+    };
     gameEvents.on(GAME_EVENTS.playerHit, onPlayerHit);
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => gameEvents.off(GAME_EVENTS.playerHit, onPlayerHit));
+    gameEvents.on(GAME_EVENTS.upgradeErased, onUpgradeErased);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      gameEvents.off(GAME_EVENTS.playerHit, onPlayerHit);
+      gameEvents.off(GAME_EVENTS.upgradeErased, onUpgradeErased);
+    });
   }
 
   update(_time: number, delta: number): void {
@@ -158,6 +172,8 @@ export class HudScene extends Phaser.Scene {
     }
     this.cropText.setPosition(width - PAD - this.streakText.width - 8, PAD + 60); // same slot as RHYTHM
     this.cropText.setVisible(this.time.now < this.cropUntil);
+    this.erasedText.setPosition(width - PAD, PAD + 78);
+    this.erasedText.setVisible(this.time.now < this.erasedUntil);
     this.fpsText?.setPosition(PAD, height - 24).setText(`${Math.round(this.game.loop.actualFps)} fps`);
 
     const controls = getControls(this);

@@ -94,6 +94,16 @@ export class FxSystem {
     this.sparks.explode(2, x, y);
   }
 
+  /** The Eraser crumples: an ink ring (reads on paper) and paper-white and ink fragments. */
+  crumple(x: number, y: number): void {
+    this.rings.setParticleTint(PALETTE.ink);
+    this.rings.explode(1, x, y);
+    this.fragments.setParticleTint(PALETTE.paperLight);
+    this.fragments.explode(10, x, y);
+    this.fragments.setParticleTint(PALETTE.ink);
+    this.fragments.explode(3, x, y);
+  }
+
   /** Player took damage: blue chips knocked off it, a red ring, a small shake. No full-screen flash: it's hard on the eyes. */
   playerHit(x: number, y: number): void {
     this.rings.setParticleTint(PALETTE.red);

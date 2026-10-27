@@ -34,6 +34,14 @@ export function shapePoints(kind: ShapeKind, cx: number, cy: number, r: number, 
       return polygonPoints(cx, cy, r, 3, 0);
     case 'square':
       return polygonPoints(cx, cy, r, 4, Math.PI / 4);
+    case 'rect':
+      // 2:1 block, wider than tall.
+      return [
+        { x: cx - r, y: cy - r / 2 },
+        { x: cx + r, y: cy - r / 2 },
+        { x: cx + r, y: cy + r / 2 },
+        { x: cx - r, y: cy + r / 2 },
+      ];
     case 'diamond':
       return polygonPoints(cx, cy, r, 4, 0);
     case 'pentagon':
