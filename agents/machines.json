@@ -68,6 +68,7 @@
       "roles": ["dev", "architect"],
       "architectMode": "idle",
       "maxDesignSize": "M",
+      "effort": { "architect": "medium", "dev": "medium" },
       "tier": "medium",
       "maxTaskSize": "M",
       "targetQueue": 2,
