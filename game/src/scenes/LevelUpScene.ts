@@ -117,6 +117,7 @@ export class LevelUpScene extends Phaser.Scene {
     getMusic(this).notePick(); // the score's tempo gains +2 BPM, same moment the pulse fires and the Index updates
     hook.stats.upgradesTaken += 1;
     getPlayer(this).pulse();
+    getPlayer(this).setBuildDepth(Object.values(getRun(this).upgradeLevels).reduce((a, b) => a + b, 0));
     this.scene.resume(SCENES.game);
     this.scene.stop();
   }

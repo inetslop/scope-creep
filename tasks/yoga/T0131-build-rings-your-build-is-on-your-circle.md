@@ -4,11 +4,12 @@ title: Build rings — your build is on your circle
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T17:13:57Z
 claimed_at: 2026-10-27T18:55:11Z
+finished_at: 2026-10-27T19:46:02Z
 ---
 
 ## Goal
@@ -87,3 +88,17 @@ setBuildDepth(totalLevels: number): void; // count = min(3, floor(totalLevels / 
 - All shared-file edits are one-line appends next to their siblings (other tasks are editing GameScene/LevelUpScene concurrently); do not reformat or move existing lines.
 ### Tests
 - none (pure art; the count rule is one line inside the art method, policed by the `build-rings` invariant in smoke).
+
+## Result (attempt 1, yoga)
+
+The build you've picked is now visible on your own shape — your circle gains a thin 2u ink ring just outside its outline every 4 total upgrade levels (first at 4, second at 8, third at 12, capped at 3), drawn on its own `buildRings` Graphics so the hitbox and stats are untouched and it never reads as The Palette's colored swatch stripes. The rings swell with the level-up pulse the moment a threshold is crossed and persist for the rest of the run. Changes are confined to `Player.ts` (the `buildRings` graphics + `setBuildDepth()`/`buildDepth`), `GameScene.ts` (seeding after Warm Start is applied, plus a `build-rings` invariant), and `LevelUpScene.ts` (one line in `choose()`). `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 50.9 min
+
+```
+game/src/entities/Player.ts     | 21 +++++++++++++++++++++
+ game/src/scenes/GameScene.ts    |  6 ++++++
+ game/src/scenes/LevelUpScene.ts |  1 +
+ 3 files changed, 28 insertions(+)
+```

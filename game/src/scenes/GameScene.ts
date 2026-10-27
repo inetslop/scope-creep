@@ -114,6 +114,7 @@ export class GameScene extends Phaser.Scene {
 
     this.player = new Player(this, 0, 0);
     this.registry.set('player', this.player);
+    this.player.setBuildDepth(Object.values(this.run.upgradeLevels).reduce((a, b) => a + b, 0));
     this.fx = new FxSystem(this);
     this.puddles = new PuddleSystem(this);
     this.damageNumbers = new DamageNumbers(this);
@@ -420,6 +421,11 @@ export class GameScene extends Phaser.Scene {
     hook.addInvariant('upgrade-history', () => {
       const levels = Object.values(this.run.upgradeLevels).reduce((a, b) => a + b, 0);
       return levels === this.run.upgradeHistory.length ? null : `upgrade levels ${levels} but history ${this.run.upgradeHistory.length}`;
+    });
+    hook.addInvariant('build-rings', () => {
+      const total = Object.values(this.run.upgradeLevels).reduce((a, b) => a + b, 0);
+      const expected = Math.min(3, Math.floor(total / 4));
+      return this.player.buildDepth === expected ? null : `build rings ${this.player.buildDepth} but ${expected} at ${total} total levels`;
     });
     hook.addInvariant('upgrade-levels', () => {
       for (const [id, level] of Object.entries(this.run.upgradeLevels)) {

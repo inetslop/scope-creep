@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { TEX } from '../art/textures';
 import { DEPTH, PLAYER_INVULN_MS, PLAYER_RADIUS } from '../config';
+import { PALETTE } from '../content/palette';
 import type { Vec2 } from '../core/vec';
 
 const PULSE_PEAK = 1.25; // pop scale
@@ -27,6 +28,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   /** Per-run trophy from The Palette: one ring stripe per swatch dodged, slot 0 (red) innermost. */
   readonly stripes: { color: number; slot: number }[] = [];
   private readonly stripeRing: Phaser.GameObjects.Graphics;
+  /** Build depth: min(3, floor(totalLevels / 4)) 2 u ink rings at 4, 8 and 12 u past the outline. */
+  private readonly buildRings: Phaser.GameObjects.Graphics;
+  /** Build rings currently drawn (0..3); the 'build-rings' invariant checks it against the run. */
+  buildDepth = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, TEX.player);
@@ -39,6 +44,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     // Drawn under the body so it reads as sticking out of the circle.
     this.barrel = scene.add.image(x, y, TEX.barrel).setOrigin(0.05, 0.5).setDepth(DEPTH.playerBarrel);
     this.stripeRing = scene.add.graphics().setDepth(DEPTH.playerBarrel).setVisible(false);
+    this.buildRings = scene.add.graphics().setDepth(DEPTH.playerBarrel).setVisible(false);
     this.pop = scene.add.image(x, y, TEX.player).setDepth(DEPTH.player + 1).setVisible(false);
   }
 
@@ -52,6 +58,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       this.stripeRing.strokeCircle(0, 0, PLAYER_RADIUS + 3 + s.slot * 2);
     }
     this.stripeRing.setVisible(true);
+  }
+
+  /** Redraws the build rings from the run's total upgrade levels; no-op when the count is unchanged. */
+  setBuildDepth(totalLevels: number): void {
+    const count = Math.min(3, Math.floor(totalLevels / 4));
+    if (count === this.buildDepth) return;
+    this.buildDepth = count;
+    this.buildRings.clear();
+    this.buildRings.lineStyle(2, PALETTE.ink, 1);
+    for (let i = 1; i <= count; i++) this.buildRings.strokeCircle(0, 0, PLAYER_RADIUS + i * 4);
+    this.buildRings.setVisible(count > 0);
   }
 
   /** `dir` has length 0..1. */
@@ -93,6 +110,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     }
     if (!this.visible || now >= this.pulseUntil) {
       if (this.pop.visible) this.pop.setScale(1).setVisible(false);
+      if (this.buildRings.scaleX !== 1) this.buildRings.setScale(1);
       return;
     }
     const t = Math.max(0, now - (this.pulseUntil - PULSE_MS));
@@ -101,6 +119,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const s = 1 + (PULSE_PEAK - 1) * (rising ? u : 1 - u);
     if (this.pop.texture.key !== this.texture.key) this.pop.setTexture(this.texture.key);
     this.pop.setScale(s).setVisible(true).setAlpha(this.alpha);
+    if (this.buildRings.visible) this.buildRings.setScale(s);
   }
 
   /** Called by GameScene after physics has moved the player this frame. */
@@ -108,6 +127,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.barrel.setPosition(this.x, this.y).setRotation(this.aimAngle);
     if (this.pop.visible) this.pop.setPosition(this.x, this.y);
     this.stripeRing.setPosition(this.x, this.y).setAlpha(this.alpha);
+    this.buildRings.setPosition(this.x, this.y).setAlpha(this.alpha);
   }
 
   protected preUpdate(time: number, delta: number): void {
@@ -127,6 +147,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.barrel.destroy();
     this.pop.destroy();
     this.stripeRing.destroy();
+    this.buildRings.destroy();
     super.destroy(fromScene);
   }
 }
