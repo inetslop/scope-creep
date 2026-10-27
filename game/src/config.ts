@@ -20,9 +20,13 @@ export const ELITE = {
 /** Points per kill, by enemy class (normal, elite, boss). */
 export const SCORE_POINTS = { enemy: 1, elite: 5, boss: 50 } as const;
 
+/** Pencil underdrawing: from 8:00 on, a director spawn is sketched leadSec before it lands. */
+export const UNDERDRAW = { atSec: 480, leadSec: 1.5 } as const;
+
 /** Draw order. Higher is on top. */
 export const DEPTH = {
   floor: 0,
+  underdrawing: 1,
   arena: 5,
   pickups: 10,
   enemies: 20,

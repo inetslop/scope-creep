@@ -104,6 +104,18 @@ export function drawShape(g: Graphics, kind: ShapeKind, cx: number, cy: number, 
   }
 }
 
+/** A pencil underdrawing: the shape's outline only, inset like drawShape — no fill, no shadow, no eye, no rotation. */
+export function drawShapeOutline(g: Graphics, kind: ShapeKind, cx: number, cy: number, r: number, color: number, width: number, alpha: number, points?: number): void {
+  g.lineStyle(width, color, alpha);
+  stroke(g, kind, cx, cy, Math.max(1, r - width / 2), points);
+}
+
+/** Pencil underdrawing for a bar look: outline only, inset like drawBar — no fill, no shadow. */
+export function drawBarOutline(g: Graphics, cx: number, cy: number, length: number, thickness: number, color: number, width: number, alpha: number): void {
+  g.lineStyle(width, color, alpha);
+  g.strokePoints(barPoints(cx, cy, Math.max(0, length - width), Math.max(0, thickness - width)), true, true);
+}
+
 /** A long bar: a sharp-cornered rectangle at length x thickness, in the house style. The outline insets by its full width, exactly like drawShape. */
 export function drawBar(g: Graphics, cx: number, cy: number, length: number, thickness: number, color: number, style: ShapeStyle = {}): void {
   const width = style.outlineWidth ?? Math.max(2, Math.round(thickness * 0.14));

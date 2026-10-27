@@ -9,6 +9,7 @@ export const PALETTE = {
   ink: 0x1d1d1b,
   inkSoft: 0x55524a,
   gray: 0x9a958a,
+  pencil: 0x8a857a,
   red: 0xd7362b,
   redDark: 0x9e2318,
   yellow: 0xf2b822,

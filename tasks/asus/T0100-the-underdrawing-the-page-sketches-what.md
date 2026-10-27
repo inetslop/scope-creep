@@ -4,11 +4,12 @@ title: The Underdrawing — the page sketches what is coming
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0098]
 attempts: 1
 created: 2026-10-27T10:32:47Z
 claimed_at: 2026-10-27T15:11:49Z
+finished_at: 2026-10-27T16:01:45Z
 ---
 
 ## Goal
@@ -122,3 +123,22 @@ private releaseDue(): void {
 
 ### Tests
 - none (director untouched — T0030/T0066 stay green by construction; no src/core rule added)
+
+## Result (attempt 1, asus)
+
+Added the pencil underdrawing (T0100): from 8:00 on, `SpawnSystem` announces each director spawn through a new `Underdrawing` layer (`src/systems/Underdrawing.ts`, depth 1) that sketches a 2 u pencil-grey outline (`drawShapeOutline` in `src/art/shapes.ts`, `PALETTE.pencil`) at the fixed spawn spot 1.5 s before the enemy lands, fading linearly to zero the frame it appears. Elites are announced at 1.8× scale; bosses, split children and minions bypass the announce path entirely, and the pre-8:00 path is identical to today with the RNG stream untouched. Config (`UNDERDRAW`, `DEPTH.underdrawing`), palette, GameScene wiring, and the `underdrawing-count` invariant are in place, plus one clause in ARCHITECTURE.md; `npm run check` and `npm run smoke` pass.
+
+- Self-review: APPROVE
+- Time: 49.9 min
+- Self-review made fixes (kept; checks pass).
+
+```
+game/docs/ARCHITECTURE.md        |  2 +-
+ game/src/art/shapes.ts           | 12 ++++++++++
+ game/src/config.ts               |  4 ++++
+ game/src/content/palette.ts      |  1 +
+ game/src/scenes/GameScene.ts     |  9 ++++++--
+ game/src/systems/SpawnSystem.ts  | 35 ++++++++++++++++++++++++----
+ game/src/systems/Underdrawing.ts | 49 ++++++++++++++++++++++++++++++++++++++++
+ 7 files changed, 105 insertions(+), 7 deletions(-)
+```

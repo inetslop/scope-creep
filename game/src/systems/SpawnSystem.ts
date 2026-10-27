@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { Sfx } from '../audio/Sfx';
+import { UNDERDRAW } from '../config';
 import { ENEMIES, getEnemy } from '../content/enemies';
 import type { EnemyDef } from '../content/types';
 import { SpawnDirector } from '../core/director';
@@ -14,6 +15,7 @@ import type { Player } from '../entities/Player';
 import { FxSystem } from './FxSystem';
 import { Marginalia } from './Marginalia';
 import { PuddleSystem } from './PuddleSystem';
+import { Underdrawing } from './Underdrawing';
 
 const MAX_ENEMIES = 260;
 const MAX_ENEMY_SHOTS = 200;
@@ -31,16 +33,19 @@ export class SpawnSystem {
   private readonly player: Player;
   private readonly bounds: Phaser.Geom.Rectangle;
   private readonly marginalia: Marginalia;
+  private readonly underdrawing: Underdrawing;
   private readonly fx: FxSystem;
   private readonly sfx: Sfx;
   private readonly puddles: PuddleSystem;
+  private readonly pending: { def: EnemyDef; elite: boolean; x: number; y: number; at: number }[] = [];
 
-  constructor(scene: Phaser.Scene, run: RunState, player: Player, bounds: Phaser.Geom.Rectangle, marginalia: Marginalia, fx: FxSystem, sfx: Sfx, puddles: PuddleSystem) {
+  constructor(scene: Phaser.Scene, run: RunState, player: Player, bounds: Phaser.Geom.Rectangle, marginalia: Marginalia, underdrawing: Underdrawing, fx: FxSystem, sfx: Sfx, puddles: PuddleSystem) {
     this.scene = scene;
     this.run = run;
     this.player = player;
     this.bounds = bounds;
     this.marginalia = marginalia;
+    this.underdrawing = underdrawing;
     this.fx = fx;
     this.sfx = sfx;
     this.puddles = puddles;
@@ -69,10 +74,11 @@ export class SpawnSystem {
     // director tick and the spawn loop, or the threat budget accumulates during
     // the fight and bursts on resume.
     if (!this.run.bossAlive) {
-      const { ids, elites } = this.director.update(dt, this.run.timeSec, this.activeCount, this.run.rng);
-      for (const id of ids) this.spawn(getEnemy(id));
-      for (const id of elites) this.spawn(getEnemy(id), undefined, true);
+      const { ids, elites } = this.director.update(dt, this.run.timeSec, this.activeCount + this.pending.length, this.run.rng);
+      for (const id of ids) this.announce(getEnemy(id), false);
+      for (const id of elites) this.announce(getEnemy(id), true);
     }
+    this.releaseDue();
     const target = this.aimTarget();
     for (const obj of this.enemies.getChildren()) {
       const e = obj as Enemy;
@@ -100,6 +106,27 @@ export class SpawnSystem {
     hook.stats.enemiesSpawned += 1;
     if (elite) hook.stats.elitesSpawned += 1;
     return enemy;
+  }
+
+  /** One director decision. Before UNDERDRAW.atSec this is exactly today's spawn; after, the spot is
+   *  fixed now and sketched, and the spawn lands leadSec later via releaseDue(). Bosses, split
+   *  children and minions call spawn() directly, so they are never underdrawn. */
+  private announce(def: EnemyDef, elite: boolean): void {
+    if (this.run.timeSec < UNDERDRAW.atSec) { this.spawn(def, undefined, elite); return; } // pre-8:00: identical to today
+    const pos = this.pickSpawnPoint(); // spot fixed at announcement, so the sketch never moves
+    this.pending.push({ def, elite, x: pos.x, y: pos.y, at: this.run.timeSec + UNDERDRAW.leadSec });
+    this.underdrawing.sketch(def, elite, pos.x, pos.y);
+  }
+
+  /** Lands announced spawns whose lead has elapsed. A null from a full pool is final: the sketch
+   *  fades out with no enemy, and the schedule never retries. */
+  private releaseDue(): void {
+    for (let i = this.pending.length - 1; i >= 0; i--) {
+      const p = this.pending[i]!;
+      if (this.run.timeSec < p.at) continue;
+      this.pending.splice(i, 1);
+      this.spawn(p.def, { x: p.x, y: p.y }, p.elite); // null from a full pool: sketch just fades out, no enemy
+    }
   }
 
   /** Fires one slow ink dart from (x, y) at `angle` (The Frame's burst). Reuses the enemy-shot pool. */

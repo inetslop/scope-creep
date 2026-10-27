@@ -32,6 +32,7 @@ import { PickupSystem } from '../systems/PickupSystem';
 import { PuddleSystem } from '../systems/PuddleSystem';
 import { ScoreFeed } from '../systems/ScoreFeed';
 import { SpawnSystem } from '../systems/SpawnSystem';
+import { Underdrawing } from '../systems/Underdrawing';
 import { WeaponSystem } from '../systems/WeaponSystem';
 import { GAME_EVENTS, onResize, SCENES } from './keys';
 
@@ -70,6 +71,7 @@ export class GameScene extends Phaser.Scene {
   private bossApproach!: BossApproachSystem;
   private orbit!: OrbitSystem;
   private arc!: ArcSystem;
+  private underdrawing!: Underdrawing;
   private spawns!: SpawnSystem;
   private pickups!: PickupSystem;
   private bounds!: Phaser.Geom.Rectangle;
@@ -122,7 +124,8 @@ export class GameScene extends Phaser.Scene {
     this.music = new Music(this, this.sfx);
     this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx);
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
-    this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia, this.fx, this.sfx, this.puddles);
+    this.underdrawing = new Underdrawing(this);
+    this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia, this.underdrawing, this.fx, this.sfx, this.puddles);
     this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.feed, this.spawns);
     this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.music, this.damageNumbers, this.feed, this.pickups, this.marginalia);
     this.bossApproach = new BossApproachSystem(this, this.run);
@@ -169,6 +172,7 @@ export class GameScene extends Phaser.Scene {
     this.arc.update(dt, input.firing);
     this.orbit.update(dt);
     this.spawns.update(dt);
+    this.underdrawing.update(dt);
     this.boss.update(dt);
     this.bossApproach.update(dt);
     this.marginalia.update(dt);
@@ -372,6 +376,7 @@ export class GameScene extends Phaser.Scene {
     });
     hook.addInvariant('arc-lines', () => (this.arc.lines.length <= 4 ? null : `${this.arc.lines.length} arc lines alive`));
     hook.addInvariant('marginalia-labels', () => (this.marginalia.activeCount <= 16 ? null : `${this.marginalia.activeCount} marginalia labels active`));
+    hook.addInvariant('underdrawing-count', () => (this.underdrawing.activeCount <= 240 ? null : `${this.underdrawing.activeCount} underdrawing sketches active`));
     hook.addInvariant('boss-state', () => {
       const b = this.boss.boss;
       // The palette's body is only active while a swatch falls, so compare against bodyActive, not bossAlive.
