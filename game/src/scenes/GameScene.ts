@@ -118,9 +118,9 @@ export class GameScene extends Phaser.Scene {
     this.feed = new ScoreFeed(this);
     this.crop = new CropSystem(this, this.run, this.player, this.damageNumbers);
     this.marginalia = new Marginalia(this, this.bounds);
-    this.gutter = new GutterSystem(this, this.run, this.player, this.marginalia, this.damageNumbers);
     this.sfx = new Sfx(this);
     this.registry.set('sfx', this.sfx);
+    this.gutter = new GutterSystem(this, this.run, this.player, this.marginalia, this.damageNumbers, this.sfx);
     this.music = new Music(this, this.sfx);
     this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx);
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);

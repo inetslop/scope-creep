@@ -184,6 +184,12 @@ export class Sfx {
     this.noise(0.15, 0.18, 600, 'lowpass');
   }
 
+  /** Soft paper slap as the gutter band sweeps into the page: ~80 ms low-passed noise at half a hit's gain, no tone. */
+  gutterSlap(): void {
+    if (!this.canPlay()) return;
+    this.noise(0.08, 0.11, 800, 'lowpass');
+  }
+
   /** Three-note rising arp. */
   levelUp(): void {
     if (!this.canPlay()) return;

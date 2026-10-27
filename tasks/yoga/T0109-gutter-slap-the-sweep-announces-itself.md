@@ -4,11 +4,12 @@ title: Gutter slap — the sweep announces itself
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0102, T0107]
 attempts: 1
 created: 2026-10-27T13:08:21Z
 claimed_at: 2026-10-27T16:12:51Z
+finished_at: 2026-10-27T16:28:28Z
 ---
 
 ## Goal
@@ -72,3 +73,17 @@ constructor(scene: Phaser.Scene, run: RunState, player: Player, marginalia: Marg
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The gutter sweep now announces itself — when the ink band's leading edge crosses into the safe area (1.5 s after the red rule telegraph), one soft paper slap plays: an ~80 ms low-passed noise burst (~800 Hz, half a normal hit's gain, no tone) added as `Sfx.gutterSlap()` in `src/audio/Sfx.ts`, fired once per sweep entry from `GutterSystem` (`src/systems/GutterSystem.ts`, which now receives `Sfx` constructed in `src/scenes/GameScene.ts`). Nothing plays before 14:00, between sweeps, or twice during a crossing, and the Gutter's timing, burn, telegraph, HUD and input are all untouched. `npm run check` and `npm run smoke` pass.
+
+- Self-review: APPROVE
+- Time: 15.6 min
+
+```
+game/src/audio/Sfx.ts            |  6 ++++++
+ game/src/scenes/GameScene.ts     |  2 +-
+ game/src/systems/GutterSystem.ts | 14 ++++++++++++--
+ 3 files changed, 19 insertions(+), 3 deletions(-)
+```
