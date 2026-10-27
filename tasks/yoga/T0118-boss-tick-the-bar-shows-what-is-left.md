@@ -4,10 +4,12 @@ title: Boss tick — the bar shows what is left
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T15:11:35Z
+claimed_at: 2026-10-27T15:32:15Z
+designer: inet-racing
 ---
 
 ## Goal
