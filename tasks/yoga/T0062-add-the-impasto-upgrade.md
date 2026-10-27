@@ -4,11 +4,12 @@ title: Add the Impasto upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T02:46:28Z
 claimed_at: 2026-10-27T03:03:14Z
+finished_at: 2026-10-27T03:10:20Z
 ---
 
 ## Goal
@@ -84,3 +85,16 @@ it('impasto offers 2 levels, then stops', () => {
 
 ### Tests
 - `tests/core/upgrades.test.ts`: "impasto offers 2 levels, then stops" — exact two mods, applied 2×, not offered after 2 levels.
+
+## Result (attempt 1, yoga)
+
+Added the "Impasto" upgrade to `src/content/upgrades/index.ts` (appended at the end of `UPGRADES` after `pedal`): a red, weight-3, max-2-level card reading "+1 projectile per volley, +15% damage", with `extraProjectiles`/`add`/1 (from `repetition`) and `damageMul`/`mul`/1.15 (from `emphasis`) — so 2 levels give +2 projectiles per volley and stacked +15%/level damage, stacking with the other projectile/damage cards. Added the matching `tests/core/upgrades.test.ts` case asserting the exact two mods, 2 applications, and no offer after max. `npm run check` passes (210 tests) and `npm run smoke` passes on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 7.1 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```

@@ -369,6 +369,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     ],
     color: PALETTE.yellow,
   },
+  {
+    id: 'impasto',
+    name: 'Impasto',
+    description: '+1 projectile per volley, +15% damage',
+    maxLevel: 2,
+    weight: 3,
+    mods: [
+      { stat: 'extraProjectiles', op: 'add', value: 1 },
+      { stat: 'damageMul', op: 'mul', value: 1.15 },
+    ],
+    color: PALETTE.red,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));
