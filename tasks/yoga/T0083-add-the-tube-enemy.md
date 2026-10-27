@@ -4,12 +4,13 @@ title: Add the Tube enemy
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-27T06:15:12Z
 claimed_at: 2026-10-27T06:30:28Z
-designer: yoga
+finished_at: 2026-10-27T06:38:24Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -28,3 +29,7 @@ The first regular rectangle in the spawn roster: a long yellow bar that slides s
 - [ ] Killing the tube breaks it into two shorter yellow bars (~60×16) that scatter faster than the parent bar moved.
 - [ ] Tube halves never spawn from the arena edge on their own (same rule as the Splinter) — only a dying tube produces them.
 - [ ] `npm run check` and `npm run smoke` (desktop + mobile) pass.
+
+## Rejected by architect (yoga)
+
+The `rect` shape is hard-coded 2:1 in `src/art/shapes.ts` (drawn 2r wide × r tall — the Eraser's 26×13 is built from radius 13), so no `look.radius` can produce the required 120×16 tube or 60×16 halves; a thin 7.5:1 bar needs a shape-system change (aspect in `content/types.ts` + `shapes.ts`, wide texture sizing in `textures.ts`, and the circular hitbox in `Enemy.ts`), which is an art-system task, not the two data files T0083 is scoped to build.
