@@ -20,19 +20,24 @@ describe('rewriteRequest', () => {
 describe('sampling', () => {
   it('writes the configured sampling into the request, over what the client sent', () => {
     const body = { messages: [{ role: 'user', content: 'hi' }], temperature: 0.2, max_tokens: 100 } as Parameters<typeof rewriteRequest>[0] & Record<string, unknown>;
-    rewriteRequest(body, 'xhigh', { temperature: 1, top_k: 20, presence_penalty: 1, min_p: undefined });
+    rewriteRequest(body, 'xhigh', { temperature: 1, top_k: 20, top_p: undefined });
     assert.equal(body.temperature, 1);
     assert.equal(body.top_k, 20);
-    assert.equal(body.presence_penalty, 1);
     assert.equal(body.max_tokens, 100);
-    assert.equal('min_p' in body, false);
+    assert.equal('top_p' in body, false);
     assert.deepEqual(body.chat_template_kwargs, { reasoning_effort: 'xhigh' });
   });
 
+  it('only sends what llama.cpp applies on /v1/messages (presence_penalty and min_p are server arguments)', () => {
+    const body = { messages: [] } as Parameters<typeof rewriteRequest>[0] & Record<string, unknown>;
+    rewriteRequest(body, undefined, { temperature: 1, presence_penalty: 1, min_p: 0.1 } as never);
+    assert.deepEqual(Object.keys(body).sort(), ['messages', 'temperature']);
+  });
+
   it('merges a machine override over the fleet default', () => {
-    const fleet = { machines: { yoga: { sampling: { presence_penalty: 1 } }, desktop: {} }, loop: { sampling: { temperature: 1, presence_penalty: 0 } } } as unknown as FleetConfig;
-    assert.deepEqual(samplingFor(fleet, 'yoga'), { temperature: 1, presence_penalty: 1 });
-    assert.deepEqual(samplingFor(fleet, 'desktop'), { temperature: 1, presence_penalty: 0 });
+    const fleet = { machines: { yoga: { sampling: { temperature: 0.8 } }, desktop: {} }, loop: { sampling: { temperature: 1, top_k: 20 } } } as unknown as FleetConfig;
+    assert.deepEqual(samplingFor(fleet, 'yoga'), { temperature: 0.8, top_k: 20 });
+    assert.deepEqual(samplingFor(fleet, 'desktop'), { temperature: 1, top_k: 20 });
     assert.deepEqual(samplingFor({ machines: {}, loop: {} } as unknown as FleetConfig, 'x'), {});
   });
 });

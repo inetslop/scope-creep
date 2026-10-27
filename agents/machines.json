@@ -30,19 +30,18 @@
       "tier": "weak",
       "maxTaskSize": "S",
       "targetQueue": 3,
-      "notes": "Heavily quantized and small context. Only small, precisely specified tasks: new content data files copied from an existing example, tuning numbers, small unit tests, tiny single-function changes. Always name the exact file and the example to copy.",
-      "sampling": { "presence_penalty": 1 }
+      "notes": "Heavily quantized and small context. Only small, precisely specified tasks: new content data files copied from an existing example, tuning numbers, small unit tests, tiny single-function changes. Always name the exact file and the example to copy."
     },
     "desktop-4070": {
       "label": "Ryzen 7 5800X + RTX 4070 SUPER (12 GB)",
       "model": "Qwen 3.8 27B UD-IQ3_XXS",
       "roles": ["dev", "architect"],
       "architectMode": "idle",
+      "maxDesignSize": "M",
       "tier": "strong",
-      "maxTaskSize": "L",
+      "maxTaskSize": "M",
       "targetQueue": 2,
-      "notes": "Heavily quantized (IQ3_XXS): expect more mistakes. Partly offloaded to CPU, so slow. Give it the hardest, design-heavy work: new systems, tricky bugs, cross-cutting changes.",
-      "sampling": { "presence_penalty": 1 }
+      "notes": "Heavily quantized (IQ3_XXS): expect more mistakes. Partly offloaded to CPU, so slow. Give it medium features: new mechanics, scenes, UI, juice, audio."
     }
   },
   "sizes": {
@@ -67,6 +66,6 @@
     "designGraceMinutes": 20,
     "smokeSeconds": 24,
     "effort": { "po": "xhigh", "architect": "xhigh", "dev": "xhigh" },
-    "sampling": { "temperature": 1, "top_p": 0.95, "top_k": 20, "min_p": 0, "presence_penalty": 0 }
+    "sampling": { "temperature": 1, "top_p": 0.95, "top_k": 20 }
   }
 }

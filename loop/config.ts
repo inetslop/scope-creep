@@ -14,18 +14,20 @@ export type Role = 'po' | 'architect' | 'dev';
 export type Effort = 'low' | 'medium' | 'high' | 'xhigh';
 
 /**
- * Sampling settings the shim sends with every model request (llama.cpp applies them per request,
- * over its startup defaults). loop.sampling is the fleet default; a machine's `sampling` overrides
- * single keys, e.g. a presence penalty for a heavily quantized model that tends to repeat itself.
+ * Sampling settings the shim sends with every model request; llama.cpp applies them per request,
+ * over its startup defaults. loop.sampling is the fleet default; a machine's `sampling` overrides
+ * single keys. Only these three: llama.cpp's /v1/messages endpoint (the one Claude Code uses) takes
+ * the Anthropic API's sampling fields and drops the rest, so presence_penalty and min_p have to be
+ * llama-server start-up arguments (`--presence-penalty 1.0`) in the machine's local config.
  */
 export interface Sampling {
   temperature?: number;
   top_p?: number;
   top_k?: number;
-  min_p?: number;
-  presence_penalty?: number;
-  repeat_penalty?: number;
 }
+
+/** The sampling fields llama.cpp honours on /v1/messages (checked against a live server). */
+export const REQUEST_SAMPLING_KEYS = ['temperature', 'top_p', 'top_k'] as const;
 
 /** One machine in the fleet (agents/machines.json, committed, human-owned). */
 export interface MachineConfig {

@@ -1,14 +1,13 @@
 ---
 id: T0044
 title: The Grid — second boss
-assignee: desktop-4070
+assignee: desktop
 size: L
 priority: 1
-status: in-progress
+status: todo
 depends_on: [T0006]
-attempts: 1
+attempts: 0
 created: 2026-10-26T23:09:26Z
-claimed_at: 2026-10-26T23:37:11Z
 ---
 
 ## Goal
@@ -120,3 +119,7 @@ export function pointToSegmentDistance(px: number, py: number, ax: number, ay: n
 - `tests/core/gridSweep.test.ts`: retracted at rest (t=0, t=3.999); telegraph at t=4; sweep at t=4.5 with progress 0; progress 0.5 at t=5.25; at t=6.0 phase is 'rest' again (cycle restarted); `pointToSegmentDistance` sanity (0 on segment, 3 off it, clamped at ends).
 - `tests/core/boss.test.ts`: `bossForKill(0..3)` → frame, grid, frame, grid.
 - `tests/content.test.ts`: new `describe('bosses')` — unique kebab ids via `expectUniqueIds(BOSSES)`, sane numbers (hp/speed/contactDamage/bodyRadius/deathXp > 0, deathPickups integer ≥ 1, grid arm numbers > 0).
+
+## Moved from desktop-4070
+
+desktop-4070 (3-bit model, 64k context) spent an hour reading code and reasoning without writing any (claimed 2026-10-26T23:37:11Z); its limit was lowered to M tasks, so this L task moved to desktop. Nothing from that attempt reached main; attempts reset.

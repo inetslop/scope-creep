@@ -1,7 +1,7 @@
 ---
 id: T0047
 title: The Eraser enemy — it deletes your last upgrade
-assignee: desktop-4070
+assignee: desktop
 size: L
 priority: 2
 status: todo
