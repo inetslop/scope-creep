@@ -21,8 +21,11 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Card-flip level-ups: the three choices flip in like cards, 150 ms apart, with a flip SFX; input locked until the deal finishes (T0059) ✅
 - Crescendo: while the kill streak is 8 or higher, fire rate +10% and the streak tally turns red (T0065) ✅
 - Controls card on the pause screen (next, before any new input): every input listed in the Bauhaus style — WASD / mouse / hold click / Esc / M mute on desktop, sticks and buttons on gamepad, left thumb / right thumb / pause button on touch — and the menu hint matches it
-- Weapon SFX timbres: the firing weapons sound like themselves — Point a short high tick, Line a low thud, Arc a sharp snap (T0093, in queue, yoga)
+- Weapon SFX timbres: the firing weapons sound like themselves — Point a short high tick, Line a low thud, Arc a sharp snap (T0093) ✅
 - Platemark: the moment you take a hit, a small red × prints on the paper at your position and fades over 2 s (T0094, in queue, yoga)
+- The Underdrawing: after 8:00, ~1.5 s before a normal enemy spawns, a faint grey pencil outline of its shape is sketched at the spawn point and fades as it lands — the late-run swarm stays legible (T0100, in queue, asus)
+- Streak break: the moment your kill streak resets, the streak tally shatters with a small ink burst and a short low blip — you see and hear the Crescendo bonus go (T0101, in queue, yoga)
+- Level-up pulse: the moment a level-up card is picked, your circle swells 25% larger for 300 ms — the level-up is felt in your own shape (T0102, in queue, yoga)
 
 ## M2 — Variety (consolidated 2026-10-27)
 The agents had padded the game: 49 upgrades (35 of them pairs of existing stat bonuses), 18 enemies (11 of them chasers that differed only in numbers, shape or color) and two active abilities with unexplained keys and a bare HUD. All of it was cut by hand; see VISION pillars 6 and 7 and the content bar in the PO prompt. Variety now grows by mechanics, not by count.
@@ -55,6 +58,7 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 - Spawn unlock timing tests: every enemy absent before its unlockAtSec, present at/after (T0030) ✅
 - Upgrade roll tests: a maxed upgrade is never offered; a roll returns 3 distinct choices (T0036) ✅
 - Vector math tests: length, normalize, add, scale, distance (T0043) ✅
+- Shape-geometry tests: polygon corner order, on-circle radii, star tip/valley alternation, and all eight ShapeKind outlines (square-vs-diamond and the exact 2:1 rect) — a geometry change can no longer silently turn a square into a diamond (T0096) ✅
 - Level-up XP curve tests: required XP strictly increasing, exact-XP boundary, finite at level 100 (T0049) ✅
 - Stat stacking tests: same-stat upgrades combine consistently (damage, fire rate), untouched stats stay at base (T0053) ✅
 - Kill-streak tests: streak grows per kill, resets when hit, bestStreak keeps the longest run (T0057) ✅
@@ -62,7 +66,7 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 - Crop schedule tests: no shrink before 12:00, 1.0→0.7 by 17:00, clamped at 0.7 after, non-increasing through the window (T0063) ✅
 - Elite schedule tests: first elite at 0:45, then exactly one every 45 s, none in between (T0066) ✅
 - Arc chain tests: the bolt targets the first enemy within 260 u of the aim, each hop jumps to the nearest un-hit enemy within the chain radius, and the chain ends at a dead end — shipped with T0022 in `tests/core/arc.test.ts`; T0085 was rejected because the tests already existed and per-hop damage falloff is not in the code ✅
-- Music tempo-curve tests: 80 BPM at 0:00, non-decreasing through the ramp, 120 BPM at 10:00, second voice at 100 BPM — all of it already shipped with T0011 except the 15:00 clamp pin; T0092 was rejected (the file already existed), replaced by the one-line pin (T0095, in queue, yoga)
+- Music tempo-curve tests: 80 BPM at 0:00, non-decreasing through the ramp, 120 BPM at 10:00, second voice at 100 BPM — all of it already shipped with T0011 except the 15:00 clamp pin; T0092 was rejected (the file already existed), replaced by the one-line pin (T0095) ✅
 
 ## Later
 - Alternate "paper" palettes (De Stijl, Constructivist), run modifiers, daily seed, achievements, PWA install
