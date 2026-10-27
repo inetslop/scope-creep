@@ -4,10 +4,12 @@ title: Add the Counterweight enemy
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T06:15:12Z
+claimed_at: 2026-10-27T06:16:49Z
+designer: yoga
 ---
 
 ## Goal
