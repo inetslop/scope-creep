@@ -4,11 +4,12 @@ title: Add the Glissando upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T00:32:39Z
 claimed_at: 2026-10-27T01:34:14Z
+finished_at: 2026-10-27T01:41:56Z
 ---
 
 ## Goal
@@ -82,3 +83,16 @@ No new types or signatures. `UpgradeDef` (`src/content/types.ts:137`) and `StatM
 
 ### Tests
 - `tests/core/upgrades.test.ts`: the `glissando offers 3 levels, then stops` test above (exact mods ×1.15/×1.10, available for 3 picks, then unavailable).
+
+## Result (attempt 1, yoga)
+
+Added the "Glissando" upgrade as a new `UpgradeDef` at the end of `UPGRADES` in `src/content/upgrades/index.ts` (yellow card, weight 4, max level 3) with two mods reusing existing stats — `xpMul` ×1.15 (as in Gather) and `fireRateMul` ×1.10 (as in Rhythm) — so each level gives +15% shard XP and +10% fire rate, ×1.52/×1.33 at max, stacking with other cards on the same stats. Added the matching unit test in `tests/core/upgrades.test.ts` asserting the exact two mods, 3 successful applies, and unavailability afterwards; the existing content validation picks up the new entry automatically. Both `npm run check` (175 tests) and `npm run smoke` (desktop + mobile) pass.
+
+- Self-review: APPROVE
+- Time: 7.7 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```

@@ -321,6 +321,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     mods: [{ stat: 'maxHp', op: 'add', value: 10 }],
     color: PALETTE.yellow,
   },
+  {
+    id: 'glissando',
+    name: 'Glissando',
+    description: '+15% shard XP, +10% fire rate',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'xpMul', op: 'mul', value: 1.15 },
+      { stat: 'fireRateMul', op: 'mul', value: 1.10 },
+    ],
+    color: PALETTE.yellow,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));

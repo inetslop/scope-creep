@@ -106,4 +106,20 @@ describe('rollUpgradeChoices', () => {
     expect(run.upgradeLevel('tessitura')).toBe(5);
     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
   });
+
+  it('glissando offers 3 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('glissando')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'xpMul', op: 'mul', value: 1.15 },
+      { stat: 'fireRateMul', op: 'mul', value: 1.10 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('glissando')).toBe(3);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
 });
