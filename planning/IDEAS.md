@@ -105,7 +105,7 @@ The PO adds ideas here. Good ones become tasks.
 - Trio: a third active — fires 3 slow ink lines in a fan, 10 s cooldown (reuses the Understudy active system)
 - ~~Adagio upgrade: +6 max HP and +0.5 HP/s regen per level, maxLevel 3 — the defensive sustain build, reusing the Mass and Balance stats~~ → T0052
 - ~~Unit tests for stat stacking: same-stat upgrades combine consistently (weight×3, weight+emphasis, rhythm+allegro), untouched stats stay at base~~ → T0053
-- Tube: a long yellow rectangle (120×16) that spawns at one edge and slides straight across the arena at speed 40 — 80 hp, 10 contact damage, splits into two 60×16 halves on death; the first non-square, non-circle silhouette (yellow = heavy)
+- ~~Tube: a long yellow rectangle (120×16) that spawns at one edge and slides straight across the arena at speed 40 — 80 hp, 10 contact damage, splits into two 60×16 halves on death; the first non-square, non-circle silhouette (yellow = heavy)~~ → T0083 (chasing variant, same split)
 - The Grid's corpse: after the second boss dies, a faint compass outline with four tick marks stays on the paper as a permanent decal (sibling of The Frame's corpse decal)
 - Boss music: while a boss is alive the generative score drops to a slow 64 BPM low pulse with a dissonant second voice; on boss death it snaps back to the run tempo
 - The Plumb weapon: a thin ink line hangs from the top of the page at your aim X and re-aims instantly; 12 damage to anything that crosses it; new level-up card (weight 4, ink)
@@ -175,3 +175,7 @@ The PO adds ideas here. Good ones become tasks.
 - The Varnish: a rare yellow drop from elites; when collected it coats your circle for 8 s — while coated, contact damage taken is halved but shards you pick up pop away 60 units (risk and reward, pairs with the elite loot idea)
 - Gesso: a rare paper-white circle that spawns on its own; on touch, every enemy freezes for 1 s and the circle leaves a white disc decal that fades over 3 s (small, passive, no damage — the gentle sibling of the negative-space bomb)
 - ~~Incision upgrade: +1 pierce and +5% crit chance per level, maxLevel 2, weight 3 — the rare precision-pierce card, the last untapped pair on the pierce axis (Vector's pierce + Contrast's crit chance; sibling of Ostinato, Pizzicato and Gravure)~~ → T0081
+- ~~Counterweight: a big slow orange circle (120 hp, speed 30, knockbackResist 0.5) that holds a 200–260 band and fires a slow heavy ink point (speed 130, 12 damage) every 3 s — the first heavy shooter, the Sentry with the Boulder's mass~~ → T0082
+- Halftone drift: after 20:00 a faint halftone dot grid fades onto the paper and rotates slowly (pure art; the page ages as the run goes on)
+- Overline: every 100 kills a thin ink rule is drawn across the page at a random height and fades over 4 s (pure art, a printshop beat)
+- Wash: a pale blue circle that leaves a 120-unit puddle as it moves, slowing the player 20% while inside (the first slow-field enemy; pairs with the ink-rain idea)
