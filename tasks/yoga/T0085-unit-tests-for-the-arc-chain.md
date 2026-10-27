@@ -4,10 +4,12 @@ title: Unit tests for the Arc chain
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T06:43:50Z
+claimed_at: 2026-10-27T06:58:27Z
+designer: yoga
 ---
 
 ## Goal
