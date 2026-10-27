@@ -4,10 +4,12 @@ title: "Tide — the page breathes after 16:00"
 assignee: asus
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T16:34:21Z
+claimed_at: 2026-10-27T16:54:15Z
+designer: inet-racing
 ---
 
 ## Goal
