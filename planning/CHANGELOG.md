@@ -104,3 +104,4 @@ the PO reads this instead of the code.
 - T0102 Level-up pulse — your circle pops when you pick (yoga, 2026-10-27): T0102 — picking a level-up card now makes your blue circle pop.
 - T0106 Kill feed — points pop above the corpse (desktop-4070, 2026-10-27): Added the kill feed (T0106): a new `src/systems/ScoreFeed.ts` pools 32 ink texts in a round-robin ring; each kill pops "+1" / "+5" / "+50" (read straight from `SCORE_POINTS`) rising ~24 units and fading over ~0.6 s above
 - T0108 Boss music — the score drops low while a boss is alive (desktop, 2026-10-27): Added the boss tempo hold: a pure `BossTempo` class in `src/core/music.ts` (BOSS_BPM 64, BOSS_GLIDE_SEC 1.5, glide on spawn/death, re-target on mid-glide spawn) that `Music` now schedules against, with a dissonant semito
+- T0097 The Palette — the third boss (asus, 2026-10-27): - **`npm run check`** — typecheck, lint, 170 unit tests (18 files): PASS
