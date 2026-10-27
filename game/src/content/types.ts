@@ -20,7 +20,9 @@ export type EnemyBehavior =
   /** Holds 240-300 units from the player, strafes, fires ink points (speed 0 = holds its ground). */
   | 'shoot'
   /** Crawls at the player, then flattens and slams: a radial knockback wave that shoves everything nearby, dealing no damage. */
-  | 'slam';
+  | 'slam'
+  /** Chases the player, but quickens as it weakens: speed steps up when HP crosses ≤75% / ≤50% / ≤25% of max (the Hare). Speed from core/hareSpeed.ts. */
+  | 'quicken';
 
 /** Flat geometric shapes, drawn by src/art/shapes.ts. Pointed shapes point to the right (angle 0). */
 export type ShapeKind = 'circle' | 'triangle' | 'square' | 'rect' | 'diamond' | 'pentagon' | 'hexagon' | 'star';

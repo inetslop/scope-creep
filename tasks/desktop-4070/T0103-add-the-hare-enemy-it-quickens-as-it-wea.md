@@ -4,11 +4,12 @@ title: Add the Hare enemy — it quickens as it weakens
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T10:47:29Z
 claimed_at: 2026-10-27T13:11:22Z
+finished_at: 2026-10-27T13:25:17Z
 ---
 
 ## Goal
@@ -100,3 +101,20 @@ export function hareSpeed(hp: number, maxHp: number): number {
 ### Tests
 - `tests/core/hareSpeed.test.ts` (vitest, modeled on `tests/core/slam.test.ts`): assert `HARE_STEPS` equals `[40, 52, 67.6, 87.9]` (use `toBe`, not `toBeCloseTo` — the function returns the table literals); with `maxHp = 24`: 40 for hp 24/21/20/19; 52 for hp 18/17/15/13; 67.6 for hp 12/10/8/7; 87.9 for hp 6/3/1/0; with `maxHp = 48` (elite): 40 at 48, 52 at 36, 67.6 at 24, 87.9 at 12; and `hareSpeed(5, 0)` returns a value from `HARE_STEPS` (no NaN).
 - `tests/content.test.ts` validates the new def automatically (all-caps note, radius in [4,80], knockbackResist in [0,1]) — no edits needed there.
+
+## Result (attempt 1, desktop-4070)
+
+Added the Hare enemy — a small green circle (radius 12, PALETTE.green) that unlocks at 1:40, deals 8 contact damage, and drops 2 XP. Its new `quicken` behavior chases at a literal speed table (40 / 52 / 67.6 / 87.9 u/s) derived each frame from its HP fraction via the new pure function `hareSpeed()` in `src/core/hareSpeed.ts`, so it quickens one step per quarter of max HP lost, topping out at 25% HP and below. New files: `src/content/enemies/hare.ts` (registered in the spawn roster), `src/core/hareSpeed.ts`, `tests/core/hareSpeed.test.ts`; touched `src/content/types.ts` (`'quicken'` union member) and `src/entities/Enemy.ts` (new `steer()` case). First-sighting marginalia, death shatter, shard drops, and elite scaling all come free from existing data-driven paths.
+
+- Self-review: APPROVE
+- Time: 13.9 min
+
+```
+game/src/content/enemies/hare.ts  | 24 +++++++++++++++++++++++
+ game/src/content/enemies/index.ts |  3 ++-
+ game/src/content/types.ts         |  4 +++-
+ game/src/core/hareSpeed.ts        | 19 +++++++++++++++++++
+ game/src/entities/Enemy.ts        |  7 +++++++
+ game/tests/core/hareSpeed.test.ts | 40 +++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 95 insertions(+), 2 deletions(-)
+```

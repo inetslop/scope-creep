@@ -3,6 +3,7 @@ import { enemyTextureKey, TEX } from '../art/textures';
 import { DEPTH, ELITE } from '../config';
 import { PALETTE } from '../content/palette';
 import type { EnemyDef } from '../content/types';
+import { hareSpeed } from '../core/hareSpeed';
 import { SLAM, SlamCycle } from '../core/slam';
 import type { Rng } from '../core/rng';
 import { distance, normalize, sub, type Vec2 } from '../core/vec';
@@ -136,6 +137,12 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       case 'chase': {
         vx = toTarget.x * this.def.speed;
         vy = toTarget.y * this.def.speed;
+        break;
+      }
+      case 'quicken': {
+        const s = hareSpeed(this.hp, this.maxHp);
+        vx = toTarget.x * s;
+        vy = toTarget.y * s;
         break;
       }
       case 'weaver': {
