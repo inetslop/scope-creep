@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 import type { Sfx } from '../audio/Sfx';
+import type { Music } from '../audio/Music';
 import type { RunState } from '../core/run';
 import type { Controls } from '../input/Controls';
 import type { Player } from '../entities/Player';
@@ -37,6 +38,10 @@ export function getControls(scene: Phaser.Scene): Controls | undefined {
 
 export function getSfx(scene: Phaser.Scene): Sfx | undefined {
   return scene.registry.get('sfx') as Sfx | undefined;
+}
+
+export function getMusic(scene: Phaser.Scene): Music {
+  return scene.registry.get('music') as Music;
 }
 
 export function getPlayer(scene: Phaser.Scene): Player {

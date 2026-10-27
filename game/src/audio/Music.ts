@@ -14,8 +14,9 @@ const PULSE_SEMITONE_HZ = PULSE_HZ * 2 ** (1 / 12);
 /**
  * A quiet generative score on the same WebAudio context as Sfx: a low ink
  * pulse on every beat, sparse notes from a 5-note set, and an occasional soft
- * noise swell. Tempo climbs 80 -> 120 BPM over the first 10 minutes and a
- * higher off-beat voice joins at 100 BPM. Beats are scheduled a short
+ * noise swell. Tempo climbs 80 -> 120 BPM over the first 10 minutes (+2 BPM
+ * per upgrade picked this run, capped at 120) and a higher off-beat voice
+ * joins at 100 BPM. Beats are scheduled a short
  * lookahead ahead; note choice uses Math.random() on purpose so the gameplay
  * RNG stream is untouched. Every call is a silent no-op until the context is
  * unlocked by the first user gesture, and it follows the SFX mute. While a
@@ -28,6 +29,8 @@ export class Music {
   private readonly noiseBuffer: AudioBuffer | null;
   private readonly sfx: Sfx;
   private readonly bossTempo = new BossTempo();
+  /** Upgrade cards picked this run; each nudges the tempo +2 BPM (effectiveTempo). */
+  private picks = 0;
   private playing = false;
   private nextBeat = 0;
   private beatIndex = 0;
@@ -76,7 +79,7 @@ export class Music {
     if (this.nextBeat < this.ctx.currentTime - 0.1) this.nextBeat = this.ctx.currentTime + 0.1;
     while (this.nextBeat < this.ctx.currentTime + LOOKAHEAD_SEC) {
       this.scheduleBeat(this.nextBeat, this.beatIndex, timeSec);
-      this.nextBeat += 60 / this.bossTempo.bpmFor(timeSec);
+      this.nextBeat += 60 / this.bossTempo.bpmFor(timeSec, this.picks);
       this.beatIndex += 1;
     }
   }
@@ -98,12 +101,19 @@ export class Music {
   /** Boss spawn: the tempo glides down to the 64 BPM hold. No mute check — the hold is
    * time-based and must survive mute toggles (update() is already the mute gate). */
   bossEnter(timeSec: number): void {
-    this.bossTempo.bossEnter(timeSec);
+    this.bossTempo.bossEnter(timeSec, this.picks);
   }
 
-  /** Boss death: the dissonant voice stops and the tempo glides back to the run curve. */
+  /** Boss death: the dissonant voice stops and the tempo glides back to the
+   * effective run tempo (base curve + the build nudge so far). */
   bossLeave(timeSec: number): void {
-    this.bossTempo.bossLeave(timeSec);
+    this.bossTempo.bossLeave(timeSec, this.picks);
+  }
+
+  /** One upgrade card picked this run: the tempo gains +2 BPM from the next
+   * scheduled beat. State only, like the boss hold — no mute check. */
+  notePick(): void {
+    this.picks += 1;
   }
 
   private scheduleBeat(t: number, beat: number, timeSec: number): void {

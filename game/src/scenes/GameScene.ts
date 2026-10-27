@@ -125,6 +125,7 @@ export class GameScene extends Phaser.Scene {
     this.registry.set('sfx', this.sfx);
     this.gutter = new GutterSystem(this, this.run, this.player, this.marginalia, this.damageNumbers, this.sfx);
     this.music = new Music(this, this.sfx);
+    this.registry.set('music', this.music);
     this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx, this.giltPop);
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
     this.underdrawing = new Underdrawing(this);

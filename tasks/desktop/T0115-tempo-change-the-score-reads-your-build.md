@@ -4,11 +4,12 @@ title: Tempo change — the score reads your build
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T14:14:52Z
 claimed_at: 2026-10-27T17:52:18Z
+finished_at: 2026-10-27T17:58:24Z
 ---
 
 ## Goal
@@ -101,4 +102,22 @@ it('glides back to the nudged tempo on boss death, capped at 120', () => {
   capped.bossLeave(360, 20); // 104 + 40 would be 144
   expect(capped.bpmFor(361.5, 20)).toBe(120);
 });
+```
+
+## Result (attempt 1, desktop)
+
+The generative score now reads the build: a new pure `effectiveTempo(timeSec, picks)` in `src/core/music.ts` adds `BPM_PER_PICK` (2) per upgrade picked, capped at 120 BPM, and `BossTempo`'s `bpmFor/bossEnter/bossLeave` take an optional picks param so the nudge is suspended during the 64 BPM boss hold and the death glide returns to the nudged tempo. `Music` owns a per-run `picks` counter with a state-only `notePick()`, called from `LevelUpScene.choose()` at the exact pick moment (warm start excluded), with the Music exposed via a new typed `getMusic()` registry getter. Locked by 7 new unit pins in `tests/core/music.test.ts` (existing pins byte-identical and passing); `BossSystem.ts` and all other systems untouched. `npm run check` and `npm run smoke` (desktop + mobile) pass.
+
+- Self-review: APPROVE
+- Time: 6.1 min
+
+```
+game/docs/ARCHITECTURE.md       |  2 +-
+ game/src/audio/Music.ts         | 22 ++++++++++++-----
+ game/src/core/music.ts          | 36 ++++++++++++++++++---------
+ game/src/scenes/GameScene.ts    |  1 +
+ game/src/scenes/LevelUpScene.ts |  3 ++-
+ game/src/scenes/keys.ts         |  5 ++++
+ game/tests/core/music.test.ts   | 54 ++++++++++++++++++++++++++++++++++++++++-
+ 7 files changed, 103 insertions(+), 20 deletions(-)
 ```

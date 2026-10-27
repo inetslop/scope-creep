@@ -6,7 +6,7 @@ import { UPGRADE_BY_ID } from '../content/upgrades';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { textStyle, titleStyle } from '../ui/text';
-import { getPlayer, getSfx, getRun, onResize, SCENES } from './keys';
+import { getPlayer, getMusic, getSfx, getRun, onResize, SCENES } from './keys';
 
 interface LevelUpData {
   choices: string[];
@@ -114,6 +114,7 @@ export class LevelUpScene extends Phaser.Scene {
     if (this.chosen || (!this.armed && !force)) return;
     this.chosen = true;
     getRun(this).applyUpgrade(def);
+    getMusic(this).notePick(); // the score's tempo gains +2 BPM, same moment the pulse fires and the Index updates
     hook.stats.upgradesTaken += 1;
     getPlayer(this).pulse();
     this.scene.resume(SCENES.game);

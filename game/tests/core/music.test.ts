@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BossTempo, BOSS_BPM, BOSS_GLIDE_SEC, bpmForTime, secondVoiceActive } from '../../src/core/music';
+import { BPM_PER_PICK, BossTempo, BOSS_BPM, BOSS_GLIDE_SEC, bpmForTime, effectiveTempo, secondVoiceActive } from '../../src/core/music';
 
 describe('music tempo curve', () => {
   it('starts at 80 BPM', () => {
@@ -71,5 +71,57 @@ describe('boss tempo hold', () => {
     t.bossEnter(600.75); // re-arms from the tempo at that moment (92)
     expect(t.bpmFor(601.5)).toBe(78);
     expect(t.bpmFor(602.25)).toBe(BOSS_BPM);
+  });
+
+  it('suspends the build nudge while a boss is alive', () => {
+    const t = new BossTempo();
+    t.bossEnter(300, 20); // effective tempo would be 120 without the boss
+    expect(t.bpmFor(300, 20)).toBe(120);
+    expect(t.bpmFor(301.5, 20)).toBe(BOSS_BPM);
+    expect(t.bpmFor(900, 20)).toBe(BOSS_BPM);
+  });
+
+  it('glides back to the nudged tempo on boss death, capped at 120', () => {
+    const t = new BossTempo();
+    t.bossEnter(300, 5);
+    t.bossLeave(360, 5); // base curve is 104 at 6:00, nudged to 114
+    expect(t.bpmFor(360, 5)).toBe(BOSS_BPM);
+    expect(t.bpmFor(361.5, 5)).toBe(114);
+    expect(t.bpmFor(361.51, 5)).toBe(effectiveTempo(361.51, 5)); // moving nudged curve, not the bare one
+    const capped = new BossTempo();
+    capped.bossEnter(300, 20);
+    capped.bossLeave(360, 20); // 104 + 40 would be 144
+    expect(capped.bpmFor(361.5, 20)).toBe(120);
+  });
+});
+
+describe('build nudge (effective tempo)', () => {
+  it('equals the bare curve with no picks', () => {
+    expect(effectiveTempo(0, 0)).toBe(80);
+    expect(effectiveTempo(300, 0)).toBe(100);
+    expect(effectiveTempo(600, 0)).toBe(120);
+    expect(effectiveTempo(900, 0)).toBe(120);
+  });
+
+  it('at base 80 (t = 0) adds 2 BPM per pick, capped at 120', () => {
+    expect(effectiveTempo(0, 0)).toBe(80);
+    expect(effectiveTempo(0, 10)).toBe(100);
+    expect(effectiveTempo(0, 20)).toBe(120);
+    expect(effectiveTempo(0, 30)).toBe(120);
+  });
+
+  it('at base 100 (t = 300) nudges 5 / 10 picks to 110 / 120', () => {
+    expect(effectiveTempo(300, 5)).toBe(110);
+    expect(effectiveTempo(300, 10)).toBe(120);
+  });
+
+  it('at base 120 (t = 600) stays at 120 for any pick count', () => {
+    expect(effectiveTempo(600, 0)).toBe(120);
+    expect(effectiveTempo(600, 50)).toBe(120);
+    expect(effectiveTempo(600, 1000)).toBe(120);
+  });
+
+  it('each pick is exactly BPM_PER_PICK over the base curve', () => {
+    expect(effectiveTempo(0, 1)).toBe(80 + BPM_PER_PICK);
   });
 });
