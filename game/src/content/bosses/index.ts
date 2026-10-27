@@ -1,9 +1,10 @@
 import { FRAME } from './frame';
 import { GRID } from './grid';
+import { PALETTE_BOSS } from './palette';
 import type { BossDef } from './types';
 
 /** Every boss in the game. To add one: create a file next to this one and add it here. */
-export const BOSSES: readonly BossDef[] = [FRAME, GRID];
+export const BOSSES: readonly BossDef[] = [FRAME, GRID, PALETTE_BOSS];
 
 export const BOSS_BY_ID: ReadonlyMap<string, BossDef> = new Map(BOSSES.map((b) => [b.id, b]));
 
@@ -13,6 +14,7 @@ export function getBoss(id: string): BossDef {
   return def;
 }
 
-export type { BossDef, FrameBossDef, GridBossDef } from './types';
+export type { BossDef, FrameBossDef, GridBossDef, PaletteBossDef } from './types';
 export { FRAME } from './frame';
 export { GRID } from './grid';
+export { PALETTE_BOSS } from './palette';

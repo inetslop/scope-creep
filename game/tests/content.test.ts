@@ -3,11 +3,13 @@
  * fails, the message tells you which field is wrong.
  */
 import { describe, expect, it } from 'vitest';
-import { BOSS_BY_ID, BOSSES, getBoss, type GridBossDef } from '../src/content/bosses';
+import { BOSS_BY_ID, BOSSES, getBoss, type GridBossDef, type PaletteBossDef } from '../src/content/bosses';
 import { ENEMIES, ENEMY_BY_ID } from '../src/content/enemies';
+import { PALETTE } from '../src/content/palette';
 import { UPGRADES } from '../src/content/upgrades';
 import { WEAPON_BY_ID, WEAPONS } from '../src/content/weapons';
 import { BASE_STATS } from '../src/core/stats';
+import { SWATCH_CASCADE } from '../src/core/swatchCascade';
 
 const ID_PATTERN = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -78,6 +80,17 @@ describe('bosses', () => {
     expect(positive(b.armLength), 'armLength > 0').toBe(true);
     expect(positive(b.armThickness), 'armThickness > 0').toBe(true);
     expect(positive(b.armDamage), 'armDamage > 0').toBe(true);
+  });
+
+  const PALETTE_VALUES: readonly number[] = Object.values(PALETTE);
+  it.each(BOSSES.filter((b): b is PaletteBossDef => b.behavior === 'palette').map((b) => [b.id, b] as const))('%s has sane palette numbers', (_id, b) => {
+    expect(positive(b.swatchHp), 'swatchHp > 0').toBe(true);
+    expect(positive(b.swatchWidth), 'swatchWidth > 0').toBe(true);
+    expect(positive(b.swatchHeight), 'swatchHeight > 0').toBe(true);
+    expect(Number.isInteger(b.shardCount) && b.shardCount >= 1, 'shardCount integer >= 1').toBe(true);
+    expect(b.swatchColors.length === SWATCH_CASCADE.count, 'one swatch color per cascade swatch').toBe(true);
+    for (const color of b.swatchColors) expect(PALETTE_VALUES.includes(color), `swatch color ${color} is in PALETTE`).toBe(true);
+    expect(b.hp === b.swatchHp * SWATCH_CASCADE.count, 'hp is swatchHp times the swatch count').toBe(true);
   });
 
   it('registry looks up every boss and rejects unknown ids', () => {

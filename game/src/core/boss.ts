@@ -1,11 +1,13 @@
 import { FRAME } from '../content/bosses/frame';
 import { GRID } from '../content/bosses/grid';
-import type { FrameBossDef, GridBossDef } from '../content/bosses/types';
+import { PALETTE_BOSS } from '../content/bosses/palette';
+import type { FrameBossDef, GridBossDef, PaletteBossDef } from '../content/bosses/types';
 
 /**
  * Boss scheduling (pure logic). The first boss appears at `firstAtSec`, and
- * after each kill the next one is due `intervalSec` later. Boss HP scales by
- * 1.5x per kill. See src/systems/BossSystem.ts for the engine-side encounter.
+ * after each kill the next one is due `intervalSec` later. The rotation is
+ * Frame -> Grid -> Palette, repeating. Boss HP scales by 1.5x per kill. See
+ * src/systems/BossSystem.ts for the engine-side encounter.
  */
 export interface BossSchedule {
   /** Seconds into the run when the first boss appears. */
@@ -24,9 +26,10 @@ export function bossHpMultiplier(kills: number): number {
 /** Seconds before a boss spawn when the page warns that something heavy is coming. */
 export const BOSS_WARNING_SEC = 5;
 
-/** The boss that appears after `kills` bosses have died: Frame and Grid alternate. */
-export function bossForKill(kills: number): FrameBossDef | GridBossDef {
-  return kills % 2 === 0 ? FRAME : GRID;
+/** The boss that appears after `kills` bosses have died: Frame, Grid and Palette repeat. */
+export function bossForKill(kills: number): FrameBossDef | GridBossDef | PaletteBossDef {
+  const n = kills % 3;
+  return n === 0 ? FRAME : n === 1 ? GRID : PALETTE_BOSS;
 }
 
 /** Tracks when the next boss should appear and when its 5 s approach warning window opens. BossSystem owns the writes. */

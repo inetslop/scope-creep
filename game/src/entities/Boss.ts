@@ -1,15 +1,15 @@
 import Phaser from 'phaser';
-import { TEX } from '../art/textures';
+import { paletteSwatchTextureKey, TEX } from '../art/textures';
 import { DEPTH } from '../config';
-import type { BossDef } from '../content/bosses';
+import type { FrameBossDef, GridBossDef, PaletteBossDef } from '../content/bosses';
 import { takeSerial } from './serial';
 
 /**
- * The boss: a big body (frame or compass) with a core at its center. A unique
- * entity, not pooled and not an EnemyDef: one instance per run, driven by
- * BossSystem. The core is a separate image pinned to the body's center
- * (Phaser sprites have no children), synced from GameScene's POST_UPDATE like
- * the player's barrel.
+ * The boss: a big body (frame, compass or swatch tile) with a core at its
+ * center. A unique entity, not pooled and not an EnemyDef: one instance per
+ * run, driven by BossSystem. The core is a separate image pinned to the
+ * body's center (Phaser sprites have no children), synced from GameScene's
+ * POST_UPDATE like the player's barrel. The palette's swatch body has no core.
  */
 export class Boss extends Phaser.Physics.Arcade.Sprite {
   /** The red core, drawn at the frame's center. */
@@ -32,7 +32,24 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.core.setDepth(DEPTH.enemies + 1);
   }
 
-  spawn(x: number, y: number, hp: number, def: BossDef): void {
+  spawn(x: number, y: number, hp: number, def: FrameBossDef | GridBossDef | PaletteBossDef): void {
+    if (def.behavior === 'palette') {
+      // A falling swatch tile (rect body); the docked rail is BossSystem graphics, not the body.
+      this.setTexture(paletteSwatchTextureKey(0));
+      this.enableBody(true, x, y, true, true);
+      const body = this.body as Phaser.Physics.Arcade.Body;
+      // setSize also clears any setCircle from a previous grid spawn on this persistent body.
+      body.setSize(def.swatchWidth, def.swatchHeight);
+      body.setOffset((this.width - def.swatchWidth) / 2, (this.height - def.swatchHeight) / 2);
+      body.setCollideWorldBounds(false);
+      this.setVelocity(0, 0);
+      this.serial = takeSerial();
+      this.hp = this.maxHp = hp;
+      this.flashMs = 0;
+      this.setRotation(0).setAlpha(1).setScale(1).clearTint();
+      this.core.setVisible(false);
+      return;
+    }
     this.setTexture(def.behavior === 'grid' ? TEX.bossGrid : TEX.bossFrame);
     this.core.setTexture(def.behavior === 'grid' ? TEX.bossGridCore : TEX.bossCore);
     this.enableBody(true, x, y, true, true);

@@ -1,14 +1,16 @@
 import Phaser from 'phaser';
 import type { Music } from '../audio/Music';
 import type { Sfx } from '../audio/Sfx';
-import { TEX } from '../art/textures';
+import { drawShape, SHADOW_OFFSET } from '../art/shapes';
+import { paletteSwatchTextureKey, TEX } from '../art/textures';
 import { ARENA_SIZE, DEPTH, PLAYER_RADIUS, SCORE_POINTS } from '../config';
-import type { FrameBossDef, GridBossDef } from '../content/bosses';
+import type { FrameBossDef, GridBossDef, PaletteBossDef } from '../content/bosses';
 import { getEnemy } from '../content/enemies';
 import { PALETTE } from '../content/palette';
 import { BossTimer, bossForKill, bossHpMultiplier } from '../core/boss';
 import { GridSweep, pointToSegmentDistance, type GridSweepPhase } from '../core/gridSweep';
 import type { RunState } from '../core/run';
+import { SWATCH_CASCADE, SwatchCascade, type SwatchCascadePhase } from '../core/swatchCascade';
 import { underexposureDamage } from '../core/underexposure';
 import { normalize, sub, type Vec2 } from '../core/vec';
 import { hook } from '../debug/testHook';
@@ -18,6 +20,7 @@ import type { Projectile } from '../entities/Projectile';
 import { GAME_EVENTS } from '../scenes/keys';
 import type { DamageNumbers } from './DamageNumbers';
 import type { FxSystem } from './FxSystem';
+import type { Marginalia } from './Marginalia';
 import type { PickupSystem } from './PickupSystem';
 import type { ScoreFeed } from './ScoreFeed';
 import type { SpawnSystem } from './SpawnSystem';
@@ -33,18 +36,30 @@ const ENTER_SEC = 0.5;
 const HOVER_ABOVE = 320;
 /** Margin kept from the arena walls when choosing the hover point. */
 const HOVER_MARGIN = 100;
+/** The Palette's ink rail, this far inside the top edge of the arena. */
+const RAIL_INSET = 8;
+const RAIL_THICKNESS = 10;
+/** How far below the rail's centerline the docked swatch tiles hang. */
+const DOCK_DROP = 20;
+const RAIL_Y = -ARENA_SIZE / 2 + RAIL_INSET;
+/** Seconds a sunk swatch's ink stain stays on the paper. */
+const STAIN_FADE_SEC = 3;
+/** Invulnerability after a falling swatch touches the player, ms. */
+const SWATCH_INVULN_MS = 1000;
+/** Radius of the even shard ring dropped where a swatch shatters. */
+const SWATCH_SHARD_SPREAD = 26;
 
 type Phase = 'off' | 'approach' | 'warning' | 'entering' | 'fighting';
 
 /**
- * The boss encounter: schedules the next boss (core/boss.ts: Frame and Grid
- * alternate), runs its approach -> warning -> slide-in -> fight state machine
- * and attack cycle, and resolves overlaps with the player's projectiles and
- * the player. The 5 s 'approach' phase (core/boss.ts: BOSS_WARNING_SEC) opens
- * when the timer enters its warning window and ends only when due() fires, so
- * the window is exactly [nextAt - 5, nextAt) in run time. BossSystem owns the
- * writes to run.bossAlive/bossWarning/bossApproach/bossId/bossHp/bossMaxHp/
- * bossKills.
+ * The boss encounter: schedules the next boss (core/boss.ts: Frame, Grid and
+ * Palette rotate), runs its approach -> warning -> slide-in -> fight state
+ * machine and attack cycle, and resolves overlaps with the player's
+ * projectiles and the player. The 5 s 'approach' phase (core/boss.ts:
+ * BOSS_WARNING_SEC) opens when the timer enters its warning window and ends
+ * only when due() fires, so the window is exactly [nextAt - 5, nextAt) in run
+ * time. BossSystem owns the writes to run.bossAlive/bossWarning/bossApproach/
+ * bossId/bossHp/bossMaxHp/bossKills.
  */
 export class BossSystem {
   readonly boss: Boss;
@@ -58,14 +73,30 @@ export class BossSystem {
   private readonly damageNumbers: DamageNumbers;
   private readonly feed: ScoreFeed;
   private readonly pickups: PickupSystem;
+  private readonly marginalia: Marginalia;
   /** The Grid's sweeping arm bar: a plain image (Arcade bodies do not rotate), hit-tested by hand. */
   readonly arm: Phaser.GameObjects.Image;
   private readonly hint: Phaser.GameObjects.Graphics;
+  /** The Palette's ink rail with the docked swatches (plain graphics: not shootable). */
+  private readonly rail: Phaser.GameObjects.Graphics;
+  /** Fading ink stains where Palette swatches have sunk into the paper. */
+  private readonly stain: Phaser.GameObjects.Graphics;
+  /** The Palette's swatch cascade (core/swatchCascade.ts); BossSystem owns the writes. */
+  readonly cascade: SwatchCascade;
   private readonly timer = new BossTimer();
   private phase: Phase = 'off';
   private phaseTimer = 0;
   /** The boss for the current or next encounter; chosen when the approach window opens. */
-  private def: FrameBossDef | GridBossDef = bossForKill(0);
+  private def: FrameBossDef | GridBossDef | PaletteBossDef = bossForKill(0);
+  /** Last-seen cascade phase, so BossSystem reacts to transitions once each. */
+  private cascadePhase: SwatchCascadePhase = 'idle';
+  /** The falling swatch already touched the player this swatch. */
+  private swatchHit = false;
+  /** The falling swatch was destroyed (so its resolve is a shatter, not a sink). */
+  private swatchDestroyed = false;
+  /** Where the last resolved swatch was: the boss-death FX anchor for the palette. */
+  private lastSwatchPos: Vec2 = { x: 0, y: 0 };
+  private stains: { x: number; age: number }[] = [];
   private readonly sweep = new GridSweep();
   private sweepPhase: GridSweepPhase = 'rest';
   /** Where the arm sweep starts from, locked once per rest -> telegraph edge. */
@@ -90,6 +121,7 @@ export class BossSystem {
     damageNumbers: DamageNumbers,
     feed: ScoreFeed,
     pickups: PickupSystem,
+    marginalia: Marginalia,
   ) {
     this.scene = scene;
     this.run = run;
@@ -101,12 +133,23 @@ export class BossSystem {
     this.damageNumbers = damageNumbers;
     this.feed = feed;
     this.pickups = pickups;
+    this.marginalia = marginalia;
     this.boss = new Boss(scene);
     this.arm = scene.add.image(0, 0, TEX.bossGridArm).setVisible(false).setDepth(DEPTH.enemies + 1);
     this.hint = scene.add.graphics().setDepth(DEPTH.enemies + 1).setVisible(false);
+    this.rail = scene.add.graphics().setDepth(DEPTH.enemies + 1).setVisible(false);
+    this.stain = scene.add.graphics().setDepth(DEPTH.arena + 1).setVisible(false);
+    this.cascade = new SwatchCascade(ARENA_SIZE, run.rng);
     // Group-vs-sprite overlaps call back with (sprite, groupChild), so the boss must come first.
     scene.physics.add.overlap(this.boss, projectiles, (b, p) => this.onProjectileHit(as<Projectile>(p), as<Boss>(b)));
     scene.physics.add.overlap(player, this.boss, (_p, b) => this.onPlayerTouched(as<Boss>(b)));
+  }
+
+  /** True while the boss body is on the page: always once in, except the palette, whose body is only active while a swatch falls. */
+  get bodyActive(): boolean {
+    if (this.phase === 'off' || this.phase === 'warning') return false;
+    if (this.def.behavior === 'palette') return this.cascade.phase === 'falling';
+    return true;
   }
 
   update(dt: number): void {
@@ -125,8 +168,12 @@ export class BossSystem {
       if (this.phaseTimer <= 0) this.startEntering();
       return;
     }
-    if (this.phase === 'entering') this.updateEntering(dt);
-    else this.updateFighting(dt);
+    if (this.phase === 'entering') {
+      // The cascade clock starts at the sting, so the first swatch detaches 1.0 s
+      // after the palette appears, not 0.5 s after the rail slide finishes.
+      if (this.def.behavior === 'palette') this.cascade.update(dt);
+      this.updateEntering(dt);
+    } else this.updateFighting(dt);
   }
 
   /** Opens the 5 s approach window: the page trembles (BossApproachSystem) and one soft thud plays. */
@@ -152,10 +199,29 @@ export class BossSystem {
     const half = ARENA_SIZE / 2;
     const x = Phaser.Math.Clamp(this.player.x, -half + HOVER_MARGIN, half - HOVER_MARGIN);
     const y = Phaser.Math.Clamp(this.player.y - HOVER_ABOVE, -half + HOVER_MARGIN, half - HOVER_MARGIN);
-    const hp = Math.round(this.def.hp * bossHpMultiplier(this.run.bossKills));
+    const mult = bossHpMultiplier(this.run.bossKills);
+    // Palette: round per swatch, then multiply. round(450 * mult) can be 2 less than
+    // 5 * round(90 * mult) (e.g. at mult = 2.25) and would break the bar total.
+    const hp = this.def.behavior === 'palette'
+      ? SWATCH_CASCADE.count * Math.round(this.def.swatchHp * mult)
+      : Math.round(this.def.hp * mult);
     this.enterFrom = { x, y: -half - 100 };
     this.enterTo = { x, y };
     this.boss.spawn(x, -half - 100, hp, this.def);
+    if (this.def.behavior === 'palette') {
+      // Hidden until the first swatch detaches; disableBody also clears active/visible,
+      // which the invariants read. The docked rail is pure graphics, not shootable.
+      this.boss.disableBody(true, true);
+      this.cascade.reset();
+      this.cascadePhase = 'idle';
+      this.swatchHit = false;
+      this.swatchDestroyed = false;
+      this.lastSwatchPos = { x: 0, y: 0 };
+      this.stains.length = 0;
+      this.redrawStains();
+      this.drawRail(this.def);
+      this.rail.setVisible(true).setPosition(0, -half - 100);
+    }
     this.run.bossWarning = false;
     this.run.bossAlive = true;
     this.run.bossHp = hp;
@@ -173,6 +239,20 @@ export class BossSystem {
     this.phaseTimer -= dt;
     const t = 1 - Phaser.Math.Clamp(this.phaseTimer, 0, ENTER_SEC) / ENTER_SEC;
     const e = t * t * (3 - 2 * t); // smoothstep: soft at both ends, fast in the middle
+    if (this.def.behavior === 'palette') {
+      // Only the rail slides in; the boss body stays hidden until the first swatch detaches.
+      const half = ARENA_SIZE / 2;
+      this.rail.setPosition(0, -half - 100 + (100 + RAIL_INSET) * e);
+      if (this.phaseTimer <= 0) {
+        this.rail.setPosition(0, RAIL_Y);
+        this.phase = 'fighting';
+        if (this.run.bossKills === 2) {
+          // The first palette of the run: a small note above the docked rail.
+          this.marginalia.noteAt(0, RAIL_Y - 40, 'SHOOT THE SWATCHES', 2.5);
+        }
+      }
+      return;
+    }
     this.boss.setPosition(
       this.enterFrom.x + (this.enterTo.x - this.enterFrom.x) * e,
       this.enterFrom.y + (this.enterTo.y - this.enterFrom.y) * e,
@@ -198,7 +278,8 @@ export class BossSystem {
   private updateFighting(dt: number): void {
     const def = this.def;
     if (def.behavior === 'frame') this.updateFrameFighting(dt, def);
-    else this.updateGridFighting(dt, def);
+    else if (def.behavior === 'grid') this.updateGridFighting(dt, def);
+    else this.updatePaletteFighting(dt, def);
   }
 
   private updateFrameFighting(dt: number, def: FrameBossDef): void {
@@ -307,6 +388,125 @@ export class BossSystem {
     else b.clearTint();
   }
 
+  /** The Palette: five swatches fall one at a time; shoot each before it sinks into the paper. */
+  private updatePaletteFighting(dt: number, def: PaletteBossDef): void {
+    this.cascade.update(dt);
+    for (let i = this.stains.length - 1; i >= 0; i--) {
+      const s = this.stains[i]!;
+      s.age += dt;
+      if (s.age >= STAIN_FADE_SEC) this.stains.splice(i, 1);
+    }
+    this.redrawStains();
+    if (this.cascade.phase !== this.cascadePhase) {
+      const prev = this.cascadePhase;
+      this.cascadePhase = this.cascade.phase;
+      if (this.cascade.phase === 'falling') this.onSwatchDetach(def);
+      // A sunk swatch still counts as dodged (stain + ring stripe), even the fifth one.
+      else if (prev === 'falling' && !this.swatchDestroyed) this.onSwatchSunk(def);
+    }
+    if (this.cascade.phase === 'done') {
+      this.killBoss();
+      return;
+    }
+    this.run.bossHp = this.paletteHpRemaining(def);
+  }
+
+  /** A swatch leaves the rail and starts falling; it is the boss body while it is down. */
+  private onSwatchDetach(def: PaletteBossDef): void {
+    const i = this.cascade.activeIndex;
+    const x = this.cascade.activeX;
+    this.boss.spawn(x, -ARENA_SIZE / 2, this.swatchHpNow(def), def);
+    this.boss.setTexture(paletteSwatchTextureKey(i));
+    // Velocity rather than per-frame setPosition: Arcade overlaps see the integrated position.
+    this.boss.setVelocity(0, ARENA_SIZE / SWATCH_CASCADE.fallSec);
+    this.swatchHit = false;
+    this.swatchDestroyed = false;
+    this.drawRail(def);
+  }
+
+  /** The falling swatch reached the bottom edge: it sinks into the paper as a fading stain. */
+  private onSwatchSunk(def: PaletteBossDef): void {
+    const x = this.cascade.activeX;
+    this.lastSwatchPos = { x, y: ARENA_SIZE / 2 };
+    this.stains.push({ x, age: 0 });
+    this.boss.setPosition(x, ARENA_SIZE / 2);
+    this.resolveSwatch(def);
+  }
+
+  /** A swatch is resolved (destroyed or sunk): hide the body, and paint a ring stripe if it never touched the player. */
+  private resolveSwatch(def: PaletteBossDef): void {
+    this.boss.disableBody(true, true);
+    if (!this.swatchHit) {
+      const i = this.cascade.resolvedCount - 1;
+      this.player.paintStripe(def.swatchColors[i]!, i);
+    }
+  }
+
+  /** The falling swatch took damage; if it shattered, it bursts, drops shards and resolves. */
+  private onSwatchHit(def: PaletteBossDef, died: boolean): void {
+    if (!died) {
+      this.run.bossHp = this.paletteHpRemaining(def);
+      return;
+    }
+    const x = this.boss.x;
+    const y = this.boss.y;
+    this.lastSwatchPos = { x, y };
+    this.cascade.destroyActive();
+    const i = this.cascade.resolvedCount - 1;
+    this.fx.death(x, y, def.swatchColors[i]!, PALETTE.ink, 30);
+    this.sfx.enemyDeath(30);
+    for (let j = 0; j < def.shardCount; j++) {
+      const a = (j / def.shardCount) * Math.PI * 2;
+      this.pickups.drop(x + Math.cos(a) * SWATCH_SHARD_SPREAD, y + Math.sin(a) * SWATCH_SHARD_SPREAD, 1);
+    }
+    this.swatchDestroyed = true;
+    this.resolveSwatch(def);
+    this.run.bossHp = this.paletteHpRemaining(def);
+    if (this.cascade.phase === 'done') this.killBoss();
+  }
+
+  /** Total HP left across the undeployed swatches and the falling one. */
+  private paletteHpRemaining(def: PaletteBossDef): number {
+    const per = this.swatchHpNow(def);
+    if (this.cascade.phase === 'falling') {
+      return (SWATCH_CASCADE.count - 1 - this.cascade.resolvedCount) * per + Math.max(0, this.boss.hp);
+    }
+    return (SWATCH_CASCADE.count - this.cascade.resolvedCount) * per;
+  }
+
+  /** One swatch's HP at the current respawn multiplier. */
+  private swatchHpNow(def: PaletteBossDef): number {
+    return Math.round(def.swatchHp * bossHpMultiplier(this.run.bossKills));
+  }
+
+  /** The ink rail with the undeployed swatches docked in it; local y = 0 is the rail centerline. */
+  private drawRail(def: PaletteBossDef): void {
+    const half = ARENA_SIZE / 2;
+    const g = this.rail;
+    g.clear();
+    g.fillStyle(PALETTE.ink, 0.18);
+    g.fillRect(-half + SHADOW_OFFSET, -RAIL_THICKNESS / 2 + SHADOW_OFFSET, ARENA_SIZE, RAIL_THICKNESS);
+    g.fillStyle(PALETTE.ink, 1);
+    g.fillRect(-half, -RAIL_THICKNESS / 2, ARENA_SIZE, RAIL_THICKNESS);
+    // Docked swatches hang below the bar, left to right.
+    const first = this.cascade.resolvedCount + (this.cascade.phase === 'falling' ? 1 : 0);
+    for (let i = first; i < SWATCH_CASCADE.count; i++) {
+      const dockX = -half + (ARENA_SIZE * (i + 0.5)) / SWATCH_CASCADE.count;
+      drawShape(g, 'rect', dockX, DOCK_DROP, def.swatchWidth / 2, def.swatchColors[i]!, { outlineWidth: 3 });
+    }
+  }
+
+  /** The faint ink stains where swatches have sunk, fading over STAIN_FADE_SEC. */
+  private redrawStains(): void {
+    const g = this.stain;
+    g.clear();
+    for (const s of this.stains) {
+      g.fillStyle(PALETTE.ink, 0.25 * (1 - s.age / STAIN_FADE_SEC));
+      g.fillEllipse(s.x, ARENA_SIZE / 2 - 12, 80, 24);
+    }
+    g.setVisible(this.stains.length > 0);
+  }
+
   private onProjectileHit(p: Projectile, b: Boss): void {
     if (!p.active || !b.active || p.hitSerials.has(b.serial)) return;
     p.hitSerials.add(b.serial);
@@ -318,6 +518,11 @@ export class BossSystem {
     this.sfx.hit();
     p.pierceLeft -= 1;
     if (p.pierceLeft < 0) p.despawn();
+    if (this.def.behavior === 'palette') {
+      this.onSwatchHit(this.def, died);
+      return;
+    }
+    this.run.bossHp = Math.max(0, b.hp);
     if (died) this.killBoss();
   }
 
@@ -325,10 +530,13 @@ export class BossSystem {
     const now = this.scene.time.now;
     if (!b.active || this.player.isInvulnerable(now) || this.run.isDead) return;
     const def = this.def;
+    if (def.behavior === 'palette' && this.swatchHit) return; // the falling swatch hits once per swatch
     let damage = def.contactDamage;
     if (def.behavior === 'frame' && this.dashTimer > 0) damage = def.dashContactDamage;
+    if (def.behavior === 'palette') this.swatchHit = true;
     this.run.takeDamage(damage);
     this.player.hurt(now);
+    if (def.behavior === 'palette') this.player.invulnerableUntil = Math.max(this.player.invulnerableUntil, now + SWATCH_INVULN_MS);
     this.fx.playerHit(this.player.x, this.player.y);
     this.sfx.playerHurt();
   }
@@ -336,9 +544,10 @@ export class BossSystem {
   /** The boss shatters, the screen shakes, and its XP scatters as pickups. */
   private killBoss(): void {
     const b = this.boss;
-    const x = b.x;
-    const y = b.y;
     const def = this.def;
+    // The palette's body may be hidden (between swatches), so anchor its death to the last swatch.
+    const x = def.behavior === 'palette' ? this.lastSwatchPos.x : b.x;
+    const y = def.behavior === 'palette' ? this.lastSwatchPos.y : b.y;
     this.phase = 'off';
     this.run.bossAlive = false;
     this.run.bossHp = 0;
@@ -351,6 +560,13 @@ export class BossSystem {
       hook.stats.gridKills += 1;
       this.arm.setVisible(false);
       this.hint.setVisible(false);
+    } else if (def.behavior === 'palette') {
+      hook.stats.paletteKills += 1;
+      // updatePaletteFighting stops running, so the rail and stains must be cleared here
+      // or they freeze on the page.
+      this.rail.setVisible(false);
+      this.stain.clear().setVisible(false);
+      this.stains.length = 0;
     }
     this.run.bossId = '';
     this.timer.onBossKilled(this.run.timeSec);

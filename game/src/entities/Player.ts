@@ -24,6 +24,9 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   /** scene.time.now at which the pulse settles. */
   private pulseUntil = 0;
   private pulseQueued = false;
+  /** Per-run trophy from The Palette: one ring stripe per swatch dodged, slot 0 (red) innermost. */
+  readonly stripes: { color: number; slot: number }[] = [];
+  private readonly stripeRing: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, TEX.player);
@@ -35,7 +38,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setDepth(DEPTH.player);
     // Drawn under the body so it reads as sticking out of the circle.
     this.barrel = scene.add.image(x, y, TEX.barrel).setOrigin(0.05, 0.5).setDepth(DEPTH.playerBarrel);
+    this.stripeRing = scene.add.graphics().setDepth(DEPTH.playerBarrel).setVisible(false);
     this.pop = scene.add.image(x, y, TEX.player).setDepth(DEPTH.player + 1).setVisible(false);
+  }
+
+  /** Paints a 2 u ring stripe around the player in `color` at `slot`; no-op if the slot is taken. */
+  paintStripe(color: number, slot: number): void {
+    if (this.stripes.some((s) => s.slot === slot)) return;
+    this.stripes.push({ color, slot });
+    this.stripeRing.clear();
+    for (const s of this.stripes) {
+      this.stripeRing.lineStyle(2, s.color, 1);
+      this.stripeRing.strokeCircle(0, 0, PLAYER_RADIUS + 3 + s.slot * 2);
+    }
+    this.stripeRing.setVisible(true);
   }
 
   /** `dir` has length 0..1. */
@@ -91,6 +107,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   syncBarrel(): void {
     this.barrel.setPosition(this.x, this.y).setRotation(this.aimAngle);
     if (this.pop.visible) this.pop.setPosition(this.x, this.y);
+    this.stripeRing.setPosition(this.x, this.y).setAlpha(this.alpha);
   }
 
   protected preUpdate(time: number, delta: number): void {
@@ -109,6 +126,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   destroy(fromScene?: boolean): void {
     this.barrel.destroy();
     this.pop.destroy();
+    this.stripeRing.destroy();
     super.destroy(fromScene);
   }
 }

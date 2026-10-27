@@ -8,6 +8,7 @@ import { UPGRADES } from '../content/upgrades';
 import { loadBestScore, saveBestScore } from '../core/bestScore';
 import { RunState } from '../core/run';
 import { STREAK_FIRE_BONUS, STREAK_FIRE_BONUS_STREAK, streakFireBonus } from '../core/stats';
+import { SWATCH_CASCADE } from '../core/swatchCascade';
 import { rollUpgradeChoices } from '../core/upgrades';
 import { length } from '../core/vec';
 import { flags } from '../debug/flags';
@@ -109,7 +110,7 @@ export class GameScene extends Phaser.Scene {
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia, this.fx, this.sfx);
     this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.feed, this.spawns);
-    this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.music, this.damageNumbers, this.feed, this.pickups);
+    this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.music, this.damageNumbers, this.feed, this.pickups, this.marginalia);
     this.bossApproach = new BossApproachSystem(this, this.run);
     this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
     this.arc = new ArcSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
@@ -347,11 +348,22 @@ export class GameScene extends Phaser.Scene {
     hook.addInvariant('marginalia-labels', () => (this.marginalia.activeCount <= 16 ? null : `${this.marginalia.activeCount} marginalia labels active`));
     hook.addInvariant('boss-state', () => {
       const b = this.boss.boss;
-      if (this.run.bossAlive !== b.active) return `bossAlive ${this.run.bossAlive} but boss.active ${b.active}`;
+      // The palette's body is only active while a swatch falls, so compare against bodyActive, not bossAlive.
+      if (b.active !== this.boss.bodyActive) return `boss body active ${b.active} but bodyActive ${this.boss.bodyActive} (bossAlive ${this.run.bossAlive})`;
       if (!b.active) return null;
       if (!Number.isFinite(b.x) || !Number.isFinite(b.y)) return `boss at (${b.x}, ${b.y})`;
       if (this.boss.arm.visible && (!Number.isFinite(this.boss.arm.x) || !Number.isFinite(this.boss.arm.y))) return `boss arm at (${this.boss.arm.x}, ${this.boss.arm.y})`;
       if (this.run.bossHp < -1e-6 || this.run.bossHp > this.run.bossMaxHp + 1e-6) return `boss hp ${this.run.bossHp} / ${this.run.bossMaxHp}`;
+      return null;
+    });
+    hook.addInvariant('palette-swatch', () => {
+      const c = this.boss.cascade;
+      if (c.resolvedCount > SWATCH_CASCADE.count) return `${c.resolvedCount} swatches resolved`;
+      if (c.phase === 'falling') {
+        const half = ARENA_SIZE / 2;
+        if (!Number.isFinite(c.activeX) || !Number.isFinite(c.activeY) || c.activeY < -half - 1 || c.activeY > half + 1)
+          return `swatch at (${c.activeX}, ${c.activeY})`;
+      }
       return null;
     });
     // Finiteness only: nextBeatTime is legitimately stale while the scene is paused.
@@ -394,4 +406,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'player-hitbox', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'inkwell', 'streak', 'score', 'score-feed', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse', 'bouncing-points', 'wound-threshold'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'player-hitbox', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'palette-swatch', 'inkwell', 'streak', 'score', 'score-feed', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse', 'bouncing-points', 'wound-threshold'];

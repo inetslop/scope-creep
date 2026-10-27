@@ -77,28 +77,31 @@ describe('bossHpMultiplier', () => {
 });
 
 describe('bossForKill', () => {
-  it('alternates Frame / Grid / Frame / Grid as bosses die', () => {
+  it('cycles Frame / Grid / Palette as bosses die', () => {
     expect(bossForKill(0).id).toBe('frame');
     expect(bossForKill(1).id).toBe('grid');
-    expect(bossForKill(2).id).toBe('frame');
-    expect(bossForKill(3).id).toBe('grid');
+    expect(bossForKill(2).id).toBe('palette');
+    expect(bossForKill(3).id).toBe('frame');
+    expect(bossForKill(4).id).toBe('grid');
+    expect(bossForKill(5).id).toBe('palette');
   });
 });
 
-describe('boss alternation: the Nth boss of the run (1-based)', () => {
-  it('boss #1 (The Frame, 5:00 spawn) is always The Frame, never The Grid', () => {
+describe('boss rotation: the Nth boss of the run (1-based)', () => {
+  it('boss #1 (The Frame, 5:00 spawn) is always The Frame, never the other bosses', () => {
     expect(bossForKill(0).id).toBe('frame');
     expect(bossForKill(0).id).not.toBe('grid');
+    expect(bossForKill(0).id).not.toBe('palette');
   });
 
-  it('strict alternation: #1..#5 = frame, grid, frame, grid, frame', () => {
+  it('strict tri-cycle: #1..#6 = frame, grid, palette, frame, grid, palette', () => {
     // Boss #N of the run is bossForKill(N - 1); BossSystem passes run.bossKills.
-    const ids = [1, 2, 3, 4, 5].map((n) => bossForKill(n - 1).id);
-    expect(ids).toEqual(['frame', 'grid', 'frame', 'grid', 'frame']);
+    const ids = [1, 2, 3, 4, 5, 6].map((n) => bossForKill(n - 1).id);
+    expect(ids).toEqual(['frame', 'grid', 'palette', 'frame', 'grid', 'palette']);
   });
 
   it('deterministic: no RNG, the same boss number always returns the same boss', () => {
-    const seq = () => [0, 1, 2, 3, 4].map((k) => bossForKill(k).id);
+    const seq = () => [0, 1, 2, 3, 4, 5].map((k) => bossForKill(k).id);
     expect(seq()).toEqual(seq());
   });
 });

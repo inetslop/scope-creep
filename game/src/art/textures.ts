@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import { PLAYER_RADIUS } from '../config';
 import { FRAME } from '../content/bosses/frame';
 import { GRID } from '../content/bosses/grid';
+import { PALETTE_BOSS } from '../content/bosses/palette';
 import { ENEMIES } from '../content/enemies';
 import { PALETTE } from '../content/palette';
 import type { EnemyDef, WeaponDef } from '../content/types';
@@ -52,6 +53,8 @@ export const TEX = {
 
 export const enemyTextureKey = (enemyId: string): string => `enemy:${enemyId}`;
 export const projectileTextureKey = (weaponId: string): string => `projectile:${weaponId}`;
+/** The Palette's swatch tile textures, one per dock position. */
+export const paletteSwatchTextureKey = (i: number): string => `bossPaletteSwatch${i}`;
 
 /** Padding around shapes inside their texture (outline + shadow). */
 const PAD = SHADOW_OFFSET + 3;
@@ -83,6 +86,7 @@ export function generateTextures(scene: Phaser.Scene): void {
   for (const enemy of ENEMIES) drawEnemy(scene, enemy);
   drawBoss(scene);
   drawBossGrid(scene);
+  drawBossPalette(scene);
   graphicsTexture(scene, TEX.enemyShot, 24, 24, (g) => drawShape(g, 'circle', 10.5, 10.5, 6, PALETTE.ink, { outlineWidth: 0 }));
   graphicsTexture(scene, TEX.badge, 28, 28, (g) => drawShape(g, 'square', 12.5, 12.5, 8, PALETTE.red, { outlineWidth: 2 }));
   graphicsTexture(scene, TEX.platemark, 22, 22, (g) => {
@@ -200,6 +204,18 @@ function drawBossGrid(scene: Phaser.Scene): void {
     g.fillStyle(PALETTE.ink, 1);
     g.fillRect(PAD, PAD, GRID.armLength * 2, GRID.armThickness);
   });
+}
+
+/** The Palette boss: five flat color tiles (2:1, the rect language), one texture per swatch. */
+function drawBossPalette(scene: Phaser.Scene): void {
+  const w = PALETTE_BOSS.swatchWidth;
+  const h = PALETTE_BOSS.swatchHeight;
+  for (let i = 0; i < PALETTE_BOSS.swatchColors.length; i++) {
+    const color = PALETTE_BOSS.swatchColors[i]!;
+    graphicsTexture(scene, paletteSwatchTextureKey(i), w + PAD * 2, h + PAD * 2, (g) => {
+      drawShape(g, 'rect', PAD + w / 2, PAD + h / 2, w / 2, color, { outlineWidth: 3 });
+    });
+  }
 }
 
 /** One orbit circle: a flat primary-color disc with ink outline and paper-cut shadow. */

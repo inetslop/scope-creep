@@ -4,11 +4,12 @@ title: The Palette — the third boss
 assignee: asus
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T09:43:38Z
 claimed_at: 2026-10-27T10:07:49Z
+finished_at: 2026-10-27T13:40:24Z
 ---
 
 ## Goal
@@ -170,3 +171,35 @@ readonly cascade: SwatchCascade;  // new ctor param: marginalia: Marginalia (las
 - `tests/core/swatchCascade.test.ts` (new): timing constant equals spec; idle until 1.0 s then `falling` with `activeIndex 0` and `activeY ≈ -1600`; at detach+5.999 s still falling with `activeY > 1599`, at +6.000 s `waiting`/`resolvedCount 1`; next detach exactly 1.2 s after `destroyActive` (`update(1.199)` still waiting, `update(0.001)` falling, `activeIndex 1`); all five resolve in dock order `[0,1,2,3,4]` then `done`; all 5 X in `[−1540,1540]` with consecutive `|Δx| ≥ 120`; same seed → same X sequence; `destroyActive` no-op when idle; `reset()`; custom timing.
 - `tests/core/boss.test.ts`: replace the alternation tests with the tri-cycle (Frame first; strict `frame,grid,palette,frame,grid,palette` for kills 0–5; deterministic; BossTimer/multiplier tests unchanged).
 - `tests/content.test.ts`: palette sanity block as in Step 2.
+
+## Result (attempt 1, asus)
+
+- **`npm run check`** — typecheck, lint, 170 unit tests (18 files): PASS
+- **`npm run smoke`** — real-browser play, desktop + mobile: PASS
+- **Acceptance criteria** — all covered: tri-cyclic rotation (Frame 5:00 → Grid 10:00 → **The Palette 15:00** → Frame 20:00 → Grid 25:00), 450 HP bar reading "THE PALETTE" with the generic warning/sting/nameplate, five docked tiles (red→blue) on an ink rail, one swatch at a time falling arena/6 for exactly 6.0 s at ≥120-unit X gaps (seeded RNG, 60-unit margins), 90 HP × respawn multiplier per swatch, shatter → death FX + 6 shards / sink → 3 s fading stain, 1.2 s between swatches, all-five-resolved → standard boss death, 12 contact damage once per swatch with 1.0 s i-frames, and per-run 2 u ring stripes (red innermost → blue outermost, per color slot) that persist for the run. New `palette-swatch` invariant + fixed `boss-state` invariant (body-vs-`bodyActive`, since the palette body is only live while a swatch falls).
+
+Deliberate, minimal deviations from the architect's design (noted per instructions):
+1. `updatePaletteFighting` reacts to cascade transitions *before* the `done` check — the design's done-first order would skip the fifth swatch's stain and ring stripe when it sinks, breaking the spec'd "five clean dodges = five-color ring".
+2. The palette helpers (`onSwatchSunk`, `resolveSwatch`, `onSwatchHit`, `drawRail`, `swatchHpNow`) take `def: PaletteBossDef` as a parameter instead of reading `this.def`, because `this.def` is a union typ…
+
+- Self-review: APPROVE
+- Time: 212.6 min
+
+```
+game/src/art/textures.ts              |  16 +++
+ game/src/content/bosses/index.ts      |   6 +-
+ game/src/content/bosses/palette.ts    |  22 +++
+ game/src/content/bosses/types.ts      |  19 ++-
+ game/src/core/boss.ts                 |  15 ++-
+ game/src/core/swatchCascade.ts        | 133 ++++++++++++++++++
+ game/src/debug/testHook.ts            |   2 +
+ game/src/entities/Boss.ts             |  33 +++--
+ game/src/entities/Player.ts           |  18 +++
+ game/src/scenes/GameScene.ts          |  18 ++-
+ game/src/systems/BossSystem.ts        | 245 +++++++++++++++++++++++++++++++---
+ game/src/systems/Marginalia.ts        |  44 ++++--
+ game/tests/content.test.ts            |  15 ++-
+ game/tests/core/boss.test.ts          |  21 +--
+ game/tests/core/swatchCascade.test.ts | 146 ++++++++++++++++++++
+ 15 files changed, 696 insertions(+), 57 deletions(-)
+```
