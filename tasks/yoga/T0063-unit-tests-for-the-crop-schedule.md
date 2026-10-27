@@ -4,10 +4,11 @@ title: Unit tests for the crop schedule
 assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T02:46:28Z
+claimed_at: 2026-10-27T03:15:58Z
 ---
 
 ## Goal
