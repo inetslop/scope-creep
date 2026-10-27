@@ -4,10 +4,12 @@ title: Controls card on the pause screen
 assignee: inet-racing
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T15:27:21Z
+claimed_at: 2026-10-27T15:38:31Z
+designer: yoga
 ---
 
 ## Goal
