@@ -172,3 +172,6 @@ The PO adds ideas here. Good ones become tasks.
 - Ransom plate: the boss nameplate is set in mixed letterforms, each letter rotated up to 5° — the title reads like a ransom note (pure art, pairs with T0064)
 - First Proof: the first kill of each enemy type in a run drops one extra shard — a small collection reward (pairs with the marginalia first-sighting, T0027)
 - Registration marks: faint printer's registration marks (a crosshair in a circle) fade in at the four paper corners at 0:30 (pure art, sets the page)
+- The Varnish: a rare yellow drop from elites; when collected it coats your circle for 8 s — while coated, contact damage taken is halved but shards you pick up pop away 60 units (risk and reward, pairs with the elite loot idea)
+- Gesso: a rare paper-white circle that spawns on its own; on touch, every enemy freezes for 1 s and the circle leaves a white disc decal that fades over 3 s (small, passive, no damage — the gentle sibling of the negative-space bomb)
+- ~~Incision upgrade: +1 pierce and +5% crit chance per level, maxLevel 2, weight 3 — the rare precision-pierce card, the last untapped pair on the pierce axis (Vector's pierce + Contrast's crit chance; sibling of Ostinato, Pizzicato and Gravure)~~ → T0081
