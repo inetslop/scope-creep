@@ -4,11 +4,10 @@ title: Screen shake on heavy deaths
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
-attempts: 1
+attempts: 0
 created: 2026-10-26T23:09:26Z
-claimed_at: 2026-10-27T00:52:19Z
 ---
 
 ## Goal
@@ -120,3 +119,7 @@ hook.addInvariant('camera-shake', () => {
 - `add(8, 300)`: `update(16)` `toBeCloseTo(8 * ((300 - 16) / 300) ** 2)`; keep calling `update(16)` until it returns null
 - `add(4, 150)`: nine `update(16)` calls non-null, tenth null (150/16 = 9.375 frames)
 - `add(14, 500); add(8, 300)`: first `update(16)` `toBeCloseTo(20 * ((500 - 16) / 500) ** 2)` — 22 capped to 20, duration takes the longer
+
+## Attempt 1 discarded (desktop-4070)
+
+Stopped by hand after 3.5 hours: the session timed out after writing only a standalone CameraShake helper and its test, never wired into the game (no heavy death triggers a shake). The gate passed because nothing used the new code. The local commit was discarded, nothing reached main; attempts reset.
