@@ -4,10 +4,11 @@ title: Add the Hare enemy — it quickens as it weakens
 assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T10:47:29Z
+claimed_at: 2026-10-27T13:11:22Z
 ---
 
 ## Goal
