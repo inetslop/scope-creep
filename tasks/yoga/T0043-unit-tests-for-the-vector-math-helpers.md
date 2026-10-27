@@ -4,11 +4,12 @@ title: Unit tests for the vector math helpers
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T23:09:26Z
 claimed_at: 2026-10-27T00:01:14Z
+finished_at: 2026-10-27T00:05:23Z
 ---
 
 ## Goal
@@ -90,3 +91,15 @@ describe('vec helpers', () => {
 
 ### Tests
 - `tests/core/vec.test.ts` (created above): length, normalize, add, scale, distance identities plus NaN-free zero-vector normalize.
+
+## Result (attempt 1, yoga)
+
+Added `tests/core/vec.test.ts`, locking the `src/core/vec.ts` helpers with the five required math identities — length of (3,4) is 5, normalize of (3,4) is (0.6,0.8), add (1,2)+(3,4)=(4,6), scale (1,2)×3=(3,6), distance (0,0)→(3,4) is 5 — plus a zero-vector test asserting `normalize(vec(0,0))` returns exactly `{x:0,y:0}` and is NaN-free (matching the module's `len > 1e-9` guard). Modeled on `tests/core/rng.test.ts`; no source files changed. `npm run check` passes (139 tests) and `npm run smoke` passes for both desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 4.1 min
+
+```
+game/tests/core/vec.test.ts | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+```
