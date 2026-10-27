@@ -4,10 +4,11 @@ title: Controls card on the pause screen
 assignee: inet-racing
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T15:27:21Z
+claimed_at: 2026-10-27T17:58:16Z
 ---
 
 ## Goal
