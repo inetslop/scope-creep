@@ -4,10 +4,12 @@ title: Boss count-in — the page counts the boss in
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T17:13:57Z
+claimed_at: 2026-10-27T17:14:48Z
+designer: yoga
 ---
 
 ## Goal
