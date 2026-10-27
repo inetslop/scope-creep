@@ -4,10 +4,11 @@ title: Boss warning — the page trembles before a boss lands
 assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0064]
-attempts: 0
+attempts: 1
 created: 2026-10-27T03:53:41Z
+claimed_at: 2026-10-27T12:08:11Z
 ---
 
 ## Goal
