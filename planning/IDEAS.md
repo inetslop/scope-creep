@@ -114,7 +114,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Weapon SFX timbres: each weapon's shoot sound gets its own pitch — Point a short high tick, Line a low thud, Orbit a soft hum, Arc a sharp snap~~ → T0093 (the Point/Line/Arc shoot timbres; the Orbit hum deferred)
 - Full Bleed upgrade: +12% damage per level while at full HP, maxLevel 2 — a risk-reward card that rewards the Tessitura/Adagio sustain builds
 - ~~The Eraser's encore: at 10:00 a bigger Eraser with a red outline appears that erases your highest-level upgrade instead of your most recent (follow-up to T0047, lands after it)~~ (dropped 2026-10-27: the Eraser was removed)
-- Kill feed: each kill pops a small ink "+1" / "+5" / "+50" above the corpse, matching the T0054 score values (depends on T0054)
+- ~~Kill feed: each kill pops a small ink "+1" / "+5" / "+50" above the corpse, matching the T0054 score values (depends on T0054)~~ → T0106 (queued, desktop-4070; reads the same `SCORE_POINTS` constant — "+1" small ink, "+5" larger and bolder, "+50" largest with a small ink ring at the boss corpse; pooled ~32 texts, ~0.6 s rise-and-fade like the damage numbers)
 - Gallery mode: three curated fixed-seed runs in the menu — "Study in Red" (only red enemies), "No Level-Ups" (no upgrade cards, double shards), "Double Shards" — each with its own persisted best score
 - ~~Pizzicato upgrade: +1 pierce and +10% projectile speed per level, maxLevel 2, weight 3 — the fast-pierce build, reusing the Vector and Draft stats~~ → T0056
 - ~~Unit tests for the kill streak: streak grows per kill, resets when hit, bestStreak keeps the longest~~ → T0057
@@ -232,3 +232,5 @@ The PO adds ideas here. Good ones become tasks.
 - The Retouch: a small ink hexagon (30 hp, speed 50, 6 contact damage) that drifts toward the densest enemy cluster and, every 5 s, restores 25% of max HP to the nearest wounded enemy within 150 units (a small green cross flashes on the healed one) — the first healer; triage becomes a decision, because the tank you cannot kill is the one being retouched (new heal behavior; M for a strong machine)
 - The Grid's second voice: below 50% HP The Grid grows a third arm and spins 25% faster — the fight changes shape at the midpoint instead of just the health bar (M, after The Palette lands so the rotation is stable)
 - Orbit hum: each Orbit contact plays a soft low hum — the deferred half of T0093 (Orbit has no firing sound to give it a timbre, so the hit is the sound); no looped drone (small audio, a weak machine)
+- Erasure: the moment the game-over card lands, a small grey rubber-eraser swipe wipes the player's blue circle off the paper at the death spot, leaving a faint smudge — the run ends the way the shapes end it (game-over juice; pairs with the score card, T0054)
+- First light: the first shard ever collected in a run pops a small ink ring and a soft pluck on pickup — the shard economy is taught by its first use, in the spirit of the enemy marginalia (T0027)

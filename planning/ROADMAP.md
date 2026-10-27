@@ -48,8 +48,8 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 - Later: boss music (64 BPM low pulse + dissonant second voice while a boss is alive), boss corpse decals, The Grid's second voice (below 50% HP: third arm, 25% faster spin — the fight changes shape at the midpoint), The Press — fourth boss (descending ink wall from the top of the page, see IDEAS)
 
 ## M4 — Meta-progression
-- Score: kills earn points (normal 1, elite 5, boss 50); HUD shows the running score, game over shows score + persisted best (T0054, in progress, desktop-4070)
-- Kill feed: each kill pops a small ink "+1" / "+5" / "+50" above the corpse, matching the score values (next, after T0054)
+- Score: kills earn points (normal 1, elite 5, boss 50); HUD shows the running score, game over shows score + persisted best (T0054) ✅
+- Kill feed: each kill pops a small ink "+1" / "+5" / "+50" above the corpse, matching the score values — "+1" small, "+5" larger and bolder, "+50" largest with a small ink ring at the boss corpse; pooled (~32 texts), ~0.6 s rise-and-fade like the damage numbers (T0106, in queue, desktop-4070)
 - Persistent currency between runs, a studio to unlock starting options
 - Settings: volume, screen shake, auto-fire
 
