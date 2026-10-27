@@ -4,12 +4,10 @@ title: Add the Stretto upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
-depends_on: []
+status: todo
+depends_on: [T0076]
 attempts: 0
 created: 2026-10-27T04:56:47Z
-claimed_at: 2026-10-27T05:10:31Z
-designer: yoga
 ---
 
 ## Goal
@@ -31,3 +29,55 @@ A 41st level-up card — Stretto — that pairs armor with fire rate: the armore
 - [ ] Picking it adds +1 armor and +10% fire rate per level; at 3 levels, +3 armor and ≈×1.33 fire rate (the player shrugs off more hits and fires faster).
 - [ ] After 3 levels it is never offered again (covered by the new test and the existing content validation).
 - [ ] `npm run check` and `npm run smoke` pass.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/upgrades/index.ts` - append one new `UpgradeDef` at the END of the `UPGRADES` array, after whichever entry is currently last (T0076/Vellum may have appended first; never assume `sotto-voce` is last)
+- edit `tests/core/upgrades.test.ts` - append one `it(...)` after the `tenuto` test
+### Interfaces
+No new types, stats, or functions. Both mods reuse existing `StatKey`s: `armor` (add) and `fireRateMul` (mul).
+### Steps
+1. In `src/content/upgrades/index.ts`, after the last entry, before the closing `];`, add exactly:
+```ts
+  {
+    id: 'stretto',
+    name: 'Stretto',
+    description: '+1 armor, +10% fire rate',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'armor', op: 'add', value: 1 },
+      { stat: 'fireRateMul', op: 'mul', value: 1.10 },
+    ],
+    color: PALETTE.yellow,
+  },
+```
+(armor mod = `plate`'s mod; fire-rate mod = `pressure`'s second mod. `PALETTE` is already imported in that file.)
+2. In `tests/core/upgrades.test.ts`, after the `tenuto` test add:
+```ts
+  it('stretto offers 3 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('stretto')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'armor', op: 'add', value: 1 },
+      { stat: 'fireRateMul', op: 'mul', value: 1.10 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('stretto')).toBe(3);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
+```
+3. Run `npm run check`, then `npm run smoke`.
+### Pitfalls
+- Do not edit `src/core/stats.ts`, `content/types.ts`, or the level-up scene: cards render from the registry automatically (`GameScene` rolls from `UPGRADES`, `LevelUpScene` looks up via `UPGRADE_BY_ID`).
+- Keep armor mod FIRST and fire rate SECOND — the test asserts exact order.
+- Use `1.10` not `1.1`; `maxLevel: 3`, `weight: 4`, `PALETTE.yellow` exactly as above.
+- `id: 'stretto'` (no hyphen) passes the kebab-case check; it is unique.
+- Max level math is already safe: armor 0+3, fireRateMul 1.10³ ≈ 1.33, both within `STAT_LIMITS`.
+### Tests
+- `tests/core/upgrades.test.ts`: new `stretto` test as above; `tests/content.test.ts` validates the entry automatically.
