@@ -4,10 +4,12 @@ title: Add the Marcato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0077]
 attempts: 0
 created: 2026-10-27T05:18:34Z
+claimed_at: 2026-10-27T05:21:23Z
+designer: yoga
 ---
 
 ## Goal
