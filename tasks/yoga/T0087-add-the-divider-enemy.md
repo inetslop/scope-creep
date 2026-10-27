@@ -4,11 +4,12 @@ title: Add the Divider enemy
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T07:13:18Z
 claimed_at: 2026-10-27T07:32:28Z
+finished_at: 2026-10-27T07:42:05Z
 ---
 
 ## Goal
@@ -82,3 +83,16 @@ export const divider: EnemyDef = {
 
 ### Tests
 none — `tests/content.test.ts` validates the new entry automatically; run `npm run check` and `npm run smoke`.
+
+## Result (attempt 1, yoga)
+
+Added the Divider enemy — a small ink hexagon late-run harasser that kites at a tight 140–190 band and strafes while firing fast, light ink points (speed 260, 6 damage) every 1.4 s, completing the kiting-shooter lineup alongside Sentry and Counterweight. Data-only change: new `src/content/enemies/divider.ts` (hp 16, speed 170, contact 8, threat 2, xp 2, spawns at 200 s with the marginalia "IT HOLDS ITS DISTANCE") plus its alphabetical import and end-of-array registration in `src/content/enemies/index.ts`. No scene, system, or stat changes were required. Both `npm run check` and `npm run smoke` (desktop + mobile) pass.
+
+- Self-review: APPROVE
+- Time: 9.6 min
+
+```
+game/src/content/enemies/divider.ts | 26 ++++++++++++++++++++++++++
+ game/src/content/enemies/index.ts   |  3 ++-
+ 2 files changed, 28 insertions(+), 1 deletion(-)
+```

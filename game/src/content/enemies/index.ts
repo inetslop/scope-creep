@@ -3,6 +3,7 @@ import { block } from './block';
 import { boulder } from './boulder';
 import { counterweight } from './counterweight';
 import { dart } from './dart';
+import { divider } from './divider';
 import { eraser } from './eraser';
 import { frameWedge } from './frameWedge';
 import { hex } from './hex';
@@ -18,7 +19,7 @@ import { turret } from './turret';
 import { wedge } from './wedge';
 
 /** Every enemy in the game. To add one: create a file next to this one and add it here. */
-export const ENEMIES: readonly EnemyDef[] = [wedge, dart, block, hex, sentry, splitter, splinter, mote, boulder, tile, slab, spike, turret, pinwheel, eraser, frameWedge, counterweight];
+export const ENEMIES: readonly EnemyDef[] = [wedge, dart, block, hex, sentry, splitter, splinter, mote, boulder, tile, slab, spike, turret, pinwheel, eraser, frameWedge, counterweight, divider];
 
 export const ENEMY_BY_ID: ReadonlyMap<string, EnemyDef> = new Map(ENEMIES.map((e) => [e.id, e]));
 
