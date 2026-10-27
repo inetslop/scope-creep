@@ -26,9 +26,20 @@ describe('StillLife', () => {
     const s = new StillLife();
     expect(s.trigger()).toBe(true);
     for (let i = 0; i < 49; i++) expect(s.update(0.1)).toBe(false);
+    expect(s.active).toBe(true); // still up at 4.9 s
     expect(s.update(0.11)).toBe(true); // 5.01 s total (never exactly 5.0, to dodge 1e-15 rounding)
     expect(s.active).toBe(false);
     expect(s.ready).toBe(false);
+  });
+
+  it('ignores a trigger while the bubble is already active', () => {
+    const s = new StillLife();
+    expect(s.trigger()).toBe(true);
+    for (let i = 0; i < 20; i++) s.update(0.1); // 2.0 s in: active and on cooldown
+    expect(s.active).toBe(true);
+    expect(s.trigger()).toBe(false); // same rejection path as the pure cooldown
+    for (let i = 0; i < 31; i++) s.update(0.1); // 5.1 s total
+    expect(s.active).toBe(false); // the 5 s clock was not restarted
   });
 
   it('exposes the tuning constants', () => {

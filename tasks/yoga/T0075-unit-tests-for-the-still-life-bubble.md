@@ -4,11 +4,12 @@ title: Unit tests for the Still Life bubble
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T04:43:07Z
 claimed_at: 2026-10-27T07:10:56Z
+finished_at: 2026-10-27T07:19:35Z
 ---
 
 ## Goal
@@ -57,3 +58,15 @@ Lock the Still Life active's (T0050) timing rules with a unit test: 5 s duration
 - Match file style exactly: 2-space indent in `describe`, 4 in `it`, single quotes, semicolons — lint enforces.
 ### Tests
 - `tests/core/stillLife.test.ts` (extended in place): fresh run can start immediately (existing: `trigger()` true at t=0 + `ready` true), active at 4.9 s and gone by 5.01 s (existing end + new line), 12 s cooldown rejects at 11.9 s and succeeds at 12.1 s (existing), trigger during the active window is a no-op and does not restart the 5 s clock (new test).
+
+## Result (attempt 1, yoga)
+
+Locked the Still Life bubble's timing rules in tests/core/stillLife.test.ts with two insertions: an assertion that the bubble is still up at 4.9 s inside the existing 5 s lifecycle test, and a new test proving a trigger during the active window is rejected (same path as the cooldown) and does not restart the 5 s clock. The existing tests already covered fresh-run readiness, the 5.01 s end, and the 11.9 s/12.1 s cooldown reject/succeed. Typecheck, lint, all 254 unit tests, and the desktop+mobile smoke run all pass; no source files were modified.
+
+- Self-review: APPROVE
+- Time: 8.7 min
+
+```
+game/tests/core/stillLife.test.ts | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+```
