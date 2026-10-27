@@ -4,10 +4,11 @@ title: Add the Marcato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0077]
-attempts: 0
+attempts: 1
 created: 2026-10-27T05:18:34Z
+claimed_at: 2026-10-27T05:38:59Z
 ---
 
 ## Goal
