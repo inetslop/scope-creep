@@ -4,12 +4,10 @@ title: Add the Wash enemy — it wets the page
 assignee: desktop
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-27T13:24:32Z
-claimed_at: 2026-10-27T13:48:14Z
-designer: desktop
 ---
 
 ## Goal
@@ -33,3 +31,73 @@ A new enemy that changes the page, not just the swarm: the Wash wets the paper b
 - [ ] Killing a Wash leaves its puddles until their natural expiry
 - [ ] "LEAVES THE PAGE WET" prints as marginalia on the Wash's first sighting in a run
 - [ ] No new sound; `npm run check` and `npm run smoke` pass
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/enemies/wash.ts` - Wash enemy data: `chase` + new `puddle` tuning, note `LEAVES THE PAGE WET`
+- create `src/systems/PuddleSystem.ts` - pooled puddle decals: drop/age/fade, per-wash cap, player-slow query
+- edit `src/content/types.ts` - new `PuddleDef` interface; optional `puddle?: PuddleDef` on `EnemyDef` (after `shoot`)
+- edit `src/content/enemies/index.ts` - import `wash`, append to `ENEMIES` (10th enemy; bar is "more than 10", OK)
+- edit `src/art/textures.ts` - `puddle: 'puddle'` key in `TEX` + 128x128 texture drawn in `generateTextures`
+- edit `src/entities/Enemy.ts` - puddle timer + pending flag + `consumePuddle()`, both reset in `spawn()`
+- edit `src/systems/SpawnSystem.ts` - ctor takes `PuddleSystem`; on `consumePuddle()` call `puddles.drop(...)`
+- edit `src/scenes/GameScene.ts` - own `PuddleSystem`, multiply move speed, `puddles.update(dt)`, `puddle-pool` invariant
+- edit `tests/content.test.ts` - puddle-tuning sanity test (mirrors the `shoot tuning` test)
+
+### Interfaces
+```ts
+// content/types.ts
+export interface PuddleDef {
+  periodSec: number; // seconds between puddles (2.0)
+  radius: number;    // world units (60 = 120 across)
+  lifeSec: number;   // 2.0
+  fadeSec: number;   // 0.5 fade at the end
+  maxAlive: number;  // max per single spawn (3); a new one removes the owner's oldest
+  slowMul: number;   // player move-speed multiplier while its center is inside (0.8)
+}
+// on EnemyDef:  puddle?: PuddleDef;
+
+// systems/PuddleSystem.ts
+export class PuddleSystem {
+  constructor(scene: Phaser.Scene);  // pre-creates 12 hidden Images: TEX.puddle, depth DEPTH.floor + 1 (under entities, like platemarks)
+  get maxPuddles(): number;
+  get activeCount(): number;
+  drop(x: number, y: number, ownerSerial: number, def: PuddleDef): void;
+  playerSpeedMul(x: number, y: number): number; // min slowMul of puddles containing the point, else 1
+  update(dt: number): void;
+}
+// entities/Enemy.ts:  consumePuddle(): boolean   // one-shot, same pattern as consumeShot()/consumeSlam()
+```
+
+### Steps
+1. `types.ts`: add `PuddleDef` (fields above, one-line comment each) and `puddle?: PuddleDef;` on `EnemyDef`.
+2. `wash.ts` (copy `wedge.ts` shape): `id:'wash', name:'Wash', note:'LEAVES THE PAGE WET', hp:35, speed:55, contactDamage:6, xp:2, threat:2, spawnWeight:4, unlockAtSec:120, behavior:'chase', knockbackResist:0.3, look:{shape:'circle', radius:14, body:PALETTE.blueLight, accent:PALETTE.ink}, puddle:{periodSec:2, radius:60, lifeSec:2, fadeSec:0.5, maxAlive:3, slowMul:0.8}`.
+3. `enemies/index.ts`: `import { wash } from './wash';` + append `wash` to `ENEMIES`.
+4. `textures.ts`: in `generateTextures` next to the platemark: `graphicsTexture(scene, TEX.puddle, 128, 128, (g) => { g.fillStyle(PALETTE.blue, 0.25); g.fillCircle(64, 64, 60); g.lineStyle(2, PALETTE.ink, 1); g.strokeCircle(64, 64, 60); });` — raw fill/stroke, NOT `drawShape` (it forces alpha 1 and the paper-cut shadow).
+5. `PuddleSystem.ts`: exactly the API above. Entry `{img, active, x, y, age, owner, radius, lifeSec, fadeSec, slowMul}`. `drop()`: count the owner's active puddles; if `>= def.maxAlive` despawn its oldest (largest `age`); slot = first inactive entry, else the globally oldest; set every field; `img.setPosition(x, y).setAlpha(1).setVisible(true)`. `update(dt)`: `age += dt`; `age >= lifeSec` → despawn (`active=false; img.setAlpha(0).setVisible(false)`); else `img.setAlpha(age > lifeSec - fadeSec ? (lifeSec - age) / fadeSec : 1)`. `playerSpeedMul`: squared-distance check `dx*dx + dy*dy <= radius*radius`.
+6. `Enemy.ts`: fields `private puddleTimer = 0; private puddlePending = false;`. In `spawn()` (after the slam resets): `this.puddleTimer = this.def.puddle ? this.def.puddle.periodSec : 0; this.puddlePending = false;`. In `steer()`, after the behavior switch, before the knockback decay: `if (this.def.puddle) { this.puddleTimer -= dt; if (this.puddleTimer <= 0) { this.puddlePending = true; this.puddleTimer = this.def.puddle.periodSec; } }`. Add `consumePuddle()` beside `consumeSlam()`.
+7. `SpawnSystem.ts`: ctor param `puddles: PuddleSystem` (last position). In the enemy loop, after the `consumeSlam` line: `if (e.consumePuddle() && e.def.puddle) this.puddles.drop(e.x, e.y, e.serial, e.def.puddle);`
+8. `GameScene.ts`: field `private puddles!: PuddleSystem;`; in `create()` `this.puddles = new PuddleSystem(this);` right after `new FxSystem`; pass it last into `new SpawnSystem(...)`; in `update()` change the drive line to `this.player.drive(input.move, run.stats.moveSpeed * this.puddles.playerSpeedMul(this.player.x, this.player.y));` and add `this.puddles.update(dt);` after `this.marginalia.update(dt);`; add invariant `hook.addInvariant('puddle-pool', () => (this.puddles.activeCount <= this.puddles.maxPuddles ? null : \`${this.puddles.activeCount} puddles on screen\`));` and `'puddle-pool'` in the `INVARIANTS` array.
+9. `content.test.ts`: add the test below. Then run `npm run check` and `npm run smoke`.
+
+### Pitfalls
+- Pooled enemies: `spawn()` must reset BOTH `puddleTimer` and `puddlePending`, or a recycled Wedge fires a stale puddle.
+- Own puddles by `serial` (unique per spawn) — never by Enemy reference; pooled enemies are reused with a new serial (same reason as in `Marginalia`).
+- Puddles get no physics body, no damage, no targetability; the slow is applied only in `GameScene` via `playerSpeedMul`, so knockback (slam shove), enemies, enemy shots and shards are untouched.
+- The 0.25 alpha is baked into the texture; runtime alpha handles only the final 0.5 s fade (1 → 0).
+- Texture is 1:1 world units: 128 px = 128 u, so the 2 px line is a 2 u outline. No shadow → no `PAD` padding needed.
+- `SpawnSystem` ctor signature changes — `GameScene` is its only caller; update both in the same step or typecheck fails.
+- `GameScene.ts` is also touched by open T0102/T0110 — keep edits in disjoint regions (system wiring, drive line, invariants).
+
+### Tests
+The spawn-unlock pattern (`tests/content/director.test.ts`) covers Wash automatically via `it.each(ENEMIES)` — absent at 119 s, present at 120 s; no code needed. Add to `tests/content.test.ts` next to the `shoot tuning` test:
+```ts
+it.each(ENEMIES.filter((e) => e.puddle).map((e) => [e.id, e] as const))('%s puddle tuning is sane', (_id, e) => {
+  const p = e.puddle!;
+  expect(positive(p.periodSec) && positive(p.radius) && positive(p.lifeSec), 'puddle numbers > 0').toBe(true);
+  expect(p.fadeSec > 0 && p.fadeSec < p.lifeSec, 'fadeSec in (0, lifeSec)').toBe(true);
+  expect(Number.isInteger(p.maxAlive) && p.maxAlive >= 1, 'maxAlive integer >= 1').toBe(true);
+  expect(p.slowMul > 0 && p.slowMul <= 1, 'slowMul in (0, 1]').toBe(true);
+});
+```
