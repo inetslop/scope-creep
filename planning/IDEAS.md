@@ -22,7 +22,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~The Frame gains a radial ink-dart burst once enemy projectiles exist~~ → folded into T0006 (Sentry's shots exist now)
 - Weapon evolution line: Point at level 3 becomes "Bullet" (faster, +1 pierce)
 - ~~Streak counter: consecutive kills without being hit, shown as a small tally in the HUD~~ → T0014
-- Gold shards: elites drop a rare gold shard worth 5 xp
+- ~~Gold shards: elites drop a rare gold shard worth 5 xp~~ → folded into the Gilt shards idea (one special-shard concept, not two)
 - Settings page in pause: volume slider, screen-shake toggle, auto-fire toggle
 - Generative background music: a quiet pulse that speeds up as the run goes on → T0011
 - Projectile speed upgrade ("Draft"): +25% per level → T0012
@@ -195,3 +195,8 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Unit tests for the Arc chain: the bolt targets the first enemy within 260 u of the aim, each hop jumps to the nearest un-hit enemy within the chain radius, damage falls off per hop, and the chain ends when a hop finds no target (locks T0022)~~ → T0085
 - Plate tone: while the Still Life bubble is active, every shard you pick up is worth 50% more XP — the bubble becomes a collector's window (pairs with T0050)
 - Rhythm section: while the kill streak is 8 or higher (Crescendo), shard pickup radius +25% and crit rings render 50% larger — the streak pays out in reach (pairs with T0065 and T0019)
+- Fanfare weapon: every 1.2 s it fires 8 small ink points in a ring around the player — 7 damage each, speed 260 — a defensive burst for when the swarm closes in (new level-up card, weight 3, ink; sibling of Orbit but on cooldown)
+- Platen: a heavy grey circle (60 hp, speed 20, 10 contact damage) that every 5 s flattens (0.5 s telegraph) then slams — a 160-unit ink shockwave that shoves the player and nearby enemies away; the first enemy that pushes instead of chasing (new push-wave behavior, so an M for a strong machine)
+- Hare: a small green circle (24 hp, 8 contact damage) that starts slow (speed 40) and runs 30% faster for every quarter of its hp it loses (≈88 at 1 hp) — the kill you are chasing gets faster; marginalia "QUICKER AS IT WEAKENS" (small behavior addition; if the speed ramp needs new Enemy code it is an M for a strong machine)
+- Shatter pause: the moment a boss dies the game slows to 30% speed for 0.5 s while it comes apart — the kill gets its own beat (juice; pairs with the boss shatter idea)
+- Studio — Warm Start: after any run of 8:00+, the next run starts with 1 random upgrade level already applied (persisted flag, one line on the menu) — the first concrete step of the studio meta-progression
