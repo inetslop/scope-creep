@@ -4,11 +4,12 @@ title: Platemark — the page records where you got hurt
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0040]
 attempts: 1
 created: 2026-10-27T08:45:39Z
 claimed_at: 2026-10-27T11:53:59Z
+finished_at: 2026-10-27T12:13:33Z
 ---
 
 ## Goal
@@ -89,3 +90,17 @@ private printPlatemark(x: number, y: number): void {
 - The invariant must land in BOTH `registerInvariants()` and the `INVARIANTS` array, or the shutdown removal and the smoke check silently miss it.
 ### Tests
 - none (pure juice in a Phaser scene; the `platemark-pool` smoke invariant is the check, the T0004 pattern)
+
+## Result (attempt 1, yoga)
+
+Platemark is in: a small red × (two flat `PALETTE.red` strokes, 16 units, no shadow or outline) now prints on the paper exactly where the player takes a discrete hit, stays put, and fades linearly over 2 s. It is pooled in `FxSystem` (cap 12, oldest dropped early via cursor wrap, at most one per 0.5 s via `scene.time.now`), triggered from the existing `playerHit()` call sites at enemy contact, enemy bullets, and both boss attacks — the continuous crop burn prints nothing. Marks render at `DEPTH.floor + 1`, below all gameplay art and the player, on a bodyless `Image` that blocks no input. The `platemark-pool` smoke invariant is registered in both `registerInvariants()` and the `INVARIANTS` array; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 19.6 min
+
+```
+game/src/art/textures.ts     |  7 +++++++
+ game/src/scenes/GameScene.ts |  3 ++-
+ game/src/systems/FxSystem.ts | 31 +++++++++++++++++++++++++++++++
+ 3 files changed, 40 insertions(+), 1 deletion(-)
+```

@@ -46,6 +46,8 @@ export const TEX = {
   bossGridCore: 'bossGridCore',
   /** The Grid boss: one sweeping ink bar, centered so it spans two opposite arms. */
   bossGridArm: 'bossGridArm',
+  /** Small red ×; the platemark printed on the paper where the player takes a hit. */
+  platemark: 'platemark',
 } as const;
 
 export const enemyTextureKey = (enemyId: string): string => `enemy:${enemyId}`;
@@ -83,6 +85,11 @@ export function generateTextures(scene: Phaser.Scene): void {
   drawBossGrid(scene);
   graphicsTexture(scene, TEX.enemyShot, 24, 24, (g) => drawShape(g, 'circle', 10.5, 10.5, 6, PALETTE.ink, { outlineWidth: 0 }));
   graphicsTexture(scene, TEX.badge, 28, 28, (g) => drawShape(g, 'square', 12.5, 12.5, 8, PALETTE.red, { outlineWidth: 2 }));
+  graphicsTexture(scene, TEX.platemark, 22, 22, (g) => {
+    g.lineStyle(3, PALETTE.red, 1);
+    g.lineBetween(3, 3, 19, 19);
+    g.lineBetween(3, 19, 19, 3);
+  });
   for (const weapon of WEAPONS) {
     if (weapon.orbit) drawOrbit(scene, weapon);
     else drawProjectile(scene, weapon);

@@ -314,6 +314,7 @@ export class GameScene extends Phaser.Scene {
     });
     hook.addInvariant('projectile-count', () => (this.weapons.activeCount <= 400 ? null : `${this.weapons.activeCount} projectiles alive`));
     hook.addInvariant('damage-numbers-pool', () => (this.damageNumbers.activeCount <= 60 ? null : `${this.damageNumbers.activeCount} damage numbers active`));
+    hook.addInvariant('platemark-pool', () => (this.fx.platemarkCount <= 12 ? null : `${this.fx.platemarkCount} platemarks on screen`));
     hook.addInvariant('orbit-circles', () => {
       for (const c of this.orbit.circles) if (!Number.isFinite(c.x) || !Number.isFinite(c.y)) return `orbit circle at (${c.x}, ${c.y})`;
       return null;
@@ -358,4 +359,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'score', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'score', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake'];

@@ -7,6 +7,10 @@ import { SLAM } from '../core/slam';
 import { hook } from '../debug/testHook';
 import { GAME_EVENTS } from '../scenes/keys';
 
+const PLATEMARK_MAX = 12;
+const PLATEMARK_LIFE_MS = 2000;
+const PLATEMARK_COOLDOWN_MS = 500;
+
 /**
  * Visual juice: particles, rings, screen shake. Purely cosmetic — gameplay code
  * calls these methods and never reads anything back. Flat style: normal blending,
@@ -20,6 +24,10 @@ export class FxSystem {
   private readonly critRings: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly slamRings: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly trail: Phaser.GameObjects.Particles.ParticleEmitter;
+  /** Platemarks: stationary red ×s printed on the paper where the player took a hit. */
+  private readonly platemarks: (Phaser.GameObjects.Image | undefined)[] = [];
+  private platemarkCursor = 0;
+  private lastPlatemarkAt = -Infinity;
   /** The camera shake state machine. Named `shakeState` (not `shake`) because the public method is `shake()`. */
   private readonly shakeState = new CameraShake();
   /** Camera jitter applied last frame, in world units; subtracted before a new one so it can't accumulate. */
@@ -124,6 +132,29 @@ export class FxSystem {
     this.fragments.explode(6, x, y);
     this.shake(4, 140);
     this.scene.events.emit(GAME_EVENTS.playerHit);
+    this.printPlatemark(x, y);
+  }
+
+  /** ×s currently on screen (the platemark-pool invariant reads this). */
+  get platemarkCount(): number {
+    let n = 0;
+    for (const s of this.platemarks) if (s && s.alpha > 0) n += 1;
+    return n;
+  }
+
+  /** Prints a stationary red × at (x, y); at most one per cooldown, oldest dropped beyond the pool cap. */
+  private printPlatemark(x: number, y: number): void {
+    const now = this.scene.time.now;
+    if (now - this.lastPlatemarkAt < PLATEMARK_COOLDOWN_MS) return; // already printed for this hit
+    this.lastPlatemarkAt = now;
+    const i = this.platemarkCursor;
+    this.platemarkCursor = (i + 1) % PLATEMARK_MAX;
+    let slot = this.platemarks[i];
+    if (!slot) slot = this.scene.add.image(0, 0, TEX.platemark).setOrigin(0.5).setDepth(DEPTH.floor + 1);
+    this.platemarks[i] = slot;
+    this.scene.tweens.killTweensOf(slot);
+    slot.setPosition(x, y).setAlpha(1).setVisible(true);
+    this.scene.tweens.add({ targets: slot, alpha: 0, duration: PLATEMARK_LIFE_MS, ease: 'Linear', onComplete: () => slot.setVisible(false) });
   }
 
   /** Boss death: a shower of ink fragments. */
