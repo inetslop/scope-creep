@@ -154,4 +154,20 @@ describe('rollUpgradeChoices', () => {
     expect(run.upgradeLevel('pizzicato')).toBe(2);
     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
   });
+
+  it('pedal offers 2 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('pedal')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'armor', op: 'add', value: 1 },
+      { stat: 'regenPerSec', op: 'add', value: 0.5 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('pedal')).toBe(2);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
 });

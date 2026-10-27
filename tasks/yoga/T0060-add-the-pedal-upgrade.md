@@ -4,11 +4,12 @@ title: Add the Pedal upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T02:15:10Z
 claimed_at: 2026-10-27T02:31:10Z
+finished_at: 2026-10-27T02:37:45Z
 ---
 
 ## Goal
@@ -84,3 +85,16 @@ it('pedal offers 2 levels, then stops', () => {
 
 ### Tests
 - `tests/core/upgrades.test.ts`: the `pedal offers 2 levels, then stops` test above (asserts exact two mods, 2 offers then stops). Existing `tests/content.test.ts` covers the rest.
+
+## Result (attempt 1, yoga)
+
+Added the "Pedal" upgrade — a yellow level-up card (weight 4, 2 levels) giving +1 armor and +0.5 HP/s regen per level, appended to `UPGRADES` in `src/content/upgrades/index.ts` after the current last entry (`pizzicato`). It reuses the existing `armor` and `regenPerSec` stats, so it stacks with Mass, Plate, Balance and Adagio, and renders generically as a yellow card in the three-card choice reading "+1 armor, +0.5 HP/s regen". Added the unit test `pedal offers 2 levels, then stops` in `tests/core/upgrades.test.ts` asserting the exact two mods and that it stops after 2 levels. `npm run check` (typecheck + lint + 200 tests incl. content validation) and `npm run smoke` (desktop + mobile in a real browser) both pass.
+
+- Self-review: APPROVE
+- Time: 6.6 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
