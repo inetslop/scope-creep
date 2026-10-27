@@ -4,10 +4,12 @@ title: Add the Sostenuto upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T07:59:07Z
+claimed_at: 2026-10-27T08:06:56Z
+designer: yoga
 ---
 
 ## Goal
