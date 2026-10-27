@@ -4,11 +4,12 @@ title: Card-flip level-ups — choices are dealt in like cards
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T02:15:10Z
 claimed_at: 2026-10-27T02:54:18Z
+finished_at: 2026-10-27T03:02:35Z
 ---
 
 ## Goal
@@ -80,3 +81,18 @@ this.tone('sine', 180, 80, 0.12, 0.22, 0.03);      // thump
 
 ### Tests
 - none (no `core/` logic changes; `npm run check` and `npm run smoke` are the gates — smoke auto-picks the first card at 700 ms, after the deal, so its shortcut path is preserved)
+
+## Result (attempt 1, desktop)
+
+Level-up choices now deal in as cards: `LevelUpScene` renders a plain face-down card back under each choice and flips them one by one (0/150/300 ms, 200 ms each) on the scene clock, arming input only at 500 ms; each flip plays a new `cardFlip()` SFX (highpass tick + low sine thump, own 120 ms throttle) from GameScene's shared `Sfx` instance, now exposed through a new `getSfx()` registry getter (set in `GameScene.create()`, removed on shutdown). Card faces are unchanged, hover is gated by the arm flag, and the smoke auto-pick moved from 250 ms to 700 ms so it still fires after the deal. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 8.3 min
+
+```
+game/src/audio/Sfx.ts           | 12 ++++++++++
+ game/src/scenes/GameScene.ts    |  2 ++
+ game/src/scenes/LevelUpScene.ts | 52 +++++++++++++++++++++++++++++++++++------
+ game/src/scenes/keys.ts         |  5 ++++
+ 4 files changed, 64 insertions(+), 7 deletions(-)
+```

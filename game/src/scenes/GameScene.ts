@@ -88,6 +88,7 @@ export class GameScene extends Phaser.Scene {
     this.crop = new CropSystem(this, this.run, this.player, this.damageNumbers);
     this.marginalia = new Marginalia(this, this.bounds);
     this.sfx = new Sfx(this);
+    this.registry.set('sfx', this.sfx);
     this.understudy = new UnderstudySystem(this, this.player, this.fx, this.sfx);
     this.registry.set('understudy', this.understudy);
     this.music = new Music(this, this.sfx);
@@ -267,6 +268,7 @@ export class GameScene extends Phaser.Scene {
       this.music.dispose();
       this.game.events.off(Phaser.Core.Events.HIDDEN, onHidden);
       for (const name of INVARIANTS) hook.removeInvariant(name);
+      this.registry.remove('sfx');
       this.registry.remove('controls');
       this.registry.remove('understudy');
       this.registry.remove('stillLife');

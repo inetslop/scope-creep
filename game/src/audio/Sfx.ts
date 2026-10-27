@@ -3,6 +3,7 @@ import type Phaser from 'phaser';
 export const MASTER_VOLUME = 0.35;
 const MUTE_STORAGE_KEY = 'scope-creep:muted';
 const THROTTLE_MS = 40;
+const CARD_FLIP_THROTTLE_MS = 120;
 const COMBO_WINDOW_MS = 350;
 const MAX_COMBO_STEP = 12;
 
@@ -21,6 +22,7 @@ export class Sfx {
   private lastCritHitAt = 0;
   private lastPickupAt = 0;
   private lastPickupCallAt = 0;
+  private lastCardFlipAt = 0;
   private lastBossStingAt = 0;
   private comboStep = 0;
 
@@ -153,6 +155,16 @@ export class Sfx {
     this.tone('triangle', 523.25, 523.25, 0.1, 0.2, 0);
     this.tone('triangle', 659.25, 659.25, 0.1, 0.2, 0.09);
     this.tone('triangle', 783.99, 783.99, 0.1, 0.2, 0.18);
+  }
+
+  /** Snappy tick plus a soft thump as an upgrade card flips over: ~120 ms, never overlaps itself. */
+  cardFlip(): void {
+    if (!this.canPlay()) return;
+    const now = performance.now();
+    if (now - this.lastCardFlipAt < CARD_FLIP_THROTTLE_MS) return;
+    this.lastCardFlipAt = now;
+    this.noise(0.05, 0.25, 3500, 'highpass');          // tick
+    this.tone('sine', 180, 80, 0.12, 0.22, 0.03);      // thump
   }
 
   /** Two low sawtooth notes for the boss warning. */

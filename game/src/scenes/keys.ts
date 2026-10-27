@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import type { Sfx } from '../audio/Sfx';
 import type { RunState } from '../core/run';
 import type { Controls } from '../input/Controls';
 import type { StillLifeSystem } from '../systems/StillLifeSystem';
@@ -39,6 +40,10 @@ export function getUnderstudy(scene: Phaser.Scene): UnderstudySystem | undefined
 
 export function getStillLife(scene: Phaser.Scene): StillLifeSystem | undefined {
   return scene.registry.get('stillLife') as StillLifeSystem | undefined;
+}
+
+export function getSfx(scene: Phaser.Scene): Sfx | undefined {
+  return scene.registry.get('sfx') as Sfx | undefined;
 }
 
 /** Runs `fn` on every resize until the scene shuts down (avoids leaked listeners). */
