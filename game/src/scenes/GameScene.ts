@@ -18,6 +18,7 @@ import { ArcSystem } from '../systems/ArcSystem';
 import { BossSystem } from '../systems/BossSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { CropSystem } from '../systems/CropSystem';
+import { GutterSystem } from '../systems/GutterSystem';
 import { DamageNumbers } from '../systems/DamageNumbers';
 import { Marginalia } from '../systems/Marginalia';
 import { FxSystem } from '../systems/FxSystem';
@@ -51,6 +52,7 @@ export class GameScene extends Phaser.Scene {
   private weapons!: WeaponSystem;
   private combat!: CombatSystem;
   private crop!: CropSystem;
+  private gutter!: GutterSystem;
   private boss!: BossSystem;
   private orbit!: OrbitSystem;
   private arc!: ArcSystem;
@@ -84,6 +86,7 @@ export class GameScene extends Phaser.Scene {
     this.damageNumbers = new DamageNumbers(this);
     this.crop = new CropSystem(this, this.run, this.player, this.damageNumbers);
     this.marginalia = new Marginalia(this, this.bounds);
+    this.gutter = new GutterSystem(this, this.run, this.player, this.marginalia, this.damageNumbers);
     this.sfx = new Sfx(this);
     this.registry.set('sfx', this.sfx);
     this.music = new Music(this, this.sfx);
@@ -132,6 +135,7 @@ export class GameScene extends Phaser.Scene {
     this.marginalia.update(dt);
     this.pickups.update(dt);
     this.crop.update(dt);
+    this.gutter.update(dt);
     if (run.stats.regenPerSec > 0) run.heal(run.stats.regenPerSec * dt);
 
     this.trailTimer -= dt;
@@ -324,6 +328,8 @@ export class GameScene extends Phaser.Scene {
     });
     hook.addInvariant('streak', () => (this.run.streak >= 0 && this.run.bestStreak >= this.run.streak ? null : `streak ${this.run.streak} / best ${this.run.bestStreak}`));
     hook.addInvariant('crop-damage', () => Number.isFinite(this.crop.totalDamage) && this.crop.totalDamage >= 0 ? null : `crop damage ${this.crop.totalDamage}`);
+    hook.addInvariant('gutter-damage', () => Number.isFinite(this.gutter.totalDamage) && this.gutter.totalDamage >= 0 ? null : `gutter damage ${this.gutter.totalDamage}`);
+    hook.addInvariant('gutter-band', () => (!this.gutter.bandActive || Number.isFinite(this.gutter.bandX) ? null : `gutter band at (${this.gutter.bandX})`));
     hook.addInvariant('upgrade-history', () => {
       const levels = Object.values(this.run.upgradeLevels).reduce((a, b) => a + b, 0);
       return levels === this.run.upgradeHistory.length ? null : `upgrade levels ${levels} but history ${this.run.upgradeHistory.length}`;
@@ -340,4 +346,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'crop-damage', 'upgrade-history', 'streak-fire-bonus', 'camera-shake'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake'];

@@ -42,13 +42,29 @@ export class Marginalia {
     this.pinLabel(label);
   }
 
+  /** Free-floating note with no enemy: fixed at (x, y), same fade and 2 s life. */
+  freeNote(text: string, x: number, y: number): void {
+    let i = this.pool.findIndex((t) => !t.active);
+    if (i === -1) {
+      if (this.pool.length >= MAX_LABELS) return;
+      i = this.pool.length;
+      this.pool.push(this.scene.add.text(0, 0, '', textStyle(13, PALETTE.ink)).setOrigin(0.5).setDepth(DEPTH.fx));
+    }
+    const t = this.pool[i];
+    t.setText(text);
+    t.setPosition(x, y);
+    t.setAlpha(0).setActive(true).setVisible(true);
+    this.labels.push({ text: t, enemy: null, serial: 0, age: 0 });
+  }
+
   /** Ages labels (fade in 200 ms, hold, fade out the last 500 ms); a label dies with its enemy. */
   update(dt: number): void {
     for (let i = this.labels.length - 1; i >= 0; i--) {
       const l = this.labels[i];
       l.age += dt;
       // A reused pooled enemy has a new serial: treat that as a death too, or the label would follow the wrong enemy.
-      if (!l.enemy || !l.enemy.active || l.enemy.serial !== l.serial || l.age >= LIFE) { this.despawn(i); continue; }
+      if (l.age >= LIFE) { this.despawn(i); continue; }
+      if (l.enemy && (!l.enemy.active || l.enemy.serial !== l.serial)) { this.despawn(i); continue; }
       l.text.setAlpha(l.age < FADE_IN ? l.age / FADE_IN : l.age > LIFE - FADE_OUT ? (LIFE - l.age) / FADE_OUT : 1);
     }
   }

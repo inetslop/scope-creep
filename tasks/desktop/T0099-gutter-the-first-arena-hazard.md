@@ -4,11 +4,12 @@ title: Gutter — the first arena hazard
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T09:43:38Z
 claimed_at: 2026-10-27T11:15:58Z
+finished_at: 2026-10-27T11:24:57Z
 ---
 
 ## Goal
@@ -138,3 +139,19 @@ if (inside && !this.run.isDead) {
 - `gutterAt(840)`: active, `sweep 0`, `direction 1`, `centerFraction 0`; `gutterAt(860)`: sweep 1, direction −1, centerFraction 1; `gutterAt(880)`: sweep 2, direction 1, centerFraction 0; `gutterAt(900)`: direction −1, centerFraction 1
 - cross takes 4.0 s: `gutterAt(842).centerFraction === 0.5`; `gutterAt(843.999).active === true`; `gutterAt(844).active === false`; `gutterAt(850).active === false`
 - pulse: `gutterAt(838.5).telegraphAlpha === 0`; `gutterAt(839) ≈ 0.6`; `gutterAt(839.5) ≈ 0`; `gutterAt(839.75) ≈ 0.3`
+
+## Result (attempt 1, desktop)
+
+Added the Gutter, the first arena hazard: after 14:00 a 40-unit ink band sweeps the crop-safe area every 20 s (4.0 s cross, alternating direction), telegraphed by a pulsing 2 u red rule and burning the player 4/s via the existing drain plumbing. New pure schedule module `src/core/gutter.ts` with unit tests (`tests/core/gutter.test.ts`), new `src/systems/GutterSystem.ts` (band + telegraph + first-sweep "THE PAGE INKS" marginalia via a new additive `Marginalia.freeNote()`), and GameScene wiring with two new invariants (`gutter-damage`, `gutter-band`). `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 9.0 min
+
+```
+game/src/core/gutter.ts          | 38 +++++++++++++++++++
+ game/src/scenes/GameScene.ts     |  8 +++-
+ game/src/systems/GutterSystem.ts | 82 ++++++++++++++++++++++++++++++++++++++++
+ game/src/systems/Marginalia.ts   | 18 ++++++++-
+ game/tests/core/gutter.test.ts   | 45 ++++++++++++++++++++++
+ 5 files changed, 189 insertions(+), 2 deletions(-)
+```
