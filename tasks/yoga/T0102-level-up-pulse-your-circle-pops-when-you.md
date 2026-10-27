@@ -4,10 +4,12 @@ title: Level-up pulse — your circle pops when you pick
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T10:32:47Z
+claimed_at: 2026-10-27T10:52:45Z
+designer: yoga
 ---
 
 ## Goal
