@@ -75,12 +75,8 @@ export class OrbitSystem {
         const died = e.hit(dmg, { x: cx, y: cy }, def.knockback);
         this.damageNumbers.show(e.x, e.y, dmg, crit, false, wound.doubled);
         this.fx.hit(cx, cy, e.def.look.body);
-        if (crit) {
-          this.sfx.critHit();
-          this.fx.critRing(cx, cy);
-        } else {
-          this.sfx.hit();
-        }
+        this.sfx.orbitHum();
+        if (crit) this.fx.critRing(cx, cy);
         if (died) this.kill(e);
       }
     }

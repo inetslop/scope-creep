@@ -4,11 +4,12 @@ title: Orbit hum — the orbiting circles make a sound
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0090, T0098, T0105]
 attempts: 1
 created: 2026-10-27T12:29:53Z
 claimed_at: 2026-10-27T16:02:47Z
+finished_at: 2026-10-27T16:12:09Z
 ---
 
 ## Goal
@@ -66,3 +67,16 @@ The call stays inside the existing per-enemy `lastHit` branch — one hum per da
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Orbit now has a voice: new `Sfx.orbitHum()` (soft 90→60 Hz sine hum, 120 ms, tone gain 0.09, 150 ms global throttle via `lastOrbitHumAt`, mute-gated by `canPlay()`) added after the `shoot()` switch in `src/audio/Sfx.ts`, and `src/systems/OrbitSystem.ts` now plays that hum — replacing the old `critHit()`/`hit()` knocks — at each damaging orbit contact while keeping the crit ring. Orbit damage, radius, spin, knockback and the 0.6 s per-enemy cooldown are unchanged, and no HUD, input or key was added; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 9.4 min
+
+```
+game/src/audio/Sfx.ts           | 10 ++++++++++
+ game/src/systems/OrbitSystem.ts |  8 ++------
+ 2 files changed, 12 insertions(+), 6 deletions(-)
+```

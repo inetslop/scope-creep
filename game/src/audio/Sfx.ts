@@ -20,6 +20,7 @@ export class Sfx {
   private muted: boolean;
   private lastHitAt = 0;
   private lastCritHitAt = 0;
+  private lastOrbitHumAt = 0;
   private lastStreakBreakAt = 0;
   private lastPickupAt = 0;
   private lastPickupCallAt = 0;
@@ -93,6 +94,15 @@ export class Sfx {
       default:
         this.noise(0.04, 0.05, 3000, 'highpass'); // shared fallback
     }
+  }
+
+  /** Orbit's contact voice: a soft low hum — 90→60 Hz sine over 120 ms, half of hit()'s tone gain, no noise. One per 150 ms. */
+  orbitHum(): void {
+    if (!this.canPlay()) return;
+    const now = performance.now();
+    if (now - this.lastOrbitHumAt < 150) return;
+    this.lastOrbitHumAt = now;
+    this.tone('sine', 90, 60, 0.12, 0.09);
   }
 
   /** One short high blip: the Inkwell meter just reached full. */
