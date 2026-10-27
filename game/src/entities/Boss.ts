@@ -1,14 +1,15 @@
 import Phaser from 'phaser';
 import { TEX } from '../art/textures';
 import { DEPTH } from '../config';
-import { FRAME } from '../content/bosses/frame';
+import type { BossDef } from '../content/bosses';
 import { takeSerial } from './serial';
 
 /**
- * The boss: a giant picture frame with a red core. A unique entity, not pooled
- * and not an EnemyDef: one instance per run, driven by BossSystem. The core is
- * a separate image pinned to the frame's center (Phaser sprites have no
- * children), synced from GameScene's POST_UPDATE like the player's barrel.
+ * The boss: a big body (frame or compass) with a core at its center. A unique
+ * entity, not pooled and not an EnemyDef: one instance per run, driven by
+ * BossSystem. The core is a separate image pinned to the body's center
+ * (Phaser sprites have no children), synced from GameScene's POST_UPDATE like
+ * the player's barrel.
  */
 export class Boss extends Phaser.Physics.Arcade.Sprite {
   /** The red core, drawn at the frame's center. */
@@ -31,10 +32,12 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.core.setDepth(DEPTH.enemies + 1);
   }
 
-  spawn(x: number, y: number, hp: number): void {
+  spawn(x: number, y: number, hp: number, def: BossDef): void {
+    this.setTexture(def.behavior === 'grid' ? TEX.bossGrid : TEX.bossFrame);
+    this.core.setTexture(def.behavior === 'grid' ? TEX.bossGridCore : TEX.bossCore);
     this.enableBody(true, x, y, true, true);
     const body = this.body as Phaser.Physics.Arcade.Body;
-    body.setCircle(FRAME.frameSize / 2, this.width / 2 - FRAME.frameSize / 2, this.height / 2 - FRAME.frameSize / 2);
+    body.setCircle(def.bodyRadius, this.width / 2 - def.bodyRadius, this.height / 2 - def.bodyRadius);
     // The slide-in starts above the arena; world bounds would clamp it back.
     body.setCollideWorldBounds(false);
     this.setVelocity(0, 0);

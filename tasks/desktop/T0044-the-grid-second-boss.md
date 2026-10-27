@@ -4,11 +4,12 @@ title: The Grid — second boss
 assignee: desktop
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: [T0006]
 attempts: 1
 created: 2026-10-26T23:09:26Z
 claimed_at: 2026-10-27T00:59:36Z
+finished_at: 2026-10-27T01:21:40Z
 ---
 
 ## Goal
@@ -124,3 +125,31 @@ export function pointToSegmentDistance(px: number, py: number, ax: number, ay: n
 ## Moved from desktop-4070
 
 desktop-4070 (3-bit model, 64k context) spent an hour reading code and reasoning without writing any (claimed 2026-10-26T23:37:11Z); its limit was lowered to M tasks, so this L task moved to desktop. Nothing from that attempt reached main; attempts reset.
+
+## Result (attempt 1, desktop)
+
+Added The Grid, a second rotating-compass boss that alternates with The Frame from the 10:00 spawn onward (new `content/bosses/` module: `types.ts`/`grid.ts`/`index.ts` with `BOSSES`/`BOSS_BY_ID`/`getBoss`, and `bossForKill()` in `core/boss.ts`), with a 400 HP / speed 40 / r46 compass that drifts, spins at 0.5 rad/s, and sweeps two 200×12 ink arms 180° every 6 s (0.5 s red telegraph, 12 dmg on arm contact via pure `core/gridSweep.ts` timing + point-to-segment hit test, unit-tested in `tests/core/gridSweep.test.ts`). The boss entity, HUD (dynamic boss name, "THE GRID" center flash, health bar), boss-death path (shard burst, shake, `gridKills` stat), and boss-state invariant all reuse The Frame's infrastructure with the +50% HP-per-respawn scaling unchanged. Two minimal deviations from the design: `bossForKill()` returns `FrameBossDef | GridBossDef` instead of `BossDef` (the plain base type couldn't narrow on `behavior` in BossSystem — TS error), and `drawBossGrid()` derives the core/arm texture sizes from `GRID` data instead of hardcoded literals (same values).
+
+- Self-review: APPROVE
+- Time: 22.1 min
+- Self-review made fixes (kept; checks pass).
+
+```
+game/src/art/textures.ts          |  45 +++++++++++
+ game/src/content/bosses/frame.ts  |  58 ++------------
+ game/src/content/bosses/grid.ts   |  21 ++++++
+ game/src/content/bosses/index.ts  |  18 +++++
+ game/src/content/bosses/types.ts  |  70 +++++++++++++++++
+ game/src/core/boss.ts             |   9 +++
+ game/src/core/gridSweep.ts        |  58 ++++++++++++++
+ game/src/core/run.ts              |   2 +
+ game/src/debug/testHook.ts        |   2 +
+ game/src/entities/Boss.ts         |  17 +++--
+ game/src/scenes/GameScene.ts      |   1 +
+ game/src/scenes/HudScene.ts       |   9 ++-
+ game/src/systems/BossSystem.ts    | 154 +++++++++++++++++++++++++++++++-------
+ game/tests/content.test.ts        |  27 +++++++
+ game/tests/core/boss.test.ts      |  11 ++-
+ game/tests/core/gridSweep.test.ts |  87 +++++++++++++++++++++
+ 16 files changed, 496 insertions(+), 93 deletions(-)
+```

@@ -315,6 +315,7 @@ export class GameScene extends Phaser.Scene {
       if (this.run.bossAlive !== b.active) return `bossAlive ${this.run.bossAlive} but boss.active ${b.active}`;
       if (!b.active) return null;
       if (!Number.isFinite(b.x) || !Number.isFinite(b.y)) return `boss at (${b.x}, ${b.y})`;
+      if (this.boss.arm.visible && (!Number.isFinite(this.boss.arm.x) || !Number.isFinite(this.boss.arm.y))) return `boss arm at (${this.boss.arm.x}, ${this.boss.arm.y})`;
       if (this.run.bossHp < -1e-6 || this.run.bossHp > this.run.bossMaxHp + 1e-6) return `boss hp ${this.run.bossHp} / ${this.run.bossMaxHp}`;
       return null;
     });

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BOSS_SCHEDULE, BossTimer, bossHpMultiplier } from '../../src/core/boss';
+import { BOSS_SCHEDULE, BossTimer, bossForKill, bossHpMultiplier } from '../../src/core/boss';
 
 describe('BossTimer', () => {
   it('first boss is due at exactly 300 s', () => {
@@ -45,5 +45,14 @@ describe('bossHpMultiplier', () => {
     expect(Math.round(1200 * bossHpMultiplier(0))).toBe(1200);
     expect(Math.round(1200 * bossHpMultiplier(1))).toBe(1800);
     expect(Math.round(1200 * bossHpMultiplier(2))).toBe(2700);
+  });
+});
+
+describe('bossForKill', () => {
+  it('alternates Frame / Grid / Frame / Grid as bosses die', () => {
+    expect(bossForKill(0).id).toBe('frame');
+    expect(bossForKill(1).id).toBe('grid');
+    expect(bossForKill(2).id).toBe('frame');
+    expect(bossForKill(3).id).toBe('grid');
   });
 });

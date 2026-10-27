@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { FRAME } from '../content/bosses/frame';
+import { BOSS_BY_ID } from '../content/bosses';
 import { cssColor, PALETTE } from '../content/palette';
 import { formatTime } from '../core/progression';
 import type { RunState } from '../core/run';
@@ -63,7 +63,7 @@ export class HudScene extends Phaser.Scene {
     if (flags.debug) this.fpsText = this.add.text(PAD, 0, '', textStyle(12, PALETTE.green));
     this.bossG = this.add.graphics();
     this.bossName = this.add.text(0, 0, '', textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0);
-    this.bossWarnText = this.add.text(0, 0, FRAME.name, textStyle(48, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0.5).setAlpha(0);
+    this.bossWarnText = this.add.text(0, 0, '', textStyle(48, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0.5).setAlpha(0);
     if (this.sys.game.device.input.touch) {
       // Captured by this top scene, so the touch never reaches the sticks below (globalTopOnly).
       this.understudyG = this.add.graphics();
@@ -118,11 +118,12 @@ export class HudScene extends Phaser.Scene {
     this.timeText.setPosition(width / 2, narrow ? PAD + 40 : PAD).setText(formatTime(run.timeSec));
 
     // Boss: the center warning, and the health bar below the top-center timer.
-    this.bossWarnText.setPosition(width / 2, height / 2).setAlpha(run.bossWarning ? 1 : 0);
+    const bossName = run.bossId !== '' ? BOSS_BY_ID.get(run.bossId)?.name ?? '' : '';
+    this.bossWarnText.setPosition(width / 2, height / 2).setAlpha(run.bossWarning ? 1 : 0).setText(bossName);
     if (run.bossAlive) {
       this.bossFade = 1;
       const top = (narrow ? PAD + 40 : PAD) + 26;
-      this.bossName.setPosition(width / 2, top).setAlpha(1).setText(FRAME.name);
+      this.bossName.setPosition(width / 2, top).setAlpha(1).setText(bossName);
       this.bossG.clear().setAlpha(1);
       this.drawBar(this.bossG, (width - width * 0.6) / 2, top + 18, width * 0.6, 12, Phaser.Math.Clamp(run.bossHp / run.bossMaxHp, 0, 1), PALETTE.red);
     } else if (this.bossFade > 0) {

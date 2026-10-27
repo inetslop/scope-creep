@@ -32,6 +32,8 @@ export class RunState {
   /** Boss encounter state; BossSystem (src/systems/BossSystem.ts) owns the writes. */
   bossAlive = false;
   bossWarning = false;
+  /** Id of the boss currently warning/alive (src/content/bosses); '' when none. */
+  bossId = '';
   bossHp = 0;
   bossMaxHp = 0;
   bossKills = 0;

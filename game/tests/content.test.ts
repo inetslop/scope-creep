@@ -3,6 +3,7 @@
  * fails, the message tells you which field is wrong.
  */
 import { describe, expect, it } from 'vitest';
+import { BOSS_BY_ID, BOSSES, getBoss, type GridBossDef } from '../src/content/bosses';
 import { ENEMIES, ENEMY_BY_ID } from '../src/content/enemies';
 import { UPGRADES } from '../src/content/upgrades';
 import { WEAPON_BY_ID, WEAPONS } from '../src/content/weapons';
@@ -56,6 +57,32 @@ describe('enemies', () => {
   it.each(ENEMIES.filter((e) => e.shoot).map((e) => [e.id, e] as const))('%s shoot tuning is sane', (_id, e) => {
     const s = e.shoot!;
     expect(positive(s.periodSec) && positive(s.speed) && positive(s.damage), 'shoot numbers > 0').toBe(true);
+  });
+});
+
+describe('bosses', () => {
+  it('have unique kebab-case ids', () => expectUniqueIds(BOSSES));
+
+  it.each(BOSSES.map((b) => [b.id, b] as const))('%s has sane numbers', (_id, b) => {
+    expect(positive(b.hp), 'hp > 0').toBe(true);
+    expect(positive(b.speed), 'speed > 0').toBe(true);
+    expect(positive(b.contactDamage), 'contactDamage > 0').toBe(true);
+    expect(positive(b.bodyRadius), 'bodyRadius > 0').toBe(true);
+    expect(positive(b.deathXp), 'deathXp > 0').toBe(true);
+    expect(Number.isInteger(b.deathPickups) && b.deathPickups >= 1, 'deathPickups integer >= 1').toBe(true);
+    expect(b.name.length > 0 && b.name === b.name.toUpperCase(), 'name is non-empty all-caps').toBe(true);
+  });
+
+  it.each(BOSSES.filter((b): b is GridBossDef => b.behavior === 'grid').map((b) => [b.id, b] as const))('%s has sane grid numbers', (_id, b) => {
+    expect(positive(b.spinRadPerSec), 'spinRadPerSec > 0').toBe(true);
+    expect(positive(b.armLength), 'armLength > 0').toBe(true);
+    expect(positive(b.armThickness), 'armThickness > 0').toBe(true);
+    expect(positive(b.armDamage), 'armDamage > 0').toBe(true);
+  });
+
+  it('registry looks up every boss and rejects unknown ids', () => {
+    for (const b of BOSSES) expect(BOSS_BY_ID.get(b.id)).toBe(b);
+    expect(() => getBoss('nope')).toThrow();
   });
 });
 

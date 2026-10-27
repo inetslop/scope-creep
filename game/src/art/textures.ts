@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import { BUBBLE_RADIUS } from '../core/stillLife';
 import { PLAYER_RADIUS } from '../config';
 import { FRAME } from '../content/bosses/frame';
+import { GRID } from '../content/bosses/grid';
 import { ENEMIES } from '../content/enemies';
 import { PALETTE } from '../content/palette';
 import type { EnemyDef, WeaponDef } from '../content/types';
@@ -42,6 +43,12 @@ export const TEX = {
   bossFrame: 'bossFrame',
   /** The Frame boss: the red square core. */
   bossCore: 'bossCore',
+  /** The Grid boss: the ink compass disc. */
+  bossGrid: 'bossGrid',
+  /** The Grid boss: the red circle core. */
+  bossGridCore: 'bossGridCore',
+  /** The Grid boss: one sweeping ink bar, centered so it spans two opposite arms. */
+  bossGridArm: 'bossGridArm',
 } as const;
 
 export const enemyTextureKey = (enemyId: string): string => `enemy:${enemyId}`;
@@ -74,6 +81,7 @@ export function generateTextures(scene: Phaser.Scene): void {
   drawFloor(scene);
   for (const enemy of ENEMIES) drawEnemy(scene, enemy);
   drawBoss(scene);
+  drawBossGrid(scene);
   graphicsTexture(scene, TEX.enemyShot, 24, 24, (g) => drawShape(g, 'circle', 10.5, 10.5, 6, PALETTE.ink, { outlineWidth: 0 }));
   graphicsTexture(scene, TEX.badge, 28, 28, (g) => drawShape(g, 'square', 12.5, 12.5, 8, PALETTE.red, { outlineWidth: 2 }));
   for (const weapon of WEAPONS) {
@@ -182,6 +190,43 @@ function drawBoss(scene: Phaser.Scene): void {
   const coreC = coreSize / 2 - SHADOW_OFFSET / 2;
   graphicsTexture(scene, TEX.bossCore, coreSize, coreSize, (g) => {
     drawShape(g, 'square', coreC, coreC, r, FRAME.look.core, { outlineWidth: 3 });
+  });
+}
+
+/** The Grid boss: a paper-cut ink compass disc, its red circle core, and one arm bar (two opposite arms). */
+function drawBossGrid(scene: Phaser.Scene): void {
+  const r = GRID.bodyRadius;
+  const size = (r + PAD) * 2;
+  const c = size / 2 - SHADOW_OFFSET / 2;
+  graphicsTexture(scene, TEX.bossGrid, size, size, (g) => {
+    g.fillStyle(PALETTE.ink, 0.18);
+    g.fillCircle(c + SHADOW_OFFSET, c + SHADOW_OFFSET, r);
+    g.fillStyle(GRID.look.body, 1);
+    g.fillCircle(c, c, r);
+    g.lineStyle(8, PALETTE.ink, 1);
+    g.strokeCircle(c, c, r - 4);
+    g.lineStyle(6, PALETTE.ink, 1);
+    g.lineBetween(c - 30, c, c + 30, c);
+    g.lineBetween(c, c - 30, c, c + 30);
+    g.lineStyle(4, PALETTE.ink, 1);
+    g.lineBetween(c + (r - 4), c, c + (r - 14), c);
+    g.lineBetween(c - (r - 4), c, c - (r - 14), c);
+    g.lineBetween(c, c + (r - 4), c, c + (r - 14));
+    g.lineBetween(c, c - (r - 4), c, c - (r - 14));
+  });
+  const coreR = GRID.coreSize / 2;
+  const coreSize = Math.ceil((coreR + PAD) * 2);
+  const coreC = coreSize / 2 - SHADOW_OFFSET / 2;
+  graphicsTexture(scene, TEX.bossGridCore, coreSize, coreSize, (g) => {
+    drawShape(g, 'circle', coreC, coreC, coreR, GRID.look.core, { outlineWidth: 2 });
+  });
+  const armW = GRID.armLength * 2 + PAD * 2;
+  const armH = GRID.armThickness + PAD * 2;
+  graphicsTexture(scene, TEX.bossGridArm, armW, armH, (g) => {
+    g.fillStyle(PALETTE.ink, 0.18);
+    g.fillRect(PAD + SHADOW_OFFSET, PAD + SHADOW_OFFSET, GRID.armLength * 2, GRID.armThickness);
+    g.fillStyle(PALETTE.ink, 1);
+    g.fillRect(PAD, PAD, GRID.armLength * 2, GRID.armThickness);
   });
 }
 
