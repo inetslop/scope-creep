@@ -4,12 +4,10 @@ title: "The Grid's second voice — the compass changes shape at the midpoint"
 assignee: asus
 size: M
 priority: 2
-status: designing
+status: design
 depends_on: []
 attempts: 0
 created: 2026-10-27T17:52:12Z
-claimed_at: 2026-10-27T17:58:42Z
-designer: narcissus
 ---
 
 ## Goal
