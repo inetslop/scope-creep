@@ -4,12 +4,10 @@ title: Add the Incision upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-27T06:00:29Z
-claimed_at: 2026-10-27T06:06:07Z
-designer: yoga
 ---
 
 ## Goal
@@ -27,3 +25,39 @@ A rare card for the pierce build: **Incision** pairs +1 pierce with +5% crit cha
 - [ ] Picking Incision twice is possible; after 2 levels it is never offered again.
 - [ ] With Incision at 2, volleys pass through 2 extra enemies and the run's crit chance is +0.10 over base (crits still show as the existing red doubled numbers).
 - [ ] The new unit test passes in `npm run check` and `npm run smoke` (desktop + mobile) is green.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/upgrades/index.ts` - append one `UpgradeDef` to the end of the `UPGRADES` array, after the `gravure` block (the `];` line)
+- edit `tests/core/upgrades.test.ts` - append one new `it` block after the `gravure` test, before the closing `});`
+### Interfaces
+No new types or functions. Data only.
+### Steps
+1. In `src/content/upgrades/index.ts`, add as the last element of `UPGRADES`:
+```ts
+{
+  id: 'incision',
+  name: 'Incision',
+  description: '+1 pierce, +5% crit chance',
+  maxLevel: 2,
+  weight: 3,
+  mods: [
+    { stat: 'extraPierce', op: 'add', value: 1 },
+    { stat: 'critChance', op: 'add', value: 0.05 },
+  ],
+  color: PALETTE.ink,
+},
+```
+2. In `tests/core/upgrades.test.ts`, copy the `gravure` `it` block and change only the id to `'incision'`, the mods to `[
+    { stat: 'extraPierce', op: 'add', value: 1 },
+    { stat: 'critChance', op: 'add', value: 0.05 },
+  ]`, and the level assertion to `expect(run.upgradeLevel('incision')).toBe(2);` (test title: `it('incision offers 2 levels, then stops', ...)`).
+3. Run `npm run check`, then `npm run smoke`.
+No other files. Do not touch `UPGRADE_BY_ID` (built from the array) or any scene/system.
+### Pitfalls
+- The id in the test (`UPGRADE_BY_ID.get('incision')`) must be spelled exactly `incision` — a typo just fails `expect(def).toBeDefined()`.
+- Do not reorder existing entries; append only. Order matters for diff review, not behavior.
+- `mods` order is checked by the test: `extraPierce` first, `critChance` second.
+### Tests
+- `tests/core/upgrades.test.ts`: the new incision block (shape of the gravure/marcato tests). `tests/content.test.ts` validates the new entry automatically.
