@@ -4,10 +4,11 @@ title: Score and best score
 assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0040]
-attempts: 0
+attempts: 1
 created: 2026-10-27T00:59:33Z
+claimed_at: 2026-10-27T10:33:52Z
 ---
 
 ## Goal
