@@ -4,9 +4,12 @@ title: Haptics on mobile
 assignee: narcissus
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
+attempts: 0
 created: 2026-10-27T19:10:00Z
+claimed_at: 2026-10-27T18:00:56Z
+designer: yoga
 ---
 
 ## Goal
