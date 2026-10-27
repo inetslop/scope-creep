@@ -4,10 +4,12 @@ title: Inkwell — the meter that fills as you fire
 assignee: desktop
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T08:45:39Z
+claimed_at: 2026-10-27T09:06:03Z
+designer: desktop
 ---
 
 ## Goal
