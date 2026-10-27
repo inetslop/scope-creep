@@ -4,7 +4,7 @@ title: Shape aspect — long bars can exist
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-27T09:43:38Z
@@ -89,3 +89,7 @@ hitTestPoint(px: number, py: number, inflate = 0): boolean {
 ### Tests
 - `tests/core/barHit.test.ts` (new): acceptance capsule points, boundary inclusivity, rotated-axis cases.
 - `tests/content.test.ts` (edit): bar look validation + 120×16 / 160×12 expressibility.
+
+## Attempt 1 interrupted (asus)
+
+The runner stopped mid-task (crash, restart or reboot). Requeued.
