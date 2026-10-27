@@ -19,15 +19,12 @@ export interface HookStats {
   shardsCollected: number;
   upgradesTaken: number;
   cropDamageTaken: number;
-  understudyDrops: number;
-  stillLifeActivations: number;
   /** Live values from the current run. */
   timeSec: number;
   level: number;
   hp: number;
   maxHp: number;
   enemiesAlive: number;
-  stillLifeActive: boolean;
   /** Crescendo bonus actually applied this run: 1.1 while the kill streak is 8+, else 1. */
   streakFireBonus: number;
 }
@@ -57,14 +54,11 @@ export class TestHook {
     shardsCollected: 0,
     upgradesTaken: 0,
     cropDamageTaken: 0,
-    understudyDrops: 0,
-    stillLifeActivations: 0,
     timeSec: 0,
     level: 0,
     hp: 0,
     maxHp: 0,
     enemiesAlive: 0,
-    stillLifeActive: false,
     streakFireBonus: 1,
   };
   private readonly checks = new Map<string, InvariantCheck>();

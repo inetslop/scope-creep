@@ -22,6 +22,8 @@ describe('buildInventory', () => {
     };
     write('src/content/enemies/wedge.ts', `export const wedge = { id: 'wedge', name: 'Wedge', hp: 1, behavior: 'chase' };`);
     write('src/content/enemies/sentry.ts', `export const sentry = { id: 'sentry', name: 'Sentry', behavior: 'shoot' };`);
+    write('src/content/enemies/splitter.ts', `export const splitter = { name: 'Splitter', behavior: 'chase', splitsInto: { id: 'splinter', count: 2 } };`);
+    write('src/content/enemies/splinter.ts', `export const splinter = { name: 'Splinter', spawnWeight: 0, behavior: 'chase' };`);
     write('src/content/enemies/index.ts', `export const ENEMIES = [wedge];`);
     write('src/content/upgrades/index.ts', `[{ id: 'r', name: 'Rhythm', description: '+20% fire rate' }]`);
     write('src/scenes/GameScene.ts', '');
@@ -29,7 +31,7 @@ describe('buildInventory', () => {
     write('src/systems/FxSystem.ts', '');
     write('src/audio/Sfx.ts', '');
     const inv = buildInventory(game);
-    assert.match(inv, /\*\*Enemies\*\* \(2\): Sentry \(shoot\), Wedge \(chase\)/);
+    assert.match(inv, /\*\*Enemies\*\* \(4\): Sentry \(shoot\), Splinter \(chase, only spawned by another\), Splitter \(chase, splits into splinter\), Wedge \(chase\)/);
     assert.match(inv, /\*\*Upgrades\*\* \(1\): Rhythm \(\+20% fire rate\)/);
     assert.match(inv, /\*\*Scenes\*\*: Game$/m);
     assert.match(inv, /\*\*Systems\*\*: Fx/);

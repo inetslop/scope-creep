@@ -68,7 +68,7 @@ Learn from these. If a task failed or was rejected, read why and write a smaller
 
 ---
 id: T0042
-title: Add the Hex enemy
+title: Show the controls on the pause screen
 assignee: yoga
 size: S
 priority: 2

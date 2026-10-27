@@ -50,8 +50,6 @@ export interface EnemyDef {
   speed: number;
   /** Damage per contact hit on the player. */
   contactDamage: number;
-  /** Contact behavior other than damage. 'erase' removes the player's most recent upgrade on contact (falls back to contactDamage if the player has none). */
-  contact?: 'erase';
   /** XP value of the shard it drops. */
   xp: number;
   /** Spawn cost for the director. Stronger enemies cost more. */

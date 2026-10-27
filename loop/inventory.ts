@@ -23,6 +23,13 @@ export function namesIn(source: string): { name: string; description?: string }[
 const tsFiles = (dir: string): string[] =>
   fs.existsSync(dir) ? fs.readdirSync(dir).filter((f) => f.endsWith('.ts') && f !== 'index.ts' && !f.endsWith('.d.ts')).sort() : [];
 
+function oneItemNote(source: string): string | undefined {
+  const behavior = /\bbehavior:\s*['"`]([\w-]+)['"`]/.exec(source)?.[1];
+  const split = /\bsplitsInto:\s*\{\s*id:\s*['"`]([\w-]+)['"`]/.exec(source)?.[1];
+  const notes = [behavior, split && `splits into ${split}`, /\bspawnWeight:\s*0\b/.test(source) && 'only spawned by another'];
+  return notes.filter(Boolean).join(', ') || undefined;
+}
+
 function contentList(dir: string, withDescriptions: boolean): string[] {
   const items: string[] = [];
   const files = tsFiles(dir);
@@ -31,9 +38,10 @@ function contentList(dir: string, withDescriptions: boolean): string[] {
   for (const file of sources) {
     if (!fs.existsSync(file)) continue;
     const source = fs.readFileSync(file, 'utf8');
-    // One-item files (enemies, bosses) show their behavior, so the PO sees which behaviors exist.
+    // One-item files (enemies, bosses) show their behavior, so the PO sees which behaviors exist
+    // and which enemies only appear through another (they don't count toward the enemy cap).
     const names = namesIn(source);
-    const behavior = names.length === 1 ? /\bbehavior:\s*['"`]([\w-]+)['"`]/.exec(source)?.[1] : undefined;
+    const behavior = names.length === 1 ? oneItemNote(source) : undefined;
     for (const { name, description } of names) {
       const note = withDescriptions ? description : behavior;
       items.push(note ? `${name} (${note})` : name);

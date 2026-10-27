@@ -20,24 +20,17 @@ describe('stat stacking', () => {
     expect(run.stats.damageMul).toBe(1.953125);
   });
 
-  it('weight + emphasis stack as 1.25 * 1.15', () => {
-    const run = new RunState(1);
-    run.applyUpgrade(byId('weight'));
-    run.applyUpgrade(byId('emphasis'));
-    expect(run.stats.damageMul).toBe(1.4375);
-  });
-
-  it('rhythm + allegro stack as 1.2 * 1.15', () => {
+  it('rhythm x2 stacks as 1.2 * 1.2', () => {
     const run = new RunState(1);
     run.applyUpgrade(byId('rhythm'));
-    run.applyUpgrade(byId('allegro'));
-    expect(run.stats.fireRateMul).toBe(1.38);
+    run.applyUpgrade(byId('rhythm'));
+    expect(run.stats.fireRateMul).toBeCloseTo(1.44, 12);
   });
 
   it('damage-only upgrades leave fire rate and move speed at base', () => {
     const run = new RunState(1);
     run.applyUpgrade(byId('weight'));
-    run.applyUpgrade(byId('emphasis'));
+    run.applyUpgrade(byId('weight'));
     expect(run.stats.fireRateMul).toBe(1);
     expect(run.stats.moveSpeed).toBe(230);
   });

@@ -22,7 +22,6 @@ const AIM_DEAD_ZONE = 0.25;
 /**
  * Twin-stick controls:
  *   keyboard+mouse  WASD/arrows move, mouse aims, hold left button to fire
- *                   (Space drops the decoy; GameScene handles it, not ControlState)
  *   touch           left thumb = floating move stick, right thumb = aim + fire
  *   gamepad         left stick move, right stick aim + fire (or hold RT)
  */

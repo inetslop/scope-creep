@@ -20,6 +20,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Boss sting: a deep low hit + music swell the moment any boss spawns (T0058) ✅
 - Card-flip level-ups: the three choices flip in like cards, 150 ms apart, with a flip SFX; input locked until the deal finishes (T0059) ✅
 - Crescendo: while the kill streak is 8 or higher, fire rate +10% and the streak tally turns red (T0065) ✅
+- Controls card on the pause screen (next, before any new input): every input listed in the Bauhaus style — WASD / mouse / hold click / Esc / M mute on desktop, sticks and buttons on gamepad, left thumb / right thumb / pause button on touch — and the menu hint matches it
 
 ## M2 — Variety (consolidated 2026-10-27)
 The agents had padded the game: 49 upgrades (35 of them pairs of existing stat bonuses), 18 enemies (11 of them chasers that differed only in numbers, shape or color) and two active abilities with unexplained keys and a bare HUD. All of it was cut by hand; see VISION pillars 6 and 7 and the content bar in the PO prompt. Variety now grows by mechanics, not by count.

@@ -12,7 +12,6 @@ import type { DamageNumbers } from './DamageNumbers';
 import type { FxSystem } from './FxSystem';
 import type { PickupSystem } from './PickupSystem';
 import type { SpawnSystem } from './SpawnSystem';
-import { GAME_EVENTS } from '../scenes/keys';
 
 /** Arcade overlap callbacks hand us loosely typed objects; our groups only contain these classes. */
 const as = <T>(obj: unknown): T => obj as T;
@@ -78,21 +77,6 @@ export class CombatSystem {
   private onPlayerTouched(e: Enemy): void {
     const now = this.scene.time.now;
     if (!e.active || this.player.isInvulnerable(now) || this.run.isDead) return;
-    if (e.def.contact === 'erase') {
-      this.player.hurt(now); // same post-hit invulnerability window: one erase per contact
-      const removed = this.run.removeLastUpgrade();
-      if (removed) {
-        this.scene.events.emit(GAME_EVENTS.upgradeErased, removed.id);
-        this.killEnemy(e, 'crumple');
-      } else {
-        // No upgrades to take: contact deals damage instead and the Eraser survives.
-        this.run.takeDamage(e.contactDamage);
-        e.hit(0, this.player, 320); // shove the enemy back so contact isn't continuous
-        this.fx.playerHit(this.player.x, this.player.y);
-        this.sfx.playerHurt();
-      }
-      return;
-    }
     this.run.takeDamage(e.contactDamage);
     this.player.hurt(now);
     e.hit(0, this.player, 320); // shove the enemy back so contact isn't continuous
@@ -109,18 +93,12 @@ export class CombatSystem {
     p.despawn();
   }
 
-  /** `deathFx` 'crumple' is the Eraser's paper-tear death; the stock 'death' ring is near-invisible on its paperLight body. */
-  killEnemy(e: Enemy, deathFx: 'death' | 'crumple' = 'death'): void {
+  killEnemy(e: Enemy): void {
     const look = e.def.look;
     const size = look.radius * (e.elite ? ELITE.scale : 1);
-    if (deathFx === 'crumple') {
-      this.fx.crumple(e.x, e.y);
-      this.sfx.paperTear();
-    } else {
-      this.fx.death(e.x, e.y, look.body, look.accent, size, e.elite ? ELITE.extraDeathRings : 0);
-      this.sfx.enemyDeath(size);
-      if (size >= 24) this.fx.shake(90, 0.003);
-    }
+    this.fx.death(e.x, e.y, look.body, look.accent, size, e.elite ? ELITE.extraDeathRings : 0);
+    this.sfx.enemyDeath(size);
+    if (size >= 24) this.fx.shake(90, 0.003);
     if (e.elite) {
       // A pile of shards: the elite's 6x XP split evenly around the death point.
       for (let i = 0; i < ELITE.shardCount; i++) {

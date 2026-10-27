@@ -10,7 +10,6 @@ import { Enemy } from '../entities/Enemy';
 import { EnemyBullet } from '../entities/EnemyBullet';
 import type { Player } from '../entities/Player';
 import { Marginalia } from './Marginalia';
-import type { UnderstudySystem } from './UnderstudySystem';
 
 const MAX_ENEMIES = 260;
 const MAX_ENEMY_SHOTS = 200;
@@ -28,15 +27,13 @@ export class SpawnSystem {
   private readonly player: Player;
   private readonly bounds: Phaser.Geom.Rectangle;
   private readonly marginalia: Marginalia;
-  private readonly understudy: UnderstudySystem;
 
-  constructor(scene: Phaser.Scene, run: RunState, player: Player, bounds: Phaser.Geom.Rectangle, marginalia: Marginalia, understudy: UnderstudySystem) {
+  constructor(scene: Phaser.Scene, run: RunState, player: Player, bounds: Phaser.Geom.Rectangle, marginalia: Marginalia) {
     this.scene = scene;
     this.run = run;
     this.player = player;
     this.bounds = bounds;
     this.marginalia = marginalia;
-    this.understudy = understudy;
     this.enemies = scene.physics.add.group({ classType: Enemy, maxSize: MAX_ENEMIES, runChildUpdate: false });
     this.enemyShots = scene.physics.add.group({ classType: EnemyBullet, maxSize: MAX_ENEMY_SHOTS, runChildUpdate: false });
   }
@@ -99,9 +96,9 @@ export class SpawnSystem {
     p.fire(x, y, angle, ENEMY_SHOT_SPEED, ENEMY_SHOT_DAMAGE, ENEMY_SHOT_LIFE);
   }
 
-  /** Where enemies steer and shoot: the decoy while it is alive, otherwise the player. */
+  /** Where enemies steer and shoot: the player. */
   private aimTarget(): Vec2 {
-    return this.understudy.target ?? { x: this.player.x, y: this.player.y };
+    return { x: this.player.x, y: this.player.y };
   }
 
   /** Fires one slow ink point from `e` at the current aim target. */

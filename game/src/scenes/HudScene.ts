@@ -9,7 +9,7 @@ import { flags } from '../debug/flags';
 import type { StickState } from '../input/TouchSticks';
 import { makeButton } from '../ui/button';
 import { textStyle } from '../ui/text';
-import { GAME_EVENTS, getControls, getRun, getStillLife, getUnderstudy, SCENES } from './keys';
+import { GAME_EVENTS, getControls, getRun, SCENES } from './keys';
 
 const PAD = 12;
 /** After a hit the HP just lost shows as a yellow chunk that waits, then drains, while the bar gives a small shake. */
@@ -24,7 +24,6 @@ export class HudScene extends Phaser.Scene {
   private killText!: Phaser.GameObjects.Text;
   private streakText!: Phaser.GameObjects.Text;
   private rhythmText!: Phaser.GameObjects.Text;
-  private erasedText!: Phaser.GameObjects.Text;
   private cropText!: Phaser.GameObjects.Text;
   private fpsText?: Phaser.GameObjects.Text;
   private pauseButton!: Phaser.GameObjects.Container;
@@ -39,17 +38,10 @@ export class HudScene extends Phaser.Scene {
   /** Seconds since the player was last hit. */
   private sinceHit = Number.POSITIVE_INFINITY;
   /** Kill-streak tally state. The scene instance survives stop/launch, so reset in create(). */
-  /** Understudy button (touch only): a 60 px round target, redrawn every frame. */
-  private understudyButton?: Phaser.GameObjects.Container;
-  private understudyG?: Phaser.GameObjects.Graphics;
-  /** Still Life button (touch only): a 60 px round target right of the understudy one. */
-  private stillLifeButton?: Phaser.GameObjects.Container;
-  private stillLifeG?: Phaser.GameObjects.Graphics;
   private streakShown = false;
   private lastStreak = 0;
   private flashUntil = 0;
   private rhythmUntil = 0;
-  private erasedUntil = 0;
   private cropUntil = 0;
   private cropFlashed = false;
   private flashRed = false;
@@ -66,22 +58,12 @@ export class HudScene extends Phaser.Scene {
     this.killText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5);
     this.streakText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5).setVisible(false);
     this.rhythmText = this.add.text(0, 0, 'RHYTHM', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
-    this.erasedText = this.add.text(0, 0, 'ERASED', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
     this.cropText = this.add.text(0, 0, 'CROPPING', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
     this.pauseButton = makeButton(this, 0, 0, 'II', () => this.scene.get(SCENES.game).events.emit(GAME_EVENTS.pauseRequest), { width: 44, height: 44, fontSize: 18 });
     if (flags.debug) this.fpsText = this.add.text(PAD, 0, '', textStyle(12, PALETTE.green));
     this.bossG = this.add.graphics();
     this.bossName = this.add.text(0, 0, '', textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0);
     this.bossWarnText = this.add.text(0, 0, '', textStyle(48, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0.5).setAlpha(0);
-    if (this.sys.game.device.input.touch) {
-      // Captured by this top scene, so the touch never reaches the sticks below (globalTopOnly).
-      this.understudyG = this.add.graphics();
-      this.understudyButton = this.add.container(0, 0, [this.understudyG]).setSize(60, 60).setInteractive({ useHandCursor: true });
-      this.understudyButton.on('pointerdown', () => getUnderstudy(this)?.trigger());
-      this.stillLifeG = this.add.graphics();
-      this.stillLifeButton = this.add.container(0, 0, [this.stillLifeG]).setSize(60, 60).setInteractive({ useHandCursor: true });
-      this.stillLifeButton.on('pointerdown', () => getStillLife(this)?.trigger());
-    }
 
     this.bossFade = 1;
     this.hpGhost = 1;
@@ -90,7 +72,6 @@ export class HudScene extends Phaser.Scene {
     this.lastStreak = 0;
     this.flashUntil = 0;
     this.rhythmUntil = 0;
-    this.erasedUntil = 0;
     this.cropUntil = 0;
     this.cropFlashed = false;
     this.flashRed = false;
@@ -98,17 +79,9 @@ export class HudScene extends Phaser.Scene {
     const onPlayerHit = (): void => {
       this.sinceHit = 0;
     };
-    const onUpgradeErased = (): void => {
-      this.erasedUntil = this.time.now + 800;
-      this.tweens.killTweensOf(this.erasedText);
-      this.erasedText.setScale(1).setAlpha(1);
-      this.tweens.add({ targets: this.erasedText, alpha: 0.35, scale: 1.2, duration: 200, yoyo: true, repeat: 1, ease: 'Sine.easeInOut' });
-    };
     gameEvents.on(GAME_EVENTS.playerHit, onPlayerHit);
-    gameEvents.on(GAME_EVENTS.upgradeErased, onUpgradeErased);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       gameEvents.off(GAME_EVENTS.playerHit, onPlayerHit);
-      gameEvents.off(GAME_EVENTS.upgradeErased, onUpgradeErased);
     });
   }
 
@@ -161,8 +134,6 @@ export class HudScene extends Phaser.Scene {
 
     this.pauseButton.setPosition(width - PAD - 22, PAD + 22);
     this.killText.setPosition(width - PAD - 54, PAD + 22).setText(`${run.kills} kills`);
-    this.drawUnderstudy(height);
-    this.drawStillLife(height);
     this.updateStreak(run, width);
     if (!this.cropFlashed && run.timeSec >= CROP.startSec) {
       this.cropFlashed = true;
@@ -173,8 +144,6 @@ export class HudScene extends Phaser.Scene {
     }
     this.cropText.setPosition(width - PAD - this.streakText.width - 8, PAD + 60); // same slot as RHYTHM
     this.cropText.setVisible(this.time.now < this.cropUntil);
-    this.erasedText.setPosition(width - PAD, PAD + 78);
-    this.erasedText.setVisible(this.time.now < this.erasedUntil);
     this.fpsText?.setPosition(PAD, height - 24).setText(`${Math.round(this.game.loop.actualFps)} fps`);
 
     const controls = getControls(this);
@@ -239,55 +208,6 @@ export class HudScene extends Phaser.Scene {
     g.strokeRect(x, y, w, h);
   }
 
-  /** Bottom-left understudy cooldown: a small icon (desktop) or a 60 px round button (touch). */
-  private drawUnderstudy(height: number): void {
-    const us = getUnderstudy(this);
-    if (!us) return;
-    if (this.understudyButton && this.understudyG) {
-      this.understudyButton.setPosition(PAD + 40, height - PAD - 36).setAlpha(us.ready ? 1 : 0.55);
-      this.understudyG.clear();
-      this.drawCooldownIcon(this.understudyG, 30, 30, 30, us.cooldownFrac);
-    } else {
-      this.drawCooldownIcon(this.g, PAD + 22, height - PAD - 36, 18, us.cooldownFrac);
-    }
-  }
-
-  /** Bottom-left still-life cooldown: a small icon (desktop) or a 60 px round button (touch), right of the understudy one. */
-  private drawStillLife(height: number): void {
-    const sl = getStillLife(this);
-    if (!sl) return;
-    if (this.stillLifeButton && this.stillLifeG) {
-      this.stillLifeButton.setPosition(PAD + 110, height - PAD - 36).setAlpha(sl.ready ? 1 : 0.55);
-      this.stillLifeG.clear();
-      this.drawCooldownIcon(this.stillLifeG, 30, 30, 30, sl.cooldownFrac);
-    } else {
-      this.drawCooldownIcon(this.g, PAD + 66, height - PAD - 36, 18, sl.cooldownFrac);
-    }
-  }
-
-  /** Round icon: paper base, blue wedge sweeping clockwise from the top as the cooldown recovers; solid blue when ready. */
-  private drawCooldownIcon(g: Phaser.GameObjects.Graphics, cx: number, cy: number, r: number, frac: number): void {
-    g.fillStyle(PALETTE.paperLight, 1);
-    g.fillCircle(cx, cy, r);
-    if (frac >= 1) {
-      g.fillStyle(PALETTE.blue, 1);
-      g.fillCircle(cx, cy, r);
-    } else {
-      g.fillStyle(PALETTE.blue, 1);
-      g.beginPath();
-      g.moveTo(cx, cy);
-      g.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2, false);
-      g.closePath();
-      g.fill();
-      const a = -Math.PI / 2 + frac * Math.PI * 2;
-      g.lineStyle(2, PALETTE.ink, 1);
-      g.lineBetween(cx, cy, cx + Math.cos(a) * r, cy + Math.sin(a) * r);
-    }
-    g.lineStyle(2, PALETTE.ink, 1);
-    g.strokeCircle(cx, cy, r);
-  }
-
-  /** Active sticks are drawn where the thumb is; idle ones as faint hints. */
   private drawStick(stick: StickState, hintX: number, hintY: number, radius: number): void {
     const g = this.g;
     if (!stick.active) {

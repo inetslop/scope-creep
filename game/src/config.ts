@@ -22,7 +22,6 @@ export const DEPTH = {
   floor: 0,
   arena: 5,
   pickups: 10,
-  bubble: 15,
   enemies: 20,
   projectiles: 30,
   playerBarrel: 39,

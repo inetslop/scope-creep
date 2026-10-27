@@ -94,16 +94,6 @@ export class FxSystem {
     this.sparks.explode(2, x, y);
   }
 
-  /** The Eraser crumples: an ink ring (reads on paper) and paper-white and ink fragments. */
-  crumple(x: number, y: number): void {
-    this.rings.setParticleTint(PALETTE.ink);
-    this.rings.explode(1, x, y);
-    this.fragments.setParticleTint(PALETTE.paperLight);
-    this.fragments.explode(10, x, y);
-    this.fragments.setParticleTint(PALETTE.ink);
-    this.fragments.explode(3, x, y);
-  }
-
   /** Player took damage: blue chips knocked off it, a red ring, a small shake. No full-screen flash: it's hard on the eyes. */
   playerHit(x: number, y: number): void {
     this.rings.setParticleTint(PALETTE.red);
@@ -112,12 +102,6 @@ export class FxSystem {
     this.fragments.explode(6, x, y);
     this.scene.cameras.main.shake(140, 0.006);
     this.scene.events.emit(GAME_EVENTS.playerHit);
-  }
-
-  /** Decoy expires: a small burst of ink fragments. */
-  decoyPop(x: number, y: number): void {
-    this.fragments.setParticleTint(PALETTE.ink);
-    this.fragments.explode(8, x, y);
   }
 
   /** Boss death: a shower of ink fragments. */

@@ -121,34 +121,6 @@ export class Sfx {
     this.noise(0.15, 0.15, 500, 'lowpass');
   }
 
-  /** Soft high pop when the decoy drops. */
-  decoyDrop(): void {
-    if (!this.canPlay()) return;
-    this.tone('sine', 740, 990, 0.07, 0.18);
-    this.noise(0.04, 0.08, 3500, 'highpass');
-  }
-
-  /** Lower pop when the decoy expires. */
-  decoyPop(): void {
-    if (!this.canPlay()) return;
-    this.tone('sine', 320, 140, 0.12, 0.25);
-    this.noise(0.08, 0.14, 1000, 'bandpass');
-  }
-
-  /** Soft descending "shush" when the bubble activates; nothing on end. */
-  bubbleOn(): void {
-    if (!this.canPlay()) return;
-    this.noise(0.6, 0.16, 1400, 'bandpass');
-    this.tone('sine', 540, 180, 0.6, 0.08);
-  }
-
-  /** Soft paper-tear when the Eraser crumples. */
-  paperTear(): void {
-    if (!this.canPlay()) return;
-    this.noise(0.16, 0.28, 1400, 'lowpass');
-    this.noise(0.12, 0.18, 700, 'lowpass', 0.06);
-  }
-
   /** Three-note rising arp. */
   levelUp(): void {
     if (!this.canPlay()) return;

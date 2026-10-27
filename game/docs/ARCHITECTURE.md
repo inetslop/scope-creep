@@ -28,10 +28,8 @@ Boot -> Menu -> Game ──launch──> Hud (overlay, runs in parallel)
 4. `WeaponSystem.update` fires volleys for every owned projectile weapon on cooldown while firing and ages projectiles; `ArcSystem.update` snaps chained arcs on its own cooldown; `OrbitSystem.update` spins the orbit circles and applies contact damage.
 5. `SpawnSystem.update` asks the `SpawnDirector` (pure) what to spawn, places enemies on a ring just outside the view, steers every enemy. The director also reports one elite every 45 s (bigger, tougher, ringed, 6x XP in 6 shards). `Marginalia.update` ages first-encounter notes (one ink label per enemy type per run, pinned in POST_UPDATE).
 6. `PickupSystem.update` magnets shards inside `pickupRadius`, collects on touch (XP).
-7. `UnderstudySystem.update` ages the decoy (3 s life); on the pop tick it bursts ink and plays the pop. While the decoy is alive, `SpawnSystem` steers and shoots at the decoy's position instead of the player; the Frame boss ignores it.
-8. `StillLifeSystem.update` ages the bubble (5 s) and, while up, re-scales the velocity SpawnSystem/BossSystem wrote this frame to 50 % for every enemy, enemy shot and the boss inside its 160-unit disc (runs after them; timers untouched).
-9. Regen; movement trail; hook stats.
-10. Death -> GameOver after a short delay. Pending level-ups -> LevelUp overlay.
+7. Regen; movement trail; hook stats.
+8. Death -> GameOver after a short delay. Pending level-ups -> LevelUp overlay.
 
 Physics overlaps live in `CombatSystem` (projectile↔enemy, player↔enemy, enemy↔enemy separation).
 
@@ -45,7 +43,7 @@ The arena is `ARENA_SIZE` square, centered on (0,0). Camera zoom = short screen 
 
 ## Input
 
-`TouchSticks` turns touches on the left/right half of the screen into floating sticks (state only; HudScene draws them). `Controls` merges gamepad > touch > keyboard+mouse into one `ControlState`. Touches starting in the top 72 px are ignored (HUD buttons). The decoy bypasses `ControlState`: Space (desktop) and the round touch button (mobile, bottom-left of the HUD) call `UnderstudySystem.trigger()` directly. Still Life bypasses `ControlState` the same way — Q (desktop) and a second round touch button right of the decoy button (mobile) call `StillLifeSystem.trigger()` directly.
+`TouchSticks` turns touches on the left/right half of the screen into floating sticks (state only; HudScene draws them). `Controls` merges gamepad > touch > keyboard+mouse into one `ControlState`. Touches starting in the top 72 px are ignored (HUD buttons).
 
 ## Audio
 
