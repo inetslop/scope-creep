@@ -60,7 +60,7 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 - Crop schedule tests: no shrink before 12:00, 1.0→0.7 by 17:00, clamped at 0.7 after, non-increasing through the window (T0063) ✅
 - Elite schedule tests: first elite at 0:45, then exactly one every 45 s, none in between (T0066) ✅
 - Arc chain tests: the bolt targets the first enemy within 260 u of the aim, each hop jumps to the nearest un-hit enemy within the chain radius, and the chain ends at a dead end — shipped with T0022 in `tests/core/arc.test.ts`; T0085 was rejected because the tests already existed and per-hop damage falloff is not in the code ✅
-- Music tempo-curve tests: 80 BPM at 0:00, non-decreasing through the ramp, 120 BPM at 10:00 and clamped there, second voice at 100 BPM (T0092, in queue, yoga)
+- Music tempo-curve tests: 80 BPM at 0:00, non-decreasing through the ramp, 120 BPM at 10:00, second voice at 100 BPM — all of it already shipped with T0011 except the 15:00 clamp pin; T0092 was rejected (the file already existed), replaced by the one-line pin (T0095, in queue, yoga)
 
 ## Later
 - Alternate "paper" palettes (De Stijl, Constructivist), run modifiers, daily seed, achievements, PWA install
