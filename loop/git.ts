@@ -148,8 +148,22 @@ export class Git {
   }
 
   /** Rebases onto origin/main. `prefer: 'upstream'` auto-resolves conflicts in favor of origin/main. */
+  private conflictStyleArg?: string;
+
+  /**
+   * Conflict markers that include the common ancestor: zdiff3 (git 2.35+) or diff3. With the base
+   * visible, add/add conflicts resolve without an agent (merge.ts) and the agent sees what changed.
+   */
+  private async conflictStyle(): Promise<string> {
+    if (!this.conflictStyleArg) {
+      const [major = 0, minor = 0] = ((await this.raw(['--version'])).stdout.match(/(\d+)\.(\d+)/) ?? []).slice(1).map(Number);
+      this.conflictStyleArg = `merge.conflictStyle=${major > 2 || (major === 2 && minor >= 35) ? 'zdiff3' : 'diff3'}`;
+    }
+    return this.conflictStyleArg;
+  }
+
   async rebase(prefer?: 'upstream'): Promise<'ok' | 'conflict'> {
-    const args = ['-c', `user.name=${this.author}`, '-c', `user.email=${this.author}@scope-creep.local`, 'rebase', '--quiet'];
+    const args = ['-c', `user.name=${this.author}`, '-c', `user.email=${this.author}@scope-creep.local`, '-c', await this.conflictStyle(), 'rebase', '--quiet'];
     // During a rebase "ours" is the upstream we are replaying onto.
     if (prefer === 'upstream') args.push('-X', 'ours');
     args.push('origin/main');
@@ -158,7 +172,7 @@ export class Git {
   }
 
   async continueRebase(): Promise<'ok' | 'conflict'> {
-    const r = await this.raw(['-c', `user.name=${this.author}`, '-c', `user.email=${this.author}@scope-creep.local`, 'rebase', '--continue'], { GIT_EDITOR: 'true' });
+    const r = await this.raw(['-c', `user.name=${this.author}`, '-c', `user.email=${this.author}@scope-creep.local`, '-c', await this.conflictStyle(), 'rebase', '--continue'], { GIT_EDITOR: 'true' });
     return r.code === 0 ? 'ok' : 'conflict';
   }
 

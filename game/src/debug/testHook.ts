@@ -82,6 +82,11 @@ export class TestHook {
     this.checks.delete(name);
   }
 
+  /** Removes every check; GameScene calls it on shutdown, so checks never outlive a run. */
+  clearInvariants(): void {
+    this.checks.clear();
+  }
+
   /** Runs every check and returns the failures as "name: message". */
   invariants(): string[] {
     const failures: string[] = [];

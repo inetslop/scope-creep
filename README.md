@@ -111,7 +111,7 @@ Each machine runs `loop/start-agent.ps1`, a supervisor that keeps `loop/runner.t
    - revert anything outside `game/`;
    - **gate**: `npm run check` (typecheck, lint, unit tests) + **browser smoke test** (builds, then plays the game for ~24 s as a desktop player and as a phone with two-thumb touch; fails on any error, stalled frame loop, broken invariant, or if nothing gets shot); up to 2 fix rounds where the agent gets the failure output back;
    - **self-review** in a fresh session on the same machine (fixes kept only if the gate still passes);
-   - rebase onto the latest main, push. On conflicts an agent resolves them, given the task and the messages of the commits on main that caused them; the gate re-runs. If the work still can't be merged, the runner saves its diff to `tasks/salvage/<id>.diff` and the next attempt re-applies it instead of starting over (the file goes when the task is archived);
+   - rebase onto the latest main (conflict markers include the common ancestor), push. Spots where both sides only added lines are resolved by keeping both (`loop/merge.ts`); an agent resolves the rest, given the task and the messages of the commits on main that caused them; the gate re-runs. If the work still can't be merged, the runner saves its diff to `tasks/salvage/<id>.diff` and the next attempt re-applies it instead of starting over (the file goes when the task is archived);
    - the runner writes the result (summary, diff stat, review verdict) or the failure reason into the task file. After 3 failed attempts a task is marked `failed`, and the PO sees why on its next cycle.
 
 ### Pacing: how much the PO plans

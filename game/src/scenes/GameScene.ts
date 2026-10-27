@@ -277,7 +277,7 @@ export class GameScene extends Phaser.Scene {
       this.sfx.dispose();
       this.music.dispose();
       this.game.events.off(Phaser.Core.Events.HIDDEN, onHidden);
-      for (const name of INVARIANTS) hook.removeInvariant(name);
+      hook.clearInvariants();
       this.registry.remove('sfx');
       this.registry.remove('player');
       this.registry.remove('controls');
@@ -297,7 +297,7 @@ export class GameScene extends Phaser.Scene {
     s.streakFireBonus = streakFireBonus(this.run.streak);
   }
 
-  /** Checks the smoke test runs every few seconds. Add one for every new system. */
+  /** Checks the smoke test runs every few seconds. Add one for every new system; shutdown clears them all. */
   private registerInvariants(): void {
     const arena = Phaser.Geom.Rectangle.Clone(this.bounds);
     Phaser.Geom.Rectangle.Inflate(arena, 64, 64);
@@ -412,5 +412,3 @@ export class GameScene extends Phaser.Scene {
     );
   }
 }
-
-const INVARIANTS = ['player-position', 'player-in-arena', 'player-hitbox', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'quicken-specks', 'puddle-pool', 'slam-dust-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'palette-swatch', 'inkwell', 'streak', 'score', 'score-feed', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse', 'bouncing-points', 'wound-threshold'];

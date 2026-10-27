@@ -13,9 +13,10 @@ Assigned to **{{ASSIGNEE}}**: {{ASSIGNEE_LABEL}}. {{ASSIGNEE_NOTES}}
 # How to work
 1. Read CLAUDE.md and docs/ARCHITECTURE.md (your working directory is the game folder), then every file this task touches and the closest existing example. Verify every name, type and signature in the code. Never guess.
 2. Choose the smallest design that meets all acceptance criteria and fits the existing patterns: content as data, systems owned by GameScene, pooled objects reset in spawn()/despawn(), scene listeners removed on shutdown, invariants for new systems, Bauhaus flat art via drawShape() and PALETTE, works with mouse + keyboard and touch.
-3. Match the detail to the assignee: for a weak machine, spell out the exact code to add (short snippets are fine); for a strong one, interfaces and steps are enough.
-4. If the task cannot be built as written (contradicts the code, already exists, far too big for {{ASSIGNEE}}, or depends on something that does not exist yet and is not in the open tasks), reject it with a clear reason for the product owner.
-5. Also reject a task that fails the content bar. Check the content files before deciding:
+3. Design for parallel work: other machines are changing the shared files right now (GameScene, HudScene, CombatSystem, SpawnSystem, FxSystem, Sfx, testHook, content types), and every edit two tasks make at the same spot becomes a merge conflict. So put the new logic in a new file (a system, a core module, a content file) and touch shared files only for the wiring it needs. Place each new line next to the code it belongs with (an update() call beside related calls, an invariant beside its system's others), never at the end of a list, class or function, where every task appends. One item per line in arrays, unions and argument lists. If another open task edits the same function, list it in DEPENDS_ON.
+4. Match the detail to the assignee: for a weak machine, spell out the exact code to add (short snippets are fine); for a strong one, interfaces and steps are enough.
+5. If the task cannot be built as written (contradicts the code, already exists, far too big for {{ASSIGNEE}}, or depends on something that does not exist yet and is not in the open tasks), reject it with a clear reason for the product owner.
+6. Also reject a task that fails the content bar. Check the content files before deciding:
    - an enemy whose behavior an existing enemy already has (only hp, speed, size, shape or color differ);
    - an upgrade that combines existing stat bonuses or copies an existing upgrade with other numbers;
    - more than 10 regular enemy types or 16 upgrades after the task, unless it removes or merges one;

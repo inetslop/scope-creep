@@ -6,6 +6,7 @@ import { effortFor, type Effort, type FleetConfig, type LocalConfig } from './co
 import type { Git } from './git.ts';
 import { info, step, warn } from './log.ts';
 import { GAME_DIR, REPO, SALVAGE_DIR, rel } from './paths.ts';
+import { autoResolvable, autoResolveAdditions } from './merge.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { updateTaskAndPush } from './sync.ts';
@@ -236,12 +237,17 @@ async function integrate(ctx: RunContext, task: Task, notes: string[]): Promise<
  */
 async function resolveConflicts(ctx: RunContext, task: Task, mine: string, notes: string[]): Promise<string | null> {
   const git = ctx.git;
+  let agentRan = false;
   for (let round = 0; round < 3 && git.isRebasing(); round++) {
-    const files = await git.conflictedFiles();
+    let files = await git.conflictedFiles();
     if (files.length > 0) {
       const outside = files.filter((f) => !f.startsWith('game/'));
       if (outside.length) return `conflicts outside the game in ${outside.join(', ')}`;
       notes.push(`Conflicts in: ${files.join(', ')}`);
+      files = await autoResolve(git, files, notes);
+    }
+    if (files.length > 0) {
+      agentRan = true;
       const session = await runAgent(ctx.local, {
         label: `${task.id}-conflict`,
         prompt: renderPrompt('conflict', {
@@ -259,17 +265,38 @@ async function resolveConflicts(ctx: RunContext, task: Task, mine: string, notes
       });
       const marked = files.filter((f) => {
         const abs = path.join(REPO, f);
-        return fs.existsSync(abs) && /^(<{7}|>{7}|={7})/m.test(fs.readFileSync(abs, 'utf8'));
+        return fs.existsSync(abs) && /^(<{7}|\|{7}|>{7}|={7})/m.test(fs.readFileSync(abs, 'utf8'));
       });
       if (marked.length) return `conflict markers left in ${marked.join(', ')} (agent: ${session.subtype})`;
       await git.ok(['add', '-A', '--', ...files]);
     }
     if ((await git.continueRebase()) === 'ok' && !git.isRebasing()) {
-      notes.push('The conflict agent resolved them.');
+      notes.push(agentRan ? 'The conflict agent resolved them.' : 'Resolved without the conflict agent.');
       return null;
     }
   }
   return git.isRebasing() ? 'git could not continue the rebase after 3 rounds' : null;
+}
+
+/**
+ * Resolves the hunks where main and our commit both only added lines (merge.ts), stages the files
+ * that are then clean, and returns the files that still need the conflict agent.
+ */
+async function autoResolve(git: Git, files: readonly string[], notes: string[]): Promise<string[]> {
+  let resolved = 0;
+  const clean: string[] = [];
+  for (const f of files.filter(autoResolvable)) {
+    const abs = path.join(REPO, f);
+    if (!fs.existsSync(abs)) continue;
+    const r = autoResolveAdditions(fs.readFileSync(abs, 'utf8'));
+    if (r.resolved === 0) continue;
+    fs.writeFileSync(abs, r.text);
+    resolved += r.resolved;
+    if (r.remaining === 0) clean.push(f);
+  }
+  if (clean.length) await git.ok(['add', '--', ...clean]);
+  if (resolved) notes.push(`Auto-resolved ${resolved} spot(s) where both sides only added lines${clean.length ? ` (clean: ${clean.join(', ')})` : ''}.`);
+  return files.filter((f) => !clean.includes(f));
 }
 
 /**

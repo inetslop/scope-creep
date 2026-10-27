@@ -11,7 +11,18 @@ import { wedge } from './wedge';
 import { wash } from './wash';
 
 /** Every enemy in the game. To add one: create a file next to this one and add it here. */
-export const ENEMIES: readonly EnemyDef[] = [wedge, dart, block, sentry, splitter, splinter, frameWedge, platen, hare, wash];
+export const ENEMIES: readonly EnemyDef[] = [
+  wedge,
+  dart,
+  block,
+  sentry,
+  splitter,
+  splinter,
+  frameWedge,
+  platen,
+  hare,
+  wash,
+];
 
 export const ENEMY_BY_ID: ReadonlyMap<string, EnemyDef> = new Map(ENEMIES.map((e) => [e.id, e]));
 
