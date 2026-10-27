@@ -4,11 +4,12 @@ title: Add the Vellum upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T04:43:07Z
 claimed_at: 2026-10-27T05:14:23Z
+finished_at: 2026-10-27T05:21:17Z
 ---
 
 ## Goal
@@ -85,3 +86,16 @@ None — content data only. No types, stats, scenes, or systems change; the leve
 ### Tests
 - `tests/core/upgrades.test.ts`: the new `vellum` test (exact mods, 3 levels, then unavailable). Existing `tests/content.test.ts` validation covers the rest.
 DEPENDED_ON: none
+
+## Result (attempt 1, yoga)
+
+Added the Vellum upgrade — a yellow "tank collector" card (+1 armor, +15% shard XP per level, max 3, weight 4) — appended at the end of `UPGRADES` in `src/content/upgrades/index.ts` after `sotto-voce`, plus the matching unit test in `tests/core/upgrades.test.ts` (exact mods armor-first, 3 offers then stops). No stats, types, or scene changes; the level-up scene renders it from the registry. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 6.9 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
