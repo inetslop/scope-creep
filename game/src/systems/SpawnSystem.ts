@@ -137,6 +137,7 @@ export class SpawnSystem {
       if (dx * dx + dy * dy <= r2) o.hit(0, e, SLAM.enemyKnock);
     }
     this.fx.slamRing(e.x, e.y);
+    this.fx.slamDust(e.x, e.y, this.run.rng);
     this.sfx.slam();
   }
 

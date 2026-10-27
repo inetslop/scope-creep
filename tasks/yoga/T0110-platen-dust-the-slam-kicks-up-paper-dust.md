@@ -4,11 +4,12 @@ title: Platen dust — the slam kicks up paper dust
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T13:08:21Z
 claimed_at: 2026-10-27T14:35:34Z
+finished_at: 2026-10-27T14:52:18Z
 ---
 
 ## Goal
@@ -95,3 +96,17 @@ and after the `platemarkCount` getter:
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+The Platen's slam now kicks up paper dust: a new `FxSystem.slamDust(x, y, rng)` spawns three flat paperLight puffs (radius 4–7, no outline/shadow) at the Platen's center that drift 10–20 units outward at seeded angles and fade linearly over 400 ms, pooled (6 slots) like the platemarks; it is called from the single existing slam trigger in `SpawnSystem.performSlam()` using `run.rng`, and a `slam-dust-pool` invariant (registered in `GameScene.registerInvariants` and the trailing `INVARIANTS` const) caps on-screen puffs at 6. No gameplay, sound, HUD, input or scene changes. `npm run check` and `npm run smoke` pass.
+
+- Self-review: APPROVE
+- Time: 16.7 min
+
+```
+game/src/scenes/GameScene.ts    |  3 ++-
+ game/src/systems/FxSystem.ts    | 36 ++++++++++++++++++++++++++++++++++++
+ game/src/systems/SpawnSystem.ts |  1 +
+ 3 files changed, 39 insertions(+), 1 deletion(-)
+```

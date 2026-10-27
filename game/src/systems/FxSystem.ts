@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import { TEX } from '../art/textures';
 import { DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
+import type { Rng } from '../core/rng';
 import { CameraShake } from '../core/shake';
 import { SLAM } from '../core/slam';
 import { hook } from '../debug/testHook';
@@ -10,6 +11,8 @@ import { GAME_EVENTS } from '../scenes/keys';
 const PLATEMARK_MAX = 12;
 const PLATEMARK_LIFE_MS = 2000;
 const PLATEMARK_COOLDOWN_MS = 500;
+const DUST_MAX = 6;
+const DUST_LIFE_MS = 400;
 
 /**
  * Visual juice: particles, rings, screen shake. Purely cosmetic — gameplay code
@@ -28,6 +31,9 @@ export class FxSystem {
   private readonly platemarks: (Phaser.GameObjects.Image | undefined)[] = [];
   private platemarkCursor = 0;
   private lastPlatemarkAt = -Infinity;
+  /** Slam dust: flat paperLight puffs kicked up when a Platen's slam fires. Pooled like platemarks. */
+  private readonly dust: (Phaser.GameObjects.Image | undefined)[] = [];
+  private dustCursor = 0;
   /** The camera shake state machine. Named `shakeState` (not `shake`) because the public method is `shake()`. */
   private readonly shakeState = new CameraShake();
   /** Camera jitter applied last frame, in world units; subtracted before a new one so it can't accumulate. */
@@ -99,6 +105,29 @@ export class FxSystem {
     this.slamRings.explode(1, x, y);
   }
 
+  /** A Platen slam: three paperLight puffs pop at the body, drift 10–20 units out and fade over 400 ms. */
+  slamDust(x: number, y: number, rng: Rng): void {
+    for (let i = 0; i < 3; i += 1) {
+      const slot = this.dustSlot();
+      const angle = rng.range(0, Math.PI * 2);
+      const dist = rng.range(10, 20);
+      const radius = rng.range(4, 7);
+      this.scene.tweens.killTweensOf(slot);
+      slot.setPosition(x, y).setScale(radius / 4).setAlpha(1).setVisible(true);
+      this.scene.tweens.add({ targets: slot, x: x + Math.cos(angle) * dist, y: y + Math.sin(angle) * dist, alpha: 0, duration: DUST_LIFE_MS, ease: 'Linear', onComplete: () => slot.setVisible(false) });
+    }
+  }
+
+  /** One slot from the dust pool; lazily created, oldest reused. TEX.dot is a 4-radius circle, so scale = radius / 4. */
+  private dustSlot(): Phaser.GameObjects.Image {
+    const i = this.dustCursor;
+    this.dustCursor = (i + 1) % DUST_MAX;
+    let slot = this.dust[i];
+    if (!slot) slot = this.scene.add.image(0, 0, TEX.dot).setOrigin(0.5).setTint(PALETTE.paperLight).setDepth(DEPTH.fx).setVisible(false);
+    this.dust[i] = slot;
+    return slot;
+  }
+
   /** Enemy destroyed: a ring and fragments in its color. `extraRings` adds rings (elites). */
   death(x: number, y: number, body: number, accent: number, size: number, extraRings = 0): void {
     this.rings.setParticleTint(body);
@@ -139,6 +168,13 @@ export class FxSystem {
   get platemarkCount(): number {
     let n = 0;
     for (const s of this.platemarks) if (s && s.alpha > 0) n += 1;
+    return n;
+  }
+
+  /** Puffs currently on screen (the slam-dust invariant reads this). */
+  get dustCount(): number {
+    let n = 0;
+    for (const s of this.dust) if (s && s.alpha > 0) n += 1;
     return n;
   }
 
