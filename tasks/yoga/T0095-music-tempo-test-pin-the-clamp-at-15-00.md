@@ -4,10 +4,12 @@ title: "Music tempo test — pin the clamp at 15:00"
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T08:55:16Z
+claimed_at: 2026-10-27T09:28:47Z
+designer: desktop
 ---
 
 ## Goal
