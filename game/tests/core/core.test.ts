@@ -116,6 +116,13 @@ describe('RunState', () => {
     expect(run.firstSighting('dart')).toBe(true);
   });
 
+  it('reports each boss id as a first sighting exactly once', () => {
+    const run = new RunState(1);
+    expect(run.firstBossSighting('frame')).toBe(true);
+    expect(run.firstBossSighting('frame')).toBe(false);
+    expect(run.firstBossSighting('grid')).toBe(true);
+  });
+
   it('tracks kill streak and best streak, reset by damage', () => {
     const run = new RunState(1);
     run.registerKill();

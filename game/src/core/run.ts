@@ -115,6 +115,15 @@ export class RunState {
     return true;
   }
 
+  private readonly seenBossIds = new Set<string>();
+
+  /** True exactly once per boss id per run (first-appearance nameplate). */
+  firstBossSighting(id: string): boolean {
+    if (this.seenBossIds.has(id)) return false;
+    this.seenBossIds.add(id);
+    return true;
+  }
+
   /** Applies an upgrade: stat mods, granted weapon, and heals by any max HP gained. */
   applyUpgrade(def: UpgradeDef): void {
     const prevMax = this.stats.maxHp;

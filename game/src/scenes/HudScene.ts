@@ -14,6 +14,8 @@ import { GAME_EVENTS, getControls, getRun, SCENES } from './keys';
 const PAD = 12;
 /** After a hit the HP just lost shows as a yellow chunk that waits, then drains, while the bar gives a small shake. */
 const HP_HIT = { holdSec: 0.25, drainRate: 7, nudgeSec: 0.22, nudgePx: 4 } as const;
+/** Seconds the boss nameplate stays on the page before it is removed. */
+const BOSS_PLATE_SEC = 2;
 
 /** Overlay drawn above GameScene: bars, timer, kills, pause button, touch sticks. Read-only view of RunState. */
 export class HudScene extends Phaser.Scene {
@@ -32,6 +34,10 @@ export class HudScene extends Phaser.Scene {
   private bossG!: Phaser.GameObjects.Graphics;
   private bossName!: Phaser.GameObjects.Text;
   private bossWarnText!: Phaser.GameObjects.Text;
+  /** Boss nameplate: the boss's name printed below its bar when the boss first spawns this run. */
+  private bossPlate!: Phaser.GameObjects.Text;
+  private bossPlateActive = false;
+  private bossPlateAge = 0;
   /** Boss bar alpha while fading out after a kill. */
   private bossFade = 1;
   /** HP fraction the yellow "just lost" chunk reaches to. */
@@ -66,8 +72,11 @@ export class HudScene extends Phaser.Scene {
     this.bossG = this.add.graphics();
     this.bossName = this.add.text(0, 0, '', textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0);
     this.bossWarnText = this.add.text(0, 0, '', textStyle(48, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0.5).setAlpha(0);
+    this.bossPlate = this.add.text(0, 0, '', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0).setVisible(false);
 
     this.bossFade = 1;
+    this.bossPlateActive = false;
+    this.bossPlateAge = 0;
     this.hpGhost = 1;
     this.sinceHit = Number.POSITIVE_INFINITY;
     this.streakShown = false;
@@ -82,8 +91,18 @@ export class HudScene extends Phaser.Scene {
       this.sinceHit = 0;
     };
     gameEvents.on(GAME_EVENTS.playerHit, onPlayerHit);
+    const onBossNameplate = (name: string): void => {
+      this.bossPlate.setText(name);
+      this.bossPlateAge = 0;
+      this.bossPlateActive = true;
+      const p = this.bossPlatePos(this.scale.width); // place it now: HudScene updates before GameScene, so this frame's render would otherwise catch it at (0,0)
+      this.bossPlate.setPosition(p.x, p.y);
+      this.bossPlate.setAlpha(1).setVisible(true);
+    };
+    gameEvents.on(GAME_EVENTS.bossNameplate, onBossNameplate);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       gameEvents.off(GAME_EVENTS.playerHit, onPlayerHit);
+      gameEvents.off(GAME_EVENTS.bossNameplate, onBossNameplate);
     });
   }
 
@@ -134,6 +153,18 @@ export class HudScene extends Phaser.Scene {
       }
     }
 
+    if (this.bossPlateActive) {
+      if (this.scene.isActive(SCENES.game)) this.bossPlateAge += dt; // frozen while pause/level-up is up
+      const p = this.bossPlatePos(width);
+      this.bossPlate.setPosition(p.x, p.y); // 12 px below the bar's bottom edge
+      if (this.bossPlateAge >= BOSS_PLATE_SEC) {
+        this.bossPlateActive = false;
+        this.bossPlate.setAlpha(0).setVisible(false);
+      } else {
+        this.bossPlate.setAlpha(1 - this.bossPlateAge / BOSS_PLATE_SEC);
+      }
+    }
+
     this.pauseButton.setPosition(width - PAD - 22, PAD + 22);
     this.killText.setPosition(width - PAD - 54, PAD + 22).setText(`${run.kills} kills`);
     this.scoreText.setPosition(PAD, PAD + 48).setText(`SCORE ${run.score}`);
@@ -154,6 +185,14 @@ export class HudScene extends Phaser.Scene {
       this.drawStick(controls.touch.left, width * 0.18, height * 0.8, controls.touch.radius);
       this.drawStick(controls.touch.right, width * 0.82, height * 0.8, controls.touch.radius);
     }
+  }
+
+  /** Centered x and y (12 px below the boss bar's bottom edge) for the boss nameplate, matching the bar layout. */
+  private bossPlatePos(width: number): { x: number; y: number } {
+    const barW = Math.min(260, width * 0.42);
+    const narrow = PAD + barW + 80 > width / 2 - 30;
+    const bossTop = (narrow ? PAD + 40 : PAD) + 26;
+    return { x: width / 2, y: bossTop + 42 };
   }
 
   /** "×N" kill-streak tally top-right; a red "RHYTHM" flash at every 8th consecutive kill. */

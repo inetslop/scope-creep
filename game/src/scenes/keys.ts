@@ -19,6 +19,8 @@ export const GAME_EVENTS = {
   pauseRequest: 'pause-request',
   /** The player took damage. HudScene shows the hurt frame. */
   playerHit: 'player-hit',
+  /** The boss first appeared this run. Payload: the boss name (string) from its content def. */
+  bossNameplate: 'boss-nameplate',
 } as const;
 
 /** Typed access to objects GameScene shares through the game registry. */

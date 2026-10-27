@@ -14,6 +14,7 @@ import { hook } from '../debug/testHook';
 import { Boss } from '../entities/Boss';
 import type { Player } from '../entities/Player';
 import type { Projectile } from '../entities/Projectile';
+import { GAME_EVENTS } from '../scenes/keys';
 import type { DamageNumbers } from './DamageNumbers';
 import type { FxSystem } from './FxSystem';
 import type { PickupSystem } from './PickupSystem';
@@ -137,6 +138,7 @@ export class BossSystem {
     this.run.bossMaxHp = hp;
     this.sfx.bossSting(); // the boss is on the page: one deep thump and a music swell, same frame
     this.music.bossSwell();
+    if (this.run.firstBossSighting(this.def.id)) this.scene.events.emit(GAME_EVENTS.bossNameplate, this.def.name);
     this.phase = 'entering';
     this.phaseTimer = ENTER_SEC;
   }

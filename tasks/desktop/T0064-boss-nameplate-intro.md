@@ -4,11 +4,12 @@ title: Boss nameplate intro
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0054]
 attempts: 1
 created: 2026-10-27T03:07:33Z
 claimed_at: 2026-10-27T11:42:01Z
+finished_at: 2026-10-27T11:55:00Z
 ---
 
 ## Goal
@@ -99,3 +100,20 @@ it('reports each boss id as a first sighting exactly once', () => {
 });
 ```
 - Optional visual check (boss first appears at 300 s): temporarily set `firstAtSec: 8, intervalSec: 15` in `src/core/boss.ts`, play, then `git checkout src/core/boss.ts` — the diff must be clean.
+
+## Result (attempt 1, desktop)
+
+Added the T0064 boss nameplate: `RunState.firstBossSighting()` (per-run boss-id set, unit-tested), a new `bossNameplate` game event emitted by `BossSystem.startEntering()` only on a boss's first spawn of the run (name taken from the boss content def, so a future third boss gets it for free), and a decorative Text in `HudScene` that prints the name centered below the boss bar and fades out linearly over 2 s, frozen while pause/level-up overlays are up and removed from the emitter on shutdown. Boss sting/swell are untouched and still play on every spawn. `npm run check` (185 tests) and `npm run smoke` (desktop + mobile) both pass, plus an extra smoke run with an accelerated boss schedule to exercise the nameplate path end-to-end in the browser.
+
+- Self-review: APPROVE
+- Time: 13.0 min
+- Self-review made fixes (kept; checks pass).
+
+```
+game/src/core/run.ts           |  9 +++++++++
+ game/src/scenes/HudScene.ts    | 39 +++++++++++++++++++++++++++++++++++++++
+ game/src/scenes/keys.ts        |  2 ++
+ game/src/systems/BossSystem.ts |  2 ++
+ game/tests/core/core.test.ts   |  7 +++++++
+ 5 files changed, 59 insertions(+)
+```
