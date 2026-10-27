@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { BOSS_SCHEDULE, BossTimer, bossForKill, bossHpMultiplier } from '../../src/core/boss';
+import { BOSS_SCHEDULE, BOSS_WARNING_SEC, BossTimer, bossForKill, bossHpMultiplier } from '../../src/core/boss';
 
 describe('BossTimer', () => {
   it('first boss is due at exactly 300 s', () => {
@@ -34,6 +34,34 @@ describe('BossTimer', () => {
     timer.onBossKilled(10);
     expect(timer.due(29.9, false)).toBe(false);
     expect(timer.due(30, false)).toBe(true);
+  });
+});
+
+describe('inWarningWindow', () => {
+  it('BOSS_WARNING_SEC is 5 and the window is [nextAt - 5, nextAt)', () => {
+    expect(BOSS_WARNING_SEC).toBe(5);
+    const timer = new BossTimer();
+    expect(timer.inWarningWindow(294.9, false)).toBe(false);
+    expect(timer.inWarningWindow(295, false)).toBe(true);
+    expect(timer.inWarningWindow(299.9, false)).toBe(true);
+    expect(timer.inWarningWindow(300, false)).toBe(false);
+  });
+
+  it('is never in the window while a boss is alive', () => {
+    const timer = new BossTimer();
+    expect(timer.inWarningWindow(295, true)).toBe(false);
+    expect(timer.inWarningWindow(299, true)).toBe(false);
+  });
+
+  it('fires again in the 5 s before each respawn', () => {
+    const timer = new BossTimer();
+    timer.onBossKilled(300);
+    expect(timer.inWarningWindow(594.9, false)).toBe(false);
+    expect(timer.inWarningWindow(595, false)).toBe(true);
+    expect(timer.inWarningWindow(600, false)).toBe(false);
+    timer.onBossKilled(600);
+    expect(timer.inWarningWindow(895, false)).toBe(true);
+    expect(timer.inWarningWindow(900, false)).toBe(false);
   });
 });
 

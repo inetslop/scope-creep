@@ -32,14 +32,17 @@ const HOVER_ABOVE = 320;
 /** Margin kept from the arena walls when choosing the hover point. */
 const HOVER_MARGIN = 100;
 
-type Phase = 'off' | 'warning' | 'entering' | 'fighting';
+type Phase = 'off' | 'approach' | 'warning' | 'entering' | 'fighting';
 
 /**
  * The boss encounter: schedules the next boss (core/boss.ts: Frame and Grid
- * alternate), runs its warning -> slide-in -> fight state machine and attack
- * cycle, and resolves overlaps with the player's projectiles and the player.
- * BossSystem owns the writes to run.bossAlive/bossWarning/bossId/bossHp/
- * bossMaxHp/bossKills.
+ * alternate), runs its approach -> warning -> slide-in -> fight state machine
+ * and attack cycle, and resolves overlaps with the player's projectiles and
+ * the player. The 5 s 'approach' phase (core/boss.ts: BOSS_WARNING_SEC) opens
+ * when the timer enters its warning window and ends only when due() fires, so
+ * the window is exactly [nextAt - 5, nextAt) in run time. BossSystem owns the
+ * writes to run.bossAlive/bossWarning/bossApproach/bossId/bossHp/bossMaxHp/
+ * bossKills.
  */
 export class BossSystem {
   readonly boss: Boss;
@@ -58,7 +61,7 @@ export class BossSystem {
   private readonly timer = new BossTimer();
   private phase: Phase = 'off';
   private phaseTimer = 0;
-  /** The boss for the current or next encounter; chosen per spawn in startWarning. */
+  /** The boss for the current or next encounter; chosen when the approach window opens. */
   private def: FrameBossDef | GridBossDef = bossForKill(0);
   private readonly sweep = new GridSweep();
   private sweepPhase: GridSweepPhase = 'rest';
@@ -104,6 +107,12 @@ export class BossSystem {
   update(dt: number): void {
     if (this.phase === 'off') {
       if (this.timer.due(this.run.timeSec, this.run.bossAlive)) this.startWarning();
+      else if (this.timer.inWarningWindow(this.run.timeSec, this.run.bossAlive)) this.startApproach();
+      return;
+    }
+    if (this.phase === 'approach') {
+      // The approach ends when the spawn is due, never on its own timer: no gap, no overlap with the warning.
+      if (this.timer.due(this.run.timeSec, this.run.bossAlive)) this.startWarning();
       return;
     }
     if (this.phase === 'warning') {
@@ -115,8 +124,18 @@ export class BossSystem {
     else this.updateFighting(dt);
   }
 
+  /** Opens the 5 s approach window: the page trembles (BossApproachSystem) and one soft thud plays. */
+  private startApproach(): void {
+    this.def = bossForKill(this.run.bossKills);
+    this.run.bossId = this.def.id;
+    this.phase = 'approach';
+    this.run.bossApproach = true;
+    this.sfx.bossApproach();
+  }
+
   private startWarning(): void {
     this.def = bossForKill(this.run.bossKills);
+    this.run.bossApproach = false;
     this.run.bossId = this.def.id;
     this.phase = 'warning';
     this.phaseTimer = WARNING_SEC;

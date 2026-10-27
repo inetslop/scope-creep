@@ -21,12 +21,15 @@ export function bossHpMultiplier(kills: number): number {
   return Math.pow(1.5, kills);
 }
 
+/** Seconds before a boss spawn when the page warns that something heavy is coming. */
+export const BOSS_WARNING_SEC = 5;
+
 /** The boss that appears after `kills` bosses have died: Frame and Grid alternate. */
 export function bossForKill(kills: number): FrameBossDef | GridBossDef {
   return kills % 2 === 0 ? FRAME : GRID;
 }
 
-/** Tracks when the next boss should appear. BossSystem owns the writes. */
+/** Tracks when the next boss should appear and when its 5 s approach warning window opens. BossSystem owns the writes. */
 export class BossTimer {
   private readonly schedule: BossSchedule;
   private nextAt: number;
@@ -39,6 +42,11 @@ export class BossTimer {
   /** True when no boss is alive and the run time has reached the scheduled time. */
   due(timeSec: number, bossAlive: boolean): boolean {
     return !bossAlive && timeSec >= this.nextAt;
+  }
+
+  /** True only in the `BOSS_WARNING_SEC` seconds before the next scheduled spawn, and only when no boss is alive. */
+  inWarningWindow(timeSec: number, bossAlive: boolean): boolean {
+    return !bossAlive && timeSec >= this.nextAt - BOSS_WARNING_SEC && timeSec < this.nextAt;
   }
 
   /** Schedules the next boss `intervalSec` after this kill. */

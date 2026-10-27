@@ -4,11 +4,12 @@ title: Boss warning — the page trembles before a boss lands
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0064]
 attempts: 1
 created: 2026-10-27T03:53:41Z
 claimed_at: 2026-10-27T12:08:11Z
+finished_at: 2026-10-27T12:23:51Z
 ---
 
 ## Goal
@@ -132,3 +133,23 @@ hook.addInvariant('boss-approach-pulse', () => {
 
 ### Tests
 - `tests/core/boss.test.ts` (append): `describe('inWarningWindow')` — (a) `BOSS_WARNING_SEC === 5`; default timer: false at 294.9, true at 295 and 299.9, false at 300; (b) never true with `bossAlive` true (295, 299); (c) respawns: `onBossKilled(300)` → false at 594.9, true at 595, false at 600; `onBossKilled(600)` → true at 895, false at 900. No engine-side unit tests (smoke covers the pulse via the new invariant).
+
+## Result (attempt 1, desktop)
+
+Added the 5 s pre-boss warning: `BossTimer.inWarningWindow()` + `BOSS_WARNING_SEC` in core (tested), a new `BossApproachSystem` that pulses a 2 u red line along the crop-aware safe boundary (0→0.6→0 per second, hidden when idle), a `'approach'` phase in BossSystem that opens the window and plays one throttled 60 Hz thud via new `Sfx.bossApproach()`, and a "SOMETHING HEAVY APPROACHES" red flash in HudScene anchored below the T0064 nameplate line with a 2 s pause-safe fade. The window ends exactly when the spawn is due, so the pulse and flash are gone before the existing sting, and everything fires for every boss in the rotation and every respawn with no id special-casing. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 15.7 min
+- Self-review made fixes (kept; checks pass).
+
+```
+game/src/audio/Sfx.ts                  | 10 ++++++
+ game/src/core/boss.ts                  | 10 +++++-
+ game/src/core/run.ts                   |  2 ++
+ game/src/scenes/GameScene.ts           | 12 ++++++-
+ game/src/scenes/HudScene.ts            | 31 ++++++++++++++++++
+ game/src/systems/BossApproachSystem.ts | 59 ++++++++++++++++++++++++++++++++++
+ game/src/systems/BossSystem.ts         | 31 ++++++++++++++----
+ game/tests/core/boss.test.ts           | 30 ++++++++++++++++-
+ 8 files changed, 176 insertions(+), 9 deletions(-)
+```

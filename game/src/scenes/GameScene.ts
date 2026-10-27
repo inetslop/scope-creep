@@ -16,6 +16,7 @@ import type { Enemy } from '../entities/Enemy';
 import { Player } from '../entities/Player';
 import { Controls } from '../input/Controls';
 import { ArcSystem } from '../systems/ArcSystem';
+import { BossApproachSystem } from '../systems/BossApproachSystem';
 import { BossSystem } from '../systems/BossSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { CropSystem } from '../systems/CropSystem';
@@ -59,6 +60,7 @@ export class GameScene extends Phaser.Scene {
   private crop!: CropSystem;
   private gutter!: GutterSystem;
   private boss!: BossSystem;
+  private bossApproach!: BossApproachSystem;
   private orbit!: OrbitSystem;
   private arc!: ArcSystem;
   private spawns!: SpawnSystem;
@@ -103,6 +105,7 @@ export class GameScene extends Phaser.Scene {
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia, this.fx, this.sfx);
     this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.spawns);
     this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.music, this.damageNumbers, this.pickups);
+    this.bossApproach = new BossApproachSystem(this, this.run);
     this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
     this.arc = new ArcSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
 
@@ -140,6 +143,7 @@ export class GameScene extends Phaser.Scene {
     this.orbit.update(dt);
     this.spawns.update(dt);
     this.boss.update(dt);
+    this.bossApproach.update(dt);
     this.marginalia.update(dt);
     this.pickups.update(dt);
     this.crop.update(dt);
@@ -356,7 +360,13 @@ export class GameScene extends Phaser.Scene {
       if (!Number.isFinite(cam.scrollX) || !Number.isFinite(cam.scrollY)) return `camera scroll (${cam.scrollX}, ${cam.scrollY})`;
       return this.fx.shakeMs > 500 ? `shake stuck at ${this.fx.shakeMs} ms` : null;
     });
+    hook.addInvariant('boss-approach-pulse', () => {
+      const p = this.bossApproach;
+      if (p.pulseVisible !== this.run.bossApproach) return `pulse visible ${p.pulseVisible} but bossApproach ${this.run.bossApproach}`;
+      if (!Number.isFinite(p.pulseAlpha) || p.pulseAlpha < -1e-6 || p.pulseAlpha > 0.6 + 1e-6) return `pulse alpha ${p.pulseAlpha}`;
+      return null;
+    });
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'score', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'score', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse'];

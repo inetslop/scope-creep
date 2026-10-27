@@ -24,6 +24,7 @@ export class Sfx {
   private lastPickupCallAt = 0;
   private lastCardFlipAt = 0;
   private lastBossStingAt = 0;
+  private lastBossApproachAt = 0;
   private lastSlamAt = 0;
   private comboStep = 0;
 
@@ -173,6 +174,15 @@ export class Sfx {
     if (!this.canPlay()) return;
     this.tone('sawtooth', 98, 98, 0.3, 0.28, 0);
     this.tone('sawtooth', 73.42, 73.42, 0.45, 0.28, 0.32);
+  }
+
+  /** One soft low thud at the start of the boss approach window: 60 Hz sine decaying over 200 ms. One per second, never overlaps itself. */
+  bossApproach(): void {
+    if (!this.canPlay()) return;
+    const now = performance.now();
+    if (now - this.lastBossApproachAt < 1000) return;
+    this.lastBossApproachAt = now;
+    this.tone('sine', 60, 60, 0.2, 0.3);
   }
 
   /** Deep sub-bass thump when a boss appears: 55 Hz with a 30 ms attack decaying over 450 ms,

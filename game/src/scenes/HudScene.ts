@@ -36,8 +36,16 @@ export class HudScene extends Phaser.Scene {
   private bossWarnText!: Phaser.GameObjects.Text;
   /** Boss nameplate: the boss's name printed below its bar when the boss first spawns this run. */
   private bossPlate!: Phaser.GameObjects.Text;
+  /** Boss approach warning: flashes below the nameplate line in the 5 s before a spawn. */
+  private bossApproachText!: Phaser.GameObjects.Text;
   private bossPlateActive = false;
   private bossPlateAge = 0;
+  /** Edge-trigger state for the approach flash: true while it is on screen. */
+  private approachEdge = false;
+  /** True once the flash has played for the current window, so it does not re-trigger after fading out. */
+  private approachShown = false;
+  /** Seconds the approach flash has been on screen; advances only while the game scene is active. */
+  private approachAge = 0;
   /** Boss bar alpha while fading out after a kill. */
   private bossFade = 1;
   /** HP fraction the yellow "just lost" chunk reaches to. */
@@ -73,10 +81,14 @@ export class HudScene extends Phaser.Scene {
     this.bossName = this.add.text(0, 0, '', textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0);
     this.bossWarnText = this.add.text(0, 0, '', textStyle(48, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0.5).setAlpha(0);
     this.bossPlate = this.add.text(0, 0, '', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0).setVisible(false);
+    this.bossApproachText = this.add.text(0, 0, 'SOMETHING HEAVY APPROACHES', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(0.5, 0).setAlpha(0);
 
     this.bossFade = 1;
     this.bossPlateActive = false;
     this.bossPlateAge = 0;
+    this.approachEdge = false;
+    this.approachShown = false;
+    this.approachAge = 0;
     this.hpGhost = 1;
     this.sinceHit = Number.POSITIVE_INFINITY;
     this.streakShown = false;
@@ -136,6 +148,25 @@ export class HudScene extends Phaser.Scene {
     // Boss: the center warning, and the health bar below the top-center timer.
     const bossName = run.bossId !== '' ? BOSS_BY_ID.get(run.bossId)?.name ?? '' : '';
     this.bossWarnText.setPosition(width / 2, height / 2).setAlpha(run.bossWarning ? 1 : 0).setText(bossName);
+    // Approach flash: "SOMETHING HEAVY APPROACHES" below the nameplate line, fading out over 2 s.
+    const nameTop = this.bossPlatePos(width).y; // the boss nameplate line
+    if (run.bossApproach && !this.approachShown) {
+      this.approachShown = true;
+      this.approachEdge = true;
+      this.approachAge = 0;
+      this.tweens.killTweensOf(this.bossApproachText);
+      this.tweens.add({ targets: this.bossApproachText, scale: 1.15, duration: 200, yoyo: true, repeat: 1, ease: 'Sine.easeInOut' });
+    }
+    if (!run.bossApproach) {
+      this.approachEdge = false;
+      this.approachShown = false; // a new window (first spawn, respawn, next boss) may flash again
+    }
+    if (this.approachEdge) {
+      if (this.scene.isActive(SCENES.game)) this.approachAge += dt; // pause with the game
+      const a = Phaser.Math.Clamp(1 - this.approachAge / 2, 0, 1);
+      this.bossApproachText.setPosition(width / 2, nameTop + 20).setAlpha(a);
+      if (a <= 0) this.approachEdge = false;
+    } else this.bossApproachText.setAlpha(0);
     if (run.bossAlive) {
       this.bossFade = 1;
       const top = (narrow ? PAD + 40 : PAD) + 26;

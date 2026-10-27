@@ -36,6 +36,8 @@ export class RunState {
   /** Boss encounter state; BossSystem (src/systems/BossSystem.ts) owns the writes. */
   bossAlive = false;
   bossWarning = false;
+  /** True only during the 5 s window before a boss spawn (core/boss.ts: BOSS_WARNING_SEC); read by BossApproachSystem + HudScene. */
+  bossApproach = false;
   /** Id of the boss currently warning/alive (src/content/bosses); '' when none. */
   bossId = '';
   bossHp = 0;
