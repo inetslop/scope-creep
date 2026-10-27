@@ -85,7 +85,13 @@ export class CombatSystem {
     const now = this.scene.time.now;
     if (!e.active || this.player.isInvulnerable(now) || this.run.isDead) return;
     if (e.def.look.bar && !e.hitTestPoint(this.player.x, this.player.y, PLAYER_RADIUS)) return; // precise capsule gate
+    const rested = this.run.rest.covered;
     this.run.takeDamage(e.contactDamage);
+    if (rested) {
+      e.hit(0, this.player, 320); // still shove the enemy back so contact isn't continuous
+      this.restForgive();
+      return;
+    }
     this.player.hurt(now);
     e.hit(0, this.player, 320); // shove the enemy back so contact isn't continuous
     this.fx.playerHit(this.player.x, this.player.y);
@@ -94,11 +100,21 @@ export class CombatSystem {
 
   private onPlayerShot(p: EnemyBullet): void {
     if (!p.active || this.player.isInvulnerable(this.scene.time.now) || this.run.isDead) return;
+    const rested = this.run.rest.covered;
     this.run.takeDamage(p.damage);
-    this.player.hurt(this.scene.time.now);
-    this.fx.playerHit(this.player.x, this.player.y);
-    this.sfx.playerHurt();
+    if (rested) this.restForgive();
+    else {
+      this.player.hurt(this.scene.time.now);
+      this.fx.playerHit(this.player.x, this.player.y);
+      this.sfx.playerHurt();
+    }
     p.despawn();
+  }
+
+  /** A hit forgiven at rest: the low blip and a small flat ink ring — no hurt frame, no platemark, no shake. */
+  private restForgive(): void {
+    this.fx.critRing(this.player.x, this.player.y);
+    this.sfx.streakBreak();
   }
 
   killEnemy(e: Enemy): void {

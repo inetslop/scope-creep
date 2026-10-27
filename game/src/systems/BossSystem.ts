@@ -385,10 +385,14 @@ export class BossSystem {
         !this.player.isInvulnerable(now) &&
         !this.run.isDead
       ) {
+        const rested = this.run.rest.covered;
         this.run.takeDamage(grid.armDamage);
-        this.player.hurt(now);
-        this.fx.playerHit(this.player.x, this.player.y);
-        this.sfx.playerHurt();
+        if (rested) this.restForgive();
+        else {
+          this.player.hurt(now);
+          this.fx.playerHit(this.player.x, this.player.y);
+          this.sfx.playerHurt();
+        }
       }
     }
 
@@ -545,11 +549,22 @@ export class BossSystem {
     let damage = def.contactDamage;
     if (def.behavior === 'frame' && this.dashTimer > 0) damage = def.dashContactDamage;
     if (def.behavior === 'palette') this.swatchHit = true;
+    const rested = this.run.rest.covered;
     this.run.takeDamage(damage);
+    if (rested) {
+      this.restForgive();
+      return;
+    }
     this.player.hurt(now);
     if (def.behavior === 'palette') this.player.invulnerableUntil = Math.max(this.player.invulnerableUntil, now + SWATCH_INVULN_MS);
     this.fx.playerHit(this.player.x, this.player.y);
     this.sfx.playerHurt();
+  }
+
+  /** A hit forgiven at rest: the low blip and a small flat ink ring — no hurt frame, no platemark, no shake. */
+  private restForgive(): void {
+    this.fx.critRing(this.player.x, this.player.y);
+    this.sfx.streakBreak();
   }
 
   /** The boss shatters, the screen shakes, and its XP scatters as pickups. */

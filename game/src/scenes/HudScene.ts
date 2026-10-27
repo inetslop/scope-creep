@@ -64,6 +64,9 @@ export class HudScene extends Phaser.Scene {
   private rhythmUntil = 0;
   private cropUntil = 0;
   private cropFlashed = false;
+  private restText!: Phaser.GameObjects.Text;
+  private lastRestNegations = 0;
+  private restPopUntil = 0;
   private flashRed = false;
   /** Inkwell meter under the streak tally. The scene instance survives stop/launch, so reset the scalars in create(). */
   private inkLabel!: Phaser.GameObjects.Text;
@@ -84,6 +87,7 @@ export class HudScene extends Phaser.Scene {
     this.killText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5);
     this.scoreText = this.add.text(0, 0, 'SCORE 0', textStyle(14, PALETTE.ink)).setOrigin(0, 0.5);
     this.streakText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5).setVisible(false);
+    this.restText = this.add.text(0, 0, 'REST', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(1, 0.5).setAlpha(0.7).setVisible(false);
     this.rhythmText = this.add.text(0, 0, 'RHYTHM', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
     this.cropText = this.add.text(0, 0, 'CROPPING', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
     // After cropText so the specks render above the tally text.
@@ -113,6 +117,8 @@ export class HudScene extends Phaser.Scene {
     this.rhythmUntil = 0;
     this.cropUntil = 0;
     this.cropFlashed = false;
+    this.lastRestNegations = 0;
+    this.restPopUntil = 0;
     this.flashRed = false;
     this.inkNoteShown = false;
     this.lastInkwell = 0;
@@ -244,6 +250,15 @@ export class HudScene extends Phaser.Scene {
     }
     this.cropText.setPosition(width - PAD - this.streakText.width - 8, PAD + 60); // same slot as RHYTHM
     this.cropText.setVisible(this.time.now < this.cropUntil);
+    if (run.rest.negations !== this.lastRestNegations) { // a hit was just forgiven
+      this.lastRestNegations = run.rest.negations;
+      this.restPopUntil = this.time.now + 150;
+      this.tweens.killTweensOf(this.restText);
+      this.restText.setScale(1.2);
+      this.tweens.add({ targets: this.restText, scale: 1, duration: 150, ease: 'Sine.easeOut' });
+    }
+    this.restText.setPosition(width - PAD - this.streakText.width - 8, PAD + 60); // same slot as RHYTHM
+    this.restText.setVisible(run.rest.covered || this.time.now < this.restPopUntil);
     this.fpsText?.setPosition(PAD, height - 24).setText(`${Math.round(this.game.loop.actualFps)} fps`);
 
     const controls = getControls(this);

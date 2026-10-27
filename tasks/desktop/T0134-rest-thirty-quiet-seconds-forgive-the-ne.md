@@ -4,11 +4,12 @@ title: Rest — thirty quiet seconds forgive the next hit
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T18:14:35Z
 claimed_at: 2026-10-27T19:57:29Z
+finished_at: 2026-10-27T20:09:01Z
 ---
 
 ## Goal
@@ -122,3 +123,21 @@ export class RestState {
 
 ### Tests
 - `tests/core/rest.test.ts` (crop/gutter style): constant exposed; not covered at 29.9 s, covered at 30.0 s; any damage (burn or discrete) at any point restarts the count; a negated hit restarts exactly — not covered again at 29.999 s after it, covered at 30.0 s; burns are never negated and a burn on the rest-completing frame can never hold the rest (`negations` stays 0); of two discrete hits in one pass only the first is negated; a non-negated hit doesn't increment `negations`; RunState wiring: `takeDamage` at rest returns 0 with hp and streak intact, `drain` at rest still deals damage and restarts the count.
+
+## Result (attempt 1, desktop)
+
+Added the Rest rule — 30 s without damage makes the next discrete hit free. New pure `src/core/rest.ts` (RestState + REST constant) wired into `RunState.takeDamage` (negates, restarts the count) and `RunState.drain` (burns only restart), with `restForgive()` (low blip + flat ink ring, no hurt frame/platemark/shake) in CombatSystem and BossSystem covering all four damage sites; HudScene shows a 70%-alpha "REST" label in the RHYTHM slot that pops 1.2× on a forgiven hit; GameScene ticks the count and registers a `rest` invariant. Verified with `npm run check` (283 tests pass) and `npm run smoke` (desktop + mobile pass).
+
+- Self-review: APPROVE
+- Time: 11.5 min
+
+```
+game/src/core/rest.ts            |  38 ++++++++++++++
+ game/src/core/run.ts             |  15 +++++-
+ game/src/scenes/GameScene.ts     |   3 ++
+ game/src/scenes/HudScene.ts      |  15 ++++++
+ game/src/systems/BossSystem.ts   |  21 ++++++--
+ game/src/systems/CombatSystem.ts |  22 ++++++--
+ game/tests/core/rest.test.ts     | 110 +++++++++++++++++++++++++++++++++++++++
+ 7 files changed, 216 insertions(+), 8 deletions(-)
+```

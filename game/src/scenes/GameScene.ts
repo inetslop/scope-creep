@@ -6,6 +6,7 @@ import { ARENA_SIZE, DEPTH, PLAYER_RADIUS, VIEW_SHORT_SIDE } from '../config';
 import { PALETTE } from '../content/palette';
 import { UPGRADES, UPGRADE_BY_ID } from '../content/upgrades';
 import { loadBestScore, saveBestScore } from '../core/bestScore';
+import { REST } from '../core/rest';
 import { RunState } from '../core/run';
 import { STREAK_FIRE_BONUS, STREAK_FIRE_BONUS_STREAK, streakFireBonus } from '../core/stats';
 import { SWATCH_CASCADE } from '../core/swatchCascade';
@@ -169,6 +170,7 @@ export class GameScene extends Phaser.Scene {
     const dt = Math.min(delta, 50) / 1000; // clamp so a stalled tab doesn't teleport everything
     const run = this.run;
     run.timeSec += dt;
+    run.rest.tick(dt); // 30 s of peace puts the player at rest (core/rest.ts)
     this.music.update(run.timeSec);
 
     const cam = this.cameras.main;
@@ -444,6 +446,7 @@ export class GameScene extends Phaser.Scene {
       return g >= MUSIC_VOLUME - 1e-6 && g <= MUSIC_VOLUME * 1.6 + 1e-6 ? null : `music swell gain ${g}`;
     });
     hook.addInvariant('inkwell', () => (this.run.inkwell >= -1e-9 && this.run.inkwell <= 1 + 1e-9 ? null : `inkwell ${this.run.inkwell}`));
+    hook.addInvariant('rest', () => (this.run.rest.covered === (this.run.rest.since >= REST.windowSec) ? null : `rest covered ${this.run.rest.covered} at ${this.run.rest.since} s of peace`));
     hook.addInvariant('streak', () => (this.run.streak >= 0 && this.run.bestStreak >= this.run.streak ? null : `streak ${this.run.streak} / best ${this.run.bestStreak}`));
     hook.addInvariant('score', () => (Number.isFinite(this.run.score) && this.run.score >= 0 ? null : `score ${this.run.score}`));
     hook.addInvariant('score-feed', () => (this.feed.activeCount <= 32 ? null : `${this.feed.activeCount} score feed texts active`));

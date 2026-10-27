@@ -1,6 +1,7 @@
 import type { UpgradeDef } from '../content/types';
 import { Fermata } from './fermata';
 import { xpToNextLevel } from './progression';
+import { RestState } from './rest';
 import { Rng } from './rng';
 import { computeStats, type PlayerStats, type StatMod } from './stats';
 
@@ -31,6 +32,8 @@ export class RunState {
   bestStreak = 0;
   /** Inkwell meter, 0..1: fills as firing weapons fire, consumed by the burst volley. */
   inkwell = 0;
+  /** Rest (core/rest.ts): 30 s of peace puts the player at rest — the next discrete hit is free. */
+  readonly rest = new RestState();
   /** The fermata: after a level-up pick, the shapes hold still for 0.6 s from the resume. */
   readonly fermata = new Fermata();
   hp: number;
@@ -78,9 +81,14 @@ export class RunState {
     return gained;
   }
 
-  /** Applies armor (min 1 damage). Returns the damage actually taken. */
+  /**
+   * A discrete hit (enemy/boss contact or bullet). Applies armor (min 1
+   * damage) and returns the damage actually taken. At rest the hit is fully
+   * negated: it returns 0 and the rest count restarts from this moment.
+   */
   takeDamage(amount: number): number {
     if (amount <= 0 || this.isDead) return 0;
+    if (this.rest.discreteHit()) return 0;
     const dealt = Math.max(1, amount - this.stats.armor);
     this.hp = Math.max(0, this.hp - dealt);
     this.streak = 0;
@@ -92,7 +100,10 @@ export class RunState {
     if (amount <= 0 || this.isDead) return 0;
     const dealt = Math.min(amount, this.hp);
     this.hp -= dealt;
-    if (dealt > 0) this.streak = 0;
+    if (dealt > 0) {
+      this.streak = 0;
+      this.rest.burn(); // burns are never negated; they only restart the rest count
+    }
     return dealt;
   }
 
