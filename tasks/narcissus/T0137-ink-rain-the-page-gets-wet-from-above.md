@@ -4,10 +4,12 @@ title: Ink rain — the page gets wet from above
 assignee: narcissus
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T18:14:35Z
+claimed_at: 2026-10-27T19:14:01Z
+designer: desktop
 ---
 
 ## Goal
