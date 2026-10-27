@@ -130,3 +130,5 @@ The PO adds ideas here. Good ones become tasks.
 - Ink bleed: when a crit lands, a small ink splat stays at the hit for 2 s and slows enemies standing in it by 30% — crit builds paint the battlefield
 - Frame's heartbeat: while The Frame is alive the paper pulses once per second in time with its attack rhythm — the boss's tempo is felt in the page
 - Prestissimo: the first time your kill streak reaches 10 in a run, your next level-up deals 4 cards instead of 3, with a "PRESTISSIMO" flash
+- ~~Impasto upgrade: +1 projectile per volley and +15% damage per level, maxLevel 2, weight 3 — a rare heavy-volley card that reuses the Repetition and Emphasis stats~~ → T0062
+- ~~Unit tests for the crop schedule: the safe area is 1.0 before 12:00, shrinks to 0.7 by 17:00, and never goes below 0.7 (locks T0045's pure schedule)~~ → T0063
