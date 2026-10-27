@@ -4,11 +4,12 @@ title: Kill feed — points pop above the corpse
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T11:41:58Z
 claimed_at: 2026-10-27T13:25:49Z
+finished_at: 2026-10-27T13:40:45Z
 ---
 
 ## Goal
@@ -73,3 +74,18 @@ Full body of `ScoreFeed` (copy verbatim): imports `SCORE_POINTS, DEPTH` from `'.
 
 ### Tests
 - none
+
+## Result (attempt 1, desktop-4070)
+
+Added the kill feed (T0106): a new `src/systems/ScoreFeed.ts` pools 32 ink texts in a round-robin ring; each kill pops "+1" / "+5" / "+50" (read straight from `SCORE_POINTS`) rising ~24 units and fading over ~0.6 s above the corpse, with elites larger/bolder and bosses largest plus a reused crit-ring at the boss position. `CombatSystem.killEnemy()` and `BossSystem.killBoss()` now call `feed.showKill` at the exact instant `addScore` fires (with `fx.critRing` on boss death), and `GameScene.ts` constructs the feed, injects it into both systems, and registers a `score-feed` pool invariant. No score values, XP, shard drops or streak behavior changed — purely additive above the existing HUD; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 14.9 min
+
+```
+game/src/scenes/GameScene.ts     | 10 +++++---
+ game/src/systems/BossSystem.ts   |  6 +++++
+ game/src/systems/CombatSystem.ts |  5 ++++
+ game/src/systems/ScoreFeed.ts    | 49 ++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 67 insertions(+), 3 deletions(-)
+```

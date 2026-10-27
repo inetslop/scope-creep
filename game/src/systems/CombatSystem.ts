@@ -12,6 +12,7 @@ import type { Projectile } from '../entities/Projectile';
 import type { DamageNumbers } from './DamageNumbers';
 import type { FxSystem } from './FxSystem';
 import type { PickupSystem } from './PickupSystem';
+import type { ScoreFeed } from './ScoreFeed';
 import type { SpawnSystem } from './SpawnSystem';
 
 /** Arcade overlap callbacks hand us loosely typed objects; our groups only contain these classes. */
@@ -29,6 +30,7 @@ export class CombatSystem {
   private readonly pickups: PickupSystem;
   private readonly sfx: Sfx;
   private readonly damageNumbers: DamageNumbers;
+  private readonly feed: ScoreFeed;
   private readonly spawns: SpawnSystem;
 
   constructor(
@@ -40,6 +42,7 @@ export class CombatSystem {
     pickups: PickupSystem,
     sfx: Sfx,
     damageNumbers: DamageNumbers,
+    feed: ScoreFeed,
     spawns: SpawnSystem,
   ) {
     this.scene = scene;
@@ -49,6 +52,7 @@ export class CombatSystem {
     this.pickups = pickups;
     this.sfx = sfx;
     this.damageNumbers = damageNumbers;
+    this.feed = feed;
     this.spawns = spawns;
     scene.physics.add.overlap(groups.projectiles, groups.enemies, (p, e) => this.onProjectileHit(as<Projectile>(p), as<Enemy>(e)));
     scene.physics.add.overlap(player, groups.enemies, (_p, e) => this.onPlayerTouched(as<Enemy>(e)));
@@ -115,6 +119,7 @@ export class CombatSystem {
     this.run.kills += 1;
     this.run.registerKill();
     this.run.addScore(e.elite ? SCORE_POINTS.elite : SCORE_POINTS.enemy);
+    this.feed.showKill(e.x, e.y - size - 10, e.elite ? 'elite' : 'enemy');
     hook.stats.enemiesKilled += 1;
     if (e.def.splitsInto) this.split(e);
     e.despawn();

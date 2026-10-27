@@ -27,6 +27,7 @@ import { Marginalia } from '../systems/Marginalia';
 import { FxSystem } from '../systems/FxSystem';
 import { OrbitSystem } from '../systems/OrbitSystem';
 import { PickupSystem } from '../systems/PickupSystem';
+import { ScoreFeed } from '../systems/ScoreFeed';
 import { SpawnSystem } from '../systems/SpawnSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
 import { GAME_EVENTS, onResize, SCENES } from './keys';
@@ -53,6 +54,7 @@ export class GameScene extends Phaser.Scene {
   private controls!: Controls;
   private fx!: FxSystem;
   private damageNumbers!: DamageNumbers;
+  private feed!: ScoreFeed;
   private marginalia!: Marginalia;
   private sfx!: Sfx;
   private music!: Music;
@@ -95,6 +97,7 @@ export class GameScene extends Phaser.Scene {
     this.player = new Player(this, 0, 0);
     this.fx = new FxSystem(this);
     this.damageNumbers = new DamageNumbers(this);
+    this.feed = new ScoreFeed(this);
     this.crop = new CropSystem(this, this.run, this.player, this.damageNumbers);
     this.marginalia = new Marginalia(this, this.bounds);
     this.gutter = new GutterSystem(this, this.run, this.player, this.marginalia, this.damageNumbers);
@@ -104,8 +107,8 @@ export class GameScene extends Phaser.Scene {
     this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx);
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia, this.fx, this.sfx);
-    this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.spawns);
-    this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.music, this.damageNumbers, this.pickups);
+    this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.feed, this.spawns);
+    this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.music, this.damageNumbers, this.feed, this.pickups);
     this.bossApproach = new BossApproachSystem(this, this.run);
     this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
     this.arc = new ArcSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
@@ -356,6 +359,7 @@ export class GameScene extends Phaser.Scene {
     hook.addInvariant('inkwell', () => (this.run.inkwell >= -1e-9 && this.run.inkwell <= 1 + 1e-9 ? null : `inkwell ${this.run.inkwell}`));
     hook.addInvariant('streak', () => (this.run.streak >= 0 && this.run.bestStreak >= this.run.streak ? null : `streak ${this.run.streak} / best ${this.run.bestStreak}`));
     hook.addInvariant('score', () => (Number.isFinite(this.run.score) && this.run.score >= 0 ? null : `score ${this.run.score}`));
+    hook.addInvariant('score-feed', () => (this.feed.activeCount <= 32 ? null : `${this.feed.activeCount} score feed texts active`));
     hook.addInvariant('crop-damage', () => Number.isFinite(this.crop.totalDamage) && this.crop.totalDamage >= 0 ? null : `crop damage ${this.crop.totalDamage}`);
     hook.addInvariant('gutter-damage', () => Number.isFinite(this.gutter.totalDamage) && this.gutter.totalDamage >= 0 ? null : `gutter damage ${this.gutter.totalDamage}`);
     hook.addInvariant('gutter-band', () => (!this.gutter.bandActive || Number.isFinite(this.gutter.bandX) ? null : `gutter band at (${this.gutter.bandX})`));
@@ -384,4 +388,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'inkwell', 'streak', 'score', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse', 'bouncing-points', 'wound-threshold'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'inkwell', 'streak', 'score', 'score-feed', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse', 'bouncing-points', 'wound-threshold'];

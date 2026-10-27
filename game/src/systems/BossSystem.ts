@@ -19,6 +19,7 @@ import { GAME_EVENTS } from '../scenes/keys';
 import type { DamageNumbers } from './DamageNumbers';
 import type { FxSystem } from './FxSystem';
 import type { PickupSystem } from './PickupSystem';
+import type { ScoreFeed } from './ScoreFeed';
 import type { SpawnSystem } from './SpawnSystem';
 
 /** Arcade overlap callbacks hand us loosely typed objects; our groups only contain these classes. */
@@ -55,6 +56,7 @@ export class BossSystem {
   private readonly sfx: Sfx;
   private readonly music: Music;
   private readonly damageNumbers: DamageNumbers;
+  private readonly feed: ScoreFeed;
   private readonly pickups: PickupSystem;
   /** The Grid's sweeping arm bar: a plain image (Arcade bodies do not rotate), hit-tested by hand. */
   readonly arm: Phaser.GameObjects.Image;
@@ -86,6 +88,7 @@ export class BossSystem {
     sfx: Sfx,
     music: Music,
     damageNumbers: DamageNumbers,
+    feed: ScoreFeed,
     pickups: PickupSystem,
   ) {
     this.scene = scene;
@@ -96,6 +99,7 @@ export class BossSystem {
     this.sfx = sfx;
     this.music = music;
     this.damageNumbers = damageNumbers;
+    this.feed = feed;
     this.pickups = pickups;
     this.boss = new Boss(scene);
     this.arm = scene.add.image(0, 0, TEX.bossGridArm).setVisible(false).setDepth(DEPTH.enemies + 1);
@@ -339,6 +343,8 @@ export class BossSystem {
     this.run.bossHp = 0;
     this.run.bossKills += 1;
     this.run.addScore(SCORE_POINTS.boss);
+    this.feed.showKill(x, y - def.bodyRadius - 12, 'boss');
+    this.fx.critRing(x, y);
     hook.stats.bossKills += 1;
     if (def.behavior === 'grid') {
       hook.stats.gridKills += 1;
