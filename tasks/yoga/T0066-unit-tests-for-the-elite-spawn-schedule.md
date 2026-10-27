@@ -4,10 +4,12 @@ title: Unit tests for the elite spawn schedule
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T03:07:33Z
+claimed_at: 2026-10-27T03:10:25Z
+designer: yoga
 ---
 
 ## Goal
