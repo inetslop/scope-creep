@@ -4,10 +4,11 @@ title: Shard glint — gilt is legible in the hand
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T15:11:35Z
+claimed_at: 2026-10-27T16:28:34Z
 ---
 
 ## Goal
