@@ -4,10 +4,11 @@ title: Hare kick — the quicken pops a puff behind it
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0110]
-attempts: 0
+attempts: 1
 created: 2026-10-27T13:48:11Z
+claimed_at: 2026-10-27T14:52:57Z
 ---
 
 ## Goal
