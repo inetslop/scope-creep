@@ -132,6 +132,13 @@ export class Sfx {
     this.noise(0.08, 0.14, 1000, 'bandpass');
   }
 
+  /** Soft descending "shush" when the bubble activates; nothing on end. */
+  bubbleOn(): void {
+    if (!this.canPlay()) return;
+    this.noise(0.6, 0.16, 1400, 'bandpass');
+    this.tone('sine', 540, 180, 0.6, 0.08);
+  }
+
   /** Three-note rising arp. */
   levelUp(): void {
     if (!this.canPlay()) return;

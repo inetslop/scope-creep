@@ -7,7 +7,7 @@ import { flags } from '../debug/flags';
 import type { StickState } from '../input/TouchSticks';
 import { makeButton } from '../ui/button';
 import { textStyle } from '../ui/text';
-import { GAME_EVENTS, getControls, getRun, getUnderstudy, SCENES } from './keys';
+import { GAME_EVENTS, getControls, getRun, getStillLife, getUnderstudy, SCENES } from './keys';
 
 const PAD = 12;
 /** After a hit the HP just lost shows as a yellow chunk that waits, then drains, while the bar gives a small shake. */
@@ -38,6 +38,9 @@ export class HudScene extends Phaser.Scene {
   /** Understudy button (touch only): a 60 px round target, redrawn every frame. */
   private understudyButton?: Phaser.GameObjects.Container;
   private understudyG?: Phaser.GameObjects.Graphics;
+  /** Still Life button (touch only): a 60 px round target right of the understudy one. */
+  private stillLifeButton?: Phaser.GameObjects.Container;
+  private stillLifeG?: Phaser.GameObjects.Graphics;
   private streakShown = false;
   private lastStreak = 0;
   private flashUntil = 0;
@@ -66,6 +69,9 @@ export class HudScene extends Phaser.Scene {
       this.understudyG = this.add.graphics();
       this.understudyButton = this.add.container(0, 0, [this.understudyG]).setSize(60, 60).setInteractive({ useHandCursor: true });
       this.understudyButton.on('pointerdown', () => getUnderstudy(this)?.trigger());
+      this.stillLifeG = this.add.graphics();
+      this.stillLifeButton = this.add.container(0, 0, [this.stillLifeG]).setSize(60, 60).setInteractive({ useHandCursor: true });
+      this.stillLifeButton.on('pointerdown', () => getStillLife(this)?.trigger());
     }
 
     this.bossFade = 1;
@@ -133,6 +139,7 @@ export class HudScene extends Phaser.Scene {
     this.pauseButton.setPosition(width - PAD - 22, PAD + 22);
     this.killText.setPosition(width - PAD - 54, PAD + 22).setText(`${run.kills} kills`);
     this.drawUnderstudy(height);
+    this.drawStillLife(height);
     this.updateStreak(run, width);
     this.fpsText?.setPosition(PAD, height - 24).setText(`${Math.round(this.game.loop.actualFps)} fps`);
 
@@ -208,6 +215,19 @@ export class HudScene extends Phaser.Scene {
       this.drawCooldownIcon(this.understudyG, 30, 30, 30, us.cooldownFrac);
     } else {
       this.drawCooldownIcon(this.g, PAD + 22, height - PAD - 36, 18, us.cooldownFrac);
+    }
+  }
+
+  /** Bottom-left still-life cooldown: a small icon (desktop) or a 60 px round button (touch), right of the understudy one. */
+  private drawStillLife(height: number): void {
+    const sl = getStillLife(this);
+    if (!sl) return;
+    if (this.stillLifeButton && this.stillLifeG) {
+      this.stillLifeButton.setPosition(PAD + 110, height - PAD - 36).setAlpha(sl.ready ? 1 : 0.55);
+      this.stillLifeG.clear();
+      this.drawCooldownIcon(this.stillLifeG, 30, 30, 30, sl.cooldownFrac);
+    } else {
+      this.drawCooldownIcon(this.g, PAD + 66, height - PAD - 36, 18, sl.cooldownFrac);
     }
   }
 

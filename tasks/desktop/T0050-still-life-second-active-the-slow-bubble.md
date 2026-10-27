@@ -4,11 +4,12 @@ title: "Still Life — second active: the slow bubble"
 assignee: desktop
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T00:32:39Z
 claimed_at: 2026-10-27T00:40:44Z
+finished_at: 2026-10-27T00:55:06Z
 ---
 
 ## Goal
@@ -67,3 +68,28 @@ A second active alongside the Understudy decoy: Still Life slows time in a bubbl
 
 ### Tests
 - `tests/core/stillLife.test.ts`: ready/frac at start; not re-triggerable at 11.9 s, ready at 12.1 s; `update` returns false 49× then true on the 50th tick (5 s) with `active` false while `ready` still false (cooldown outlives the window); constants 5/12/160/0.5.
+
+## Result (attempt 1, desktop)
+
+Added Still Life, a second always-available active: a 160-unit pale-blue bubble (5 s, 12 s cooldown) around the player that halves the speed of enemies, enemy shots and the boss inside it while leaving attack-pattern timers untouched. New pure timing module `src/core/stillLife.ts` with unit tests, new `StillLifeSystem` (disc texture at depth 15, per-frame slow pass, quiet descending "shush" SFX, hook stats `stillLifeActivations`/`stillLifeActive`, `still-life` invariant), Q-key trigger on desktop and a second 60 px touch button + second clockwise cooldown icon in the HUD, with `EnemyBullet` gaining `baseVx/baseVy` so shots re-derive velocity instead of compounding; docs updated. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 14.4 min
+- Self-review made fixes (kept; checks pass).
+
+```
+game/docs/ARCHITECTURE.md           |  7 +--
+ game/src/art/textures.ts            | 21 ++++++++
+ game/src/audio/Sfx.ts               |  7 +++
+ game/src/config.ts                  |  1 +
+ game/src/core/stillLife.ts          | 50 +++++++++++++++++++
+ game/src/debug/testHook.ts          |  4 ++
+ game/src/entities/EnemyBullet.ts    |  7 ++-
+ game/src/scenes/GameScene.ts        | 18 ++++++-
+ game/src/scenes/HudScene.ts         | 22 ++++++++-
+ game/src/scenes/MenuScene.ts        |  2 +-
+ game/src/scenes/keys.ts             |  5 ++
+ game/src/systems/StillLifeSystem.ts | 96 +++++++++++++++++++++++++++++++++++++
+ game/tests/core/stillLife.test.ts   | 40 ++++++++++++++++
+ 13 files changed, 273 insertions(+), 7 deletions(-)
+```

@@ -18,12 +18,14 @@ export interface HookStats {
   shardsCollected: number;
   upgradesTaken: number;
   understudyDrops: number;
+  stillLifeActivations: number;
   /** Live values from the current run. */
   timeSec: number;
   level: number;
   hp: number;
   maxHp: number;
   enemiesAlive: number;
+  stillLifeActive: boolean;
 }
 
 /** Returns an error message when something is wrong, otherwise null/undefined. */
@@ -50,11 +52,13 @@ export class TestHook {
     shardsCollected: 0,
     upgradesTaken: 0,
     understudyDrops: 0,
+    stillLifeActivations: 0,
     timeSec: 0,
     level: 0,
     hp: 0,
     maxHp: 0,
     enemiesAlive: 0,
+    stillLifeActive: false,
   };
   private readonly checks = new Map<string, InvariantCheck>();
 

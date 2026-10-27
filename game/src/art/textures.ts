@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import { BUBBLE_RADIUS } from '../core/stillLife';
 import { PLAYER_RADIUS } from '../config';
 import { FRAME } from '../content/bosses/frame';
 import { ENEMIES } from '../content/enemies';
@@ -25,6 +26,8 @@ export const TEX = {
   playerHurt: 'playerHurt',
   /** The understudy decoy: the player's disc without the core, ringed with dashed ink. */
   decoy: 'decoy',
+  /** Still Life: a pale blue disc with a dashed blue ring at its rim. */
+  bubble: 'bubble',
   barrel: 'barrel',
   /** XP pickup. */
   shard: 'shard',
@@ -62,6 +65,7 @@ export function generateTextures(scene: Phaser.Scene): void {
   });
   drawPlayer(scene);
   drawDecoy(scene);
+  drawBubble(scene);
   graphicsTexture(scene, TEX.barrel, 34, 10, (g) => {
     g.fillStyle(PALETTE.ink, 1);
     g.fillRoundedRect(0, 1, 34, 8, 3);
@@ -112,6 +116,23 @@ function drawDecoy(scene: Phaser.Scene): void {
     for (let i = 0; i < 12; i++) {
       g.beginPath();
       g.arc(c, c, r, i * step, i * step + step * 0.55, false);
+      g.stroke();
+    }
+  });
+}
+
+/** Still Life: a pale blue disc with a dashed blue ring at its rim, centered on the player. */
+function drawBubble(scene: Phaser.Scene): void {
+  const size = BUBBLE_RADIUS * 2 + 16;
+  const c = size / 2;
+  graphicsTexture(scene, TEX.bubble, size, size, (g) => {
+    g.fillStyle(PALETTE.blue, 0.14);
+    g.fillCircle(c, c, BUBBLE_RADIUS);
+    g.lineStyle(4, PALETTE.blue, 1);
+    const step = (Math.PI * 2) / 24;
+    for (let i = 0; i < 24; i++) {
+      g.beginPath();
+      g.arc(c, c, BUBBLE_RADIUS - 2, i * step, i * step + step * 0.5, false);
       g.stroke();
     }
   });

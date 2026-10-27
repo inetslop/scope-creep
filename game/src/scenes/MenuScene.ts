@@ -45,7 +45,7 @@ export class MenuScene extends Phaser.Scene {
       .text(width / 2, height * 0.66, touch ? 'Tap to start' : 'Click or press Enter to start', textStyle(Math.min(30, short * 0.06), PALETTE.ink, { fontStyle: 'bold' }))
       .setOrigin(0.5);
     this.tweens.add({ targets: prompt, alpha: 0.3, duration: 700, yoyo: true, repeat: -1 });
-    const hint = touch ? 'Left thumb: move  ·  Right thumb: aim & fire' : 'WASD: move  ·  Mouse: aim  ·  Hold click: fire  ·  Space: decoy  ·  Esc: pause';
+    const hint = touch ? 'Left thumb: move  ·  Right thumb: aim & fire' : 'WASD: move  ·  Mouse: aim  ·  Hold click: fire  ·  Space: decoy  ·  Q: slow bubble  ·  Esc: pause';
     this.add.text(width / 2, height * 0.74, hint, textStyle(Math.min(18, short * 0.036), PALETTE.inkSoft)).setOrigin(0.5);
     this.add.text(width - 8, height - 6, `build ${hook.sha}`, textStyle(12, PALETTE.gray)).setOrigin(1, 1);
 

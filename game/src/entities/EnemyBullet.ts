@@ -6,6 +6,9 @@ import { DEPTH } from '../config';
 export class EnemyBullet extends Phaser.Physics.Arcade.Image {
   damage = 0;
   lifeLeft = 0;
+  /** Speed at fire time; StillLifeSystem re-derives the live velocity from it each frame. */
+  baseVx = 0;
+  baseVy = 0;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, TEX.enemyShot);
@@ -15,7 +18,9 @@ export class EnemyBullet extends Phaser.Physics.Arcade.Image {
     this.enableBody(true, x, y, true, true);
     (this.body as Phaser.Physics.Arcade.Body).setCircle(6, this.width / 2 - 6, this.height / 2 - 6);
     this.setDepth(DEPTH.projectiles);
-    this.setVelocity(Math.cos(angle) * speed, Math.sin(angle) * speed);
+    this.baseVx = Math.cos(angle) * speed;
+    this.baseVy = Math.sin(angle) * speed;
+    this.setVelocity(this.baseVx, this.baseVy);
     this.damage = damage;
     this.lifeLeft = lifetimeSec;
   }

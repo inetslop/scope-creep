@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import type { RunState } from '../core/run';
 import type { Controls } from '../input/Controls';
+import type { StillLifeSystem } from '../systems/StillLifeSystem';
 import type { UnderstudySystem } from '../systems/UnderstudySystem';
 
 /** Scene keys. Use these constants instead of string literals. */
@@ -32,6 +33,10 @@ export function getControls(scene: Phaser.Scene): Controls | undefined {
 
 export function getUnderstudy(scene: Phaser.Scene): UnderstudySystem | undefined {
   return scene.registry.get('understudy') as UnderstudySystem | undefined;
+}
+
+export function getStillLife(scene: Phaser.Scene): StillLifeSystem | undefined {
+  return scene.registry.get('stillLife') as StillLifeSystem | undefined;
 }
 
 /** Runs `fn` on every resize until the scene shuts down (avoids leaked listeners). */

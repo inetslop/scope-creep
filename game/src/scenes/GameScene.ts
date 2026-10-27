@@ -22,6 +22,7 @@ import { FxSystem } from '../systems/FxSystem';
 import { OrbitSystem } from '../systems/OrbitSystem';
 import { PickupSystem } from '../systems/PickupSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
+import { StillLifeSystem } from '../systems/StillLifeSystem';
 import { UnderstudySystem } from '../systems/UnderstudySystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
 import { GAME_EVENTS, onResize, SCENES } from './keys';
@@ -47,6 +48,7 @@ export class GameScene extends Phaser.Scene {
   private marginalia!: Marginalia;
   private sfx!: Sfx;
   private understudy!: UnderstudySystem;
+  private stillLife!: StillLifeSystem;
   private music!: Music;
   private weapons!: WeaponSystem;
   private combat!: CombatSystem;
@@ -91,6 +93,8 @@ export class GameScene extends Phaser.Scene {
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia, this.understudy);
     this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.spawns);
     this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.damageNumbers, this.pickups);
+    this.stillLife = new StillLifeSystem(this, this.player, this.spawns.enemies, this.spawns.enemyShots, this.boss.boss, this.sfx);
+    this.registry.set('stillLife', this.stillLife);
     this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
     this.arc = new ArcSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
 
@@ -131,6 +135,7 @@ export class GameScene extends Phaser.Scene {
     this.marginalia.update(dt);
     this.pickups.update(dt);
     this.understudy.update(dt);
+    this.stillLife.update(dt);
     if (run.stats.regenPerSec > 0) run.heal(run.stats.regenPerSec * dt);
 
     this.trailTimer -= dt;
@@ -223,6 +228,9 @@ export class GameScene extends Phaser.Scene {
     const onUnderstudy = (): void => {
       this.understudy.trigger();
     };
+    const onStillLife = (): void => {
+      this.stillLife.trigger();
+    };
     // Physics writes body positions back to sprites in POST_UPDATE (after update()), so anything pinned
     // to the player is placed here, or it trails the player by a frame and wobbles.
     const onPostUpdate = (): void => {
@@ -238,6 +246,7 @@ export class GameScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-P', onPauseRequest);
     this.input.keyboard?.on('keydown-M', onMute);
     this.input.keyboard?.on('keydown-SPACE', onUnderstudy);
+    this.input.keyboard?.on('keydown-Q', onStillLife);
     // Auto-pause when the tab/app is backgrounded (important on mobile). Not in smoke mode.
     if (!flags.smoke) this.game.events.on(Phaser.Core.Events.HIDDEN, onHidden);
 
@@ -249,12 +258,14 @@ export class GameScene extends Phaser.Scene {
       this.input.keyboard?.off('keydown-P', onPauseRequest);
       this.input.keyboard?.off('keydown-M', onMute);
       this.input.keyboard?.off('keydown-SPACE', onUnderstudy);
+      this.input.keyboard?.off('keydown-Q', onStillLife);
       this.sfx.dispose();
       this.music.dispose();
       this.game.events.off(Phaser.Core.Events.HIDDEN, onHidden);
       for (const name of INVARIANTS) hook.removeInvariant(name);
       this.registry.remove('controls');
       this.registry.remove('understudy');
+      this.registry.remove('stillLife');
     });
   }
 
@@ -265,6 +276,7 @@ export class GameScene extends Phaser.Scene {
     s.hp = this.run.hp;
     s.maxHp = this.run.stats.maxHp;
     s.enemiesAlive = this.spawns.activeCount;
+    s.stillLifeActive = this.stillLife.active;
   }
 
   /** Checks the smoke test runs every few seconds. Add one for every new system. */
@@ -317,7 +329,11 @@ export class GameScene extends Phaser.Scene {
       if (!Number.isFinite(t.x) || !Number.isFinite(t.y)) return `decoy at (${t.x}, ${t.y})`;
       return arena.contains(t.x, t.y) ? null : `decoy outside arena at (${t.x}, ${t.y})`;
     });
+    hook.addInvariant('still-life', () => {
+      const frac = this.stillLife.cooldownFrac;
+      return frac < -1e-6 || frac > 1 + 1e-6 ? `still-life cooldownFrac ${frac}` : null;
+    });
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels', 'boss-state', 'streak', 'decoy'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels', 'boss-state', 'streak', 'decoy', 'still-life'];
