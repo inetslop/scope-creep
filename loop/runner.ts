@@ -92,7 +92,7 @@ async function main(): Promise<number> {
     const allIds = Object.keys(fleet.machines);
 
     if (machine.roles.includes('po')) {
-      const reason = poDue(fleet, listTasks(allIds));
+      const reason = poDue(fleet, listTasks(allIds, true));
       if (reason) {
         await runPoCycle(ctx, reason);
         worked = true;

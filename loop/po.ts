@@ -10,8 +10,9 @@ import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { loadState, saveState } from './state.ts';
 import { commitAndPush } from './sync.ts';
-import { formatTaskId, listTasks, maxTaskNumber, parseTask, taskFileName, writeTask, type Task, type TaskListing } from './tasks.ts';
+import { formatTaskId, listTasks, maxTaskNumber, parseTask, taskFileName, unblockedTaskIds, writeTask, type Task, type TaskListing } from './tasks.ts';
 
+const folderOf = (t: Task): string => path.basename(path.dirname(t.file));
 const isArchived = (t: Task): boolean => path.dirname(t.file) === ARCHIVE_DIR;
 const isFinished = (t: Task): boolean => !isArchived(t) && (t.status === 'done' || t.status === 'failed');
 /** Waiting for a dev: still being designed, or designed and ready. */
@@ -23,6 +24,7 @@ const PO_EDITABLE = new Set<string>(['design', 'todo']);
  * Returns why the PO should plan now, or null if it shouldn't. Planning is driven by
  * backpressure: each dev machine has a targetQueue, and the PO only tops queues up to it,
  * so fast machines (that drain their queue sooner) trigger planning more often.
+ * Pass a listing that includes the archive, so archived dependencies count as done.
  */
 export function poDue(fleet: FleetConfig, listing: TaskListing): string | null {
   const state = loadState();
@@ -49,13 +51,24 @@ function describeMachines(fleet: FleetConfig): string {
 }
 
 function describeQueues(fleet: FleetConfig, listing: TaskListing): string {
+  const unblocked = unblockedTaskIds(listing.tasks);
+  const byId = new Map(listing.tasks.map((t) => [t.id, t]));
+  const waitsOn = (t: Task): string =>
+    t.dependsOn
+      .filter((d) => byId.get(d)?.status !== 'done')
+      .map((d) => {
+        const dep = byId.get(d);
+        return dep ? `${d} (${folderOf(dep)}, ${dep.status})` : `${d} (missing)`;
+      })
+      .join(', ');
   return devMachineIds(fleet)
     .map((id) => {
-      const open = listing.tasks.filter((t) => !isArchived(t) && path.basename(path.dirname(t.file)) === id && (isQueued(t) || t.status === 'in-progress'));
-      const queued = open.filter(isQueued).length;
+      const open = listing.tasks.filter((t) => !isArchived(t) && folderOf(t) === id && (isQueued(t) || t.status === 'in-progress'));
+      const queued = queueSize(listing, id);
+      const blocked = open.filter((t) => isQueued(t) && !unblocked.has(t.id)).length;
       const need = Math.max(0, fleet.machines[id]!.targetQueue - queued);
-      const lines = open.map((t) => `  - ${t.id} [${t.status}, size ${t.size}, priority ${t.priority}] ${t.title}`);
-      return [`### ${id} — ${queued} queued, needs ${need} more`, ...(lines.length ? lines : ['  - (empty)'])].join('\n');
+      const lines = open.map((t) => `  - ${t.id} [${t.status}, size ${t.size}, priority ${t.priority}${unblocked.has(t.id) ? '' : `, blocked: waits on ${waitsOn(t)}`}] ${t.title}`);
+      return [`### ${id} — ${queued} queued${blocked ? `, ${blocked} blocked` : ''}, needs ${need} more`, ...(lines.length ? lines : ['  - (empty)'])].join('\n');
     })
     .join('\n\n');
 }
@@ -242,6 +255,8 @@ async function validateTaskChanges(ctx: RunContext, before: TaskListing, firstId
   return fresh.length;
 }
 
+/** Queued tasks the machine can get to by itself; blocked ones don't keep it busy. */
 function queueSize(listing: TaskListing, machine: string): number {
-  return listing.tasks.filter((t) => !isArchived(t) && path.basename(path.dirname(t.file)) === machine && isQueued(t)).length;
+  const unblocked = unblockedTaskIds(listing.tasks);
+  return listing.tasks.filter((t) => !isArchived(t) && folderOf(t) === machine && isQueued(t) && unblocked.has(t.id)).length;
 }

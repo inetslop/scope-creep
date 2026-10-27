@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { describe, it } from 'node:test';
-import { parseTask, pickNextTask, serializeTask, slugify, TaskFormatError, type Task } from '../tasks.ts';
+import { parseTask, pickNextTask, serializeTask, slugify, TaskFormatError, unblockedTaskIds, type Task } from '../tasks.ts';
 
 const file = path.join('tasks', 'yoga', 'T0007-thing.md');
 
@@ -77,6 +77,43 @@ describe('pickNextTask', () => {
     assert.equal(pickNextTask(mine, [done, ...mine])?.id, 'T0005');
     assert.equal(pickNextTask([blocked, a, b], [done, blocked, a, b])?.id, 'T0003');
     assert.equal(pickNextTask([blocked], [blocked]), undefined);
+  });
+});
+
+describe('unblockedTaskIds', () => {
+  const on = (machine: string) => (id: string, extra: Partial<Task> = {}): Task => ({
+    ...parseTask(`---\nid: ${id}\ntitle: ${id}\n---\n`, path.join('tasks', machine, `${id}.md`)),
+    status: 'todo',
+    ...extra,
+  });
+  const yoga = on('yoga');
+  const desktop = on('desktop');
+  const archived = on('archive');
+  const ids = (tasks: Task[]): string[] => [...unblockedTaskIds(tasks)].sort();
+
+  it('counts tasks whose dependencies are done, also in the archive', () => {
+    assert.deepEqual(ids([archived('T0001', { status: 'done' }), yoga('T0002', { dependsOn: ['T0001'] }), yoga('T0003', { status: 'design' })]), ['T0002', 'T0003']);
+  });
+
+  it('counts a chain the machine builds by itself', () => {
+    const tasks = [yoga('T0001', { status: 'in-progress' }), yoga('T0002', { dependsOn: ['T0001'] }), yoga('T0003', { status: 'design', dependsOn: ['T0002'] })];
+    assert.deepEqual(ids(tasks), ['T0001', 'T0002', 'T0003']);
+  });
+
+  it("blocks tasks waiting on another machine's open work, and their chain", () => {
+    const tasks = [yoga('T0001'), desktop('T0002', { dependsOn: ['T0001'] }), desktop('T0003', { dependsOn: ['T0002'] })];
+    assert.deepEqual(ids(tasks), ['T0001']);
+  });
+
+  it('blocks tasks waiting on failed, missing or circular dependencies', () => {
+    const tasks = [
+      archived('T0001', { status: 'failed' }),
+      yoga('T0002', { dependsOn: ['T0001'] }),
+      yoga('T0003', { dependsOn: ['T0099'] }),
+      yoga('T0004', { dependsOn: ['T0005'] }),
+      yoga('T0005', { dependsOn: ['T0004'] }),
+    ];
+    assert.deepEqual(ids(tasks), []);
   });
 });
 

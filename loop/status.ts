@@ -9,11 +9,13 @@ import { run } from './exec.ts';
 import { detectContextSize, isHealthy } from './llama.ts';
 import { ARCHIVE_DIR, REPO } from './paths.ts';
 import { loadState } from './state.ts';
-import { listTasks } from './tasks.ts';
+import { listTasks, unblockedTaskIds } from './tasks.ts';
 
 const fleet = loadFleet();
 const ids = Object.keys(fleet.machines);
 const { tasks, invalid } = listTasks(ids, true);
+const unblocked = unblockedTaskIds(tasks);
+const done = new Set(tasks.filter((t) => t.status === 'done').map((t) => t.id));
 
 console.log('\nQUEUES');
 for (const id of ids) {
@@ -26,7 +28,8 @@ for (const id of ids) {
   const marks: Record<string, string> = { 'in-progress': '▶', todo: '·', design: '✎', designing: '✍' };
   for (const t of mine.filter((x) => x.status in marks).sort((a, b) => a.id.localeCompare(b.id))) {
     const who = t.status === 'designing' ? ` (designing: ${t.extra.designer ?? '?'})` : '';
-    console.log(`      ${t.id} ${marks[t.status]} [${t.size}] ${t.title}${who}`);
+    const blocked = unblocked.has(t.id) ? '' : ` (blocked: waits on ${t.dependsOn.filter((d) => !done.has(d)).join(', ')})`;
+    console.log(`      ${t.id} ${marks[t.status]} [${t.size}] ${t.title}${who}${blocked}`);
   }
   console.log('      legend: ✎ waiting for design  ✍ being designed  · ready  ▶ in progress');
 }

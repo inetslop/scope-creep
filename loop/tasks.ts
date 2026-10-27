@@ -208,3 +208,29 @@ export function pickNextTask(mine: readonly Task[], all: readonly Task[]): Task 
     .filter((t) => t.status === 'todo' && t.dependsOn.every((d) => done.has(d)))
     .sort((a, b) => a.priority - b.priority || a.id.localeCompare(b.id))[0];
 }
+
+const OPEN_STATUSES = new Set<TaskStatus>(['design', 'designing', 'todo', 'in-progress']);
+
+/**
+ * Ids of the open tasks (design to in-progress) their machine can get to by itself: every
+ * dependency is done, or is another such task in the same folder (a chain it builds in order).
+ * A task waiting on another machine's unfinished work, or on a failed or unknown task, is blocked.
+ */
+export function unblockedTaskIds(all: readonly Task[]): Set<string> {
+  const byId = new Map(all.map((t) => [t.id, t]));
+  const folderOf = (t: Task): string => path.basename(path.dirname(t.file));
+  const memo = new Map<string, boolean>();
+  const reachable = (t: Task): boolean => {
+    const known = memo.get(t.id);
+    if (known !== undefined) return known;
+    memo.set(t.id, false); // a dependency cycle never unblocks
+    const ok = t.dependsOn.every((d) => {
+      const dep = byId.get(d);
+      if (dep?.status === 'done') return true;
+      return !!dep && OPEN_STATUSES.has(dep.status) && folderOf(dep) === folderOf(t) && reachable(dep);
+    });
+    memo.set(t.id, ok);
+    return ok;
+  };
+  return new Set(all.filter((t) => OPEN_STATUSES.has(t.status) && reachable(t)).map((t) => t.id));
+}

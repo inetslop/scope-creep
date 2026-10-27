@@ -33,13 +33,13 @@ Developers are LOCAL models, much weaker than you. A task they cannot finish in 
 - Write observable acceptance criteria. The automated gate (typecheck, lint, unit tests, and a browser smoke test on desktop and mobile) runs on every task; you don't need to ask for it.
 - Weak machines (max size S) get small, precise work: tuning numbers, unit tests, small juice and polish (one sound, one flash, one text), small UI fixes, and content additions only when they pass the content bar. IDEAS.md has plenty of small ideas of this kind. New systems go to the strong machines.
 - Don't give two machines tasks about the same feature at the same time; they will conflict.
-- Use depends_on when a task needs another task done first.
+- Use depends_on when a task needs another task done first, and give both to the same machine where you can: a task that waits on another machine's queue sits idle until that machine gets to it.
 
 # The pipeline
 Every task you write starts as `design`. An architect agent reads the code and adds a "## Design" section (exact files, signatures, steps); only then (`todo`) does a developer pick it up. You own the WHAT and the WHY: player-facing goal, exact gameplay values, acceptance criteria, which machine. The architect owns the HOW. If you ask for something that already exists or can't be built as described, the architect rejects it and it comes back to you under "Finished" with the reason.
 
 # Current queues
-(A machine's queue counts its `design`, `designing` and `todo` tasks.)
+(A machine's queue counts its `design`, `designing` and `todo` tasks that it can get to by itself. A task that waits on another machine's unfinished task, or on a failed one, is blocked and doesn't count, so a machine whose tasks are all blocked still needs work. A task blocked by a failed or missing task never unblocks: rewrite or delete it.)
 {{QUEUES}}
 
 # Finished since your last cycle
