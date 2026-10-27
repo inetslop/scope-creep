@@ -4,12 +4,10 @@ title: Add the Arpeggio upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-27T03:40:32Z
-claimed_at: 2026-10-27T03:44:29Z
-designer: yoga
 ---
 
 ## Goal
@@ -31,3 +29,57 @@ A rare "crit swarm" level-up card — an extra projectile plus a crit-chance bum
 - [ ] Picking it adds +1 projectile per volley and +5% crit chance per level; at 2 levels, +2 projectiles per volley and +10% crit chance (each volley visibly fires one more ink point, and red crit numbers appear more often).
 - [ ] After 2 levels it is never offered again (covered by the new test and the existing content validation).
 - [ ] `npm run check` and `npm run smoke` pass.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/upgrades/index.ts` — append one `UpgradeDef` entry to the `UPGRADES` array (end of array, before the closing `];`)
+- edit `tests/core/upgrades.test.ts` — append the arpeggio test to the `rollUpgradeChoices` describe block
+
+### Interfaces
+None. Data-only: the entry satisfies the existing `UpgradeDef` (`src/content/types.ts`); both stats (`extraProjectiles`, `critChance`) already exist in `src/core/stats.ts`. `UPGRADE_BY_ID` and card rendering are registry-driven — no scene, core, or scene-key changes.
+
+### Steps
+1. In `src/content/upgrades/index.ts`, find the LAST entry of `UPGRADES` (read the file — do not assume `impasto`; T0067/T0055 also append there) and insert after it:
+   ```ts
+   {
+     id: 'arpeggio',
+     name: 'Arpeggio',
+     description: '+1 projectile per volley, +5% crit chance',
+     maxLevel: 2,
+     weight: 3,
+     mods: [
+       { stat: 'extraProjectiles', op: 'add', value: 1 },
+       { stat: 'critChance', op: 'add', value: 0.05 },
+     ],
+     color: PALETTE.red,
+   },
+   ```
+2. In `tests/core/upgrades.test.ts`, after the `impasto` test, add (imports already present):
+   ```ts
+   it('arpeggio offers 2 levels, then stops', () => {
+     const run = new RunState(1);
+     const def = UPGRADE_BY_ID.get('arpeggio')!;
+     expect(def).toBeDefined();
+     expect(def.mods).toEqual([
+       { stat: 'extraProjectiles', op: 'add', value: 1 },
+       { stat: 'critChance', op: 'add', value: 0.05 },
+     ]);
+     for (let i = 0; i < def.maxLevel; i++) {
+       expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+       run.applyUpgrade(def);
+     }
+     expect(run.upgradeLevel('arpeggio')).toBe(2);
+     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+   });
+   ```
+3. Run `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- Copy only the two specified mods: `extraProjectiles`/`add`/`1` (from `repetition`/`trill`) and `critChance`/`add`/`0.05` (from `accent`) — NOT `trill`'s `fireRateMul` mod, NOT `accent`'s `damageMul` mod, and `0.05` not `0.1` (that's `contrast`).
+- `maxLevel: 2`, `weight: 3`, `color: PALETTE.red` (already imported at the top of the file; no new imports).
+- Do not touch `src/core/stats.ts`, `src/content/types.ts`, the LevelUp scene, or `UPGRADE_BY_ID` — cards render from the registry; `tests/content.test.ts` validates the new entry automatically.
+- `extraProjectiles` clamps at 12 and `critChance` at 0.5 in `STAT_LIMITS` — +2/+10% at max is far inside limits.
+
+### Tests
+- `tests/core/upgrades.test.ts`: "arpeggio offers 2 levels, then stops" (exact two mods; offered/applied 2 times, then unavailable) — same pattern as `pizzicato`/`impasto`.
