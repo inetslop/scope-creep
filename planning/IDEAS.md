@@ -60,7 +60,7 @@ The PO adds ideas here. Good ones become tasks.
 - Wedge ghost: a pale blue wedge that mirrors your position with a 1 s delay, unlocks at 90 s
 - Score: kills give points (elite ×5, boss ×50); game over shows score and best score
 - ~~Emphasis upgrade: +15% damage per level, maxLevel 5 — a slower damage ramp alongside Weight~~ → T0020
-- Second active "Still Life": a 5 s bubble that slows enemies to 50% speed around you, 12 s cooldown (reuses the Understudy active system)
+- ~~Second active "Still Life": a 5 s bubble that slows enemies to 50% speed around you, 12 s cooldown (reuses the Understudy active system)~~ → T0050
 - The Curator: at 8:00 every enemy freezes for 2 s, then a spiral wave of 20 Motes sweeps in
 - Ink meter: firing fills a meter; at full, your next volley becomes a heavy ink burst (3× projectiles, big knockback)
 - Game over lists your kill count per enemy type (a small bestiary tally)
@@ -95,7 +95,7 @@ The PO adds ideas here. Good ones become tasks.
 - Enemy ink trails: fast enemies (Dart, Spike, Mote) leave a faint fading line behind them so their path is readable at speed
 - Sforzando: for 6 s after you take a hit, your volleys deal +50% damage, with a small "SFORZANDO" flash — a comeback window
 - ~~Tessitura upgrade: +10 max HP per level, maxLevel 5 — a pure survival ramp between Mass and Plate~~ → T0048
-- Glissando upgrade: +15% shard XP and +10% fire rate per level, maxLevel 3 — the economy-DPS hybrid, reusing the Composition and Rhythm stats
+- ~~Glissando upgrade: +15% shard XP and +10% fire rate per level, maxLevel 3 — the economy-DPS hybrid, reusing the Composition and Rhythm stats~~ → T0051
 - The Critic: every 200 kills, the arena border flashes ink and every enemy on screen takes 15 damage ("THE CRITIC ARRIVES")
 - Gilt shards: 5% of shards are gilt (gold outline) and worth 3× XP — a small economy spice
 - Ink rain: after 10:00, ink drops fall from the top of the page and leave short-lived puddles that slow you by 25% for 2 s
@@ -103,3 +103,5 @@ The PO adds ideas here. Good ones become tasks.
 - Staple: a small grey staple that sticks to your circle for 3 s, slowing you by 20% — a debuff you have to shake off by running
 - Coffee rings: as the run goes on, faint decorative coffee rings accumulate on the paper (pure art, no gameplay)
 - Trio: a third active — fires 3 slow ink lines in a fan, 10 s cooldown (reuses the Understudy active system)
+- ~~Adagio upgrade: +6 max HP and +0.5 HP/s regen per level, maxLevel 3 — the defensive sustain build, reusing the Mass and Balance stats~~ → T0052
+- ~~Unit tests for stat stacking: same-stat upgrades combine consistently (weight×3, weight+emphasis, rhythm+allegro), untouched stats stay at base~~ → T0053
