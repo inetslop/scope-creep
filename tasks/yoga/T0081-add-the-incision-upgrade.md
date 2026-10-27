@@ -4,11 +4,12 @@ title: Add the Incision upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T06:00:29Z
 claimed_at: 2026-10-27T06:09:57Z
+finished_at: 2026-10-27T06:16:43Z
 ---
 
 ## Goal
@@ -62,3 +63,16 @@ No other files. Do not touch `UPGRADE_BY_ID` (built from the array) or any scene
 - `mods` order is checked by the test: `extraPierce` first, `critChance` second.
 ### Tests
 - `tests/core/upgrades.test.ts`: the new incision block (shape of the gravure/marcato tests). `tests/content.test.ts` validates the new entry automatically.
+
+## Result (attempt 1, yoga)
+
+Added the Incision upgrade — a rare ink card pairing +1 pierce with +5% crit chance, max 2 levels, weight 3 — appended to `UPGRADES` in `src/content/upgrades/index.ts` after the gravure entry, plus its unit test (2 levels, then stops, mods in order) in `tests/core/upgrades.test.ts`. `npm run check` is green (247 tests) and `npm run smoke` passes on desktop and mobile, closing out the last untapped pair on the pierce axis.
+
+- Self-review: APPROVE
+- Time: 6.8 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```

@@ -346,4 +346,20 @@ describe('rollUpgradeChoices', () => {
     expect(run.upgradeLevel('gravure')).toBe(2);
     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
   });
+
+  it('incision offers 2 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('incision')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'extraPierce', op: 'add', value: 1 },
+      { stat: 'critChance', op: 'add', value: 0.05 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('incision')).toBe(2);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
 });

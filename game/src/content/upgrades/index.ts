@@ -501,6 +501,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     ],
     color: PALETTE.ink,
   },
+  {
+    id: 'incision',
+    name: 'Incision',
+    description: '+1 pierce, +5% crit chance',
+    maxLevel: 2,
+    weight: 3,
+    mods: [
+      { stat: 'extraPierce', op: 'add', value: 1 },
+      { stat: 'critChance', op: 'add', value: 0.05 },
+    ],
+    color: PALETTE.ink,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));
