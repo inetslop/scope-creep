@@ -4,11 +4,12 @@ title: Controls card on the pause screen
 assignee: inet-racing
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T15:27:21Z
 claimed_at: 2026-10-27T17:58:16Z
+finished_at: 2026-10-27T18:29:50Z
 ---
 
 ## Goal
@@ -85,3 +86,15 @@ private buildControlsCard(title: Phaser.GameObjects.Text, width: number, height:
 
 ### Tests
 none
+
+## Result (attempt 1, inet-racing)
+
+The pause screen now shows a CONTROLS card in The Index's ink type listing every input for the device last used (6 keyboard lines, 3 gamepad, 3 touch), 200 px wide, mirroring The Index to the left of the buttons at 1280x720 and sitting between the PAUSED title and Resume at 412x915 (the title moves up, clamped at 18 %, only if the card needs room). All changes are in src/scenes/PauseScene.ts; the only deviation from the design was replacing the nonexistent Phaser 3.90 call `g.line` with the codebase's `g.lineBetween` for the rule under the title. `npm run check` and `npm run smoke` both pass on desktop and mobile, and Resume/Quit/Esc/P and The Index are unchanged.
+
+- Self-review: APPROVE
+- Time: 31.6 min
+
+```
+game/src/scenes/PauseScene.ts | 58 +++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 53 insertions(+), 5 deletions(-)
+```

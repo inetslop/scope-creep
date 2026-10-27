@@ -3,9 +3,32 @@ import { PALETTE } from '../content/palette';
 import type { UpgradeDef } from '../content/types';
 import { UPGRADE_BY_ID } from '../content/upgrades';
 import { hook } from '../debug/testHook';
+import type { InputDevice } from '../input/Controls';
 import { makeButton } from '../ui/button';
 import { textStyle, titleStyle } from '../ui/text';
-import { getRun, onResize, SCENES } from './keys';
+import { getControls, getRun, onResize, SCENES } from './keys';
+
+/** Every input for each device, shown on the pause screen's CONTROLS card. */
+const CONTROLS_BY_DEVICE: Record<InputDevice, string[]> = {
+  keyboard: [
+    'WASD / Arrows — move',
+    'Mouse — aim',
+    'Hold left click — fire',
+    'Esc / P — pause',
+    'M — mute',
+    '1 / 2 / 3 — pick a card',
+  ],
+  gamepad: [
+    'Left stick — move',
+    'Right stick — aim and fire',
+    'R2 — fire',
+  ],
+  touch: [
+    'Left thumb — move',
+    'Right thumb — aim and fire',
+    'II button — pause',
+  ],
+};
 
 /** Pause overlay above a paused GameScene. */
 export class PauseScene extends Phaser.Scene {
@@ -17,13 +40,14 @@ export class PauseScene extends Phaser.Scene {
     hook.overlay = SCENES.pause;
     const { width, height } = this.scale;
     this.add.rectangle(0, 0, width, height, PALETTE.paper, 0.88).setOrigin(0).setInteractive();
-    this.add.text(width / 2, height * 0.3, 'PAUSED', titleStyle(Math.min(60, width * 0.12), PALETTE.ink, PALETTE.blue)).setOrigin(0.5);
+    const title = this.add.text(width / 2, height * 0.3, 'PAUSED', titleStyle(Math.min(60, width * 0.12), PALETTE.ink, PALETTE.blue)).setOrigin(0.5);
     makeButton(this, width / 2, height * 0.52, 'Resume', () => this.resumeGame());
     makeButton(this, width / 2, height * 0.52 + 70, 'Quit to menu', () => this.quitToMenu(), { color: PALETTE.red });
     this.input.keyboard?.once('keydown-ESC', () => this.resumeGame());
     this.input.keyboard?.once('keydown-P', () => this.resumeGame());
     onResize(this, () => this.scene.restart());
-    this.buildPicksColumn(width, height);
+    const picksColTop = this.buildPicksColumn(width, height);
+    this.buildControlsCard(title, width, height, picksColTop);
   }
 
   private resumeGame(): void {
@@ -38,7 +62,7 @@ export class PauseScene extends Phaser.Scene {
   }
 
   /** The run's build in a narrow ink column: one line per distinct upgrade, most recently picked first. */
-  private buildPicksColumn(width: number, height: number): void {
+  private buildPicksColumn(width: number, height: number): number {
     const run = getRun(this);
     const COL_W = 200, PIP = 8, PIP_GAP = 4, HEADER_H = 16, HEADER_GAP = 8, MAX_ROWS = 16;
     const rows: { def: UpgradeDef; index: number }[] = [];
@@ -66,7 +90,7 @@ export class PauseScene extends Phaser.Scene {
     const firstRowY = colTop + HEADER_H + HEADER_GAP + rowH / 2;
     if (picked.length === 0) {
       this.add.text(colLeft, firstRowY, 'NOTHING PICKED YET', textStyle(13, PALETTE.inkSoft, { fontStyle: 'bold' })).setOrigin(0, 0.5);
-      return;
+      return colTop;
     }
     const g = this.add.graphics();
     picked.forEach((r, i) => {
@@ -80,6 +104,30 @@ export class PauseScene extends Phaser.Scene {
         g.lineStyle(1, PALETTE.ink, 1);
         g.strokeRect(x - PIP / 2, y - PIP / 2, PIP, PIP);
       }
+    });
+    return colTop;
+  }
+
+  /** CONTROLS card: every input for the device last used, in The Index's ink type. */
+  private buildControlsCard(title: Phaser.GameObjects.Text, width: number, height: number, picksColTop: number): void {
+    const lines = CONTROLS_BY_DEVICE[getControls(this)?.device ?? 'keyboard'];
+    const COL_W = 200, HEADER_H = 16, HEADER_GAP = 8, ROW_H = 18, MARGIN = 12;
+    const colH = HEADER_H + HEADER_GAP + ROW_H * lines.length;
+    const horizontal = width >= 760;
+    const centerX = horizontal ? width / 2 - 110 - 28 - COL_W / 2 : width / 2; // landscape: mirror of The Index
+    let colTop = picksColTop; // landscape: top-aligned with The Index
+    if (!horizontal) {
+      const resumeTop = height * 0.52 - 26; // top edge of the 52 px Resume button
+      colTop = Math.min(title.y + title.height / 2 + MARGIN, resumeTop - MARGIN - colH);
+      title.setY(Math.max(height * 0.18, colTop - MARGIN - title.height / 2)); // title yields, never above 18%
+    }
+    const colLeft = centerX - COL_W / 2;
+    this.add.text(centerX, colTop, 'CONTROLS', textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0);
+    const g = this.add.graphics();
+    g.lineStyle(1, PALETTE.ink, 1);
+    g.lineBetween(colLeft, colTop + HEADER_H, colLeft + COL_W, colTop + HEADER_H);
+    lines.forEach((line, i) => {
+      this.add.text(colLeft, colTop + HEADER_H + HEADER_GAP + ROW_H / 2 + i * ROW_H, line, textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
     });
   }
 }
