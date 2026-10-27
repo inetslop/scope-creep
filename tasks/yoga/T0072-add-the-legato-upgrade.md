@@ -4,10 +4,12 @@ title: Add the Legato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T04:08:50Z
+claimed_at: 2026-10-27T04:08:56Z
+designer: yoga
 ---
 
 ## Goal
