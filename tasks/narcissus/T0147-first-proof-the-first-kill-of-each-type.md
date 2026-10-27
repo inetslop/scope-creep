@@ -4,10 +4,12 @@ title: First Proof — the first kill of each type pays
 assignee: narcissus
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T21:50:56Z
+claimed_at: 2026-10-27T22:22:14Z
+designer: desktop
 ---
 
 ## Goal
