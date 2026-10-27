@@ -4,12 +4,10 @@ title: Add the Divider enemy
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-27T07:13:18Z
-claimed_at: 2026-10-27T07:19:41Z
-designer: yoga
 ---
 
 ## Goal
@@ -30,3 +28,56 @@ A new late-run harasser: the **Divider**, a small ink hexagon that never closes 
 - [ ] It keeps ~140–190 units from the player and strafes sideways, firing a fast ink point (speed 260, 6 damage) every 1.4 s — noticeably closer in and faster-firing than the Sentry, with visibly lighter shots.
 - [ ] It moves at speed 170, has 16 hp, and deals 8 contact damage.
 - [ ] `npm run check` and `npm run smoke` (desktop + mobile) pass.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/enemies/divider.ts` - the Divider enemy def, data only
+- edit `src/content/enemies/index.ts` - register the def (one import + array append)
+
+### Interfaces
+No new types; `EnemyDef.shoot` already has `periodSec`, `speed`, `damage`, `bandNear`, `bandFar`. No code changes anywhere else — `shoot` behavior, hexagon texture, and first-sighting marginalia (`SpawnSystem` → `Marginalia.note`) are all generic on `def`.
+
+Exact content of `src/content/enemies/divider.ts` (copy sentry.ts, replace values as shown — note: Sentry has NO `shoot` field; Divider must add one, like counterweight.ts:18):
+
+```ts
+import { PALETTE } from '../palette';
+import type { EnemyDef } from '../types';
+
+/** Late-run harasser: a small ink hexagon that holds close range and fires fast, light ink points. */
+export const divider: EnemyDef = {
+  id: 'divider',
+  name: 'Divider',
+  note: 'IT HOLDS ITS DISTANCE',
+  hp: 16,
+  speed: 170,
+  contactDamage: 8,
+  xp: 2,
+  threat: 2,
+  spawnWeight: 4,
+  unlockAtSec: 200,
+  behavior: 'shoot',
+  knockbackResist: 0.2,
+  shoot: { periodSec: 1.4, speed: 260, damage: 6, bandNear: 140, bandFar: 190 },
+  look: {
+    shape: 'hexagon',
+    radius: 13,
+    body: PALETTE.ink,
+    accent: PALETTE.paperLight,
+    spin: 0.8,
+  },
+};
+```
+
+### Steps
+1. Create `src/content/enemies/divider.ts` exactly as above (update the file comment; do not leave the Sentry's).
+2. In `src/content/enemies/index.ts`: add `import { divider } from './divider';` between the existing `dart` and `eraser` imports (keeps alphabetical), and append `divider` at the END of the `ENEMIES` array: `... eraser, frameWedge, counterweight, divider]`.
+
+### Pitfalls
+- The #1 trap: copying sentry.ts verbatim silently keeps its defaults (2.4 s / 150 / 8 / 240–300 band) because Sentry has no `shoot` field — the divider would play like a slow Sentry and fail the shoot criteria. The `shoot: {...}` line is mandatory.
+- `note` must be all caps or `tests/content.test.ts` fails; id must be kebab-case.
+- Don't touch `content/types.ts` or any scene/system — nothing new exists to register.
+- Radius 13 is fine (test bounds are 4–80); band `bandNear < bandFar` (140 < 190) as the test expects sane numbers.
+
+### Tests
+none — `tests/content.test.ts` validates the new entry automatically; run `npm run check` and `npm run smoke`.
