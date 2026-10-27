@@ -155,3 +155,7 @@ The PO adds ideas here. Good ones become tasks.
 - Coda: after 25:00 the page loses its color — every shape is drawn in flat ink on grey paper, the composition's final act (pure art; shape still carries meaning, color retires)
 - Margin notes: the pause screen gets a dry one-line annotation about your current build, computed from your top two stats ("HEAVY AND SLOW — A SLAB WITH LEGS")
 - Ink cost: every upgrade you pick leaves a small ink blot in the bottom margin; when the row of 10 blots is full, the paper flips to the next palette variant (ties the palette-drift idea to player choices)
+- ~~Stretto upgrade: +1 armor and +10% fire rate per level, maxLevel 3 — the armored-tempos card, the last untapped pair on the armor axis (Plate's armor + Pressure's fire-rate stat)~~ → T0077
+- Unit tests for Crescendo (T0065): no fire-rate bonus at streak 7, exactly ×1.1 at streak 8, still ×1.1 at streak 20 (a threshold, not a ramp), and the bonus composes with the Rhythm upgrade's fire rate
+- Kill table: the game-over screen gains a small two-line tally under the score — total kills and time survived (pairs with T0054)
+- Scavenge: while below 25% of max HP, every shard is worth double XP, with a small "SCAVENGE" flash in the HUD when it toggles — the desperate player collects harder
