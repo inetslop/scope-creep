@@ -4,10 +4,12 @@ title: Inkwell ripple — the burst is ready before you spend it
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T22:11:29Z
+claimed_at: 2026-10-27T22:20:59Z
+designer: yoga
 ---
 
 ## Goal
