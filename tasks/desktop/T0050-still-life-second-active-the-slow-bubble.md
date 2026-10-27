@@ -4,10 +4,12 @@ title: "Still Life — second active: the slow bubble"
 assignee: desktop
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T00:32:39Z
+claimed_at: 2026-10-27T00:32:41Z
+designer: desktop
 ---
 
 ## Goal
