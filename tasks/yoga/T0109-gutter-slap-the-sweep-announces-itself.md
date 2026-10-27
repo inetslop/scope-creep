@@ -4,12 +4,10 @@ title: Gutter slap — the sweep announces itself
 assignee: yoga
 size: S
 priority: 2
-status: designing
-depends_on: []
+status: todo
+depends_on: [T0102, T0107]
 attempts: 0
 created: 2026-10-27T13:08:21Z
-claimed_at: 2026-10-27T13:34:04Z
-designer: desktop
 ---
 
 ## Goal
@@ -26,3 +24,50 @@ The moment a gutter band enters the page, a soft paper slap plays — the sweep 
 - [ ] No slap while the Gutter is inactive (before 14:00) or during the 20 s between sweeps, and no second slap during a band's 4.0 s crossing.
 - [ ] The Gutter's width, crossing time, cadence, burn and telegraph are unchanged, and no HUD element, input or key is added.
 - [ ] `npm run check` and `npm run smoke` pass.
+
+## Design (architect, desktop)
+
+### Files
+- edit `src/audio/Sfx.ts` — add `gutterSlap()`: one filtered noise burst, no tone
+- edit `src/systems/GutterSystem.ts` — receive `Sfx`, play one slap per sweep entry
+- edit `src/scenes/GameScene.ts` — construct `Sfx` before `GutterSystem`, pass it in
+
+### Interfaces
+```ts
+// Sfx.ts — new public method (no fields, no throttling — sweeps are 20 s apart; mute comes from canPlay())
+gutterSlap(): void
+
+// GutterSystem.ts — only constructor change: sfx appended as last parameter
+constructor(scene: Phaser.Scene, run: RunState, player: Player, marginalia: Marginalia, damageNumbers: DamageNumbers, sfx: Sfx)
+```
+
+### Steps
+1. `src/audio/Sfx.ts` — insert after `slam()`'s closing brace (line 175), before `levelUp()`. Reuse the private `noise()` helper (it already does instant attack + exponential decay):
+```ts
+  /** Soft paper slap as the gutter band sweeps into the page: ~80 ms low-passed noise at half a hit's gain, no tone. */
+  gutterSlap(): void {
+    if (!this.canPlay()) return;
+    this.noise(0.08, 0.11, 800, 'lowpass');
+  }
+```
+2. `src/systems/GutterSystem.ts` — (a) add `import type { Sfx } from '../audio/Sfx';` after the `'../art/shapes'` import; (b) add fields `private readonly sfx: Sfx;` (with the other readonly fields) and `private lastSlapSweep = -1;` (after `taught`); (c) append `sfx: Sfx` to the constructor and set `this.sfx = sfx;`; (d) in `update()`, right after the `this.bandX = ...` line (line 51), before `this.g.clear()`, insert:
+```ts
+    if (ph.active && ph.sweep !== this.lastSlapSweep) {
+      this.lastSlapSweep = ph.sweep;
+      this.sfx.gutterSlap();
+    }
+```
+(e) in the class doc, after the `"THE PAGE INKS" marginalia note.` line, add: ` * One soft paper slap (Sfx.gutterSlap) plays when each band sweeps into the safe area; the burn stays silent.`
+3. `src/scenes/GameScene.ts` — move lines 101–102 (`this.sfx = new Sfx(this);` and `this.registry.set('sfx', this.sfx);`) above line 100, and change line 100 to:
+```ts
+    this.gutter = new GutterSystem(this, this.run, this.player, this.marginalia, this.damageNumbers, this.sfx);
+```
+
+### Pitfalls
+- `Sfx` is currently constructed AFTER `GutterSystem` in `create()` — passing `this.sfx` without moving those two lines compiles but hands over `undefined`.
+- Trigger on `ph.sweep` (integer, stable for the whole 4 s crossing), not on a bool edge: a late frame or pause/resume mid-crossing must never re-slap, and a dropped frame cannot skip the entry (dt is clamped to 50 ms).
+- Do NOT add a `last*At` throttle field and do NOT write a new gain envelope — the `noise()` helper is the whole sound; no `tone()` call (no new tone, no pitch movement).
+- Do not touch `GUTTER`/`gutterAt` in `src/core/gutter.ts` (width 40, cross 4 s, period 20 s, burn 4/s, telegraph 1.5 s all unchanged); no HUD, no input, no new key, no new invariants (no new system added).
+
+### Tests
+none
