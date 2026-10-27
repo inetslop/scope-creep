@@ -156,6 +156,11 @@ The PO adds ideas here. Good ones become tasks.
 - Margin notes: the pause screen gets a dry one-line annotation about your current build, computed from your top two stats ("HEAVY AND SLOW — A SLAB WITH LEGS")
 - Ink cost: every upgrade you pick leaves a small ink blot in the bottom margin; when the row of 10 blots is full, the paper flips to the next palette variant (ties the palette-drift idea to player choices)
 - ~~Stretto upgrade: +1 armor and +10% fire rate per level, maxLevel 3 — the armored-tempos card, the last untapped pair on the armor axis (Plate's armor + Pressure's fire-rate stat)~~ → T0077
-- Unit tests for Crescendo (T0065): no fire-rate bonus at streak 7, exactly ×1.1 at streak 8, still ×1.1 at streak 20 (a threshold, not a ramp), and the bonus composes with the Rhythm upgrade's fire rate
+- ~~Marcato upgrade: +5% crit chance and +10% projectile speed per level, maxLevel 3 — the precision-velocity card, the last untapped pair on the crit axis (Contrast's crit chance + Draft's projectile-speed stat)~~ → T0078
+- ~~Unit tests for Crescendo (T0065): no fire-rate bonus at streak 7, exactly ×1.1 at streak 8, still ×1.1 at streak 20, composes with Rhythm~~ → shipped with T0065 (the threshold, stacking and on-hit-reset tests landed in that task)
 - Kill table: the game-over screen gains a small two-line tally under the score — total kills and time survived (pairs with T0054)
 - Scavenge: while below 25% of max HP, every shard is worth double XP, with a small "SCAVENGE" flash in the HUD when it toggles — the desperate player collects harder
+- Andante upgrade: +0.5 HP/s regen and +8% move speed per level, maxLevel 3 — the walking-pace sustain-mobility card, the last untapped pair on the regen axis (Balance's regen + Momentum's move speed)
+- Boss shatter: the moment a boss dies, every enemy projectile on screen bursts into shards — a boss kill is a breather and a payday
+- Gauge: a thin ink line under the HUD streak tally that fills as the streak approaches 8 — you can see Crescendo coming (pairs with T0065)
+- Overtone: while Still Life is active, the generative score's second voice holds one long sustained tone; it releases the moment the bubble pops (pairs with T0050 and T0011)
