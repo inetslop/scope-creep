@@ -4,10 +4,12 @@ title: "Warm Start — finish an 8:00+ run and the next run begins with one pick
 assignee: desktop-4070
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T13:48:11Z
+claimed_at: 2026-10-27T14:14:54Z
+designer: desktop
 ---
 
 ## Goal
