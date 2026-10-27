@@ -94,6 +94,12 @@ The PO adds ideas here. Good ones become tasks.
 - Cinder: a black circle that, on death, leaves a slow-fading ink scorch on the paper that damages you if you stand in it
 - Enemy ink trails: fast enemies (Dart, Spike, Mote) leave a faint fading line behind them so their path is readable at speed
 - Sforzando: for 6 s after you take a hit, your volleys deal +50% damage, with a small "SFORZANDO" flash — a comeback window
-- Tessitura upgrade: +10 max HP per level, maxLevel 5 — a pure survival ramp between Mass and Plate
+- ~~Tessitura upgrade: +10 max HP per level, maxLevel 5 — a pure survival ramp between Mass and Plate~~ → T0048
 - Glissando upgrade: +15% shard XP and +10% fire rate per level, maxLevel 3 — the economy-DPS hybrid, reusing the Composition and Rhythm stats
 - The Critic: every 200 kills, the arena border flashes ink and every enemy on screen takes 15 damage ("THE CRITIC ARRIVES")
+- Gilt shards: 5% of shards are gilt (gold outline) and worth 3× XP — a small economy spice
+- Ink rain: after 10:00, ink drops fall from the top of the page and leave short-lived puddles that slow you by 25% for 2 s
+- The Palette — third boss: a row of five color bars that slide down the page; each bar you survive paints your circle in that color
+- Staple: a small grey staple that sticks to your circle for 3 s, slowing you by 20% — a debuff you have to shake off by running
+- Coffee rings: as the run goes on, faint decorative coffee rings accumulate on the paper (pure art, no gameplay)
+- Trio: a third active — fires 3 slow ink lines in a fan, 10 s cooldown (reuses the Understudy active system)

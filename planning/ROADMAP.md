@@ -23,7 +23,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Enemies: Hex (T0001) ✅, Mote swarm (T0010) ✅, Sentry ranged (T0007) ✅, Splitter (T0009) ✅, Boulder heavy chaser (T0017) ✅, Tile mid chaser (T0023) ✅, Slab slow wall (T0025) ✅, Spike small fast punisher (T0028) ✅, Turret stationary fast shooter (T0032) ✅, Pinwheel spinning chaser (T0039) ✅, The Eraser upgrade-deleting white rectangle (T0047, design, desktop-4070)
 - Enemy projectiles now exist (Sentry) — boss dart-burst patterns unblocked
 - Weapons: Orbit (T0008) ✅, Arc chain beam (T0022) ✅; backlog: stamp, counterpoint, negative-space bomb
-- Upgrades: Tempo (T0002) ✅, Draft (T0012) ✅, Contrast crit (T0013) ✅, Plate armor (T0016) ✅, Staccato speed combo (T0018) ✅, Emphasis damage ramp (T0020) ✅, Allegro fire-rate-for-speed trade-off (T0026) ✅, Ostinato pierce + fire-rate build card (T0029) ✅, Dynamics damage-for-mobility trade-off (T0031) ✅, Fugue damage + projectile-speed combo (T0033) ✅, Pressure damage + fire-rate DPS build (T0034) ✅, Gather pickup-radius + shard-XP economy build (T0035) ✅, Accent crit + damage build (T0037) ✅, Presto projectile-speed + move-speed build (T0038) ✅, Pulse fire-rate + crit crit-shred build (T0041, in progress, yoga), Sweep move-speed + pickup-radius mobility build (T0042, todo, yoga), Trill rare repeat-fire build (T0046, design, yoga); backlog: weapon-specific lines, evolutions, Kerning (projectile size + knockback)
+- Upgrades: Tempo (T0002) ✅, Draft (T0012) ✅, Contrast crit (T0013) ✅, Plate armor (T0016) ✅, Staccato speed combo (T0018) ✅, Emphasis damage ramp (T0020) ✅, Allegro fire-rate-for-speed trade-off (T0026) ✅, Ostinato pierce + fire-rate build card (T0029) ✅, Dynamics damage-for-mobility trade-off (T0031) ✅, Fugue damage + projectile-speed combo (T0033) ✅, Pressure damage + fire-rate DPS build (T0034) ✅, Gather pickup-radius + shard-XP economy build (T0035) ✅, Accent crit + damage build (T0037) ✅, Presto projectile-speed + move-speed build (T0038) ✅, Pulse fire-rate + crit crit-shred build (T0041) ✅, Sweep move-speed + pickup-radius mobility build (T0042) ✅, Trill rare repeat-fire build (T0046) ✅, Tessitura max-HP survival ramp (T0048, design, yoga); backlog: weapon-specific lines, evolutions, Kerning (projectile size + knockback), Glissando (shard XP + fire rate)
 - Actives: Understudy decoy — drop a blue decoy that taunts enemies for 3 s, 8 s cooldown (T0015, todo, desktop)
 - Systems: Crop marks — after 12:00 the arena's safe area shrinks to 70% by 17:00; the cropped margin burns the player for 5 damage/s (T0045, design, desktop-4070)
 
@@ -42,6 +42,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Spawn unlock timing tests: every enemy absent before its unlockAtSec, present at/after (T0030) ✅
 - Upgrade roll tests: a maxed upgrade is never offered; a roll returns 3 distinct choices (T0036) ✅
 - Vector math tests: length, normalize, add, scale, distance (T0043, design, yoga)
+- Level-up XP curve tests: required XP strictly increasing, exact-XP boundary, finite at level 100 (T0049, design, yoga)
 
 ## Later
 - Alternate "paper" palettes (De Stijl, Constructivist), run modifiers, daily seed, achievements, PWA install
