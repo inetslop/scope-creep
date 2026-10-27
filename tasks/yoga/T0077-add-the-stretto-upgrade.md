@@ -4,10 +4,11 @@ title: Add the Stretto upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0076]
-attempts: 0
+attempts: 1
 created: 2026-10-27T04:56:47Z
+claimed_at: 2026-10-27T05:26:13Z
 ---
 
 ## Goal
