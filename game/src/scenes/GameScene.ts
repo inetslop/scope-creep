@@ -4,13 +4,14 @@ import { Sfx } from '../audio/Sfx';
 import { TEX } from '../art/textures';
 import { ARENA_SIZE, DEPTH, PLAYER_RADIUS, VIEW_SHORT_SIDE } from '../config';
 import { PALETTE } from '../content/palette';
-import { UPGRADES } from '../content/upgrades';
+import { UPGRADES, UPGRADE_BY_ID } from '../content/upgrades';
 import { loadBestScore, saveBestScore } from '../core/bestScore';
 import { RunState } from '../core/run';
 import { STREAK_FIRE_BONUS, STREAK_FIRE_BONUS_STREAK, streakFireBonus } from '../core/stats';
 import { SWATCH_CASCADE } from '../core/swatchCascade';
 import { rollUpgradeChoices } from '../core/upgrades';
 import { length } from '../core/vec';
+import { drawWarmStartPick, isWarmStartEarned, loadWarmStart, saveWarmStart } from '../core/warmStart';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import type { Enemy } from '../entities/Enemy';
@@ -76,6 +77,8 @@ export class GameScene extends Phaser.Scene {
   private ending = false;
   /** All-time best score loaded at run start; written back in endRun(). */
   private storedBest = 0;
+  /** Warm-start upgrade name pending for the HUD note: set in create(), cleared once emitted on the first tick. */
+  private warmStartName = '';
 
   constructor() {
     super(SCENES.game);
@@ -90,6 +93,14 @@ export class GameScene extends Phaser.Scene {
     this.run = new RunState(flags.seed ?? Math.floor(Math.random() * 2 ** 31));
     this.registry.set('run', this.run);
     this.storedBest = loadBestScore();
+    this.warmStartName = '';
+    if (loadWarmStart()) {
+      saveWarmStart(false); // consumed by this run whatever its outcome
+      const def = drawWarmStartPick(this.run.rng, UPGRADES, (id) => this.run.upgradeLevel(id), this.run.weapons);
+      this.run.applyUpgrade(def);
+      this.warmStartName = def.name;
+      hook.stats.upgradesTaken += 1;
+    }
 
     const half = ARENA_SIZE / 2;
     this.bounds = new Phaser.Geom.Rectangle(-half, -half, ARENA_SIZE, ARENA_SIZE);
@@ -129,6 +140,8 @@ export class GameScene extends Phaser.Scene {
     this.applyZoom(this.scale.width, this.scale.height);
     onResize(this, (w, h) => this.applyZoom(w, h));
 
+    // The warm-start note is emitted from update(), not here: scene.launch is queued by Phaser, so the HUD's
+    // create() (and its GAME_EVENTS.warmStart listener) runs only after this create() returns.
     this.scene.launch(SCENES.hud);
     this.bindSceneEvents();
     this.registerInvariants();
@@ -136,6 +149,11 @@ export class GameScene extends Phaser.Scene {
 
   update(_time: number, delta: number): void {
     if (this.ending) return;
+    if (this.warmStartName !== '') {
+      // First tick after create(): the HUD listener now exists, so the note can't be lost to launch queuing.
+      this.events.emit(GAME_EVENTS.warmStart, `WARM START — ${this.warmStartName}`);
+      this.warmStartName = '';
+    }
     const dt = Math.min(delta, 50) / 1000; // clamp so a stalled tab doesn't teleport everything
     const run = this.run;
     run.timeSec += dt;
@@ -205,6 +223,7 @@ export class GameScene extends Phaser.Scene {
     const summary: RunSummary = { timeSec: this.run.timeSec, level: this.run.level, kills: this.run.kills, bestStreak: this.run.bestStreak, score, best: Math.max(score, this.storedBest), seed: this.run.seed };
     this.time.delayedCall(700, () => {
       this.scene.stop(SCENES.hud);
+      if (isWarmStartEarned(this.run.timeSec)) saveWarmStart(true);
       this.scene.start(SCENES.gameOver, summary);
     });
   }
@@ -391,6 +410,14 @@ export class GameScene extends Phaser.Scene {
     hook.addInvariant('upgrade-history', () => {
       const levels = Object.values(this.run.upgradeLevels).reduce((a, b) => a + b, 0);
       return levels === this.run.upgradeHistory.length ? null : `upgrade levels ${levels} but history ${this.run.upgradeHistory.length}`;
+    });
+    hook.addInvariant('upgrade-levels', () => {
+      for (const [id, level] of Object.entries(this.run.upgradeLevels)) {
+        const def = UPGRADE_BY_ID.get(id);
+        if (!def) return `unknown upgrade ${id}`;
+        if (level < 1 || level > def.maxLevel) return `${id} at level ${level}, max ${def.maxLevel}`;
+      }
+      return null;
     });
     hook.addInvariant('streak-fire-bonus', () => {
       const expected = this.run.streak >= STREAK_FIRE_BONUS_STREAK ? STREAK_FIRE_BONUS : 1;

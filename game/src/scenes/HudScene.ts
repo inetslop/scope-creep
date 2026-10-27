@@ -37,7 +37,7 @@ export class HudScene extends Phaser.Scene {
   private bossG!: Phaser.GameObjects.Graphics;
   private bossName!: Phaser.GameObjects.Text;
   private bossWarnText!: Phaser.GameObjects.Text;
-  /** Boss nameplate: the boss's name printed below its bar when the boss first spawns this run. */
+  /** Nameplate below the boss bar: the boss's name at first spawn, or the warm-start note at run start. */
   private bossPlate!: Phaser.GameObjects.Text;
   /** Boss approach warning: flashes below the nameplate line in the 5 s before a spawn. */
   private bossApproachText!: Phaser.GameObjects.Text;
@@ -120,7 +120,7 @@ export class HudScene extends Phaser.Scene {
       if (this.lastStreak >= 1) this.shatterTally();
     };
     gameEvents.on(GAME_EVENTS.playerHit, onPlayerHit);
-    const onBossNameplate = (name: string): void => {
+    const onNameplate = (name: string): void => {
       this.bossPlate.setText(name);
       this.bossPlateAge = 0;
       this.bossPlateActive = true;
@@ -128,10 +128,12 @@ export class HudScene extends Phaser.Scene {
       this.bossPlate.setPosition(p.x, p.y);
       this.bossPlate.setAlpha(1).setVisible(true);
     };
-    gameEvents.on(GAME_EVENTS.bossNameplate, onBossNameplate);
+    gameEvents.on(GAME_EVENTS.bossNameplate, onNameplate);
+    gameEvents.on(GAME_EVENTS.warmStart, onNameplate);
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       gameEvents.off(GAME_EVENTS.playerHit, onPlayerHit);
-      gameEvents.off(GAME_EVENTS.bossNameplate, onBossNameplate);
+      gameEvents.off(GAME_EVENTS.bossNameplate, onNameplate);
+      gameEvents.off(GAME_EVENTS.warmStart, onNameplate);
     });
   }
 

@@ -3,6 +3,7 @@ import { drawShape } from '../art/shapes';
 import { TEX } from '../art/textures';
 import { PALETTE } from '../content/palette';
 import type { ShapeKind } from '../content/types';
+import { loadWarmStart } from '../core/warmStart';
 import { hook } from '../debug/testHook';
 import { textStyle, titleStyle } from '../ui/text';
 import { onResize, SCENES } from './keys';
@@ -47,6 +48,7 @@ export class MenuScene extends Phaser.Scene {
     this.tweens.add({ targets: prompt, alpha: 0.3, duration: 700, yoyo: true, repeat: -1 });
     const hint = touch ? 'Left thumb: move  ·  Right thumb: aim & fire' : 'WASD: move  ·  Mouse: aim  ·  Hold click: fire  ·  Esc: pause';
     this.add.text(width / 2, height * 0.74, hint, textStyle(Math.min(18, short * 0.036), PALETTE.inkSoft)).setOrigin(0.5);
+    this.add.text(width / 2, height * 0.7, loadWarmStart() ? 'WARM START READY — NEXT RUN BEGINS WITH ONE PICK' : 'FINISH AN 8:00+ RUN TO EARN A WARM START', textStyle(Math.min(16, short * 0.032), PALETTE.ink)).setOrigin(0.5);
     this.add.text(width - 8, height - 6, `build ${hook.sha}`, textStyle(12, PALETTE.gray)).setOrigin(1, 1);
 
     const start = (): void => {

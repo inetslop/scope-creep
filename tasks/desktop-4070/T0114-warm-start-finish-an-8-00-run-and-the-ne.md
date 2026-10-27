@@ -4,11 +4,12 @@ title: "Warm Start — finish an 8:00+ run and the next run begins with one pick
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T13:48:11Z
 claimed_at: 2026-10-27T14:45:26Z
+finished_at: 2026-10-27T16:02:06Z
 ---
 
 ## Goal
@@ -107,3 +108,21 @@ export function drawWarmStartPick(rng: Rng, pool: readonly UpgradeDef[], levelOf
 `tests/core/warmStart.test.ts` (model on `tests/core/upgrades.test.ts`; node env — never call load/save):
 - `isWarmStartEarned`: false at 479.999, true at exactly 480 and at 480+; `WARM_START_TIME_SEC === 480`.
 - `drawWarmStartPick`: `new Rng(7)` twice gives the same id; with 'rhythm' maxed (apply it 5× into a fresh `RunState`) it is never returned across 200 seeds; across 4000 seeds the distinct ids seen equal `UPGRADES.length` (all 16 reachable, weapon cards included).
+
+## Result (attempt 1, desktop-4070)
+
+T0114 Warm Start implemented per the design: new `src/core/warmStart.ts` holds the 8:00 threshold (480 s exactly), the persisted '1'/'0' flag using the same try/catch localStorage idiom as bestScore, and a uniform pick drawn through the run's seeded rng from the full 16-card pool filtered to what a fresh run can still take. GameScene consumes the flag at run START in `create()` — one level of one card applied via the normal `applyUpgrade` path (so it shows in The Index and later picks respect maxLevel), re-armed only in `endRun()` when the game-over card lands with the clock at 8:00+ — and emits the "WARM START — <UPGRADE NAME>" note after the HUD is launched. The HudScene nameplate handler (now registered for both boss-nameplate and warm-start, both removed on shutdown) prints the note with the same 2 s fade, MenuScene shows the exact armed/unarmed ink line at 70% height, and an `upgrade-levels` invariant was registered and listed in INVARIANTS. Four unit tests were added (reproducible pick for a fixed seed, maxed cards never offered, all 16 cards reachable including weapon cards, arming boundary); `npm run check` (typecheck + lint + 245 tests) and `npm run smoke` (real-browser desktop + phone) both pass with no checks weakened and no deviation from the design.
+
+- Self-review: APPROVE
+- Time: 76.7 min
+- Self-review made fixes (kept; checks pass).
+
+```
+game/src/core/warmStart.ts        | 23 +++++++++++++++++++++
+ game/src/scenes/GameScene.ts      | 31 +++++++++++++++++++++++++++--
+ game/src/scenes/HudScene.ts       | 10 ++++++----
+ game/src/scenes/MenuScene.ts      |  2 ++
+ game/src/scenes/keys.ts           |  2 ++
+ game/tests/core/warmStart.test.ts | 42 +++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 104 insertions(+), 6 deletions(-)
+```

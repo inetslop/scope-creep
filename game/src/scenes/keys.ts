@@ -22,6 +22,8 @@ export const GAME_EVENTS = {
   playerHit: 'player-hit',
   /** The boss first appeared this run. Payload: the boss name (string) from its content def. */
   bossNameplate: 'boss-nameplate',
+  /** The run started with a warm-start upgrade. Payload: the full note text (string). */
+  warmStart: 'warm-start',
 } as const;
 
 /** Typed access to objects GameScene shares through the game registry. */
