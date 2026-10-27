@@ -4,12 +4,13 @@ title: Unit tests for the Arc chain
 assignee: yoga
 size: S
 priority: 3
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-27T06:43:50Z
 claimed_at: 2026-10-27T06:58:27Z
-designer: yoga
+finished_at: 2026-10-27T07:02:19Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -24,3 +25,7 @@ designer: yoga
 - [ ] `tests/core/arc.test.ts` exists and passes in the automated gate.
 - [ ] The tests assert real numbers (chain radius, per-hop damage), so they fail if the chain rules change.
 - [ ] No file under `src/` is modified.
+
+## Rejected by architect (yoga)
+
+`tests/core/arc.test.ts` already exists (committed in T0022) and covers all four requested cases with real numbers (range 260, chain radius 140, maxJumps 3), and the "per-hop falloff" the task asks to lock does not exist in the code — `ArcSystem.fire()` (src/systems/ArcSystem.ts:92) applies full `def.damage * stats.damageMul` to every chain hop and `WeaponDef.arc` has no falloff field, so the acceptance criterion "assert per-hop damage" cannot be met without redesigning `src/core/arc.ts`, which the task forbids.
