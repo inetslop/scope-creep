@@ -4,10 +4,11 @@ title: Add the Counterweight enemy
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T06:15:12Z
+claimed_at: 2026-10-27T06:38:28Z
 ---
 
 ## Goal
