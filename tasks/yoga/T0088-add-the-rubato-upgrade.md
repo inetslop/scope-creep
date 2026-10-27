@@ -4,11 +4,12 @@ title: Add the Rubato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T07:26:36Z
 claimed_at: 2026-10-27T07:42:10Z
+finished_at: 2026-10-27T07:50:49Z
 ---
 
 ## Goal
@@ -86,3 +87,16 @@ it('rubato offers 3 levels, then stops', () => {
 
 ### Tests
 - `tests/core/upgrades.test.ts`: the `rubato` test above. `tests/content.test.ts` validates the new entry automatically (unique kebab id, weight > 0, known stats, mods present) — no edit needed there.
+
+## Result (attempt 1, yoga)
+
+Added the Rubato upgrade — a yellow level-up card (max level 3, weight 4) reading "+8% fire rate, +0.5 HP/s regen" — appended to the end of UPGRADES in src/content/upgrades/index.ts with mods fireRateMul ×1.08 (mul) and regenPerSec +0.5 (add), and added its matching unit test in tests/core/upgrades.test.ts asserting the exact ordered mods and that it stops being offered after 3 levels. Both `npm run check` (typecheck + lint + 260 tests) and `npm run smoke` (desktop + mobile) pass green.
+
+- Self-review: APPROVE
+- Time: 8.7 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```

@@ -383,4 +383,20 @@ describe('rollUpgradeChoices', () => {
     expect(plain.stats.extraProjectiles).toBe(0);
     expect(plain.stats.extraPierce).toBe(0);
   });
+
+  it('rubato offers 3 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('rubato')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'fireRateMul', op: 'mul', value: 1.08 },
+      { stat: 'regenPerSec', op: 'add', value: 0.5 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('rubato')).toBe(3);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
 });
