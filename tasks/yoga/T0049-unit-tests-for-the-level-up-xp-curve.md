@@ -4,11 +4,12 @@ title: Unit tests for the level-up XP curve
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T00:03:46Z
 claimed_at: 2026-10-27T00:11:36Z
+finished_at: 2026-10-27T00:19:08Z
 ---
 
 ## Goal
@@ -109,3 +110,15 @@ describe('RunState XP', () => {
 
 ### Tests
 - `tests/core/progression.test.ts` as above: pinned curve values, strict increase over levels 1–30 (≥20 required), finite at level 100, fresh state at level 1 / 0 XP, exact-XP boundary (exact = one level up, one less = none).
+
+## Result (attempt 1, yoga)
+
+Added `tests/core/progression.test.ts` locking the level-up XP curve: pinned values for `xpToNextLevel` (9 at level 1, 16 at level 2, 3182 at level 100), strict increase across levels 1–30, finiteness at level 100, a fresh `RunState` starting at level 1 with 0 XP, and the exact-XP boundary (exactly the required XP levels up once, one less does not). `npm run check` (147 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 7.5 min
+
+```
+game/tests/core/progression.test.ts | 50 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 50 insertions(+)
+```
