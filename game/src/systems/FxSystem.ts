@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import { haptics } from '../audio/Haptics';
 import { TEX } from '../art/textures';
 import { DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
@@ -203,6 +204,7 @@ export class FxSystem {
     this.shake(4, 140);
     this.scene.events.emit(GAME_EVENTS.playerHit);
     this.printPlatemark(x, y);
+    haptics.hit(); // every takeDamage path routes through playerHit, so the one buzz covers them all
   }
 
   /** ×s currently on screen (the platemark-pool invariant reads this). */

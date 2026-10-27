@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { haptics } from '../audio/Haptics';
 import type { Music } from '../audio/Music';
 import type { Sfx } from '../audio/Sfx';
 import { drawShape, SHADOW_OFFSET } from '../art/shapes';
@@ -290,6 +291,7 @@ export class BossSystem {
     this.run.bossHp = hp;
     this.run.bossMaxHp = hp;
     this.sfx.bossSting(); // the boss is on the page: one deep thump and a music swell, same frame
+    haptics.boss(); // touch players feel the landing under their thumbs, where the shake lives
     this.music.bossSwell();
     this.music.bossEnter(this.run.timeSec); // the score glides down to the 64 BPM boss hold
     if (this.run.firstBossSighting(this.def.id)) this.scene.events.emit(GAME_EVENTS.bossNameplate, this.def.name);

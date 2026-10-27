@@ -4,11 +4,12 @@ title: Haptics on mobile
 assignee: narcissus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0131]
 attempts: 1
 created: 2026-10-27T19:10:00Z
 claimed_at: 2026-10-27T20:11:20Z
+finished_at: 2026-10-27T21:08:04Z
 ---
 
 ## Goal
@@ -88,3 +89,19 @@ export const haptics = new Haptics();
 
 ### Tests
 - `tests/haptics.test.ts` (required by the acceptance criteria, which override the audio-task default): stub `navigator.vibrate`; cover the mute gate, the missing-API case, and the 150 ms throttle, plus the exact patterns.
+
+## Result (attempt 1, narcissus)
+
+Added `src/audio/Haptics.ts`, a hook-style singleton with `hit()` (30 ms buzz), `levelUp()` ([20, 40, 20] double tap) and `boss()` (120 ms buzz); every call is a silent no-op when the game is muted (reads Sfx's `'scope-creep:muted'` localStorage key per call) or `navigator.vibrate` is missing, and `hit()` is throttled to at most one buzz per 150 ms of wall-clock time. Wired in three single-line calls: `haptics.hit()` in `FxSystem.playerHit()` (covers every takeDamage path), `haptics.boss()` right after the boss sting in `BossSystem.startEntering()`, and `haptics.levelUp()` in `LevelUpScene.choose()` when a card is picked — so on phones the big shake moments are felt under the thumbs. New unit test `tests/haptics.test.ts` covers the exact patterns, the mute gate, the missing-API case, and the throttle (plus that a muted hit doesn't consume the throttle window). Two minimal deviations from the design snippet: its `buzz()` catch clause had no block body, so I wrote it as a proper empty catch; and I pinned `performance.now()` in the pattern test for determinism across vitest's fresh worker processes. `npm run check` (typecheck, lint, 288 tests) and `npm run smoke` (desktop + mobile browser playthrough) both pass.
+
+- Self-review: APPROVE
+- Time: 56.7 min
+
+```
+game/src/audio/Haptics.ts       | 54 +++++++++++++++++++++++++++++
+ game/src/scenes/LevelUpScene.ts |  2 ++
+ game/src/systems/BossSystem.ts  |  2 ++
+ game/src/systems/FxSystem.ts    |  2 ++
+ game/tests/haptics.test.ts      | 75 +++++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 135 insertions(+)
+```
