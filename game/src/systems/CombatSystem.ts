@@ -98,7 +98,8 @@ export class CombatSystem {
     const size = look.radius * (e.elite ? ELITE.scale : 1);
     this.fx.death(e.x, e.y, look.body, look.accent, size, e.elite ? ELITE.extraDeathRings : 0);
     this.sfx.enemyDeath(size);
-    if (size >= 24) this.fx.shake(90, 0.003);
+    if (e.def.id === 'block') this.fx.shake(4, 150);
+    if (e.elite) this.fx.shake(8, 300);
     if (e.elite) {
       // A pile of shards: the elite's 6x XP split evenly around the death point.
       for (let i = 0; i < ELITE.shardCount; i++) {

@@ -2,6 +2,8 @@ import type Phaser from 'phaser';
 import { TEX } from '../art/textures';
 import { DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
+import { CameraShake } from '../core/shake';
+import { hook } from '../debug/testHook';
 import { GAME_EVENTS } from '../scenes/keys';
 
 /**
@@ -16,6 +18,11 @@ export class FxSystem {
   private readonly rings: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly critRings: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly trail: Phaser.GameObjects.Particles.ParticleEmitter;
+  /** The camera shake state machine. Named `shakeState` (not `shake`) because the public method is `shake()`. */
+  private readonly shakeState = new CameraShake();
+  /** Camera jitter applied last frame, in world units; subtracted before a new one so it can't accumulate. */
+  private lastShakeX = 0;
+  private lastShakeY = 0;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -100,7 +107,7 @@ export class FxSystem {
     this.rings.explode(1, x, y);
     this.fragments.setParticleTint(PALETTE.blue);
     this.fragments.explode(6, x, y);
-    this.scene.cameras.main.shake(140, 0.006);
+    this.shake(4, 140);
     this.scene.events.emit(GAME_EVENTS.playerHit);
   }
 
@@ -110,7 +117,32 @@ export class FxSystem {
     this.fragments.explode(count, x, y);
   }
 
-  shake(durationMs: number, intensity: number): void {
-    this.scene.cameras.main.shake(durationMs, intensity);
+  /** Requests a screen shake. Amplitude is in screen px; adds to (and caps at) the shake in flight. */
+  shake(amplitude: number, durationMs: number): void {
+    if (!hook.stats.screenShake) return;
+    this.shakeState.add(amplitude, durationMs);
+  }
+
+  /** How long the current shake has left to run (ms). The camera-shake invariant reads this. */
+  get shakeMs(): number {
+    return this.shakeState.remainingMs;
+  }
+
+  /**
+   * Called from GameScene's POST_UPDATE, after the camera follow has run.
+   * Removes last frame's jitter, then adds a fresh random offset scaled by zoom.
+   */
+  updateShake(dtMs: number): void {
+    const cam = this.scene.cameras.main;
+    cam.scrollX -= this.lastShakeX;
+    cam.scrollY -= this.lastShakeY; // remove last frame's jitter so it can't accumulate
+    this.lastShakeX = 0;
+    this.lastShakeY = 0;
+    const amp = this.shakeState.update(dtMs);
+    if (amp === null) return; // scroll is now exactly the follow position
+    this.lastShakeX = ((Math.random() * 2 - 1) * amp) / cam.zoom; // screen px -> world units
+    this.lastShakeY = ((Math.random() * 2 - 1) * amp) / cam.zoom;
+    cam.scrollX += this.lastShakeX;
+    cam.scrollY += this.lastShakeY;
   }
 }

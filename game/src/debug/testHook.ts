@@ -25,6 +25,8 @@ export interface HookStats {
   hp: number;
   maxHp: number;
   enemiesAlive: number;
+  /** Screen shake on heavy deaths (smoke test / future settings toggle). */
+  screenShake: boolean;
   /** Crescendo bonus actually applied this run: 1.1 while the kill streak is 8+, else 1. */
   streakFireBonus: number;
 }
@@ -59,6 +61,7 @@ export class TestHook {
     hp: 0,
     maxHp: 0,
     enemiesAlive: 0,
+    screenShake: true,
     streakFireBonus: 1,
   };
   private readonly checks = new Map<string, InvariantCheck>();

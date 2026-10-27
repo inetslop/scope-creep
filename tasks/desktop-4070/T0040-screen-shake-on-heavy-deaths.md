@@ -4,11 +4,12 @@ title: Screen shake on heavy deaths
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-10-26T23:09:26Z
 claimed_at: 2026-10-27T09:32:09Z
+finished_at: 2026-10-27T10:33:18Z
 ---
 
 ## Goal
@@ -129,3 +130,21 @@ Stopped by hand after 3.5 hours: the session timed out after writing only a stan
 
 Could not merge into main (conflict). The work was discarded; retry on the latest code.
 - Resolved merge conflicts in: game/src/debug/testHook.ts, game/src/scenes/GameScene.ts, game/src/systems/CombatSystem.ts
+
+## Result (attempt 2, desktop-4070)
+
+Heavy-death camera shake now lives in a pure state machine, `src/core/shake.ts` (`CameraShake`: amplitudes sum capped at 20 screen px, longest duration wins, ease-out), driven by `FxSystem.updateShake()` from GameScene's POST_UPDATE so jitter applies to camera scroll after the follow pass and is removed each frame — the view always returns exactly to center. Call sites: Block death → `shake(4, 150)`, elite → `shake(8, 300)` in `CombatSystem.killEnemy`, any boss → `shake(14, 500)` in `BossSystem.killBoss` (player-hit and death-by-erasure kept their old moments as `shake(4,140)`/`shake(16,400)`); normal enemy deaths no longer shake. A `screenShake: boolean` flag (default true) was added to the hook stats in `src/debug/testHook.ts` and short-circuits all shakes; a cheap `camera-shake` invariant (finite scroll, shake not stuck >500 ms) is registered/removed with the scene. One minimal deviation from the design: the FxSystem field holding the state machine is named `shakeState` instead of `shake`, because a field and a method can't share that name in TypeScript — the public API (`shake(amplitude, durationMs)`, `get shakeMs`, `updateShake(dtMs)`) matches the design exactly. Unit tests (`tests/core/shake.test.ts`) pin the 0.15 s / 0.3 s / combined durations; `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 61.2 min
+
+```
+game/src/core/shake.ts           | 37 +++++++++++++++++++++++++++++
+ game/src/debug/testHook.ts       |  3 +++
+ game/src/scenes/GameScene.ts     | 12 +++++++---
+ game/src/systems/BossSystem.ts   |  2 +-
+ game/src/systems/CombatSystem.ts |  3 ++-
+ game/src/systems/FxSystem.ts     | 38 +++++++++++++++++++++++++++---
+ game/tests/core/shake.test.ts    | 51 ++++++++++++++++++++++++++++++++++++++++
+ 7 files changed, 138 insertions(+), 8 deletions(-)
+```

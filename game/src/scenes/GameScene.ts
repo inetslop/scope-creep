@@ -172,7 +172,7 @@ export class GameScene extends Phaser.Scene {
     this.physics.pause();
     this.fx.death(this.player.x, this.player.y, PALETTE.blue, PALETTE.yellow, 40);
     this.sfx.enemyDeath(40);
-    this.fx.shake(400, 0.012);
+    this.fx.shake(16, 400);
     this.player.setVisible(false);
     const summary: RunSummary = { timeSec: this.run.timeSec, level: this.run.level, kills: this.run.kills, bestStreak: this.run.bestStreak, seed: this.run.seed };
     this.time.delayedCall(700, () => {
@@ -223,11 +223,12 @@ export class GameScene extends Phaser.Scene {
     };
     // Physics writes body positions back to sprites in POST_UPDATE (after update()), so anything pinned
     // to the player is placed here, or it trails the player by a frame and wobbles.
-    const onPostUpdate = (): void => {
+    const onPostUpdate = (_time: number, delta: number): void => {
       this.player.syncBarrel();
       this.orbit.pinToPlayer();
       this.marginalia.pin();
       this.boss.boss.syncCore();
+      this.fx.updateShake(Math.min(delta, 50));
     };
     this.events.on(Phaser.Scenes.Events.POST_UPDATE, onPostUpdate);
     this.events.on(Phaser.Scenes.Events.RESUME, onResume);
@@ -323,7 +324,12 @@ export class GameScene extends Phaser.Scene {
       const expected = this.run.streak >= STREAK_FIRE_BONUS_STREAK ? STREAK_FIRE_BONUS : 1;
       return hook.stats.streakFireBonus === expected ? null : `streakFireBonus ${hook.stats.streakFireBonus} at streak ${this.run.streak}`;
     });
+    hook.addInvariant('camera-shake', () => {
+      const cam = this.cameras.main;
+      if (!Number.isFinite(cam.scrollX) || !Number.isFinite(cam.scrollY)) return `camera scroll (${cam.scrollX}, ${cam.scrollY})`;
+      return this.fx.shakeMs > 500 ? `shake stuck at ${this.fx.shakeMs} ms` : null;
+    });
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'crop-damage', 'upgrade-history', 'streak-fire-bonus'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'crop-damage', 'upgrade-history', 'streak-fire-bonus', 'camera-shake'];

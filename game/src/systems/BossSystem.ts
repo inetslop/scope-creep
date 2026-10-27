@@ -324,7 +324,7 @@ export class BossSystem {
     this.run.bossId = '';
     this.timer.onBossKilled(this.run.timeSec);
     this.fx.shatter(x, y, 40);
-    this.fx.shake(600, 0.02);
+    this.fx.shake(14, 500);
     this.sfx.enemyDeath(80);
     for (let i = 0; i < def.deathPickups; i++) {
       const a = this.run.rng.range(0, Math.PI * 2);
