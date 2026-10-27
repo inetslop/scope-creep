@@ -4,10 +4,11 @@ title: The Underdrawing — the page sketches what is coming
 assignee: asus
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0098]
-attempts: 0
+attempts: 1
 created: 2026-10-27T10:32:47Z
+claimed_at: 2026-10-27T15:11:49Z
 ---
 
 ## Goal
