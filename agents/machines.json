@@ -53,7 +53,6 @@
       "notes": "Heavily quantized (IQ2_S): expect more mistakes. Give it medium features: new mechanics, scenes, UI, juice, audio."
     },
     "inet-racing": {
-      "paused": true,
       "label": "Ryzen 5 5600X + 32 GB RAM",
       "model": "Qwen 3.8 27B UD-IQ4_XS",
       "roles": ["dev", "architect"],
