@@ -4,12 +4,10 @@ title: Add the Impasto upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-27T02:46:28Z
-claimed_at: 2026-10-27T02:50:17Z
-designer: yoga
 ---
 
 ## Goal
@@ -30,3 +28,58 @@ A rare "heavy volley" level-up card — an extra projectile plus solid damage on
 - [ ] Picking it adds +1 projectile per volley and +15% damage per level; at 2 levels, +2 projectiles per volley and +30% damage.
 - [ ] After 2 levels it is never offered again (covered by the new test and the existing content validation).
 - [ ] `npm run check` and `npm run smoke` pass.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/upgrades/index.ts` - append one new `UpgradeDef` entry at the END of the `UPGRADES` array, after whichever entry is currently last (re-open the file at edit time; T0055 also appends here, so do not assume `pedal` is last)
+- edit `tests/core/upgrades.test.ts` - add one test after the `pedal` test, copied from the `pizzicato` test block
+
+### Interfaces
+No new types or functions. The exact entry to append:
+```ts
+{
+  id: 'impasto',
+  name: 'Impasto',
+  description: '+1 projectile per volley, +15% damage',
+  maxLevel: 2,
+  weight: 3,
+  mods: [
+    { stat: 'extraProjectiles', op: 'add', value: 1 },
+    { stat: 'damageMul', op: 'mul', value: 1.15 },
+  ],
+  color: PALETTE.red,
+},
+```
+The exact test (copy the pizzicato block, swap id and mods):
+```ts
+it('impasto offers 2 levels, then stops', () => {
+  const run = new RunState(1);
+  const def = UPGRADE_BY_ID.get('impasto')!;
+  expect(def).toBeDefined();
+  expect(def.mods).toEqual([
+    { stat: 'extraProjectiles', op: 'add', value: 1 },
+    { stat: 'damageMul', op: 'mul', value: 1.15 },
+  ]);
+  for (let i = 0; i < def.maxLevel; i++) {
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+    run.applyUpgrade(def);
+  }
+  expect(run.upgradeLevel('impasto')).toBe(2);
+  expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+});
+```
+
+### Steps
+1. Open `src/content/upgrades/index.ts`, append the entry after the array's current last entry, before the closing `];`.
+2. In `tests/core/upgrades.test.ts`, append the test above after the `pedal` test (inside the existing `describe`).
+3. Run `npm run check` and `npm run smoke`.
+
+### Pitfalls
+- `damageMul` must be `op: 'mul'` (copied from `emphasis`), NOT `add`; `extraProjectiles` must be `op: 'add'` (copied from `repetition`).
+- `id: 'impasto'` must be unique kebab-case — tests/content.test.ts checks duplicates.
+- `weight: 3` and `color: PALETTE.red` match the `trill` entry exactly, per the spec.
+- Do not reorder or touch any other entry; if T0055's Counterpoint entry lands in this same spot, keep both entries and re-append after whichever is last.
+
+### Tests
+- `tests/core/upgrades.test.ts`: "impasto offers 2 levels, then stops" — exact two mods, applied 2×, not offered after 2 levels.
