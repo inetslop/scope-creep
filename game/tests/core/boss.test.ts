@@ -77,13 +77,15 @@ describe('bossHpMultiplier', () => {
 });
 
 describe('bossForKill', () => {
-  it('cycles Frame / Grid / Palette as bosses die', () => {
+  it('cycles Frame / Grid / Palette / Press as bosses die', () => {
     expect(bossForKill(0).id).toBe('frame');
     expect(bossForKill(1).id).toBe('grid');
     expect(bossForKill(2).id).toBe('palette');
-    expect(bossForKill(3).id).toBe('frame');
-    expect(bossForKill(4).id).toBe('grid');
-    expect(bossForKill(5).id).toBe('palette');
+    expect(bossForKill(3).id).toBe('press');
+    expect(bossForKill(4).id).toBe('frame');
+    expect(bossForKill(5).id).toBe('grid');
+    expect(bossForKill(6).id).toBe('palette');
+    expect(bossForKill(7).id).toBe('press');
   });
 });
 
@@ -92,16 +94,27 @@ describe('boss rotation: the Nth boss of the run (1-based)', () => {
     expect(bossForKill(0).id).toBe('frame');
     expect(bossForKill(0).id).not.toBe('grid');
     expect(bossForKill(0).id).not.toBe('palette');
+    expect(bossForKill(0).id).not.toBe('press');
   });
 
-  it('strict tri-cycle: #1..#6 = frame, grid, palette, frame, grid, palette', () => {
+  it('strict quad-cycle: #1..#8 = frame, grid, palette, press, frame, grid, palette, press', () => {
     // Boss #N of the run is bossForKill(N - 1); BossSystem passes run.bossKills.
-    const ids = [1, 2, 3, 4, 5, 6].map((n) => bossForKill(n - 1).id);
-    expect(ids).toEqual(['frame', 'grid', 'palette', 'frame', 'grid', 'palette']);
+    const ids = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => bossForKill(n - 1).id);
+    expect(ids).toEqual(['frame', 'grid', 'palette', 'press', 'frame', 'grid', 'palette', 'press']);
+  });
+
+  it('the first Press is the fourth boss, due at 20:00 in a standard run', () => {
+    const timer = new BossTimer();
+    timer.onBossKilled(300); // Frame dies at 5:00
+    timer.onBossKilled(600); // Grid dies at 10:00
+    timer.onBossKilled(900); // Palette dies at 15:00
+    expect(bossForKill(3).id).toBe('press');
+    expect(timer.due(1199.9, false)).toBe(false);
+    expect(timer.due(1200, false)).toBe(true);
   });
 
   it('deterministic: no RNG, the same boss number always returns the same boss', () => {
-    const seq = () => [0, 1, 2, 3, 4, 5].map((k) => bossForKill(k).id);
+    const seq = () => [0, 1, 2, 3, 4, 5, 6, 7].map((k) => bossForKill(k).id);
     expect(seq()).toEqual(seq());
   });
 });

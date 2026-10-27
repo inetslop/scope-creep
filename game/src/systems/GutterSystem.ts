@@ -62,12 +62,14 @@ export class GutterSystem {
     this.g.clear();
     if (!ph.active && !ph.telegraph) return;
     const half = this.safeHalf();
+    // The Press wall (when on the page) is solid ink: the gutter sweeps only the free region below it.
+    const top = Number.isFinite(this.run.pressLeadY) ? Math.max(-half, this.run.pressLeadY) : -half;
     if (ph.telegraph) {
-      const x = ph.direction === 1 ? -half : half - 2;   // 2 u red rule, full safe height, at the entering edge
-      this.g.fillStyle(PALETTE.red, ph.telegraphAlpha).fillRect(x, -half, 2, 2 * half);
+      const x = ph.direction === 1 ? -half : half - 2;   // 2 u red rule, full free height, at the entering edge
+      this.g.fillStyle(PALETTE.red, ph.telegraphAlpha).fillRect(x, top, 2, half - top);
       if (!this.taught) {
         this.taught = true;
-        this.marginalia.freeNote('THE PAGE INKS', x + (ph.direction === 1 ? 70 : -70), -half + 60);
+        this.marginalia.freeNote('THE PAGE INKS', x + (ph.direction === 1 ? 70 : -70), top + 60);
       }
       return;
     }
@@ -76,10 +78,10 @@ export class GutterSystem {
     if (x1 <= x0) return;
     const dx = ph.direction * SHADOW_OFFSET;                          // hard paper-cut shadow on the leading edge
     const s0 = Math.max(x0 + dx, -half), s1 = Math.min(x1 + dx, half);
-    if (s1 > s0) this.g.fillStyle(PALETTE.ink, 0.18).fillRect(s0, -half + SHADOW_OFFSET, s1 - s0, 2 * half - SHADOW_OFFSET);
-    this.g.fillStyle(PALETTE.ink, 0.85).fillRect(x0, -half, x1 - x0, 2 * half);
+    if (half - top - SHADOW_OFFSET > 0 && s1 > s0) this.g.fillStyle(PALETTE.ink, 0.18).fillRect(s0, top + SHADOW_OFFSET, s1 - s0, half - top - SHADOW_OFFSET);
+    this.g.fillStyle(PALETTE.ink, 0.85).fillRect(x0, top, x1 - x0, half - top);
     const p = this.player, R = PLAYER_RADIUS;
-    const inside = p.x + R > x0 && p.x - R < x1 && p.y + R > -half && p.y - R < half;
+    const inside = p.x + R > x0 && p.x - R < x1 && p.y + R > top && p.y - R < half;
     if (inside && !this.run.isDead) {
       this.totalDamage += this.run.drain(GUTTER.burnPerSec * dt);
       this.numberTimer -= dt;

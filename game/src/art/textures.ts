@@ -53,6 +53,10 @@ export const TEX = {
   platemark: 'platemark',
   /** Flat pale blue puddle (128 px = 120 u across); the Wash wets the paper with these. No shadow: it is wet, not paper. */
   puddle: 'puddle',
+  /** The Press's type block: a flat grey 24 u square printed on the wall's leading edge. */
+  typeBlock: 'typeBlock',
+  /** A flat ink fragment the Press band shatters into. */
+  pressFragment: 'pressFragment',
 } as const;
 
 export const enemyTextureKey = (enemyId: string): string => `enemy:${enemyId}`;
@@ -95,6 +99,7 @@ export function generateTextures(scene: Phaser.Scene): void {
   drawBoss(scene);
   drawBossGrid(scene);
   drawBossPalette(scene);
+  drawBossPress(scene);
   graphicsTexture(scene, TEX.enemyShot, 24, 24, (g) => drawShape(g, 'circle', 10.5, 10.5, 6, PALETTE.ink, { outlineWidth: 0 }));
   graphicsTexture(scene, TEX.badge, 28, 28, (g) => drawShape(g, 'square', 12.5, 12.5, 8, PALETTE.red, { outlineWidth: 2 }));
   graphicsTexture(scene, TEX.platemark, 22, 22, (g) => {
@@ -234,6 +239,23 @@ function drawBossPalette(scene: Phaser.Scene): void {
       drawShape(g, 'rect', PAD + w / 2, PAD + h / 2, w / 2, color, { outlineWidth: 3 });
     });
   }
+}
+
+/** The Press boss: a flat grey type block (24 u square) and a flat ink band fragment (120x36). */
+function drawBossPress(scene: Phaser.Scene): void {
+  const r = 24 / Math.SQRT2; // a 24 u square
+  const side = Math.ceil((r + PAD) * 2);
+  const c = side / 2 - SHADOW_OFFSET / 2;
+  graphicsTexture(scene, TEX.typeBlock, side, side, (g) => {
+    drawShape(g, 'square', c, c, r, PALETTE.gray, { outlineWidth: 3 });
+  });
+  const fw = 120, fh = 36;
+  graphicsTexture(scene, TEX.pressFragment, fw + PAD * 2 + SHADOW_OFFSET, fh + PAD * 2 + SHADOW_OFFSET, (g) => {
+    g.fillStyle(PALETTE.ink, 0.18);
+    g.fillRect(PAD + SHADOW_OFFSET, PAD + SHADOW_OFFSET, fw, fh);
+    g.fillStyle(PALETTE.ink, 1);
+    g.fillRect(PAD, PAD, fw, fh);
+  });
 }
 
 /** One orbit circle: a flat primary-color disc with ink outline and paper-cut shadow. */

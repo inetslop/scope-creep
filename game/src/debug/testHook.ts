@@ -16,6 +16,7 @@ export interface HookStats {
   bossKills: number;
   gridKills: number;
   paletteKills: number;
+  pressKills: number;
   shotsFired: number;
   shardsCollected: number;
   upgradesTaken: number;
@@ -57,6 +58,7 @@ export class TestHook {
     bossKills: 0,
     gridKills: 0,
     paletteKills: 0,
+    pressKills: 0,
     shotsFired: 0,
     shardsCollected: 0,
     upgradesTaken: 0,

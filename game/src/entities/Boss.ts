@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { paletteSwatchTextureKey, TEX } from '../art/textures';
 import { DEPTH } from '../config';
-import type { FrameBossDef, GridBossDef, PaletteBossDef } from '../content/bosses';
+import type { FrameBossDef, GridBossDef, PaletteBossDef, PressBossDef } from '../content/bosses';
 import { takeSerial } from './serial';
 
 /**
@@ -32,7 +32,7 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
     this.core.setDepth(DEPTH.enemies + 1);
   }
 
-  spawn(x: number, y: number, hp: number, def: FrameBossDef | GridBossDef | PaletteBossDef): void {
+  spawn(x: number, y: number, hp: number, def: FrameBossDef | GridBossDef | PaletteBossDef | PressBossDef): void {
     if (def.behavior === 'palette') {
       // A falling swatch tile (rect body); the docked rail is BossSystem graphics, not the body.
       this.setTexture(paletteSwatchTextureKey(0));
@@ -42,6 +42,23 @@ export class Boss extends Phaser.Physics.Arcade.Sprite {
       body.setSize(def.swatchWidth, def.swatchHeight);
       body.setOffset((this.width - def.swatchWidth) / 2, (this.height - def.swatchHeight) / 2);
       body.setCollideWorldBounds(false);
+      this.setVelocity(0, 0);
+      this.serial = takeSerial();
+      this.hp = this.maxHp = hp;
+      this.flashMs = 0;
+      this.setRotation(0).setAlpha(1).setScale(1).clearTint();
+      this.core.setVisible(false);
+      return;
+    }
+    if (def.behavior === 'press') {
+      // The wall: the dot texture is invisible and only carries the hit region
+      // (BossSystem sizes it to the full safe-width band); the visible band is
+      // BossSystem graphics, and pushing is a manual clamp, so no world bounds.
+      this.setTexture(TEX.dot);
+      // enableBody's show flag would re-show the sprite, so pass false and keep the dot hidden.
+      this.enableBody(true, x, y, true, false);
+      this.setVisible(false);
+      (this.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(false);
       this.setVelocity(0, 0);
       this.serial = takeSerial();
       this.hp = this.maxHp = hp;

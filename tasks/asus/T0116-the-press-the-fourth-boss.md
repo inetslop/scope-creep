@@ -4,11 +4,12 @@ title: The Press — the fourth boss
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0098]
 attempts: 1
 created: 2026-10-27T14:32:00Z
 claimed_at: 2026-10-27T16:09:15Z
+finished_at: 2026-10-27T20:44:06Z
 ---
 
 ## Goal
@@ -115,3 +116,33 @@ export class TypeBlock extends Phaser.Physics.Arcade.Image { hp = 0; maxHp = 0; 
 - `tests/core/press.test.ts`: PRESS_WALL toEqual; update(4) → 4/150; telegraph at 4.5 not at 3.99/5.0; stamps 0→1 at exactly 5.0, progress(5.0)=5/150+1/20; unopposed crossing <1 at 59.9, ===1 at 60.0; rows 0@<3, 1@3, 2@12, 3@21; clearRow at 12 (progress 0.18) → 0.18−1/16 at 12.6; retract clamps at 0 (clearRow at 3.5 → 0 at 4.1); 200s run never exceeds 1; stamp mid-retract (clearRow at 9.6, stamp at 10) shifts retractFrom/To by 1/20 (progress 0.1515 at 10.2).
 - `tests/core/boss.test.ts`: bossForKill(0..7)=frame,grid,palette,press ×2; extend timer chain to due(1200) with bossForKill(3)='press' (20:00 first Press); boss #1 test adds not.toBe('press').
 - `tests/content.test.ts`: press block (bandThickness>0, blockHp>0, blockSize∈[4,80], blockContactDamage≥0).
+
+## Result (attempt 1, asus)
+
+Added The Press, the fourth boss (`content/bosses/press.ts`, 520 HP, 70 u ink wall): a pure schedule module `core/pressWall.ts` (1/150 advance, 5 s stamps with 1 s red-rule telegraph + low thud + smallest shake, rows of four 24 u/30 HP type blocks at 20/40/60/80% from 3 s at 9 s intervals, 1/16 retract over 0.6 s on row clear) with 14 unit tests, a pooled `TypeBlock` entity, and the `BossSystem` encounter (solid push, 8/s drain burn, orbit + projectile + Inkwell-burst damage, enemy shots dying on the band, 4–6 fragment shatter into the standard death). Rotation is now Frame→Grid→Palette→Press with the first Press at the 20:00 slot; `GutterSystem` clips its band below the wall, `SpawnSystem` keeps the region above it off-limits, and two new smoke invariants plus a `pressKills` hook stat were registered. Two documented deviations from the design: the mid-retract stamp test value is 0.1015, not the design's 0.1515 (which double-counted the 5 s stamp — only one stamp exists by t=9.6), and the wall clock is stepped once per frame inside `updatePress` so the entering and fighting phases can't double-step it. Note for the loop: file overlap with T0098 (same assignee, in progress) in `OrbitSystem.ts` and `art/textures.ts` — declared as a dependency.
+
+- Self-review: NO VERDICT
+- Time: 274.9 min
+- Self-review made fixes (kept; checks pass).
+
+```
+game/src/art/textures.ts         |  22 +++
+ game/src/content/bosses/index.ts |   6 +-
+ game/src/content/bosses/press.ts |  21 +++
+ game/src/content/bosses/types.ts |  17 +-
+ game/src/core/boss.ts            |  15 +-
+ game/src/core/pressWall.ts       | 135 ++++++++++++++++
+ game/src/core/run.ts             |   6 +
+ game/src/debug/testHook.ts       |   2 +
+ game/src/entities/Boss.ts        |  21 ++-
+ game/src/entities/TypeBlock.ts   |  54 +++++++
+ game/src/scenes/GameScene.ts     |  16 +-
+ game/src/systems/BossSystem.ts   | 325 ++++++++++++++++++++++++++++++++++++---
+ game/src/systems/GutterSystem.ts |  14 +-
+ game/src/systems/OrbitSystem.ts  |  23 ++-
+ game/src/systems/SpawnSystem.ts  |   9 +-
+ game/tests/content.test.ts       |   9 +-
+ game/tests/core/boss.test.ts     |  29 +++-
+ game/tests/core/press.test.ts    | 179 +++++++++++++++++++++
+ 18 files changed, 847 insertions(+), 56 deletions(-)
+```

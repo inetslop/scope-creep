@@ -3,7 +3,7 @@
  * fails, the message tells you which field is wrong.
  */
 import { describe, expect, it } from 'vitest';
-import { BOSS_BY_ID, BOSSES, getBoss, type GridBossDef, type PaletteBossDef } from '../src/content/bosses';
+import { BOSS_BY_ID, BOSSES, getBoss, type GridBossDef, type PaletteBossDef, type PressBossDef } from '../src/content/bosses';
 import { ENEMIES, ENEMY_BY_ID } from '../src/content/enemies';
 import { PALETTE } from '../src/content/palette';
 import type { EnemyLook } from '../src/content/types';
@@ -124,6 +124,13 @@ describe('bosses', () => {
     expect(b.swatchColors.length === SWATCH_CASCADE.count, 'one swatch color per cascade swatch').toBe(true);
     for (const color of b.swatchColors) expect(PALETTE_VALUES.includes(color), `swatch color ${color} is in PALETTE`).toBe(true);
     expect(b.hp === b.swatchHp * SWATCH_CASCADE.count, 'hp is swatchHp times the swatch count').toBe(true);
+  });
+
+  it.each(BOSSES.filter((b): b is PressBossDef => b.behavior === 'press').map((b) => [b.id, b] as const))('%s has sane press numbers', (_id, b) => {
+    expect(positive(b.bandThickness), 'bandThickness > 0').toBe(true);
+    expect(positive(b.blockHp), 'blockHp > 0').toBe(true);
+    expect(b.blockSize >= 4 && b.blockSize <= 80, 'blockSize in [4,80]').toBe(true);
+    expect(nonNegative(b.blockContactDamage), 'blockContactDamage >= 0').toBe(true);
   });
 
   it('registry looks up every boss and rejects unknown ids', () => {

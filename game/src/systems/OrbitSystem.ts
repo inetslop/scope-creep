@@ -28,10 +28,16 @@ export class OrbitSystem {
   private readonly sfx: Sfx;
   private readonly damageNumbers: DamageNumbers;
   private readonly kill: (e: Enemy) => void;
+  /** The Press wall's band as a rect, or null when the Press is off the page. */
+  private readonly pressWallRect: () => Phaser.Geom.Rectangle | null;
+  /** Reports an orbit contact with the Press wall (BossSystem.hitWallFromOrbit). */
+  private readonly pressWallHit: (x: number, y: number, damage: number, crit: boolean) => void;
   private readonly lastHit = new Map<number, number>();
+  /** Last orbit hit on the Press wall (scene time, ms); one shared cooldown. */
+  private wallLastHit = -Infinity;
   private angle = 0;
 
-  constructor(scene: Phaser.Scene, run: RunState, player: Player, enemies: Phaser.Physics.Arcade.Group, fx: FxSystem, sfx: Sfx, damageNumbers: DamageNumbers, kill: (e: Enemy) => void) {
+  constructor(scene: Phaser.Scene, run: RunState, player: Player, enemies: Phaser.Physics.Arcade.Group, fx: FxSystem, sfx: Sfx, damageNumbers: DamageNumbers, kill: (e: Enemy) => void, pressWallRect: () => Phaser.Geom.Rectangle | null, pressWallHit: (x: number, y: number, damage: number, crit: boolean) => void) {
     this.scene = scene;
     this.run = run;
     this.player = player;
@@ -40,6 +46,8 @@ export class OrbitSystem {
     this.sfx = sfx;
     this.damageNumbers = damageNumbers;
     this.kill = kill;
+    this.pressWallRect = pressWallRect;
+    this.pressWallHit = pressWallHit;
     this.angle = run.rng.range(0, Math.PI * 2);
   }
 
@@ -78,6 +86,19 @@ export class OrbitSystem {
         this.sfx.orbitHum();
         if (crit) this.fx.critRing(cx, cy);
         if (died) this.kill(e);
+      }
+      // The Press wall: a circle reaching the band is absorbed and damages the boss.
+      const wall = this.pressWallRect();
+      if (wall) {
+        const qx = Math.max(wall.x, Math.min(wall.right, cx));
+        const qy = Math.max(wall.y, Math.min(wall.bottom, cy));
+        const dx = cx - qx;
+        const dy = cy - qy;
+        if (dx * dx + dy * dy <= circleRadius * circleRadius && now - this.wallLastHit >= cooldownMs) {
+          this.wallLastHit = now;
+          const crit = this.run.stats.critChance > 0 && this.run.rng.chance(this.run.stats.critChance);
+          this.pressWallHit(cx, cy, (crit ? 2 : 1) * def.damage * this.run.stats.damageMul, crit);
+        }
       }
     }
   }

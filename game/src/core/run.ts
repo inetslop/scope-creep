@@ -54,6 +54,12 @@ export class RunState {
   bossHp = 0;
   bossMaxHp = 0;
   bossKills = 0;
+  /**
+   * World y of The Press wall's leading edge; BossSystem owns the writes.
+   * NaN while the Press is off the page. Read by GutterSystem (clip),
+   * SpawnSystem (off-limits region) and the smoke invariants.
+   */
+  pressLeadY = Number.NaN;
   private mods: StatMod[] = [];
 
   constructor(seed: number) {

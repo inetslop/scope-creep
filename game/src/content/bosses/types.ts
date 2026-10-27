@@ -1,13 +1,13 @@
 /**
  * Boss definitions. A boss is a unique entity (not an EnemyDef, not in the
  * enemy group), driven by src/systems/BossSystem.ts. The base shape is here;
- * each boss's numbers live in its own file (frame.ts, grid.ts, palette.ts).
+ * each boss's numbers live in its own file (frame.ts, grid.ts, palette.ts, press.ts).
  */
 export interface BossDef {
   id: string;
   name: string;
   /** Behavior switch read by BossSystem and Boss.spawn. */
-  behavior: 'frame' | 'grid' | 'palette';
+  behavior: 'frame' | 'grid' | 'palette' | 'press';
   hp: number;
   /** World units per second while drifting toward the player. */
   speed: number;
@@ -82,4 +82,17 @@ export interface PaletteBossDef extends BossDef {
   swatchColors: readonly number[];
   /** Shards dropped where a swatch shatters. */
   shardCount: number;
+}
+
+/** The Press: an ink wall that advances down the page, printing rows of type blocks to shoot. */
+export interface PressBossDef extends BossDef {
+  behavior: 'press';
+  /** Thickness of the ink band (the boss body), world units. */
+  bandThickness: number;
+  /** HP of one type block, flat (no respawn multiplier). */
+  blockHp: number;
+  /** Width of a type block, world units. */
+  blockSize: number;
+  /** Contact damage when the player touches a type block. */
+  blockContactDamage: number;
 }

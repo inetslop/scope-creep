@@ -8,6 +8,7 @@ import { UPGRADES, UPGRADE_BY_ID } from '../content/upgrades';
 import { loadBestScore, saveBestScore } from '../core/bestScore';
 import { REST } from '../core/rest';
 import { RunState } from '../core/run';
+import { cropSafeFraction } from '../core/crop';
 import { STREAK_FIRE_BONUS, STREAK_FIRE_BONUS_STREAK, streakFireBonus } from '../core/stats';
 import { SWATCH_CASCADE } from '../core/swatchCascade';
 import { rollUpgradeChoices } from '../core/upgrades';
@@ -137,9 +138,9 @@ export class GameScene extends Phaser.Scene {
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia, this.underdrawing, this.fx, this.sfx, this.puddles);
     this.fermata = new FermataSystem(this.run);
     this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.feed, this.spawns);
-    this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.music, this.damageNumbers, this.feed, this.pickups, this.marginalia);
+    this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.spawns.enemyShots, this.fx, this.sfx, this.music, this.damageNumbers, this.feed, this.pickups, this.marginalia);
     this.bossApproach = new BossApproachSystem(this, this.run);
-    this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
+    this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e), () => this.boss.pressWallRect(), (x, y, d, c) => this.boss.hitWallFromOrbit(x, y, d, c));
     this.arc = new ArcSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
 
     this.controls = new Controls(this);
@@ -437,6 +438,17 @@ export class GameScene extends Phaser.Scene {
       }
       return null;
     });
+    hook.addInvariant('press-wall', () => {
+      const leadY = this.run.pressLeadY;
+      const alive = this.run.bossAlive && this.run.bossId === 'press';
+      if (alive !== Number.isFinite(leadY)) return `pressLeadY ${leadY} but bossAlive ${this.run.bossAlive} / bossId "${this.run.bossId}"`;
+      if (Number.isFinite(leadY)) {
+        const half = (ARENA_SIZE / 2) * cropSafeFraction(this.run.timeSec);
+        if (leadY < -half - 1 || leadY > half + 1) return `pressLeadY ${leadY} outside safe rect [${-half}, ${half}]`;
+      }
+      return null;
+    });
+    hook.addInvariant('type-blocks', () => (this.boss.blocks.countActive(true) <= 4 ? null : `${this.boss.blocks.countActive(true)} type blocks active`));
     // Finiteness only: nextBeatTime is legitimately stale while the scene is paused.
     hook.addInvariant('music-scheduler', () =>
       Number.isFinite(this.music.nextBeatTime) && this.music.nextBeatTime >= 0 ? null : `music nextBeatTime ${this.music.nextBeatTime}`,

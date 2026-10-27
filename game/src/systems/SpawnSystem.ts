@@ -180,23 +180,26 @@ export class SpawnSystem {
     this.fx.quickenPuff(e.x, e.y, rear, this.run.rng);
   }
 
-  /** A point on a ring just outside the camera view, inside the arena. */
+  /** A point on a ring just outside the camera view, inside the arena (and below the Press wall, when on the page). */
   private pickSpawnPoint(): { x: number; y: number } {
     const view = this.scene.cameras.main.worldView;
     const ring = Math.hypot(view.width, view.height) / 2 + 60;
     const margin = 40;
     const inner = new Phaser.Geom.Rectangle(this.bounds.x + margin, this.bounds.y + margin, this.bounds.width - margin * 2, this.bounds.height - margin * 2);
+    // The Press's wall is solid: the region above its leading edge is off-limits, like the crop margin.
+    const floorY = Number.isFinite(this.run.pressLeadY) ? this.run.pressLeadY + 40 : inner.top;
+    const yLo = Math.max(inner.top, floorY);
     for (let attempt = 0; attempt < 8; attempt++) {
       const a = this.run.rng.range(0, Math.PI * 2);
       const x = this.player.x + Math.cos(a) * ring;
       const y = this.player.y + Math.sin(a) * ring;
-      if (inner.contains(x, y)) return { x, y };
+      if (inner.contains(x, y) && y >= yLo) return { x, y };
     }
     // Player is hugging a wall: clamp a random ring point into the arena.
     const a = this.run.rng.range(0, Math.PI * 2);
     return {
       x: Phaser.Math.Clamp(this.player.x + Math.cos(a) * ring, inner.left, inner.right),
-      y: Phaser.Math.Clamp(this.player.y + Math.sin(a) * ring, inner.top, inner.bottom),
+      y: Phaser.Math.Clamp(this.player.y + Math.sin(a) * ring, yLo, inner.bottom),
     };
   }
 }
