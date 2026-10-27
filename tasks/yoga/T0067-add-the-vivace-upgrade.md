@@ -4,10 +4,11 @@ title: Add the Vivace upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T03:21:30Z
+claimed_at: 2026-10-27T03:49:32Z
 ---
 
 ## Goal
