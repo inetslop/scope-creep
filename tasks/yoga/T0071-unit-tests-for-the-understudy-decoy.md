@@ -4,12 +4,13 @@ title: Unit tests for the Understudy decoy
 assignee: yoga
 size: S
 priority: 3
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-27T03:53:41Z
 claimed_at: 2026-10-27T03:56:53Z
-designer: yoga
+finished_at: 2026-10-27T04:01:52Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -27,3 +28,7 @@ Lock the Understudy active's timing rules (T0015) in unit tests so its duration 
 - [ ] A new test file (e.g. `tests/core/understudy.test.ts`) passes `npm run check` and runs in the standard test suite.
 - [ ] The tests assert the 3 s active duration, the 8 s cooldown, rejection of a drop during cooldown, and that a fresh run can drop immediately.
 - [ ] No gameplay values change: decoy duration, cooldown, taunt behavior and inputs behave identically to before.
+
+## Rejected by architect (yoga)
+
+Already done — `tests/core/understudy.test.ts` and the pure module `src/core/understudy.ts` (`Understudy` class with `drop()`/`update()`, `DECOY_LIFE_SEC = 3`, `DECOY_COOLDOWN_SEC = 8`) were merged in commit 428166a (T0015), the tests cover the fresh-run drop, 8 s cooldown rejection/allow and 3 s pop, run under `npm run check`'s standard vitest suite, and `UnderstudySystem` already delegates to the pure module, so every acceptance criterion is satisfied with nothing left to build.
