@@ -4,10 +4,12 @@ title: Unit tests for the vector math helpers
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-26T23:09:26Z
+claimed_at: 2026-10-27T00:00:01Z
+designer: desktop
 ---
 
 ## Goal
