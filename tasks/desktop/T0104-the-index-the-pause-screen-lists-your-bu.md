@@ -4,10 +4,12 @@ title: The Index — the pause screen lists your build
 assignee: desktop
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T11:11:53Z
+claimed_at: 2026-10-27T11:32:50Z
+designer: desktop
 ---
 
 ## Goal
