@@ -4,10 +4,12 @@ title: Add the Andante upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0078]
 attempts: 0
 created: 2026-10-27T05:31:40Z
+claimed_at: 2026-10-27T05:34:04Z
+designer: yoga
 ---
 
 ## Goal
