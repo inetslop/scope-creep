@@ -4,11 +4,12 @@ title: Add the Adagio upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0051]
 attempts: 1
 created: 2026-10-27T00:32:39Z
 claimed_at: 2026-10-27T01:42:01Z
+finished_at: 2026-10-27T01:48:59Z
 ---
 
 ## Goal
@@ -84,3 +85,16 @@ None — data only. No new types, stats, or functions.
 
 ### Tests
 - New test `adagio offers 3 levels, then stops` in `tests/core/upgrades.test.ts` (snippet above); `tests/content.test.ts` validates the entry automatically.
+
+## Result (attempt 1, yoga)
+
+Added the Adagio upgrade as a single data entry at the end of `UPGRADES` in `src/content/upgrades/index.ts` (yellow card, "+6 max HP, +0.5 HP/s regen", max level 3, weight 5, `maxHp` +6 and `regenPerSec` +0.5 mods), so it renders in the three-card choice, grows the HP bar's maximum, and regens through the same `GameScene` tick as Balance. Added the matching unit test "adagio offers 3 levels, then stops" in `tests/core/upgrades.test.ts`, asserting the exact two mods, three offers, and stopping at max level; content validation covers the rest automatically. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 7.0 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
