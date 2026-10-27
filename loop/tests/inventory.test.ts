@@ -20,7 +20,8 @@ describe('buildInventory', () => {
       fs.mkdirSync(path.dirname(path.join(game, rel)), { recursive: true });
       fs.writeFileSync(path.join(game, rel), text);
     };
-    write('src/content/enemies/wedge.ts', `export const wedge = { id: 'wedge', name: 'Wedge', hp: 1 };`);
+    write('src/content/enemies/wedge.ts', `export const wedge = { id: 'wedge', name: 'Wedge', hp: 1, behavior: 'chase' };`);
+    write('src/content/enemies/sentry.ts', `export const sentry = { id: 'sentry', name: 'Sentry', behavior: 'shoot' };`);
     write('src/content/enemies/index.ts', `export const ENEMIES = [wedge];`);
     write('src/content/upgrades/index.ts', `[{ id: 'r', name: 'Rhythm', description: '+20% fire rate' }]`);
     write('src/scenes/GameScene.ts', '');
@@ -28,7 +29,7 @@ describe('buildInventory', () => {
     write('src/systems/FxSystem.ts', '');
     write('src/audio/Sfx.ts', '');
     const inv = buildInventory(game);
-    assert.match(inv, /\*\*Enemies\*\* \(1\): Wedge/);
+    assert.match(inv, /\*\*Enemies\*\* \(2\): Sentry \(shoot\), Wedge \(chase\)/);
     assert.match(inv, /\*\*Upgrades\*\* \(1\): Rhythm \(\+20% fire rate\)/);
     assert.match(inv, /\*\*Scenes\*\*: Game$/m);
     assert.match(inv, /\*\*Systems\*\*: Fx/);

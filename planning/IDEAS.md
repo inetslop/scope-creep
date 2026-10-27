@@ -1,5 +1,7 @@
 # Ideas (scope-creep backlog)
 
+Content bar (2026-10-27): a new enemy needs a behavior no existing enemy has; a new upgrade must change what the player does or decides — never a pair of existing stat bonuses or a copy with other numbers. Actives only as upgrade cards or a pre-run hero pick, with the key shown on screen. Ideas that relied on purged content are struck below.
+
 The PO adds ideas here. Good ones become tasks.
 
 - ~~Orbiting circles that damage enemies on contact~~ → T0008
@@ -61,7 +63,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Score: kills give points (elite ×5, boss ×50); game over shows score and best score~~ → T0054
 - ~~Emphasis upgrade: +15% damage per level, maxLevel 5 — a slower damage ramp alongside Weight~~ → T0020
 - ~~Second active "Still Life": a 5 s bubble that slows enemies to 50% speed around you, 12 s cooldown (reuses the Understudy active system)~~ → T0050
-- The Curator: at 8:00 every enemy freezes for 2 s, then a spiral wave of 20 Motes sweeps in
+- ~~The Curator: at 8:00 every enemy freezes for 2 s, then a spiral wave of 20 Motes sweeps in~~ (dropped 2026-10-27: the Mote was removed)
 - Ink meter: firing fills a meter; at full, your next volley becomes a heavy ink burst (3× projectiles, big knockback)
 - Game over lists your kill count per enemy type (a small bestiary tally)
 - Shard trails: shards leave a faint fading trail so you can see where they came from
@@ -75,7 +77,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Unit test for spawn unlock timing: each enemy is absent just before its unlockAtSec and present at/after it~~ → T0030
 - ~~Ostinato upgrade: +1 pierce, +10% fire rate per level, maxLevel 2 — the pierce build's backbone~~ → T0029
 - ~~Boss warning: 5 s before any boss spawn (Frame or Grid, including respawns), the arena edges pulse red and "SOMETHING HEAVY APPROACHES" flashes in the HUD~~ → T0070
-- Mote nest: a still grey circle (40 hp) that releases 6 Motes every 10 s
+- ~~Mote nest: a still grey circle (40 hp) that releases 6 Motes every 10 s~~ (dropped 2026-10-27: the Mote was removed)
 - Combo text: at 50 kills in a run, "MAESTRO" flashes in the HUD next to the streak tally
 - ~~Dynamics upgrade: +20% damage, -8% move speed per level, maxLevel 3 — the damage-for-mobility trade-off, sibling of Allegro~~ → T0031
 - Rest: if you go 30 s without being hit, the next hit you take is negated, with a "REST" flash in the HUD
@@ -92,7 +94,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Sweep upgrade: +10% move speed and +10% pickup radius per level, maxLevel 3 — the shard-sweeping mobility build, reusing the Momentum and Gravity stats~~ → T0042
 - ~~Trill upgrade: +1 projectile per volley and +8% fire rate per level, maxLevel 2, weight 3 — a rare repeat-fire build, reusing the Repetition and Rhythm stats~~ → T0046
 - Cinder: a black circle that, on death, leaves a slow-fading ink scorch on the paper that damages you if you stand in it
-- Enemy ink trails: fast enemies (Dart, Spike, Mote) leave a faint fading line behind them so their path is readable at speed
+- Enemy ink trails: fast enemies (Dart, Wedge) leave a faint fading line behind them so their path is readable at speed
 - Sforzando: for 6 s after you take a hit, your volleys deal +50% damage, with a small "SFORZANDO" flash — a comeback window
 - ~~Tessitura upgrade: +10 max HP per level, maxLevel 5 — a pure survival ramp between Mass and Plate~~ → T0048
 - ~~Glissando upgrade: +15% shard XP and +10% fire rate per level, maxLevel 3 — the economy-DPS hybrid, reusing the Composition and Rhythm stats~~ → T0051
@@ -102,7 +104,7 @@ The PO adds ideas here. Good ones become tasks.
 - The Palette — third boss: a row of five color bars that slide down the page; each bar you survive paints your circle in that color
 - Staple: a small grey staple that sticks to your circle for 3 s, slowing you by 20% — a debuff you have to shake off by running
 - Coffee rings: as the run goes on, faint decorative coffee rings accumulate on the paper (pure art, no gameplay)
-- Trio: a third active — fires 3 slow ink lines in a fan, 10 s cooldown (reuses the Understudy active system)
+- ~~Trio: a third active — fires 3 slow ink lines in a fan, 10 s cooldown (reuses the Understudy active system)~~ (dropped 2026-10-27: actives were removed)
 - ~~Adagio upgrade: +6 max HP and +0.5 HP/s regen per level, maxLevel 3 — the defensive sustain build, reusing the Mass and Balance stats~~ → T0052
 - ~~Unit tests for stat stacking: same-stat upgrades combine consistently (weight×3, weight+emphasis, rhythm+allegro), untouched stats stay at base~~ → T0053
 - ~~Tube: a long yellow rectangle (120×16) that spawns at one edge and slides straight across the arena at speed 40 — 80 hp, 10 contact damage, splits into two 60×16 halves on death; the first non-square, non-circle silhouette (yellow = heavy)~~ → T0083 (chasing variant, same split) — **rejected**: the rect shape is hard-coded 2:1, so a 7.5:1 bar needs the shape-aspect change (below) before Tube can ship
@@ -111,7 +113,7 @@ The PO adds ideas here. Good ones become tasks.
 - The Plumb weapon: a thin ink line hangs from the top of the page at your aim X and re-aims instantly; 12 damage to anything that crosses it; new level-up card (weight 4, ink)
 - Weapon SFX timbres: each weapon's shoot sound gets its own pitch — Point a short high tick, Line a low thud, Orbit a soft hum, Arc a sharp snap
 - Full Bleed upgrade: +12% damage per level while at full HP, maxLevel 2 — a risk-reward card that rewards the Tessitura/Adagio sustain builds
-- The Eraser's encore: at 10:00 a bigger Eraser with a red outline appears that erases your highest-level upgrade instead of your most recent (follow-up to T0047, lands after it)
+- ~~The Eraser's encore: at 10:00 a bigger Eraser with a red outline appears that erases your highest-level upgrade instead of your most recent (follow-up to T0047, lands after it)~~ (dropped 2026-10-27: the Eraser was removed)
 - Kill feed: each kill pops a small ink "+1" / "+5" / "+50" above the corpse, matching the T0054 score values (depends on T0054)
 - Gallery mode: three curated fixed-seed runs in the menu — "Study in Red" (only red enemies), "No Level-Ups" (no upgrade cards, double shards), "Double Shards" — each with its own persisted best score
 - ~~Pizzicato upgrade: +1 pierce and +10% projectile speed per level, maxLevel 2, weight 3 — the fast-pierce build, reusing the Vector and Draft stats~~ → T0056
@@ -148,7 +150,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Sotto Voce upgrade: +15% shard XP and +0.5 HP/s regen per level, maxLevel 3 — the quiet sustain-economy card, reusing the Composition and Balance stats~~ → T0074
 - Level-up pulse: the moment a card is picked, your circle swells 25% larger for 300 ms — the level-up is felt in your own shape
 - The Pause: after 8 s without firing, your next volley is a heavy double-sized point (2× damage, 2× knockback) with a small "PAUSE" flash — a risk-and-reward hold that rewards timing your fire
-- Blue pencil: the Eraser only spawns while you have 2 or more total upgrade levels — it always has something worth erasing (tuning, follow-up to T0047)
+- ~~Blue pencil: the Eraser only spawns while you have 2 or more total upgrade levels — it always has something worth erasing (tuning, follow-up to T0047)~~ (dropped 2026-10-27: the Eraser was removed)
 - ~~Vellum upgrade: +1 armor and +15% shard XP per level, maxLevel 3 — the tank-collector card pairing the Plate and Composition stats~~ → T0076
 - ~~Unit tests for the Still Life bubble: 5 s duration, 12 s cooldown, restart rejected during the cooldown, fresh run can start immediately (locks T0050's timing)~~ → T0075
 - Rejection stamp: the game-over screen gets a big red ink stamp — "ERASED" for runs under 8:00, "FRAMED" at 8:00+, "PUBLISHED" at 15:00+ — the run's verdict in one word (pairs with the score, T0054)
@@ -163,7 +165,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Andante upgrade: +0.5 HP/s regen and +8% move speed per level, maxLevel 3 — the walking-pace sustain-mobility card, the last untapped pair on the regen axis (Balance's regen + Momentum's move speed)~~ → T0079
 - Boss shatter: the moment a boss dies, every enemy projectile on screen bursts into shards — a boss kill is a breather and a payday
 - Gauge: a thin ink line under the HUD streak tally that fills as the streak approaches 8 — you can see Crescendo coming (pairs with T0065)
-- Overtone: while Still Life is active, the generative score's second voice holds one long sustained tone; it releases the moment the bubble pops (pairs with T0050 and T0011)
+- ~~Overtone: while Still Life is active, the generative score's second voice holds one long sustained tone; it releases the moment the bubble pops (pairs with T0050 and T0011)~~ (dropped 2026-10-27: Still Life was removed)
 - Cadenza: for 8 s after The Grid dies, fire rate ×1.5 with a "CADENZA" flash in the HUD — Encore's sibling on the second boss
 - Fermata: the moment a level-up card is picked, every enemy freezes for 0.6 s — the choice feels like a held breath (small juice, one line in the level-up flow)
 - Weapon marginalia: the first time a new weapon card is picked in a run, a dry annotation fades in under the HUD ("THE LINE PIERCES", "THE ORBITS BITE", "THE ARC CHAINS") — sibling of the enemy marginalia (T0027)
@@ -193,7 +195,7 @@ The PO adds ideas here. Good ones become tasks.
 - Elite tick: a short high tick plays the moment an elite spawns, so a sharp ear hears the page getting meaner (small audio)
 - Shape aspect: add a width:height aspect to the shape system (the rect shape is hard-coded 2:1) so long-bar enemies — Tube (120×16), The Rail (160×12) — can exist; touches the enemy content types, the shape draw, the texture sizing and the enemy hitbox, so an M for a strong machine (unblocks Tube and The Rail)
 - ~~Unit tests for the Arc chain: the bolt targets the first enemy within 260 u of the aim, each hop jumps to the nearest un-hit enemy within the chain radius, damage falls off per hop, and the chain ends when a hop finds no target (locks T0022)~~ → T0085 (**rejected**: `tests/core/arc.test.ts` already shipped with T0022 and covers the range, chain-radius and max-jumps cases; per-hop damage falloff does not exist in the code — do not re-write this task)
-- Plate tone: while the Still Life bubble is active, every shard you pick up is worth 50% more XP — the bubble becomes a collector's window (pairs with T0050)
+- ~~Plate tone: while the Still Life bubble is active, every shard you pick up is worth 50% more XP — the bubble becomes a collector's window (pairs with T0050)~~ (dropped 2026-10-27: Still Life was removed)
 - Rhythm section: while the kill streak is 8 or higher (Crescendo), shard pickup radius +25% and crit rings render 50% larger — the streak pays out in reach (pairs with T0065 and T0019)
 - Fanfare weapon: every 1.2 s it fires 8 small ink points in a ring around the player — 7 damage each, speed 260 — a defensive burst for when the swarm closes in (new level-up card, weight 3, ink; sibling of Orbit but on cooldown)
 - Platen: a heavy grey circle (60 hp, speed 20, 10 contact damage) that every 5 s flattens (0.5 s telegraph) then slams — a 160-unit ink shockwave that shoves the player and nearby enemies away; the first enemy that pushes instead of chasing (new push-wave behavior, so an M for a strong machine)
@@ -208,11 +210,11 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Rubato upgrade: +8% fire rate and +0.5 HP/s regen per level, maxLevel 3, weight 4, yellow — the tempo-sustain card, the last untapped pair on the regen axis (Rhythm's fire rate + Andante's regen; sibling of Pedal, Andante, Sotto Voce and Adagio)~~ → T0088
 - Gilt best: when the game-over screen beats the saved best score, the best line is printed in gold (a gold outline, like the gilt shards) with a small "NEW" tag (pairs with T0054)
 - Score count-up: the game-over score ticks up from 0 over 1 s while the rest of the screen waits — the verdict lands like a gavel (pairs with T0054)
-- ~~Leggero upgrade: +1 pierce and +10% move speed per level, maxLevel 2, weight 3, green — the light-arms card, the first pierce card on the mobility axis (Vector's pierce + Momentum's move speed; sibling of Tempo, Presto, Sweep, Legato and Andante on move speed, and of Ostinato, Gravure, Incision, Pizzicato and Riff on pierce)~~ → T0089
+- ~~Leggero upgrade: +1 pierce and +10% move speed per level, maxLevel 2, weight 3, green — the light-arms card, the first pierce card on the mobility axis (Vector's pierce + Momentum's move speed; sibling of Tempo, Presto, Sweep, Legato and Andante on move speed, and of Ostinato, Gravure, Incision, Pizzicato and Riff on pierce)~~ (dropped 2026-10-27: a pair of stat bonuses; built as T0089, then removed)
 - Needle: a still black square (40 hp) that every 4 s gouges a thin red line across the whole page at a random angle — 0.5 s red telegraph, 10 damage to anything on the line when it lands; the first line-attack enemy (a new line-telegraph behavior, so an M for a strong machine)
 - Platemark: the moment you take a hit, a small red × is printed on the paper at your position and fades over 2 s — the page records where you got hurt (small juice; pairs with the corpse-decal ideas)
 - Colophon: the game-over screen gains a small dry one-line colophon under the score, generated from the run's own numbers — "340 shards, 12 elites, 2 bosses, 9:41" — the run's credits (pairs with the score, T0054)
-- ~~Sostenuto upgrade: +8% damage and +4 max HP per level, maxLevel 3, weight 4, yellow — the brawler's card, the third of the max-HP pairings (Mass's HP+armor, Adagio's HP+regen): hit harder and take harder, the Slab build completes~~ → T0090
+- ~~Sostenuto upgrade: +8% damage and +4 max HP per level, maxLevel 3, weight 4, yellow — the brawler's card, the third of the max-HP pairings (Mass's HP+armor, Adagio's HP+regen): hit harder and take harder, the Slab build completes~~ (dropped 2026-10-27: a pair of stat bonuses; T0090 cancelled)
 - The Index: the pause screen lists every upgrade picked this run, one line each with small level pips, in a narrow ink column — your build is always legible (M, desktop; pairs with the margin-notes idea)
 - Tempo change: each level-up nudges the generative score +2 BPM (capped at the run's natural tempo curve), so a run that keeps levelling gets audibly faster — the music reads your build (M, audio, desktop; pairs with T0011)
 - Cliché: the third time a boss type spawns it arrives as a Cliché — 50% smaller and attacking 2× faster — the page stops being original (pairs with the +50%-HP-per-respawn scaling; M, after the third boss exists)

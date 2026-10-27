@@ -15,6 +15,13 @@ Assigned to **{{ASSIGNEE}}**: {{ASSIGNEE_LABEL}}. {{ASSIGNEE_NOTES}}
 2. Choose the smallest design that meets all acceptance criteria and fits the existing patterns: content as data, systems owned by GameScene, pooled objects reset in spawn()/despawn(), scene listeners removed on shutdown, invariants for new systems, Bauhaus flat art via drawShape() and PALETTE, works with mouse + keyboard and touch.
 3. Match the detail to the assignee: for a weak machine, spell out the exact code to add (short snippets are fine); for a strong one, interfaces and steps are enough.
 4. If the task cannot be built as written (contradicts the code, already exists, far too big for {{ASSIGNEE}}, or depends on something that does not exist yet and is not in the open tasks), reject it with a clear reason for the product owner.
+5. Also reject a task that fails the content bar. Check the content files before deciding:
+   - an enemy whose behavior an existing enemy already has (only hp, speed, size, shape or color differ);
+   - an upgrade that combines existing stat bonuses or copies an existing upgrade with other numbers;
+   - more than 10 regular enemy types or 16 upgrades after the task, unless it removes or merges one;
+   - an active ability (triggered by a key or button) that is not granted by an upgrade card or a pre-run hero/loadout pick;
+   - a new input or HUD element without its on-screen explanation: the key or button shown where it is used and on the pause screen, a touch control on mobile, a layout that works at 412x915 and 1280x720.
+   When a task adds an input or HUD element, your design must include that explanation and layout, not leave it for later.
 
 # Your final message, exactly in this format
 

@@ -13,6 +13,8 @@
 3. **Bauhaus, procedurally.** Flat primary colors and ink on warm paper, thick outlines, a hard paper-cut shadow. Everything is drawn in code. No glow, no gradients, no neon.
 4. **Juice through form.** Hits flash black, shapes shatter into fragments, rings ripple out, the screen shakes when something heavy falls.
 5. **Plays great on a phone.** Portrait or landscape, twin thumbs, 60 fps on a mid-range phone, large touch targets.
+6. **Depth over count.** A new enemy brings a new behavior; a new upgrade changes what you do or decide. Ten enemies that each ask something different beat thirty that differ only in numbers, shape or color. Pairs of stat bonuses are not upgrades.
+7. **Nothing unexplained.** Every key, button and HUD element is shown and taught where it is used, and listed on the pause screen. Abilities you trigger come from an upgrade you pick or a hero you choose before the run, never from nowhere.
 
 ## Tone
 

@@ -30,8 +30,13 @@ function contentList(dir: string, withDescriptions: boolean): string[] {
   const sources = files.length > 0 ? files.map((f) => path.join(dir, f)) : [path.join(dir, 'index.ts')];
   for (const file of sources) {
     if (!fs.existsSync(file)) continue;
-    for (const { name, description } of namesIn(fs.readFileSync(file, 'utf8'))) {
-      items.push(withDescriptions && description ? `${name} (${description})` : name);
+    const source = fs.readFileSync(file, 'utf8');
+    // One-item files (enemies, bosses) show their behavior, so the PO sees which behaviors exist.
+    const names = namesIn(source);
+    const behavior = names.length === 1 ? /\bbehavior:\s*['"`]([\w-]+)['"`]/.exec(source)?.[1] : undefined;
+    for (const { name, description } of names) {
+      const note = withDescriptions ? description : behavior;
+      items.push(note ? `${name} (${note})` : name);
     }
   }
   return items;
