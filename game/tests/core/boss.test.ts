@@ -56,3 +56,21 @@ describe('bossForKill', () => {
     expect(bossForKill(3).id).toBe('grid');
   });
 });
+
+describe('boss alternation: the Nth boss of the run (1-based)', () => {
+  it('boss #1 (The Frame, 5:00 spawn) is always The Frame, never The Grid', () => {
+    expect(bossForKill(0).id).toBe('frame');
+    expect(bossForKill(0).id).not.toBe('grid');
+  });
+
+  it('strict alternation: #1..#5 = frame, grid, frame, grid, frame', () => {
+    // Boss #N of the run is bossForKill(N - 1); BossSystem passes run.bossKills.
+    const ids = [1, 2, 3, 4, 5].map((n) => bossForKill(n - 1).id);
+    expect(ids).toEqual(['frame', 'grid', 'frame', 'grid', 'frame']);
+  });
+
+  it('deterministic: no RNG, the same boss number always returns the same boss', () => {
+    const seq = () => [0, 1, 2, 3, 4].map((k) => bossForKill(k).id);
+    expect(seq()).toEqual(seq());
+  });
+});

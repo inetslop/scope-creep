@@ -4,11 +4,12 @@ title: Unit tests for boss alternation
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T02:15:10Z
 claimed_at: 2026-10-27T02:43:57Z
+finished_at: 2026-10-27T02:50:12Z
 ---
 
 ## Goal
@@ -61,3 +62,15 @@ describe('boss alternation: the Nth boss of the run (1-based)', () => {
 - Do not modify the existing `describe('bossForKill')` block or any source file; the new block's value is the `#5 = 'frame'` assertion (existing tests stop at kill 3).
 ### Tests
 - The three `it` blocks above in `tests/core/boss.test.ts` (first-boss-is-frame, alternation through boss #5, determinism).
+
+## Result (attempt 1, yoga)
+
+T0061 is done. I appended exactly one new `describe` block to `tests/core/boss.test.ts` that locks in the T0044 boss rotation: the first boss (the 5:00 spawn) is always The Frame (`'frame'`), strict alternation holds through boss #5 (`frame, grid, frame, grid, frame` via `bossForKill(N - 1)`), and the mapping is deterministic with no RNG — asserting only the returned boss ids per the design. `bossForKill` is the pure helper in `src/core/boss.ts` (the task text's pointer at `src/content/bosses/index.ts` is just the FRAME/GRID registry, as the architect noted), so no source files changed. `npm run check` passes (typecheck, lint, 208/208 tests) and `npm run smoke` passes on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 6.3 min
+
+```
+game/tests/core/boss.test.ts | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+```
