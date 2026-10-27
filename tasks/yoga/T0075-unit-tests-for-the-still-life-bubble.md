@@ -4,10 +4,12 @@ title: Unit tests for the Still Life bubble
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T04:43:07Z
+claimed_at: 2026-10-27T04:51:17Z
+designer: yoga
 ---
 
 ## Goal
