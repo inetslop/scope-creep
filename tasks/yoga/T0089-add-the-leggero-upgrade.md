@@ -4,12 +4,10 @@ title: Add the Leggero upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-27T07:44:20Z
-claimed_at: 2026-10-27T07:50:54Z
-designer: yoga
 ---
 
 ## Goal
@@ -32,3 +30,65 @@ One more level-up card: **Leggero** pairs +1 pierce with +10% move speed — the
 - [ ] Picking it makes every volley pierce one extra enemy and the player move 10% faster per level; at level 2 that is +2 pierce and ≈×1.21 move speed, stacking with Vector and Sweep builds.
 - [ ] After 2 levels it is never offered again.
 - [ ] The new unit test passes in the automated gate.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/upgrades/index.ts` — append the `leggero` entry at the end of `UPGRADES` (after the `rubato` entry, before the closing `];` at line 540)
+- edit `tests/core/upgrades.test.ts` — append the `leggero` test after the last test in the file (the `rubato` test, ending line 401)
+
+### Interfaces
+None — data only; no type or signature changes (`extraPierce` and `moveSpeed` stats, `add`/`mul` ops, `PALETTE.green` all exist).
+
+### Steps
+1. In `src/content/upgrades/index.ts`, confirm `rubato` is still the last `UPGRADES` entry (it is; T0088 is committed). Insert after it:
+
+```ts
+  {
+    id: 'leggero',
+    name: 'Leggero',
+    description: '+1 pierce, +10% move speed',
+    maxLevel: 2,
+    weight: 3,
+    mods: [
+      { stat: 'extraPierce', op: 'add', value: 1 },
+      { stat: 'moveSpeed', op: 'mul', value: 1.10 },
+    ],
+    color: PALETTE.green,
+  },
+```
+
+2. In `tests/core/upgrades.test.ts`, insert after the `rubato` test, before the `});` that closes the `describe`:
+
+```ts
+  it('leggero offers 2 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('leggero')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'extraPierce', op: 'add', value: 1 },
+      { stat: 'moveSpeed', op: 'mul', value: 1.10 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('leggero')).toBe(2);
+    expect(run.stats.extraPierce).toBe(2);
+    const plain = new RunState(1);
+    expect(run.stats.moveSpeed).toBeCloseTo(plain.stats.moveSpeed * 1.21);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
+```
+
+3. Run `npm run check`.
+
+### Pitfalls
+- Append after whichever entry is last — never assume a fixed end-of-array line (queued T0086/T0088 both append to this file; `leggero` itself may not be last either).
+- Mod order is asserted: pierce first (`extraPierce`, `add`, 1), move speed second (`moveSpeed`, `mul`); write `value: 1.10` to match the `sweep` entry's source form.
+- Use `toBeCloseTo` for moveSpeed (float: 230×1.1×1.1 ≈ 278.3 = plain 230 × 1.21), not `toBe`; `extraPierce` is exact `toBe(2)`.
+- No `requires`/`requiresWeapon`/`grantsWeapon` fields; `id: 'leggero'` passes the kebab-case check in `tests/content.test.ts`, which auto-validates the new entry.
+- Green card + level-up rendering come for free from `color` + registry — no scene, art, or system change.
+
+### Tests
+- `tests/core/upgrades.test.ts`: the `leggero` test above (exact two mods in order, applied twice → level 2, +2 pierce, ≈×1.21 moveSpeed vs a fresh `RunState`, third offer rejected).
