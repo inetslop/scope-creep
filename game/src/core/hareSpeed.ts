@@ -7,13 +7,17 @@
  */
 export const HARE_STEPS: readonly number[] = [40, 52, 67.6, 87.9];
 
+/** Quickener step 0–3 at the given HP: one per full quarter of max HP lost. */
+export function hareStep(hp: number, maxHp: number): number {
+  if (maxHp > 0) {
+    if (hp <= maxHp * 0.25) return 3;
+    if (hp <= maxHp * 0.5) return 2;
+    if (hp <= maxHp * 0.75) return 1;
+  }
+  return 0;
+}
+
 /** Chase speed (world units/second) of the Hare at the given HP. Steps up at ≤75%, ≤50%, ≤25% of max HP. */
 export function hareSpeed(hp: number, maxHp: number): number {
-  let n = 0;
-  if (maxHp > 0) {
-    if (hp <= maxHp * 0.75) n = 1;
-    if (hp <= maxHp * 0.5) n = 2;
-    if (hp <= maxHp * 0.25) n = 3;
-  }
-  return HARE_STEPS[n];
+  return HARE_STEPS[hareStep(hp, maxHp)];
 }

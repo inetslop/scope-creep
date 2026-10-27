@@ -77,6 +77,7 @@ export class SpawnSystem {
       e.steer(target, dt);
       if (e.consumeShot()) this.fireShot(e);
       if (e.consumeSlam()) this.performSlam(e);
+      if (e.consumeQuickenPuff()) this.performQuickenPuff(e);
     }
     for (const obj of this.enemyShots.getChildren()) {
       const p = obj as EnemyBullet;
@@ -139,6 +140,13 @@ export class SpawnSystem {
     this.fx.slamRing(e.x, e.y);
     this.fx.slamDust(e.x, e.y, this.run.rng);
     this.sfx.slam();
+  }
+
+  /** A Hare quickened: an ink puff pops behind it, opposite its travel (stationary: random rear). */
+  private performQuickenPuff(e: Enemy): void {
+    const v = (e.body as Phaser.Physics.Arcade.Body).velocity;
+    const rear = (Math.hypot(v.x, v.y) > 1 ? Math.atan2(v.y, v.x) : this.run.rng.range(0, Math.PI * 2)) + Math.PI;
+    this.fx.quickenPuff(e.x, e.y, rear, this.run.rng);
   }
 
   /** A point on a ring just outside the camera view, inside the arena. */

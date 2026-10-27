@@ -4,7 +4,7 @@ import { DEPTH, ELITE } from '../config';
 import { PALETTE } from '../content/palette';
 import type { EnemyDef } from '../content/types';
 import { barContains } from '../core/barHit';
-import { hareSpeed } from '../core/hareSpeed';
+import { hareSpeed, hareStep } from '../core/hareSpeed';
 import { SLAM, SlamCycle } from '../core/slam';
 import type { Rng } from '../core/rng';
 import { distance, normalize, sub, type Vec2 } from '../core/vec';
@@ -60,6 +60,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   // 'slam' state machine
   private readonly slamCycle = new SlamCycle();
   private slamPending = false;
+  // 'quicken' state
+  private quickenStep = 0;
+  private quickenPuffPending = false;
   private get shootPeriod(): number {
     return this.def.shoot?.periodSec ?? SHOOT_PERIOD;
   }
@@ -100,6 +103,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.shotPending = false;
     this.slamCycle.reset();
     this.slamPending = false;
+    this.quickenStep = 0;
+    this.quickenPuffPending = false;
     this.slamRing.setVisible(false).setAlpha(0);
     this.ringAngle = rng.range(0, Math.PI * 2);
     this.ring.setVisible(elite);
@@ -141,6 +146,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         break;
       }
       case 'quicken': {
+        const step = hareStep(this.hp, this.maxHp);
+        if (step > this.quickenStep) {
+          this.quickenStep = step;
+          this.quickenPuffPending = true;
+        }
         const s = hareSpeed(this.hp, this.maxHp);
         vx = toTarget.x * s;
         vy = toTarget.y * s;
@@ -251,6 +261,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     const s = this.scaleX;
     if (!look.bar) return distance({ x: px, y: py }, this) <= (look.radius + inflate) * s;
     return barContains(this.x, this.y, this.rotation, (look.bar.length / 2) * s, (look.bar.thickness / 2) * s + inflate, px, py);
+  }
+
+  /** True exactly once, the frame a Hare's quicken step went up. SpawnSystem consumes it. */
+  consumeQuickenPuff(): boolean {
+    const pending = this.quickenPuffPending;
+    this.quickenPuffPending = false;
+    return pending;
   }
 
   /** Applies damage and knockback. Returns true if this hit killed it. */

@@ -4,11 +4,12 @@ title: Hare kick — the quicken pops a puff behind it
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0110]
 attempts: 1
 created: 2026-10-27T13:48:11Z
 claimed_at: 2026-10-27T14:52:57Z
+finished_at: 2026-10-27T15:17:40Z
 ---
 
 ## Goal
@@ -140,3 +141,20 @@ it('hareStep: 0–3 at the 75/50/25% thresholds, agreeing with hareSpeed', () =>
 
 ### Tests
 - `tests/core/hareSpeed.test.ts`: the `hareStep` case above (step 0 at full HP, 1/2/3 at exactly 75/50/25%, `HARE_STEPS[hareStep] === hareSpeed` across the table).
+
+## Result (attempt 1, yoga)
+
+The Hare's quicken now kicks up a puff: when its speed step goes up, one burst of three flat ink specks (radius 3–5, the TEX dot idiom) pops 12 units behind it opposite its travel, drifts 15–25 units over the rearward direction ±30° from the run RNG, and fades over 300 ms. Implemented as a per-Hare last-step + one-shot flag in `Enemy.steer()`, a rearward-puff consumer in `SpawnSystem`, a 9-slot speck pool in `FxSystem.quickenPuff()` beside the Platen dust pool, a `hareStep()` step function in `core/hareSpeed.ts` (hareSpeed behavior unchanged, table pinned in the new test case), and a `quicken-specks` pool invariant in GameScene. No sound, no gameplay change, no HUD/input/scene; `npm run check` and `npm run smoke` pass.
+
+- Self-review: APPROVE
+- Time: 24.7 min
+
+```
+game/src/core/hareSpeed.ts        | 18 +++++++++++-------
+ game/src/entities/Enemy.ts        | 19 ++++++++++++++++++-
+ game/src/scenes/GameScene.ts      |  3 ++-
+ game/src/systems/FxSystem.ts      | 35 +++++++++++++++++++++++++++++++++++
+ game/src/systems/SpawnSystem.ts   |  8 ++++++++
+ game/tests/core/hareSpeed.test.ts | 11 ++++++++++-
+ 6 files changed, 84 insertions(+), 10 deletions(-)
+```

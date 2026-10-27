@@ -11,6 +11,8 @@ import { GAME_EVENTS } from '../scenes/keys';
 const PLATEMARK_MAX = 12;
 const PLATEMARK_LIFE_MS = 2000;
 const PLATEMARK_COOLDOWN_MS = 500;
+const QUICKEN_SPECK_MAX = 9;
+const QUICKEN_SPECK_LIFE_MS = 300;
 const DUST_MAX = 6;
 const DUST_LIFE_MS = 400;
 
@@ -34,6 +36,9 @@ export class FxSystem {
   /** Slam dust: flat paperLight puffs kicked up when a Platen's slam fires. Pooled like platemarks. */
   private readonly dust: (Phaser.GameObjects.Image | undefined)[] = [];
   private dustCursor = 0;
+  /** Quicken specks: flat ink specks popping behind a Hare the moment it steps up a speed. Pooled like slam dust. */
+  private readonly quickenSpecks: (Phaser.GameObjects.Image | undefined)[] = [];
+  private quickenCursor = 0;
   /** The camera shake state machine. Named `shakeState` (not `shake`) because the public method is `shake()`. */
   private readonly shakeState = new CameraShake();
   /** Camera jitter applied last frame, in world units; subtracted before a new one so it can't accumulate. */
@@ -128,6 +133,29 @@ export class FxSystem {
     return slot;
   }
 
+  /** Hare quicken kick: three flat ink specks popping 12 units behind the Hare, drifting over `rear` ±30°. Pooled: oldest slot reused. */
+  quickenPuff(x: number, y: number, rear: number, rng: Rng): void {
+    const ox = x + Math.cos(rear) * 12, oy = y + Math.sin(rear) * 12;
+    for (let i = 0; i < 3; i += 1) {
+      const angle = rear + rng.range(-Math.PI / 6, Math.PI / 6);
+      const drift = rng.range(15, 25);
+      const slot = this.takeQuickenSpeck();
+      this.scene.tweens.killTweensOf(slot);
+      slot.setPosition(ox, oy).setAlpha(1).setScale(rng.range(3, 5) / 4).setVisible(true); // TEX.dot is radius 4 at scale 1
+      this.scene.tweens.add({ targets: slot, x: ox + Math.cos(angle) * drift, y: oy + Math.sin(angle) * drift, alpha: 0, duration: QUICKEN_SPECK_LIFE_MS, ease: 'Linear', onComplete: () => slot.setVisible(false) });
+    }
+  }
+
+  /** Next quicken-speck slot (created lazily; round-robin so the oldest visible is reused first). */
+  private takeQuickenSpeck(): Phaser.GameObjects.Image {
+    const i = this.quickenCursor;
+    this.quickenCursor = (i + 1) % QUICKEN_SPECK_MAX;
+    let slot = this.quickenSpecks[i];
+    if (!slot) slot = this.scene.add.image(0, 0, TEX.dot).setTint(PALETTE.ink).setOrigin(0.5).setDepth(DEPTH.fx).setVisible(false);
+    this.quickenSpecks[i] = slot;
+    return slot;
+  }
+
   /** Enemy destroyed: a ring and fragments in its color. `extraRings` adds rings (elites). */
   death(x: number, y: number, body: number, accent: number, size: number, extraRings = 0): void {
     this.rings.setParticleTint(body);
@@ -175,6 +203,13 @@ export class FxSystem {
   get dustCount(): number {
     let n = 0;
     for (const s of this.dust) if (s && s.alpha > 0) n += 1;
+    return n;
+  }
+
+  /** Specks currently on screen (the quicken-specks invariant reads this). */
+  get quickenSpeckCount(): number {
+    let n = 0;
+    for (const s of this.quickenSpecks) if (s && s.alpha > 0) n += 1;
     return n;
   }
 

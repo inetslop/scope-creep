@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { HARE_STEPS, hareSpeed } from '../../src/core/hareSpeed';
+import { HARE_STEPS, hareSpeed, hareStep } from '../../src/core/hareSpeed';
 
 describe('hareSpeed', () => {
   it('pins the four speed steps to 40 / 52 / 67.6 / 87.9', () => {
@@ -36,5 +36,14 @@ describe('hareSpeed', () => {
 
   it('never returns NaN (even with maxHp 0)', () => {
     expect(HARE_STEPS).toContain(hareSpeed(5, 0));
+  });
+
+  it('hareStep: 0–3 at the 75/50/25% thresholds, agreeing with hareSpeed', () => {
+    expect(hareStep(24, 24)).toBe(0);
+    expect(hareStep(18, 24)).toBe(1);
+    expect(hareStep(12, 24)).toBe(2);
+    expect(hareStep(6, 24)).toBe(3);
+    expect(hareStep(5, 0)).toBe(0);
+    for (const hp of [24, 20, 18, 12, 6, 3, 0]) expect(HARE_STEPS[hareStep(hp, 24)]).toBe(hareSpeed(hp, 24));
   });
 });
