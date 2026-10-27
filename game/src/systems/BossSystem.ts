@@ -9,6 +9,7 @@ import { PALETTE } from '../content/palette';
 import { BossTimer, bossForKill, bossHpMultiplier } from '../core/boss';
 import { GridSweep, pointToSegmentDistance, type GridSweepPhase } from '../core/gridSweep';
 import type { RunState } from '../core/run';
+import { underexposureDamage } from '../core/underexposure';
 import { normalize, sub, type Vec2 } from '../core/vec';
 import { hook } from '../debug/testHook';
 import { Boss } from '../entities/Boss';
@@ -304,9 +305,10 @@ export class BossSystem {
   private onProjectileHit(p: Projectile, b: Boss): void {
     if (!p.active || !b.active || p.hitSerials.has(b.serial)) return;
     p.hitSerials.add(b.serial);
-    const died = b.hit(p.damage);
+    const wound = underexposureDamage(this.run.stats.woundThreshold, b.hp, b.maxHp, p.damage);
+    const died = b.hit(wound.damage);
     this.run.bossHp = Math.max(0, b.hp);
-    this.damageNumbers.show(b.x, b.y, p.damage);
+    this.damageNumbers.show(b.x, b.y, wound.damage, false, false, wound.doubled);
     this.fx.hit(p.x, p.y, PALETTE.ink);
     this.sfx.hit();
     p.pierceLeft -= 1;

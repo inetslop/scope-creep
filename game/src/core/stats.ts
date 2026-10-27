@@ -30,6 +30,8 @@ export interface PlayerStats {
   xpMul: number;
   /** Chance (0-0.5) that a player weapon hit deals double damage. */
   critChance: number;
+  /** Fraction of a shape's own max HP below which a hit deals double damage (Underexposure; 0 = off). */
+  woundThreshold: number;
 }
 
 export type StatKey = keyof PlayerStats;
@@ -53,6 +55,7 @@ export const BASE_STATS: Readonly<PlayerStats> = {
   extraPierce: 0,
   xpMul: 1,
   critChance: 0,
+  woundThreshold: 0,
 };
 
 /** Hard limits so stacking upgrades can never break the game. */
@@ -69,6 +72,7 @@ export const STAT_LIMITS: Partial<Record<StatKey, { min?: number; max?: number; 
   extraPierce: { min: 0, max: 20, integer: true },
   xpMul: { min: 0.1, max: 10 },
   critChance: { min: 0, max: 0.5 },
+  woundThreshold: { min: 0, max: 0.75 },
 };
 
 export function computeStats(mods: readonly StatMod[], base: Readonly<PlayerStats> = BASE_STATS): PlayerStats {

@@ -22,17 +22,17 @@ export class DamageNumbers {
     return n;
   }
 
-  /** Pops a number at (x, y); dropped if all 60 slots are busy. `red` prints it in red (the crop burn). */
-  show(x: number, y: number, amount: number, crit = false, red = false): void {
+  /** Pops a number at (x, y); dropped if all 60 slots are busy. `red` prints it in red (the crop burn); `blue` prints it in blue (an Underexposure double). */
+  show(x: number, y: number, amount: number, crit = false, red = false, blue = false): void {
     let i = this.pool.findIndex((t) => !t.active);
     if (i === -1) {
       if (this.pool.length >= MAX_NUMBERS) return; // pool exhausted: skip rather than allocate
       i = this.pool.length;
-      this.pool.push(this.scene.add.text(0, 0, '', this.style(crit, red)).setOrigin(0.5).setDepth(DEPTH.fx + 1));
+      this.pool.push(this.scene.add.text(0, 0, '', this.style(crit, red, blue)).setOrigin(0.5).setDepth(DEPTH.fx + 1));
     }
     const t = this.pool[i];
     t.setText(String(Math.round(amount)));
-    t.setStyle(this.style(crit, red));
+    t.setStyle(this.style(crit, red, blue));
     t.setPosition(x + (Math.random() * 2 - 1) * 10, y); // small jitter so numbers don't stack exactly
     t.setAlpha(1).setActive(true).setVisible(true);
     this.scene.tweens.add({
@@ -45,8 +45,8 @@ export class DamageNumbers {
     });
   }
 
-  private style(crit: boolean, red: boolean): Phaser.Types.GameObjects.Text.TextStyle {
-    return textStyle(crit ? 28 : 20, crit || red ? PALETTE.red : PALETTE.ink, {
+  private style(crit: boolean, red: boolean, blue: boolean): Phaser.Types.GameObjects.Text.TextStyle {
+    return textStyle(crit ? 28 : 20, crit || red ? PALETTE.red : blue ? PALETTE.blue : PALETTE.ink, {
       fontStyle: 'bold',
       stroke: cssColor(PALETTE.paperLight),
       strokeThickness: 3,

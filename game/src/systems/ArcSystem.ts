@@ -6,6 +6,7 @@ import type { WeaponDef } from '../content/types';
 import { WEAPON_BY_ID } from '../content/weapons';
 import { pickArcTargets, type ArcTarget } from '../core/arc';
 import { INKWELL, type RunState } from '../core/run';
+import { underexposureDamage } from '../core/underexposure';
 import { fireRateMultiplier } from '../core/stats';
 import { fromAngle, type Vec2 } from '../core/vec';
 import { hook } from '../debug/testHook';
@@ -103,10 +104,11 @@ export class ArcSystem {
       const e = bySerial.get(id);
       if (!e || !e.active) continue; // killed mid-chain by an earlier jump: skip
       const crit = stats.critChance > 0 && this.run.rng.chance(stats.critChance);
-      const dmg = (crit ? 2 : 1) * def.damage * stats.damageMul;
+      const wound = underexposureDamage(stats.woundThreshold, e.hp, e.maxHp, (crit ? 2 : 1) * def.damage * stats.damageMul);
+      const dmg = wound.damage;
       const died = e.hit(dmg, from, def.knockback * (burst ? INKWELL.burstKnockback : 1));
       from = { x: e.x, y: e.y };
-      this.damageNumbers.show(e.x, e.y, dmg, crit);
+      this.damageNumbers.show(e.x, e.y, dmg, crit, false, wound.doubled);
       this.fx.hit(e.x, e.y, e.def.look.body);
       if (crit) {
         this.sfx.critHit();

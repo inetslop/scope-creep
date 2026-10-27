@@ -4,11 +4,12 @@ title: Add the Underexposure upgrade
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T11:32:46Z
 claimed_at: 2026-10-27T13:08:25Z
+finished_at: 2026-10-27T13:18:00Z
 ---
 
 ## Goal
@@ -84,3 +85,24 @@ export function underexposureDamage(threshold: number, hpBefore: number, maxHp: 
 - target's own max: `(0.5, 9, 20, 10)` doubled; `(0.5, 10, 20, 10)` not
 - multiplies, not flat: `(0.5, 1, 100, 13.5)` → 27; `WOUND_MULTIPLIER` is 2
 - `RunState`: base `woundThreshold` 0; applying `UPGRADE_BY_ID.get('underexposure')` once → 0.5, twice → 0.75; `computeStats([{ stat: 'woundThreshold', op: 'add', value: 99 }])` clamps to 0.75
+
+## Result (attempt 1, desktop)
+
+Added the Underexposure level-up card (maxLevel 2, weight 3, ink) with a new pure rule in src/core/underexposure.ts and a `woundThreshold` stat (0 off, clamped 0–0.75): hits on enemies, elites, or bosses below 50% (L1) / 75% (L2) of their own max HP — checked on pre-hit HP — deal ×2 damage and pop blue damage numbers, composing multiplicatively with crits (×4). Applied at all four damage sites (Combat, Orbit, Arc, Boss), with a `wound-threshold` scene invariant and unit tests in tests/core/underexposure.test.ts. Sole deviation from the design: the upgrade mod is +0.5/level rather than +0.25, because applyUpgrade pushes mods once per level and the acceptance criteria require 0.5 at L1 — the design's own 0.75 STAT_LIMITS cap then produces L2 = 0.75. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 9.6 min
+
+```
+game/src/content/upgrades/index.ts    |  9 +++++++
+ game/src/core/stats.ts                |  4 ++++
+ game/src/core/underexposure.ts        | 11 +++++++++
+ game/src/scenes/GameScene.ts          |  5 +++-
+ game/src/systems/ArcSystem.ts         |  6 +++--
+ game/src/systems/BossSystem.ts        |  6 +++--
+ game/src/systems/CombatSystem.ts      |  6 +++--
+ game/src/systems/DamageNumbers.ts     | 12 +++++-----
+ game/src/systems/OrbitSystem.ts       |  6 +++--
+ game/tests/core/underexposure.test.ts | 45 +++++++++++++++++++++++++++++++++++
+ 10 files changed, 95 insertions(+), 15 deletions(-)
+```

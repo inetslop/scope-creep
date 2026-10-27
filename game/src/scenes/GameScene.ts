@@ -378,7 +378,10 @@ export class GameScene extends Phaser.Scene {
       if (!Number.isFinite(p.pulseAlpha) || p.pulseAlpha < -1e-6 || p.pulseAlpha > 0.6 + 1e-6) return `pulse alpha ${p.pulseAlpha}`;
       return null;
     });
+    hook.addInvariant('wound-threshold', () =>
+      this.run.stats.woundThreshold >= 0 && this.run.stats.woundThreshold <= 0.75 + 1e-6 ? null : `woundThreshold ${this.run.stats.woundThreshold}`,
+    );
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'inkwell', 'streak', 'score', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse', 'bouncing-points'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'inkwell', 'streak', 'score', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse', 'bouncing-points', 'wound-threshold'];

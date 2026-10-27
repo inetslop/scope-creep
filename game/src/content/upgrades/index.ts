@@ -148,6 +148,15 @@ export const UPGRADES: readonly UpgradeDef[] = [
     grantsWeapon: 'counterpoint',
     color: PALETTE.ink,
   },
+  {
+    id: 'underexposure',
+    name: 'Underexposure',
+    description: 'Wounded shapes (under 50% HP) take double damage',
+    maxLevel: 2,
+    weight: 3,
+    mods: [{ stat: 'woundThreshold', op: 'add', value: 0.5 }],
+    color: PALETTE.ink,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));

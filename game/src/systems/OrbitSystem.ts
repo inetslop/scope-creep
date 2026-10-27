@@ -5,6 +5,7 @@ import { DEPTH } from '../config';
 import type { WeaponDef } from '../content/types';
 import { WEAPON_BY_ID } from '../content/weapons';
 import type { RunState } from '../core/run';
+import { underexposureDamage } from '../core/underexposure';
 import type { Vec2 } from '../core/vec';
 import type { Enemy } from '../entities/Enemy';
 import type { Player } from '../entities/Player';
@@ -68,9 +69,10 @@ export class OrbitSystem {
         if (last !== undefined && now - last < cooldownMs) continue; // at most one orbit hit per enemy per 0.6 s
         this.lastHit.set(e.serial, now);
         const crit = this.run.stats.critChance > 0 && this.run.rng.chance(this.run.stats.critChance);
-        const dmg = (crit ? 2 : 1) * def.damage * this.run.stats.damageMul;
+        const wound = underexposureDamage(this.run.stats.woundThreshold, e.hp, e.maxHp, (crit ? 2 : 1) * def.damage * this.run.stats.damageMul);
+        const dmg = wound.damage;
         const died = e.hit(dmg, { x: cx, y: cy }, def.knockback);
-        this.damageNumbers.show(e.x, e.y, dmg, crit);
+        this.damageNumbers.show(e.x, e.y, dmg, crit, false, wound.doubled);
         this.fx.hit(cx, cy, e.def.look.body);
         if (crit) {
           this.sfx.critHit();

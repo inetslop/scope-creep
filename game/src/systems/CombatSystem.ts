@@ -3,6 +3,7 @@ import { ELITE, SCORE_POINTS } from '../config';
 import type { Sfx } from '../audio/Sfx';
 import { getEnemy } from '../content/enemies';
 import type { RunState } from '../core/run';
+import { underexposureDamage } from '../core/underexposure';
 import { hook } from '../debug/testHook';
 import type { Enemy } from '../entities/Enemy';
 import type { EnemyBullet } from '../entities/EnemyBullet';
@@ -59,9 +60,10 @@ export class CombatSystem {
     if (!p.active || !e.active || p.hitSerials.has(e.serial)) return;
     p.hitSerials.add(e.serial);
     const crit = this.run.stats.critChance > 0 && this.run.rng.chance(this.run.stats.critChance);
-    const dmg = crit ? p.damage * 2 : p.damage;
+    const wound = underexposureDamage(this.run.stats.woundThreshold, e.hp, e.maxHp, crit ? p.damage * 2 : p.damage);
+    const dmg = wound.damage;
     const died = e.hit(dmg, p, p.knockback);
-    this.damageNumbers.show(e.x, e.y, dmg, crit);
+    this.damageNumbers.show(e.x, e.y, dmg, crit, false, wound.doubled);
     this.fx.hit(p.x, p.y, e.def.look.body);
     if (crit) {
       this.sfx.critHit();
