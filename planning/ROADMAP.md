@@ -20,14 +20,16 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Boss sting: a deep low hit + music swell the moment any boss spawns (T0058) ✅
 - Card-flip level-ups: the three choices flip in like cards, 150 ms apart, with a flip SFX; input locked until the deal finishes (T0059) ✅
 - Crescendo: while the kill streak is 8 or higher, fire rate +10% and the streak tally turns red (T0065) ✅
-- The Index: the pause screen lists every upgrade picked this run in a narrow ink column — one line per upgrade, pips in the card color, newest pick first, at most 16 lines, "NOTHING PICKED YET" while empty (T0104, in queue, desktop)
+- The Index: the pause screen lists every upgrade picked this run in a narrow ink column — one line per upgrade, pips in the card color, newest pick first, at most 16 lines, "NOTHING PICKED YET" while empty (T0104) ✅
 - Controls card on the pause screen (next, before any new input): every input listed in the Bauhaus style — WASD / mouse / hold click / Esc / M mute on desktop, sticks and buttons on gamepad, left thumb / right thumb / pause button on touch — and the menu hint matches it
 - Weapon SFX timbres: the firing weapons sound like themselves — Point a short high tick, Line a low thud, Arc a sharp snap (T0093) ✅
 - Orbit hum: each Orbit contact plays a soft low hum — the deferred half of T0093, so all four weapons are audible (T0107, in queue, yoga)
 - Platemark: the moment you take a hit, a small red × prints on the paper at your position and fades over 2 s (T0094) ✅
 - The Underdrawing: after 8:00, ~1.5 s before a normal enemy spawns, a faint grey pencil outline of its shape is sketched at the spawn point and fades as it lands — the late-run swarm stays legible (T0100, in queue, asus)
 - Streak break: the moment your kill streak resets (it was ≥1), the streak tally shatters — 4–6 flat ink specks scatter for 20–40 u and fade over 400 ms, plus one throttled low blip — you see and hear the Crescendo bonus go (T0101) ✅
-- Level-up pulse: the moment a level-up card is picked, your circle swells 25% larger for 300 ms — the level-up is felt in your own shape (T0102, in queue, yoga)
+- Level-up pulse: the moment a level-up card is picked, your circle swells 25% larger for 300 ms — the level-up is felt in your own shape (T0102, in progress, yoga)
+- Gutter slap: the moment a gutter band enters the page, a soft paper slap plays — a short filtered noise, no new tone (T0109, in queue, yoga)
+- Platen dust: the Platen's slam (T0091) kicks up three small paper-dust puffs at the impact point (T0110, in queue, yoga)
 
 ## M2 — Variety (consolidated 2026-10-27)
 The agents had padded the game: 49 upgrades (35 of them pairs of existing stat bonuses), 18 enemies (11 of them chasers that differed only in numbers, shape or color) and two active abilities with unexplained keys and a bare HUD. All of it was cut by hand; see VISION pillars 6 and 7 and the content bar in the PO prompt. Variety now grows by mechanics, not by count.
@@ -46,7 +48,8 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 - Boss sting: a deep low hit + music swell on any boss spawn (T0058) ✅
 - Boss nameplate intro: the first time each boss spawns, its name (from the boss content def, so The Palette gets it for free) is printed in small caps centered below the boss bar, fading over 2 s and freezing under overlays (T0064) ✅
 - Boss warning: 5 s before any boss spawn (Frame or Grid, including respawns) the arena boundary pulses red, "SOMETHING HEAVY APPROACHES" flashes in the HUD, and a low thud plays (T0070) ✅
-- Later: boss music (64 BPM low pulse + dissonant second voice while a boss is alive), boss corpse decals, The Grid's second voice (below 50% HP: third arm, 25% faster spin — the fight changes shape at the midpoint), The Press — fourth boss (descending ink wall from the top of the page, see IDEAS)
+- Boss music: while a boss is alive the score holds at a slow 64 BPM low pulse with a dissonant second voice (a semitone above the pulse, on alternating beats); it glides down over 1.5 s at the boss spawn event and back to the run tempo over 1.5 s on the boss's death (T0108, in queue, desktop)
+- Later: boss corpse decals, The Grid's second voice (below 50% HP: third arm, 25% faster spin — the fight changes shape at the midpoint), The Press — fourth boss (descending ink wall from the top of the page, see IDEAS)
 
 ## M4 — Meta-progression
 - Score: kills earn points (normal 1, elite 5, boss 50); HUD shows the running score, game over shows score + persisted best (T0054) ✅
