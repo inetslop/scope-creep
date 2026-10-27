@@ -4,10 +4,11 @@ title: Add the Wash enemy — it wets the page
 assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T13:24:32Z
+claimed_at: 2026-10-27T15:11:41Z
 ---
 
 ## Goal
