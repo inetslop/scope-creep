@@ -11,7 +11,7 @@ created: 2026-10-27T03:53:41Z
 ---
 
 ## Goal
-Five seconds before any boss spawn (The Frame or The Grid, including scaled HP respawns), the player gets a warning: the arena boundary pulses red, "SOMETHING HEAVY APPROACHES" flashes in the HUD, and one soft low thud plays — so the boss sting (T0058) and the nameplate (T0064) land on top of a build-up instead of out of nowhere.
+Five seconds before any boss spawn (The Frame, The Grid, The Palette — whatever the rotation schedules next — including scaled HP respawns), the player gets a warning: the arena boundary pulses red, "SOMETHING HEAVY APPROACHES" flashes in the HUD, and one soft low thud plays — so the boss sting (T0058) and the nameplate (T0064) land on top of a build-up instead of out of nowhere.
 
 ## Details
 - The warning window is exactly the 5 seconds before a scheduled boss spawn: from spawnTime − 5 s to spawnTime.
@@ -19,12 +19,12 @@ Five seconds before any boss spawn (The Frame or The Grid, including scaled HP r
 - HUD: "SOMETHING HEAVY APPROACHES" in red small caps, top-center of the page just below where the boss nameplate (T0064) is printed; fades out over 2 s. Reuse the existing HUD flash pattern ("ERASED", "RHYTHM").
 - Audio: one soft low thud (~60 Hz, ~200 ms decay) at the start of the window, throttled to at most one per warning. The spawn itself keeps the existing T0058 boss sting; do not change the sting.
 - If the run is paused, the countdown and the pulse pause with the game and resume without a jump.
-- The warning must fire for The Frame and The Grid, for their first spawns and for every later respawn.
+- The warning must fire for every boss in the rotation — The Frame, The Grid, and The Palette (T0097) once it lands — for first spawns and every later respawn. The schedule is BossTimer-driven, so it fires for whatever boss is next; do not special-case boss ids.
 
 ## Acceptance criteria
 - [ ] In a run, exactly 5 s before The Frame's 5:00 spawn the boundary starts pulsing red, the HUD flash appears, and the low thud plays.
 - [ ] The pulse has stopped and the flash is gone by the moment the boss sting plays at spawn.
-- [ ] The same warning plays before The Grid's 10:00 spawn and before a boss respawn; the red line follows the cropped boundary when the crop is active (after 12:00).
+- [ ] The same warning plays before The Grid's 10:00 spawn, before The Palette's 15:00 spawn (T0097), and before a boss respawn; the red line follows the cropped boundary when the crop is active (after 12:00).
 - [ ] No warning appears when no boss spawn is scheduled within the next 5 s.
 - [ ] Pausing the game pauses the pulse; resuming continues it with no jump or double thud.
 

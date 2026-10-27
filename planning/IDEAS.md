@@ -101,7 +101,7 @@ The PO adds ideas here. Good ones become tasks.
 - The Critic: every 200 kills, the arena border flashes ink and every enemy on screen takes 15 damage ("THE CRITIC ARRIVES")
 - Gilt shards: 5% of shards are gilt (gold outline) and worth 3× XP — a small economy spice
 - Ink rain: after 10:00, ink drops fall from the top of the page and leave short-lived puddles that slow you by 25% for 2 s
-- The Palette — third boss: a row of five color bars that slide down the page; each bar you survive paints your circle in that color
+- ~~The Palette — third boss: a row of five color bars that slide down the page; each bar you survive paints your circle in that color~~ → T0097 (queued, asus; the swatches are 60×30 tiles in red, orange, yellow, green, blue, 90 HP each, 6.0 s to fall, ≥120 units apart; each swatch dodged paints a 2 u ring stripe on the player; rotation becomes Frame → Grid → Palette)
 - Staple: a small grey staple that sticks to your circle for 3 s, slowing you by 20% — a debuff you have to shake off by running
 - Coffee rings: as the run goes on, faint decorative coffee rings accumulate on the paper (pure art, no gameplay)
 - ~~Trio: a third active — fires 3 slow ink lines in a fan, 10 s cooldown (reuses the Understudy active system)~~ (dropped 2026-10-27: actives were removed)
@@ -129,7 +129,7 @@ The PO adds ideas here. Good ones become tasks.
 - Low-HP vignette: when you drop below 25% max HP, the paper's edges darken to a warm shadow and a thin red rule pulses at the arena boundary — danger readable at a glance
 - ~~Crescendo: while your kill streak is 8 or higher, fire rate +10%; the streak tally in the HUD turns red while it is active (sibling of T0014)~~ → T0065
 - Metronome: a still grey circle that pulses; every pulse speeds up all enemies within 200 units by 20% for 3 s — a late-run enemy that punishes camping
-- Ink bleed: when a crit lands, a small ink splat stays at the hit for 2 s and slows enemies standing in it by 30% — crit builds paint the battlefield
+- Ink bleed: when a crit lands, a small ink splat stays at the hit for 2 s and slows enemies standing in it by 30% — crit builds paint the battlefield (held this cycle: waits for the FxSystem slate to settle — T0040, T0091)
 - Frame's heartbeat: while The Frame is alive the paper pulses once per second in time with its attack rhythm — the boss's tempo is felt in the page
 - Prestissimo: the first time your kill streak reaches 10 in a run, your next level-up deals 4 cards instead of 3, with a "PRESTISSIMO" flash
 - ~~Impasto upgrade: +1 projectile per volley and +15% damage per level, maxLevel 2, weight 3 — a rare heavy-volley card that reuses the Repetition and Emphasis stats~~ → T0062
@@ -170,7 +170,7 @@ The PO adds ideas here. Good ones become tasks.
 - Fermata: the moment a level-up card is picked, every enemy freezes for 0.6 s — the choice feels like a held breath (small juice, one line in the level-up flow)
 - Weapon marginalia: the first time a new weapon card is picked in a run, a dry annotation fades in under the HUD ("THE LINE PIERCES", "THE ORBITS BITE", "THE ARC CHAINS") — sibling of the enemy marginalia (T0027)
 - ~~Gravure upgrade: +1 pierce and +15% damage per level, maxLevel 2, weight 3 — the rare pierce-damage card that gives a piercing volley the damage to back it up (reuses Vector's pierce and Emphasis's damage; sibling of Ostinato and Pizzicato on the pierce axis)~~ → T0080
-- Gutter: the first arena hazard — after 14:00 a 40-unit-wide band of ink sweeps horizontally across the page every 20 seconds; standing in it burns 4 damage/s (the concrete first of the arena-hazards idea)
+- ~~Gutter: the first arena hazard — after 14:00 a 40-unit-wide band of ink sweeps horizontally across the page every 20 seconds; standing in it burns 4 damage/s (the concrete first of the arena-hazards idea)~~ → T0099 (queued, desktop; 4.0 s to cross, direction alternating, 1.5 s red-rule telegraph, clipped to the crop-safe area, marginalia "THE PAGE INKS" on the first sweep, no new SFX)
 - Ransom plate: the boss nameplate is set in mixed letterforms, each letter rotated up to 5° — the title reads like a ransom note (pure art, pairs with T0064)
 - First Proof: the first kill of each enemy type in a run drops one extra shard — a small collection reward (pairs with the marginalia first-sighting, T0027)
 - Registration marks: faint printer's registration marks (a crosshair in a circle) fade in at the four paper corners at 0:30 (pure art, sets the page)
@@ -193,7 +193,7 @@ The PO adds ideas here. Good ones become tasks.
 - Fold: every 8 minutes the page folds in half for 10 s — the arena temporarily becomes a rectangle half as wide, with a paper-crease SFX on fold and unfold (stretch)
 - Ligature: two red squares joined by a thin ink line; if both die within 2 s of each other the line shatters and both drop double shards (stretch)
 - Elite tick: a short high tick plays the moment an elite spawns, so a sharp ear hears the page getting meaner (small audio)
-- Shape aspect: add a width:height aspect to the shape system (the rect shape is hard-coded 2:1) so long-bar enemies — Tube (120×16), The Rail (160×12) — can exist; touches the enemy content types, the shape draw, the texture sizing and the enemy hitbox, so an M for a strong machine (unblocks Tube and The Rail)
+- ~~Shape aspect: add a width:height aspect to the shape system (the rect shape is hard-coded 2:1) so long-bar enemies — Tube (120×16), The Rail (160×12) — can exist; touches the enemy content types, the shape draw, the texture sizing and the enemy hitbox, so an M for a strong machine (unblocks Tube and The Rail)~~ → T0098 (queued, asus; additive — the rect stays 2:1 and the existing roster is unchanged; long bars draw stretched and hit-test as a capsule along their long axis)
 - ~~Unit tests for the Arc chain: the bolt targets the first enemy within 260 u of the aim, each hop jumps to the nearest un-hit enemy within the chain radius, damage falls off per hop, and the chain ends when a hop finds no target (locks T0022)~~ → T0085 (**rejected**: `tests/core/arc.test.ts` already shipped with T0022 and covers the range, chain-radius and max-jumps cases; per-hop damage falloff does not exist in the code — do not re-write this task)
 - ~~Plate tone: while the Still Life bubble is active, every shard you pick up is worth 50% more XP — the bubble becomes a collector's window (pairs with T0050)~~ (dropped 2026-10-27: Still Life was removed)
 - Rhythm section: while the kill streak is 8 or higher (Crescendo), shard pickup radius +25% and crit rings render 50% larger — the streak pays out in reach (pairs with T0065 and T0019)
@@ -222,3 +222,7 @@ The PO adds ideas here. Good ones become tasks.
 - Underexposure upgrade: enemies below 50% of their max HP take double damage from you — the finisher card: a conditional damage rule, not a stat bonus (maxLevel 2, weight 3, ink); it changes what you chase, because the wounded shapes are the kill
 - The Underdrawing: after 8:00, 1.5 s before any enemy spawns, a faint pencil outline of the incoming shape is sketched at its spawn point and fades — the page warns of what is coming, so the late-run swarm stays legible (new spawn-telegraph system; M for a strong machine)
 - Streak break: the moment your kill streak resets (you get hit), the streak tally shatters — a small ink burst on the tally plus a short low blip — so you can see the Crescendo bonus (T0065) go, and why (small juice, pairs with T0014 and T0065)
+- Swatch stain: a destroyed swatch leaves a faint stain of its color where it broke, fading over 4 s (pairs with T0097, small juice)
+- Platen dust: the Platen's slam (T0091) kicks up three small paper-dust puffs at the impact point (pairs with T0091, small juice)
+- Gutter slap: the moment a gutter band enters the page, a soft paper slap plays — a short filtered noise, no new tone (pairs with T0099, small audio)
+- Type block: a still grey square that falls from the top edge with a 0.4 s shadow telegraph — 40 hp, bounces once on landing (the first falling enemy; the enemy pool is at 7/10)

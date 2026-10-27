@@ -26,20 +26,22 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 
 ## M2 — Variety (consolidated 2026-10-27)
 The agents had padded the game: 49 upgrades (35 of them pairs of existing stat bonuses), 18 enemies (11 of them chasers that differed only in numbers, shape or color) and two active abilities with unexplained keys and a bare HUD. All of it was cut by hand; see VISION pillars 6 and 7 and the content bar in the PO prompt. Variety now grows by mechanics, not by count.
-- Enemies kept (behavior): Wedge (chase), Dart (weave), Block (charge), Sentry (ranged), Splitter (splits into Splinters), plus the bosses' minions. Next: the Platen — a heavy yellow circle that flattens and slams every 5 s, a 160-unit ink shockwave shoving the player and nearby enemies away (the slam deals no damage); the first enemy that pushes instead of chasing (T0091, in queue, desktop). After it, from IDEAS: Mine, Ring, Hare, Needle, Bracket, Ligature, Wash
+- Enemies kept (behavior): Wedge (chase), Dart (weave), Block (charge), Sentry (ranged), Splitter (splits into Splinters), plus the bosses' minions. Next: the Platen — a heavy yellow circle that flattens and slams every 5 s, a 160-unit ink shockwave shoving the player and nearby enemies away (the slam deals no damage); the first enemy that pushes instead of chasing (T0091, in queue, desktop). After it, from IDEAS: Mine, Ring, Hare, Needle, Bracket, Ligature, Wash. Long-bar enemies (Tube 120×16, The Rail 160×12) wait on the shape-aspect change (T0098, in queue, asus).
 - Weapons: Point, Line, Orbit (T0008) ✅, Arc (T0022) ✅, Counterpoint wall-bounce (T0055, in queue, desktop-4070); backlog: Stamp, Plumb, Hatch, Baseline, Fanfare, negative-space bomb
 - Upgrades kept (14): Rhythm, Weight, Repetition, Momentum, Mass, Gravity, Vector, Balance, Composition, Contrast (crit), Draft (projectile speed), and the Line, Orbit and Arc weapon cards. Next: upgrades that change play, not numbers: weapon evolutions (Point → Bullet), conditional cards (Full Bleed, Scavenge, Sforzando, Overprint), Kerning (projectile size + knockback)
 - Actives: removed 2026-10-27. They may return only as an upgrade card that grants one or as a hero/loadout picked before the run, with the key shown on screen (desktop, gamepad, a touch button) and a designed cooldown element. A UX design task comes first.
 - Systems: Crop marks — after 12:00 the arena's safe area shrinks to 70% by 17:00; the cropped margin burns the player for 5 damage/s (T0045) ✅
 - Inkwell: firing fills a thin meter under the streak tally; a full meter makes the next volley a burst — 3× projectiles, 2× knockback, a deeper shoot sound and an ink ring (T0090, in queue, desktop)
+- Gutter: the first arena hazard — after 14:00 a 40-unit-wide ink band sweeps the crop-safe area horizontally every 20 s (4.0 s to cross, direction alternating); a thin red rule telegraphs it for 1.5 s; standing inside burns 4 damage/s (T0099, in queue, desktop)
 
 ## M3 — Bosses (started)
 - The Frame at 5:00: health bar, charge + wedge ring + radial dart burst, +50% HP per respawn (T0006) ✅
 - The Grid — second boss: a 400 HP rotating compass that sweeps two 200×12 ink arms (0.5 s red telegraph, 12 dmg) across the arena; boss content file + pure `gridSweep` timing module (unit-tested), reusing The Frame's boss infrastructure and +50% HP-per-respawn scaling (T0044) ✅
+- The Palette — third boss: five color swatches (red, orange, yellow, green, blue) fall down the page one at a time, 90 HP each, 6.0 s to fall, ≥120 units apart; each swatch you dodge paints a 2 u ring stripe on the player; rotation becomes Frame → Grid → Palette (T0097, in queue, asus)
 - Boss sting: a deep low hit + music swell on any boss spawn (T0058) ✅
 - Boss nameplate intro: the first time each boss spawns, its name is printed in small caps at the top of the page, fading over 2 s (T0064, in queue, desktop)
 - Boss warning: 5 s before any boss spawn (Frame or Grid, including respawns) the arena boundary pulses red, "SOMETHING HEAVY APPROACHES" flashes in the HUD, and a low thud plays (T0070, in queue, desktop)
-- Later: boss music (64 BPM low pulse + dissonant second voice while a boss is alive), boss corpse decals, The Palette — third boss (five sliding color bars, same pattern: content data file + pure timing module + unit tests), The Press — fourth boss (descending ink wall from the top of the page, see IDEAS)
+- Later: boss music (64 BPM low pulse + dissonant second voice while a boss is alive), boss corpse decals, The Press — fourth boss (descending ink wall from the top of the page, see IDEAS)
 
 ## M4 — Meta-progression
 - Score: kills earn points (normal 1, elite 5, boss 50); HUD shows the running score, game over shows score + persisted best (T0054, in queue, desktop-4070)
@@ -56,7 +58,7 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 - Level-up XP curve tests: required XP strictly increasing, exact-XP boundary, finite at level 100 (T0049) ✅
 - Stat stacking tests: same-stat upgrades combine consistently (damage, fire rate), untouched stats stay at base (T0053) ✅
 - Kill-streak tests: streak grows per kill, resets when hit, bestStreak keeps the longest run (T0057) ✅
-- Boss alternation tests: first boss is The Frame, bosses strictly alternate Frame/Grid, deterministic (T0061) ✅
+- Boss alternation tests: first boss is The Frame, bosses strictly alternate Frame/Grid, deterministic (T0061) ✅ — the rotation becomes Frame → Grid → Palette with T0097; that test is updated in the same task
 - Crop schedule tests: no shrink before 12:00, 1.0→0.7 by 17:00, clamped at 0.7 after, non-increasing through the window (T0063) ✅
 - Elite schedule tests: first elite at 0:45, then exactly one every 45 s, none in between (T0066) ✅
 - Arc chain tests: the bolt targets the first enemy within 260 u of the aim, each hop jumps to the nearest un-hit enemy within the chain radius, and the chain ends at a dead end — shipped with T0022 in `tests/core/arc.test.ts`; T0085 was rejected because the tests already existed and per-hop damage falloff is not in the code ✅
@@ -64,5 +66,5 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 
 ## Later
 - Alternate "paper" palettes (De Stijl, Constructivist), run modifiers, daily seed, achievements, PWA install
-- Arena hazards, "overtime" after 15 minutes, run summary screen
+- More arena hazards (the Gutter is the first — see M2), "overtime" after 15 minutes, run summary screen
 - The Frame's corpse decal, mobile aim snap, pause-screen bestiary
