@@ -4,11 +4,12 @@ title: Add the Pizzicato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T01:47:24Z
 claimed_at: 2026-10-27T01:55:43Z
+finished_at: 2026-10-27T02:03:15Z
 ---
 
 ## Goal
@@ -84,3 +85,16 @@ A rare fast-pierce level-up card for players who want their shots to fly faster 
 
 ### Tests
 - New unit test in `tests/core/upgrades.test.ts` (step 2); `tests/content.test.ts` auto-validates the new entry (unique id, stat names, mul > 0, non-empty mods).
+
+## Result (attempt 1, yoga)
+
+Added the Pizzicato upgrade — a rare (weight 3), ink-colored, 2-level card in `src/content/upgrades/index.ts` that grants +1 pierce (`extraPierce`) and +10% projectile speed (`projectileSpeedMul` × 1.10) per level, reaching +2 pierce and ×1.21 projectile speed at max and stacking with Vector/Ostinato/Draft/Fugue/Presto/Staccato via the existing `computeStats()` limits. Level-up rendering and the three-card choice need no code changes — `LevelUpScene` reads name/description/color from the def automatically. Added the matching unit test in `tests/core/upgrades.test.ts` asserting the exact two mods and that it is offered twice then stops; `npm run check` and `npm run smoke` (desktop + phone) both pass.
+
+- Self-review: APPROVE
+- Time: 7.5 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
