@@ -4,10 +4,11 @@ title: Platemark — the page records where you got hurt
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0040]
-attempts: 0
+attempts: 1
 created: 2026-10-27T08:45:39Z
+claimed_at: 2026-10-27T11:53:59Z
 ---
 
 ## Goal
