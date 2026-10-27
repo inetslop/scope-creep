@@ -4,10 +4,12 @@ title: Boss warning — the page trembles before a boss lands
 assignee: desktop
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T03:53:41Z
+claimed_at: 2026-10-27T04:13:57Z
+designer: desktop
 ---
 
 ## Goal
