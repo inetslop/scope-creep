@@ -31,7 +31,7 @@ Developers are LOCAL models, much weaker than you. A task they cannot finish in 
 - One task = one focused change. If the title needs "and", split it.
 - Describe what the player sees and does, and give exact gameplay values (hp, speed, damage, cooldowns, colors by name: red, yellow, blue, ink, green, orange) instead of "balanced" or "nice".
 - Write observable acceptance criteria. The automated gate (typecheck, lint, unit tests, and a browser smoke test on desktop and mobile) runs on every task; you don't need to ask for it.
-- Weak machines (max size S) get small, precise work: tuning numbers, unit tests, small juice and polish (one sound, one flash, one text), small UI fixes, and content additions only when they pass the content bar. IDEAS.md has plenty of small ideas of this kind. New systems go to the strong machines.
+- Weak machines (max size S) get small, precise work: tuning numbers, small juice and polish (one sound, one flash, one text), small UI fixes, and content additions only when they pass the content bar. IDEAS.md has plenty of small ideas of this kind. New systems go to the strong machines.
 - Don't give two machines tasks about the same feature at the same time; they will conflict.
 - Use depends_on when a task needs another task done first, and give both to the same machine where you can: a task that waits on another machine's queue sits idle until that machine gets to it.
 

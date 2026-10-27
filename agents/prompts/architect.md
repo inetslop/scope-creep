@@ -36,7 +36,7 @@ New or changed types and function signatures, as exact TypeScript.
 ## Pitfalls
 - What could break (pooling, cleanup, mobile layout, NaN, frame-rate dependence) and how to avoid it.
 ## Tests
-- Unit tests to add in tests/ (pure logic in src/core) or "none".
+- Unit tests to add in tests/, only when the task adds or changes a rule in src/core that a later change could silently break; otherwise "none" (art, audio, UI and juice tasks are "none").
 DEPENDS_ON: <ids of open tasks that must be done first, e.g. T0003> or none
 STATUS: READY
 

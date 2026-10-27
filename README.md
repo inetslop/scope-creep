@@ -114,7 +114,7 @@ Each machine runs `loop/start-agent.ps1`, a supervisor that keeps `loop/runner.t
 
 ### Pacing: how much the PO plans
 
-The PO doesn't generate tasks continuously. It works by backpressure: every dev machine has a `targetQueue` in `agents/machines.json` (asus 2, desktop 2, yoga 3), counting its `design` + `todo` tasks that it can get to by itself. A task that waits on another machine's unfinished task (or on a failed one) is blocked and doesn't count, so a machine whose queue is all blocked gets new work instead of idling. A chain of dependencies on the same machine still counts in full. The PO runs when:
+The PO doesn't generate tasks continuously. It works by backpressure: every dev machine has a `targetQueue` in `agents/machines.json` (asus 2, desktop 2, yoga 2), counting its `design` + `todo` tasks that it can get to by itself. A task that waits on another machine's unfinished task (or on a failed one) is blocked and doesn't count, so a machine whose queue is all blocked gets new work instead of idling. A chain of dependencies on the same machine still counts in full. The PO runs when:
 
 - some machine's queue is below its target — and it writes exactly enough tasks to refill it;
 - tasks finished (done, failed or rejected) and need reviewing;
