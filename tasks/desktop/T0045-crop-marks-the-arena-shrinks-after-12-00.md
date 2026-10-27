@@ -4,10 +4,11 @@ title: "Crop marks — the arena shrinks after 12:00"
 assignee: desktop
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-26T23:09:26Z
+claimed_at: 2026-10-27T01:47:27Z
 ---
 
 ## Goal
