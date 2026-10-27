@@ -4,10 +4,11 @@ title: The Eraser enemy — it deletes your last upgrade
 assignee: desktop
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-26T23:43:51Z
+claimed_at: 2026-10-27T01:56:46Z
 ---
 
 ## Goal
