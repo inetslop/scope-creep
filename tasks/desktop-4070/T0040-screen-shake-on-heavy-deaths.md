@@ -4,11 +4,12 @@ title: Screen shake on heavy deaths
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-26T23:09:26Z
 claimed_at: 2026-10-27T07:30:13Z
+finished_at: 2026-10-27T09:32:06Z
 ---
 
 ## Goal
@@ -124,3 +125,8 @@ hook.addInvariant('camera-shake', () => {
 ## Attempt 1 discarded (desktop-4070)
 
 Stopped by hand after 3.5 hours: the session timed out after writing only a standalone CameraShake helper and its test, never wired into the game (no heavy death triggers a shake). The gate passed because nothing used the new code. The local commit was discarded, nothing reached main; attempts reset.
+
+## Attempt 1 failed (desktop-4070)
+
+Could not merge into main (conflict). The work was discarded; retry on the latest code.
+- Resolved merge conflicts in: game/src/debug/testHook.ts, game/src/scenes/GameScene.ts, game/src/systems/CombatSystem.ts
