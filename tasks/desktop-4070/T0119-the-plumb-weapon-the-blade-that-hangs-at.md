@@ -4,10 +4,12 @@ title: The Plumb weapon — the blade that hangs at your aim
 assignee: desktop-4070
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T15:11:35Z
+claimed_at: 2026-10-27T15:42:54Z
+designer: desktop
 ---
 
 ## Goal
