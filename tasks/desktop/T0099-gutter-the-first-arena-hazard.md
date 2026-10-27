@@ -4,10 +4,11 @@ title: Gutter — the first arena hazard
 assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T09:43:38Z
+claimed_at: 2026-10-27T11:15:58Z
 ---
 
 ## Goal
