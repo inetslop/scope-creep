@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { describe, it } from 'node:test';
-import { parseTask, pickNextTask, serializeTask, slugify, TaskFormatError, unblockedTaskIds, type Task } from '../tasks.ts';
+import { designedFiles, parseTask, pickNextTask, serializeTask, slugify, TaskFormatError, unblockedTaskIds, type Task } from '../tasks.ts';
 
 const file = path.join('tasks', 'yoga', 'T0007-thing.md');
 
@@ -114,6 +114,22 @@ describe('unblockedTaskIds', () => {
       yoga('T0005', { dependsOn: ['T0004'] }),
     ];
     assert.deepEqual(ids(tasks), []);
+  });
+});
+
+describe('designedFiles', () => {
+  it("lists the game files named in the design, once each, ignoring the task's own text", () => {
+    const body = [
+      'Mention `src/old.ts` before the design.',
+      '## Design',
+      '## Files',
+      '- edit `src/scenes/GameScene.ts` - shake on death',
+      '- create `src/systems/Shake.ts`',
+      '- edit `src/scenes/GameScene.ts` again, and `tests/core/shake.test.ts`',
+    ].join('\n');
+    const t = { ...parseTask(`---\nid: T0001\ntitle: x\n---\n${body}\n`, file) };
+    assert.deepEqual(designedFiles(t), ['src/scenes/GameScene.ts', 'src/systems/Shake.ts', 'tests/core/shake.test.ts']);
+    assert.deepEqual(designedFiles({ ...t, body: 'no design yet' }), []);
   });
 });
 

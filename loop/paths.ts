@@ -5,6 +5,8 @@ export const REPO = path.resolve(import.meta.dirname, '..');
 export const GAME_DIR = path.join(REPO, 'game');
 export const TASKS_DIR = path.join(REPO, 'tasks');
 export const ARCHIVE_DIR = path.join(TASKS_DIR, 'archive');
+/** Work from attempts that passed the gate but could not be merged, kept for the next attempt (<id>.diff). */
+export const SALVAGE_DIR = path.join(TASKS_DIR, 'salvage');
 export const PLANNING_DIR = path.join(REPO, 'planning');
 export const AGENTS_DIR = path.join(REPO, 'agents');
 /** Per-machine, git-ignored state. */

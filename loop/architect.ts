@@ -7,7 +7,7 @@ import { GAME_DIR, REPO, rel } from './paths.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { updateTaskAndPush } from './sync.ts';
-import { appendSection, listTasks, readTask, type Task } from './tasks.ts';
+import { appendSection, designedFiles, listTasks, readTask, type Task } from './tasks.ts';
 
 /**
  * The architect stage: between the PO and the devs. For each task in `design` it reads
@@ -90,10 +90,8 @@ export function designCandidates(
 }
 
 /** Files named in a task's design, so the architect can see what other open tasks will touch. */
-function designedFiles(t: Task): string {
-  const design = t.body.split(/\n## Design\b/)[1];
-  if (!design) return '';
-  const files = [...new Set([...design.matchAll(/`((?:src|tests|docs)\/[^`\s]+)`/g)].map((m) => m[1]))];
+function touches(t: Task): string {
+  const files = designedFiles(t);
   return files.length ? ` — touches ${files.slice(0, 8).join(', ')}` : '';
 }
 
@@ -154,7 +152,7 @@ async function designTask(ctx: RunContext, task: Task, all: Task[]): Promise<voi
 
   const others = all
     .filter((t) => t.id !== task.id && OPEN.has(t.status))
-    .map((t) => `- ${t.id} [${t.status}, ${folderOf(t)}] ${t.title}${designedFiles(t)}`)
+    .map((t) => `- ${t.id} [${t.status}, ${folderOf(t)}] ${t.title}${touches(t)}`)
     .join('\n');
 
   let result = '';

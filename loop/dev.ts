@@ -5,7 +5,7 @@ import { ensureGameDeps, runGate } from './checks.ts';
 import { effortFor, type Effort, type FleetConfig, type LocalConfig } from './config.ts';
 import type { Git } from './git.ts';
 import { info, step, warn } from './log.ts';
-import { GAME_DIR, REPO, rel } from './paths.ts';
+import { GAME_DIR, REPO, SALVAGE_DIR, rel } from './paths.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { updateTaskAndPush } from './sync.ts';
@@ -22,6 +22,7 @@ const devEffort = (ctx: RunContext): Effort => effortFor(ctx.fleet, ctx.local.ma
 
 const now = (): string => new Date().toISOString().slice(0, 19) + 'Z';
 const GAME = ['game/'];
+const salvageRel = (id: string): string => rel(path.join(SALVAGE_DIR, `${id}.diff`));
 
 /**
  * One dev task, start to finish:
@@ -70,6 +71,7 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
         TASK_BODY: task.body,
         MACHINE: ctx.fleet.machines[machine]?.label ?? machine,
         ATTEMPT: task.attempts,
+        PREVIOUS_WORK: previousWork(task.id),
       }),
       cwd: GAME_DIR,
       profile: 'dev',
@@ -122,8 +124,18 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
     writeTask(task);
     await ctx.git.amendPaths([taskRel]);
 
+    // Kept in case it can't be merged: the next attempt re-applies it instead of starting over.
+    const work = await ctx.git.ok(['diff', base, 'HEAD', '--', 'game/']);
+    const workFiles = (await ctx.git.ok(['diff', '--name-only', base, 'HEAD', '--', 'game/'])).split(/\r?\n/).filter(Boolean);
+
     const outcome = await integrate(ctx, task, notes);
-    if (outcome !== 'pushed') return await fail(ctx, task, `Could not merge into main (${outcome}). The work was discarded; retry on the latest code.`, '', notes);
+    if (outcome !== 'pushed') {
+      const upstream = await upstreamLog(ctx.git, base, workFiles);
+      const header = `${task.id} attempt ${task.attempts} (${machine}) passed the checks on ${base.slice(0, 7)} but could not be merged into main (${outcome}).`;
+      return await fail(ctx, task, `Could not merge into main (${outcome}). The work was saved to ${salvageRel(task.id)}; the next attempt re-applies it on the latest code.`, '', notes, {
+        [salvageRel(task.id)]: salvageText(header, upstream, work),
+      });
+    }
     info(`${task.id}: done and pushed (${((Date.now() - started) / 60_000).toFixed(1)} min)`);
   } catch (err) {
     const e = err as Error;
@@ -195,9 +207,14 @@ async function integrate(ctx: RunContext, task: Task, notes: string[]): Promise<
     await git.fetch();
     if ((await git.behindCount()) > 0) {
       const upstreamGame = (await git.ok(['diff', '--name-only', 'HEAD...origin/main', '--', 'game/'])).trim() !== '';
-      if ((await git.rebase()) === 'conflict' && !(await resolveConflicts(ctx, task, notes))) {
-        await git.abortRebase();
-        return 'conflict';
+      const mine = await git.head();
+      if ((await git.rebase()) === 'conflict') {
+        const unresolved = await resolveConflicts(ctx, task, mine, notes);
+        if (unresolved) {
+          notes.push(`Could not resolve them: ${unresolved}.`);
+          await git.abortRebase();
+          return 'conflict';
+        }
       }
       if (upstreamGame) {
         const gate = await runGate(ctx.fleet.loop.smokeSeconds);
@@ -213,35 +230,97 @@ async function integrate(ctx: RunContext, task: Task, notes: string[]): Promise<
   return 'push-failed';
 }
 
-async function resolveConflicts(ctx: RunContext, task: Task, notes: string[]): Promise<boolean> {
+/**
+ * Lets an agent resolve rebase conflicts in game/, telling it which commits on main caused them.
+ * `mine` is our commit before the rebase. Returns null once the rebase is through, else why not.
+ */
+async function resolveConflicts(ctx: RunContext, task: Task, mine: string, notes: string[]): Promise<string | null> {
   const git = ctx.git;
   for (let round = 0; round < 3 && git.isRebasing(); round++) {
     const files = await git.conflictedFiles();
     if (files.length > 0) {
-      if (files.some((f) => !f.startsWith('game/'))) return false;
-      notes.push(`Resolved merge conflicts in: ${files.join(', ')}`);
-      await runAgent(ctx.local, {
+      const outside = files.filter((f) => !f.startsWith('game/'));
+      if (outside.length) return `conflicts outside the game in ${outside.join(', ')}`;
+      notes.push(`Conflicts in: ${files.join(', ')}`);
+      const session = await runAgent(ctx.local, {
         label: `${task.id}-conflict`,
-        prompt: renderPrompt('conflict', { TASK_ID: task.id, TASK_TITLE: task.title, FILES: files.map((f) => `- ${f.replace(/^game\//, '')}`).join('\n') }),
+        prompt: renderPrompt('conflict', {
+          TASK_ID: task.id,
+          TASK_TITLE: task.title,
+          TASK_BODY: task.body,
+          FILES: files.map((f) => `- ${f.replace(/^game\//, '')}`).join('\n'),
+          UPSTREAM: await upstreamLog(git, mine, files),
+        }),
         cwd: GAME_DIR,
         profile: 'dev',
         effort: devEffort(ctx),
         maxTurns: 40,
         timeoutMin: 60,
       });
-      for (const f of files) {
+      const marked = files.filter((f) => {
         const abs = path.join(REPO, f);
-        if (fs.existsSync(abs) && /^(<{7}|>{7}|={7})/m.test(fs.readFileSync(abs, 'utf8'))) return false;
-      }
+        return fs.existsSync(abs) && /^(<{7}|>{7}|={7})/m.test(fs.readFileSync(abs, 'utf8'));
+      });
+      if (marked.length) return `conflict markers left in ${marked.join(', ')} (agent: ${session.subtype})`;
       await git.ok(['add', '-A', '--', ...files]);
     }
-    if ((await git.continueRebase()) === 'ok' && !git.isRebasing()) return true;
+    if ((await git.continueRebase()) === 'ok' && !git.isRebasing()) {
+      notes.push('The conflict agent resolved them.');
+      return null;
+    }
   }
-  return !git.isRebasing();
+  return git.isRebasing() ? 'git could not continue the rebase after 3 rounds' : null;
 }
 
-/** Records a failed attempt: resets the checkout and requeues (or fails) the task. */
-async function fail(ctx: RunContext, task: Task, reason: string, output: string, notes: string[]): Promise<void> {
+/**
+ * Commits on main after `since` that touch `files`, with their messages, so an agent fitting
+ * older work onto newer code knows what changed and why.
+ */
+async function upstreamLog(git: Git, since: string, files: readonly string[]): Promise<string> {
+  if (files.length === 0) return '(none)';
+  const log = await git.ok(['log', '--format=- %h %an: %s%n%w(0,2,2)%b', `${since}..origin/main`, '--', ...files]);
+  return formatUpstreamLog(log);
+}
+
+/** Drops commit trailers and blank runs from a `git log` of upstream commits, capped in length. */
+export function formatUpstreamLog(log: string): string {
+  const text = log
+    .split(/\r?\n/)
+    .filter((l) => !/^\s*(Co-Authored-By|Claude-Session):/i.test(l))
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  if (!text) return '(none)';
+  return text.length > 6000 ? `${text.slice(0, 6000)}\n… (truncated)` : text;
+}
+
+/** tasks/salvage/<id>.diff: a header and the upstream commits as # comments, then the diff (git apply skips the comments). */
+export function salvageText(header: string, upstream: string, diff: string): string {
+  const comments = [header, 'Commits on main since then that touch the same files:', ...upstream.split('\n')].map((l) => `# ${l}`.trimEnd());
+  return `${comments.join('\n')}\n\n${diff}\n`;
+}
+
+/** Prompt section that hands a retry the work of an attempt that could not be merged ('' if none). */
+function previousWork(id: string): string {
+  const file = path.join(REPO, salvageRel(id));
+  return fs.existsSync(file) ? previousWorkSection(fs.readFileSync(file, 'utf8')) : '';
+}
+
+export function previousWorkSection(saved: string): string {
+  let text = saved.trim();
+  if (text.length > 60_000) text = `${text.slice(0, 60_000)}\n… (truncated)`;
+  return [
+    '# Earlier work to re-apply',
+    'An earlier attempt finished this task and passed every check, but main changed underneath it and the work could not be merged. Its diff is below, after the commits on main it collided with. Re-apply that work onto the current code instead of starting over: keep what still fits, adapt it where the code has moved, and do not bring back anything those commits removed on purpose.',
+    '',
+    '````diff',
+    text,
+    '````',
+  ].join('\n');
+}
+
+/** Records a failed attempt: resets the checkout and requeues (or fails) the task. `files` are committed with it. */
+async function fail(ctx: RunContext, task: Task, reason: string, output: string, notes: string[], files: Record<string, string> = {}): Promise<void> {
   warn(`${task.id}: ${reason}`);
   const git = ctx.git;
   await git.abortRebase();
@@ -263,6 +342,7 @@ async function fail(ctx: RunContext, task: Task, reason: string, output: string,
       return true;
     },
     `${task.id}: attempt ${task.attempts} failed`,
+    files,
   );
 }
 

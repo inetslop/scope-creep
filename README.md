@@ -85,11 +85,13 @@ Machines aren't hard-coded: choose **a new machine** in either setup. It detects
 | Command (repo root) | |
 | --- | --- |
 | `npm run agent` | start the loop on this machine (supervisor + runner) |
-| `npm run status` | queues per machine (✎ waiting for design, ✍ being designed, · ready, ▶ in progress), recent commits, model server health |
+| `npm run status` | queues per machine (✎ waiting for design, ✍ being designed, · ready, ▶ in progress, with the files each ▶ task touches), recent commits, model server health |
 | `npm run doctor` | health check (`-- --gate` also runs the merge gate) |
 | `New-Item .agent\STOP` | stop after the current task |
 | `"paused": true` in `agents/machines.json` | take a machine out of the loop while it's down: its runner idles (no model server, no work) and nobody plans or assigns tasks for it. Move its open tasks to another machine's `tasks/<machine>/` folder (an `in-progress` one back to `todo`) |
 | `cd game; npm run dev` | play the latest local code |
+
+**Editing the game by hand** while the loop runs: a big change to files that a ▶ task in `npm run status` touches will conflict with it. Pause that machine first (it finishes and pushes its current task, then idles), make your change, then unpause it.
 
 Logs: `.agent\logs\` (runner, supervisor, llama-server). Full agent transcripts: `.agent\runs\*.jsonl`. Smoke screenshots: `.agent\smoke\`.
 
@@ -109,7 +111,7 @@ Each machine runs `loop/start-agent.ps1`, a supervisor that keeps `loop/runner.t
    - revert anything outside `game/`;
    - **gate**: `npm run check` (typecheck, lint, unit tests) + **browser smoke test** (builds, then plays the game for ~24 s as a desktop player and as a phone with two-thumb touch; fails on any error, stalled frame loop, broken invariant, or if nothing gets shot); up to 2 fix rounds where the agent gets the failure output back;
    - **self-review** in a fresh session on the same machine (fixes kept only if the gate still passes);
-   - rebase onto the latest main (the agent resolves code conflicts, the gate re-runs), push;
+   - rebase onto the latest main, push. On conflicts an agent resolves them, given the task and the messages of the commits on main that caused them; the gate re-runs. If the work still can't be merged, the runner saves its diff to `tasks/salvage/<id>.diff` and the next attempt re-applies it instead of starting over (the file goes when the task is archived);
    - the runner writes the result (summary, diff stat, review verdict) or the failure reason into the task file. After 3 failed attempts a task is marked `failed`, and the PO sees why on its next cycle.
 
 ### Pacing: how much the PO plans
@@ -142,7 +144,7 @@ loop/            runner, supervisor, smoke test, doctor, status
 agents/          machines.json (fleet + loop tuning) and prompt templates
 setup/           setup.ps1
 site/            the public build log page (generated at deploy time, humans only)
-tasks/           <machine>/ queues and archive/ — PO + runner only
+tasks/           <machine>/ queues, archive/, salvage/ (unmerged work kept for a retry) — PO + runner only
 planning/        VISION, ROADMAP, IDEAS, CHANGELOG — PO-owned (the runner appends to CHANGELOG)
 .github/         Pages deployment
 ```

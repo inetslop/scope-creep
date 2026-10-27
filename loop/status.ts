@@ -9,7 +9,7 @@ import { run } from './exec.ts';
 import { detectContextSize, isHealthy } from './llama.ts';
 import { ARCHIVE_DIR, REPO } from './paths.ts';
 import { loadState } from './state.ts';
-import { listTasks, unblockedTaskIds } from './tasks.ts';
+import { designedFiles, listTasks, unblockedTaskIds } from './tasks.ts';
 
 const fleet = loadFleet();
 const ids = Object.keys(fleet.machines);
@@ -30,6 +30,9 @@ for (const id of ids) {
     const who = t.status === 'designing' ? ` (designing: ${t.extra.designer ?? '?'})` : '';
     const blocked = unblocked.has(t.id) ? '' : ` (blocked: waits on ${t.dependsOn.filter((d) => !done.has(d)).join(', ')})`;
     console.log(`      ${t.id} ${marks[t.status]} [${t.size}] ${t.title}${who}${blocked}`);
+    // What a task being built will touch, so a hand edit to the same files can wait for it.
+    const files = t.status === 'in-progress' ? designedFiles(t) : [];
+    if (files.length) console.log(`          touches ${files.map((f) => `game/${f}`).join(', ')}`);
   }
   console.log('      legend: ✎ waiting for design  ✍ being designed  · ready  ▶ in progress');
 }

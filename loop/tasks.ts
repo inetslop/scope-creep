@@ -209,6 +209,13 @@ export function pickNextTask(mine: readonly Task[], all: readonly Task[]): Task 
     .sort((a, b) => a.priority - b.priority || a.id.localeCompare(b.id))[0];
 }
 
+/** Files (relative to game/) named in a task's "## Design": what building it will touch. */
+export function designedFiles(t: Task): string[] {
+  const design = t.body.split(/\n## Design\b/)[1];
+  if (!design) return [];
+  return [...new Set([...design.matchAll(/`((?:src|tests|docs)\/[^`\s]+)`/g)].map((m) => m[1]!))];
+}
+
 const OPEN_STATUSES = new Set<TaskStatus>(['design', 'designing', 'todo', 'in-progress']);
 
 /**

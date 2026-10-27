@@ -35,9 +35,10 @@ export async function syncMain(git: Git): Promise<string[]> {
 /**
  * Safely updates ONE task file on top of the latest origin/main and pushes it.
  * Resets the checkout to origin/main first, so only call this when there is no
- * local work worth keeping. `mutate` returns false to cancel.
+ * local work worth keeping. `mutate` returns false to cancel. `files` (repo path ->
+ * content) are written and committed along with the task.
  */
-export async function updateTaskAndPush(git: Git, taskRel: string, mutate: (t: Task) => boolean, message: string): Promise<boolean> {
+export async function updateTaskAndPush(git: Git, taskRel: string, mutate: (t: Task) => boolean, message: string, files: Record<string, string> = {}): Promise<boolean> {
   for (let attempt = 1; attempt <= 4; attempt++) {
     await git.abortRebase();
     await git.fetch();
@@ -50,7 +51,11 @@ export async function updateTaskAndPush(git: Git, taskRel: string, mutate: (t: T
     const task = readTask(abs);
     if (!mutate(task)) return false;
     writeTask(task);
-    if (!(await git.commitPaths([taskRel], message))) return true;
+    for (const [p, content] of Object.entries(files)) {
+      fs.mkdirSync(path.dirname(path.join(REPO, p)), { recursive: true });
+      fs.writeFileSync(path.join(REPO, p), content);
+    }
+    if (!(await git.commitPaths([taskRel, ...Object.keys(files)], message))) return true;
     if ((await git.push()).code === 0) return true;
     warn(`push of ${taskRel} rejected (attempt ${attempt}); retrying on latest main`);
   }

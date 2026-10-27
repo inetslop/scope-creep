@@ -5,7 +5,7 @@ import { devMachineIds, effortFor, hasArchitect, SIZE_ORDER, type FleetConfig } 
 import type { RunContext } from './dev.ts';
 import { info, step, warn } from './log.ts';
 import { buildInventory, CHANGELOG_HEADER, changelogLine } from './inventory.ts';
-import { ARCHIVE_DIR, GAME_DIR, PLANNING_DIR, REPO, TASKS_DIR, rel } from './paths.ts';
+import { ARCHIVE_DIR, GAME_DIR, PLANNING_DIR, REPO, SALVAGE_DIR, TASKS_DIR, rel } from './paths.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { loadState, saveState } from './state.ts';
@@ -139,6 +139,11 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
     if (!fs.existsSync(t.file)) continue;
     fs.renameSync(t.file, path.join(ARCHIVE_DIR, path.basename(t.file)));
     archived++;
+  }
+  // Salvaged work is only for retries: drop it once its task is archived or deleted.
+  const open = new Set(listTasks(machineIds).tasks.map((t) => t.id));
+  for (const f of fs.existsSync(SALVAGE_DIR) ? fs.readdirSync(SALVAGE_DIR) : []) {
+    if (!open.has(path.basename(f, '.diff'))) fs.rmSync(path.join(SALVAGE_DIR, f), { force: true });
   }
 
   const summary = session.result.trim().split('\n').slice(-1)[0]?.slice(0, 120) ?? '';
