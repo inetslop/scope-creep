@@ -4,11 +4,12 @@ title: Fermata — the shapes hold their breath when you pick
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T15:42:50Z
 claimed_at: 2026-10-27T19:37:46Z
+finished_at: 2026-10-27T19:52:51Z
 ---
 
 ## Goal
@@ -89,3 +90,20 @@ export class FermataSystem {
 
 ### Tests
 - `tests/core/fermata.test.ts` as listed in step 2 (start, retrigger/no-stacking, expiry, no-op, clamp).
+
+## Result (attempt 1, desktop)
+
+Added the fermata — a 0.6 s held breath after every level-up pick: pure timing state in `src/core/fermata.ts` (armed from `LevelUpScene.choose()`, ticked by the run clock), a `FermataSystem` that freezes enemies, enemy bullets and the boss by zeroing velocities (bullets and boss restored from a ledger, so boss patterns like the Grid sweep, Frame dash and Palette cascade resume exactly where they left off), and a gate in `GameScene.update()` that pauses the spawner, underdrawing and boss director while the player, shards and hazards keep moving. Two invariants (`fermata-hold`, `fermata-ledger`) guard the frozen state, and 10 unit tests cover arm/retrigger/expiry/no-op/clamp; `npm run check` (273 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 15.1 min
+
+```
+game/src/core/fermata.ts          | 36 ++++++++++++++++
+ game/src/core/run.ts              |  3 ++
+ game/src/scenes/GameScene.ts      | 39 +++++++++++++++--
+ game/src/scenes/LevelUpScene.ts   |  1 +
+ game/src/systems/FermataSystem.ts | 63 +++++++++++++++++++++++++++
+ game/tests/core/fermata.test.ts   | 89 +++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 228 insertions(+), 3 deletions(-)
+```

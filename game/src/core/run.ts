@@ -1,4 +1,5 @@
 import type { UpgradeDef } from '../content/types';
+import { Fermata } from './fermata';
 import { xpToNextLevel } from './progression';
 import { Rng } from './rng';
 import { computeStats, type PlayerStats, type StatMod } from './stats';
@@ -30,6 +31,8 @@ export class RunState {
   bestStreak = 0;
   /** Inkwell meter, 0..1: fills as firing weapons fire, consumed by the burst volley. */
   inkwell = 0;
+  /** The fermata: after a level-up pick, the shapes hold still for 0.6 s from the resume. */
+  readonly fermata = new Fermata();
   hp: number;
   stats: PlayerStats;
   /** Weapon ids the player currently has (see src/content/weapons). */

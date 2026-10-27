@@ -15,6 +15,7 @@ import { drawWarmStartPick, isWarmStartEarned, loadWarmStart, saveWarmStart } fr
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import type { Enemy } from '../entities/Enemy';
+import type { EnemyBullet } from '../entities/EnemyBullet';
 import type { Projectile } from '../entities/Projectile';
 import { Player } from '../entities/Player';
 import { Controls } from '../input/Controls';
@@ -23,6 +24,7 @@ import { BossApproachSystem } from '../systems/BossApproachSystem';
 import { BossSystem } from '../systems/BossSystem';
 import { CombatSystem } from '../systems/CombatSystem';
 import { CropSystem } from '../systems/CropSystem';
+import { FermataSystem } from '../systems/FermataSystem';
 import { GiltPop } from '../systems/GiltPop';
 import { GutterSystem } from '../systems/GutterSystem';
 import { DamageNumbers } from '../systems/DamageNumbers';
@@ -75,6 +77,7 @@ export class GameScene extends Phaser.Scene {
   private arc!: ArcSystem;
   private underdrawing!: Underdrawing;
   private spawns!: SpawnSystem;
+  private fermata!: FermataSystem;
   private pickups!: PickupSystem;
   private bounds!: Phaser.Geom.Rectangle;
   private trailTimer = 0;
@@ -131,6 +134,7 @@ export class GameScene extends Phaser.Scene {
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
     this.underdrawing = new Underdrawing(this);
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia, this.underdrawing, this.fx, this.sfx, this.puddles);
+    this.fermata = new FermataSystem(this.run);
     this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.feed, this.spawns);
     this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.music, this.damageNumbers, this.feed, this.pickups, this.marginalia);
     this.bossApproach = new BossApproachSystem(this, this.run);
@@ -176,9 +180,14 @@ export class GameScene extends Phaser.Scene {
     this.weapons.update(dt, input.firing);
     this.arc.update(dt, input.firing);
     this.orbit.update(dt);
-    this.spawns.update(dt);
-    this.underdrawing.update(dt);
-    this.boss.update(dt);
+    // Fermata: after a level-up pick every enemy shape holds still for 0.6 s; player,
+    // their weapons, shards and hazards keep moving (core/fermata.ts).
+    const holding = this.fermata.update(dt, this.spawns.enemies, this.spawns.enemyShots, this.boss.boss);
+    if (!holding) {
+      this.spawns.update(dt);
+      this.underdrawing.update(dt);
+      this.boss.update(dt);
+    }
     this.bossApproach.update(dt);
     this.marginalia.update(dt);
     this.puddles.update(dt);
@@ -344,6 +353,30 @@ export class GameScene extends Phaser.Scene {
     });
     hook.addInvariant('enemy-count', () => (this.spawns.activeCount <= this.spawns.maxEnemies ? null : `${this.spawns.activeCount} enemies alive`));
     hook.addInvariant('enemy-shot-count', () => (this.spawns.activeShotCount <= this.spawns.maxEnemyShots ? null : `${this.spawns.activeShotCount} enemy shots alive`));
+    hook.addInvariant('fermata-hold', () => {
+      if (this.ending || !this.scene.isActive() || !this.run.fermata.active) return null;
+      for (const obj of this.spawns.enemies.getChildren()) {
+        const e = obj as Enemy;
+        if (!e.active) continue;
+        const b = e.body as Phaser.Physics.Arcade.Body;
+        if (b.velocity.x !== 0 || b.velocity.y !== 0) return `frozen enemy ${e.def.id} moving at (${b.velocity.x}, ${b.velocity.y})`;
+      }
+      for (const obj of this.spawns.enemyShots.getChildren()) {
+        const p = obj as EnemyBullet;
+        if (!p.active) continue;
+        const b = p.body as Phaser.Physics.Arcade.Body;
+        if (b.velocity.x !== 0 || b.velocity.y !== 0) return `frozen enemy bullet moving at (${b.velocity.x}, ${b.velocity.y})`;
+      }
+      const boss = this.boss.boss;
+      if (boss.active) {
+        const b = boss.body as Phaser.Physics.Arcade.Body;
+        if (b.velocity.x !== 0 || b.velocity.y !== 0) return `frozen boss moving at (${b.velocity.x}, ${b.velocity.y})`;
+      }
+      return null;
+    });
+    hook.addInvariant('fermata-ledger', () =>
+      this.fermata.savedCount <= this.spawns.maxEnemies + this.spawns.maxEnemyShots + 1 ? null : `${this.fermata.savedCount} saved fermata velocities`,
+    );
     hook.addInvariant('elite-markers', () => {
       for (const obj of this.spawns.enemies.getChildren()) {
         const e = obj as Enemy;

@@ -118,6 +118,7 @@ export class LevelUpScene extends Phaser.Scene {
     hook.stats.upgradesTaken += 1;
     getPlayer(this).pulse();
     getPlayer(this).setBuildDepth(Object.values(getRun(this).upgradeLevels).reduce((a, b) => a + b, 0));
+    getRun(this).fermata.arm(); // the shapes hold their breath for 0.6 s from the resume (T0125)
     this.scene.resume(SCENES.game);
     this.scene.stop();
   }
