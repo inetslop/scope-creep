@@ -50,7 +50,8 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 - Boss sting: a deep low hit + music swell on any boss spawn (T0058) ✅
 - Boss nameplate intro: the first time each boss spawns, its name (from the boss content def, so The Palette gets it for free) is printed in small caps centered below the boss bar, fading over 2 s and freezing under overlays (T0064) ✅
 - Boss warning: 5 s before any boss spawn (Frame or Grid, including respawns) the arena boundary pulses red, "SOMETHING HEAVY APPROACHES" flashes in the HUD, and a low thud plays (T0070) ✅
-- Boss music: while a boss is alive the score holds at a slow 64 BPM low pulse with a dissonant second voice (a semitone above the pulse, on alternating beats); it glides down over 1.5 s at the boss spawn event and back to the run tempo over 1.5 s on the boss's death (T0108, in queue, desktop)
+- Boss music: while a boss is alive the score holds at a slow 64 BPM low pulse with a dissonant second voice (a semitone above the pulse, on alternating beats); it glides down over 1.5 s at the boss spawn event and back to the run tempo over 1.5 s on the boss's death (T0108) ✅
+- Tempo change: the run tempo becomes `min(120, base curve + 2 × picks)` — every upgrade picked nudges the score +2 BPM, so a fast-building run reaches the 120 BPM clamp well before the 10:00 ramp; the nudge is suspended during the boss hold (T0108) and restored on boss death (T0115, in queue, desktop)
 - Later: boss corpse decals, The Grid's second voice (below 50% HP: third arm, 25% faster spin — the fight changes shape at the midpoint), The Press — fourth boss (descending ink wall from the top of the page, see IDEAS)
 
 ## M4 — Meta-progression
