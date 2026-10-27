@@ -4,10 +4,11 @@ title: First light — the first shard of a run teaches the economy
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T19:37:42Z
+claimed_at: 2026-10-27T20:22:23Z
 ---
 
 ## Goal
