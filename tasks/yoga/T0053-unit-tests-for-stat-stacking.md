@@ -4,11 +4,12 @@ title: Unit tests for stat stacking
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T00:32:39Z
 claimed_at: 2026-10-27T02:03:53Z
+finished_at: 2026-10-27T02:22:55Z
 ---
 
 ## Goal
@@ -90,3 +91,15 @@ describe('stat stacking', () => {
 - Do not edit `src/content/upgrades/index.ts` — T0051/T0052 will add upgrades there; this test only reads the four ids above via `UPGRADE_BY_ID`, so their work cannot break it (and no file overlap).
 ### Tests
 - `tests/core/stats.test.ts` (the entire task).
+
+## Result (attempt 1, yoga)
+
+Added `tests/core/stats.test.ts`, a unit test that locks down the stat-stacking pipeline (`RunState.applyUpgrade` → `computeStats`). It asserts the exact IEEE-754 results of stacking the damage upgrades `weight`×3 (1.25³ = 1.953125), `weight`+`emphasis` (1.25×1.15 = 1.4375), the fire-rate combo `rhythm`+`allegro` (1.2×1.15 = 1.38), a fresh run's base values (damage 1, fire rate 1, move speed 230), and that damage-only upgrades leave fire rate and move speed untouched. `npm run check` is green (16 files, 189 tests) and `npm run smoke` passes on both desktop and mobile; the diff touches only the new test file.
+
+- Self-review: APPROVE
+- Time: 19.1 min
+
+```
+game/tests/core/stats.test.ts | 43 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+```
