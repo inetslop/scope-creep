@@ -4,10 +4,12 @@ title: Counterpoint bounce marks — the wall remembers the bounce
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T21:17:36Z
+claimed_at: 2026-10-27T21:33:44Z
+designer: yoga
 ---
 
 ## Goal
