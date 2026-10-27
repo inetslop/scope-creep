@@ -100,3 +100,4 @@ the PO reads this instead of the code.
 - T0104 The Index — the pause screen lists your build (desktop, 2026-10-27): The pause screen now shows "The Index" — a narrow ink column listing the run's build: a "PICKS" header plus one line per distinct upgrade in most-recently-picked order, with flat square pips tinted in each upgrade's card
 - T0105 Add the Underexposure upgrade (desktop, 2026-10-27): Added the Underexposure level-up card (maxLevel 2, weight 3, ink) with a new pure rule in src/core/underexposure.ts and a `woundThreshold` stat (0 off, clamped 0–0.75): hits on enemies, elites, or bosses below 50% (L1) /
 - T0055 Add the Counterpoint weapon (desktop-4070, 2026-10-27): Diff is clean — the Counterpoint feature is complete.
+- T0103 Add the Hare enemy — it quickens as it weakens (desktop-4070, 2026-10-27): Added the Hare enemy — a small green circle (radius 12, PALETTE.green) that unlocks at 1:40, deals 8 contact damage, and drops 2 XP.
