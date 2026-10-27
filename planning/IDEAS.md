@@ -74,7 +74,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Turret: a still orange square that never moves and fires faster than the Sentry, but only straight at you~~ → T0032
 - ~~Unit test for spawn unlock timing: each enemy is absent just before its unlockAtSec and present at/after it~~ → T0030
 - ~~Ostinato upgrade: +1 pierce, +10% fire rate per level, maxLevel 2 — the pierce build's backbone~~ → T0029
-- Boss warning: 5 s before The Frame spawns, the arena edges pulse red and "SOMETHING HEAVY APPROACHES" flashes in the HUD
+- ~~Boss warning: 5 s before any boss spawn (Frame or Grid, including respawns), the arena edges pulse red and "SOMETHING HEAVY APPROACHES" flashes in the HUD~~ → T0070
 - Mote nest: a still grey circle (40 hp) that releases 6 Motes every 10 s
 - Combo text: at 50 kills in a run, "MAESTRO" flashes in the HUD next to the streak tally
 - ~~Dynamics upgrade: +20% damage, -8% move speed per level, maxLevel 3 — the damage-for-mobility trade-off, sibling of Allegro~~ → T0031
@@ -141,3 +141,5 @@ The PO adds ideas here. Good ones become tasks.
 - Doodle margin: every 10 min a small hand-drawn asterisk appears in a random paper margin (pure art, no gameplay — pairs with the coffee-ring idea)
 - Paper feed: every 60 s the bottom edge of the page slides up a few units like a printing press for 400 ms (pure art, no gameplay — pairs with the page-number idea)
 - Shard chips: shards are drawn as small flat ink chips with the hard paper-cut shadow, and tumble briefly (200 ms) when they drop before settling
+- ~~Unit tests for the Understudy decoy: 3 s active duration, 8 s cooldown, a drop during cooldown is rejected, and a fresh run can drop immediately (locks T0015's timing)~~ → T0071
+- Pencil trail: the player leaves a faint pencil path that fades over 1 s, so you can see where you were a moment ago (pairs with the ghost-run idea)

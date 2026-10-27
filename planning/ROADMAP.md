@@ -19,7 +19,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Screen shake on heavy deaths: the camera jolts when a Block, an elite, or a boss dies (T0040, in progress, desktop-4070)
 - Boss sting: a deep low hit + music swell the moment any boss spawns (T0058) ✅
 - Card-flip level-ups: the three choices flip in like cards, 150 ms apart, with a flip SFX; input locked until the deal finishes (T0059) ✅
-- Crescendo: while the kill streak is 8 or higher, fire rate +10% and the streak tally turns red (T0065, in queue, desktop)
+- Crescendo: while the kill streak is 8 or higher, fire rate +10% and the streak tally turns red (T0065) ✅
 
 ## M2 — Variety (in progress)
 - Enemies: Hex (T0001) ✅, Mote swarm (T0010) ✅, Sentry ranged (T0007) ✅, Splitter (T0009) ✅, Boulder heavy chaser (T0017) ✅, Tile mid chaser (T0023) ✅, Slab slow wall (T0025) ✅, Spike small fast punisher (T0028) ✅, Turret stationary fast shooter (T0032) ✅, Pinwheel spinning chaser (T0039) ✅, The Eraser upgrade-deleting white rectangle (T0047) ✅
@@ -34,6 +34,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - The Grid — second boss: a 400 HP rotating compass that sweeps two 200×12 ink arms (0.5 s red telegraph, 12 dmg) across the arena; boss content file + pure `gridSweep` timing module (unit-tested), reusing The Frame's boss infrastructure and +50% HP-per-respawn scaling (T0044) ✅
 - Boss sting: a deep low hit + music swell on any boss spawn (T0058) ✅
 - Boss nameplate intro: the first time each boss spawns, its name is printed in small caps at the top of the page, fading over 2 s (T0064, in queue, desktop)
+- Boss warning: 5 s before any boss spawn (Frame or Grid, including respawns) the arena boundary pulses red, "SOMETHING HEAVY APPROACHES" flashes in the HUD, and a low thud plays (T0070, in queue, desktop)
 - Later: boss music (64 BPM low pulse + dissonant second voice while a boss is alive), boss corpse decals, The Palette — third boss (five sliding color bars, same pattern: content data file + pure timing module + unit tests)
 
 ## M4 — Meta-progression
@@ -55,6 +56,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Crop schedule tests: no shrink before 12:00, 1.0→0.7 by 17:00, clamped at 0.7 after, non-increasing through the window (T0063) ✅
 - Elite schedule tests: first elite at 0:45, then exactly one every 45 s, none in between (T0066) ✅
 - Eraser removal tests: the most recently picked upgrade level is removed, the first-picked survives, no-op on an empty run (T0068, in design, yoga)
+- Understudy decoy tests: 3 s active duration, 8 s cooldown, drop rejected during cooldown, fresh run can drop immediately (T0071, in design, yoga)
 
 ## Later
 - Alternate "paper" palettes (De Stijl, Constructivist), run modifiers, daily seed, achievements, PWA install
