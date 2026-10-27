@@ -4,11 +4,11 @@ title: Unit tests for the shape geometry
 assignee: asus
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 2
+attempts: 3
 created: 2026-10-27T09:18:11Z
-claimed_at: 2026-10-27T09:24:58Z
+claimed_at: 2026-10-27T09:27:28Z
 ---
 
 ## Goal
