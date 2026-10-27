@@ -4,11 +4,12 @@ title: Add the Counterweight enemy
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T06:15:12Z
 claimed_at: 2026-10-27T06:38:28Z
+finished_at: 2026-10-27T06:51:46Z
 ---
 
 ## Goal
@@ -91,3 +92,18 @@ export const counterweight: EnemyDef = {
 
 ### Tests
 - none — `tests/content.test.ts` validates every `ENEMIES` entry (ids, numbers, note caps, shoot tuning > 0) and picks the new def up automatically.
+
+## Result (attempt 1, yoga)
+
+Added the Counterweight — a heavy late-run tank-shooter that kites the player: a big slow orange circle (radius 32, speed 30, 120 hp, 14 contact damage, 0.5 knockback resist) that holds a 200–260 unit band and fires heavy ink points (speed 130, 12 damage) every 3 s, unlocking at 195 s with the "SLOW AND HEAVY SHOTS" marginalia on first appearance. It is registered in the enemy roster (`src/content/enemies/counterweight.ts` + `index.ts`), with the hold band made data-driven via new optional `bandNear`/`bandFar` fields on the `shoot` tuning (`src/content/types.ts`, `src/entities/Enemy.ts`) that default to the old 240–300 band so the Sentry and Turret are unchanged. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 13.3 min
+
+```
+game/src/content/enemies/counterweight.ts | 20 ++++++++++++++++++++
+ game/src/content/enemies/index.ts         |  3 ++-
+ game/src/content/types.ts                 |  6 +++++-
+ game/src/entities/Enemy.ts                |  8 +++++++-
+ 4 files changed, 34 insertions(+), 3 deletions(-)
+```

@@ -65,7 +65,7 @@ export interface EnemyDef {
   knockbackResist: number;
   /** If set, dying also spawns this many enemies of this id at the death spot. They burst outward first. */
   splitsInto?: { id: string; count: number };
-  /** Tuning for behavior 'shoot'; omit for the defaults (2.4 s period, speed 150, damage 8). */
+  /** Tuning for behavior 'shoot'; omit for the defaults (2.4 s period, speed 150, damage 8, 240–300 band). */
   shoot?: {
     /** Seconds between shots. */
     periodSec: number;
@@ -73,6 +73,10 @@ export interface EnemyDef {
     speed: number;
     /** Projectile damage. */
     damage: number;
+    /** Near end of the hold band; the enemy backs off inside it. Default 240. */
+    bandNear?: number;
+    /** Far end of the hold band; the enemy approaches outside it. Default 300. */
+    bandFar?: number;
   };
   look: EnemyLook;
 }

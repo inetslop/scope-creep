@@ -55,6 +55,12 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private get shootPeriod(): number {
     return this.def.shoot?.periodSec ?? SHOOT_PERIOD;
   }
+  private get shootBandNear(): number {
+    return this.def.shoot?.bandNear ?? SHOOT_BAND_NEAR;
+  }
+  private get shootBandFar(): number {
+    return this.def.shoot?.bandFar ?? SHOOT_BAND_FAR;
+  }
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, TEX.dot);
@@ -155,7 +161,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
       }
       case 'shoot': {
         const dist = distance(target, this);
-        const radial = dist < SHOOT_BAND_NEAR ? -1 : dist > SHOOT_BAND_FAR ? 1 : 0; // back off / hold / approach
+        const radial = dist < this.shootBandNear ? -1 : dist > this.shootBandFar ? 1 : 0; // back off / hold / approach
         const strafe = Math.sin(this.age * 1.1 + this.phase) * SHOOT_STRAFE;
         vx = (toTarget.x * radial + toTarget.y * strafe) * this.def.speed;
         vy = (toTarget.y * radial - toTarget.x * strafe) * this.def.speed;
