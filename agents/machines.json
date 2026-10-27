@@ -24,7 +24,9 @@
     "yoga": {
       "label": "Lenovo Yoga RTX Spark (32 GB unified)",
       "model": "Qwen 3.8 UD-Q2_K_XL",
-      "roles": ["dev"],
+      "roles": ["dev", "architect"],
+      "devMode": "idle",
+      "maxDesignSize": "S",
       "tier": "weak",
       "maxTaskSize": "S",
       "targetQueue": 3,
@@ -60,6 +62,7 @@
     "architectTimeoutMin": 120,
     "architectMaxPerPass": 4,
     "architectMaxAttempts": 2,
+    "designGraceMinutes": 20,
     "smokeSeconds": 24,
     "effort": { "po": "xhigh", "architect": "xhigh", "dev": "xhigh" }
   }

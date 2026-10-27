@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { runAgent } from './claude.ts';
-import { effortFor, type FleetConfig } from './config.ts';
+import { architectMachineIds, effortFor, SIZE_ORDER, type FleetConfig } from './config.ts';
 import type { RunContext } from './dev.ts';
 import { info, step, warn } from './log.ts';
 import { GAME_DIR, REPO, rel } from './paths.ts';
@@ -53,11 +53,39 @@ export function isStaleClaim(t: Task, staleMinutes: number, nowMs = Date.now()):
   return !Number.isFinite(claimed) || nowMs - claimed > staleMinutes * 60_000;
 }
 
+/**
+ * Which tasks this architect designs, by size: nothing above its maxDesignSize, and tasks that a
+ * smaller architect (smaller maxDesignSize, not paused) also covers only once they have waited
+ * loop.designGraceMinutes, so the small machine gets them first and the big one keeps to big work.
+ */
+export function sizeFilter(fleet: FleetConfig, me: string, nowMs = Date.now()): (t: Task) => boolean {
+  const maxOf = (id: string): number => SIZE_ORDER[fleet.machines[id]?.maxDesignSize ?? 'L'];
+  const mine = maxOf(me);
+  const smaller = architectMachineIds(fleet)
+    .filter((id) => id !== me)
+    .map(maxOf)
+    .filter((max) => max < mine);
+  const leaveUpTo = Math.max(0, ...smaller);
+  const graceMs = (fleet.loop.designGraceMinutes ?? 20) * 60_000;
+  return (t) => {
+    const size = SIZE_ORDER[t.size];
+    if (size > mine) return false;
+    if (size > leaveUpTo) return true;
+    const created = t.created ? Date.parse(t.created) : Number.NaN;
+    return !Number.isFinite(created) || nowMs - created >= graceMs;
+  };
+}
+
 /** Tasks this architect may design, best first. `preferOwn` puts the machine's own tasks first. */
-export function designCandidates(tasks: readonly Task[], me: string, opts: { preferOwn: boolean; staleMinutes: number; nowMs?: number }): Task[] {
+export function designCandidates(
+  tasks: readonly Task[],
+  me: string,
+  opts: { preferOwn: boolean; staleMinutes: number; nowMs?: number; mayDesign?: (t: Task) => boolean },
+): Task[] {
   const own = (t: Task): number => (opts.preferOwn && folderOf(t) === me ? 0 : 1);
   return tasks
     .filter((t) => t.status === 'design' || isStaleClaim(t, opts.staleMinutes, opts.nowMs))
+    .filter((t) => opts.mayDesign?.(t) ?? true)
     .sort((a, b) => own(a) - own(b) || a.priority - b.priority || a.id.localeCompare(b.id));
 }
 
@@ -85,7 +113,7 @@ export async function runArchitectPass(ctx: RunContext, opts: ArchitectPassOptio
     // Re-read each time: claims and designs by other machines arrive with every sync.
     const all = listTasks(Object.keys(ctx.fleet.machines)).tasks;
     let claimed: Task | undefined;
-    for (const candidate of designCandidates(all, me, { preferOwn: opts.preferOwn, staleMinutes })) {
+    for (const candidate of designCandidates(all, me, { preferOwn: opts.preferOwn, staleMinutes, mayDesign: sizeFilter(ctx.fleet, me) })) {
       if (await claimDesign(ctx, candidate, staleMinutes)) {
         claimed = readTask(path.join(REPO, rel(candidate.file)));
         break;

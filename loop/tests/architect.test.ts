@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { describe, it } from 'node:test';
-import { designCandidates, isStaleClaim, parseArchitectResult } from '../architect.ts';
+import { designCandidates, isStaleClaim, parseArchitectResult, sizeFilter } from '../architect.ts';
+import type { FleetConfig, MachineConfig } from '../config.ts';
 import { parseTask, type Task } from '../tasks.ts';
 
 const mk = (id: string, machine: string, extra: Partial<Task> = {}): Task => ({
@@ -72,5 +73,35 @@ describe('parseArchitectResult', () => {
   it('flags answers without a READY status or without a real design', () => {
     assert.equal(parseArchitectResult(design.replace('STATUS: READY', '')).kind, 'invalid');
     assert.equal(parseArchitectResult('DESIGN:\nok\nSTATUS: READY').kind, 'invalid');
+  });
+});
+
+describe('who designs what size', () => {
+  const machine = (extra: Partial<MachineConfig>): MachineConfig => ({ label: '', model: '', roles: ['dev', 'architect'], tier: '', maxTaskSize: 'L', targetQueue: 2, notes: '', ...extra });
+  const fleet = (machines: Record<string, MachineConfig>): FleetConfig => ({ machines, loop: { designGraceMinutes: 20 } }) as unknown as FleetConfig;
+  const small = mk('T0001', 'yoga', { size: 'S', created: minutesAgo(5) });
+  const smallOld = mk('T0002', 'desktop-4070', { size: 'S', created: minutesAgo(25) });
+  const medium = mk('T0003', 'yoga', { size: 'M', created: minutesAgo(1) });
+  const ids = (f: (t: Task) => boolean): string[] => [small, smallOld, medium].filter(f).map((t) => t.id);
+
+  it('a small-task architect designs only up to its size', () => {
+    const f = fleet({ desktop: machine({}), yoga: machine({ maxDesignSize: 'S' }) });
+    assert.deepEqual(ids(sizeFilter(f, 'yoga', NOW)), ['T0001', 'T0002']);
+  });
+
+  it('a bigger architect leaves small tasks to it until they have waited the grace period', () => {
+    const f = fleet({ desktop: machine({}), yoga: machine({ maxDesignSize: 'S' }) });
+    assert.deepEqual(ids(sizeFilter(f, 'desktop', NOW)), ['T0002', 'T0003']);
+  });
+
+  it('designs everything when the small architect is paused or absent', () => {
+    assert.deepEqual(ids(sizeFilter(fleet({ desktop: machine({}), yoga: machine({ maxDesignSize: 'S', paused: true }) }), 'desktop', NOW)), ['T0001', 'T0002', 'T0003']);
+    assert.deepEqual(ids(sizeFilter(fleet({ desktop: machine({}), yoga: machine({ roles: ['dev'] }) }), 'desktop', NOW)), ['T0001', 'T0002', 'T0003']);
+  });
+
+  it('plugs into the candidate list', () => {
+    const f = fleet({ desktop: machine({}), yoga: machine({ maxDesignSize: 'S' }) });
+    const picked = designCandidates([small, smallOld, medium], 'yoga', { preferOwn: true, staleMinutes: 150, nowMs: NOW, mayDesign: sizeFilter(f, 'yoga', NOW) });
+    assert.deepEqual(picked.map((t) => t.id), ['T0001', 'T0002']);
   });
 });

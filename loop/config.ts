@@ -42,6 +42,12 @@ export interface MachineConfig {
    */
   devMode?: 'always' | 'idle';
   /**
+   * For machines with the architect role: the biggest task size it designs (default L: all).
+   * Bigger architects leave tasks this size and smaller to it for loop.designGraceMinutes, so a
+   * strong machine spends its time on big work and a small one designs the small tasks.
+   */
+  maxDesignSize?: TaskSize;
+  /**
    * Takes the machine out of the loop, e.g. while it's down: its runner keeps syncing but starts
    * no model server and does no work, and nobody plans, designs or assigns anything for it. Move
    * its open tasks to another machine's folder when pausing it. Default false.
@@ -78,6 +84,11 @@ export interface FleetConfig {
     architectMaxPerPass: number;
     /** Design attempts before a task is failed back to the PO. */
     architectMaxAttempts: number;
+    /**
+     * How long a bigger architect leaves a task to an architect whose maxDesignSize covers it,
+     * before designing it itself (so small tasks never get stuck behind a busy small machine). Default 20.
+     */
+    designGraceMinutes?: number;
     smokeSeconds: number;
     /** Reasoning effort per role (see Effort). */
     effort: Record<Role, Effort>;
@@ -144,6 +155,13 @@ export function hasArchitect(fleet: FleetConfig): boolean {
 
 export function effortFor(fleet: FleetConfig, machineId: string, role: Role): Effort {
   return fleet.machines[machineId]?.effort?.[role] ?? fleet.loop.effort[role];
+}
+
+/** Active machines that design tasks. */
+export function architectMachineIds(fleet: FleetConfig): string[] {
+  return activeMachines(fleet)
+    .filter(([, m]) => m.roles.includes('architect'))
+    .map(([id]) => id);
 }
 
 /** Machines the PO plans for: dev role, not paused. */
