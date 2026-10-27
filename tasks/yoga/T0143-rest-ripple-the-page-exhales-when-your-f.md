@@ -4,11 +4,12 @@ title: Rest ripple — the page exhales when your free hit is in hand
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T21:17:36Z
 claimed_at: 2026-10-27T21:51:45Z
+finished_at: 2026-10-27T22:04:42Z
 ---
 
 ## Goal
@@ -73,3 +74,16 @@ restRing(x: number, y: number): void;
 - Keep the GameScene edit at the `rest.tick` line (line 174), not at the end of `update()`; do not touch the `'rest'` invariant or `run.rest` internals.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Added the rest-arming ring: a new `restRings` ParticleEmitter in FxSystem (copy of `firstLightRings` with its own 400 ms lifespan) plus a public `restRing(x, y)` method, and in `GameScene.update()` the `run.rest.tick(dt)` line now catches the false→true `covered` edge (reading `wasCovered` before the tick) to ripple one flat 2 u ink ring (8→24 u, fading over 400 ms) from the player the moment the 30 s count completes — exactly one ring per arming, none at run start, no repeated rings while the REST label holds. `npm run check` (typecheck + lint + 307 unit tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 13.0 min
+
+```
+game/src/scenes/GameScene.ts |  2 ++
+ game/src/systems/FxSystem.ts | 15 ++++++++++++++-
+ 2 files changed, 16 insertions(+), 1 deletion(-)
+```

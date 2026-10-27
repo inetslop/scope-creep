@@ -171,7 +171,9 @@ export class GameScene extends Phaser.Scene {
     const dt = Math.min(delta, 50) / 1000; // clamp so a stalled tab doesn't teleport everything
     const run = this.run;
     run.timeSec += dt;
+    const wasCovered = run.rest.covered;
     run.rest.tick(dt); // 30 s of peace puts the player at rest (core/rest.ts)
+    if (!wasCovered && run.rest.covered) this.fx.restRing(this.player.x, this.player.y); // the page exhales: free hit in hand
     this.music.update(run.timeSec);
 
     const cam = this.cameras.main;

@@ -29,6 +29,7 @@ export class FxSystem {
   private readonly rings: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly critRings: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly firstLightRings: Phaser.GameObjects.Particles.ParticleEmitter;
+  private readonly restRings: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly slamRings: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly trail: Phaser.GameObjects.Particles.ParticleEmitter;
   /** Platemarks: stationary red ×s printed on the paper where the player took a hit. */
@@ -83,6 +84,13 @@ export class FxSystem {
       tint: PALETTE.ink,
       emitting: false,
     });
+    this.restRings = scene.add.particles(0, 0, TEX.ring, {
+      lifespan: 400,
+      scale: { start: 0.29, end: 0.86 }, // TEX.ring radius 28 u: grows 8 -> 24 u
+      alpha: { start: 1, end: 0 },
+      tint: PALETTE.ink,
+      emitting: false,
+    });
     // The 26 -> 160 ripple is baked into the emitter: ParticleEmitter has no per-call setScale in 3.90.
     this.slamRings = scene.add.particles(0, 0, TEX.ringWide, {
       lifespan: 250,
@@ -100,7 +108,7 @@ export class FxSystem {
       emitting: false,
     });
     this.trail.setDepth(DEPTH.pickups - 1);
-    for (const e of [this.fragments, this.sparks, this.rings, this.critRings, this.firstLightRings, this.slamRings]) e.setDepth(DEPTH.fx);
+    for (const e of [this.fragments, this.sparks, this.rings, this.critRings, this.firstLightRings, this.slamRings, this.restRings]) e.setDepth(DEPTH.fx);
   }
 
   /** Small burst where a projectile hits. */
@@ -117,6 +125,11 @@ export class FxSystem {
   /** First light: the run's first shard picked up — a small flat ink ring at the pickup point. */
   firstLightRing(x: number, y: number): void {
     this.firstLightRings.explode(1, x, y);
+  }
+
+  /** Rest arming: the 30 s count completed and the free hit is in hand — one flat ink ring ripples from the player. */
+  restRing(x: number, y: number): void {
+    this.restRings.explode(1, x, y);
   }
 
   /** A Platen slam: one ink ring rippling outward from the body to the slam radius. */
