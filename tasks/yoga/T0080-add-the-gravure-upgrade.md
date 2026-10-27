@@ -4,11 +4,12 @@ title: Add the Gravure upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0079]
 attempts: 1
 created: 2026-10-27T05:46:39Z
 claimed_at: 2026-10-27T05:57:06Z
+finished_at: 2026-10-27T06:06:01Z
 ---
 
 ## Goal
@@ -68,3 +69,16 @@ No new types or signatures. `extraPierce` and `damageMul` already exist in `Play
 
 ### Tests
 - New unit test in `tests/core/upgrades.test.ts` as specified in step 2; existing content validation + `rollUpgradeChoices` tests cover the rest.
+
+## Result (attempt 1, yoga)
+
+Added the 45th level-up card "Gravure" (`id: 'gravure'`) to `UPGRADES` in `src/content/upgrades/index.ts` — a rare ink card (weight 3, max level 2) granting +1 pierce and +15% damage per level (+2 pierce and ≈×1.32 damage at max), completing the pierce axis with Vector, Ostinato and Pizzicato. Appended the matching unit test in `tests/core/upgrades.test.ts` asserting the exact mod order (pierce first, damage second), 2 offers, then stops. Cards render from the registry automatically, so no scene or stat changes were needed. `npm run check` (245 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 8.9 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
