@@ -4,11 +4,12 @@ title: Add the Vivace upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T03:21:30Z
 claimed_at: 2026-10-27T03:49:32Z
+finished_at: 2026-10-27T03:56:48Z
 ---
 
 ## Goal
@@ -83,3 +84,16 @@ No new types. Reuses existing `StatMod` stats `extraProjectiles` (add) and `proj
 
 ### Tests
 - `tests/core/upgrades.test.ts`: the single `vivace` block above (exact mods asserted; applied 2 times; available 2 times then `isUpgradeAvailable` false).
+
+## Result (attempt 1, yoga)
+
+Added the rare "Vivace" level-up card to `UPGRADES` in `src/content/upgrades/index.ts` — orange (PALETTE.orange), weight 3, max level 2, granting +1 projectile per volley (`extraProjectiles`/add) and +10% projectile speed (`projectileSpeedMul`/mul 1.10) per level, stacking with Repetition/Trill/Impasto and Draft/Presto/Fugue. Added the matching unit test in `tests/core/upgrades.test.ts` asserting the exact two mods, 2 applies, and that it stops being offered at max level. `npm run check` and `npm run smoke` both pass; the card renders automatically from the registry in the three-card choice.
+
+- Self-review: APPROVE
+- Time: 7.3 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
