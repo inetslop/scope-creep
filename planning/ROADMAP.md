@@ -17,20 +17,22 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Marginalia: first-encounter annotations — a small dry ink note fades in beside a new enemy type for 2 s (T0027) ✅
 - Crit sting: higher-pitched hit sound + small ink ring when a crit lands (T0019) ✅
 - Screen shake on heavy deaths: the camera jolts when a Block, an elite, or a boss dies (T0040, in progress, desktop-4070)
-- Next: boss sting (low hit + music swell on any boss spawn), card-flip level-ups
+- Boss sting: a deep low hit + music swell the moment any boss spawns (T0058, in queue, desktop)
+- Card-flip level-ups: the three choices flip in like cards, 150 ms apart, with a flip SFX; input locked until the deal finishes (T0059, in queue, desktop)
 
 ## M2 — Variety (in progress)
-- Enemies: Hex (T0001) ✅, Mote swarm (T0010) ✅, Sentry ranged (T0007) ✅, Splitter (T0009) ✅, Boulder heavy chaser (T0017) ✅, Tile mid chaser (T0023) ✅, Slab slow wall (T0025) ✅, Spike small fast punisher (T0028) ✅, Turret stationary fast shooter (T0032) ✅, Pinwheel spinning chaser (T0039) ✅, The Eraser upgrade-deleting white rectangle (T0047, todo, desktop)
+- Enemies: Hex (T0001) ✅, Mote swarm (T0010) ✅, Sentry ranged (T0007) ✅, Splitter (T0009) ✅, Boulder heavy chaser (T0017) ✅, Tile mid chaser (T0023) ✅, Slab slow wall (T0025) ✅, Spike small fast punisher (T0028) ✅, Turret stationary fast shooter (T0032) ✅, Pinwheel spinning chaser (T0039) ✅, The Eraser upgrade-deleting white rectangle (T0047) ✅
 - Enemy projectiles now exist (Sentry) — boss dart-burst patterns unblocked
 - Weapons: Orbit (T0008) ✅, Arc chain beam (T0022) ✅, Counterpoint wall-bounce (T0055, in queue, desktop-4070); backlog: stamp, plumb line, negative-space bomb
-- Upgrades: Tempo (T0002) ✅, Draft (T0012) ✅, Contrast crit (T0013) ✅, Plate armor (T0016) ✅, Staccato speed combo (T0018) ✅, Emphasis damage ramp (T0020) ✅, Allegro fire-rate-for-speed trade-off (T0026) ✅, Ostinato pierce + fire-rate build card (T0029) ✅, Dynamics damage-for-mobility trade-off (T0031) ✅, Fugue damage + projectile-speed combo (T0033) ✅, Pressure damage + fire-rate DPS build (T0034) ✅, Gather pickup-radius + shard-XP economy build (T0035) ✅, Accent crit + damage build (T0037) ✅, Presto projectile-speed + move-speed build (T0038) ✅, Pulse fire-rate + crit crit-shred build (T0041) ✅, Sweep move-speed + pickup-radius mobility build (T0042) ✅, Trill rare repeat-fire build (T0046) ✅, Tessitura max-HP survival ramp (T0048) ✅, Glissando shard-XP + fire-rate economy-DPS build (T0051) ✅, Adagio max-HP + regen sustain build (T0052, in progress, yoga), Pizzicato fast-pierce build (T0056, design, yoga); backlog: weapon-specific lines, evolutions, Kerning (projectile size + knockback), Full Bleed (damage at full HP)
+- Upgrades: Tempo (T0002) ✅, Draft (T0012) ✅, Contrast crit (T0013) ✅, Plate armor (T0016) ✅, Staccato speed combo (T0018) ✅, Emphasis damage ramp (T0020) ✅, Allegro fire-rate-for-speed trade-off (T0026) ✅, Ostinato pierce + fire-rate build card (T0029) ✅, Dynamics damage-for-mobility trade-off (T0031) ✅, Fugue damage + projectile-speed combo (T0033) ✅, Pressure damage + fire-rate DPS build (T0034) ✅, Gather pickup-radius + shard-XP economy build (T0035) ✅, Accent crit + damage build (T0037) ✅, Presto projectile-speed + move-speed build (T0038) ✅, Pulse fire-rate + crit crit-shred build (T0041) ✅, Sweep move-speed + pickup-radius mobility build (T0042) ✅, Trill rare repeat-fire build (T0046) ✅, Tessitura max-HP survival ramp (T0048) ✅, Glissando shard-XP + fire-rate economy-DPS build (T0051) ✅, Adagio max-HP + regen sustain build (T0052) ✅, Pizzicato fast-pierce build (T0056) ✅, Pedal armor + regen tortoise build (T0060, in queue, yoga); backlog: weapon-specific lines, evolutions, Kerning (projectile size + knockback), Full Bleed (damage at full HP)
 - Actives: Understudy decoy — drop a blue decoy that taunts enemies for 3 s, 8 s cooldown (T0015) ✅; Still Life — a 5 s bubble that slows nearby enemies to 50% speed, 12 s cooldown (T0050) ✅
-- Systems: Crop marks — after 12:00 the arena's safe area shrinks to 70% by 17:00; the cropped margin burns the player for 5 damage/s (T0045, todo, desktop)
+- Systems: Crop marks — after 12:00 the arena's safe area shrinks to 70% by 17:00; the cropped margin burns the player for 5 damage/s (T0045) ✅
 
 ## M3 — Bosses (started)
 - The Frame at 5:00: health bar, charge + wedge ring + radial dart burst, +50% HP per respawn (T0006) ✅
 - The Grid — second boss: a 400 HP rotating compass that sweeps two 200×12 ink arms (0.5 s red telegraph, 12 dmg) across the arena; boss content file + pure `gridSweep` timing module (unit-tested), reusing The Frame's boss infrastructure and +50% HP-per-respawn scaling (T0044) ✅
-- Later: boss sting + boss music (low hit, music swell, 64 BPM boss tempo on any boss spawn), boss corpse decals, The Palette — third boss (five sliding color bars, same pattern: content data file + pure timing module + unit tests)
+- Boss sting: a deep low hit + music swell on any boss spawn (T0058, in queue, desktop)
+- Later: boss music (64 BPM low pulse + dissonant second voice while a boss is alive), boss corpse decals, The Palette — third boss (five sliding color bars, same pattern: content data file + pure timing module + unit tests)
 
 ## M4 — Meta-progression
 - Score: kills earn points (normal 1, elite 5, boss 50); HUD shows the running score, game over shows score + persisted best (T0054, in queue, desktop-4070)
@@ -44,8 +46,9 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Upgrade roll tests: a maxed upgrade is never offered; a roll returns 3 distinct choices (T0036) ✅
 - Vector math tests: length, normalize, add, scale, distance (T0043) ✅
 - Level-up XP curve tests: required XP strictly increasing, exact-XP boundary, finite at level 100 (T0049) ✅
-- Stat stacking tests: same-stat upgrades combine consistently (damage, fire rate), untouched stats stay at base (T0053, designing, yoga)
-- Kill-streak tests: streak grows per kill, resets when hit, bestStreak keeps the longest run (T0057, design, yoga)
+- Stat stacking tests: same-stat upgrades combine consistently (damage, fire rate), untouched stats stay at base (T0053, in progress, yoga)
+- Kill-streak tests: streak grows per kill, resets when hit, bestStreak keeps the longest run (T0057, in queue, yoga)
+- Boss alternation tests: first boss is The Frame, bosses strictly alternate Frame/Grid, deterministic (T0061, in queue, yoga)
 
 ## Later
 - Alternate "paper" palettes (De Stijl, Constructivist), run modifiers, daily seed, achievements, PWA install

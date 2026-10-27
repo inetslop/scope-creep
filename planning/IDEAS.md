@@ -29,7 +29,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Crit chance upgrade: 10% chance of double damage~~ → T0013 (Contrast)
 - ~~"Plate" upgrade: +1 armor, maxLevel 2~~ → T0016
 - Dash enemy: a small red square that dashes at the player in a straight line, then stops
-- Boss sting: a low hit plus a music swell when any boss (Frame or Grid) spawns
+- ~~Boss sting: a low hit plus a music swell when any boss (Frame or Grid) spawns~~ → T0058
 - ~~Kill-streak text: "RHYTHM" flashes in the HUD at 8 kills without being hit~~ → T0014
 - ~~Crit sting: a short higher-pitched hit sound when a crit lands (follows T0013)~~ → T0019 (sound + small ink ring)
 - ~~The Eraser: a slow white rectangle that, on contact, erases your most recent upgrade with a small "ERASED" flash in the HUD~~ → T0047
@@ -52,7 +52,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Staccato upgrade: +12% fire rate and +12% projectile speed per level, maxLevel 3~~ → T0018
 - ~~Boulder: a heavy yellow circle that slowly chases and shrugs off knockback~~ → T0017
 - The Frame's corpse: after the first boss dies, a faint frame outline stays on the paper as a permanent decal
-- Card-flip level-up: the three upgrade choices are dealt in like cards with a card-flip SFX
+- ~~Card-flip level-up: the three upgrade choices are dealt in like cards with a card-flip SFX~~ → T0059
 - Aim snap (mobile): while the right stick is held, shots snap to the nearest enemy within 40 units
 - Bestiary on the pause screen: the enemy shapes met this run, each with a one-line note
 - Shard vacuum: the moment a level-up card is picked, every shard on screen is pulled to you
@@ -116,6 +116,11 @@ The PO adds ideas here. Good ones become tasks.
 - Gallery mode: three curated fixed-seed runs in the menu — "Study in Red" (only red enemies), "No Level-Ups" (no upgrade cards, double shards), "Double Shards" — each with its own persisted best score
 - ~~Pizzicato upgrade: +1 pierce and +10% projectile speed per level, maxLevel 2, weight 3 — the fast-pierce build, reusing the Vector and Draft stats~~ → T0056
 - ~~Unit tests for the kill streak: streak grows per kill, resets when hit, bestStreak keeps the longest~~ → T0057
+- ~~Pedal upgrade: +1 armor and +0.5 HP/s regen per level, maxLevel 2 — a defensive tortoise card that reuses the Plate and Balance stats~~ → T0060
+- ~~Unit tests for boss alternation: the first boss is The Frame and bosses strictly alternate Frame/Grid, deterministic~~ → T0061
+- Boss nameplate intro: the first time each boss spawns its name is printed in small caps at the top of the page ("THE FRAME", "THE GRID"), fading over 2 s
+- The Frame's charge telegraph: a thin red line draws from the boss toward the player over 0.4 s before a Frame charge lands
+- Pedal point (music): while at full HP your volleys leave a faint ink afterimage for 1 s — the sustain builds get a visible reward (follow-up to T0060)
 - Enemy cap: when 60 enemies are on screen, spawning pauses until the count drops — keeps late runs playable on phones
 - Page number: a faint small number in the bottom-right corner of the paper, incrementing every 60 s — which page of the composition you are on
 - Mute keys: M toggles music, N toggles sound effects, both shown on the pause screen — the first half of the settings page
