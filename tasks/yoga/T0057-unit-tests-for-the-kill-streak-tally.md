@@ -4,10 +4,12 @@ title: Unit tests for the kill-streak tally
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T01:47:24Z
+claimed_at: 2026-10-27T01:53:06Z
+designer: yoga
 ---
 
 ## Goal
