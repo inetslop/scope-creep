@@ -131,7 +131,12 @@ The PO adds ideas here. Good ones become tasks.
 - Frame's heartbeat: while The Frame is alive the paper pulses once per second in time with its attack rhythm — the boss's tempo is felt in the page
 - Prestissimo: the first time your kill streak reaches 10 in a run, your next level-up deals 4 cards instead of 3, with a "PRESTISSIMO" flash
 - ~~Impasto upgrade: +1 projectile per volley and +15% damage per level, maxLevel 2, weight 3 — a rare heavy-volley card that reuses the Repetition and Emphasis stats~~ → T0062
+- ~~Vivace upgrade: +1 projectile per volley and +10% projectile speed per level, maxLevel 2, weight 3 — a rare fast-swarm card that reuses the Repetition and Draft stats~~ → T0067
 - ~~Unit tests for the crop schedule: the safe area is 1.0 before 12:00, shrinks to 0.7 by 17:00, and never goes below 0.7 (locks T0045's pure schedule)~~ → T0063
 - ~~Unit tests for the elite spawn schedule: first elite at 0:45, then exactly one every 45 s, none in between (locks T0005's elite pacing)~~ → T0066
+- ~~Unit tests for upgrade removal (the Eraser): the most recently picked upgrade level is removed, the first-picked survives, no-op on an empty run (locks T0047's contact rule)~~ → T0068
+- Counterpoint bounce marks: each wall bounce leaves a small ink × on the arena edge for 2 s (depends on T0055)
+- Boss calm: while a boss is alive, normal enemies deal 50% contact damage — the boss has your attention (keeps boss fights fair against the late-run swarm)
+- Doodle margin: every 10 min a small hand-drawn asterisk appears in a random paper margin (pure art, no gameplay — pairs with the coffee-ring idea)
 - Paper feed: every 60 s the bottom edge of the page slides up a few units like a printing press for 400 ms (pure art, no gameplay — pairs with the page-number idea)
 - Shard chips: shards are drawn as small flat ink chips with the hard paper-cut shadow, and tumble briefly (200 ms) when they drop before settling
