@@ -92,3 +92,4 @@ the PO reads this instead of the code.
 - T0091 Add the Platen enemy — it shoves you off the page (desktop, 2026-10-27): Added the Platen, the first enemy that shoves instead of hurting: a yellow circle (r26, 60 hp, speed 20, unlocks 150 s) that crawls at you, flattens to 40% height behind an ink ring at 160 units every 5 s, then ripples a
 - T0099 Gutter — the first arena hazard (desktop, 2026-10-27): Added the Gutter, the first arena hazard: after 14:00 a 40-unit ink band sweeps the crop-safe area every 20 s (4.0 s cross, alternating direction), telegraphed by a pulsing 2 u red rule and burning the player 4/s via the
 - T0054 Score and best score (desktop-4070, 2026-10-27): Both gates pass:
+- T0064 Boss nameplate intro (desktop, 2026-10-27): Added the T0064 boss nameplate: `RunState.firstBossSighting()` (per-run boss-id set, unit-tested), a new `bossNameplate` game event emitted by `BossSystem.startEntering()` only on a boss's first spawn of the run (name ta
