@@ -20,6 +20,7 @@ export class Sfx {
   private muted: boolean;
   private lastHitAt = 0;
   private lastCritHitAt = 0;
+  private lastStreakBreakAt = 0;
   private lastPickupAt = 0;
   private lastPickupCallAt = 0;
   private lastCardFlipAt = 0;
@@ -112,6 +113,15 @@ export class Sfx {
     this.lastCritHitAt = now;
     this.noise(0.07, 0.22, 2400, 'bandpass');
     this.tone('sine', 440, 320, 0.08, 0.18);
+  }
+
+  /** Low blip when the kill streak shatters: flat ~150 Hz, 80 ms, under the crit sting's gain. */
+  streakBreak(): void {
+    if (!this.canPlay()) return;
+    const now = performance.now();
+    if (now - this.lastStreakBreakAt < THROTTLE_MS) return;
+    this.lastStreakBreakAt = now;
+    this.tone('sine', 150, 150, 0.08, 0.12); // flat ~150 Hz, 80 ms, gain < crit's 0.18, no noise
   }
 
   /** Low pluck that drops in pitch with enemy size. */

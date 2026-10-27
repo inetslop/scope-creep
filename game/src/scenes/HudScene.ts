@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { TEX } from '../art/textures';
 import { BOSS_BY_ID } from '../content/bosses';
 import { cssColor, PALETTE } from '../content/palette';
 import { CROP } from '../core/crop';
@@ -9,7 +10,7 @@ import { flags } from '../debug/flags';
 import type { StickState } from '../input/TouchSticks';
 import { makeButton } from '../ui/button';
 import { textStyle } from '../ui/text';
-import { GAME_EVENTS, getControls, getRun, SCENES } from './keys';
+import { GAME_EVENTS, getControls, getRun, getSfx, SCENES } from './keys';
 
 const PAD = 12;
 /** After a hit the HP just lost shows as a yellow chunk that waits, then drains, while the bar gives a small shake. */
@@ -28,6 +29,8 @@ export class HudScene extends Phaser.Scene {
   private streakText!: Phaser.GameObjects.Text;
   private rhythmText!: Phaser.GameObjects.Text;
   private cropText!: Phaser.GameObjects.Text;
+  /** Ink specks that scatter from the tally when the kill streak shatters. */
+  private streakSpecks!: Phaser.GameObjects.Particles.ParticleEmitter;
   private fpsText?: Phaser.GameObjects.Text;
   private pauseButton!: Phaser.GameObjects.Container;
   /** Boss health bar: its own Graphics, so the 0.5 s death fade can lower alpha without clearing the main HUD. */
@@ -75,6 +78,8 @@ export class HudScene extends Phaser.Scene {
     this.streakText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5).setVisible(false);
     this.rhythmText = this.add.text(0, 0, 'RHYTHM', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
     this.cropText = this.add.text(0, 0, 'CROPPING', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
+    // After cropText so the specks render above the tally text.
+    this.streakSpecks = this.add.particles(0, 0, TEX.dot, { lifespan: 400, speed: { min: 50, max: 100 }, scale: { start: 0.75, end: 0.75 }, alpha: { start: 1, end: 0 }, tint: PALETTE.ink, emitting: false });
     this.pauseButton = makeButton(this, 0, 0, 'II', () => this.scene.get(SCENES.game).events.emit(GAME_EVENTS.pauseRequest), { width: 44, height: 44, fontSize: 18 });
     if (flags.debug) this.fpsText = this.add.text(PAD, 0, '', textStyle(12, PALETTE.green));
     this.bossG = this.add.graphics();
@@ -101,6 +106,7 @@ export class HudScene extends Phaser.Scene {
     const gameEvents = this.scene.get(SCENES.game).events;
     const onPlayerHit = (): void => {
       this.sinceHit = 0;
+      if (this.lastStreak >= 1) this.shatterTally();
     };
     gameEvents.on(GAME_EVENTS.playerHit, onPlayerHit);
     const onBossNameplate = (name: string): void => {
@@ -224,6 +230,13 @@ export class HudScene extends Phaser.Scene {
     const narrow = PAD + barW + 80 > width / 2 - 30;
     const bossTop = (narrow ? PAD + 40 : PAD) + 26;
     return { x: width / 2, y: bossTop + 42 };
+  }
+
+  /** Streak reset: a scatter of 4–6 ink specks from the tally, and the low blip. */
+  private shatterTally(): void {
+    const { width } = this.scale;
+    this.streakSpecks.explode(4 + Math.floor(Math.random() * 3), width - PAD - this.streakText.width / 2, PAD + 60);
+    getSfx(this)?.streakBreak();
   }
 
   /** "×N" kill-streak tally top-right; a red "RHYTHM" flash at every 8th consecutive kill. */

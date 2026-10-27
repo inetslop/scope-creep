@@ -4,11 +4,12 @@ title: Streak break — the tally shatters when it goes
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T10:32:47Z
 claimed_at: 2026-10-27T12:14:11Z
+finished_at: 2026-10-27T12:40:38Z
 ---
 
 ## Goal
@@ -69,3 +70,16 @@ this.streakSpecks = this.add.particles(0, 0, TEX.dot, { lifespan: 400, speed: { 
 - HUD is screen space at 1 px = 1 u; `Math.random` is right (juice, like DamageNumbers jitter), not `run.rng`. Not a system: no invariant, no smoke hook, no core rule touched, `updateStreak` rendering unchanged.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Streak-break juice is in: when a hit resets a kill streak of 1 or higher, the HUD streak tally shatters — 4–6 tiny flat ink specks (TEX.dot, no outline) scatter from the tally for 20–40 u and fade linearly over 400 ms, plus one short low blip (150 Hz sine, 80 ms, gain 0.12, throttled like critHit so blips never stack). Implemented exactly per the design: `streakBreak()` + `lastStreakBreakAt` in `src/audio/Sfx.ts`, and a screen-space `streakSpecks` emitter + `shatterTally()` triggered from the existing `GAME_EVENTS.playerHit` listener in `src/scenes/HudScene.ts`. Hits at streak 0 play and scatter nothing; streak logic, the Crescendo fire-rate rule and tally rendering are unchanged. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 26.5 min
+
+```
+game/src/audio/Sfx.ts       | 10 ++++++++++
+ game/src/scenes/HudScene.ts | 15 ++++++++++++++-
+ 2 files changed, 24 insertions(+), 1 deletion(-)
+```
