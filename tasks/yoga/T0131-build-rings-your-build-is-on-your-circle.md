@@ -4,10 +4,12 @@ title: Build rings — your build is on your circle
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T17:13:57Z
+claimed_at: 2026-10-27T17:39:38Z
+designer: desktop
 ---
 
 ## Goal
