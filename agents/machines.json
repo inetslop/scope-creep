@@ -67,7 +67,7 @@
       "model": "Qwen 3.8 27B UD-IQ3_XXS",
       "roles": ["dev", "architect"],
       "architectMode": "idle",
-      "maxDesignSize": "M",
+      "maxDesignSize": "S",
       "effort": { "architect": "medium", "dev": "medium" },
       "tier": "medium",
       "maxTaskSize": "M",
