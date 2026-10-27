@@ -4,10 +4,11 @@ title: Add the Pizzicato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T01:47:24Z
+claimed_at: 2026-10-27T01:55:43Z
 ---
 
 ## Goal
