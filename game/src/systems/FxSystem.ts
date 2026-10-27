@@ -12,6 +12,8 @@ import { GAME_EVENTS } from '../scenes/keys';
 const PLATEMARK_MAX = 12;
 const PLATEMARK_LIFE_MS = 2000;
 const PLATEMARK_COOLDOWN_MS = 500;
+const BOUNCE_MARK_MAX = 16;
+const BOUNCE_MARK_LIFE_MS = 2000;
 const QUICKEN_SPECK_MAX = 9;
 const QUICKEN_SPECK_LIFE_MS = 300;
 const DUST_MAX = 6;
@@ -36,6 +38,9 @@ export class FxSystem {
   private readonly platemarks: (Phaser.GameObjects.Image | undefined)[] = [];
   private platemarkCursor = 0;
   private lastPlatemarkAt = -Infinity;
+  /** Bounce marks: stationary ink ×s printed on a wall where a Counterpoint point came off it. Pooled like platemarks. */
+  private readonly bounceMarks: (Phaser.GameObjects.Image | undefined)[] = [];
+  private bounceMarkCursor = 0;
   /** Slam dust: flat paperLight puffs kicked up when a Platen's slam fires. Pooled like platemarks. */
   private readonly dust: (Phaser.GameObjects.Image | undefined)[] = [];
   private dustCursor = 0;
@@ -227,6 +232,13 @@ export class FxSystem {
     return n;
   }
 
+  /** Bounce marks currently on screen (the bounce-marks-pool invariant reads this). */
+  get bounceMarkCount(): number {
+    let n = 0;
+    for (const s of this.bounceMarks) if (s && s.alpha > 0) n += 1;
+    return n;
+  }
+
   /** Puffs currently on screen (the slam-dust invariant reads this). */
   get dustCount(): number {
     let n = 0;
@@ -254,6 +266,18 @@ export class FxSystem {
     this.scene.tweens.killTweensOf(slot);
     slot.setPosition(x, y).setAlpha(1).setVisible(true);
     this.scene.tweens.add({ targets: slot, alpha: 0, duration: PLATEMARK_LIFE_MS, ease: 'Linear', onComplete: () => slot.setVisible(false) });
+  }
+
+  /** Prints a flat ink × at the wall a Counterpoint point bounced off; oldest recycled beyond the pool cap. */
+  bounceMark(x: number, y: number): void {
+    const i = this.bounceMarkCursor;
+    this.bounceMarkCursor = (i + 1) % BOUNCE_MARK_MAX;
+    let slot = this.bounceMarks[i];
+    if (!slot) slot = this.scene.add.image(0, 0, TEX.bounceMark).setOrigin(0.5).setDepth(DEPTH.floor + 1);
+    this.bounceMarks[i] = slot;
+    this.scene.tweens.killTweensOf(slot);
+    slot.setPosition(x, y).setAlpha(1).setVisible(true);
+    this.scene.tweens.add({ targets: slot, alpha: 0, duration: BOUNCE_MARK_LIFE_MS, ease: 'Linear', onComplete: () => slot.setVisible(false) });
   }
 
   /** Boss death: a shower of ink fragments. */

@@ -4,11 +4,12 @@ title: Counterpoint bounce marks — the wall remembers the bounce
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T21:17:36Z
 claimed_at: 2026-10-27T22:04:48Z
+finished_at: 2026-10-27T22:20:21Z
 ---
 
 ## Goal
@@ -90,3 +91,18 @@ bounceMark(x: number, y: number): void {
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Counterpoint wall bounces now leave a small flat ink × at each contact point — a new `TEX.bounceMark` texture (identical 22×22 / 3 px-stroke geometry to the red platemark, but ink rather than tinted) in `src/art/textures.ts`, a second 16-slot round-robin pool in `FxSystem` (`bounceMarks`, `bounceMarkCount`, public `bounceMark(x, y)`) with a 2 s linear-fade scene tween and `killTweensOf` before recycling, one call in the bounce branch of `WeaponSystem.onWorldBounds` at `p.x, p.y`, and a `bounce-marks-pool` invariant in `GameScene.registerInvariants()` beside `platemark-pool`. Marks sit at `DEPTH.floor + 1` on the paper under all entities, so Crop and Tide need no special-casing; a double-bounce shot leaves two marks, a straight shot leaves none, and no sound, key, HUD, scene, gameplay number, listener or shutdown work changed.
+
+- Self-review: APPROVE
+- Time: 15.6 min
+
+```
+game/src/art/textures.ts         |  7 +++++++
+ game/src/scenes/GameScene.ts     |  1 +
+ game/src/systems/FxSystem.ts     | 24 ++++++++++++++++++++++++
+ game/src/systems/WeaponSystem.ts |  1 +
+ 4 files changed, 33 insertions(+)
+```

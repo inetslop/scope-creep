@@ -418,6 +418,7 @@ export class GameScene extends Phaser.Scene {
     });
     hook.addInvariant('damage-numbers-pool', () => (this.damageNumbers.activeCount <= 60 ? null : `${this.damageNumbers.activeCount} damage numbers active`));
     hook.addInvariant('platemark-pool', () => (this.fx.platemarkCount <= 12 ? null : `${this.fx.platemarkCount} platemarks on screen`));
+    hook.addInvariant('bounce-marks-pool', () => (this.fx.bounceMarkCount <= 16 ? null : `${this.fx.bounceMarkCount} bounce marks on screen`));
     hook.addInvariant('quicken-specks', () => (this.fx.quickenSpeckCount <= 9 ? null : `${this.fx.quickenSpeckCount} quicken specks on screen`));
     hook.addInvariant('puddle-pool', () => (this.puddles.activeCount <= this.puddles.maxPuddles ? null : `${this.puddles.activeCount} puddles on screen`));
     hook.addInvariant('slam-dust-pool', () => (this.fx.dustCount <= 6 ? null : `${this.fx.dustCount} slam dust puffs on screen`));

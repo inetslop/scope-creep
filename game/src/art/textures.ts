@@ -51,6 +51,8 @@ export const TEX = {
   bossGridArm: 'bossGridArm',
   /** Small red ×; the platemark printed on the paper where the player takes a hit. */
   platemark: 'platemark',
+  /** Small ink ×; printed on a wall where a Counterpoint point came off it. */
+  bounceMark: 'bounceMark',
   /** Flat pale blue puddle (128 px = 120 u across); the Wash wets the paper with these. No shadow: it is wet, not paper. */
   puddle: 'puddle',
   /** The Press's type block: a flat grey 24 u square printed on the wall's leading edge. */
@@ -104,6 +106,11 @@ export function generateTextures(scene: Phaser.Scene): void {
   graphicsTexture(scene, TEX.badge, 28, 28, (g) => drawShape(g, 'square', 12.5, 12.5, 8, PALETTE.red, { outlineWidth: 2 }));
   graphicsTexture(scene, TEX.platemark, 22, 22, (g) => {
     g.lineStyle(3, PALETTE.red, 1);
+    g.lineBetween(3, 3, 19, 19);
+    g.lineBetween(3, 19, 19, 3);
+  });
+  graphicsTexture(scene, TEX.bounceMark, 22, 22, (g) => {
+    g.lineStyle(3, PALETTE.ink, 1);
     g.lineBetween(3, 3, 19, 19);
     g.lineBetween(3, 19, 19, 3);
   });

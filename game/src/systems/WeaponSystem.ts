@@ -40,6 +40,7 @@ export class WeaponSystem {
       p.bouncesLeft -= 1;
       p.damage *= p.bounceDamageMul;
       this.sfx.hit();
+      this.fx.bounceMark(p.x, p.y);
       if (p.bouncesLeft === 0) body.setCollideWorldBounds(true, 0, 0); // no third bounce: next contact stops it here, then kills it below
     } else {
       p.despawn();
