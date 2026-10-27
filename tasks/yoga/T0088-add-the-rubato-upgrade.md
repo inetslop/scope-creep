@@ -4,12 +4,10 @@ title: Add the Rubato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-27T07:26:36Z
-claimed_at: 2026-10-27T07:27:54Z
-designer: yoga
 ---
 
 ## Goal
@@ -30,3 +28,60 @@ One more level-up card: **Rubato** pairs +8% fire rate with +0.5 HP/s regen — 
 - [ ] Picking it makes volleys fire 8% faster and the player visibly regain 0.5 HP/s per level; at 3 levels ≈×1.26 fire rate and +1.5 HP/s regen, stacking with Rhythm builds and the Adagio/Pedal/Andante sustain builds.
 - [ ] After 3 levels it is never offered again.
 - [ ] The new unit test passes in the automated gate (`npm run check` and `npm run smoke` on desktop + mobile green).
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/upgrades/index.ts` - append one new `rubato` entry to `UPGRADES` (after the entry that is currently LAST — re-open the file and check; do not insert mid-list)
+- edit `tests/core/upgrades.test.ts` - append one new `it` block after the last test in the file, copying the `andante` test shape with the ids/vals below
+
+### Interfaces
+No new types, stats, or functions. Both stats (`fireRateMul`, `regenPerSec`) already exist in `PlayerStats` (`src/core/stats.ts`); cards render from the `UPGRADES` registry automatically.
+
+Exact entry (paste as-is; `PALETTE` is already imported in that file):
+```ts
+{
+  id: 'rubato',
+  name: 'Rubato',
+  description: '+8% fire rate, +0.5 HP/s regen',
+  maxLevel: 3,
+  weight: 4,
+  mods: [
+    { stat: 'fireRateMul', op: 'mul', value: 1.08 },
+    { stat: 'regenPerSec', op: 'add', value: 0.5 },
+  ],
+  color: PALETTE.yellow,
+},
+```
+Exact test (paste as-is after the last `it` block):
+```ts
+it('rubato offers 3 levels, then stops', () => {
+  const run = new RunState(1);
+  const def = UPGRADE_BY_ID.get('rubato')!;
+  expect(def).toBeDefined();
+  expect(def.mods).toEqual([
+    { stat: 'fireRateMul', op: 'mul', value: 1.08 },
+    { stat: 'regenPerSec', op: 'add', value: 0.5 },
+  ]);
+  for (let i = 0; i < def.maxLevel; i++) {
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+    run.applyUpgrade(def);
+  }
+  expect(run.upgradeLevel('rubato')).toBe(3);
+  expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+});
+```
+
+### Steps
+1. Open `src/content/upgrades/index.ts`; find the last entry in `UPGRADES` and insert the entry above after it (keep the trailing comma style).
+2. Open `tests/core/upgrades.test.ts`; insert the test above as the final `it` block inside the existing `describe`.
+3. Run `npm run check` — must be green.
+
+### Pitfalls
+- Mods order is fire rate FIRST, regen second — the opposite of `andante`'s order; the test asserts the exact ordered array.
+- Do not copy `andante`'s mods or values: fire rate uses `fireRateMul`/`mul`/`1.08` (from `rhythm`), not `moveSpeed`; description must read exactly `+8% fire rate, +0.5 HP/s regen`.
+- Do not hardcode the list position (e.g. "after `riff`") — T0086 appends another entry ahead of this task; only rule is "after whatever is last when you open the file".
+- Max-level math: 1.08^3 ≈ 1.2597 (≈×1.26) and +1.5 HP/s — no clamping needed; `fireRateMul` limit is 8.
+
+### Tests
+- `tests/core/upgrades.test.ts`: the `rubato` test above. `tests/content.test.ts` validates the new entry automatically (unique kebab id, weight > 0, known stats, mods present) — no edit needed there.
