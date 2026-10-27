@@ -160,7 +160,10 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Unit tests for Crescendo (T0065): no fire-rate bonus at streak 7, exactly ×1.1 at streak 8, still ×1.1 at streak 20, composes with Rhythm~~ → shipped with T0065 (the threshold, stacking and on-hit-reset tests landed in that task)
 - Kill table: the game-over screen gains a small two-line tally under the score — total kills and time survived (pairs with T0054)
 - Scavenge: while below 25% of max HP, every shard is worth double XP, with a small "SCAVENGE" flash in the HUD when it toggles — the desperate player collects harder
-- Andante upgrade: +0.5 HP/s regen and +8% move speed per level, maxLevel 3 — the walking-pace sustain-mobility card, the last untapped pair on the regen axis (Balance's regen + Momentum's move speed)
+- ~~Andante upgrade: +0.5 HP/s regen and +8% move speed per level, maxLevel 3 — the walking-pace sustain-mobility card, the last untapped pair on the regen axis (Balance's regen + Momentum's move speed)~~ → T0079
 - Boss shatter: the moment a boss dies, every enemy projectile on screen bursts into shards — a boss kill is a breather and a payday
 - Gauge: a thin ink line under the HUD streak tally that fills as the streak approaches 8 — you can see Crescendo coming (pairs with T0065)
 - Overtone: while Still Life is active, the generative score's second voice holds one long sustained tone; it releases the moment the bubble pops (pairs with T0050 and T0011)
+- Cadenza: for 8 s after The Grid dies, fire rate ×1.5 with a "CADENZA" flash in the HUD — Encore's sibling on the second boss
+- Fermata: the moment a level-up card is picked, every enemy freezes for 0.6 s — the choice feels like a held breath (small juice, one line in the level-up flow)
+- Weapon marginalia: the first time a new weapon card is picked in a run, a dry annotation fades in under the HUD ("THE LINE PIERCES", "THE ORBITS BITE", "THE ARC CHAINS") — sibling of the enemy marginalia (T0027)
