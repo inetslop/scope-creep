@@ -4,11 +4,12 @@ title: Shard glint — gilt is legible in the hand
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T15:11:35Z
 claimed_at: 2026-10-27T16:28:34Z
+finished_at: 2026-10-27T16:50:52Z
 ---
 
 ## Goal
@@ -59,3 +60,18 @@ constructor(scene: Phaser.Scene, run: RunState, player: Player, fx: FxSystem, sf
 - Pop is world-space text at the pickup point (like the kill feed), depth `DEPTH.fx + 1` — no HUD/input/scene, so 412x915 and 1280x720 work for free; XP values are finite, no NaN.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Gilt shards now announce themselves in the hand: `Sfx.pickup(gilt=false)` plays the existing pickup pluck exactly one semitone (×2^(1/12)) higher for gilt and bit-identically the same for normal shards, and a new `GiltPop` (pooled yellow "+N" text, 16-cap, 24 px rise / 0.6 s fade copied from the ScoreFeed idiom) prints at the pickup point with N = the XP actually granted (`Math.round(xp * xpMul)`) — both collect paths in `PickupSystem` feed it, gilt-only; `GameScene` constructs it and registers the `gilt-pop-pool` invariant (the design's "INVARIANTS array" doesn't exist in this codebase, so it lives in `registerInvariants()` with the rest). Normal shards keep today's exact sound and print no pop; gilt values and `core/gilt.ts`/`addXp` are untouched, all 256 unit tests, `npm run check` and `npm run smoke` (desktop + mobile) pass, and no HUD element, key, scene or enemy was added.
+
+- Self-review: APPROVE
+- Time: 22.3 min
+
+```
+game/src/audio/Sfx.ts            |  7 ++++---
+ game/src/scenes/GameScene.ts     |  6 +++++-
+ game/src/systems/GiltPop.ts      | 39 +++++++++++++++++++++++++++++++++++++++
+ game/src/systems/PickupSystem.ts | 16 ++++++++++++----
+ 4 files changed, 60 insertions(+), 8 deletions(-)
+```

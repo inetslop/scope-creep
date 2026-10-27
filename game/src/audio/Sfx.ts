@@ -155,8 +155,8 @@ export class Sfx {
     this.noise(0.1, 0.18, 900, 'lowpass');
   }
 
-  /** Short pluck; rises a semitone per shard collected in quick succession. */
-  pickup(): void {
+  /** Short pluck; rises a semitone per shard collected in quick succession. A gilt shard lands one more semitone higher. */
+  pickup(gilt = false): void {
     if (!this.canPlay()) return;
     const now = performance.now();
     // The combo advances on every call, even when the sound is throttled.
@@ -164,7 +164,8 @@ export class Sfx {
     this.lastPickupCallAt = now;
     if (now - this.lastPickupAt < THROTTLE_MS) return;
     this.lastPickupAt = now;
-    this.tone('triangle', 523.25 * 2 ** (this.comboStep / 12), 523.25 * 2 ** (this.comboStep / 12), 0.12, 0.16);
+    const hz = 523.25 * 2 ** ((this.comboStep + (gilt ? 1 : 0)) / 12);
+    this.tone('triangle', hz, hz, 0.12, 0.16);
   }
 
   /** Dull sawtooth thud for taking damage. */

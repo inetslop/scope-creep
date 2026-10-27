@@ -6,6 +6,7 @@ import { hook } from '../debug/testHook';
 import type { Player } from '../entities/Player';
 import { Shard } from '../entities/Shard';
 import type { FxSystem } from './FxSystem';
+import type { GiltPop } from './GiltPop';
 
 const COLLECT_DISTANCE = 22;
 const MAGNET_ACCEL = 2400;
@@ -18,12 +19,14 @@ export class PickupSystem {
   private readonly player: Player;
   private readonly fx: FxSystem;
   private readonly sfx: Sfx;
+  private readonly giltPop: GiltPop;
 
-  constructor(scene: Phaser.Scene, run: RunState, player: Player, fx: FxSystem, sfx: Sfx) {
+  constructor(scene: Phaser.Scene, run: RunState, player: Player, fx: FxSystem, sfx: Sfx, giltPop: GiltPop) {
     this.run = run;
     this.player = player;
     this.fx = fx;
     this.sfx = sfx;
+    this.giltPop = giltPop;
     this.shards = scene.add.group({ classType: Shard, maxSize: MAX_SHARDS });
   }
 
@@ -35,7 +38,10 @@ export class PickupSystem {
     const gilt = rollGilt(this.run.rng);
     const s = this.shards.get(x, y) as Shard | null;
     if (!s) {
-      this.collect(shardXp(value, gilt)); // pool full: award it directly instead of losing it
+      const xp = shardXp(value, gilt); // pool full: award it directly instead of losing it
+      this.collect(xp);
+      this.sfx.pickup(gilt);
+      if (gilt) this.giltPop.show(x, y, Math.round(xp * this.run.stats.xpMul));
       return;
     }
     s.drop(x, y, value, gilt);
@@ -52,9 +58,11 @@ export class PickupSystem {
       const dy = py - s.y;
       const dist = Math.hypot(dx, dy);
       if (dist < COLLECT_DISTANCE) {
-        this.collect(shardXp(s.value, s.gilt));
+        const xp = shardXp(s.value, s.gilt);
+        this.collect(xp);
         this.fx.pickup(s.x, s.y);
-        this.sfx.pickup();
+        this.sfx.pickup(s.gilt);
+        if (s.gilt) this.giltPop.show(s.x, s.y, Math.round(xp * this.run.stats.xpMul));
         s.despawn();
         continue;
       }
