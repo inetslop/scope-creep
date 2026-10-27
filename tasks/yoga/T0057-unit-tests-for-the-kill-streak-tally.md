@@ -4,11 +4,12 @@ title: Unit tests for the kill-streak tally
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T01:47:24Z
 claimed_at: 2026-10-27T02:37:50Z
+finished_at: 2026-10-27T02:43:51Z
 ---
 
 ## Goal
@@ -94,3 +95,15 @@ describe('kill-streak tally', () => {
 - Do not import anything from `src/scenes`, `src/systems`, or Phaser — keep it a pure `core` test like `critChance.test.ts`.
 ### Tests
 - The file itself: fresh-0, grow-to-8, reset-keeps-best-8, shorter-run-5/8, longer-run-9/9.
+
+## Result (attempt 1, yoga)
+
+Added `tests/core/streak.test.ts`, a pure `core` test locking down the T0014 kill-streak rules on `RunState`: fresh run reads 0/0, eight consecutive `registerKill()` calls grow streak and bestStreak to 8, `takeDamage(1)` resets streak to 0 while keeping bestStreak at 8, a shorter 5-kill run leaves bestStreak at 8, and a longer 9-kill run raises it to 9. `npm run check` passes (205 tests across 18 files) and `npm run smoke` passes on desktop and mobile; no source files changed.
+
+- Self-review: APPROVE
+- Time: 6.0 min
+
+```
+game/tests/core/streak.test.ts | 47 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+```
