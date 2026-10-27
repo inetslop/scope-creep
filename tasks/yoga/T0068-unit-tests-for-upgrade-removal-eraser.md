@@ -4,11 +4,12 @@ title: Unit tests for upgrade removal (Eraser)
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T03:21:30Z
 claimed_at: 2026-10-27T04:40:23Z
+finished_at: 2026-10-27T04:47:38Z
 ---
 
 ## Goal
@@ -108,3 +109,15 @@ describe('upgrade removal (the Eraser)', () => {
 - `tests/core/erase.test.ts` overlaps thematically — leave it untouched; the task file is only the new `run.test.ts`. Don't add extra imports, deps, or `it` blocks.
 ### Tests
 - `tests/core/run.test.ts`: the five cases above (empty no-op; newest level first with rhythm surviving; weight fully removed, damage at base, fire rate 1.2; all base; no-op on the now-empty run).
+
+## Result (attempt 1, yoga)
+
+Added `tests/core/run.test.ts`, a vitest unit test locking down `RunState.removeLastUpgrade()` (the Eraser's upgrade-removal rule from T0047): it asserts the no-op on an empty run, newest-level-first removal (rhythm 1, weight 2→1), full removal of weight with damage back at base while fire rate keeps the 1.2 rhythm value, all-base after rhythm is dropped, and a final no-op — matching the structure of `streak.test.ts`/`stats.test.ts` with a fixed seed. No game source files changed; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 7.3 min
+
+```
+game/tests/core/run.test.ts | 59 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
+```
