@@ -4,10 +4,12 @@ title: Puddle plop — the slow is felt the instant it starts
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T22:11:29Z
+claimed_at: 2026-10-27T22:37:20Z
+designer: yoga
 ---
 
 ## Goal
