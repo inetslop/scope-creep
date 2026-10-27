@@ -4,11 +4,12 @@ title: Add the Sotto Voce upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T04:27:23Z
 claimed_at: 2026-10-27T04:33:58Z
+finished_at: 2026-10-27T04:40:18Z
 ---
 
 ## Goal
@@ -84,3 +85,16 @@ No new types or functions. Both stats already exist and are used by existing ent
 
 ### Tests
 - New test `'sotto voce offers 3 levels, then stops'` in `tests/core/upgrades.test.ts` (exact two mods, apply 3×, stops offering). Content validation in `tests/content.test.ts` covers id/name/registry rules automatically.
+
+## Result (attempt 1, yoga)
+
+Added the "Sotto Voce" upgrade (sustain-and-economy card) as a new `UpgradeDef` entry appended after `tenuto` at the end of `UPGRADES` in `src/content/upgrades/index.ts` — yellow, maxLevel 3, weight 4, with exactly two mods: `xpMul` ×1.15 (from glissando) and `regenPerSec` +0.5 (from adagio), so at 3 levels it grants ≈×1.52 shard XP and 1.5 HP/s regen, stacking with the other cards using those stats. Cards render from the registry automatically, so no scene, stat, or type changes were needed. Added the matching unit test `'sotto voce offers 3 levels, then stops'` in `tests/core/upgrades.test.ts` asserting the exact mods, 3 offers, and the stop. `npm run check` (230 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 6.3 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```

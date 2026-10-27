@@ -429,6 +429,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     ],
     color: PALETTE.yellow,
   },
+  {
+    id: 'sotto-voce',
+    name: 'Sotto Voce',
+    description: '+15% shard XP, +0.5 HP/s regen',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'xpMul', op: 'mul', value: 1.15 },
+      { stat: 'regenPerSec', op: 'add', value: 0.5 },
+    ],
+    color: PALETTE.yellow,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));

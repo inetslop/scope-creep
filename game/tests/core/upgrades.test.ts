@@ -250,4 +250,20 @@ describe('rollUpgradeChoices', () => {
     expect(run.upgradeLevel('tenuto')).toBe(3);
     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
   });
+
+  it('sotto voce offers 3 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('sotto-voce')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'xpMul', op: 'mul', value: 1.15 },
+      { stat: 'regenPerSec', op: 'add', value: 0.5 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('sotto-voce')).toBe(3);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
 });
