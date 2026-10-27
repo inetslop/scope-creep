@@ -6,6 +6,7 @@ import type { WeaponDef } from '../content/types';
 import { WEAPON_BY_ID } from '../content/weapons';
 import { pickArcTargets, type ArcTarget } from '../core/arc';
 import type { RunState } from '../core/run';
+import { fireRateMultiplier } from '../core/stats';
 import { fromAngle, type Vec2 } from '../core/vec';
 import { hook } from '../debug/testHook';
 import type { Enemy } from '../entities/Enemy';
@@ -54,7 +55,7 @@ export class ArcSystem {
     let cd = this.cooldown - dt;
     if (firing && cd <= 0) {
       this.fire(def);
-      cd += 1 / (def.fireRate * this.run.stats.fireRateMul);
+      cd += 1 / (def.fireRate * fireRateMultiplier(this.run.stats, this.run.streak));
     }
     this.cooldown = Math.max(cd, 0);
   }

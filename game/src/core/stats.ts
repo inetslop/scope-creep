@@ -86,3 +86,18 @@ export function computeStats(mods: readonly StatMod[], base: Readonly<PlayerStat
   }
   return out;
 }
+
+/** Crescendo: a kill streak at or above this length earns a temporary fire-rate bonus. */
+export const STREAK_FIRE_BONUS_STREAK = 8;
+/** The bonus: multiplied on top of fireRateMul. It is not a stat. */
+export const STREAK_FIRE_BONUS = 1.1;
+
+/** 1.1 while the kill streak is at or above STREAK_FIRE_BONUS_STREAK, else 1. */
+export function streakFireBonus(streak: number): number {
+  return streak >= STREAK_FIRE_BONUS_STREAK ? STREAK_FIRE_BONUS : 1;
+}
+
+/** Total fire-rate multiplier weapons use: the upgrade stat times the temporary streak bonus. */
+export function fireRateMultiplier(stats: PlayerStats, streak: number): number {
+  return stats.fireRateMul * streakFireBonus(streak);
+}

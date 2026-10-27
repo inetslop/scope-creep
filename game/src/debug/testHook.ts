@@ -28,6 +28,8 @@ export interface HookStats {
   maxHp: number;
   enemiesAlive: number;
   stillLifeActive: boolean;
+  /** Crescendo bonus actually applied this run: 1.1 while the kill streak is 8+, else 1. */
+  streakFireBonus: number;
 }
 
 /** Returns an error message when something is wrong, otherwise null/undefined. */
@@ -63,6 +65,7 @@ export class TestHook {
     maxHp: 0,
     enemiesAlive: 0,
     stillLifeActive: false,
+    streakFireBonus: 1,
   };
   private readonly checks = new Map<string, InvariantCheck>();
 

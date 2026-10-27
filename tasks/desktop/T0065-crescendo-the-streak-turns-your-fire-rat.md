@@ -4,11 +4,12 @@ title: Crescendo — the streak turns your fire rate up
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T03:07:33Z
 claimed_at: 2026-10-27T03:40:35Z
+finished_at: 2026-10-27T03:46:14Z
 ---
 
 ## Goal
@@ -113,4 +114,22 @@ describe('streak fire bonus (Crescendo)', () => {
     expect(streakFireBonus(run.streak)).toBe(1);
   });
 });
+```
+
+## Result (attempt 1, desktop)
+
+Crescendo is in: a kill streak of 8+ now multiplies the player's fire rate by 1.1 via two new pure helpers in `src/core/stats.ts` (`streakFireBonus`, `fireRateMultiplier`), wired into both volley cooldowns (`WeaponSystem`, `ArcSystem`) so the bonus is temporary, multiplicative with all fire-rate upgrades, and drops the instant damage resets the streak. The HUD streak tally now stays red while streak ≥ 8 (back to ink below), the debug hook exposes the exact applied factor (`hook.stats.streakFireBonus`) each frame with a matching invariant, and three unit tests lock the threshold, multiplicative stacking, and on-hit drop-off. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 5.7 min
+
+```
+game/src/core/stats.ts           | 15 +++++++++++++++
+ game/src/debug/testHook.ts       |  3 +++
+ game/src/scenes/GameScene.ts     |  8 +++++++-
+ game/src/scenes/HudScene.ts      |  3 ++-
+ game/src/systems/ArcSystem.ts    |  3 ++-
+ game/src/systems/WeaponSystem.ts |  3 ++-
+ game/tests/core/stats.test.ts    | 24 ++++++++++++++++++++++++
+ 7 files changed, 55 insertions(+), 4 deletions(-)
 ```

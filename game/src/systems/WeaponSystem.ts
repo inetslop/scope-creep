@@ -3,6 +3,7 @@ import type { Sfx } from '../audio/Sfx';
 import { getWeapon } from '../content/weapons';
 import type { WeaponDef } from '../content/types';
 import type { RunState } from '../core/run';
+import { fireRateMultiplier } from '../core/stats';
 import { hook } from '../debug/testHook';
 import type { Player } from '../entities/Player';
 import { Projectile } from '../entities/Projectile';
@@ -34,7 +35,7 @@ export class WeaponSystem {
       let cd = (this.cooldowns.get(id) ?? 0) - dt;
       if (firing && cd <= 0) {
         this.fireVolley(def);
-        cd += 1 / (def.fireRate * this.run.stats.fireRateMul);
+        cd += 1 / (def.fireRate * fireRateMultiplier(this.run.stats, this.run.streak));
       }
       // Never bank shots while idle: the first shot after releasing fires immediately, no burst.
       this.cooldowns.set(id, Math.max(cd, 0));

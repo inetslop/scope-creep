@@ -4,6 +4,7 @@ import { cssColor, PALETTE } from '../content/palette';
 import { CROP } from '../core/crop';
 import { formatTime } from '../core/progression';
 import type { RunState } from '../core/run';
+import { STREAK_FIRE_BONUS_STREAK } from '../core/stats';
 import { flags } from '../debug/flags';
 import type { StickState } from '../input/TouchSticks';
 import { makeButton } from '../ui/button';
@@ -210,7 +211,7 @@ export class HudScene extends Phaser.Scene {
     this.lastStreak = s;
     if (s >= 2) {
       this.streakText.setText(`×${s}`);
-      const red = now < this.flashUntil;
+      const red = now < this.flashUntil || s >= STREAK_FIRE_BONUS_STREAK;
       if (red !== this.flashRed) {
         this.flashRed = red;
         this.streakText.setColor(cssColor(red ? PALETTE.red : PALETTE.ink));

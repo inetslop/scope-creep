@@ -6,6 +6,7 @@ import { ARENA_SIZE, DEPTH, VIEW_SHORT_SIDE } from '../config';
 import { PALETTE } from '../content/palette';
 import { UPGRADES } from '../content/upgrades';
 import { RunState } from '../core/run';
+import { STREAK_FIRE_BONUS, STREAK_FIRE_BONUS_STREAK, streakFireBonus } from '../core/stats';
 import { rollUpgradeChoices } from '../core/upgrades';
 import { length } from '../core/vec';
 import { flags } from '../debug/flags';
@@ -284,6 +285,7 @@ export class GameScene extends Phaser.Scene {
     s.enemiesAlive = this.spawns.activeCount;
     s.stillLifeActive = this.stillLife.active;
     s.cropDamageTaken = this.crop.totalDamage;
+    s.streakFireBonus = streakFireBonus(this.run.streak);
   }
 
   /** Checks the smoke test runs every few seconds. Add one for every new system. */
@@ -350,7 +352,11 @@ export class GameScene extends Phaser.Scene {
       const levels = Object.values(this.run.upgradeLevels).reduce((a, b) => a + b, 0);
       return levels === this.run.upgradeHistory.length ? null : `upgrade levels ${levels} but history ${this.run.upgradeHistory.length}`;
     });
+    hook.addInvariant('streak-fire-bonus', () => {
+      const expected = this.run.streak >= STREAK_FIRE_BONUS_STREAK ? STREAK_FIRE_BONUS : 1;
+      return hook.stats.streakFireBonus === expected ? null : `streakFireBonus ${hook.stats.streakFireBonus} at streak ${this.run.streak}`;
+    });
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'decoy', 'still-life', 'crop-damage', 'upgrade-history'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'decoy', 'still-life', 'crop-damage', 'upgrade-history', 'streak-fire-bonus'];
