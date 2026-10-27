@@ -393,6 +393,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     ],
     color: PALETTE.orange,
   },
+  {
+    id: 'arpeggio',
+    name: 'Arpeggio',
+    description: '+1 projectile per volley, +5% crit chance',
+    maxLevel: 2,
+    weight: 3,
+    mods: [
+      { stat: 'extraProjectiles', op: 'add', value: 1 },
+      { stat: 'critChance', op: 'add', value: 0.05 },
+    ],
+    color: PALETTE.red,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));

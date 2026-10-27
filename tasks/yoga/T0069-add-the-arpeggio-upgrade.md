@@ -4,11 +4,12 @@ title: Add the Arpeggio upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T03:40:32Z
 claimed_at: 2026-10-27T04:01:56Z
+finished_at: 2026-10-27T04:08:51Z
 ---
 
 ## Goal
@@ -84,3 +85,16 @@ None. Data-only: the entry satisfies the existing `UpgradeDef` (`src/content/typ
 
 ### Tests
 - `tests/core/upgrades.test.ts`: "arpeggio offers 2 levels, then stops" (exact two mods; offered/applied 2 times, then unavailable) — same pattern as `pizzicato`/`impasto`.
+
+## Result (attempt 1, yoga)
+
+Added the Arpeggio upgrade — a rare red crit-swarm card (`maxLevel: 2`, `weight: 3`, `PALETTE.red`) granting +1 projectile per volley (`extraProjectiles add 1`) and +5% crit chance (`critChance add 0.05`) per level, capped at +2 projectiles/+10% crit — appended to `UPGRADES` in `src/content/upgrades/index.ts`. Added the matching unit test in `tests/core/upgrades.test.ts` asserting the exact two mods, that it is offered and applied 2 times, then stops. Both `npm run check` and `npm run smoke` pass; cards render from the registry, so no scene or core changes were needed.
+
+- Self-review: APPROVE
+- Time: 6.9 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```

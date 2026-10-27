@@ -187,6 +187,22 @@ describe('rollUpgradeChoices', () => {
     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
   });
 
+  it('arpeggio offers 2 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('arpeggio')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'extraProjectiles', op: 'add', value: 1 },
+      { stat: 'critChance', op: 'add', value: 0.05 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('arpeggio')).toBe(2);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
+
   it('vivace offers 2 levels, then stops', () => {
     const run = new RunState(1);
     const def = UPGRADE_BY_ID.get('vivace')!;
