@@ -4,10 +4,11 @@ title: Crescendo — the streak turns your fire rate up
 assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T03:07:33Z
+claimed_at: 2026-10-27T03:40:35Z
 ---
 
 ## Goal
