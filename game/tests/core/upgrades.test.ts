@@ -218,4 +218,20 @@ describe('rollUpgradeChoices', () => {
     expect(run.upgradeLevel('vivace')).toBe(2);
     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
   });
+
+  it('legato offers 3 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('legato')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'fireRateMul', op: 'mul', value: 1.12 },
+      { stat: 'moveSpeed', op: 'mul', value: 1.12 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('legato')).toBe(3);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
 });

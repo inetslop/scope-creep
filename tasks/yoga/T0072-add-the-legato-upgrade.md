@@ -4,11 +4,12 @@ title: Add the Legato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T04:08:50Z
 claimed_at: 2026-10-27T04:17:13Z
+finished_at: 2026-10-27T04:24:24Z
 ---
 
 ## Goal
@@ -84,3 +85,16 @@ it('legato offers 3 levels, then stops', () => {
 
 ### Tests
 - `tests/core/upgrades.test.ts`: the new `legato` test above (exact mods, 3 levels, then stops). `tests/content.test.ts` validates the entry automatically — no edits.
+
+## Result (attempt 1, yoga)
+
+Added the Legato level-up card to Scope Creep: a new `legato` entry in `UPGRADES` (`src/content/upgrades/index.ts`) granting +12% fire rate and +12% move speed per level (max 3, ≈×1.40 each at max), orange-colored like the other speed cards, plus its unit test in `tests/core/upgrades.test.ts` asserting the exact two mods and the 3-level cap. Cards render from the registry automatically, so it now appears in the three-card choice reading "+12% fire rate, +12% move speed" and stacks with the other fire-rate/move-speed cards. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 7.2 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
