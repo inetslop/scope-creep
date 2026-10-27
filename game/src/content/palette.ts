@@ -6,6 +6,7 @@ export const PALETTE = {
   paper: 0xf2ead8,
   paperLight: 0xfbf7ee,
   paperDark: 0xe2d6bc,
+  paperShade: 0xd9c69f,
   ink: 0x1d1d1b,
   inkSoft: 0x55524a,
   gray: 0x9a958a,

@@ -4,11 +4,12 @@ title: Low-HP vignette — the page reads your danger
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T19:57:25Z
 claimed_at: 2026-10-27T21:54:42Z
+finished_at: 2026-10-27T22:05:09Z
 ---
 
 ## Goal
@@ -153,3 +154,21 @@ hook.addInvariant('low-hp-vignette', () => {
 
 ### Tests
 - `tests/core/vignette.test.ts` as specified in Step 5 (the hysteresis is a rule a later change could silently break — e.g. someone "tidying" the thresholds).
+
+## Result (attempt 1, desktop)
+
+Added the low-HP danger vignette: a pure 25%/30%-hysteresis latch in `src/core/vignette.ts` (unit-tested, latched on `RunState`), a new flat `paperShade` palette tone, and `src/systems/VignetteSystem.ts` which draws four 40 u warm-shadow edge bands plus a 2 u red rule pulsing 0.25→0.75→0.25 over 1 s along the same crop-safe boundary as the BossApproach line, fading in/out over 200 ms; wired into `GameScene` with six single-line insertions and a `low-hp-vignette` invariant. Pure readability — no damage, stat, spawn, hazard, weapon, clock or music changes; both 412×915 and 1280×720 smoke runs pass.
+
+- Self-review: APPROVE
+- Time: 10.5 min
+- Self-review made fixes (kept; checks pass).
+
+```
+game/src/content/palette.ts        |  1 +
+ game/src/core/run.ts               |  3 ++
+ game/src/core/vignette.ts          | 21 ++++++++++++
+ game/src/scenes/GameScene.ts       | 15 +++++++++
+ game/src/systems/VignetteSystem.ts | 63 +++++++++++++++++++++++++++++++++++
+ game/tests/core/vignette.test.ts   | 68 ++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 171 insertions(+)
+```

@@ -13,6 +13,7 @@ import { STREAK_FIRE_BONUS, STREAK_FIRE_BONUS_STREAK, streakFireBonus } from '..
 import { SWATCH_CASCADE } from '../core/swatchCascade';
 import { rollUpgradeChoices } from '../core/upgrades';
 import { length } from '../core/vec';
+import { VIGNETTE } from '../core/vignette';
 import { drawWarmStartPick, isWarmStartEarned, loadWarmStart, saveWarmStart } from '../core/warmStart';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
@@ -38,6 +39,7 @@ import { PuddleSystem } from '../systems/PuddleSystem';
 import { ScoreFeed } from '../systems/ScoreFeed';
 import { SpawnSystem } from '../systems/SpawnSystem';
 import { Underdrawing } from '../systems/Underdrawing';
+import { VignetteSystem } from '../systems/VignetteSystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
 import { GAME_EVENTS, onResize, SCENES } from './keys';
 
@@ -75,6 +77,7 @@ export class GameScene extends Phaser.Scene {
   private gutter!: GutterSystem;
   private boss!: BossSystem;
   private bossApproach!: BossApproachSystem;
+  private vignette!: VignetteSystem;
   private orbit!: OrbitSystem;
   private arc!: ArcSystem;
   private underdrawing!: Underdrawing;
@@ -140,6 +143,7 @@ export class GameScene extends Phaser.Scene {
     this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.feed, this.spawns);
     this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.spawns.enemyShots, this.fx, this.sfx, this.music, this.damageNumbers, this.feed, this.pickups, this.marginalia);
     this.bossApproach = new BossApproachSystem(this, this.run);
+    this.vignette = new VignetteSystem(this, this.run);
     this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e), () => this.boss.pressWallRect(), (x, y, d, c) => this.boss.hitWallFromOrbit(x, y, d, c));
     this.arc = new ArcSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
 
@@ -210,6 +214,10 @@ export class GameScene extends Phaser.Scene {
     this.updateHookStats();
     if (run.isDead) this.endRun();
     else if (run.pendingLevelUps > 0) this.openLevelUp();
+    // Ticks last, after this frame's heals (Balance regen, maxed-level-up heal), so the latch always
+    // sees the frame's final HP fraction and the 'low-hp-vignette' invariant's hard boundaries
+    // (≤25% ⇒ on, >30% ⇒ off) hold between frames.
+    this.vignette.update(dt);
   }
 
   openPause(): void {
@@ -498,6 +506,13 @@ export class GameScene extends Phaser.Scene {
       const p = this.bossApproach;
       if (p.pulseVisible !== this.run.bossApproach) return `pulse visible ${p.pulseVisible} but bossApproach ${this.run.bossApproach}`;
       if (!Number.isFinite(p.pulseAlpha) || p.pulseAlpha < -1e-6 || p.pulseAlpha > 0.6 + 1e-6) return `pulse alpha ${p.pulseAlpha}`;
+      return null;
+    });
+    hook.addInvariant('low-hp-vignette', () => {
+      const f = this.run.hp / this.run.stats.maxHp;
+      if (f <= VIGNETTE.onAt && !this.run.vignette.on) return `vignette off at hp fraction ${f}`;
+      if (f > VIGNETTE.offAt && this.run.vignette.on) return `vignette on at hp fraction ${f}`;
+      if (!Number.isFinite(this.vignette.fade) || this.vignette.fade < -1e-6 || this.vignette.fade > 1 + 1e-6) return `vignette fade ${this.vignette.fade}`;
       return null;
     });
     hook.addInvariant('wound-threshold', () =>

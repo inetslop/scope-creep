@@ -4,6 +4,7 @@ import { xpToNextLevel } from './progression';
 import { RestState } from './rest';
 import { Rng } from './rng';
 import { computeStats, type PlayerStats, type StatMod } from './stats';
+import { VignetteState } from './vignette';
 
 /** Inkwell meter tuning: each firing-weapon volley adds 10%; a full well bursts at 3× count and 2× knockback. */
 export const INKWELL = { fillPerVolley: 0.1, burstCount: 3, burstKnockback: 2 } as const;
@@ -36,6 +37,8 @@ export class RunState {
   readonly rest = new RestState();
   /** The fermata: after a level-up pick, the shapes hold still for 0.6 s from the resume. */
   readonly fermata = new Fermata();
+  /** The low-HP vignette (core/vignette.ts): latched on at 25% HP, off above 30%; VignetteSystem reads it. */
+  readonly vignette = new VignetteState();
   hp: number;
   stats: PlayerStats;
   /** Weapon ids the player currently has (see src/content/weapons). */
