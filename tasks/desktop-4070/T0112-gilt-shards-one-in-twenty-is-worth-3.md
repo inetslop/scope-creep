@@ -4,11 +4,12 @@ title: Gilt shards — one in twenty is worth 3×
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T13:24:32Z
 claimed_at: 2026-10-27T14:31:21Z
+finished_at: 2026-10-27T14:45:23Z
 ---
 
 ## Goal
@@ -149,3 +150,19 @@ describe('gilt shard rule', () => {
 - `tests/core/gilt.test.ts` as above: determinism under fixed seed, gilt fraction in [0.03, 0.07] over 1000 seeded rolls, exactly-one-draw, parameter pins, exact ×3 XP.
 - If the fraction band assertion fails at seed 1, change only that test's seed constant (try 2); never change `GILT_CHANCE` — it is pinned by a separate assertion.
 - `npm run check` and `npm run smoke` must pass; `tests/content.test.ts` is unaffected (no new content).
+
+## Result (attempt 1, desktop-4070)
+
+Gilt shards landed per the design: new pure rule module `src/core/gilt.ts` (`GILT_CHANCE = 0.05`, `rollGilt` as exactly one seeded draw, `shardXp` for the ×3), a `gilt` field plus required-gilt `drop()` on `src/entities/Shard.ts` that swaps to a new 18×18 `TEX.shardGilt` texture (ink diamond, 2 u yellow outline, yellow center dot, identical geometry and motion), and one roll per drop in `src/systems/PickupSystem.ts` applied at both collect paths so the Composition `xpMul` still stacks on top in the same order. Elite and boss drops flow through the same roll untouched; no SFX, HUD, input or scene changes. Locked by new `tests/core/gilt.test.ts`; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 14.0 min
+
+```
+game/src/art/textures.ts         |  6 ++++++
+ game/src/core/gilt.ts            | 15 +++++++++++++++
+ game/src/entities/Shard.ts       |  8 ++++++--
+ game/src/systems/PickupSystem.ts |  8 +++++---
+ game/tests/core/gilt.test.ts     | 37 +++++++++++++++++++++++++++++++++++++
+ 5 files changed, 69 insertions(+), 5 deletions(-)
+```

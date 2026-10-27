@@ -9,14 +9,18 @@ export class Shard extends Phaser.GameObjects.Image {
   magnetized = false;
   vx = 0;
   vy = 0;
+  /** Gilt shard: worth GILT_MULTIPLIER × XP, same size and motion. Rolled once at drop. */
+  gilt = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
     super(scene, x, y, TEX.shard);
   }
 
-  drop(x: number, y: number, value: number): void {
+  drop(x: number, y: number, value: number, gilt: boolean): void {
     this.setPosition(x, y).setActive(true).setVisible(true).setDepth(DEPTH.pickups);
-    this.value = value;
+    this.value = value; // base value drives scale — size must stay identical to normal
+    this.gilt = gilt;
+    this.setTexture(gilt ? TEX.shardGilt : TEX.shard);
     this.magnetized = false;
     this.vx = 0;
     this.vy = 0;

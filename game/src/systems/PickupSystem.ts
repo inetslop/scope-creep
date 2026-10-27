@@ -1,5 +1,6 @@
 import type Phaser from 'phaser';
 import type { Sfx } from '../audio/Sfx';
+import { rollGilt, shardXp } from '../core/gilt';
 import type { RunState } from '../core/run';
 import { hook } from '../debug/testHook';
 import type { Player } from '../entities/Player';
@@ -31,12 +32,13 @@ export class PickupSystem {
   }
 
   drop(x: number, y: number, value: number): void {
+    const gilt = rollGilt(this.run.rng);
     const s = this.shards.get(x, y) as Shard | null;
     if (!s) {
-      this.collect(value); // pool full: award it directly instead of losing it
+      this.collect(shardXp(value, gilt)); // pool full: award it directly instead of losing it
       return;
     }
-    s.drop(x, y, value);
+    s.drop(x, y, value, gilt);
   }
 
   update(dt: number): void {
@@ -50,7 +52,7 @@ export class PickupSystem {
       const dy = py - s.y;
       const dist = Math.hypot(dx, dy);
       if (dist < COLLECT_DISTANCE) {
-        this.collect(s.value);
+        this.collect(shardXp(s.value, s.gilt));
         this.fx.pickup(s.x, s.y);
         this.sfx.pickup();
         s.despawn();

@@ -30,6 +30,8 @@ export const TEX = {
   barrel: 'barrel',
   /** XP pickup. */
   shard: 'shard',
+  /** XP pickup, gilt variant: ink fill with yellow outline + center dot, worth 3× XP. */
+  shardGilt: 'shardGilt',
   /** Enemy ink point (Sentry). */
   enemyShot: 'enemyShot',
   /** Orbit weapon circle. */
@@ -82,6 +84,10 @@ export function generateTextures(scene: Phaser.Scene): void {
     g.fillRoundedRect(0, 1, 34, 8, 3);
   });
   graphicsTexture(scene, TEX.shard, 18, 18, (g) => drawShape(g, 'diamond', 8, 8, 7, PALETTE.yellow, { outlineWidth: 2, shadow: true }));
+  graphicsTexture(scene, TEX.shardGilt, 18, 18, (g) => {
+    drawShape(g, 'diamond', 8, 8, 7, PALETTE.ink, { outline: PALETTE.yellow, outlineWidth: 2, shadow: true });
+    drawShape(g, 'circle', 8, 8, 2.8, PALETTE.yellow, { outlineWidth: 1.5, shadow: false }); // dot = 40% of body radius 7
+  });
   drawFloor(scene);
   for (const enemy of ENEMIES) drawEnemy(scene, enemy);
   drawBoss(scene);
