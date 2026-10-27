@@ -4,10 +4,12 @@ title: Ghost run — the last run remains on the page
 assignee: desktop
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T20:19:39Z
+claimed_at: 2026-10-27T21:17:39Z
+designer: desktop
 ---
 
 ## Goal
