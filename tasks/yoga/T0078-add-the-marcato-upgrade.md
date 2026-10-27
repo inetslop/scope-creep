@@ -4,12 +4,10 @@ title: Add the Marcato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: [T0077]
 attempts: 0
 created: 2026-10-27T05:18:34Z
-claimed_at: 2026-10-27T05:21:23Z
-designer: yoga
 ---
 
 ## Goal
@@ -31,3 +29,61 @@ A 43rd level-up card — Marcato — that pairs crit chance with projectile spee
 - [ ] Picking it adds +5% crit chance and +10% projectile speed per level; at 3 levels, +15% crit chance and ≈×1.33 projectile speed (shots arrive visibly faster and crits land more often).
 - [ ] After 3 levels it is never offered again (covered by the new test and the existing content validation).
 - [ ] `npm run check` and `npm run smoke` pass.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/upgrades/index.ts` — append the Marcato `UpgradeDef` as the LAST entry of `UPGRADES` (after whichever entry is currently last — do not assume it is `vellum`; T0077 may have added `stretto` first)
+- edit `tests/core/upgrades.test.ts` — append the marcato test after the currently-last `it(...)` block (same caveat: it may be `vellum` or `stretto`)
+
+### Interfaces
+No new types or functions — pure data on the existing `UpgradeDef`/`StatMod`.
+
+Exact entry for `UPGRADES`:
+```ts
+  {
+    id: 'marcato',
+    name: 'Marcato',
+    description: '+5% crit chance, +10% projectile speed',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'critChance', op: 'add', value: 0.05 },
+      { stat: 'projectileSpeedMul', op: 'mul', value: 1.10 },
+    ],
+    color: PALETTE.red,
+  },
+```
+Exact test (same shape as the `tenuto` test at tests/core/upgrades.test.ts:238):
+```ts
+  it('marcato offers 3 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('marcato')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'critChance', op: 'add', value: 0.05 },
+      { stat: 'projectileSpeedMul', op: 'mul', value: 1.10 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('marcato')).toBe(3);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
+```
+
+### Steps
+1. Open `src/content/upgrades/index.ts`, scroll to the end of the `UPGRADES` array; insert the entry above after the last existing entry, before the `];`.
+2. Run `npm run check` — the content validation (kebab-case id, valid stats, weight > 0) now covers `marcato` automatically.
+3. Open `tests/core/upgrades.test.ts`, insert the test above after the last `it(...)` block.
+4. Run `npm run check` again, then `npm run smoke`.
+
+### Pitfalls
+- Mod ORDER matters: `critChance` first, `projectileSpeedMul` second — the test's `toEqual` is order-sensitive (copy from `accent` line 1 and `pizzicato` line 2, in that order).
+- Never assume which entry is last in the array (T0076/T0077 land on this same machine); always open the file and look at the tail before appending.
+- Do not touch `src/core/stats.ts`, `content/types.ts`, or the LevelUp scene — both stats already exist and cards render from the registry (name/description/color all data). The 0–0.5 crit clamp is `STAT_LIMITS` in `stats.ts:71`; no change needed.
+- Values per level: 0.05 crit (3 levels → 0.15, 15%, within clamp) and 1.10^3 ≈ 1.331 projectile speed.
+
+### Tests
+- `tests/core/upgrades.test.ts`: the marcato test above.
