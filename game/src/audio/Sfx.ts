@@ -216,7 +216,7 @@ export class Sfx {
     this.tone('sawtooth', 73.42, 73.42, 0.45, 0.28, 0.32);
   }
 
-  /** One soft low thud at the start of the boss approach window: 60 Hz sine decaying over 200 ms. One per second, never overlaps itself. */
+  /** One soft low thud of the boss approach count-in: 60 Hz sine decaying over 200 ms. One per second, never overlaps itself. */
   bossApproach(): void {
     if (!this.canPlay()) return;
     const now = performance.now();

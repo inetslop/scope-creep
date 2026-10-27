@@ -4,11 +4,12 @@ title: Boss count-in — the page counts the boss in
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T17:13:57Z
 claimed_at: 2026-10-27T17:45:41Z
+finished_at: 2026-10-27T18:00:16Z
 ---
 
 ## Goal
@@ -80,3 +81,16 @@ Result: thuds at window start + 0, 1, 2, 3, 4 s (5 total, 1 s apart in run time)
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The boss approach window now counts the boss in: the existing low thud (`Sfx.bossApproach()`) plays once at the window's start (as before) and once on each of the following 4 whole run-seconds — 5 thuds 1 s apart leading into the spawn sting. Implemented in `src/systems/BossSystem.ts` with a private `approachThudTimer` re-armed in `startApproach()` and ticked in the `update()` `'approach'` branch (due-check-first so the 5 s window stays exact), plus a one-word doc fix on `bossApproach()` in `src/audio/Sfx.ts` so it no longer claims the thud plays only at the window's start. No new SFX tone, mute and pause behavior inherited; warning visuals, flash and 5 s length unchanged.
+
+- Self-review: APPROVE
+- Time: 14.6 min
+
+```
+game/src/audio/Sfx.ts          |  2 +-
+ game/src/systems/BossSystem.ts | 13 ++++++++++++-
+ 2 files changed, 13 insertions(+), 2 deletions(-)
+```

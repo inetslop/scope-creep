@@ -86,6 +86,8 @@ export class BossSystem {
   private readonly timer = new BossTimer();
   private phase: Phase = 'off';
   private phaseTimer = 0;
+  /** Seconds until the next count-in thud; only read while in the 'approach' phase. */
+  private approachThudTimer = 1;
   /** The boss for the current or next encounter; chosen when the approach window opens. */
   private def: FrameBossDef | GridBossDef | PaletteBossDef = bossForKill(0);
   /** Last-seen cascade phase, so BossSystem reacts to transitions once each. */
@@ -161,6 +163,14 @@ export class BossSystem {
     if (this.phase === 'approach') {
       // The approach ends when the spawn is due, never on its own timer: no gap, no overlap with the warning.
       if (this.timer.due(this.run.timeSec, this.run.bossAlive)) this.startWarning();
+      else {
+        // Count-in: one low thud per whole second of the window; the first already played in startApproach.
+        this.approachThudTimer -= dt;
+        if (this.approachThudTimer <= 0) {
+          this.sfx.bossApproach();
+          this.approachThudTimer = 1;
+        }
+      }
       return;
     }
     if (this.phase === 'warning') {
@@ -176,13 +186,14 @@ export class BossSystem {
     } else this.updateFighting(dt);
   }
 
-  /** Opens the 5 s approach window: the page trembles (BossApproachSystem) and one soft thud plays. */
+  /** Opens the 5 s approach window: the page trembles (BossApproachSystem) and the thud count-in starts. */
   private startApproach(): void {
     this.def = bossForKill(this.run.bossKills);
     this.run.bossId = this.def.id;
     this.phase = 'approach';
     this.run.bossApproach = true;
     this.sfx.bossApproach();
+    this.approachThudTimer = 1; // the window's own thud just played; the next one is 1 s later
   }
 
   private startWarning(): void {
