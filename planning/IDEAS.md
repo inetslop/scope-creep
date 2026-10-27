@@ -29,7 +29,7 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Crit chance upgrade: 10% chance of double damage~~ → T0013 (Contrast)
 - ~~"Plate" upgrade: +1 armor, maxLevel 2~~ → T0016
 - Dash enemy: a small red square that dashes at the player in a straight line, then stops
-- Boss sting: a low hit plus a music swell when The Frame spawns
+- Boss sting: a low hit plus a music swell when any boss (Frame or Grid) spawns
 - ~~Kill-streak text: "RHYTHM" flashes in the HUD at 8 kills without being hit~~ → T0014
 - ~~Crit sting: a short higher-pitched hit sound when a crit lands (follows T0013)~~ → T0019 (sound + small ink ring)
 - ~~The Eraser: a slow white rectangle that, on contact, erases your most recent upgrade with a small "ERASED" flash in the HUD~~ → T0047
@@ -105,3 +105,12 @@ The PO adds ideas here. Good ones become tasks.
 - Trio: a third active — fires 3 slow ink lines in a fan, 10 s cooldown (reuses the Understudy active system)
 - ~~Adagio upgrade: +6 max HP and +0.5 HP/s regen per level, maxLevel 3 — the defensive sustain build, reusing the Mass and Balance stats~~ → T0052
 - ~~Unit tests for stat stacking: same-stat upgrades combine consistently (weight×3, weight+emphasis, rhythm+allegro), untouched stats stay at base~~ → T0053
+- Tube: a long yellow rectangle (120×16) that spawns at one edge and slides straight across the arena at speed 40 — 80 hp, 10 contact damage, splits into two 60×16 halves on death; the first non-square, non-circle silhouette (yellow = heavy)
+- The Grid's corpse: after the second boss dies, a faint compass outline with four tick marks stays on the paper as a permanent decal (sibling of The Frame's corpse decal)
+- Boss music: while a boss is alive the generative score drops to a slow 64 BPM low pulse with a dissonant second voice; on boss death it snaps back to the run tempo
+- The Plumb weapon: a thin ink line hangs from the top of the page at your aim X and re-aims instantly; 12 damage to anything that crosses it; new level-up card (weight 4, ink)
+- Weapon SFX timbres: each weapon's shoot sound gets its own pitch — Point a short high tick, Line a low thud, Orbit a soft hum, Arc a sharp snap
+- Full Bleed upgrade: +12% damage per level while at full HP, maxLevel 2 — a risk-reward card that rewards the Tessitura/Adagio sustain builds
+- The Eraser's encore: at 10:00 a bigger Eraser with a red outline appears that erases your highest-level upgrade instead of your most recent (follow-up to T0047, lands after it)
+- Kill feed: each kill pops a small ink "+1" / "+5" / "+50" above the corpse, matching the T0054 score values (depends on T0054)
+- Gallery mode: three curated fixed-seed runs in the menu — "Study in Red" (only red enemies), "No Level-Ups" (no upgrade cards, double shards), "Double Shards" — each with its own persisted best score
