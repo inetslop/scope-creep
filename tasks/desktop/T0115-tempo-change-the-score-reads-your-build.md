@@ -4,10 +4,12 @@ title: Tempo change — the score reads your build
 assignee: desktop
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T14:14:52Z
+claimed_at: 2026-10-27T14:36:21Z
+designer: cachyos-x8664
 ---
 
 ## Goal
