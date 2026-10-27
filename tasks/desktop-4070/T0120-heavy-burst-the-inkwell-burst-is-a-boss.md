@@ -4,10 +4,12 @@ title: Heavy burst — the Inkwell burst is a boss tool
 assignee: desktop-4070
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T15:11:35Z
+claimed_at: 2026-10-27T15:51:15Z
+designer: inet-racing
 ---
 
 ## Goal
