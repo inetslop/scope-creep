@@ -4,11 +4,12 @@ title: The Varnish — a rare yellow drop from elites
 assignee: narcissus
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: [T0138]
 attempts: 1
 created: 2026-10-27T19:37:42Z
 claimed_at: 2026-10-27T21:08:36Z
+finished_at: 2026-10-27T23:08:39Z
 ---
 
 ## Goal
@@ -109,3 +110,7 @@ hook.addInvariant('varnish', () => {
 
 ### Tests
 `tests/core/varnish.test.ts`: roll deterministic under a fixed seed; fraction in [0.06, 0.14] over 1000 rolls; exactly one draw per roll (`rollVarnish(a) === b.next() < VARNISH.dropChance`); pins `dropChance 0.1`, `coatSec 8`, `shardPush 60`; coat refresh resets to full 8 s (refresh at 5 s left, 5 s later → 3 s left, not 11); alpha 1 while coated then 1→0 over 0.3 s, `active` false after; `takeDamage(10, true)` with 2 armor (two `mass` upgrades from `UPGRADE_BY_ID`) → 4, `takeDamage(9, true)` → 3, `takeDamage(10, false)` → 8, 1-dmg-after-armor contact → 0, full damage again after 10 s of `update`.
+
+## Attempt 1 failed (narcissus)
+
+The agent made no changes to the game (timeout).
