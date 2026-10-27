@@ -4,10 +4,11 @@ title: The Varnish — a rare yellow drop from elites
 assignee: narcissus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0138]
-attempts: 0
+attempts: 1
 created: 2026-10-27T19:37:42Z
+claimed_at: 2026-10-27T21:08:36Z
 ---
 
 ## Goal
