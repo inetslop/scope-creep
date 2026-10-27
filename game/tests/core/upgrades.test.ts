@@ -314,4 +314,20 @@ describe('rollUpgradeChoices', () => {
     expect(run.upgradeLevel('marcato')).toBe(3);
     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
   });
+
+  it('andante offers 3 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('andante')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'regenPerSec', op: 'add', value: 0.5 },
+      { stat: 'moveSpeed', op: 'mul', value: 1.08 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('andante')).toBe(3);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
 });

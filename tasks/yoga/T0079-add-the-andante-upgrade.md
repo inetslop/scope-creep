@@ -4,11 +4,12 @@ title: Add the Andante upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0078]
 attempts: 1
 created: 2026-10-27T05:31:40Z
 claimed_at: 2026-10-27T05:46:12Z
+finished_at: 2026-10-27T05:53:55Z
 ---
 
 ## Goal
@@ -85,3 +86,16 @@ No new types or functions. Entry uses the existing `UpgradeDef` (`src/content/ty
 
 ### Tests
 - `tests/core/upgrades.test.ts`: the andante test above (mods asserted exactly, offered 3× then stops). `tests/content.test.ts` auto-validates the new entry.
+
+## Result (attempt 1, yoga)
+
+Added the 44th level-up card Andante — a yellow (`PALETTE.yellow`, max level 3, weight 4) sustain-mobility pair granting +0.5 HP/s regen and +8% move speed per level — appended as the last entry in `UPGRADES` in `src/content/upgrades/index.ts` (after Marcato, which was the entry currently last). Added the matching unit test in `tests/core/upgrades.test.ts` asserting the exact two mods (regen first, move speed second), three levels offered, then unavailable. Cards render from the registry automatically, so no stats, types, or scene changes were needed; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 7.7 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
