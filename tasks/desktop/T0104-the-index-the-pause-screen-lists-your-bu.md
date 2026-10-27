@@ -4,11 +4,12 @@ title: The Index — the pause screen lists your build
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T11:11:53Z
 claimed_at: 2026-10-27T12:54:43Z
+finished_at: 2026-10-27T13:01:09Z
 ---
 
 ## Goal
@@ -105,3 +106,15 @@ When you pause, you can read your run back: the pause screen lists every upgrade
 
 ### Tests
 - none (UI-only; no rule in src/core changes).
+
+## Result (attempt 1, desktop)
+
+The pause screen now shows "The Index" — a narrow ink column listing the run's build: a "PICKS" header plus one line per distinct upgrade in most-recently-picked order, with flat square pips tinted in each upgrade's card color (one `Graphics` for all pips). It reads the existing `run.upgradeHistory` record via a new private `buildPicksColumn()` in `src/scenes/PauseScene.ts` (the only file touched), sits right of the buttons in landscape (1280×720) and below them in portrait (412×915) with ≥12 px margins, shows "NOTHING PICKED YET" before the first level-up, caps at 16 lines with pips never exceeding an upgrade's max level, and is per-run with no new state, keys, sounds, or listeners.
+
+- Self-review: APPROVE
+- Time: 6.4 min
+
+```
+game/src/scenes/PauseScene.ts | 53 +++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 51 insertions(+), 2 deletions(-)
+```
