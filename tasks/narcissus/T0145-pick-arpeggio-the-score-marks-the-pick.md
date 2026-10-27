@@ -4,10 +4,12 @@ title: Pick arpeggio — the score marks the pick
 assignee: narcissus
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T21:17:36Z
+claimed_at: 2026-10-27T21:50:59Z
+designer: desktop
 ---
 
 ## Goal
