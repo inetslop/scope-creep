@@ -17,8 +17,9 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Marginalia: first-encounter annotations — a small dry ink note fades in beside a new enemy type for 2 s (T0027) ✅
 - Crit sting: higher-pitched hit sound + small ink ring when a crit lands (T0019) ✅
 - Screen shake on heavy deaths: the camera jolts when a Block, an elite, or a boss dies (T0040, in progress, desktop-4070)
-- Boss sting: a deep low hit + music swell the moment any boss spawns (T0058, in queue, desktop)
-- Card-flip level-ups: the three choices flip in like cards, 150 ms apart, with a flip SFX; input locked until the deal finishes (T0059, in queue, desktop)
+- Boss sting: a deep low hit + music swell the moment any boss spawns (T0058) ✅
+- Card-flip level-ups: the three choices flip in like cards, 150 ms apart, with a flip SFX; input locked until the deal finishes (T0059) ✅
+- Crescendo: while the kill streak is 8 or higher, fire rate +10% and the streak tally turns red (T0065, in queue, desktop)
 
 ## M2 — Variety (in progress)
 - Enemies: Hex (T0001) ✅, Mote swarm (T0010) ✅, Sentry ranged (T0007) ✅, Splitter (T0009) ✅, Boulder heavy chaser (T0017) ✅, Tile mid chaser (T0023) ✅, Slab slow wall (T0025) ✅, Spike small fast punisher (T0028) ✅, Turret stationary fast shooter (T0032) ✅, Pinwheel spinning chaser (T0039) ✅, The Eraser upgrade-deleting white rectangle (T0047) ✅
@@ -31,8 +32,9 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 ## M3 — Bosses (started)
 - The Frame at 5:00: health bar, charge + wedge ring + radial dart burst, +50% HP per respawn (T0006) ✅
 - The Grid — second boss: a 400 HP rotating compass that sweeps two 200×12 ink arms (0.5 s red telegraph, 12 dmg) across the arena; boss content file + pure `gridSweep` timing module (unit-tested), reusing The Frame's boss infrastructure and +50% HP-per-respawn scaling (T0044) ✅
-- Boss sting: a deep low hit + music swell on any boss spawn (T0058, in queue, desktop)
-- Later: boss music (64 BPM low pulse + dissonant second voice while a boss is alive), boss corpse decals, boss nameplate intro (the first time each boss spawns its name is printed in small caps at the top of the page, fading over 2 s), The Palette — third boss (five sliding color bars, same pattern: content data file + pure timing module + unit tests)
+- Boss sting: a deep low hit + music swell on any boss spawn (T0058) ✅
+- Boss nameplate intro: the first time each boss spawns, its name is printed in small caps at the top of the page, fading over 2 s (T0064, in queue, desktop)
+- Later: boss music (64 BPM low pulse + dissonant second voice while a boss is alive), boss corpse decals, The Palette — third boss (five sliding color bars, same pattern: content data file + pure timing module + unit tests)
 
 ## M4 — Meta-progression
 - Score: kills earn points (normal 1, elite 5, boss 50); HUD shows the running score, game over shows score + persisted best (T0054, in queue, desktop-4070)
@@ -48,11 +50,12 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Vector math tests: length, normalize, add, scale, distance (T0043) ✅
 - Level-up XP curve tests: required XP strictly increasing, exact-XP boundary, finite at level 100 (T0049) ✅
 - Stat stacking tests: same-stat upgrades combine consistently (damage, fire rate), untouched stats stay at base (T0053) ✅
-- Kill-streak tests: streak grows per kill, resets when hit, bestStreak keeps the longest run (T0057, in progress, yoga)
-- Boss alternation tests: first boss is The Frame, bosses strictly alternate Frame/Grid, deterministic (T0061, in queue, yoga)
-- Crop schedule tests: no shrink before 12:00, 1.0→0.7 by 17:00, clamped at 0.7 after, non-increasing through the window (T0063, in queue, yoga)
+- Kill-streak tests: streak grows per kill, resets when hit, bestStreak keeps the longest run (T0057) ✅
+- Boss alternation tests: first boss is The Frame, bosses strictly alternate Frame/Grid, deterministic (T0061) ✅
+- Crop schedule tests: no shrink before 12:00, 1.0→0.7 by 17:00, clamped at 0.7 after, non-increasing through the window (T0063, in design, yoga)
+- Elite schedule tests: first elite at 0:45, then exactly one every 45 s, none in between (T0066, in queue, yoga)
 
 ## Later
 - Alternate "paper" palettes (De Stijl, Constructivist), run modifiers, daily seed, achievements, PWA install
 - Arena hazards, "overtime" after 15 minutes, run summary screen
-- The Frame's corpse decal, card-flip level-ups, mobile aim snap, pause-screen bestiary
+- The Frame's corpse decal, mobile aim snap, pause-screen bestiary

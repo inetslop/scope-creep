@@ -118,17 +118,20 @@ The PO adds ideas here. Good ones become tasks.
 - ~~Unit tests for the kill streak: streak grows per kill, resets when hit, bestStreak keeps the longest~~ → T0057
 - ~~Pedal upgrade: +1 armor and +0.5 HP/s regen per level, maxLevel 2 — a defensive tortoise card that reuses the Plate and Balance stats~~ → T0060
 - ~~Unit tests for boss alternation: the first boss is The Frame and bosses strictly alternate Frame/Grid, deterministic~~ → T0061
-- Boss nameplate intro: the first time each boss spawns its name is printed in small caps at the top of the page ("THE FRAME", "THE GRID"), fading over 2 s
+- ~~Boss nameplate intro: the first time each boss spawns its name is printed in small caps at the top of the page ("THE FRAME", "THE GRID"), fading over 2 s~~ → T0064
 - The Frame's charge telegraph: a thin red line draws from the boss toward the player over 0.4 s before a Frame charge lands
 - Pedal point (music): while at full HP your volleys leave a faint ink afterimage for 1 s — the sustain builds get a visible reward (follow-up to T0060)
 - Enemy cap: when 60 enemies are on screen, spawning pauses until the count drops — keeps late runs playable on phones
 - Page number: a faint small number in the bottom-right corner of the paper, incrementing every 60 s — which page of the composition you are on
 - Mute keys: M toggles music, N toggles sound effects, both shown on the pause screen — the first half of the settings page
 - Low-HP vignette: when you drop below 25% max HP, the paper's edges darken to a warm shadow and a thin red rule pulses at the arena boundary — danger readable at a glance
-- Crescendo: while your kill streak is 8 or higher, fire rate +10%; the streak tally in the HUD turns red while it is active (sibling of T0014)
+- ~~Crescendo: while your kill streak is 8 or higher, fire rate +10%; the streak tally in the HUD turns red while it is active (sibling of T0014)~~ → T0065
 - Metronome: a still grey circle that pulses; every pulse speeds up all enemies within 200 units by 20% for 3 s — a late-run enemy that punishes camping
 - Ink bleed: when a crit lands, a small ink splat stays at the hit for 2 s and slows enemies standing in it by 30% — crit builds paint the battlefield
 - Frame's heartbeat: while The Frame is alive the paper pulses once per second in time with its attack rhythm — the boss's tempo is felt in the page
 - Prestissimo: the first time your kill streak reaches 10 in a run, your next level-up deals 4 cards instead of 3, with a "PRESTISSIMO" flash
 - ~~Impasto upgrade: +1 projectile per volley and +15% damage per level, maxLevel 2, weight 3 — a rare heavy-volley card that reuses the Repetition and Emphasis stats~~ → T0062
 - ~~Unit tests for the crop schedule: the safe area is 1.0 before 12:00, shrinks to 0.7 by 17:00, and never goes below 0.7 (locks T0045's pure schedule)~~ → T0063
+- ~~Unit tests for the elite spawn schedule: first elite at 0:45, then exactly one every 45 s, none in between (locks T0005's elite pacing)~~ → T0066
+- Paper feed: every 60 s the bottom edge of the page slides up a few units like a printing press for 400 ms (pure art, no gameplay — pairs with the page-number idea)
+- Shard chips: shards are drawn as small flat ink chips with the hard paper-cut shadow, and tumble briefly (200 ms) when they drop before settling
