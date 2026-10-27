@@ -8,8 +8,8 @@ status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T15:42:50Z
-claimed_at: 2026-10-27T16:06:54Z
-designer: desktop-4070
+claimed_at: 2026-10-27T18:46:13Z
+designer: desktop
 ---
 
 ## Goal
