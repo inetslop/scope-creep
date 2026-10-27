@@ -205,3 +205,6 @@ The PO adds ideas here. Good ones become tasks.
 - Tacet: the first 5 s of a run have no enemy spawns and only the music plays — a held breath before the page fills (small pacing touch)
 - Proof: for the first 30 s, shards are worth double XP with a small "PROOF" flash in the HUD — the opening of a run feels rich (pairs with the shard-value escalation idea)
 - Foil: at 20:00 the page flips to a dark night-paper palette for 30 s — shapes keep their meaning, only the page turns (pure-art sibling of the palette-drift idea)
+- ~~Rubato upgrade: +8% fire rate and +0.5 HP/s regen per level, maxLevel 3, weight 4, yellow — the tempo-sustain card, the last untapped pair on the regen axis (Rhythm's fire rate + Andante's regen; sibling of Pedal, Andante, Sotto Voce and Adagio)~~ → T0088
+- Gilt best: when the game-over screen beats the saved best score, the best line is printed in gold (a gold outline, like the gilt shards) with a small "NEW" tag (pairs with T0054)
+- Score count-up: the game-over score ticks up from 0 over 1 s while the rest of the screen waits — the verdict lands like a gavel (pairs with T0054)
