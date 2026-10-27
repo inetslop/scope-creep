@@ -4,12 +4,10 @@ title: Boss music — the score drops low while a boss is alive
 assignee: desktop
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-27T13:08:21Z
-claimed_at: 2026-10-27T13:28:38Z
-designer: desktop
 ---
 
 ## Goal
@@ -32,3 +30,103 @@ While a boss is alive, the generative score drops from the run tempo into a slow
 - [ ] The boss tempo logic is locked by unit tests in `tests/core/music.test.ts` (64 BPM hold, 1.5 s glides on both edges, return to the curve value).
 - [ ] Mute (M) silences the boss score like all other audio; no SFX, HUD, input or scene changes.
 - [ ] `npm run check` and `npm run smoke` pass.
+
+## Design (architect, desktop)
+
+### Files
+- edit `src/core/music.ts` — append `BOSS_BPM`, `BOSS_GLIDE_SEC`, and a `BossTempo` class (pure, mutable state owned by writes; queries are pure functions of `(state, timeSec)`)
+- edit `src/audio/Music.ts` — own a `BossTempo`, expose `bossEnter(timeSec)`/`bossLeave(timeSec)`, schedule beats at `bossTempo.bpmFor(timeSec)`, add the dissonant hold branch in `scheduleBeat`
+- edit `src/systems/BossSystem.ts` — two one-line calls at the existing spawn/death moments (it already holds `this.music`)
+- edit `tests/core/music.test.ts` — new `describe('boss tempo hold')` block
+- edit `docs/ARCHITECTURE.md` — one sentence in the Audio paragraph
+
+### Interfaces
+Append to `src/core/music.ts` (exact):
+```ts
+export const BOSS_BPM = 64;
+export const BOSS_GLIDE_SEC = 1.5;
+
+function lerp(a: number, b: number, t: number): number { return a + (b - a) * t; }
+function clamp01(t: number): number { return t < 0 ? 0 : t > 1 ? 1 : t; }
+
+/**
+ * Boss tempo hold for the score: while a boss is alive the tempo holds at
+ * BOSS_BPM, gliding down over BOSS_GLIDE_SEC on spawn and gliding back to the
+ * run curve over BOSS_GLIDE_SEC on death. BossSystem owns the writes,
+ * mirroring how it owns BossTimer.
+ */
+export class BossTempo {
+  private phase: 'off' | 'entering' | 'leaving' = 'off';
+  private enteredAtSec = 0;
+  private enterFromBpm = MUSIC_BASE_BPM;
+  private leftAtSec = 0;
+  private leaveToBpm = MUSIC_BASE_BPM;
+
+  /** Boss spawn: glide from the current tempo down to BOSS_BPM. A call during a
+   *  return glide re-targets it from the tempo at that moment. */
+  bossEnter(timeSec: number): void {
+    this.enterFromBpm = this.bpmFor(timeSec);
+    this.enteredAtSec = timeSec;
+    this.phase = 'entering';
+  }
+
+  /** Boss death: glide back to the run curve's value at that moment. */
+  bossLeave(timeSec: number): void {
+    if (this.phase === 'off') return;
+    this.leaveToBpm = bpmForTime(timeSec);
+    this.leftAtSec = timeSec;
+    this.phase = 'leaving';
+  }
+
+  /** True once the 64 BPM hold is in effect: after the spawn glide, until bossLeave. */
+  holding(timeSec: number): boolean {
+    if (this.phase === 'off' || this.phase === 'leaving') return false;
+    return timeSec >= this.enteredAtSec + BOSS_GLIDE_SEC;
+  }
+
+  /** The score's tempo at run time `timeSec`, honoring the hold and both glides. */
+  bpmFor(timeSec: number): number {
+    if (this.phase === 'entering') {
+      return lerp(this.enterFromBpm, BOSS_BPM, clamp01((timeSec - this.enteredAtSec) / BOSS_GLIDE_SEC));
+    }
+    if (this.phase === 'leaving') {
+      const t = (timeSec - this.leftAtSec) / BOSS_GLIDE_SEC;
+      if (t >= 1) return bpmForTime(timeSec); // glide done: back on the moving curve, no 64 residue
+      return lerp(BOSS_BPM, this.leaveToBpm, clamp01(t));
+    }
+    return bpmForTime(timeSec);
+  }
+}
+```
+`Music` gains: `private readonly bossTempo = new BossTempo();`, `bossEnter(timeSec: number): void` / `bossLeave(timeSec: number): void` (each one line delegating; no mute check — the hold state must survive mute toggles).
+
+### Steps
+1. Append the block above to `src/core/music.ts`.
+2. `src/audio/Music.ts`: import `BossTempo`; add `const PULSE_HZ = 110;` and `const PULSE_SEMITONE_HZ = PULSE_HZ * 2 ** (1 / 12);` near `NOTES`. In `update`, change the loop line to `this.nextBeat += 60 / this.bossTempo.bpmFor(timeSec);`. In `scheduleBeat`, change the pulse line to `this.tone('sine', PULSE_HZ, PULSE_HZ / 2, 0.3, 0.5, t);` and, immediately after it, insert:
+```ts
+    // Boss hold: pulse plus, on alternating beats, a tone a semitone above it —
+    // the dissonant pair. No other voices while a boss is alive.
+    if (this.bossTempo.holding(timeSec)) {
+      if (barBeat % 2 === 0) this.tone('sine', PULSE_SEMITONE_HZ, PULSE_SEMITONE_HZ / 2, 0.3, 0.5, t);
+      return;
+    }
+```
+(early return suppresses the sparse notes, the high off-beat voice and the noise swell — at 5:00+ the run is past 100 BPM and the high voice would otherwise fight the "score drops low" hold). Add the two delegating methods next to `bossSwell()`, and one sentence about the 64 BPM boss hold in the class doc comment.
+3. `src/systems/BossSystem.ts`: in `startEntering()`, after `this.music.bossSwell();` add `this.music.bossEnter(this.run.timeSec);`; in `killBoss()`, after `this.sfx.enemyDeath(80);` add `this.music.bossLeave(this.run.timeSec);`.
+4. Add the tests (below). 5. `docs/ARCHITECTURE.md` Audio paragraph: add "and drops to a slow 64 BPM dissonant hold while a boss is alive (core/music.ts `BossTempo`)". 6. `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- Do NOT mutate `BossTempo.phase` inside `bpmFor` — queries stay pure; the `t >= 1` branch is what returns to the curve, so a stale `'leaving'` phase is harmless and `bossEnter` fully re-arms all fields.
+- No 64 residue: after the return glide `bpmFor` must return `bpmForTime(timeSec)`, not the frozen death-time value (curve keeps moving at 4 BPM/min).
+- Mute: `bossEnter`/`bossLeave` must run even while muted (state is time-based; `update` is already the mute gate).
+- Pause/level-up overlay: everything keys to `run.timeSec`, which freezes with the scene — no `ctx.currentTime` coupling; the existing catch-up in `Music.update` handles beats.
+- A `60 / 0` or NaN tempo would poison `nextBeat`; the existing `music-scheduler` invariant in GameScene already fails on that — keep `BOSS_BPM` nonzero and never divide by `bpmFor` without it.
+- T0097 (asus) will also edit `BossSystem.ts` and `core/boss.ts` for the Palette boss: keep your two insertions anchored to the `bossSwell()`/`enemyDeath(80)` lines so rebases are trivial; no functional dependency.
+
+### Tests
+Append to `tests/core/music.test.ts` (import `BossTempo, BOSS_BPM, BOSS_GLIDE_SEC`): in `describe('boss tempo hold')`, pin:
+- no boss: `bpmFor(300) === 100`, `holding(300) === false`
+- `bossEnter(300)`: `bpmFor(300)===100`, `bpmFor(300+0.75)===82`, `bpmFor(301.5)===64`, `bpmFor(900)===64`, `holding(301.4)===false`, `holding(301.5)===true`
+- `bossLeave(360)` (curve 104): `bpmFor(360)===64`, `bpmFor(360.75)===84`, `bpmFor(361.5)===104`, `holding(360)===false`, `bpmFor(361.51)===bpmForTime(361.51)` (curve, not frozen 104)
+- re-target: `bossEnter(300)`, `bossLeave(600)` (curve 120), `bpmFor(600.75)===92`, `bossEnter(600.75)`, then `bpmFor(601.5)===78`, `bpmFor(602.25)===64`
+All test times are exactly representable in binary; use `toBe`, matching the existing pins.
