@@ -68,10 +68,28 @@ export class Sfx {
     if (this.master) this.master.disconnect();
   }
 
-  /** Quiet filtered-noise tick; plays several times per second. */
-  shoot(): void {
+  /**
+   * Per-weapon fire timbre, routed by weapon id at the firing call site:
+   * Point a short high tick, Line a low thud, Arc a sharp snap. The fallback
+   * is today's shared tick, so a fire weapon without its own case still sounds.
+   */
+  shoot(id: string): void {
     if (!this.canPlay()) return;
-    this.noise(0.04, 0.05, 3000, 'highpass');
+    switch (id) {
+      case 'point':
+        this.tone('triangle', 3400, 2600, 0.05, 0.12); // short high tick
+        break;
+      case 'line':
+        this.tone('sine', 150, 80, 0.1, 0.18); // low thud
+        this.noise(0.08, 0.14, 600, 'lowpass'); // dull knock
+        break;
+      case 'arc':
+        this.noise(0.03, 0.25, 4500, 'highpass'); // bright snap
+        this.tone('triangle', 1800, 400, 0.05, 0.12); // quick pitch drop: distinct from Point
+        break;
+      default:
+        this.noise(0.04, 0.05, 3000, 'highpass'); // shared fallback
+    }
   }
 
   /** Woodblock-like knock. */

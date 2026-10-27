@@ -4,11 +4,12 @@ title: Weapon SFX timbres — Point, Line and Arc sound like themselves
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T08:45:39Z
 claimed_at: 2026-10-27T09:30:23Z
+finished_at: 2026-10-27T09:41:40Z
 ---
 
 ## Goal
@@ -84,3 +85,17 @@ No new types, files, or content.
 
 ### Tests
 none (Sfx is Phaser/WebAudio, not pure core logic; acceptance is the three distinct sounds on desktop + mobile — same WebAudio path both.)
+
+## Result (attempt 1, yoga)
+
+The three firing weapons now sound like themselves: in `src/audio/Sfx.ts`, `shoot()` became `shoot(id: string)` switching on weapon id — Point a short high triangle tick (3400→2600 Hz), Line a low dull thud (sine 150→80 Hz + lowpassed knock), Arc a bright highpassed snap with a quick 1800→400 Hz pitch drop, and an unchanged shared tick as fallback. The weapon id is passed at both firing call sites (`WeaponSystem.fireVolley` for point/line and `ArcSystem.fire`), so every fire gets its own timbre on desktop and mobile; the default case keeps a future firing weapon (e.g. Counterpoint) non-silent. No other SFX, files, content or scenes changed, and rapid fire keeps today's discipline — `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 11.3 min
+
+```
+game/src/audio/Sfx.ts            | 24 +++++++++++++++++++++---
+ game/src/systems/ArcSystem.ts    |  2 +-
+ game/src/systems/WeaponSystem.ts |  2 +-
+ 3 files changed, 23 insertions(+), 5 deletions(-)
+```

@@ -104,7 +104,7 @@ export class ArcSystem {
       points.push(from);
     }
     if (points.length === 1) points.push({ x: origin.x + aim.x * spec.range * 0.5, y: origin.y + aim.y * spec.range * 0.5 }); // whiff: short stub toward the aim
-    this.sfx.shoot();
+    this.sfx.shoot(def.id);
     hook.stats.shotsFired += 1;
     this.draw(points, spec.fadeMs);
   }

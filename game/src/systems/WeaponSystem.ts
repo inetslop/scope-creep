@@ -74,6 +74,6 @@ export class WeaponSystem {
       hook.stats.shotsFired += 1;
     }
     this.fx.muzzle(muzzle.x, muzzle.y, def.look.color);
-    this.sfx.shoot();
+    this.sfx.shoot(def.id);
   }
 }
