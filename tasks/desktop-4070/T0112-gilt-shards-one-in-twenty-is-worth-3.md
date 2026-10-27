@@ -4,10 +4,11 @@ title: Gilt shards — one in twenty is worth 3×
 assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T13:24:32Z
+claimed_at: 2026-10-27T14:31:21Z
 ---
 
 ## Goal
