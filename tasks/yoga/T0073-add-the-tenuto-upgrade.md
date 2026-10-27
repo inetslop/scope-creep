@@ -4,12 +4,10 @@ title: Add the Tenuto upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-27T04:08:50Z
-claimed_at: 2026-10-27T04:12:33Z
-designer: yoga
 ---
 
 ## Goal
@@ -31,3 +29,58 @@ An "armored hammer" level-up card — armor plus damage on one card — the firs
 - [ ] Picking it adds +1 armor and +10% damage per level; at 3 levels, +3 armor and ≈×1.33 damage (the player visibly shrugs off more hits and their damage numbers go up).
 - [ ] After 3 levels it is never offered again (covered by the new test and the existing content validation).
 - [ ] `npm run check` and `npm run smoke` pass.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/upgrades/index.ts` - append the new `tenuto` `UpgradeDef` at the end of `UPGRADES`
+- edit `tests/core/upgrades.test.ts` - add the "tenuto offers 3 levels, then stops" test
+
+### Interfaces
+None. No new types: `tenuto` uses only existing `UpgradeDef` fields and existing stats `armor` and `damageMul` (both already in `PlayerStats`/`BASE_STATS`).
+
+### Steps
+1. Open `src/content/upgrades/index.ts`, read it fresh, and append after whichever entry is LAST in `UPGRADES` (do not assume it is `arpeggio` — T0069/T0072/T0055 may have appended):
+```ts
+  {
+    id: 'tenuto',
+    name: 'Tenuto',
+    description: '+1 armor, +10% damage',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'armor', op: 'add', value: 1 },
+      { stat: 'damageMul', op: 'mul', value: 1.10 },
+    ],
+    color: PALETTE.yellow,
+  },
+```
+   (armor mod copied from `plate`, damage mod copied from `pressure`, exactly as shown above.)
+2. In `tests/core/upgrades.test.ts`, add inside the `rollUpgradeChoices` describe block (e.g. after the `impasto` test), following the existing pattern:
+```ts
+  it('tenuto offers 3 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('tenuto')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'armor', op: 'add', value: 1 },
+      { stat: 'damageMul', op: 'mul', value: 1.10 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('tenuto')).toBe(3);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
+```
+3. Run `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- `toEqual` on `mods` is order-sensitive: armor mod first, damageMul second (matches description order).
+- Do NOT touch `src/core/stats.ts`, `content/types.ts`, or the level-up scene — `GameScene` rolls from `UPGRADES` and `LevelUpScene` renders from `UPGRADE_BY_ID`; the yellow card appears automatically from the registry.
+- T0069/T0072/T0055 append to the same two files; re-read them before editing and if git conflicts, keep the other entries AND add tenuto after the new last one.
+- `tests/content.test.ts` validates the new entry automatically (unique kebab-case id, weight > 0, known stats, mul value > 0) — do not edit it.
+
+### Tests
+- `tests/core/upgrades.test.ts`: the tenuto test above (exact 2 mods, offered 3× then stops).
