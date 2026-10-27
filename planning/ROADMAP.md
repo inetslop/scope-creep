@@ -23,7 +23,8 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - The Index: the pause screen lists every upgrade picked this run in a narrow ink column — one line per upgrade, pips in the card color, newest pick first, at most 16 lines, "NOTHING PICKED YET" while empty (T0104, in queue, desktop)
 - Controls card on the pause screen (next, before any new input): every input listed in the Bauhaus style — WASD / mouse / hold click / Esc / M mute on desktop, sticks and buttons on gamepad, left thumb / right thumb / pause button on touch — and the menu hint matches it
 - Weapon SFX timbres: the firing weapons sound like themselves — Point a short high tick, Line a low thud, Arc a sharp snap (T0093) ✅
-- Platemark: the moment you take a hit, a small red × prints on the paper at your position and fades over 2 s (T0094, in queue, yoga)
+- Orbit hum: each Orbit contact plays a soft low hum — the deferred half of T0093, so all four weapons are audible (T0107, in queue, yoga)
+- Platemark: the moment you take a hit, a small red × prints on the paper at your position and fades over 2 s (T0094) ✅
 - The Underdrawing: after 8:00, ~1.5 s before a normal enemy spawns, a faint grey pencil outline of its shape is sketched at the spawn point and fades as it lands — the late-run swarm stays legible (T0100, in queue, asus)
 - Streak break: the moment your kill streak resets, the streak tally shatters with a small ink burst and a short low blip — you see and hear the Crescendo bonus go (T0101, in queue, yoga)
 - Level-up pulse: the moment a level-up card is picked, your circle swells 25% larger for 300 ms — the level-up is felt in your own shape (T0102, in queue, yoga)
@@ -44,7 +45,7 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 - The Palette — third boss: five color swatches (red, orange, yellow, green, blue) fall down the page one at a time, 90 HP each, 6.0 s to fall, ≥120 units apart; each swatch you dodge paints a 2 u ring stripe on the player; rotation becomes Frame → Grid → Palette (T0097, in queue, asus)
 - Boss sting: a deep low hit + music swell on any boss spawn (T0058) ✅
 - Boss nameplate intro: the first time each boss spawns, its name (from the boss content def, so The Palette gets it for free) is printed in small caps centered below the boss bar, fading over 2 s and freezing under overlays (T0064) ✅
-- Boss warning: 5 s before any boss spawn (Frame or Grid, including respawns) the arena boundary pulses red, "SOMETHING HEAVY APPROACHES" flashes in the HUD, and a low thud plays (T0070, in queue, desktop)
+- Boss warning: 5 s before any boss spawn (Frame or Grid, including respawns) the arena boundary pulses red, "SOMETHING HEAVY APPROACHES" flashes in the HUD, and a low thud plays (T0070) ✅
 - Later: boss music (64 BPM low pulse + dissonant second voice while a boss is alive), boss corpse decals, The Grid's second voice (below 50% HP: third arm, 25% faster spin — the fight changes shape at the midpoint), The Press — fourth boss (descending ink wall from the top of the page, see IDEAS)
 
 ## M4 — Meta-progression
