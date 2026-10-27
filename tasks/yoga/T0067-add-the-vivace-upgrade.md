@@ -4,12 +4,10 @@ title: Add the Vivace upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-27T03:21:30Z
-claimed_at: 2026-10-27T03:29:52Z
-designer: yoga
 ---
 
 ## Goal
@@ -30,3 +28,57 @@ A rare "fast swarm" level-up card — an extra projectile plus a projectile-spee
 - [ ] Picking it adds +1 projectile per volley and +10% projectile speed per level; at 2 levels, +2 projectiles per volley and ≈×1.21 projectile speed.
 - [ ] After 2 levels it is never offered again (covered by the new test and the existing content validation).
 - [ ] `npm run check` and `npm run smoke` pass.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/upgrades/index.ts` — append one `UpgradeDef` at the end of the `UPGRADES` array (after whichever entry is currently last — open the file first; T0055 may have appended to it)
+- edit `tests/core/upgrades.test.ts` — append one `it(...)` block at the end of the `describe` (after the `impasto` test, before the closing `});`)
+
+### Interfaces
+No new types. Reuses existing `StatMod` stats `extraProjectiles` (add) and `projectileSpeedMul` (mul).
+
+### Steps
+1. In `src/content/upgrades/index.ts`, append as the last element of `UPGRADES`:
+```ts
+  {
+    id: 'vivace',
+    name: 'Vivace',
+    description: '+1 projectile per volley, +10% projectile speed',
+    maxLevel: 2,
+    weight: 3,
+    mods: [
+      { stat: 'extraProjectiles', op: 'add', value: 1 },
+      { stat: 'projectileSpeedMul', op: 'mul', value: 1.10 },
+    ],
+    color: PALETTE.orange,
+  },
+```
+2. In `tests/core/upgrades.test.ts`, append after the `impasto` test, copying its shape:
+```ts
+  it('vivace offers 2 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('vivace')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'extraProjectiles', op: 'add', value: 1 },
+      { stat: 'projectileSpeedMul', op: 'mul', value: 1.10 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('vivace')).toBe(2);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
+```
+3. Run `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- T0055 (Counterpoint) also appends to `UPGRADES`: re-open the file immediately before editing and insert after the current last entry, never mid-array, and keep `vivace` the final entry of your edit.
+- The speed mod value is `1.10` (as in `presto`), not `draft`'s `1.25`; stats must be `extraProjectiles`/`add` and `projectileSpeedMul`/`mul` exactly — not `extraPierce`/`fireRateMul`.
+- No new stats, weapons, or files: do not touch `src/core/stats.ts`, `content/types.ts`, or the level-up scene — cards render from the registry automatically.
+- Content validation (tests/content.test.ts) already checks id uniqueness, stats known, `weight > 0`, `mul` value `> 0` — no changes needed there.
+
+### Tests
+- `tests/core/upgrades.test.ts`: the single `vivace` block above (exact mods asserted; applied 2 times; available 2 times then `isUpgradeAvailable` false).
