@@ -4,6 +4,7 @@
  *
  *   node setup/models.ts download --dir <models folder> [--repo <owner/name>] [--out result.json]
  *   node setup/models.ts context --model-file <gguf> [--cache q8_0|q4_0]
+ *   node setup/models.ts gpu-plan --model-file <gguf> --ctx <tokens> [--cache q8_0|q4_0]   (LLAMA_GPU_PLAN)
  *
  * `download` lists the repo's GGUF quants with their size and how well each fits this machine, then
  * downloads the one you pick (resumable, checksum-verified). `context` prints how big the context
@@ -12,7 +13,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Hardware } from './lib/fleet.ts';
-import { CONTEXT_CHOICES, gpuSplit, kvElementsPerToken, modelBytes, readGgufMetadata, type CacheType } from './lib/gguf.ts';
+import { CONTEXT_CHOICES, formatGpuPlan, gpuPlan, gpuSplit, kvElementsPerToken, modelBytes, readGguf, readGgufMetadata, type CacheType } from './lib/gguf.ts';
 import { detectHardware } from './lib/hardware.ts';
 import { defaultChoice, downloadModel, FIT_LABEL, fitOf, gb, listRepoFiles, modelChoices } from './lib/hf.ts';
 import { ask, askValid, choose, closePrompts, flag, note, ok, problem, progress, step, yesNo } from './lib/prompt.ts';
@@ -138,6 +139,16 @@ export async function askCacheAndContext(modelPath: string, hw: Hardware, previo
 async function main(): Promise<void> {
   const dir = flag('dir');
   try {
+    if (process.argv[2] === 'gpu-plan') {
+      const modelFile = flag('model-file');
+      const ctx = Number(flag('ctx'));
+      if (!modelFile || !fs.existsSync(modelFile) || !(ctx > 0)) throw new Error('--model-file <existing .gguf> and --ctx <tokens> are required');
+      const { meta, tensors } = readGguf(modelFile);
+      const plan = gpuPlan(meta, tensors, ctx, flag('cache') === 'q8_0' ? 'q8_0' : 'q4_0');
+      if (!plan) throw new Error('no dense feed-forward layers in this model: leave LLAMA_GPU_PLAN empty');
+      console.log(formatGpuPlan(plan));
+      return;
+    }
     if (process.argv[2] === 'context') {
       const modelFile = flag('model-file');
       if (!modelFile || !fs.existsSync(modelFile)) throw new Error('--model-file <existing .gguf> is required');

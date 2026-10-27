@@ -65,10 +65,13 @@ setup/docker/agent.sh setup
 
 It creates `~/scope-creep-agent/` (override with `SCOPE_CREEP_AGENT_HOME`) with the agent's **own clone** of the repo (the runner resets and pushes `main`, so it never uses your working copy), a `models/` folder and the container's home. Two containers run from `setup/docker/compose.yml`: **agent** (Node 24, git, GitHub CLI, Claude Code and Chromium's libraries; the repo is mounted, so the runner still updates itself with git) and **llama** (the official `llama.cpp:server-cuda` image, reachable only from the agent). Setup builds the image, checks the GPU works inside Docker, logs the container in to GitHub (device code), asks which machine this is (or registers it), lets you pick a GGUF in `models/` or download one, asks for the context cache precision (`q8_0` or `q4_0`) and context size while showing how much of the model each choice leaves on the GPU (llama.cpp gets one request slot: the runner only runs one session), waits for the model, runs the doctor with the merge gate, unpauses a new machine and starts it. Both containers restart with Docker, so after a reboot too.
 
+**GPU placement.** At every start the llama container (`setup/docker/llama-start.sh`) checks the free VRAM and keeps every layer and the whole context cache on the GPU, moving just enough of the largest feed-forward weights to the CPU (`-ot`). llama.cpp's own `--fit` moves whole layers, cache included, which is far slower (Unsloth measured cache on the CPU at ~20× the cost per byte). On the RTX 4070 SUPER at 64k context this took Qwen3.8-27B IQ3_XXS from ~14 to ~20 tokens/s with the desktop's apps closed. Setup records the model's layout in `LLAMA_GPU_PLAN`; `LLAMA_GPU_MARGIN_MIB` (640) is the VRAM it leaves free.
+
 | `setup/docker/agent.sh …` | |
 | --- | --- |
 | `start` / `stop` / `down` | start (also after a stop) / stop after the current task / stop now (the task is requeued) |
 | `logs [agent\|llama]`, `status`, `doctor [--gate]`, `shell` | watch and inspect |
+| `refit` | restart the model server so it re-places the model by the VRAM free now: after closing apps more of it goes on the GPU (faster), after opening them it makes room |
 | `update` | rebuild the agent image (new Claude Code) and pull the latest llama.cpp server |
 
 ### Adding a machine

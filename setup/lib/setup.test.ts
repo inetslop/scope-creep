@@ -5,7 +5,7 @@ import { describe, it } from 'node:test';
 import { REPO } from '../../loop/paths.ts';
 import { parseEnv, updateEnvText } from '../docker/env.ts';
 import { addMachine, formatFleetJson, hardwareLabel, parseModelFile, setPaused, sizeForTier, suggestCapabilities, suggestMachineId, suggestNotes, validateMachineId, type FleetFile, type Hardware } from './fleet.ts';
-import { gpuSplit, kvElementsPerToken, parseGgufMetadata } from './gguf.ts';
+import { formatGpuPlan, gpuPlan, gpuSplit, GPU_OVERHEAD_MIB, kvElementsPerToken, parseGguf, parseGgufMetadata } from './gguf.ts';
 import { parseNvidiaSmi, parseVramOther } from './hardware.ts';
 import { defaultChoice, fitOf, modelChoices, type HfFile } from './hf.ts';
 
@@ -188,5 +188,39 @@ describe('context planning', () => {
     assert.equal(parseVramOther('11102\n', 'brave, 604\n/app/llama-server, 9466\nsunshine, 187\n'), 1.6);
     assert.equal(parseVramOther('900\n', 'C:\\llama\\llama-server.exe, [N/A]\n'), 0.9);
     assert.equal(parseVramOther('', ''), undefined);
+  });
+});
+
+describe('GPU placement plan', () => {
+  it('reads tensor sizes from the tensor table', () => {
+    const header = Buffer.concat([Buffer.from('GGUF'), u32(3), u64(2), u64(0)]);
+    const info = (name: string, offset: number): Buffer => Buffer.concat([u64(name.length), Buffer.from(name), u32(1), u64(4), u32(0), u64(offset)]);
+    const head = Buffer.concat([header, info('blk.0.ffn_up.weight', 0), info('output.weight', 96)]);
+    const dataStart = Math.ceil(head.length / 32) * 32;
+    const { tensors } = parseGguf(head, dataStart + 96 + 40);
+    assert.deepEqual(tensors, [
+      { name: 'blk.0.ffn_up.weight', bytes: 96 },
+      { name: 'output.weight', bytes: 40 },
+    ]);
+  });
+
+  it('counts everything llama-server puts on the GPU, and lists dense FFN weights largest first', () => {
+    const MIB = 1024 * 1024;
+    const meta = { 'general.architecture': 'qwen35', 'qwen35.block_count': 3, 'qwen35.nextn_predict_layers': 1, 'qwen35.attention.head_count': 2, 'qwen35.attention.head_count_kv': 1, 'qwen35.attention.key_length': 128 };
+    const tensors = [
+      { name: 'token_embd.weight', bytes: 500 * MIB }, // stays on the CPU
+      { name: 'output.weight', bytes: 100 * MIB },
+      { name: 'blk.0.attn_q.weight', bytes: 50 * MIB },
+      { name: 'blk.0.ffn_up.weight', bytes: 30 * MIB },
+      { name: 'blk.0.ffn_down.weight', bytes: 30 * MIB },
+      { name: 'blk.1.ffn_gate.weight', bytes: 80 * MIB },
+      { name: 'blk.2.ffn_up.weight', bytes: 999 * MIB }, // multi-token-prediction layer: not loaded
+    ];
+    const plan = gpuPlan(meta, tensors, 1024 * 1024, 'q4_0')!;
+    // 290 MiB of weights; cache: 1 Mi tokens x 2 layers (the third is MTP) x 1 head x 256 x 18/32 bytes = 288 MiB
+    assert.equal(plan.needMib, 290 + 288 + GPU_OVERHEAD_MIB);
+    assert.deepEqual(plan.ffn, [[1, 80], [0, 60]]);
+    assert.equal(formatGpuPlan(plan), `need=${290 + 288 + GPU_OVERHEAD_MIB};ffn=1:80,0:60`);
+    assert.equal(gpuPlan(meta, [{ name: 'blk.0.attn_q.weight', bytes: MIB }], 4096, 'q4_0'), undefined);
   });
 });

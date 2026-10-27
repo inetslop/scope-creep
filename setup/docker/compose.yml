@@ -7,8 +7,14 @@ services:
   llama:
     image: ${LLAMA_IMAGE:-ghcr.io/ggml-org/llama.cpp:server-cuda}
     restart: unless-stopped
+    # Places the model by the VRAM free at each start (see llama-start.sh); `agent.sh refit` re-runs it.
+    entrypoint: ["/bin/sh", "/scope-creep/llama-start.sh"]
     volumes:
       - ${AGENT_HOME:?run agent.sh setup first}/models:/models:ro
+      - ./llama-start.sh:/scope-creep/llama-start.sh:ro
+    environment:
+      LLAMA_GPU_PLAN: ${LLAMA_GPU_PLAN:-}
+      LLAMA_GPU_MARGIN_MIB: ${LLAMA_GPU_MARGIN_MIB:-640}
     command: -m /models/${MODEL_FILE:-none.gguf} --alias ${MODEL_ALIAS:-none} --host 0.0.0.0 --port 8080 ${LLAMA_ARGS:-}
     deploy:
       resources:

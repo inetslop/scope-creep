@@ -32,11 +32,26 @@ const SCALAR: Record<number, [number, (b: Buffer, o: number) => number | boolean
 const STRING = 8;
 const ARRAY = 9;
 
+export interface GgufTensor {
+  name: string;
+  /** Bytes in the file (from the offsets; the data section is contiguous). */
+  bytes: number;
+}
+
 /** Parses the metadata block. Long arrays (the tokenizer's vocabulary) are skipped, not kept. */
 export function parseGgufMetadata(buf: Buffer): Record<string, unknown> {
+  return parseGguf(buf).meta;
+}
+
+/**
+ * Metadata plus the tensor table. Tensor sizes come from consecutive offsets, so the last one needs
+ * `fileBytes` (the whole file's size); without it the last tensor is left out.
+ */
+export function parseGguf(buf: Buffer, fileBytes?: number): { meta: Record<string, unknown>; tensors: GgufTensor[] } {
   if (buf.toString('latin1', 0, 4) !== 'GGUF') throw new Error('not a GGUF file');
   let o = 8; // magic + version
-  o += 8; // tensor count
+  const tensorCount = Number(buf.readBigUInt64LE(o));
+  o += 8;
   const count = Number(buf.readBigUInt64LE(o));
   o += 8;
   const str = (): string => {
@@ -72,19 +87,40 @@ export function parseGgufMetadata(buf: Buffer): Record<string, unknown> {
     o += 4;
     meta[key] = value(type);
   }
-  return meta;
+  const infos: { name: string; offset: number }[] = [];
+  for (let i = 0; i < tensorCount; i++) {
+    const name = str();
+    const dims = buf.readUInt32LE(o);
+    o += 4 + 8 * dims + 4; // dims, then the type
+    infos.push({ name, offset: Number(buf.readBigUInt64LE(o)) });
+    o += 8;
+  }
+  const alignment = Number(meta['general.alignment']) || 32;
+  const dataStart = Math.ceil(o / alignment) * alignment;
+  const sorted = [...infos].sort((a, b) => a.offset - b.offset);
+  const tensors: GgufTensor[] = [];
+  sorted.forEach((t, i) => {
+    const next = sorted[i + 1]?.offset ?? (fileBytes !== undefined ? fileBytes - dataStart : undefined);
+    if (next !== undefined) tensors.push({ name: t.name, bytes: next - t.offset });
+  });
+  return { meta, tensors };
 }
 
-/** Metadata of a GGUF on disk (reads only the header, at most 64 MB). */
-export function readGgufMetadata(file: string): Record<string, unknown> {
+/** Metadata and tensor table of a GGUF on disk (reads only the header, at most 64 MB). */
+export function readGguf(file: string): { meta: Record<string, unknown>; tensors: GgufTensor[] } {
   const fd = fs.openSync(file, 'r');
   try {
-    const buf = Buffer.alloc(Math.min(fs.fstatSync(fd).size, 64 * 1024 * 1024));
+    const size = fs.fstatSync(fd).size;
+    const buf = Buffer.alloc(Math.min(size, 64 * 1024 * 1024));
     fs.readSync(fd, buf, 0, buf.length, 0);
-    return parseGgufMetadata(buf);
+    return parseGguf(buf, size);
   } finally {
     fs.closeSync(fd);
   }
+}
+
+export function readGgufMetadata(file: string): Record<string, unknown> {
+  return readGguf(file).meta;
 }
 
 /** Context cache elements per token: attention layers x KV heads x (key + value length). */
@@ -133,3 +169,51 @@ export function gpuSplit(opts: { modelBytes: number; kvElementsPerToken: number;
 }
 
 export const CONTEXT_CHOICES = [32_768, 65_536, 100_000, 131_072];
+
+/**
+ * VRAM llama-server needs beyond weights and context cache: CUDA context, compute buffers at -ub 256,
+ * recurrent state for one slot. Measured on an RTX 4070 SUPER with Qwen3.8-27B: ~715 MiB.
+ */
+export const GPU_OVERHEAD_MIB = 720;
+
+export interface GpuPlan {
+  /** MiB llama-server needs with every layer, the whole cache and all weights on the GPU. */
+  needMib: number;
+  /** Dense feed-forward weights per block, largest first: what may go to the CPU instead. */
+  ffn: [block: number, mib: number][];
+}
+
+/**
+ * What setup/docker/llama-start.sh needs to place the model at start-up: keep every layer and the
+ * whole context cache on the GPU, and move just enough of the biggest feed-forward weights to the
+ * CPU. Spilling FFN weights is cheap; spilling whole layers drags their cache along (llama.cpp's
+ * --fit), which Unsloth measured at ~20x the cost per byte. Undefined for a model without dense FFNs.
+ */
+export function gpuPlan(meta: Record<string, unknown>, tensors: readonly GgufTensor[], ctx: number, cache: CacheType): GpuPlan | undefined {
+  const arch = String(meta['general.architecture'] ?? '');
+  const blocks = Number(meta[`${arch}.block_count`]) || 0;
+  const firstUnused = blocks - (Number(meta[`${arch}.nextn_predict_layers`]) || 0);
+  const kv = kvElementsPerToken(meta);
+  if (!kv) return undefined;
+  const MIB = 1024 * 1024;
+  let gpuBytes = 0;
+  const ffn = new Map<number, number>();
+  for (const t of tensors) {
+    if (t.name === 'token_embd.weight') continue; // looked up on the CPU anyway
+    const m = /^blk\.(\d+)\.(.+)$/.exec(t.name);
+    if (m && Number(m[1]) >= firstUnused) continue; // multi-token-prediction layer: not loaded when serving
+    gpuBytes += t.bytes;
+    if (m && /^ffn_(up|gate|down)\.weight$/.test(m[2]!)) ffn.set(Number(m[1]), (ffn.get(Number(m[1])) ?? 0) + t.bytes);
+  }
+  if (ffn.size === 0) return undefined;
+  const cacheBytes = ctx * kv * CACHE_BYTES[cache];
+  return {
+    needMib: Math.ceil((gpuBytes + cacheBytes) / MIB) + GPU_OVERHEAD_MIB,
+    ffn: [...ffn.entries()].sort((a, b) => b[1] - a[1] || a[0] - b[0]).map(([blk, bytes]) => [blk, Math.ceil(bytes / MIB)]),
+  };
+}
+
+/** The LLAMA_GPU_PLAN value llama-start.sh reads: "need=<MiB>;ffn=<block>:<MiB>,...". */
+export function formatGpuPlan(plan: GpuPlan): string {
+  return `need=${plan.needMib};ffn=${plan.ffn.map(([b, mib]) => `${b}:${mib}`).join(',')}`;
+}

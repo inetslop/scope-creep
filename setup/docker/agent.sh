@@ -8,6 +8,8 @@
 #   setup/docker/agent.sh logs [agent|llama]
 #   setup/docker/agent.sh status    queues, recent commits, model server health
 #   setup/docker/agent.sh doctor [--gate]
+#   setup/docker/agent.sh refit     restart the model server so it re-places the model by the VRAM free now
+#                                   (after closing apps: more on the GPU, faster; after opening them: room again)
 #   setup/docker/agent.sh shell     a shell inside the agent container
 #   setup/docker/agent.sh update    rebuild the agent image and pull the latest llama.cpp server
 #
@@ -173,6 +175,13 @@ case "$cmd" in
   logs) need_setup && compose logs -f --tail 200 "${1:-agent}" ;;
   status) need_setup && compose ps && compose exec agent node loop/status.ts ;;
   doctor) need_setup && compose exec agent node loop/doctor.ts "$@" ;;
+  refit)
+    need_setup
+    compose restart llama
+    n=0
+    until docker exec scope-creep-agent-llama-1 curl -fsS localhost:8080/health >/dev/null 2>&1 || [ $n -ge 100 ]; do sleep 3; n=$((n+1)); done
+    compose logs --no-log-prefix llama 2>&1 | grep '\[llama-start\]' | tail -1
+    ;;
   shell) need_setup && compose exec agent bash ;;
   update)
     need_setup
@@ -182,5 +191,5 @@ case "$cmd" in
     compose pull llama
     compose up -d
     ;;
-  *) sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//' ;;
+  *) sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//' ;;
 esac

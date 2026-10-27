@@ -17,7 +17,7 @@ import { run } from '../../loop/exec.ts';
 import { GAME_DIR, REPO } from '../../loop/paths.ts';
 import { detectHardware } from '../lib/hardware.ts';
 import { MIN_CONTEXT } from '../../loop/llama.ts';
-import { modelBytes, type CacheType } from '../lib/gguf.ts';
+import { formatGpuPlan, gpuPlan, modelBytes, readGguf, type CacheType } from '../lib/gguf.ts';
 import { choose, closePrompts, note, ok, problem, step } from '../lib/prompt.ts';
 import { readFleet } from '../lib/publish.ts';
 import { registerMachine } from '../machine.ts';
@@ -103,15 +103,28 @@ async function main(): Promise<void> {
   fs.mkdirSync(path.dirname(LOCAL_CONFIG_FILE), { recursive: true });
   fs.writeFileSync(LOCAL_CONFIG_FILE, JSON.stringify(config, null, 2));
   // One request slot: the runner runs one agent session at a time, and every extra slot costs VRAM.
-  // LLAMA_CUSTOM_ARGS in .env is appended as is, for anything else.
+  // A smaller compute buffer (-ub 256) leaves more VRAM for weights; weights on the CPU are loaded,
+  // not memory-mapped (--load-mode none), which reads them faster. LLAMA_CUSTOM_ARGS is appended as is.
   const ctxArgs = ctxSize ? `-c ${ctxSize}` : `--fit-ctx ${MIN_CONTEXT}`;
+  // With a fixed context, llama-start.sh places the model itself at every start (see there).
+  let plan = '';
+  if (ctxSize) {
+    try {
+      const { meta, tensors } = readGguf(modelPath);
+      const p = gpuPlan(meta, tensors, ctxSize, cache);
+      if (p) plan = formatGpuPlan(p);
+    } catch (err) {
+      problem(`could not read the model's layout (${(err as Error).message}); llama.cpp's --fit will place it`);
+    }
+  }
   writeEnv(ENV_FILE, {
     MACHINE_ID: machineId,
     MODEL_FILE: path.relative(MODELS, modelPath),
     MODEL_ALIAS: alias,
     HF_REPO: hfRepo,
     LLAMA_CACHE_TYPE: cache,
-    LLAMA_ARGS: [ctxArgs, '-np 1', `--cache-type-k ${cache} --cache-type-v ${cache}`, SAMPLING, env.LLAMA_CUSTOM_ARGS ?? ''].filter(Boolean).join(' '),
+    LLAMA_GPU_PLAN: plan,
+    LLAMA_ARGS: [ctxArgs, '-np 1', '-ub 256 --load-mode none', `--cache-type-k ${cache} --cache-type-v ${cache}`, SAMPLING, env.LLAMA_CUSTOM_ARGS ?? ''].filter(Boolean).join(' '),
   });
   ok(`wrote ${LOCAL_CONFIG_FILE} and ${ENV_FILE}`);
 
