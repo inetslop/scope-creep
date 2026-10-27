@@ -143,3 +143,7 @@ The PO adds ideas here. Good ones become tasks.
 - Shard chips: shards are drawn as small flat ink chips with the hard paper-cut shadow, and tumble briefly (200 ms) when they drop before settling
 - ~~Unit tests for the Understudy decoy: 3 s active duration, 8 s cooldown, a drop during cooldown is rejected, and a fresh run can drop immediately (locks T0015's timing)~~ → T0071
 - Pencil trail: the player leaves a faint pencil path that fades over 1 s, so you can see where you were a moment ago (pairs with the ghost-run idea)
+- ~~Legato upgrade: +12% fire rate, +12% move speed per level, maxLevel 3 — the fast-hands build, a strong sibling of Tempo pairing the Rhythm and Momentum stats~~ → T0072
+- ~~Tenuto upgrade: +1 armor, +10% damage per level, maxLevel 3 — the armored-hammer build, the first card pairing armor with damage, reusing the Plate and Pressure stats~~ → T0073
+- Sotto Voce upgrade: +15% shard XP and +0.5 HP/s regen per level, maxLevel 3 — the quiet sustain-economy card, reusing the Composition and Balance stats
+- Level-up pulse: the moment a card is picked, your circle swells 25% larger for 300 ms — the level-up is felt in your own shape
