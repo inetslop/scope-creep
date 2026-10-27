@@ -13,6 +13,7 @@ import { EnemyBullet } from '../entities/EnemyBullet';
 import type { Player } from '../entities/Player';
 import { FxSystem } from './FxSystem';
 import { Marginalia } from './Marginalia';
+import { PuddleSystem } from './PuddleSystem';
 
 const MAX_ENEMIES = 260;
 const MAX_ENEMY_SHOTS = 200;
@@ -32,8 +33,9 @@ export class SpawnSystem {
   private readonly marginalia: Marginalia;
   private readonly fx: FxSystem;
   private readonly sfx: Sfx;
+  private readonly puddles: PuddleSystem;
 
-  constructor(scene: Phaser.Scene, run: RunState, player: Player, bounds: Phaser.Geom.Rectangle, marginalia: Marginalia, fx: FxSystem, sfx: Sfx) {
+  constructor(scene: Phaser.Scene, run: RunState, player: Player, bounds: Phaser.Geom.Rectangle, marginalia: Marginalia, fx: FxSystem, sfx: Sfx, puddles: PuddleSystem) {
     this.scene = scene;
     this.run = run;
     this.player = player;
@@ -41,6 +43,7 @@ export class SpawnSystem {
     this.marginalia = marginalia;
     this.fx = fx;
     this.sfx = sfx;
+    this.puddles = puddles;
     this.enemies = scene.physics.add.group({ classType: Enemy, maxSize: MAX_ENEMIES, runChildUpdate: false });
     this.enemyShots = scene.physics.add.group({ classType: EnemyBullet, maxSize: MAX_ENEMY_SHOTS, runChildUpdate: false });
   }
@@ -78,6 +81,7 @@ export class SpawnSystem {
       if (e.consumeShot()) this.fireShot(e);
       if (e.consumeSlam()) this.performSlam(e);
       if (e.consumeQuickenPuff()) this.performQuickenPuff(e);
+      if (e.consumePuddle() && e.def.puddle) this.puddles.drop(e.x, e.y, e.serial, e.def.puddle);
     }
     for (const obj of this.enemyShots.getChildren()) {
       const p = obj as EnemyBullet;

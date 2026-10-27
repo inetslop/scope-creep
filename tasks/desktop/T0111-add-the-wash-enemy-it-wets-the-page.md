@@ -4,11 +4,12 @@ title: Add the Wash enemy — it wets the page
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T13:24:32Z
 claimed_at: 2026-10-27T15:11:41Z
+finished_at: 2026-10-27T15:21:56Z
 ---
 
 ## Goal
@@ -101,4 +102,24 @@ it.each(ENEMIES.filter((e) => e.puddle).map((e) => [e.id, e] as const))('%s pudd
   expect(Number.isInteger(p.maxAlive) && p.maxAlive >= 1, 'maxAlive integer >= 1').toBe(true);
   expect(p.slowMul > 0 && p.slowMul <= 1, 'slowMul in (0, 1]').toBe(true);
 });
+```
+
+## Result (attempt 1, desktop)
+
+Added the Wash enemy (T0111), the first arena-persistent enemy: a pale blue circle (`content/enemies/wash.ts`, 35 hp, 55 u/s chase, unlocks at 2:00) that wets the paper behind it. A new pooled `PuddleSystem` drops flat 120 u pale-blue puddles (128 px texture, 0.25 alpha, 2 u ink outline) every 2 s — max 3 per Wash, 2 s life with a 0.5 s fade, drawn under entities — and slows the player to exactly 80 % of move speed while its center is inside; enemies, shots and shards are unaffected. The `puddle?` tuning lives on `EnemyDef` as `PuddleDef`, the timer/flag ride on the pooled `Enemy` (reset in `spawn()`), and "LEAVES THE PAGE WET" prints as marginalia on first sighting. Verified: `npm run check` (245 tests, including the new puddle-tuning test and the spawn-unlock pattern covering the Wash) and `npm run smoke` both pass on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 10.3 min
+
+```
+game/src/art/textures.ts          |  10 +++
+ game/src/content/enemies/index.ts |   3 +-
+ game/src/content/enemies/wash.ts  |  32 +++++++++
+ game/src/content/types.ts         |  18 ++++++
+ game/src/entities/Enemy.ts        |  20 ++++++
+ game/src/scenes/GameScene.ts      |  11 +++-
+ game/src/systems/PuddleSystem.ts  | 133 ++++++++++++++++++++++++++++++++++++++
+ game/src/systems/SpawnSystem.ts   |   6 +-
+ game/tests/content.test.ts        |   8 +++
+ 9 files changed, 236 insertions(+), 5 deletions(-)
 ```

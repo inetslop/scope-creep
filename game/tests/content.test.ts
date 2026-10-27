@@ -85,6 +85,14 @@ describe('enemies', () => {
       expect(look.radius >= 4 && look.radius <= 96, 'bar radius within [4,96]').toBe(true);
     }
   });
+
+  it.each(ENEMIES.filter((e) => e.puddle).map((e) => [e.id, e] as const))('%s puddle tuning is sane', (_id, e) => {
+    const p = e.puddle!;
+    expect(positive(p.periodSec) && positive(p.radius) && positive(p.lifeSec), 'puddle numbers > 0').toBe(true);
+    expect(p.fadeSec > 0 && p.fadeSec < p.lifeSec, 'fadeSec in (0, lifeSec)').toBe(true);
+    expect(Number.isInteger(p.maxAlive) && p.maxAlive >= 1, 'maxAlive integer >= 1').toBe(true);
+    expect(p.slowMul > 0 && p.slowMul <= 1, 'slowMul in (0, 1]').toBe(true);
+  });
 });
 
 describe('bosses', () => {

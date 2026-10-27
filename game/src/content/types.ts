@@ -47,6 +47,22 @@ export interface EnemyLook {
   bar?: { length: number; thickness: number };
 }
 
+/** Tuning for a puddle-dropping enemy (the Wash): flat decals that wet the paper and slow the player. */
+export interface PuddleDef {
+  /** Seconds between puddles (2.0). */
+  periodSec: number;
+  /** World units (60 = 120 across). */
+  radius: number;
+  /** 2.0. */
+  lifeSec: number;
+  /** 0.5 fade at the end. */
+  fadeSec: number;
+  /** Max per single spawn (3); a new one removes the owner's oldest. */
+  maxAlive: number;
+  /** Player move-speed multiplier while its center is inside (0.8). */
+  slowMul: number;
+}
+
 export interface EnemyDef {
   id: string;
   name: string;
@@ -83,6 +99,8 @@ export interface EnemyDef {
     /** Far end of the hold band; the enemy approaches outside it. Default 300. */
     bandFar?: number;
   };
+  /** If set, the enemy drops puddles that slow the player (the Wash). */
+  puddle?: PuddleDef;
   look: EnemyLook;
 }
 

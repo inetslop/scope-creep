@@ -63,6 +63,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   // 'quicken' state
   private quickenStep = 0;
   private quickenPuffPending = false;
+  // 'puddle' state machine (the Wash)
+  private puddleTimer = 0;
+  private puddlePending = false;
   private get shootPeriod(): number {
     return this.def.shoot?.periodSec ?? SHOOT_PERIOD;
   }
@@ -105,6 +108,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.slamPending = false;
     this.quickenStep = 0;
     this.quickenPuffPending = false;
+    this.puddleTimer = this.def.puddle ? this.def.puddle.periodSec : 0;
+    this.puddlePending = false;
     this.slamRing.setVisible(false).setAlpha(0);
     this.ringAngle = rng.range(0, Math.PI * 2);
     this.ring.setVisible(elite);
@@ -223,6 +228,14 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         break;
       }
     }
+    // Independent of the behavior: the Wash wets the page on its own timer.
+    if (this.def.puddle) {
+      this.puddleTimer -= dt;
+      if (this.puddleTimer <= 0) {
+        this.puddlePending = true;
+        this.puddleTimer = this.def.puddle.periodSec;
+      }
+    }
     const decay = Math.exp(-8 * dt);
     this.knock = { x: this.knock.x * decay, y: this.knock.y * decay };
     this.setVelocity(vx + this.knock.x, vy + this.knock.y);
@@ -267,6 +280,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   consumeQuickenPuff(): boolean {
     const pending = this.quickenPuffPending;
     this.quickenPuffPending = false;
+    return pending;
+  }
+
+  /** True exactly once, the frame a puddle-dropping enemy's timer fires. SpawnSystem consumes it. */
+  consumePuddle(): boolean {
+    const pending = this.puddlePending;
+    this.puddlePending = false;
     return pending;
   }
 

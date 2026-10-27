@@ -51,6 +51,8 @@ export const TEX = {
   bossGridArm: 'bossGridArm',
   /** Small red ×; the platemark printed on the paper where the player takes a hit. */
   platemark: 'platemark',
+  /** Flat pale blue puddle (128 px = 120 u across); the Wash wets the paper with these. No shadow: it is wet, not paper. */
+  puddle: 'puddle',
 } as const;
 
 export const enemyTextureKey = (enemyId: string): string => `enemy:${enemyId}`;
@@ -99,6 +101,14 @@ export function generateTextures(scene: Phaser.Scene): void {
     g.lineStyle(3, PALETTE.red, 1);
     g.lineBetween(3, 3, 19, 19);
     g.lineBetween(3, 19, 19, 3);
+  });
+  // Raw fill/stroke, not drawShape: drawShape forces alpha 1 and the paper-cut shadow, and a wet patch is neither.
+  // 128 px = 128 u, so the 2 px line is a 2 u ink outline and the 60 u radius is 120 u across.
+  graphicsTexture(scene, TEX.puddle, 128, 128, (g) => {
+    g.fillStyle(PALETTE.blue, 0.25);
+    g.fillCircle(64, 64, 60);
+    g.lineStyle(2, PALETTE.ink, 1);
+    g.strokeCircle(64, 64, 60);
   });
   for (const weapon of WEAPONS) {
     if (weapon.orbit) drawOrbit(scene, weapon);
