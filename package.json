@@ -8,6 +8,7 @@
   },
   "scripts": {
     "agent": "powershell -NoProfile -ExecutionPolicy Bypass -File loop/start-agent.ps1",
+    "agent:sh": "bash loop/start-agent.sh",
     "agent:once": "node loop/runner.ts --once",
     "status": "node loop/status.ts",
     "doctor": "node loop/doctor.ts",

@@ -61,6 +61,18 @@
       "maxTaskSize": "L",
       "targetQueue": 2,
       "notes": "Mid quant (IQ4_XS) Runs on a 24GB card. Give it the hardest, design heavy work."
+    },
+    "narcissus": {
+      "label": "Apple M5 MacBook Pro (24 GB unified)",
+      "model": "Qwen 3.8 27B UD-IQ3_XXS",
+      "roles": ["dev", "architect"],
+      "architectMode": "idle",
+      "maxDesignSize": "M",
+      "tier": "medium",
+      "maxTaskSize": "M",
+      "targetQueue": 2,
+      "notes": "Heavily quantized (IQ3_XXS) on a laptop GPU: expect more mistakes, and slow. Give it medium features: new mechanics, scenes, UI, juice, audio.",
+      "paused": true
     }
   },
   "sizes": {

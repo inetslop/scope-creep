@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
-# Supervisor for the agent runner on Linux (the Docker agent's entrypoint). Same contract as
-# start-agent.ps1 on Windows; keeps loop/runner.ts alive:
-#   exit 0   clean stop (.agent/STOP file)  -> idle until the container is restarted (agent.sh start)
+# Supervisor for the agent runner on Linux (the Docker agent's entrypoint) and macOS (`npm run
+# agent:sh`, native so llama-server gets Metal). Same contract as start-agent.ps1 on Windows; keeps
+# loop/runner.ts alive:
+#   exit 0   clean stop (.agent/STOP file)  -> idle until the container is restarted (agent.sh start);
+#                                              outside Docker, exit
 #   exit 75  loop code changed upstream     -> reinstall deps if needed, restart now
 #   exit 76  model server unavailable       -> wait 60s, restart
 #   other    crash                          -> git pull (a fix may have landed), back off, restart
@@ -44,6 +46,10 @@ while true; do
   code=$?
   case $code in
     0)
+      if [ ! -f /.dockerenv ]; then
+        log 'runner stopped cleanly'
+        exit 0
+      fi
       log 'runner stopped cleanly; idle until the container restarts (agent.sh start)'
       touch .agent/IDLE
       exec sleep infinity
