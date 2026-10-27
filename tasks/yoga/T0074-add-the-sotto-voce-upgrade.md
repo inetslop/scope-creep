@@ -4,12 +4,10 @@ title: Add the Sotto Voce upgrade
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-27T04:27:23Z
-claimed_at: 2026-10-27T04:32:20Z
-designer: yoga
 ---
 
 ## Goal
@@ -31,3 +29,57 @@ A quiet sustain-and-economy card: Sotto Voce pairs shard value with slow healing
 - [ ] Picking it raises shard value and adds per-second healing; at 3 levels, ≈×1.52 shard XP and 1.5 HP/s regen (a damaged player visibly regens back).
 - [ ] After 3 levels it is never offered again (covered by the new test and the existing content validation).
 - [ ] `npm run check` and `npm run smoke` pass.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/upgrades/index.ts` - append one `UpgradeDef` entry at the end of the `UPGRADES` array, after `tenuto` (the current last entry)
+- edit `tests/core/upgrades.test.ts` - add one `it(...)` test in the existing `describe('rollUpgradeChoices')` block, appended after the `tenuto` test
+
+### Interfaces
+No new types or functions. Both stats already exist and are used by existing entries (`xpMul` in `glissando`, `regenPerSec` in `adagio`/`pedal`). Do not touch `src/core/stats.ts`, `src/content/types.ts`, or the level-up scene.
+
+### Steps
+1. In `src/content/upgrades/index.ts`, after the `tenuto` entry (the object whose `id` is `'tenuto'`, still the last entry unless T0055/T0072-T0073 land first — always re-open the file and append after whatever is last), add:
+```ts
+  {
+    id: 'sotto-voce',
+    name: 'Sotto Voce',
+    description: '+15% shard XP, +0.5 HP/s regen',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'xpMul', op: 'mul', value: 1.15 },
+      { stat: 'regenPerSec', op: 'add', value: 0.5 },
+    ],
+    color: PALETTE.yellow,
+  },
+```
+2. In `tests/core/upgrades.test.ts`, after the `'tenuto offers 3 levels, then stops'` test, add the same pattern with `sotto-voce`:
+```ts
+  it('sotto voce offers 3 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('sotto-voce')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'xpMul', op: 'mul', value: 1.15 },
+      { stat: 'regenPerSec', op: 'add', value: 0.5 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('sotto-voce')).toBe(3);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
+```
+3. Run `npm run check` then `npm run smoke`; both must pass.
+
+### Pitfalls
+- The mods array order must be exactly `[xpMul, regenPerSec]` — `tests/content.test.ts` and the new test assert exact mods via `toEqual`.
+- `stat` names must be `xpMul` and `regenPerSec` exactly (existing keys in `PlayerStats`); do not invent new stats or touch `stats.ts`.
+- `color: PALETTE.yellow` (same as `adagio`/`pedal`/`gather`/`glissando`), not green — the sustain cards are yellow.
+- Do not modify any other entry; the array is shared with T0055, which appends concurrently.
+
+### Tests
+- New test `'sotto voce offers 3 levels, then stops'` in `tests/core/upgrades.test.ts` (exact two mods, apply 3×, stops offering). Content validation in `tests/content.test.ts` covers id/name/registry rules automatically.
