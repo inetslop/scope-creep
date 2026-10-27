@@ -1,16 +1,19 @@
 import Phaser from 'phaser';
+import { drawBar } from '../art/shapes';
 import { TEX } from '../art/textures';
 import { BOSS_BY_ID } from '../content/bosses';
 import { cssColor, PALETTE } from '../content/palette';
 import { CROP } from '../core/crop';
 import { formatTime } from '../core/progression';
 import type { RunState } from '../core/run';
+import { loadRedactorPick } from '../core/redactor';
 import { STREAK_FIRE_BONUS_STREAK } from '../core/stats';
 import { flags } from '../debug/flags';
+import type { InputDevice } from '../input/Controls';
 import type { StickState } from '../input/TouchSticks';
 import { makeButton } from '../ui/button';
 import { textStyle } from '../ui/text';
-import { GAME_EVENTS, getControls, getRun, getSfx, SCENES } from './keys';
+import { GAME_EVENTS, getControls, getRedact, getRun, getSfx, SCENES } from './keys';
 
 const PAD = 12;
 /** After a hit the HP just lost shows as a yellow chunk that waits, then drains, while the bar gives a small shake. */
@@ -74,6 +77,17 @@ export class HudScene extends Phaser.Scene {
   private inkNoteShown = false;
   private lastInkwell = 0;
   private inkNoteUntil = 0;
+  /** The Redactor's 64 px cooldown button, bottom-right. The scene instance survives stop/launch, so reset the flags in create(). */
+  private redactBtn!: Phaser.GameObjects.Container;
+  private redactRing!: Phaser.GameObjects.Graphics;
+  private redactEraser!: Phaser.GameObjects.Graphics;
+  private redactKey!: Phaser.GameObjects.Text;
+  private redactNote!: Phaser.GameObjects.Text;
+  private redactPicked = false;
+  private redactNoteShown = false;
+  private redactNoteAge = 0;
+  /** One screen-space rect kept out of the aim stick while the Redact button is up. */
+  private readonly redactIgnore = new Phaser.Geom.Rectangle(0, 0, 80, 80);
 
   constructor() {
     super(SCENES.hud);
@@ -123,6 +137,28 @@ export class HudScene extends Phaser.Scene {
     this.inkNoteShown = false;
     this.lastInkwell = 0;
     this.inkNoteUntil = 0;
+    this.redactPicked = loadRedactorPick();
+    this.redactNoteShown = false;
+    this.redactNoteAge = 0;
+    // The Redact button: a 64 px ink circle with a 2 px cooldown ring just outside it, bottom-right.
+    const redactBody = this.add.graphics();
+    redactBody.fillStyle(PALETTE.ink, 0.18);
+    redactBody.fillCircle(3, 3, 32); // house shadow
+    redactBody.fillStyle(PALETTE.ink, 1);
+    redactBody.fillCircle(0, 0, 32);
+    this.redactRing = this.add.graphics();
+    this.redactEraser = this.add.graphics();
+    drawBar(this.redactEraser, 0, 0, 20, 11, PALETTE.paperLight, { shadow: false });
+    this.redactEraser.fillStyle(PALETTE.paperDark, 1);
+    this.redactEraser.fillRect(-7, -4, 5, 8); // the eraser's felt band
+    this.redactKey = this.add.text(0, 0, '', textStyle(13, PALETTE.paperLight, { fontStyle: 'bold' })).setOrigin(0.5);
+    this.redactBtn = this.add.container(0, 0, [redactBody, this.redactRing, this.redactEraser, this.redactKey]);
+    this.redactBtn.setInteractive(new Phaser.Geom.Circle(0, 0, 40));
+    this.redactBtn.on(Phaser.Input.Events.POINTER_DOWN, () => {
+      if (this.scene.isActive(SCENES.game)) this.scene.get(SCENES.game).events.emit(GAME_EVENTS.redactRequest);
+    });
+    this.redactBtn.setVisible(this.redactPicked);
+    this.redactNote = this.add.text(0, 0, '', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0).setVisible(false);
     const gameEvents = this.scene.get(SCENES.game).events;
     const onPlayerHit = (): void => {
       this.sinceHit = 0;
@@ -241,6 +277,7 @@ export class HudScene extends Phaser.Scene {
     this.scoreText.setPosition(PAD, PAD + 48).setText(`SCORE ${run.score}`);
     this.updateStreak(run, width);
     this.drawInkwell(run, width, narrow);
+    this.updateRedact(run, dt);
     if (!this.cropFlashed && run.timeSec >= CROP.startSec) {
       this.cropFlashed = true;
       this.cropUntil = this.time.now + 800;
@@ -340,6 +377,66 @@ export class HudScene extends Phaser.Scene {
     const noteY = narrow ? 150 : y + h + 6;
     if (left > 0) this.inkNote.setPosition(width - PAD, noteY).setAlpha((2000 - left) < 200 ? (2000 - left) / 200 : left < 500 ? left / 500 : 1).setVisible(true);
     else if (this.inkNote.visible) this.inkNote.setVisible(false);
+  }
+
+  /** The device for the Redactor's hints: touch if any touch was seen (or the device is touch-only), else the last game input. */
+  private redactDevice(): InputDevice {
+    const controls = getControls(this);
+    const touch = !!controls && (controls.touch.everTouched || this.sys.game.device.input.touch);
+    if (touch) return 'touch';
+    if (controls?.device === 'gamepad') return 'gamepad';
+    return 'keyboard';
+  }
+
+  /** The Redact button (bottom-right, 12 px off both edges), its 12 s cooldown ring, and the first-second note. */
+  private updateRedact(run: RunState, dt: number): void {
+    const { width, height } = this.scale;
+    const cx = width - 44;
+    const cy = height - 44;
+    this.redactBtn.setPosition(cx, cy).setVisible(this.redactPicked);
+    // Keep the aim stick from spawning on a touch that lands on the button; empty again when unpicked.
+    const controls = getControls(this);
+    const zones = controls?.touch.ignoreZones ?? [];
+    if (this.redactPicked) {
+      this.redactIgnore.x = cx - 40;
+      this.redactIgnore.y = cy - 40;
+      zones.length = 0;
+      zones.push(this.redactIgnore);
+    } else {
+      zones.length = 0;
+    }
+    if (!this.redactPicked) return;
+    const device = this.redactDevice();
+    if (device === 'touch') {
+      this.redactEraser.setVisible(true);
+      this.redactKey.setVisible(false);
+    } else {
+      this.redactEraser.setVisible(false);
+      this.redactKey.setVisible(true).setText(device === 'gamepad' ? 'Y' : 'SPACE');
+    }
+    // The thin ink ring drains clockwise from the top as the cooldown recovers; full ring means ready.
+    this.redactRing.clear();
+    this.redactRing.lineStyle(2, PALETTE.ink, 1);
+    this.redactRing.beginPath();
+    this.redactRing.arc(0, 0, 36, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * (getRedact(this)?.ringFrac ?? 1), false);
+    this.redactRing.strokePath();
+    // First-second note, in the boss nameplate idiom: 2 s linear fade, frozen while the game is paused.
+    if (!this.redactNoteShown && run.timeSec < 1) {
+      this.redactNoteShown = true;
+      this.redactNoteAge = 0;
+      this.redactNote.setText(device === 'touch' ? 'THE REDACTOR ERASES' : device === 'gamepad' ? 'THE REDACTOR ERASES — Y' : 'THE REDACTOR ERASES — SPACE');
+      const p = this.bossPlatePos(width);
+      this.redactNote.setPosition(p.x, p.y + (this.bossPlateActive ? 26 : 0)).setAlpha(1).setVisible(true);
+    }
+    if (this.redactNoteShown) {
+      if (this.scene.isActive(SCENES.game)) this.redactNoteAge += dt; // pause with the game
+      if (this.redactNoteAge >= 2) {
+        this.redactNoteShown = false;
+        this.redactNote.setAlpha(0).setVisible(false);
+      } else {
+        this.redactNote.setAlpha(1 - this.redactNoteAge / 2);
+      }
+    }
   }
 
   /** `ghost` > `frac` draws the span between them in yellow (HP just lost). */

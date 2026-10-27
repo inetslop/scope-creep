@@ -26,6 +26,8 @@ export class TouchSticks {
   radius = 64;
   /** Touches starting in this top band are ignored (HUD buttons live there). */
   ignoreTopPx = 72;
+  /** Screen-space rects a touch starting inside ignores (e.g. the Redact button); cleared by the HUD when empty. */
+  readonly ignoreZones: Phaser.Geom.Rectangle[] = [];
   /** True once any touch has been seen; used to show stick hints. */
   everTouched = false;
   private readonly scene: Phaser.Scene;
@@ -47,6 +49,7 @@ export class TouchSticks {
 
   private onDown(p: Phaser.Input.Pointer): void {
     if (!p.wasTouch || p.y < this.ignoreTopPx) return;
+    if (this.ignoreZones.some((z) => z.contains(p.x, p.y))) return;
     this.everTouched = true;
     const stick = p.x < this.scene.scale.width / 2 ? this.left : this.right;
     if (stick.active) return;

@@ -12,6 +12,8 @@ export interface ControlState {
   aim: Vec2;
   /** True while the player wants to shoot. */
   firing: boolean;
+  /** True while the player holds the Redact input (the Redactor's active). */
+  redact: boolean;
   /** Device used most recently (HUD shows matching hints). */
   device: InputDevice;
 }
@@ -36,13 +38,19 @@ export class Controls {
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.touch = new TouchSticks(scene);
-    this.keys = scene.input.keyboard?.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT', false) as Record<string, Phaser.Input.Keyboard.Key> | undefined;
+    this.keys = scene.input.keyboard?.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,SPACE', false) as Record<string, Phaser.Input.Keyboard.Key> | undefined;
   }
 
   /** Call when the scene resumes so no stick or button stays "held". */
   reset(): void {
     this.touch.reset();
     if (this.keys) Object.values(this.keys).forEach((k) => k.reset());
+  }
+
+  /** True while the redact input is physically held, without read()'s aim/device side effects (the Redact edge is seeded with this at run start). */
+  redactDown(): boolean {
+    const pad = this.scene.input.gamepad?.pad1;
+    return !!(pad && pad.connected && pad.Y) || this.keys?.SPACE?.isDown === true;
   }
 
   /** `playerScreen` is the player's position in screen pixels (for mouse aiming). */
@@ -59,7 +67,7 @@ export class Controls {
     const aiming = length(aimRaw) > 0;
     if (aiming) this.lastAim = normalize(aimRaw);
     else if (length(move) > 0) this.lastAim = normalize(move);
-    return { move, aim: this.lastAim, firing: aiming, device: 'touch' };
+    return { move, aim: this.lastAim, firing: aiming, redact: false, device: 'touch' }; // Redact is the HUD button on touch
   }
 
   private readGamepad(): ControlState | null {
@@ -68,11 +76,12 @@ export class Controls {
     const move = applyDeadZone({ x: pad.leftStick.x, y: pad.leftStick.y }, MOVE_DEAD_ZONE);
     const aimRaw = applyDeadZone({ x: pad.rightStick.x, y: pad.rightStick.y }, AIM_DEAD_ZONE);
     const trigger = pad.R2 > 0.3;
-    if (length(move) === 0 && length(aimRaw) === 0 && !trigger && this.device !== 'gamepad') return null;
+    const redact = pad.Y; // in 3.90 the face buttons are booleans
+    if (length(move) === 0 && length(aimRaw) === 0 && !trigger && !redact && this.device !== 'gamepad') return null;
     this.device = 'gamepad';
     if (length(aimRaw) > 0) this.lastAim = normalize(aimRaw);
     else if (length(move) > 0 && !trigger) this.lastAim = normalize(move);
-    return { move, aim: this.lastAim, firing: length(aimRaw) > 0 || trigger, device: 'gamepad' };
+    return { move, aim: this.lastAim, firing: length(aimRaw) > 0 || trigger, redact, device: 'gamepad' };
   }
 
   private readKeyboardMouse(playerScreen: Vec2): ControlState {
@@ -86,7 +95,8 @@ export class Controls {
     const mouseDown = mouse?.isDown ?? false;
     const mouseMoved = !!mouse && (mouse.x !== this.lastMouse.x || mouse.y !== this.lastMouse.y);
     if (mouse && mouseMoved) this.lastMouse = { x: mouse.x, y: mouse.y };
-    if (length(move) > 0 || mouseMoved || mouseDown) this.device = 'keyboard';
+    const redact = this.keys?.SPACE?.isDown === true;
+    if (length(move) > 0 || mouseMoved || mouseDown || redact) this.device = 'keyboard';
 
     if (this.lastMouse.x >= 0) {
       const toMouse = sub(this.lastMouse, playerScreen);
@@ -94,6 +104,6 @@ export class Controls {
     } else if (length(move) > 0) {
       this.lastAim = move; // keyboard-only players aim where they walk
     }
-    return { move, aim: this.lastAim, firing: mouseDown, device: this.device };
+    return { move, aim: this.lastAim, firing: mouseDown, redact, device: this.device };
   }
 }

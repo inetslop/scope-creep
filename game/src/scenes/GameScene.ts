@@ -6,6 +6,7 @@ import { ARENA_SIZE, DEPTH, PLAYER_RADIUS, VIEW_SHORT_SIDE } from '../config';
 import { PALETTE } from '../content/palette';
 import { UPGRADES, UPGRADE_BY_ID } from '../content/upgrades';
 import { loadBestScore, saveBestScore } from '../core/bestScore';
+import { loadRedactorPick, REDACT_COOLDOWN_SEC, REDACT_SLOW_SEC } from '../core/redactor';
 import { REST } from '../core/rest';
 import { RunState } from '../core/run';
 import { cropSafeFraction } from '../core/crop';
@@ -36,6 +37,7 @@ import { FxSystem } from '../systems/FxSystem';
 import { OrbitSystem } from '../systems/OrbitSystem';
 import { PickupSystem } from '../systems/PickupSystem';
 import { PuddleSystem } from '../systems/PuddleSystem';
+import { RedactSystem } from '../systems/RedactSystem';
 import { ScoreFeed } from '../systems/ScoreFeed';
 import { SpawnSystem } from '../systems/SpawnSystem';
 import { Underdrawing } from '../systems/Underdrawing';
@@ -84,6 +86,7 @@ export class GameScene extends Phaser.Scene {
   private spawns!: SpawnSystem;
   private fermata!: FermataSystem;
   private pickups!: PickupSystem;
+  private redact!: RedactSystem;
   private bounds!: Phaser.Geom.Rectangle;
   private trailTimer = 0;
   private ending = false;
@@ -104,6 +107,7 @@ export class GameScene extends Phaser.Scene {
 
     this.run = new RunState(flags.seed ?? Math.floor(Math.random() * 2 ** 31));
     this.registry.set('run', this.run);
+    const redactorPicked = loadRedactorPick(); // the loadout is read once, at run start
     this.storedBest = loadBestScore();
     this.warmStartName = '';
     if (loadWarmStart()) {
@@ -135,7 +139,7 @@ export class GameScene extends Phaser.Scene {
     this.gutter = new GutterSystem(this, this.run, this.player, this.marginalia, this.damageNumbers, this.sfx);
     this.music = new Music(this, this.sfx);
     this.registry.set('music', this.music);
-    this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx, this.giltPop);
+    this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx, this.giltPop, redactorPicked);
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
     this.underdrawing = new Underdrawing(this);
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia, this.underdrawing, this.fx, this.sfx, this.puddles);
@@ -146,9 +150,12 @@ export class GameScene extends Phaser.Scene {
     this.vignette = new VignetteSystem(this, this.run);
     this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e), () => this.boss.pressWallRect(), (x, y, d, c) => this.boss.hitWallFromOrbit(x, y, d, c));
     this.arc = new ArcSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
+    this.redact = new RedactSystem(this.player, this.spawns.enemies, this.spawns.enemyShots, this.fx, this.sfx, redactorPicked);
+    this.registry.set('redact', this.redact);
 
     this.controls = new Controls(this);
     this.registry.set('controls', this.controls);
+    this.redact.seedHeld(this.controls.redactDown()); // a Space/Y press made in the menu to start the run is not a Redact
 
     const cam = this.cameras.main;
     cam.setBackgroundColor(PALETTE.paperDark); // outside the arena
@@ -201,6 +208,7 @@ export class GameScene extends Phaser.Scene {
     this.marginalia.update(dt);
     this.puddles.update(dt);
     this.pickups.update(dt);
+    this.redact.update(dt, input.redact);
     this.crop.update(dt);
     this.gutter.update(dt);
     if (run.stats.regenPerSec > 0) run.heal(run.stats.regenPerSec * dt);
@@ -293,8 +301,10 @@ export class GameScene extends Phaser.Scene {
     const onResume = (): void => {
       hook.overlay = '';
       this.controls.reset();
+      this.redact.reset(); // a stale touch from before the pause must not fire the Redact
     };
     const onPauseRequest = (): void => this.openPause();
+    const onRedactRequest = (): void => this.redact.request();
     const onHidden = (): void => this.openPause();
     const onMute = (): void => {
       this.sfx.toggleMute();
@@ -311,6 +321,7 @@ export class GameScene extends Phaser.Scene {
     this.events.on(Phaser.Scenes.Events.POST_UPDATE, onPostUpdate);
     this.events.on(Phaser.Scenes.Events.RESUME, onResume);
     this.events.on(GAME_EVENTS.pauseRequest, onPauseRequest);
+    this.events.on(GAME_EVENTS.redactRequest, onRedactRequest);
     this.input.keyboard?.on('keydown-ESC', onPauseRequest);
     this.input.keyboard?.on('keydown-P', onPauseRequest);
     this.input.keyboard?.on('keydown-M', onMute);
@@ -321,6 +332,7 @@ export class GameScene extends Phaser.Scene {
       this.events.off(Phaser.Scenes.Events.POST_UPDATE, onPostUpdate);
       this.events.off(Phaser.Scenes.Events.RESUME, onResume);
       this.events.off(GAME_EVENTS.pauseRequest, onPauseRequest);
+      this.events.off(GAME_EVENTS.redactRequest, onRedactRequest);
       this.input.keyboard?.off('keydown-ESC', onPauseRequest);
       this.input.keyboard?.off('keydown-P', onPauseRequest);
       this.input.keyboard?.off('keydown-M', onMute);
@@ -331,6 +343,7 @@ export class GameScene extends Phaser.Scene {
       this.registry.remove('sfx');
       this.registry.remove('player');
       this.registry.remove('controls');
+      this.registry.remove('redact');
     });
   }
 
@@ -519,5 +532,17 @@ export class GameScene extends Phaser.Scene {
     hook.addInvariant('wound-threshold', () =>
       this.run.stats.woundThreshold >= 0 && this.run.stats.woundThreshold <= 0.75 + 1e-6 ? null : `woundThreshold ${this.run.stats.woundThreshold}`,
     );
+    hook.addInvariant('redact-cooldown', () => {
+      const cd = this.redact.cdLeft;
+      return Number.isFinite(cd) && cd >= 0 && cd <= REDACT_COOLDOWN_SEC ? null : `redact cooldown ${cd}`;
+    });
+    hook.addInvariant('redact-slow', () => {
+      for (const obj of this.spawns.enemies.getChildren()) {
+        const e = obj as Enemy;
+        if (!e.active) continue;
+        if (e.slowLeft < -1e-9 || e.slowLeft > REDACT_SLOW_SEC + 1e-9) return `redact slow ${e.slowLeft} on ${e.def.id}`;
+      }
+      return null;
+    });
   }
 }

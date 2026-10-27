@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { TEX } from '../art/textures';
 import { PALETTE } from '../content/palette';
 import { formatTime } from '../core/progression';
+import { saveRedactorUnlocked } from '../core/redactor';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
@@ -20,6 +21,7 @@ export class GameOverScene extends Phaser.Scene {
     hook.scene = SCENES.gameOver;
     hook.overlay = '';
     this.armed = false;
+    saveRedactorUnlocked(); // the card has landed: the next menu offers The Redactor
     const { width, height } = this.scale;
     const short = Math.min(width, height);
 

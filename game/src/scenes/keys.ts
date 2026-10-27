@@ -4,6 +4,7 @@ import type { Music } from '../audio/Music';
 import type { RunState } from '../core/run';
 import type { Controls } from '../input/Controls';
 import type { Player } from '../entities/Player';
+import type { RedactSystem } from '../systems/RedactSystem';
 
 /** Scene keys. Use these constants instead of string literals. */
 export const SCENES = {
@@ -25,6 +26,8 @@ export const GAME_EVENTS = {
   bossNameplate: 'boss-nameplate',
   /** The run started with a warm-start upgrade. Payload: the full note text (string). */
   warmStart: 'warm-start',
+  /** The HUD's touch button asked for a Redact (keyboard and gamepad flow through ControlState). */
+  redactRequest: 'redact-request',
 } as const;
 
 /** Typed access to objects GameScene shares through the game registry. */
@@ -38,6 +41,10 @@ export function getControls(scene: Phaser.Scene): Controls | undefined {
 
 export function getSfx(scene: Phaser.Scene): Sfx | undefined {
   return scene.registry.get('sfx') as Sfx | undefined;
+}
+
+export function getRedact(scene: Phaser.Scene): RedactSystem | undefined {
+  return scene.registry.get('redact') as RedactSystem | undefined;
 }
 
 export function getMusic(scene: Phaser.Scene): Music {

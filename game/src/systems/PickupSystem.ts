@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import type { Sfx } from '../audio/Sfx';
-import { rollGilt, shardXp } from '../core/gilt';
+import { rollGilt } from '../core/gilt';
+import { redactorShardXp } from '../core/redactor';
 import type { RunState } from '../core/run';
 import { hook } from '../debug/testHook';
 import type { Player } from '../entities/Player';
@@ -20,13 +21,15 @@ export class PickupSystem {
   private readonly fx: FxSystem;
   private readonly sfx: Sfx;
   private readonly giltPop: GiltPop;
+  private readonly redactorPicked: boolean;
 
-  constructor(scene: Phaser.Scene, run: RunState, player: Player, fx: FxSystem, sfx: Sfx, giltPop: GiltPop) {
+  constructor(scene: Phaser.Scene, run: RunState, player: Player, fx: FxSystem, sfx: Sfx, giltPop: GiltPop, redactorPicked: boolean) {
     this.run = run;
     this.player = player;
     this.fx = fx;
     this.sfx = sfx;
     this.giltPop = giltPop;
+    this.redactorPicked = redactorPicked;
     this.shards = scene.add.group({ classType: Shard, maxSize: MAX_SHARDS });
   }
 
@@ -38,9 +41,9 @@ export class PickupSystem {
     const gilt = rollGilt(this.run.rng);
     const s = this.shards.get(x, y) as Shard | null;
     if (!s) {
-      const xp = shardXp(value, gilt); // pool full: award it directly instead of losing it
+      // Pool full: award it directly instead of losing it
       const first = this.run.firstShardPickup();
-      this.collect(xp);
+      const xp = this.collect(value, gilt);
       if (first) this.fx.firstLightRing(x, y);
       this.sfx.pickup(gilt, first);
       if (gilt) this.giltPop.show(x, y, Math.round(xp * this.run.stats.xpMul));
@@ -60,9 +63,8 @@ export class PickupSystem {
       const dy = py - s.y;
       const dist = Math.hypot(dx, dy);
       if (dist < COLLECT_DISTANCE) {
-        const xp = shardXp(s.value, s.gilt);
         const first = this.run.firstShardPickup();
-        this.collect(xp);
+        const xp = this.collect(s.value, s.gilt);
         this.fx.pickup(s.x, s.y);
         if (first) this.fx.firstLightRing(s.x, s.y);
         this.sfx.pickup(s.gilt, first);
@@ -84,8 +86,12 @@ export class PickupSystem {
     }
   }
 
-  private collect(value: number): void {
-    this.run.addXp(value);
+  /** Awards the shard's XP (half with the Redactor picked; gilt 3× before the halving).
+   *  Returns the awarded amount — the single source for the pickup's XP pop. */
+  private collect(base: number, gilt: boolean): number {
+    const xp = redactorShardXp(base, gilt, this.redactorPicked);
+    this.run.addXp(xp);
     hook.stats.shardsCollected += 1;
+    return xp;
   }
 }

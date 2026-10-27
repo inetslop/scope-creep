@@ -4,11 +4,12 @@ title: The Redactor — the first pre-run pick
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0117, T0123]
 attempts: 1
 created: 2026-10-27T15:42:50Z
 claimed_at: 2026-10-27T20:44:46Z
+finished_at: 2026-10-28T00:18:15Z
 design_attempts: 1
 ---
 
@@ -95,3 +96,28 @@ export class RedactClock { get ready(): boolean; get cdLeft(): number; trigger()
 
 ### Tests
 - `tests/core/redactor.test.ts` (underexposure pattern): `redactorShardXp` — unpicked `(5,f)=5, (5,t)=15`; picked `(5,f)=2, (1,f)=0`; gilt-then-half `(5,t)=7, (3,t)=4`; `RedactClock` — starts ready, trigger burns 12 s, mid-cooldown trigger rejected and clock untouched, completion edge returned exactly once (assert with the 1e-9 snap, e.g. update(11.999) then update(0.001)); `redactSlowTick` — `(0,dt)= {left:0,mul:1}`, `(2.5,0.5,f)={left:2,mul:0.6}` (binary-exact values only), `(0.25,0.5,f)={left:0,mul:1}`, retrigger `(0.4,0.1,true)={left:2.5,mul:0.6}`; `inRedactRadius` — boundary `(0,0,140,0)` in, `(0,0,141,0)` out, `(0,0,99,98)` in, `(0,0,99,99)` out.
+
+## Result (attempt 1, asus)
+
+Added The Redactor, the first pre-run pick: after the first run ends the menu offers an ink-eraser toggle (persisted like the best score, one-time "NEW IN THE STUDIO" marginalia); while picked, a 64 px cooldown button in the bottom-right (Space / pad Y / touch) erases enemy bullets and slows enemies in 140 u for 2.5 s on a 12 s ring-drained cooldown, and all shard XP is halved (gilt 3× first) with the halved value in the gilt pop. Implemented as a pure `src/core/redactor.ts` rule module with unit tests, a `RedactSystem`, and one-line wirings through Enemy, Controls, TouchSticks, PickupSystem, GameScene, Hud/Menu/GameOver/Pause scenes, keys and Sfx. Two minimal deviations from the design's wording: Phaser 3.90 removed `Graphics.strokeArc` (ring drawn with the `beginPath`/`arc`/`strokePath` path idiom at the same geometry) and `pad.Y` is a boolean there, plus a `seedHeld` guard so a Space/Y press used to *start* the run in the menu doesn't fire Redact on frame 1 (the spec forbids Redact "in the menu"). `npm run check` and `npm run smoke` both pass on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 213.5 min
+
+```
+game/src/audio/Sfx.ts            |   6 +++
+ game/src/core/redactor.ts        |  93 ++++++++++++++++++++++++++++++++
+ game/src/entities/Enemy.ts       |  16 +++++-
+ game/src/input/Controls.ts       |  22 +++++---
+ game/src/input/TouchSticks.ts    |   3 ++
+ game/src/scenes/GameOverScene.ts |   2 +
+ game/src/scenes/GameScene.ts     |  27 +++++++++-
+ game/src/scenes/HudScene.ts      |  99 +++++++++++++++++++++++++++++++++-
+ game/src/scenes/MenuScene.ts     |  45 ++++++++++++++--
+ game/src/scenes/PauseScene.ts    |   7 ++-
+ game/src/scenes/keys.ts          |   7 +++
+ game/src/systems/PickupSystem.ts |  22 +++++---
+ game/src/systems/RedactSystem.ts |  93 ++++++++++++++++++++++++++++++++
+ game/tests/core/redactor.test.ts | 111 +++++++++++++++++++++++++++++++++++++++
+ 14 files changed, 531 insertions(+), 22 deletions(-)
+```

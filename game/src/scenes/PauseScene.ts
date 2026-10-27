@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { PALETTE } from '../content/palette';
 import type { UpgradeDef } from '../content/types';
 import { UPGRADE_BY_ID } from '../content/upgrades';
+import { loadRedactorPick } from '../core/redactor';
 import { hook } from '../debug/testHook';
 import type { InputDevice } from '../input/Controls';
 import { makeButton } from '../ui/button';
@@ -110,7 +111,11 @@ export class PauseScene extends Phaser.Scene {
 
   /** CONTROLS card: every input for the device last used, in The Index's ink type. */
   private buildControlsCard(title: Phaser.GameObjects.Text, width: number, height: number, picksColTop: number): void {
-    const lines = CONTROLS_BY_DEVICE[getControls(this)?.device ?? 'keyboard'];
+    const controls = getControls(this);
+    const touch = !!controls && (controls.touch.everTouched || this.sys.game.device.input.touch);
+    const device: InputDevice = touch ? 'touch' : controls?.device === 'gamepad' ? 'gamepad' : 'keyboard';
+    const lines = [...CONTROLS_BY_DEVICE[device]];
+    if (loadRedactorPick()) lines.push(touch ? 'REDACT — ERASE' : device === 'gamepad' ? 'REDACT — Y' : 'REDACT — SPACE');
     const COL_W = 200, HEADER_H = 16, HEADER_GAP = 8, ROW_H = 18, MARGIN = 12;
     const colH = HEADER_H + HEADER_GAP + ROW_H * lines.length;
     const horizontal = width >= 760;

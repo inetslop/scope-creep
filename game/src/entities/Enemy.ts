@@ -5,6 +5,7 @@ import { PALETTE } from '../content/palette';
 import type { EnemyDef } from '../content/types';
 import { barContains } from '../core/barHit';
 import { hareSpeed, hareStep } from '../core/hareSpeed';
+import { REDACT_FLASH_MS, REDACT_SLOW_SEC, redactSlowTick } from '../core/redactor';
 import { SLAM, SlamCycle } from '../core/slam';
 import type { Rng } from '../core/rng';
 import { distance, normalize, sub, type Vec2 } from '../core/vec';
@@ -50,6 +51,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   private phase = 0;
   private age = 0;
   private flashMs = 0;
+  /** Seconds of the Redactor's Redact slow left on this enemy; 0 = full speed. */
+  slowLeft = 0;
   // 'charger' state machine
   private chargeState: 'chase' | 'windup' | 'dash' = 'chase';
   private stateTimer = 0;
@@ -100,6 +103,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.phase = rng.range(0, Math.PI * 2);
     this.age = 0;
     this.flashMs = 0;
+    this.slowLeft = 0;
     this.chargeState = 'chase';
     this.stateTimer = rng.range(1.5, 3.5);
     this.shootTimer = rng.range(0.8, this.shootPeriod);
@@ -238,7 +242,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
     const decay = Math.exp(-8 * dt);
     this.knock = { x: this.knock.x * decay, y: this.knock.y * decay };
-    this.setVelocity(vx + this.knock.x, vy + this.knock.y);
+    // The Redact slow scales the steering velocity only; knockback is unaffected.
+    const slow = redactSlowTick(this.slowLeft, dt, false);
+    this.slowLeft = slow.left;
+    this.setVelocity(vx * slow.mul + this.knock.x, vy * slow.mul + this.knock.y);
 
     // Spinners spin; everything else turns to face where it is going (shapes point right at angle 0).
     if (this.def.look.spin !== undefined) this.rotation += this.def.look.spin * dt;
@@ -299,6 +306,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.setTintFill(PALETTE.ink); // a black silhouette flash reads best on paper
     this.flashMs = 60;
     return this.hp <= 0;
+  }
+
+  /** The Redactor's Redact: slow to 60% for 2.5 s, flashing pale blue once for the first 100 ms. */
+  redact(): void {
+    this.slowLeft = REDACT_SLOW_SEC;
+    this.setTintFill(PALETTE.blueLight);
+    this.flashMs = REDACT_FLASH_MS;
   }
 
   /** One-shot outward velocity (e.g. a split burst). Decays like knockback. */

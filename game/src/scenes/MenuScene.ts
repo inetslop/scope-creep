@@ -1,8 +1,9 @@
 import Phaser from 'phaser';
-import { drawShape } from '../art/shapes';
+import { drawBar, drawShape } from '../art/shapes';
 import { TEX } from '../art/textures';
 import { PALETTE } from '../content/palette';
 import type { ShapeKind } from '../content/types';
+import { loadRedactorNoteSeen, loadRedactorPick, loadRedactorUnlocked, saveRedactorNoteSeen, saveRedactorPick } from '../core/redactor';
 import { loadWarmStart } from '../core/warmStart';
 import { hook } from '../debug/testHook';
 import { textStyle, titleStyle } from '../ui/text';
@@ -47,11 +48,47 @@ export class MenuScene extends Phaser.Scene {
       .setOrigin(0.5);
     this.tweens.add({ targets: prompt, alpha: 0.3, duration: 700, yoyo: true, repeat: -1 });
     const hint = touch ? 'Left thumb: move  ·  Right thumb: aim & fire' : 'WASD: move  ·  Mouse: aim  ·  Hold click: fire  ·  Esc: pause';
-    this.add.text(width / 2, height * 0.74, hint, textStyle(Math.min(18, short * 0.036), PALETTE.inkSoft)).setOrigin(0.5);
-    this.add.text(width / 2, height * 0.7, loadWarmStart() ? 'WARM START READY — NEXT RUN BEGINS WITH ONE PICK' : 'FINISH AN 8:00+ RUN TO EARN A WARM START', textStyle(Math.min(16, short * 0.032), PALETTE.ink)).setOrigin(0.5);
+    const hintText = this.add.text(width / 2, height * 0.74, hint, textStyle(Math.min(18, short * 0.036), PALETTE.inkSoft)).setOrigin(0.5);
+    const warmStartText = this.add.text(width / 2, height * 0.7, loadWarmStart() ? 'WARM START READY — NEXT RUN BEGINS WITH ONE PICK' : 'FINISH AN 8:00+ RUN TO EARN A WARM START', textStyle(Math.min(16, short * 0.032), PALETTE.ink)).setOrigin(0.5);
+
+    // The Redactor, offered once the first run has ended: an eraser glyph beside the start line, a
+    // label under it, and the warm-start and hint lines shifted down to make room.
+    let redactorBox: Phaser.Geom.Rectangle | null = null;
+    if (loadRedactorUnlocked()) {
+      warmStartText.setY(prompt.y + 56);
+      hintText.setY(prompt.y + 84);
+      this.add.text(prompt.x, prompt.y + 28, 'REDACTOR — ERASES THE INK · SHARDS HALF', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
+      const gx = prompt.x + prompt.width / 2 + 36; // 16 px to the right of the start line, vertically centered with it
+      const gy = prompt.y;
+      const glyph = this.add.graphics();
+      const drawGlyph = (): void => {
+        const picked = loadRedactorPick();
+        glyph.clear();
+        drawBar(glyph, gx, gy, 40, 22, picked ? PALETTE.ink : PALETTE.paperLight); // fills with ink while marked
+        glyph.fillStyle(picked ? PALETTE.paperLight : PALETTE.ink, 1);
+        glyph.fillRect(gx - 16, gy - 8, 8, 16); // the eraser's felt band, in the opposite color
+      };
+      drawGlyph();
+      redactorBox = new Phaser.Geom.Rectangle(gx - 28, gy - 28, 56, 56);
+      glyph.setInteractive(redactorBox);
+      glyph.on(Phaser.Input.Events.POINTER_UP, () => {
+        saveRedactorPick(!loadRedactorPick());
+        drawGlyph();
+      });
+      if (!loadRedactorNoteSeen()) {
+        saveRedactorNoteSeen(); // saved now, so the marginalia plays exactly once (a resize must not replay it)
+        const note = this.add.text(gx + 20, prompt.y + 112, 'NEW IN THE STUDIO — THE REDACTOR', textStyle(13, PALETTE.inkSoft, { fontStyle: 'bold' })).setOrigin(1, 0.5).setAlpha(0);
+        this.tweens.add({ targets: note, alpha: 1, duration: 3000, ease: 'Linear' });
+        this.time.delayedCall(3000 + 1200, () => {
+          this.tweens.add({ targets: note, alpha: 0, duration: 800, ease: 'Linear', onComplete: () => note.destroy() });
+        });
+      }
+    }
     this.add.text(width - 8, height - 6, `build ${hook.sha}`, textStyle(12, PALETTE.gray)).setOrigin(1, 1);
 
-    const start = (): void => {
+    const start = (...args: unknown[]): void => {
+      const pointer = args[0];
+      if (pointer instanceof Phaser.Input.Pointer && redactorBox?.contains(pointer.x, pointer.y)) return; // the tap went to the Redactor toggle
       this.scene.start(SCENES.game);
     };
     this.input.once('pointerup', start);

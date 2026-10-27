@@ -192,6 +192,12 @@ export class Sfx {
     this.noise(0.08, 0.11, 800, 'lowpass');
   }
 
+  /** Filtered paper-swipe as the Redactor's Redact cleans the page: ~120 ms low-passed noise at half a hit's gain. */
+  redact(): void {
+    if (!this.canPlay()) return;
+    this.noise(0.12, 0.11, 900, 'lowpass');
+  }
+
   /** Three-note rising arp. */
   levelUp(): void {
     if (!this.canPlay()) return;
