@@ -167,3 +167,8 @@ The PO adds ideas here. Good ones become tasks.
 - Cadenza: for 8 s after The Grid dies, fire rate ×1.5 with a "CADENZA" flash in the HUD — Encore's sibling on the second boss
 - Fermata: the moment a level-up card is picked, every enemy freezes for 0.6 s — the choice feels like a held breath (small juice, one line in the level-up flow)
 - Weapon marginalia: the first time a new weapon card is picked in a run, a dry annotation fades in under the HUD ("THE LINE PIERCES", "THE ORBITS BITE", "THE ARC CHAINS") — sibling of the enemy marginalia (T0027)
+- ~~Gravure upgrade: +1 pierce and +15% damage per level, maxLevel 2, weight 3 — the rare pierce-damage card that gives a piercing volley the damage to back it up (reuses Vector's pierce and Emphasis's damage; sibling of Ostinato and Pizzicato on the pierce axis)~~ → T0080
+- Gutter: the first arena hazard — after 14:00 a 40-unit-wide band of ink sweeps horizontally across the page every 20 seconds; standing in it burns 4 damage/s (the concrete first of the arena-hazards idea)
+- Ransom plate: the boss nameplate is set in mixed letterforms, each letter rotated up to 5° — the title reads like a ransom note (pure art, pairs with T0064)
+- First Proof: the first kill of each enemy type in a run drops one extra shard — a small collection reward (pairs with the marginalia first-sighting, T0027)
+- Registration marks: faint printer's registration marks (a crosshair in a circle) fade in at the four paper corners at 0:30 (pure art, sets the page)
