@@ -4,11 +4,12 @@ title: Add the Leggero upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T07:44:20Z
 claimed_at: 2026-10-27T07:58:04Z
+finished_at: 2026-10-27T08:06:51Z
 ---
 
 ## Goal
@@ -93,3 +94,16 @@ None — data only; no type or signature changes (`extraPierce` and `moveSpeed` 
 
 ### Tests
 - `tests/core/upgrades.test.ts`: the `leggero` test above (exact two mods in order, applied twice → level 2, +2 pierce, ≈×1.21 moveSpeed vs a fresh `RunState`, third offer rejected).
+
+## Result (attempt 1, yoga)
+
+Added the Leggero level-up card — a new `leggero` entry appended at the end of `UPGRADES` in `src/content/upgrades/index.ts` (+1 pierce, +10% move speed per level; maxLevel 2, weight 3, green, pierce mod first then move-speed mod), making it the first pierce card on the mobility axis. Added the matching unit test in `tests/core/upgrades.test.ts` asserting the exact two mods in order, level 2 at max (+2 pierce, ≈×1.21 move speed vs a fresh run), and rejection of a third offer. `npm run check` (typecheck + lint + 262 tests) and `npm run smoke` (desktop + mobile) both pass; no scene, art, or type changes were needed since cards render from the registry.
+
+- Self-review: APPROVE
+- Time: 8.8 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 19 +++++++++++++++++++
+ 2 files changed, 31 insertions(+)
+```
