@@ -4,10 +4,11 @@ title: Add the Riff upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T06:43:50Z
+claimed_at: 2026-10-27T07:02:23Z
 ---
 
 ## Goal
