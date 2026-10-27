@@ -4,10 +4,12 @@ title: Add the Underexposure upgrade
 assignee: desktop
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T11:32:46Z
+claimed_at: 2026-10-27T11:59:03Z
+designer: desktop
 ---
 
 ## Goal
