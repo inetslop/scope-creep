@@ -4,10 +4,11 @@ title: Understudy active — decoy circle
 assignee: desktop
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0005, T0011, T0014]
-attempts: 0
+attempts: 1
 created: 2026-10-26T19:20:22Z
+claimed_at: 2026-10-27T00:07:31Z
 ---
 
 ## Goal
