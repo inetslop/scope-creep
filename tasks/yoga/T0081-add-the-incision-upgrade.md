@@ -4,10 +4,11 @@ title: Add the Incision upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T06:00:29Z
+claimed_at: 2026-10-27T06:09:57Z
 ---
 
 ## Goal
