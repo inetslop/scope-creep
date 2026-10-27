@@ -4,11 +4,12 @@ title: Add the Stretto upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0076]
 attempts: 1
 created: 2026-10-27T04:56:47Z
 claimed_at: 2026-10-27T05:26:13Z
+finished_at: 2026-10-27T05:33:59Z
 ---
 
 ## Goal
@@ -82,3 +83,16 @@ No new types, stats, or functions. Both mods reuse existing `StatKey`s: `armor` 
 - Max level math is already safe: armor 0+3, fireRateMul 1.10³ ≈ 1.33, both within `STAT_LIMITS`.
 ### Tests
 - `tests/core/upgrades.test.ts`: new `stretto` test as above; `tests/content.test.ts` validates the entry automatically.
+
+## Result (attempt 1, yoga)
+
+Added the Stretto upgrade (41st level-up card) by appending an `UpgradeDef` at the end of `UPGRADES` in `src/content/upgrades/index.ts` — `id: 'stretto'`, "+1 armor, +10% fire rate", maxLevel 3, weight 4, `PALETTE.yellow`, with the armor mod from `plate` first and the ×1.10 `fireRateMul` mod from `pressure` second — completing the last untapped pair on the armor axis. Also added the matching unit test in `tests/core/upgrades.test.ts` (after the `tenuto`-pattern tests, following the file's ordering) asserting the exact mods, 3 offerable levels, then unavailable. `npm run check` (typecheck + lint + 239 tests) and `npm run smoke` (desktop + phone in a real browser) both pass; no new stats, types, or scene code needed since cards render from the registry.
+
+- Self-review: APPROVE
+- Time: 7.8 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
