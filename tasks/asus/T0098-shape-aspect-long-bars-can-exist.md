@@ -4,10 +4,12 @@ title: Shape aspect — long bars can exist
 assignee: asus
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T09:43:38Z
+claimed_at: 2026-10-27T10:06:55Z
+designer: desktop
 ---
 
 ## Goal
