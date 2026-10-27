@@ -4,12 +4,10 @@ title: Boss nameplate intro
 assignee: desktop
 size: M
 priority: 2
-status: designing
-depends_on: []
+status: todo
+depends_on: [T0054]
 attempts: 0
 created: 2026-10-27T03:07:33Z
-claimed_at: 2026-10-27T03:27:41Z
-designer: desktop
 ---
 
 ## Goal
@@ -29,3 +27,74 @@ The first time each boss spawns in a run, its name is printed in small caps near
 - [ ] Second and later spawns of the same boss show no nameplate, and the T0058 boss sting still plays on those respawns.
 - [ ] The nameplate never overlaps the boss health bar or the HUD readouts and does not block input.
 - [ ] `npm run check` and `npm run smoke` pass.
+
+## Design (architect, desktop)
+
+### Files
+- edit `src/core/run.ts` - per-run boss-id sighting set + `firstBossSighting()`, next to the existing `firstSighting()`
+- edit `src/scenes/keys.ts` - add `bossNameplate` to `GAME_EVENTS`
+- edit `src/systems/BossSystem.ts` - emit the event on the spawn frame, only when this boss id is new to the run
+- edit `src/scenes/HudScene.ts` - the nameplate: one Text, one listener, a 2 s linear fade in `update()`
+- edit `tests/core/core.test.ts` - unit test for `firstBossSighting`
+
+No new files, no new art, no new SFX, no new scene.
+
+### Interfaces
+```ts
+// core/run.ts — add to RunState directly below firstSighting()
+private readonly seenBossIds = new Set<string>();
+/** True exactly once per boss id per run (first-appearance nameplate). */
+firstBossSighting(id: string): boolean {
+  if (this.seenBossIds.has(id)) return false;
+  this.seenBossIds.add(id);
+  return true;
+}
+
+// scenes/keys.ts — add to GAME_EVENTS
+/** The boss first appeared this run. Payload: the boss name (string) from its content def. */
+bossNameplate: 'boss-nameplate';
+
+// systems/BossSystem.ts — in startEntering(), immediately after this.music.bossSwell();
+if (this.run.firstBossSighting(this.def.id)) this.scene.events.emit(GAME_EVENTS.bossNameplate, this.def.name);
+```
+
+### Steps
+1. Apply the three snippets above (BossSystem also needs `import { GAME_EVENTS } from '../scenes/keys';`).
+2. HudScene fields (near `bossWarnText`) + top const: `private bossPlate!: Phaser.GameObjects.Text; private bossPlateActive = false; private bossPlateAge = 0;` and `const BOSS_PLATE_SEC = 2;`.
+3. In `HudScene.create()` right after the `bossWarnText` line: `this.bossPlate = this.add.text(0, 0, '', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0).setVisible(false);` and add `this.bossPlateActive = false; this.bossPlateAge = 0;` to the state-reset block.
+4. In `create()`, beside the other `gameEvents` listeners, add `const onBossNameplate = (name: string): void => { this.bossPlate.setText(name); this.bossPlateAge = 0; this.bossPlateActive = true; this.bossPlate.setAlpha(1).setVisible(true); };` then `gameEvents.on(GAME_EVENTS.bossNameplate, onBossNameplate);` and `gameEvents.off(GAME_EVENTS.bossNameplate, onBossNameplate);` in the existing SHUTDOWN block.
+5. In `update()`, after the boss-bar if/else block, add:
+```ts
+if (this.bossPlateActive) {
+  if (this.scene.isActive(SCENES.game)) this.bossPlateAge += dt; // frozen while pause/level-up is up
+  const bossTop = (narrow ? PAD + 40 : PAD) + 26;
+  this.bossPlate.setPosition(width / 2, bossTop + 42); // 12 px below the bar's bottom edge
+  if (this.bossPlateAge >= BOSS_PLATE_SEC) {
+    this.bossPlateActive = false;
+    this.bossPlate.setAlpha(0).setVisible(false);
+  } else {
+    this.bossPlate.setAlpha(1 - this.bossPlateAge / BOSS_PLATE_SEC);
+  }
+}
+```
+6. Add the unit test below. Run `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- Placement: the slot above the boss bar is already occupied (timer + the bar's own name label), so the plate goes below the bar at `bossTop + 42`, centered. Do not put it above the bar — that is what overlaps the HUD. Re-read HudScene before editing (T0054 adds a SCORE readout there); if that readout lands in the plate's slot, bump the y down by one row (single expression).
+- Name comes from `this.def.name` (content data, already all-caps per content.test.ts). No hardcoding, no case transforms — a future third boss gets its plate for free.
+- First-appearance-only state lives in RunState, so it resets on every new run automatically. Do not touch `bossSting`/`bossSwell` — they must still fire on every spawn.
+- The listener must be removed in the SHUTDOWN block (the Game scene's emitter survives restarts), and plate state reset in `create()` (Hud is re-created each run).
+- Leave the Text non-interactive (default) — no input blocking. No new invariant: this is a HUD label in the same class as the RHYTHM/ERASED flashes, not a system.
+- The fade is pure `dt` math (seconds), no tween; the `isActive` guard keeps the 2 s window from being consumed while the game scene is paused.
+
+### Tests
+- `tests/core/core.test.ts`, in `describe('RunState')` next to the first-sighting test:
+```ts
+it('reports each boss id as a first sighting exactly once', () => {
+  const run = new RunState(1);
+  expect(run.firstBossSighting('frame')).toBe(true);
+  expect(run.firstBossSighting('frame')).toBe(false);
+  expect(run.firstBossSighting('grid')).toBe(true);
+});
+```
+- Optional visual check (boss first appears at 300 s): temporarily set `firstAtSec: 8, intervalSec: 15` in `src/core/boss.ts`, play, then `git checkout src/core/boss.ts` — the diff must be clean.
