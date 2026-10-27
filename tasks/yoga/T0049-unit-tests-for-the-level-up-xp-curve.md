@@ -4,10 +4,12 @@ title: Unit tests for the level-up XP curve
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T00:03:46Z
+claimed_at: 2026-10-27T00:05:03Z
+designer: desktop
 ---
 
 ## Goal
