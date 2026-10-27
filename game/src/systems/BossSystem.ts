@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import type { Music } from '../audio/Music';
 import type { Sfx } from '../audio/Sfx';
 import { TEX } from '../art/textures';
 import { ARENA_SIZE, DEPTH, PLAYER_RADIUS } from '../config';
@@ -47,6 +48,7 @@ export class BossSystem {
   private readonly spawns: SpawnSystem;
   private readonly fx: FxSystem;
   private readonly sfx: Sfx;
+  private readonly music: Music;
   private readonly damageNumbers: DamageNumbers;
   private readonly pickups: PickupSystem;
   /** The Grid's sweeping arm bar: a plain image (Arcade bodies do not rotate), hit-tested by hand. */
@@ -77,6 +79,7 @@ export class BossSystem {
     projectiles: Phaser.Physics.Arcade.Group,
     fx: FxSystem,
     sfx: Sfx,
+    music: Music,
     damageNumbers: DamageNumbers,
     pickups: PickupSystem,
   ) {
@@ -86,6 +89,7 @@ export class BossSystem {
     this.spawns = spawns;
     this.fx = fx;
     this.sfx = sfx;
+    this.music = music;
     this.damageNumbers = damageNumbers;
     this.pickups = pickups;
     this.boss = new Boss(scene);
@@ -131,6 +135,8 @@ export class BossSystem {
     this.run.bossAlive = true;
     this.run.bossHp = hp;
     this.run.bossMaxHp = hp;
+    this.sfx.bossSting(); // the boss is on the page: one deep thump and a music swell, same frame
+    this.music.bossSwell();
     this.phase = 'entering';
     this.phaseTimer = ENTER_SEC;
   }

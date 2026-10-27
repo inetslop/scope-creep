@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { Music } from '../audio/Music';
+import { MUSIC_VOLUME, Music } from '../audio/Music';
 import { Sfx } from '../audio/Sfx';
 import { TEX } from '../art/textures';
 import { ARENA_SIZE, DEPTH, VIEW_SHORT_SIDE } from '../config';
@@ -95,7 +95,7 @@ export class GameScene extends Phaser.Scene {
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
     this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia, this.understudy);
     this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.spawns);
-    this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.damageNumbers, this.pickups);
+    this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.music, this.damageNumbers, this.pickups);
     this.stillLife = new StillLifeSystem(this, this.player, this.spawns.enemies, this.spawns.enemyShots, this.boss.boss, this.sfx);
     this.registry.set('stillLife', this.stillLife);
     this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
@@ -328,6 +328,10 @@ export class GameScene extends Phaser.Scene {
     hook.addInvariant('music-scheduler', () =>
       Number.isFinite(this.music.nextBeatTime) && this.music.nextBeatTime >= 0 ? null : `music nextBeatTime ${this.music.nextBeatTime}`,
     );
+    hook.addInvariant('music-swell', () => {
+      const g = this.music.masterGain;
+      return g >= MUSIC_VOLUME - 1e-6 && g <= MUSIC_VOLUME * 1.6 + 1e-6 ? null : `music swell gain ${g}`;
+    });
     hook.addInvariant('streak', () => (this.run.streak >= 0 && this.run.bestStreak >= this.run.streak ? null : `streak ${this.run.streak} / best ${this.run.bestStreak}`));
     hook.addInvariant('decoy', () => {
       const t = this.understudy.target;
@@ -347,4 +351,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels', 'boss-state', 'streak', 'decoy', 'still-life', 'crop-damage', 'upgrade-history'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'decoy', 'still-life', 'crop-damage', 'upgrade-history'];

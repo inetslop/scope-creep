@@ -21,6 +21,7 @@ export class Sfx {
   private lastCritHitAt = 0;
   private lastPickupAt = 0;
   private lastPickupCallAt = 0;
+  private lastBossStingAt = 0;
   private comboStep = 0;
 
   constructor(scene: Phaser.Scene) {
@@ -159,6 +160,38 @@ export class Sfx {
     if (!this.canPlay()) return;
     this.tone('sawtooth', 98, 98, 0.3, 0.28, 0);
     this.tone('sawtooth', 73.42, 73.42, 0.45, 0.28, 0.32);
+  }
+
+  /** Deep sub-bass thump when a boss appears: 55 Hz with a 30 ms attack decaying over 450 ms,
+   *  plus a darker 82 Hz tone at a quarter of the gain. One per second, never overlaps itself. */
+  bossSting(): void {
+    if (!this.canPlay()) return;
+    const now = performance.now();
+    if (now - this.lastBossStingAt < 1000) return;
+    this.lastBossStingAt = now;
+    this.stingTone(55, 0.6);
+    this.stingTone(82, 0.15);
+  }
+
+  /** Sine tone with a 30 ms linear attack and an exponential decay to silence over 450 ms. */
+  private stingTone(hz: number, vol: number): void {
+    if (!this.ctx || !this.master || vol <= 0) return;
+    const t = this.ctx.currentTime;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(hz, t);
+    gain.gain.setValueAtTime(0.001, t);
+    gain.gain.linearRampToValueAtTime(vol, t + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
+    osc.connect(gain);
+    gain.connect(this.master);
+    osc.start(t);
+    osc.stop(t + 0.47);
+    osc.onended = () => {
+      osc.disconnect();
+      gain.disconnect();
+    };
   }
 
   /** False until the context exists and is unlocked by the first user gesture. Never resume() ourselves. */

@@ -4,11 +4,12 @@ title: Boss sting — the moment a boss spawns
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T02:15:10Z
 claimed_at: 2026-10-27T02:46:33Z
+finished_at: 2026-10-27T02:53:46Z
 ---
 
 ## Goal
@@ -124,3 +125,18 @@ and add `'music-swell'` to the `INVARIANTS` array after `'music-scheduler'`.
 
 ### Tests
 - none — all new logic is engine-side (WebAudio/Phaser), which vitest (Node) can't touch; the `music-swell` invariant and the error checks run under `npm run smoke`.
+
+## Result (attempt 1, desktop)
+
+Every boss spawn (The Frame, The Grid, and all higher-HP respawns) now announces itself with a deep ~55 Hz sub-bass sting (`Sfx.bossSting()`, throttled to one per second) plus a music swell to 1.6× that settles back within ~3 s (`Music.bossSwell()`), fired together from `BossSystem.startEntering()` where the boss entity actually appears — elite and regular enemy spawns are unaffected. BossSystem now takes the Music dependency from GameScene, and a new `music-swell` invariant verifies the master gain never leaves the [1.0×, 1.6×] band. Verified with `npm run check` (typecheck, lint, 205 tests) and `npm run smoke` (desktop + mobile), both passing.
+
+- Self-review: APPROVE
+- Time: 7.2 min
+
+```
+game/src/audio/Music.ts        | 20 +++++++++++++++++++-
+ game/src/audio/Sfx.ts          | 33 +++++++++++++++++++++++++++++++++
+ game/src/scenes/GameScene.ts   | 10 +++++++---
+ game/src/systems/BossSystem.ts |  6 ++++++
+ 4 files changed, 65 insertions(+), 4 deletions(-)
+```

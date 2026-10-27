@@ -2,7 +2,7 @@ import type Phaser from 'phaser';
 import { bpmForTime, secondVoiceActive } from '../core/music';
 import { MASTER_VOLUME, type Sfx } from './Sfx';
 
-const MUSIC_VOLUME = MASTER_VOLUME * 0.25;
+export const MUSIC_VOLUME = MASTER_VOLUME * 0.25;
 const LOOKAHEAD_SEC = 0.12;
 // A-minor pentatonic, and the same set one octave up for the second voice.
 const NOTES = [220, 261.63, 293.66, 329.63, 392];
@@ -51,6 +51,10 @@ export class Music {
     return this.nextBeat;
   }
 
+  get masterGain(): number {
+    return this.master ? this.master.gain.value : 0;
+  }
+
   /** Call once per frame from GameScene.update; no-op while paused or muted. */
   update(timeSec: number): void {
     if (this.ctx === null || this.master === null || this.sfx.isMuted || this.ctx.state !== 'running') {
@@ -69,6 +73,20 @@ export class Music {
       this.nextBeat += 60 / bpmForTime(timeSec);
       this.beatIndex += 1;
     }
+  }
+
+  /** Boss arrival: raise the master gain to 1.6x over 0.4 s, hold 0.3 s, ease back over 2 s.
+   * A call mid-swell re-anchors the envelope at the current value, so it extends the
+   * hold instead of stacking — the gain never exceeds 1.6x. */
+  bossSwell(): void {
+    if (this.ctx === null || this.master === null || this.sfx.isMuted || this.ctx.state !== 'running') return;
+    const t = this.ctx.currentTime;
+    const gain = this.master.gain;
+    gain.cancelScheduledValues(t);
+    gain.setValueAtTime(gain.value, t);
+    gain.linearRampToValueAtTime(MUSIC_VOLUME * 1.6, t + 0.4);
+    gain.setValueAtTime(MUSIC_VOLUME * 1.6, t + 0.7);
+    gain.linearRampToValueAtTime(MUSIC_VOLUME, t + 2.7);
   }
 
   private scheduleBeat(t: number, beat: number, timeSec: number): void {
