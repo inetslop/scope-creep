@@ -4,10 +4,12 @@ title: Add the Counterpoint weapon
 assignee: desktop-4070
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T00:59:33Z
+claimed_at: 2026-10-27T01:31:33Z
+designer: desktop
 ---
 
 ## Goal
