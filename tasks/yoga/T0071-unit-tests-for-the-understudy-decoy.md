@@ -4,10 +4,12 @@ title: Unit tests for the Understudy decoy
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T03:53:41Z
+claimed_at: 2026-10-27T03:56:53Z
+designer: yoga
 ---
 
 ## Goal
