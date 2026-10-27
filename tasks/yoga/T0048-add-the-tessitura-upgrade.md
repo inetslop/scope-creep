@@ -4,10 +4,11 @@ title: Add the Tessitura upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T00:03:46Z
+claimed_at: 2026-10-27T00:05:28Z
 ---
 
 ## Goal
