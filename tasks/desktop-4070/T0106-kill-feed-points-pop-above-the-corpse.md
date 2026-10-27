@@ -4,10 +4,12 @@ title: Kill feed — points pop above the corpse
 assignee: desktop-4070
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T11:41:58Z
+claimed_at: 2026-10-27T12:04:51Z
+designer: desktop
 ---
 
 ## Goal
