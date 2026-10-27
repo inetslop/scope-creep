@@ -4,10 +4,12 @@ title: Add the Glissando upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T00:32:39Z
+claimed_at: 2026-10-27T00:33:33Z
+designer: yoga
 ---
 
 ## Goal
