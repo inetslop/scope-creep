@@ -4,10 +4,12 @@ title: Add the Leggero upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T07:44:20Z
+claimed_at: 2026-10-27T07:50:54Z
+designer: yoga
 ---
 
 ## Goal
