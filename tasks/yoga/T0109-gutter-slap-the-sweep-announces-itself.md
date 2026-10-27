@@ -4,10 +4,11 @@ title: Gutter slap — the sweep announces itself
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0102, T0107]
-attempts: 0
+attempts: 1
 created: 2026-10-27T13:08:21Z
+claimed_at: 2026-10-27T16:12:51Z
 ---
 
 ## Goal
