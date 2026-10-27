@@ -4,10 +4,12 @@ title: The Palette — the third boss
 assignee: asus
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T09:43:38Z
+claimed_at: 2026-10-27T09:43:42Z
+designer: desktop
 ---
 
 ## Goal
