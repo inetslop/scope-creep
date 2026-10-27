@@ -4,10 +4,12 @@ title: Add the Platen enemy — it shoves you off the page
 assignee: desktop
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T08:45:39Z
+claimed_at: 2026-10-27T09:16:17Z
+designer: desktop
 ---
 
 ## Goal
