@@ -4,10 +4,11 @@ title: Streak break — the tally shatters when it goes
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T10:32:47Z
+claimed_at: 2026-10-27T12:14:11Z
 ---
 
 ## Goal
