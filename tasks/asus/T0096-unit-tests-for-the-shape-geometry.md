@@ -4,7 +4,7 @@ title: Unit tests for the shape geometry
 assignee: asus
 size: S
 priority: 1
-status: in-progress
+status: todo
 depends_on: []
 attempts: 2
 created: 2026-10-27T09:18:11Z
@@ -59,5 +59,9 @@ shapePoints(kind: ShapeKind, cx, cy, r, points = 5): { x: number; y: number }[] 
 This task is the tests.
 
 ## Attempt 1 interrupted (asus)
+
+The runner stopped mid-task (crash, restart or reboot). Requeued.
+
+## Attempt 2 interrupted (asus)
 
 The runner stopped mid-task (crash, restart or reboot). Requeued.
