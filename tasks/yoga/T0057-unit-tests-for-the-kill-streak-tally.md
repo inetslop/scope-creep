@@ -4,10 +4,11 @@ title: Unit tests for the kill-streak tally
 assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T01:47:24Z
+claimed_at: 2026-10-27T02:37:50Z
 ---
 
 ## Goal
