@@ -4,10 +4,12 @@ title: Unit tests for upgrade removal (Eraser)
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T03:21:30Z
+claimed_at: 2026-10-27T03:33:24Z
+designer: yoga
 ---
 
 ## Goal
