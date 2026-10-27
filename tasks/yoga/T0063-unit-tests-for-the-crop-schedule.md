@@ -4,12 +4,10 @@ title: Unit tests for the crop schedule
 assignee: yoga
 size: S
 priority: 3
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-27T02:46:28Z
-claimed_at: 2026-10-27T02:54:27Z
-designer: yoga
 ---
 
 ## Goal
@@ -30,3 +28,62 @@ Lock down the pure crop schedule from T0045 so the late-run arena shrink can nev
 - [ ] The tests assert no shrink before 12:00, 1.0 at 12:00, 0.85 at 14:30, 0.7 at 17:00, clamping after 17:00, and a non-increasing schedule through the window.
 - [ ] No source files are modified (the diff touches only `tests/core/crop.test.ts`).
 - [ ] `npm run smoke` passes.
+
+## Design (architect, yoga)
+
+### Files
+- edit `tests/core/crop.test.ts` — the file already exists from T0045; replace its whole content (shown below). No source files change.
+### Interfaces
+No new interfaces. Use what T0045 exported from `src/core/crop.ts`:
+```ts
+export function cropSafeFraction(timeSec: number): number; // time in seconds
+export const CROP: { startSec: 720; endSec: 1020; endFraction: 0.7; burnPerSec: 5 };
+```
+### Steps
+1. Overwrite `tests/core/crop.test.ts` with exactly this:
+```ts
+import { describe, expect, it } from 'vitest';
+import { CROP, cropSafeFraction } from '../../src/core/crop';
+
+describe('crop', () => {
+  it('exposes the schedule constants', () => {
+    expect(CROP).toEqual({ startSec: 720, endSec: 1020, endFraction: 0.7, burnPerSec: 5 });
+  });
+
+  it('keeps the whole arena safe before 12:00', () => {
+    expect(cropSafeFraction(0)).toBe(1);
+    expect(cropSafeFraction(719)).toBe(1);
+  });
+
+  it('is still 1.0 at 12:00 — the shrink has just begun', () => {
+    expect(cropSafeFraction(720)).toBe(1);
+  });
+
+  it('reaches 0.85 at the 14:30 midpoint', () => {
+    expect(cropSafeFraction(870)).toBeCloseTo(0.85);
+  });
+
+  it('never increases between 12:00 and 17:00', () => {
+    const a = cropSafeFraction(720);
+    const b = cropSafeFraction(810);
+    const c = cropSafeFraction(900);
+    const d = cropSafeFraction(1020);
+    expect(a).toBeGreaterThanOrEqual(b);
+    expect(b).toBeGreaterThanOrEqual(c);
+    expect(c).toBeGreaterThanOrEqual(d);
+  });
+
+  it('clamps at 0.7 from 17:00 onward', () => {
+    expect(cropSafeFraction(1020)).toBe(0.7);
+    expect(cropSafeFraction(1021)).toBe(0.7);
+    expect(cropSafeFraction(3600)).toBe(0.7);
+  });
+});
+```
+2. Run `npm run check`, then `npm run smoke`. Both must pass.
+### Pitfalls
+- The file is an EDIT, not a create — it exists since T0045; do not re-add imports or leave old tests in a merge. The final diff must touch only `tests/core/crop.test.ts`.
+- 720/1020/1021/3600/719 return the function's exact literals, so `toBe` is right; only the 870 midpoint is computed, so keep `toBeCloseTo(0.85)` there (do not use `toBe(0.85)` — float).
+- Assert only the returned scale. Do not import or test `CropSystem`, burn damage, crop marks, or any scene.
+### Tests
+- `tests/core/crop.test.ts` as above: no shrink before 12:00, 1.0 at 720 s, 0.85 at 870 s, non-increasing 720 ≥ 810 ≥ 900 ≥ 1020, clamped 0.7 at 1020/1021/3600 s.
