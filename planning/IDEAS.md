@@ -124,3 +124,9 @@ The PO adds ideas here. Good ones become tasks.
 - Enemy cap: when 60 enemies are on screen, spawning pauses until the count drops — keeps late runs playable on phones
 - Page number: a faint small number in the bottom-right corner of the paper, incrementing every 60 s — which page of the composition you are on
 - Mute keys: M toggles music, N toggles sound effects, both shown on the pause screen — the first half of the settings page
+- Low-HP vignette: when you drop below 25% max HP, the paper's edges darken to a warm shadow and a thin red rule pulses at the arena boundary — danger readable at a glance
+- Crescendo: while your kill streak is 8 or higher, fire rate +10%; the streak tally in the HUD turns red while it is active (sibling of T0014)
+- Metronome: a still grey circle that pulses; every pulse speeds up all enemies within 200 units by 20% for 3 s — a late-run enemy that punishes camping
+- Ink bleed: when a crit lands, a small ink splat stays at the hit for 2 s and slows enemies standing in it by 30% — crit builds paint the battlefield
+- Frame's heartbeat: while The Frame is alive the paper pulses once per second in time with its attack rhythm — the boss's tempo is felt in the page
+- Prestissimo: the first time your kill streak reaches 10 in a run, your next level-up deals 4 cards instead of 3, with a "PRESTISSIMO" flash
