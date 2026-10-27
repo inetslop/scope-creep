@@ -4,10 +4,12 @@ title: Unit tests for stat stacking
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T00:32:39Z
+claimed_at: 2026-10-27T00:40:56Z
+designer: yoga
 ---
 
 ## Goal
