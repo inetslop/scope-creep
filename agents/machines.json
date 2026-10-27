@@ -71,8 +71,7 @@
       "tier": "medium",
       "maxTaskSize": "M",
       "targetQueue": 2,
-      "notes": "Heavily quantized (IQ3_XXS) on a laptop GPU: expect more mistakes, and slow. Give it medium features: new mechanics, scenes, UI, juice, audio.",
-      "paused": true
+      "notes": "Heavily quantized (IQ3_XXS) on a laptop GPU: expect more mistakes, and slow. Give it medium features: new mechanics, scenes, UI, juice, audio."
     }
   },
   "sizes": {
