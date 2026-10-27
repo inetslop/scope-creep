@@ -26,6 +26,8 @@ export interface HookStats {
   maxHp: number;
   score: number;
   enemiesAlive: number;
+  /** Inkwell meter of the current run, 0..1. */
+  inkwell: number;
   /** Screen shake on heavy deaths (smoke test / future settings toggle). */
   screenShake: boolean;
   /** Crescendo bonus actually applied this run: 1.1 while the kill streak is 8+, else 1. */
@@ -63,6 +65,7 @@ export class TestHook {
     maxHp: 0,
     score: 0,
     enemiesAlive: 0,
+    inkwell: 0,
     screenShake: true,
     streakFireBonus: 1,
   };

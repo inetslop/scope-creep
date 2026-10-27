@@ -5,7 +5,7 @@ import { PALETTE } from '../content/palette';
 import type { WeaponDef } from '../content/types';
 import { WEAPON_BY_ID } from '../content/weapons';
 import { pickArcTargets, type ArcTarget } from '../core/arc';
-import type { RunState } from '../core/run';
+import { INKWELL, type RunState } from '../core/run';
 import { fireRateMultiplier } from '../core/stats';
 import { fromAngle, type Vec2 } from '../core/vec';
 import { hook } from '../debug/testHook';
@@ -70,6 +70,20 @@ export class ArcSystem {
   }
 
   private fire(def: WeaponDef): void {
+    // A full inkwell is consumed by this volley: 3 independent bolts at 2× knockback. Never refill here.
+    const burst = this.run.consumeInkwell();
+    for (let b = 0, bolts = burst ? INKWELL.burstCount : 1; b < bolts; b++) this.bolt(def, burst);
+    if (burst) {
+      this.fx.critRing(this.player.x, this.player.y);
+      this.sfx.inkBurst();
+    } else {
+      this.sfx.shoot(def.id);
+      if (this.run.addInkwell(INKWELL.fillPerVolley)) this.sfx.inkwellFull();
+    }
+  }
+
+  /** One jagged bolt: picks its own targets and chains between nearby enemies. */
+  private bolt(def: WeaponDef, burst: boolean): void {
     const spec = def.arc!;
     const stats = this.run.stats;
     const aim = fromAngle(this.player.aimAngle);
@@ -90,7 +104,7 @@ export class ArcSystem {
       if (!e || !e.active) continue; // killed mid-chain by an earlier jump: skip
       const crit = stats.critChance > 0 && this.run.rng.chance(stats.critChance);
       const dmg = (crit ? 2 : 1) * def.damage * stats.damageMul;
-      const died = e.hit(dmg, from, def.knockback);
+      const died = e.hit(dmg, from, def.knockback * (burst ? INKWELL.burstKnockback : 1));
       from = { x: e.x, y: e.y };
       this.damageNumbers.show(e.x, e.y, dmg, crit);
       this.fx.hit(e.x, e.y, e.def.look.body);
@@ -104,7 +118,6 @@ export class ArcSystem {
       points.push(from);
     }
     if (points.length === 1) points.push({ x: origin.x + aim.x * spec.range * 0.5, y: origin.y + aim.y * spec.range * 0.5 }); // whiff: short stub toward the aim
-    this.sfx.shoot(def.id);
     hook.stats.shotsFired += 1;
     this.draw(points, spec.fadeMs);
   }

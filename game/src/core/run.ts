@@ -3,6 +3,9 @@ import { xpToNextLevel } from './progression';
 import { Rng } from './rng';
 import { computeStats, type PlayerStats, type StatMod } from './stats';
 
+/** Inkwell meter tuning: each firing-weapon volley adds 10%; a full well bursts at 3× count and 2× knockback. */
+export const INKWELL = { fillPerVolley: 0.1, burstCount: 3, burstKnockback: 2 } as const;
+
 /**
  * Everything about the current run that is not a Phaser object: time, HP, XP,
  * level, upgrades and derived stats. Scenes read it; systems mutate it through
@@ -25,6 +28,8 @@ export class RunState {
   streak = 0;
   /** Highest streak reached this run. */
   bestStreak = 0;
+  /** Inkwell meter, 0..1: fills as firing weapons fire, consumed by the burst volley. */
+  inkwell = 0;
   hp: number;
   stats: PlayerStats;
   /** Weapon ids the player currently has (see src/content/weapons). */
@@ -97,6 +102,25 @@ export class RunState {
   registerKill(): void {
     this.streak += 1;
     this.bestStreak = Math.max(this.bestStreak, this.streak);
+  }
+
+  /**
+   * Fills the inkwell. Returns true exactly when this call crosses 1, so the
+   * full blip plays once per fill and never while the meter is held full.
+   * Ten 0.1 fills sum to 0.9999999999999999 in float, so a hair under full snaps to full.
+   */
+  addInkwell(amount: number): boolean {
+    const was = this.inkwell;
+    const next = this.inkwell + amount;
+    this.inkwell = next >= 1 - 1e-9 ? 1 : next;
+    return was < 1 && this.inkwell >= 1;
+  }
+
+  /** Empties the inkwell if it is full (the burst volley). Returns whether it was consumed. */
+  consumeInkwell(): boolean {
+    if (this.inkwell < 1) return false;
+    this.inkwell = 0;
+    return true;
   }
 
   /** Awards points for a kill; only ever grows, so the score is monotonic within a run. */

@@ -95,6 +95,19 @@ export class Sfx {
     }
   }
 
+  /** One short high blip: the Inkwell meter just reached full. */
+  inkwellFull(): void {
+    if (!this.canPlay()) return;
+    this.tone('sine', 1046.5, 1046.5, 0.12, 0.16);
+  }
+
+  /** Deep variant of the shoot sound for a full-ink burst volley. */
+  inkBurst(): void {
+    if (!this.canPlay()) return;
+    this.noise(0.08, 0.12, 700, 'lowpass');
+    this.tone('sine', 130, 65, 0.14, 0.2);
+  }
+
   /** Woodblock-like knock. */
   hit(): void {
     if (!this.canPlay()) return;

@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import type { Sfx } from '../audio/Sfx';
 import { getWeapon } from '../content/weapons';
 import type { WeaponDef } from '../content/types';
-import type { RunState } from '../core/run';
+import { INKWELL, type RunState } from '../core/run';
 import { fireRateMultiplier } from '../core/stats';
 import { hook } from '../debug/testHook';
 import type { Player } from '../entities/Player';
@@ -54,7 +54,9 @@ export class WeaponSystem {
 
   private fireVolley(def: WeaponDef): void {
     const stats = this.run.stats;
-    const count = def.count + stats.extraProjectiles;
+    // A full inkwell is consumed by this volley: 3× count at 2× knockback. Never refill here.
+    const burst = this.run.consumeInkwell();
+    const count = (def.count + stats.extraProjectiles) * (burst ? INKWELL.burstCount : 1);
     const spread = (def.spreadDeg + (count - 1) * 4) * DEG;
     const muzzle = this.player.muzzle();
     for (let i = 0; i < count; i++) {
@@ -70,10 +72,17 @@ export class WeaponSystem {
         speed: def.speed * stats.projectileSpeedMul,
         damage: def.damage * stats.damageMul,
         pierce: def.pierce + stats.extraPierce,
+        knockback: def.knockback * (burst ? INKWELL.burstKnockback : 1),
       });
       hook.stats.shotsFired += 1;
     }
     this.fx.muzzle(muzzle.x, muzzle.y, def.look.color);
-    this.sfx.shoot(def.id);
+    if (burst) {
+      this.fx.critRing(this.player.x, this.player.y);
+      this.sfx.inkBurst();
+    } else {
+      this.sfx.shoot(def.id);
+      if (this.run.addInkwell(INKWELL.fillPerVolley)) this.sfx.inkwellFull();
+    }
   }
 }

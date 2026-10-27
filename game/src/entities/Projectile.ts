@@ -11,6 +11,8 @@ export interface ShotParams {
   speed: number;
   damage: number;
   pierce: number;
+  /** Per-projectile knockback, so an Inkwell burst can double the weapon's without a def clone. */
+  knockback: number;
 }
 
 /** Pooled projectile. WeaponSystem fires and ages them; CombatSystem resolves hits. */
@@ -36,7 +38,7 @@ export class Projectile extends Phaser.Physics.Arcade.Image {
     this.setRotation(p.angle).setDepth(DEPTH.projectiles);
     this.setVelocity(Math.cos(p.angle) * p.speed, Math.sin(p.angle) * p.speed);
     this.damage = p.damage;
-    this.knockback = p.weapon.knockback;
+    this.knockback = p.knockback;
     this.pierceLeft = p.pierce;
     this.lifeLeft = p.weapon.lifetimeSec;
     this.hitSerials.clear();

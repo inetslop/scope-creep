@@ -4,11 +4,12 @@ title: Inkwell — the meter that fills as you fire
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0064, T0070]
 attempts: 1
 created: 2026-10-27T08:45:39Z
 claimed_at: 2026-10-27T12:29:56Z
+finished_at: 2026-10-27T12:49:52Z
 ---
 
 ## Goal
@@ -93,3 +94,24 @@ private drawInkwell(run: RunState, width: number, narrow: boolean): void {
 
 ### Tests
 - `tests/core/core.test.ts`: the inkwell fill/crossing/consume case above. HUD/Sfx/system behavior covered by `npm run smoke`.
+
+## Result (attempt 1, desktop)
+
+Added the Inkwell meter (T0090): a per-run `inkwell` field with `INKWELL` tuning, `addInkwell()`/`consumeInkwell()` in `core/run.ts`, a 10%-per-volley fill and a 3×-projectile / 2×-knockback burst implemented as a multiplier on the shared `WeaponSystem.fireVolley()` path (with `ShotParams.knockback` in `Projectile.ts`) and the `ArcSystem` `fire()`→`bolt()` split for 3 independent chained bolts; new `inkwellFull()`/`inkBurst()` Sfx, the "INK" rule + "A FULL WELL BURSTS" first-fill note under the streak tally in `HudScene.ts` (120×6 desktop / 88×5 mobile), the `inkwell` hook stat and range invariant, and a unit test. The only deviation from the design: `addInkwell()` snaps 0.9999999999999999 (the IEEE-754 sum of ten 0.1 fills) to full, since the literal formula would have left the meter permanently unfillable in play. `npm run check` and `npm run smoke` (desktop + phone) both pass, and the smoke shot counts confirm the fill→burst→refill cycle fired four times in real play.
+
+- Self-review: APPROVE
+- Time: 20.0 min
+- Self-review made fixes (kept; checks pass).
+
+```
+game/src/audio/Sfx.ts            | 13 +++++++++++++
+ game/src/core/run.ts             | 24 ++++++++++++++++++++++++
+ game/src/debug/testHook.ts       |  3 +++
+ game/src/entities/Projectile.ts  |  4 +++-
+ game/src/scenes/GameScene.ts     |  4 +++-
+ game/src/scenes/HudScene.ts      | 26 ++++++++++++++++++++++++++
+ game/src/systems/ArcSystem.ts    | 19 ++++++++++++++++---
+ game/src/systems/WeaponSystem.ts | 15 ++++++++++++---
+ game/tests/core/core.test.ts     | 15 ++++++++++++++-
+ 9 files changed, 114 insertions(+), 9 deletions(-)
+```

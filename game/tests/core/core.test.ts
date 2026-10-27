@@ -5,7 +5,7 @@ import { UPGRADE_BY_ID, UPGRADES } from '../../src/content/upgrades';
 import { SpawnDirector } from '../../src/core/director';
 import { enemyHpScale, formatTime, xpToNextLevel } from '../../src/core/progression';
 import { Rng } from '../../src/core/rng';
-import { RunState } from '../../src/core/run';
+import { INKWELL, RunState } from '../../src/core/run';
 import { BASE_STATS, computeStats } from '../../src/core/stats';
 import { rollUpgradeChoices } from '../../src/core/upgrades';
 import { applyDeadZone, clampLength, length, normalize } from '../../src/core/vec';
@@ -135,6 +135,19 @@ describe('RunState', () => {
     for (let i = 0; i < 5; i++) run.registerKill();
     expect(run.streak).toBe(5);
     expect(run.bestStreak).toBe(5);
+  });
+
+  it('fills the inkwell per volley, reports the crossing once, and consumes it when full', () => {
+    const run = new RunState(1);
+    expect(run.inkwell).toBe(0);
+    for (let i = 0; i < 9; i++) expect(run.addInkwell(INKWELL.fillPerVolley)).toBe(false);
+    expect(run.inkwell).toBeCloseTo(0.9);
+    expect(run.addInkwell(INKWELL.fillPerVolley)).toBe(true);
+    expect(run.inkwell).toBe(1);
+    expect(run.addInkwell(INKWELL.fillPerVolley)).toBe(false); // clamped at 1, no re-cross
+    expect(run.consumeInkwell()).toBe(true);
+    expect(run.inkwell).toBe(0);
+    expect(run.consumeInkwell()).toBe(false);
   });
 
   it('awards score per kill class and ignores zero/negative points', () => {

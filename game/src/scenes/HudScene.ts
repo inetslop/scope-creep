@@ -63,6 +63,12 @@ export class HudScene extends Phaser.Scene {
   private cropUntil = 0;
   private cropFlashed = false;
   private flashRed = false;
+  /** Inkwell meter under the streak tally. The scene instance survives stop/launch, so reset the scalars in create(). */
+  private inkLabel!: Phaser.GameObjects.Text;
+  private inkNote!: Phaser.GameObjects.Text;
+  private inkNoteShown = false;
+  private lastInkwell = 0;
+  private inkNoteUntil = 0;
 
   constructor() {
     super(SCENES.hud);
@@ -87,6 +93,8 @@ export class HudScene extends Phaser.Scene {
     this.bossWarnText = this.add.text(0, 0, '', textStyle(48, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0.5).setAlpha(0);
     this.bossPlate = this.add.text(0, 0, '', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0).setVisible(false);
     this.bossApproachText = this.add.text(0, 0, 'SOMETHING HEAVY APPROACHES', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(0.5, 0).setAlpha(0);
+    this.inkLabel = this.add.text(0, 0, 'INK', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(1, 0.5);
+    this.inkNote = this.add.text(0, 0, 'A FULL WELL BURSTS', textStyle(13, PALETTE.ink)).setOrigin(1, 0).setVisible(false);
 
     this.bossFade = 1;
     this.bossPlateActive = false;
@@ -103,6 +111,9 @@ export class HudScene extends Phaser.Scene {
     this.cropUntil = 0;
     this.cropFlashed = false;
     this.flashRed = false;
+    this.inkNoteShown = false;
+    this.lastInkwell = 0;
+    this.inkNoteUntil = 0;
     const gameEvents = this.scene.get(SCENES.game).events;
     const onPlayerHit = (): void => {
       this.sinceHit = 0;
@@ -206,6 +217,7 @@ export class HudScene extends Phaser.Scene {
     this.killText.setPosition(width - PAD - 54, PAD + 22).setText(`${run.kills} kills`);
     this.scoreText.setPosition(PAD, PAD + 48).setText(`SCORE ${run.score}`);
     this.updateStreak(run, width);
+    this.drawInkwell(run, width, narrow);
     if (!this.cropFlashed && run.timeSec >= CROP.startSec) {
       this.cropFlashed = true;
       this.cropUntil = this.time.now + 800;
@@ -276,6 +288,20 @@ export class HudScene extends Phaser.Scene {
     this.streakText.setPosition(width - PAD, y);
     this.rhythmText.setPosition(width - PAD - this.streakText.width - 8, y);
     this.rhythmText.setVisible(s >= 2 && now < this.rhythmUntil);
+  }
+
+  /** INK meter under the streak tally: a thin ink-outlined rule that fills left to right in red as the player fires. */
+  private drawInkwell(run: RunState, width: number, narrow: boolean): void {
+    const w = narrow ? 88 : 120; const h = narrow ? 5 : 6; const y = PAD + 74; const x = width - PAD - w;
+    this.drawBar(this.g, x, y, w, h, Phaser.Math.Clamp(run.inkwell, 0, 1), PALETTE.red);
+    this.inkLabel.setPosition(x - 8, y + h / 2);
+    if (this.lastInkwell < 1 && run.inkwell >= 1 && !this.inkNoteShown) { this.inkNoteShown = true; this.inkNoteUntil = this.time.now + 2000; }
+    this.lastInkwell = run.inkwell;
+    const left = this.inkNoteUntil - this.time.now;
+    // On narrow screens the boss bar (y 96-108) and its nameplate (to ~y 144) own the band under the rule, so the note drops below them.
+    const noteY = narrow ? 150 : y + h + 6;
+    if (left > 0) this.inkNote.setPosition(width - PAD, noteY).setAlpha((2000 - left) < 200 ? (2000 - left) / 200 : left < 500 ? left / 500 : 1).setVisible(true);
+    else if (this.inkNote.visible) this.inkNote.setVisible(false);
   }
 
   /** `ghost` > `frac` draws the span between them in yellow (HP just lost). */

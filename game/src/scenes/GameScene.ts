@@ -281,6 +281,7 @@ export class GameScene extends Phaser.Scene {
     s.maxHp = this.run.stats.maxHp;
     s.score = this.run.score;
     s.enemiesAlive = this.spawns.activeCount;
+    s.inkwell = this.run.inkwell;
     s.cropDamageTaken = this.crop.totalDamage;
     s.streakFireBonus = streakFireBonus(this.run.streak);
   }
@@ -342,6 +343,7 @@ export class GameScene extends Phaser.Scene {
       const g = this.music.masterGain;
       return g >= MUSIC_VOLUME - 1e-6 && g <= MUSIC_VOLUME * 1.6 + 1e-6 ? null : `music swell gain ${g}`;
     });
+    hook.addInvariant('inkwell', () => (this.run.inkwell >= -1e-9 && this.run.inkwell <= 1 + 1e-9 ? null : `inkwell ${this.run.inkwell}`));
     hook.addInvariant('streak', () => (this.run.streak >= 0 && this.run.bestStreak >= this.run.streak ? null : `streak ${this.run.streak} / best ${this.run.bestStreak}`));
     hook.addInvariant('score', () => (Number.isFinite(this.run.score) && this.run.score >= 0 ? null : `score ${this.run.score}`));
     hook.addInvariant('crop-damage', () => Number.isFinite(this.crop.totalDamage) && this.crop.totalDamage >= 0 ? null : `crop damage ${this.crop.totalDamage}`);
@@ -369,4 +371,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'score', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'inkwell', 'streak', 'score', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse'];
