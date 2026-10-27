@@ -1,7 +1,7 @@
 ---
 id: T0040
 title: Screen shake on heavy deaths
-assignee: desktop
+assignee: desktop-4070
 size: M
 priority: 2
 status: todo
