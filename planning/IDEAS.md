@@ -132,6 +132,7 @@ The PO adds ideas here. Good ones become tasks.
 - Prestissimo: the first time your kill streak reaches 10 in a run, your next level-up deals 4 cards instead of 3, with a "PRESTISSIMO" flash
 - ~~Impasto upgrade: +1 projectile per volley and +15% damage per level, maxLevel 2, weight 3 — a rare heavy-volley card that reuses the Repetition and Emphasis stats~~ → T0062
 - ~~Vivace upgrade: +1 projectile per volley and +10% projectile speed per level, maxLevel 2, weight 3 — a rare fast-swarm card that reuses the Repetition and Draft stats~~ → T0067
+- ~~Arpeggio upgrade: +1 projectile per volley and +5% crit chance per level, maxLevel 2, weight 3 — the crit-swarm card, fourth member of the +1-projectile family (Trill, Vivace, Impasto), reusing the Repetition and Contrast stats~~ → T0069
 - ~~Unit tests for the crop schedule: the safe area is 1.0 before 12:00, shrinks to 0.7 by 17:00, and never goes below 0.7 (locks T0045's pure schedule)~~ → T0063
 - ~~Unit tests for the elite spawn schedule: first elite at 0:45, then exactly one every 45 s, none in between (locks T0005's elite pacing)~~ → T0066
 - ~~Unit tests for upgrade removal (the Eraser): the most recently picked upgrade level is removed, the first-picked survives, no-op on an empty run (locks T0047's contact rule)~~ → T0068
