@@ -39,8 +39,10 @@ export class PickupSystem {
     const s = this.shards.get(x, y) as Shard | null;
     if (!s) {
       const xp = shardXp(value, gilt); // pool full: award it directly instead of losing it
+      const first = this.run.firstShardPickup();
       this.collect(xp);
-      this.sfx.pickup(gilt);
+      if (first) this.fx.firstLightRing(x, y);
+      this.sfx.pickup(gilt, first);
       if (gilt) this.giltPop.show(x, y, Math.round(xp * this.run.stats.xpMul));
       return;
     }
@@ -59,9 +61,11 @@ export class PickupSystem {
       const dist = Math.hypot(dx, dy);
       if (dist < COLLECT_DISTANCE) {
         const xp = shardXp(s.value, s.gilt);
+        const first = this.run.firstShardPickup();
         this.collect(xp);
         this.fx.pickup(s.x, s.y);
-        this.sfx.pickup(s.gilt);
+        if (first) this.fx.firstLightRing(s.x, s.y);
+        this.sfx.pickup(s.gilt, first);
         if (s.gilt) this.giltPop.show(s.x, s.y, Math.round(xp * this.run.stats.xpMul));
         s.despawn();
         continue;

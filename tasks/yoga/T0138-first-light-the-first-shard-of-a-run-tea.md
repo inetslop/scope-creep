@@ -4,11 +4,12 @@ title: First light — the first shard of a run teaches the economy
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T19:37:42Z
 claimed_at: 2026-10-27T20:22:23Z
+finished_at: 2026-10-27T20:38:47Z
 ---
 
 ## Goal
@@ -64,3 +65,19 @@ firstLightRing(x: number, y: number): void;
 
 ### Tests
 - `tests/core/core.test.ts`: the once-per-run test from step 5.
+
+## Result (attempt 1, yoga)
+
+First light is in: the run's first shard pickup (any shard, gilt or not) now pops a small flat ink ring at the pickup point (8→24 u over 300 ms, new `firstLightRings` emitter in FxSystem) and plays the pluck one octave higher (new `firstLight` param on `Sfx.pickup`, which replaces the gilt +1 semitone when both apply — the yellow "+N" pop still prints). The per-run flag `firstShardPickup()` lives in `RunState` beside `firstSighting`, fires on both real pickup sites in `PickupSystem` (collect + pool-full drop), and resets every run. All other pickups are byte-for-byte as before: plain pluck for normal shards, +1 semitone for gilt. `npm run check` and `npm run smoke` (desktop + mobile) pass.
+
+- Self-review: APPROVE
+- Time: 16.4 min
+
+```
+game/src/audio/Sfx.ts            |  7 ++++---
+ game/src/core/run.ts             |  9 +++++++++
+ game/src/systems/FxSystem.ts     | 15 ++++++++++++++-
+ game/src/systems/PickupSystem.ts |  8 ++++++--
+ game/tests/core/core.test.ts     |  7 +++++++
+ 5 files changed, 40 insertions(+), 6 deletions(-)
+```

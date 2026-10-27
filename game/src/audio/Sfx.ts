@@ -155,8 +155,8 @@ export class Sfx {
     this.noise(0.1, 0.18, 900, 'lowpass');
   }
 
-  /** Short pluck; rises a semitone per shard collected in quick succession. A gilt shard lands one more semitone higher. */
-  pickup(gilt = false): void {
+  /** Short pluck; rises a semitone per shard collected in quick succession. A gilt shard lands one more semitone higher; the run's first shard (first light) lands one octave higher, replacing the gilt lift. */
+  pickup(gilt = false, firstLight = false): void {
     if (!this.canPlay()) return;
     const now = performance.now();
     // The combo advances on every call, even when the sound is throttled.
@@ -164,7 +164,8 @@ export class Sfx {
     this.lastPickupCallAt = now;
     if (now - this.lastPickupAt < THROTTLE_MS) return;
     this.lastPickupAt = now;
-    const hz = 523.25 * 2 ** ((this.comboStep + (gilt ? 1 : 0)) / 12);
+    const lift = firstLight ? 12 : gilt ? 1 : 0;
+    const hz = 523.25 * 2 ** ((this.comboStep + lift) / 12);
     this.tone('triangle', hz, hz, 0.12, 0.16);
   }
 

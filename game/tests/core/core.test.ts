@@ -123,6 +123,13 @@ describe('RunState', () => {
     expect(run.firstBossSighting('grid')).toBe(true);
   });
 
+  it('reports the first shard pickup exactly once per run', () => {
+    const run = new RunState(1);
+    expect(run.firstShardPickup()).toBe(true);
+    expect(run.firstShardPickup()).toBe(false);
+    expect(new RunState(2).firstShardPickup()).toBe(true);
+  });
+
   it('tracks kill streak and best streak, reset by damage', () => {
     const run = new RunState(1);
     run.registerKill();

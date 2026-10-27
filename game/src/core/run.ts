@@ -164,6 +164,15 @@ export class RunState {
     return true;
   }
 
+  private firstShardPickedUp = false;
+
+  /** True exactly once per run: the first shard picked up (first light). */
+  firstShardPickup(): boolean {
+    if (this.firstShardPickedUp) return false;
+    this.firstShardPickedUp = true;
+    return true;
+  }
+
   /** Applies an upgrade: stat mods, granted weapon, and heals by any max HP gained. */
   applyUpgrade(def: UpgradeDef): void {
     const prevMax = this.stats.maxHp;
