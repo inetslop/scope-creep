@@ -4,10 +4,11 @@ title: Add the Pedal upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T02:15:10Z
+claimed_at: 2026-10-27T02:31:10Z
 ---
 
 ## Goal
