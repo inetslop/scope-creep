@@ -417,6 +417,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     ],
     color: PALETTE.orange,
   },
+  {
+    id: 'tenuto',
+    name: 'Tenuto',
+    description: '+1 armor, +10% damage',
+    maxLevel: 3,
+    weight: 4,
+    mods: [
+      { stat: 'armor', op: 'add', value: 1 },
+      { stat: 'damageMul', op: 'mul', value: 1.10 },
+    ],
+    color: PALETTE.yellow,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));

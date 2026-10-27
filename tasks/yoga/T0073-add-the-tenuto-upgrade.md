@@ -4,11 +4,12 @@ title: Add the Tenuto upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T04:08:50Z
 claimed_at: 2026-10-27T04:24:29Z
+finished_at: 2026-10-27T04:32:15Z
 ---
 
 ## Goal
@@ -85,3 +86,16 @@ None. No new types: `tenuto` uses only existing `UpgradeDef` fields and existing
 
 ### Tests
 - `tests/core/upgrades.test.ts`: the tenuto test above (exact 2 mods, offered 3× then stops).
+
+## Result (attempt 1, yoga)
+
+Added the Tenuto upgrade — the first card pairing the defensive axis with the offensive axis — as a new `UpgradeDef` appended at the end of `UPGRADES` in `src/content/upgrades/index.ts`: yellow (`PALETTE.yellow`, same as Plate/Pedal), max level 3, weight 4, description "+1 armor, +10% damage", with an armor mod copied from `plate` (+1 add) and a damage mod copied from `pressure` (×1.10 mul), so 3 levels yields +3 armor and ≈×1.33 damage. Added the matching "tenuto offers 3 levels, then stops" test in `tests/core/upgrades.test.ts` asserting the exact two mods (armor first, damageMul second) and max-level cutoff. `npm run check` (typecheck + lint + 228 tests) and `npm run smoke` (desktop + phone) both pass; the card renders automatically from the registry with no scene, stats, or type changes.
+
+- Self-review: APPROVE
+- Time: 7.8 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
