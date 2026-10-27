@@ -4,10 +4,11 @@ title: Boss sting — the moment a boss spawns
 assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T02:15:10Z
+claimed_at: 2026-10-27T02:46:33Z
 ---
 
 ## Goal
