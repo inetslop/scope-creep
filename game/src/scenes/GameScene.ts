@@ -16,6 +16,7 @@ import { Controls } from '../input/Controls';
 import { ArcSystem } from '../systems/ArcSystem';
 import { BossSystem } from '../systems/BossSystem';
 import { CombatSystem } from '../systems/CombatSystem';
+import { CropSystem } from '../systems/CropSystem';
 import { DamageNumbers } from '../systems/DamageNumbers';
 import { Marginalia } from '../systems/Marginalia';
 import { FxSystem } from '../systems/FxSystem';
@@ -52,6 +53,7 @@ export class GameScene extends Phaser.Scene {
   private music!: Music;
   private weapons!: WeaponSystem;
   private combat!: CombatSystem;
+  private crop!: CropSystem;
   private boss!: BossSystem;
   private orbit!: OrbitSystem;
   private arc!: ArcSystem;
@@ -83,6 +85,7 @@ export class GameScene extends Phaser.Scene {
     this.player = new Player(this, 0, 0);
     this.fx = new FxSystem(this);
     this.damageNumbers = new DamageNumbers(this);
+    this.crop = new CropSystem(this, this.run, this.player, this.damageNumbers);
     this.marginalia = new Marginalia(this, this.bounds);
     this.sfx = new Sfx(this);
     this.understudy = new UnderstudySystem(this, this.player, this.fx, this.sfx);
@@ -134,6 +137,7 @@ export class GameScene extends Phaser.Scene {
     this.boss.update(dt);
     this.marginalia.update(dt);
     this.pickups.update(dt);
+    this.crop.update(dt);
     this.understudy.update(dt);
     this.stillLife.update(dt);
     if (run.stats.regenPerSec > 0) run.heal(run.stats.regenPerSec * dt);
@@ -277,6 +281,7 @@ export class GameScene extends Phaser.Scene {
     s.maxHp = this.run.stats.maxHp;
     s.enemiesAlive = this.spawns.activeCount;
     s.stillLifeActive = this.stillLife.active;
+    s.cropDamageTaken = this.crop.totalDamage;
   }
 
   /** Checks the smoke test runs every few seconds. Add one for every new system. */
@@ -334,7 +339,8 @@ export class GameScene extends Phaser.Scene {
       const frac = this.stillLife.cooldownFrac;
       return frac < -1e-6 || frac > 1 + 1e-6 ? `still-life cooldownFrac ${frac}` : null;
     });
+    hook.addInvariant('crop-damage', () => Number.isFinite(this.crop.totalDamage) && this.crop.totalDamage >= 0 ? null : `crop damage ${this.crop.totalDamage}`);
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels', 'boss-state', 'streak', 'decoy', 'still-life'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels', 'boss-state', 'streak', 'decoy', 'still-life', 'crop-damage'];

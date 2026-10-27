@@ -73,6 +73,15 @@ export class RunState {
     return dealt;
   }
 
+  /** Continuous drain (the crop burn): no armor, no min-1, no invulnerability. Returns the damage actually taken. */
+  drain(amount: number): number {
+    if (amount <= 0 || this.isDead) return 0;
+    const dealt = Math.min(amount, this.hp);
+    this.hp -= dealt;
+    if (dealt > 0) this.streak = 0;
+    return dealt;
+  }
+
   heal(amount: number): void {
     if (this.isDead) return;
     this.hp = Math.min(this.stats.maxHp, this.hp + Math.max(0, amount));

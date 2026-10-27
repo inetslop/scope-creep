@@ -83,6 +83,18 @@ describe('RunState', () => {
     expect(run.hp).toBe(hp - 1);
   });
 
+  it('drain ignores armor, can kill, and does nothing at 0 HP', () => {
+    const run = new RunState(1);
+    run.applyUpgrade(UPGRADE_BY_ID.get('mass')!);
+    const hp = run.hp;
+    expect(run.drain(0.5)).toBe(0.5);
+    expect(run.hp).toBeCloseTo(hp - 0.5);
+    expect(run.drain(9999)).toBe(hp - 0.5);
+    expect(run.hp).toBe(0);
+    expect(run.isDead).toBe(true);
+    expect(run.drain(1)).toBe(0);
+  });
+
   it('max HP upgrades heal by the amount gained', () => {
     const run = new RunState(1);
     run.takeDamage(50);

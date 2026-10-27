@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { BOSS_BY_ID } from '../content/bosses';
 import { cssColor, PALETTE } from '../content/palette';
+import { CROP } from '../core/crop';
 import { formatTime } from '../core/progression';
 import type { RunState } from '../core/run';
 import { flags } from '../debug/flags';
@@ -22,6 +23,7 @@ export class HudScene extends Phaser.Scene {
   private killText!: Phaser.GameObjects.Text;
   private streakText!: Phaser.GameObjects.Text;
   private rhythmText!: Phaser.GameObjects.Text;
+  private cropText!: Phaser.GameObjects.Text;
   private fpsText?: Phaser.GameObjects.Text;
   private pauseButton!: Phaser.GameObjects.Container;
   /** Boss health bar: its own Graphics, so the 0.5 s death fade can lower alpha without clearing the main HUD. */
@@ -45,6 +47,8 @@ export class HudScene extends Phaser.Scene {
   private lastStreak = 0;
   private flashUntil = 0;
   private rhythmUntil = 0;
+  private cropUntil = 0;
+  private cropFlashed = false;
   private flashRed = false;
 
   constructor() {
@@ -59,6 +63,7 @@ export class HudScene extends Phaser.Scene {
     this.killText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5);
     this.streakText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5).setVisible(false);
     this.rhythmText = this.add.text(0, 0, 'RHYTHM', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
+    this.cropText = this.add.text(0, 0, 'CROPPING', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
     this.pauseButton = makeButton(this, 0, 0, 'II', () => this.scene.get(SCENES.game).events.emit(GAME_EVENTS.pauseRequest), { width: 44, height: 44, fontSize: 18 });
     if (flags.debug) this.fpsText = this.add.text(PAD, 0, '', textStyle(12, PALETTE.green));
     this.bossG = this.add.graphics();
@@ -81,6 +86,8 @@ export class HudScene extends Phaser.Scene {
     this.lastStreak = 0;
     this.flashUntil = 0;
     this.rhythmUntil = 0;
+    this.cropUntil = 0;
+    this.cropFlashed = false;
     this.flashRed = false;
     const gameEvents = this.scene.get(SCENES.game).events;
     const onPlayerHit = (): void => {
@@ -142,6 +149,15 @@ export class HudScene extends Phaser.Scene {
     this.drawUnderstudy(height);
     this.drawStillLife(height);
     this.updateStreak(run, width);
+    if (!this.cropFlashed && run.timeSec >= CROP.startSec) {
+      this.cropFlashed = true;
+      this.cropUntil = this.time.now + 800;
+      this.tweens.killTweensOf(this.cropText);
+      this.cropText.setScale(1).setAlpha(1);
+      this.tweens.add({ targets: this.cropText, alpha: 0.35, scale: 1.2, duration: 200, yoyo: true, repeat: 1, ease: 'Sine.easeInOut' });
+    }
+    this.cropText.setPosition(width - PAD - this.streakText.width - 8, PAD + 60); // same slot as RHYTHM
+    this.cropText.setVisible(this.time.now < this.cropUntil);
     this.fpsText?.setPosition(PAD, height - 24).setText(`${Math.round(this.game.loop.actualFps)} fps`);
 
     const controls = getControls(this);

@@ -4,11 +4,12 @@ title: "Crop marks — the arena shrinks after 12:00"
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-26T23:09:26Z
 claimed_at: 2026-10-27T01:47:27Z
+finished_at: 2026-10-27T01:56:14Z
 ---
 
 ## Goal
@@ -147,3 +148,23 @@ this.cropText.setVisible(this.time.now < this.cropUntil);
 
 ### Tests
 - `tests/core/crop.test.ts` (new, step 2) and the `drain()` test in `tests/core/core.test.ts` (step 3).
+
+## Result (attempt 1, desktop)
+
+Added the late-run crop mechanic: `src/core/crop.ts` (pure shrink schedule 1.0→0.7 from 12:00 to 17:00) and `src/systems/CropSystem.ts` (darker-paper margin, ink crop marks tracking the safe-rect corners, 5 HP/s continuous burn via a new `RunState.drain()` that skips armor/invuln, red damage number every 0.5 s), plus a "CROPPING" HUD flash in `HudScene`, `cropDamageTaken` in the debug hook, a `crop-damage` invariant, and unit tests for the schedule and `drain()`. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 8.8 min
+
+```
+game/src/core/crop.ts             | 15 +++++++++
+ game/src/core/run.ts              |  9 ++++++
+ game/src/debug/testHook.ts        |  2 ++
+ game/src/scenes/GameScene.ts      |  8 ++++-
+ game/src/scenes/HudScene.ts       | 16 ++++++++++
+ game/src/systems/CropSystem.ts    | 66 +++++++++++++++++++++++++++++++++++++++
+ game/src/systems/DamageNumbers.ts | 12 +++----
+ game/tests/core/core.test.ts      | 12 +++++++
+ game/tests/core/crop.test.ts      | 25 +++++++++++++++
+ 9 files changed, 158 insertions(+), 7 deletions(-)
+```
