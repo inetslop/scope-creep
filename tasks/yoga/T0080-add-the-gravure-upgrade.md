@@ -4,10 +4,11 @@ title: Add the Gravure upgrade
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0079]
-attempts: 0
+attempts: 1
 created: 2026-10-27T05:46:39Z
+claimed_at: 2026-10-27T05:57:06Z
 ---
 
 ## Goal
