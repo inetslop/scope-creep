@@ -4,11 +4,12 @@ title: Add the Marcato upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0077]
 attempts: 1
 created: 2026-10-27T05:18:34Z
 claimed_at: 2026-10-27T05:38:59Z
+finished_at: 2026-10-27T05:46:08Z
 ---
 
 ## Goal
@@ -88,3 +89,16 @@ Exact test (same shape as the `tenuto` test at tests/core/upgrades.test.ts:238):
 
 ### Tests
 - `tests/core/upgrades.test.ts`: the marcato test above.
+
+## Result (attempt 1, yoga)
+
+Added the Marcato upgrade — the 43rd level-up card pairing crit chance with projectile speed — as a new `UpgradeDef` appended at the end of `UPGRADES` in `src/content/upgrades/index.ts` (after Stretto, which was last), with `+5% crit chance, +10% projectile speed` per level, maxLevel 3, weight 4, and the crit-card red from `PALETTE.red`. Added the matching `marcato offers 3 levels, then stops` unit test after the last `it` block in `tests/core/upgrades.test.ts`, asserting the exact two mods in order and the level cap. `npm run check` (241 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 7.2 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 16 ++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```

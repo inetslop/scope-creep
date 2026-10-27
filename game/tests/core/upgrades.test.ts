@@ -298,4 +298,20 @@ describe('rollUpgradeChoices', () => {
     expect(run.upgradeLevel('stretto')).toBe(3);
     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
   });
+
+  it('marcato offers 3 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('marcato')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'critChance', op: 'add', value: 0.05 },
+      { stat: 'projectileSpeedMul', op: 'mul', value: 1.10 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('marcato')).toBe(3);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
 });
