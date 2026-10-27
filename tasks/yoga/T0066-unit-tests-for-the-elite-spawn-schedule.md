@@ -4,11 +4,12 @@ title: Unit tests for the elite spawn schedule
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T03:07:33Z
 claimed_at: 2026-10-27T03:21:30Z
+finished_at: 2026-10-27T03:29:46Z
 ---
 
 ## Goal
@@ -91,3 +92,15 @@ describe('elite spawn schedule', () => {
 ### Tests
 - The new file itself is the unit test (pure logic in `src/core`, no source changes needed).
 DEPENDED: none
+
+## Result (attempt 1, yoga)
+
+Added `tests/content/director.test.ts`, which drives `SpawnDirector` one whole second at a time from t=0 with a fixed-seed `Rng` and records the seconds that yield an elite, locking the T0005 pacing: no elite before 45 s, the first elite at exactly 45 s, exactly one elite every 45 s (45/90/135/180 s), nothing between the marks (checked both by exact-list assertions and a `t % ELITE.intervalSec === 0` guard), and identical elite timing for identical seeds. No game source file was modified; `npm run check` (typecheck, lint, full suite) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 8.3 min
+
+```
+game/tests/content/director.test.ts | 39 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
+```
