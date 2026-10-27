@@ -101,3 +101,5 @@ the PO reads this instead of the code.
 - T0105 Add the Underexposure upgrade (desktop, 2026-10-27): Added the Underexposure level-up card (maxLevel 2, weight 3, ink) with a new pure rule in src/core/underexposure.ts and a `woundThreshold` stat (0 off, clamped 0–0.75): hits on enemies, elites, or bosses below 50% (L1) /
 - T0055 Add the Counterpoint weapon (desktop-4070, 2026-10-27): Diff is clean — the Counterpoint feature is complete.
 - T0103 Add the Hare enemy — it quickens as it weakens (desktop-4070, 2026-10-27): Added the Hare enemy — a small green circle (radius 12, PALETTE.green) that unlocks at 1:40, deals 8 contact damage, and drops 2 XP.
+- T0102 Level-up pulse — your circle pops when you pick (yoga, 2026-10-27): T0102 — picking a level-up card now makes your blue circle pop.
+- T0106 Kill feed — points pop above the corpse (desktop-4070, 2026-10-27): Added the kill feed (T0106): a new `src/systems/ScoreFeed.ts` pools 32 ink texts in a round-robin ring; each kill pops "+1" / "+5" / "+50" (read straight from `SCORE_POINTS`) rising ~24 units and fading over ~0.6 s above

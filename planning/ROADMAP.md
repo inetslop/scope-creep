@@ -27,7 +27,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Platemark: the moment you take a hit, a small red × prints on the paper at your position and fades over 2 s (T0094) ✅
 - The Underdrawing: after 8:00, ~1.5 s before a normal enemy spawns, a faint grey pencil outline of its shape is sketched at the spawn point and fades as it lands — the late-run swarm stays legible (T0100, in queue, asus)
 - Streak break: the moment your kill streak resets (it was ≥1), the streak tally shatters — 4–6 flat ink specks scatter for 20–40 u and fade over 400 ms, plus one throttled low blip — you see and hear the Crescendo bonus go (T0101) ✅
-- Level-up pulse: the moment a level-up card is picked, your circle swells 25% larger for 300 ms — the level-up is felt in your own shape (T0102, in progress, yoga)
+- Level-up pulse: the moment a level-up card is picked, your circle swells 25% larger for 300 ms — the level-up is felt in your own shape (T0102) ✅
 - Gutter slap: the moment a gutter band enters the page, a soft paper slap plays — a short filtered noise, no new tone (T0109, in queue, yoga)
 - Platen dust: the Platen's slam (T0091) kicks up three small paper-dust puffs at the impact point (T0110, in queue, yoga)
 - Hare kick: the moment the Hare quickens to a new speed step, a small ink puff pops behind it — the quicken is visible, not just felt (T0113, in queue, yoga)
@@ -46,7 +46,7 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 ## M3 — Bosses (started)
 - The Frame at 5:00: health bar, charge + wedge ring + radial dart burst, +50% HP per respawn (T0006) ✅
 - The Grid — second boss: a 400 HP rotating compass that sweeps two 200×12 ink arms (0.5 s red telegraph, 12 dmg) across the arena; boss content file + pure `gridSweep` timing module (unit-tested), reusing The Frame's boss infrastructure and +50% HP-per-respawn scaling (T0044) ✅
-- The Palette — third boss: five color swatches (red, orange, yellow, green, blue) fall down the page one at a time, 90 HP each, 6.0 s to fall, ≥120 units apart; each swatch you dodge paints a 2 u ring stripe on the player; rotation becomes Frame → Grid → Palette (T0097, in queue, asus)
+- The Palette — third boss: five color swatches (red, orange, yellow, green, blue) fall down the page one at a time, 90 HP each, 6.0 s to fall, ≥120 units apart; each swatch you dodge paints a 2 u ring stripe on the player; rotation becomes Frame → Grid → Palette (T0097, in progress, asus)
 - Boss sting: a deep low hit + music swell on any boss spawn (T0058) ✅
 - Boss nameplate intro: the first time each boss spawns, its name (from the boss content def, so The Palette gets it for free) is printed in small caps centered below the boss bar, fading over 2 s and freezing under overlays (T0064) ✅
 - Boss warning: 5 s before any boss spawn (Frame or Grid, including respawns) the arena boundary pulses red, "SOMETHING HEAVY APPROACHES" flashes in the HUD, and a low thud plays (T0070) ✅
@@ -55,8 +55,9 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 
 ## M4 — Meta-progression
 - Score: kills earn points (normal 1, elite 5, boss 50); HUD shows the running score, game over shows score + persisted best (T0054) ✅
-- Kill feed: each kill pops a small ink "+1" / "+5" / "+50" above the corpse, matching the score values — "+1" small, "+5" larger and bolder, "+50" largest with a small ink ring at the boss corpse; pooled (~32 texts), ~0.6 s rise-and-fade like the damage numbers (T0106, in queue, desktop-4070)
+- Kill feed: each kill pops a small ink "+1" / "+5" / "+50" above the corpse, matching the score values — "+1" small, "+5" larger and bolder, "+50" largest with a small ink ring at the boss corpse; pooled (~32 texts), ~0.6 s rise-and-fade like the damage numbers (T0106) ✅
 - Warm Start: after any run of 8:00+, the next run starts with 1 random upgrade level already applied — the first concrete step of the studio meta-progression (T0114, in queue, desktop-4070)
+- Proof press: after any run of 10:00+ the menu lists a second pre-run pick — a starting weapon (Point, Line or Orbit) for the next run, applied at run start through the normal pick path so it shows in The Index (next, after Warm Start lands; see IDEAS)
 - Persistent currency between runs, a studio to unlock starting options
 - Settings: volume, screen shake, auto-fire
 
