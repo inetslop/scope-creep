@@ -149,3 +149,9 @@ The PO adds ideas here. Good ones become tasks.
 - Level-up pulse: the moment a card is picked, your circle swells 25% larger for 300 ms — the level-up is felt in your own shape
 - The Pause: after 8 s without firing, your next volley is a heavy double-sized point (2× damage, 2× knockback) with a small "PAUSE" flash — a risk-and-reward hold that rewards timing your fire
 - Blue pencil: the Eraser only spawns while you have 2 or more total upgrade levels — it always has something worth erasing (tuning, follow-up to T0047)
+- ~~Vellum upgrade: +1 armor and +15% shard XP per level, maxLevel 3 — the tank-collector card pairing the Plate and Composition stats~~ → T0076
+- ~~Unit tests for the Still Life bubble: 5 s duration, 12 s cooldown, restart rejected during the cooldown, fresh run can start immediately (locks T0050's timing)~~ → T0075
+- Rejection stamp: the game-over screen gets a big red ink stamp — "ERASED" for runs under 8:00, "FRAMED" at 8:00+, "PUBLISHED" at 15:00+ — the run's verdict in one word (pairs with the score, T0054)
+- Coda: after 25:00 the page loses its color — every shape is drawn in flat ink on grey paper, the composition's final act (pure art; shape still carries meaning, color retires)
+- Margin notes: the pause screen gets a dry one-line annotation about your current build, computed from your top two stats ("HEAVY AND SLOW — A SLAB WITH LEGS")
+- Ink cost: every upgrade you pick leaves a small ink blot in the bottom margin; when the row of 10 blots is full, the paper flips to the next palette variant (ties the palette-drift idea to player choices)
