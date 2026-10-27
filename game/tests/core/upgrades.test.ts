@@ -362,4 +362,25 @@ describe('rollUpgradeChoices', () => {
     expect(run.upgradeLevel('incision')).toBe(2);
     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
   });
+
+  it('riff offers 2 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('riff')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'extraProjectiles', op: 'add', value: 1 },
+      { stat: 'extraPierce', op: 'add', value: 1 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('riff')).toBe(2);
+    expect(run.stats.extraProjectiles).toBe(2);
+    expect(run.stats.extraPierce).toBe(2);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+    const plain = new RunState(1);
+    expect(plain.stats.extraProjectiles).toBe(0);
+    expect(plain.stats.extraPierce).toBe(0);
+  });
 });

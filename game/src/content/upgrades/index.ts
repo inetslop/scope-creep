@@ -513,6 +513,18 @@ export const UPGRADES: readonly UpgradeDef[] = [
     ],
     color: PALETTE.ink,
   },
+  {
+    id: 'riff',
+    name: 'Riff',
+    description: '+1 projectile per volley, +1 pierce',
+    maxLevel: 2,
+    weight: 3,
+    mods: [
+      { stat: 'extraProjectiles', op: 'add', value: 1 },
+      { stat: 'extraPierce', op: 'add', value: 1 },
+    ],
+    color: PALETTE.green,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));

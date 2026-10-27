@@ -4,11 +4,12 @@ title: Add the Riff upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T06:43:50Z
 claimed_at: 2026-10-27T07:02:23Z
+finished_at: 2026-10-27T07:10:50Z
 ---
 
 ## Goal
@@ -80,3 +81,16 @@ No types change; `riff` is a plain `UpgradeDef` (both mod stats already exist in
 - Mod order in the entry is `extraProjectiles` then `extraPierce` — the test's `toEqual` is order-sensitive; keep both in the same order.
 - No `requires`/`requiresWeapon`/`grantsWeapon` on `riff`; it is a pure mod card. No scene, system, or art change: `LevelUpScene` renders `def.color`/`name`/`description` generically, and `WeaponSystem` already reads both stats (stacking with Trill/Vivace/Impasto/Arpeggio and Vector/Ostinato/Pizzicato/Gravure/Incision is automatic — `computeStats` sums all add-mods; maxed-out exclusion comes from the generic `maxLevel` check in `isUpgradeAvailable`).
 - `PALETTE.green` already exists (`src/content/palette.ts`); do not add a palette entry. `tests/content.test.ts` validates the new entry automatically (kebab-case id, weight > 0, stats in `BASE_STATS`).
+
+## Result (attempt 1, yoga)
+
+Added the Riff level-up card to Scope Creep: a new `riff` UpgradeDef at the end of `UPGRADES` in `src/content/upgrades/index.ts` (green, weight 3, maxLevel 2, `extraProjectiles` +1 and `extraPierce` +1 per level), plus a unit test in `tests/core/upgrades.test.ts` verifying it offers 2 levels, grants +2 projectiles per volley and +2 pierce at max, stops offering after that, and that a fresh run has neither. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 8.5 min
+
+```
+game/src/content/upgrades/index.ts | 12 ++++++++++++
+ game/tests/core/upgrades.test.ts   | 21 +++++++++++++++++++++
+ 2 files changed, 33 insertions(+)
+```
