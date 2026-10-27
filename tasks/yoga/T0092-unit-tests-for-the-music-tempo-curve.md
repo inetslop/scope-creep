@@ -4,12 +4,13 @@ title: Unit tests for the music tempo curve
 assignee: yoga
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-27T08:45:39Z
 claimed_at: 2026-10-27T08:45:56Z
-designer: yoga
+finished_at: 2026-10-27T08:52:00Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -31,3 +32,7 @@ Lock the generative score's tempo curve in unit tests, so later music work (the 
 - [ ] `tests/core/music.test.ts` exists and pins 80 BPM at 0:00, a non-decreasing ramp, 120 BPM at 10:00, and exactly 120 BPM at 15:00.
 - [ ] The second-voice threshold is asserted off below 100 BPM and on at 100 BPM or above.
 - [ ] All tests pass in the automated gate.
+
+## Rejected by architect (yoga)
+
+tests/core/music.test.ts already exists (added in T0011, green on main) and pins 80 BPM at 0:00, the non-decreasing ramp, 120 BPM at 10:00, and both sides of the 100 BPM threshold (299 s / 300 s); the only gap is the t = 900 s (15:00) pin, so close T0092 or shrink it to a one-line edit adding that assertion.
