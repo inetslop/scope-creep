@@ -41,6 +41,17 @@
       "maxTaskSize": "M",
       "targetQueue": 2,
       "notes": "Heavily quantized (IQ3_XXS): expect more mistakes. Partly offloaded to CPU, so slow. Give it medium features: new mechanics, scenes, UI, juice, audio."
+    },
+    "cachyos-x8664": {
+      "paused": true,
+      "label": "Ryzen 9 7900X3D + RTX 4070 Ti (12 GB)",
+      "model": "Qwen 3.8 27B UD-IQ2_S",
+      "roles": ["dev", "architect"],
+      "architectMode": "always",
+      "tier": "fast",
+      "maxTaskSize": "M",
+      "targetQueue": 2,
+      "notes": "Heavily quantized (IQ2_S): expect more mistakes. Give it medium features: new mechanics, scenes, UI, juice, audio."
     }
   },
   "sizes": {
