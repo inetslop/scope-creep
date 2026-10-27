@@ -13,7 +13,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Hardware } from './lib/fleet.ts';
-import { CONTEXT_CHOICES, formatGpuPlan, gpuPlan, gpuSplit, kvElementsPerToken, modelBytes, readGguf, readGgufMetadata, type CacheType } from './lib/gguf.ts';
+import { CONTEXT_CHOICES, formatGpuPlan, gpuPlan, gpuSplit, kvElementsPerToken, modelBytes, readGguf, readGgufMetadata, type CacheType } from '../loop/gguf.ts';
 import { detectHardware } from './lib/hardware.ts';
 import { defaultChoice, downloadModel, FIT_LABEL, fitOf, gb, listRepoFiles, modelChoices } from './lib/hf.ts';
 import { ask, askValid, choose, closePrompts, flag, note, ok, problem, progress, step, yesNo } from './lib/prompt.ts';

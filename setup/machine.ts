@@ -16,7 +16,7 @@ import type { MachineConfig, Role } from '../loop/config.ts';
 import { REPO } from '../loop/paths.ts';
 import { TASK_SIZES, type TaskSize } from '../loop/tasks.ts';
 import { addMachine, hardwareLabel, parseModelFile, setPaused, sizeForTier, suggestCapabilities, suggestMachineId, suggestNotes, validateMachineId, type Hardware } from './lib/fleet.ts';
-import { modelBytes } from './lib/gguf.ts';
+import { modelBytes } from '../loop/gguf.ts';
 import { detectHardware } from './lib/hardware.ts';
 import { ask, askValid, closePrompts, flag, note, ok, step, yesNo } from './lib/prompt.ts';
 import { readFleet, updateFleetAndPush } from './lib/publish.ts';

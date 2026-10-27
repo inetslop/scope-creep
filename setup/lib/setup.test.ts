@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
 import { REPO } from '../../loop/paths.ts';
 import { parseEnv, updateEnvText } from '../docker/env.ts';
 import { addMachine, formatFleetJson, hardwareLabel, parseModelFile, setPaused, sizeForTier, suggestCapabilities, suggestMachineId, suggestNotes, validateMachineId, type FleetFile, type Hardware } from './fleet.ts';
-import { formatGpuPlan, gpuPlan, gpuSplit, GPU_OVERHEAD_MIB, kvElementsPerToken, parseGguf, parseGgufMetadata } from './gguf.ts';
+import { formatGpuPlan, gpuPlan, gpuSplit, GPU_OVERHEAD_MIB, kvElementsPerToken, parseGguf, parseGgufMetadata, readGguf } from '../../loop/gguf.ts';
 import { parseNvidiaSmi, parseVramOther } from './hardware.ts';
 import { defaultChoice, fitOf, modelChoices, type HfFile } from './hf.ts';
 
@@ -202,6 +203,29 @@ describe('GPU placement plan', () => {
       { name: 'blk.0.ffn_up.weight', bytes: 96 },
       { name: 'output.weight', bytes: 40 },
     ]);
+  });
+
+  it('reads the tensors of every part of a split model, the metadata from the first', () => {
+    const str = (s: string): Buffer => Buffer.concat([u64(Buffer.byteLength(s)), Buffer.from(s)]);
+    const part = (kv: Buffer[], names: string[]): Buffer => {
+      const infos = names.map((n, i) => Buffer.concat([str(n), u32(1), u64(4), u32(0), u64(i * 64)]));
+      const head = Buffer.concat([Buffer.from('GGUF'), u32(3), u64(names.length), u64(kv.length), ...kv, ...infos]);
+      return Buffer.concat([head, Buffer.alloc(Math.ceil(head.length / 32) * 32 - head.length + names.length * 64)]);
+    };
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'gguf-'));
+    try {
+      fs.writeFileSync(path.join(dir, 'm-00001-of-00002.gguf'), part([Buffer.concat([str('general.architecture'), u32(8), str('qwen35')])], ['blk.0.ffn_up.weight']));
+      fs.writeFileSync(path.join(dir, 'm-00002-of-00002.gguf'), part([], ['blk.1.ffn_up.weight', 'output.weight']));
+      const { meta, tensors } = readGguf(path.join(dir, 'm-00001-of-00002.gguf'));
+      assert.equal(meta['general.architecture'], 'qwen35');
+      assert.deepEqual(tensors, [
+        { name: 'blk.0.ffn_up.weight', bytes: 64 },
+        { name: 'blk.1.ffn_up.weight', bytes: 64 },
+        { name: 'output.weight', bytes: 64 },
+      ]);
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   it('counts everything llama-server puts on the GPU, and lists dense FFN weights largest first', () => {

@@ -17,7 +17,7 @@ import { run } from '../../loop/exec.ts';
 import { GAME_DIR, REPO } from '../../loop/paths.ts';
 import { detectHardware } from '../lib/hardware.ts';
 import { MIN_CONTEXT } from '../../loop/llama.ts';
-import { formatGpuPlan, gpuPlan, modelBytes, readGguf, type CacheType } from '../lib/gguf.ts';
+import { formatGpuPlan, gpuPlan, modelBytes, readGguf, type CacheType } from '../../loop/gguf.ts';
 import { choose, closePrompts, note, ok, problem, step } from '../lib/prompt.ts';
 import { readFleet } from '../lib/publish.ts';
 import { registerMachine } from '../machine.ts';

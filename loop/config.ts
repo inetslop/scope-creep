@@ -130,9 +130,12 @@ export interface LocalConfig {
     /**
      * Context window in tokens. 0 or missing = auto: llama-server picks the largest context
      * that fits in memory (--fit), and the runner asks the server for the real value before
-     * every agent session (see detectContextSize). A number forces `-c N`.
+     * every agent session (see detectContextSize). A number forces `-c N` and lets the runner place
+     * the model on the GPU itself (see placeModel in llama.ts).
      */
     ctxSize?: number;
+    /** VRAM the runner leaves free for the desktop and allocation spikes when it places the model (default 640). */
+    gpuMarginMib?: number;
     serverPath?: string;
     modelPath?: string;
     /** Folder setup searched for models (remembered for re-runs). */

@@ -310,6 +310,7 @@ if ($mode -eq 'managed') {
     if ($existing -and $existing.llama.ctxSize) { $ctxDefault = [string]$existing.llama.ctxSize }
     # How each context size splits this model between GPU and CPU (estimate; informational only)
     & node (Join-Path $Repo 'setup\models.ts') context --model-file $model.FullName --cache q8_0
+    Write-Note 'a number also lets the runner keep the whole context cache on the GPU and move only feed-forward weights to the CPU when VRAM is short (faster than auto then)'
     $ctxAnswer = Read-Default 'Context size: "auto" = largest that fits in memory (recommended), or a number of tokens' $ctxDefault
     $ctx = 0
     if ($ctxAnswer -ne 'auto') { $ctx = [int]$ctxAnswer }

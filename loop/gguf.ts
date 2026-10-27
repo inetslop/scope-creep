@@ -1,6 +1,7 @@
 /**
  * Reads a GGUF file's metadata (not its weights) to learn the model's shape, and estimates how a
- * context size splits the model between GPU and CPU. Used by setup to show the trade-off.
+ * context size splits the model between GPU and CPU. Used by setup to show the trade-off, and by
+ * the runner (llama.ts) and the Docker setup to place the model on the GPU.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -106,8 +107,22 @@ export function parseGguf(buf: Buffer, fileBytes?: number): { meta: Record<strin
   return { meta, tensors };
 }
 
-/** Metadata and tensor table of a GGUF on disk (reads only the header, at most 64 MB). */
+/** The files of a model: every part of a split GGUF (given its first, "-00001-of-0000N.gguf"), else just the file. */
+function modelFiles(file: string): string[] {
+  const m = /^(.*-)00001(-of-(\d{5})\.gguf)$/i.exec(file);
+  return m ? Array.from({ length: Number(m[3]) }, (_, i) => `${m[1]}${String(i + 1).padStart(5, '0')}${m[2]}`) : [file];
+}
+
+/**
+ * Metadata and tensor table of a model on disk (reads only headers, at most 64 MB per file). A split
+ * model's metadata is in its first part, but each part lists only its own tensors: all are read.
+ */
 export function readGguf(file: string): { meta: Record<string, unknown>; tensors: GgufTensor[] } {
+  const [first, ...rest] = modelFiles(file).map(readGgufFile);
+  return { meta: first!.meta, tensors: [first!, ...rest].flatMap((part) => part.tensors) };
+}
+
+function readGgufFile(file: string): { meta: Record<string, unknown>; tensors: GgufTensor[] } {
   const fd = fs.openSync(file, 'r');
   try {
     const size = fs.fstatSync(fd).size;
@@ -120,7 +135,7 @@ export function readGguf(file: string): { meta: Record<string, unknown>; tensors
 }
 
 export function readGgufMetadata(file: string): Record<string, unknown> {
-  return readGguf(file).meta;
+  return readGgufFile(file).meta;
 }
 
 /** Context cache elements per token: attention layers x KV heads x (key + value length). */
@@ -184,9 +199,9 @@ export interface GpuPlan {
 }
 
 /**
- * What setup/docker/llama-start.sh needs to place the model at start-up: keep every layer and the
- * whole context cache on the GPU, and move just enough of the biggest feed-forward weights to the
- * CPU. Spilling FFN weights is cheap; spilling whole layers drags their cache along (llama.cpp's
+ * What setup/docker/llama-start.sh and the runner (gpuPlacement in llama.ts) need to place the model
+ * at start-up: keep every layer and the whole context cache on the GPU, and move just enough of the
+ * biggest feed-forward weights to the CPU. Spilling FFN weights is cheap; spilling whole layers drags their cache along (llama.cpp's
  * --fit), which Unsloth measured at ~20x the cost per byte. Undefined for a model without dense FFNs.
  */
 export function gpuPlan(meta: Record<string, unknown>, tensors: readonly GgufTensor[], ctx: number, cache: CacheType): GpuPlan | undefined {

@@ -55,6 +55,8 @@ Then start the loop:
 npm run agent          # runs forever; restarts itself when loop code changes
 ```
 
+**GPU placement.** With a fixed context size (not `auto`), a `q8_0` or `q4_0` context cache and one NVIDIA GPU, the runner places the model like the Docker agent does (see *GPU placement* under Linux) whenever it starts llama-server: every layer and the whole context cache on the GPU, just enough of the largest feed-forward weights on the CPU for the VRAM free at that moment, with `-ub 256 --load-mode none`. The runner log says what it chose. `llama.gpuMarginMib` in `.agent\local.json` (640) is the VRAM it leaves free; your own placement flags in `extraArgs` (`-ngl`, `-ot`, `--fit`, …) turn it off. If llama-server dies while loading that way (an older build, or VRAM taken meanwhile), the runner retries with llama.cpp's `--fit`. Unlike Linux, the Windows NVIDIA driver spills into shared system memory when VRAM runs out, so a too-tight fit runs slowly instead of failing: set *CUDA - Sysmem Fallback Policy* to *Prefer No Sysmem Fallback* for `llama-server.exe` in the NVIDIA Control Panel to make it fail, and fall back, instead. To re-place after closing apps: `New-Item .agent\STOP`, wait for the loop to stop, then `Stop-Process -Name llama-server` and `npm run agent`.
+
 ### Linux (Docker)
 
 Needs Docker with Compose v2, an NVIDIA GPU and the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html) (setup checks and tells you what is missing). From any checkout:
