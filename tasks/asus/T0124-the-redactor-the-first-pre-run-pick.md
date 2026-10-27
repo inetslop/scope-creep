@@ -4,10 +4,11 @@ title: The Redactor — the first pre-run pick
 assignee: asus
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0117, T0123]
-attempts: 0
+attempts: 1
 created: 2026-10-27T15:42:50Z
+claimed_at: 2026-10-27T20:44:46Z
 design_attempts: 1
 ---
 
