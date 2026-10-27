@@ -17,7 +17,7 @@ The PO adds ideas here. Good ones become tasks.
 - Daily seeded run with a shareable result code
 - Colorblind-friendly mode (patterns/hatching on shapes)
 - Auto-fire toggle for one-thumb mobile play
-- Haptics on mobile (navigator.vibrate) for hits and level-ups
+- ~~Haptics on mobile (navigator.vibrate) for hits and level-ups~~ → T0133
 - Arena hazards: ink lines that sweep across the page, rotating compasses
 - Run summary screen with a damage-by-weapon breakdown
 - ~~Second boss "The Grid": a rotating compass that sweeps ink arms across the arena~~ → T0044
