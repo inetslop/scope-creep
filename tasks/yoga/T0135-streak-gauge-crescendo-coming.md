@@ -4,11 +4,12 @@ title: Streak gauge — Crescendo coming
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T18:14:35Z
 claimed_at: 2026-10-27T20:11:32Z
+finished_at: 2026-10-27T20:22:17Z
 ---
 
 ## Goal
@@ -52,3 +53,15 @@ None. No new types, functions, files or imports. Everything the gauge needs is a
 - The line's bottom edge (y = PAD+74, since the 16 px text has height 16: 72 + 8 + 4) touches the inkwell rule's top edge within the rightmost tally width; `drawInkwell` draws after this on the same `this.g`, so no visible overlap — do not "fix" the position. At both 412×915 and 1280×720 the line sits in the free band between the tally (y = PAD+60) and the INK rule (y = PAD+74).
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Added the Crescendo gauge (T0135): a thin line 4 u under the streak tally in HudScene.ts that fills with the streak (width = min(streak,8)/8 × tally width), ink below 8 and PALETTE.red at 8+, undrawn at 0, and gone the same frame a hit shatters the tally. It is a stateless draw appended at the end of updateStreak(); typecheck, lint, unit tests and the desktop+mobile smoke all pass.
+
+- Self-review: APPROVE
+- Time: 10.8 min
+
+```
+game/src/scenes/HudScene.ts | 6 ++++++
+ 1 file changed, 6 insertions(+)
+```

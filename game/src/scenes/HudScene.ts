@@ -320,6 +320,12 @@ export class HudScene extends Phaser.Scene {
     this.streakText.setPosition(width - PAD, y);
     this.rhythmText.setPosition(width - PAD - this.streakText.width - 8, y);
     this.rhythmText.setVisible(s >= 2 && now < this.rhythmUntil);
+    // Crescendo gauge (T0135): flat 2 u rule 4 u below the tally number, full and red at streak 8.
+    if (s > 0) {
+      const gaugeW = (Math.min(s, STREAK_FIRE_BONUS_STREAK) / STREAK_FIRE_BONUS_STREAK) * this.streakText.width;
+      this.g.fillStyle(s >= STREAK_FIRE_BONUS_STREAK ? PALETTE.red : PALETTE.ink, 1);
+      this.g.fillRect(width - PAD - this.streakText.width, this.streakText.y + this.streakText.height / 2 + 4, gaugeW, 2);
+    }
   }
 
   /** INK meter under the streak tally: a thin ink-outlined rule that fills left to right in red as the player fires. */
