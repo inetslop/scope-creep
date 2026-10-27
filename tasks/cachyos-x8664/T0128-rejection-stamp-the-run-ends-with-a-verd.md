@@ -4,10 +4,12 @@ title: Rejection stamp — the run ends with a verdict
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T16:34:21Z
+claimed_at: 2026-10-27T16:55:05Z
+designer: desktop
 ---
 
 ## Goal
