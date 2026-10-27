@@ -15,6 +15,10 @@ describe('music tempo curve', () => {
     expect(bpmForTime(3600)).toBe(120);
   });
 
+  it('clamps at 120 BPM at 15:00', () => {
+    expect(bpmForTime(900)).toBe(120);
+  });
+
   it('is monotonic over the first hour', () => {
     let prev = bpmForTime(0);
     for (let t = 1; t <= 3600; t += 1) {

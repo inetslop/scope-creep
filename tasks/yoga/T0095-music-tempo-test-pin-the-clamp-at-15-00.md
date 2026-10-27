@@ -4,11 +4,12 @@ title: "Music tempo test — pin the clamp at 15:00"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T08:55:16Z
 claimed_at: 2026-10-27T09:41:45Z
+finished_at: 2026-10-27T09:46:21Z
 ---
 
 ## Goal
@@ -51,3 +52,15 @@ None new. Existing: `bpmForTime(timeSec: number): number` from `src/core/music.t
 
 ### Tests
 - The added `it('clamps at 120 BPM at 15:00')` in `tests/core/music.test.ts` is the entire deliverable.
+
+## Result (attempt 1, yoga)
+
+Pinned the music tempo clamp in `tests/core/music.test.ts` by adding one new test, `it('clamps at 120 BPM at 15:00')`, asserting `bpmForTime(900)` is exactly 120 — written in the same style as the existing t = 600 s pin, per the architect's design. This closes the gap the T0092 rejection found: any future change to the tempo curve that lets the ramp keep climbing after 10:00 now fails a specific test. Typecheck, lint, full vitest suite (148 tests) and the real-browser smoke test (desktop + mobile) all pass, with zero changes to `src/` and no existing test touched.
+
+- Self-review: APPROVE
+- Time: 4.6 min
+
+```
+game/tests/core/music.test.ts | 4 ++++
+ 1 file changed, 4 insertions(+)
+```
