@@ -26,7 +26,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Orbit hum: each Orbit contact plays a soft low hum — the deferred half of T0093, so all four weapons are audible (T0107, in queue, yoga)
 - Platemark: the moment you take a hit, a small red × prints on the paper at your position and fades over 2 s (T0094) ✅
 - The Underdrawing: after 8:00, ~1.5 s before a normal enemy spawns, a faint grey pencil outline of its shape is sketched at the spawn point and fades as it lands — the late-run swarm stays legible (T0100, in queue, asus)
-- Streak break: the moment your kill streak resets, the streak tally shatters with a small ink burst and a short low blip — you see and hear the Crescendo bonus go (T0101, in queue, yoga)
+- Streak break: the moment your kill streak resets (it was ≥1), the streak tally shatters — 4–6 flat ink specks scatter for 20–40 u and fade over 400 ms, plus one throttled low blip — you see and hear the Crescendo bonus go (T0101) ✅
 - Level-up pulse: the moment a level-up card is picked, your circle swells 25% larger for 300 ms — the level-up is felt in your own shape (T0102, in queue, yoga)
 
 ## M2 — Variety (consolidated 2026-10-27)
@@ -36,7 +36,7 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 - Upgrades kept (14): Rhythm, Weight, Repetition, Momentum, Mass, Gravity, Vector, Balance, Composition, Contrast (crit), Draft (projectile speed), and the Line, Orbit and Arc weapon cards. Next: upgrades that change play, not numbers — the first conditional card is Underexposure (T0105, queued, desktop: any shape below 50% of its max HP takes double damage from you, measured on the HP before the hit; the threshold widens to 75% at level 2; it applies to elites and bosses and composes ×4 with crits, so the wounded shapes are the kill you end fastest); after it, more conditionals (Full Bleed, Scavenge, Sforzando, Overprint), weapon evolutions (Point → Bullet), Kerning (projectile size + knockback). Pool: 14/16 now, 15/16 once Counterpoint (T0055) lands, 16/16 (at the cap) once Underexposure (T0105) also lands — any further new card must remove or merge an existing one
 - Actives: removed 2026-10-27. They may return only as an upgrade card that grants one or as a hero/loadout picked before the run, with the key shown on screen (desktop, gamepad, a touch button) and a designed cooldown element. A UX design task comes first.
 - Systems: Crop marks — after 12:00 the arena's safe area shrinks to 70% by 17:00; the cropped margin burns the player for 5 damage/s (T0045) ✅
-- Inkwell: firing fills a thin meter under the streak tally; a full meter makes the next volley a burst — 3× projectiles, 2× knockback, a deeper shoot sound and an ink ring (T0090, in queue, desktop)
+- Inkwell: firing fills a thin meter under the streak tally; a full meter makes the next volley a burst — 3× projectiles, 2× knockback, a deeper shoot sound and an ink ring (T0090) ✅
 - Gutter: the first arena hazard — after 14:00 a 40-unit-wide ink band sweeps the crop-safe area horizontally every 20 s (4.0 s to cross, direction alternating); a thin red rule telegraphs it for 1.5 s; standing inside burns 4 damage/s (T0099) ✅
 
 ## M3 — Bosses (started)
