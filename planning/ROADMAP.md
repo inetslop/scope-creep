@@ -21,14 +21,17 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Card-flip level-ups: the three choices flip in like cards, 150 ms apart, with a flip SFX; input locked until the deal finishes (T0059) ✅
 - Crescendo: while the kill streak is 8 or higher, fire rate +10% and the streak tally turns red (T0065) ✅
 - Controls card on the pause screen (next, before any new input): every input listed in the Bauhaus style — WASD / mouse / hold click / Esc / M mute on desktop, sticks and buttons on gamepad, left thumb / right thumb / pause button on touch — and the menu hint matches it
+- Weapon SFX timbres: the firing weapons sound like themselves — Point a short high tick, Line a low thud, Arc a sharp snap (T0093, in queue, yoga)
+- Platemark: the moment you take a hit, a small red × prints on the paper at your position and fades over 2 s (T0094, in queue, yoga)
 
 ## M2 — Variety (consolidated 2026-10-27)
 The agents had padded the game: 49 upgrades (35 of them pairs of existing stat bonuses), 18 enemies (11 of them chasers that differed only in numbers, shape or color) and two active abilities with unexplained keys and a bare HUD. All of it was cut by hand; see VISION pillars 6 and 7 and the content bar in the PO prompt. Variety now grows by mechanics, not by count.
-- Enemies kept (behavior): Wedge (chase), Dart (weave), Block (charge), Sentry (ranged), Splitter (splits into Splinters), plus the bosses' minions. Next: enemies with behaviors nobody has yet, from IDEAS (Mine, Ring, Hare, Platen, Needle, Bracket, Ligature, Wash)
+- Enemies kept (behavior): Wedge (chase), Dart (weave), Block (charge), Sentry (ranged), Splitter (splits into Splinters), plus the bosses' minions. Next: the Platen — a heavy yellow circle that flattens and slams every 5 s, a 160-unit ink shockwave shoving the player and nearby enemies away (the slam deals no damage); the first enemy that pushes instead of chasing (T0091, in queue, desktop). After it, from IDEAS: Mine, Ring, Hare, Needle, Bracket, Ligature, Wash
 - Weapons: Point, Line, Orbit (T0008) ✅, Arc (T0022) ✅, Counterpoint wall-bounce (T0055, in queue, desktop-4070); backlog: Stamp, Plumb, Hatch, Baseline, Fanfare, negative-space bomb
 - Upgrades kept (14): Rhythm, Weight, Repetition, Momentum, Mass, Gravity, Vector, Balance, Composition, Contrast (crit), Draft (projectile speed), and the Line, Orbit and Arc weapon cards. Next: upgrades that change play, not numbers: weapon evolutions (Point → Bullet), conditional cards (Full Bleed, Scavenge, Sforzando, Overprint), Kerning (projectile size + knockback)
 - Actives: removed 2026-10-27. They may return only as an upgrade card that grants one or as a hero/loadout picked before the run, with the key shown on screen (desktop, gamepad, a touch button) and a designed cooldown element. A UX design task comes first.
 - Systems: Crop marks — after 12:00 the arena's safe area shrinks to 70% by 17:00; the cropped margin burns the player for 5 damage/s (T0045) ✅
+- Inkwell: firing fills a thin meter under the streak tally; a full meter makes the next volley a burst — 3× projectiles, 2× knockback, a deeper shoot sound and an ink ring (T0090, in queue, desktop)
 
 ## M3 — Bosses (started)
 - The Frame at 5:00: health bar, charge + wedge ring + radial dart burst, +50% HP per respawn (T0006) ✅
@@ -57,6 +60,7 @@ The agents had padded the game: 49 upgrades (35 of them pairs of existing stat b
 - Crop schedule tests: no shrink before 12:00, 1.0→0.7 by 17:00, clamped at 0.7 after, non-increasing through the window (T0063) ✅
 - Elite schedule tests: first elite at 0:45, then exactly one every 45 s, none in between (T0066) ✅
 - Arc chain tests: the bolt targets the first enemy within 260 u of the aim, each hop jumps to the nearest un-hit enemy within the chain radius, and the chain ends at a dead end — shipped with T0022 in `tests/core/arc.test.ts`; T0085 was rejected because the tests already existed and per-hop damage falloff is not in the code ✅
+- Music tempo-curve tests: 80 BPM at 0:00, non-decreasing through the ramp, 120 BPM at 10:00 and clamped there, second voice at 100 BPM (T0092, in queue, yoga)
 
 ## Later
 - Alternate "paper" palettes (De Stijl, Constructivist), run modifiers, daily seed, achievements, PWA install
