@@ -4,12 +4,11 @@ title: Screen shake on heavy deaths
 assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 1
+attempts: 2
 created: 2026-10-26T23:09:26Z
-claimed_at: 2026-10-27T07:30:13Z
-finished_at: 2026-10-27T09:32:06Z
+claimed_at: 2026-10-27T09:32:09Z
 ---
 
 ## Goal
