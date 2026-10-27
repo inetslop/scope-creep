@@ -4,10 +4,12 @@ title: Add the Vellum upgrade
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T04:43:07Z
+claimed_at: 2026-10-27T04:47:44Z
+designer: yoga
 ---
 
 ## Goal
