@@ -6,7 +6,7 @@ import { UPGRADE_BY_ID } from '../content/upgrades';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { textStyle, titleStyle } from '../ui/text';
-import { getSfx, getRun, onResize, SCENES } from './keys';
+import { getPlayer, getSfx, getRun, onResize, SCENES } from './keys';
 
 interface LevelUpData {
   choices: string[];
@@ -115,6 +115,7 @@ export class LevelUpScene extends Phaser.Scene {
     this.chosen = true;
     getRun(this).applyUpgrade(def);
     hook.stats.upgradesTaken += 1;
+    getPlayer(this).pulse();
     this.scene.resume(SCENES.game);
     this.scene.stop();
   }

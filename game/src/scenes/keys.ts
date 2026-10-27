@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import type { Sfx } from '../audio/Sfx';
 import type { RunState } from '../core/run';
 import type { Controls } from '../input/Controls';
+import type { Player } from '../entities/Player';
 
 /** Scene keys. Use these constants instead of string literals. */
 export const SCENES = {
@@ -34,6 +35,10 @@ export function getControls(scene: Phaser.Scene): Controls | undefined {
 
 export function getSfx(scene: Phaser.Scene): Sfx | undefined {
   return scene.registry.get('sfx') as Sfx | undefined;
+}
+
+export function getPlayer(scene: Phaser.Scene): Player {
+  return scene.registry.get('player') as Player;
 }
 
 /** Runs `fn` on every resize until the scene shuts down (avoids leaked listeners). */

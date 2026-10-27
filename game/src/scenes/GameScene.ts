@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { MUSIC_VOLUME, Music } from '../audio/Music';
 import { Sfx } from '../audio/Sfx';
 import { TEX } from '../art/textures';
-import { ARENA_SIZE, DEPTH, VIEW_SHORT_SIDE } from '../config';
+import { ARENA_SIZE, DEPTH, PLAYER_RADIUS, VIEW_SHORT_SIDE } from '../config';
 import { PALETTE } from '../content/palette';
 import { UPGRADES } from '../content/upgrades';
 import { loadBestScore, saveBestScore } from '../core/bestScore';
@@ -95,6 +95,7 @@ export class GameScene extends Phaser.Scene {
     this.drawArenaWalls();
 
     this.player = new Player(this, 0, 0);
+    this.registry.set('player', this.player);
     this.fx = new FxSystem(this);
     this.damageNumbers = new DamageNumbers(this);
     this.feed = new ScoreFeed(this);
@@ -273,6 +274,7 @@ export class GameScene extends Phaser.Scene {
       this.game.events.off(Phaser.Core.Events.HIDDEN, onHidden);
       for (const name of INVARIANTS) hook.removeInvariant(name);
       this.registry.remove('sfx');
+      this.registry.remove('player');
       this.registry.remove('controls');
     });
   }
@@ -298,6 +300,10 @@ export class GameScene extends Phaser.Scene {
       Number.isFinite(this.player.x) && Number.isFinite(this.player.y) ? null : `player at (${this.player.x}, ${this.player.y})`,
     );
     hook.addInvariant('player-in-arena', () => (arena.contains(this.player.x, this.player.y) ? null : `player outside arena at (${this.player.x}, ${this.player.y})`));
+    hook.addInvariant('player-hitbox', () => {
+      const b = this.player.body as Phaser.Physics.Arcade.Body;
+      return b.halfWidth === PLAYER_RADIUS && b.halfHeight === PLAYER_RADIUS ? null : `player body ${b.halfWidth}x${b.halfHeight}`;
+    });
     hook.addInvariant('hp-range', () => (this.run.hp >= 0 && this.run.hp <= this.run.stats.maxHp + 1e-6 ? null : `hp ${this.run.hp} / ${this.run.stats.maxHp}`));
     hook.addInvariant('stats-finite', () => {
       const bad = Object.entries(this.run.stats).filter(([, v]) => !Number.isFinite(v));
@@ -388,4 +394,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'inkwell', 'streak', 'score', 'score-feed', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse', 'bouncing-points', 'wound-threshold'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'player-hitbox', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'inkwell', 'streak', 'score', 'score-feed', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse', 'bouncing-points', 'wound-threshold'];

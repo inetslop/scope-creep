@@ -4,11 +4,12 @@ title: Level-up pulse — your circle pops when you pick
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T10:32:47Z
 claimed_at: 2026-10-27T13:00:31Z
+finished_at: 2026-10-27T13:39:46Z
 ---
 
 ## Goal
@@ -89,3 +90,18 @@ hook.addInvariant('player-hitbox', () => {
 - A second `pulse()` before a tick just re-queues: two pending level-ups → two back-to-back scenes → one pop per card.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+T0102 — picking a level-up card now makes your blue circle pop. `LevelUpScene.choose()` fires `Player.pulse()` as play resumes; `Player.ts` animates a body-less copy image of the player texture (1.0 → 1.25 → 1.0, 300 ms ease-out, house-clock driven) so the hitbox, movement and stats never change, and `GameScene` registers the player in the scene registry with a new `player-hitbox` invariant that asserts the body stays at `PLAYER_RADIUS` — the exact property that would break if the sprite were ever scaled. No sound, flip, input, scene or content changes; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: NO VERDICT
+- Time: 39.3 min
+
+```
+game/src/entities/Player.ts     | 38 ++++++++++++++++++++++++++++++++++++++
+ game/src/scenes/GameScene.ts    | 10 ++++++++--
+ game/src/scenes/LevelUpScene.ts |  3 ++-
+ game/src/scenes/keys.ts         |  5 +++++
+ 4 files changed, 53 insertions(+), 3 deletions(-)
+```
