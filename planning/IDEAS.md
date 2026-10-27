@@ -114,3 +114,8 @@ The PO adds ideas here. Good ones become tasks.
 - The Eraser's encore: at 10:00 a bigger Eraser with a red outline appears that erases your highest-level upgrade instead of your most recent (follow-up to T0047, lands after it)
 - Kill feed: each kill pops a small ink "+1" / "+5" / "+50" above the corpse, matching the T0054 score values (depends on T0054)
 - Gallery mode: three curated fixed-seed runs in the menu — "Study in Red" (only red enemies), "No Level-Ups" (no upgrade cards, double shards), "Double Shards" — each with its own persisted best score
+- ~~Pizzicato upgrade: +1 pierce and +10% projectile speed per level, maxLevel 2, weight 3 — the fast-pierce build, reusing the Vector and Draft stats~~ → T0056
+- ~~Unit tests for the kill streak: streak grows per kill, resets when hit, bestStreak keeps the longest~~ → T0057
+- Enemy cap: when 60 enemies are on screen, spawning pauses until the count drops — keeps late runs playable on phones
+- Page number: a faint small number in the bottom-right corner of the paper, incrementing every 60 s — which page of the composition you are on
+- Mute keys: M toggles music, N toggles sound effects, both shown on the pause screen — the first half of the settings page

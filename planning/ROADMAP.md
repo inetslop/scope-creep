@@ -22,8 +22,8 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 ## M2 — Variety (in progress)
 - Enemies: Hex (T0001) ✅, Mote swarm (T0010) ✅, Sentry ranged (T0007) ✅, Splitter (T0009) ✅, Boulder heavy chaser (T0017) ✅, Tile mid chaser (T0023) ✅, Slab slow wall (T0025) ✅, Spike small fast punisher (T0028) ✅, Turret stationary fast shooter (T0032) ✅, Pinwheel spinning chaser (T0039) ✅, The Eraser upgrade-deleting white rectangle (T0047, todo, desktop)
 - Enemy projectiles now exist (Sentry) — boss dart-burst patterns unblocked
-- Weapons: Orbit (T0008) ✅, Arc chain beam (T0022) ✅, Counterpoint wall-bounce (T0055, design, desktop-4070); backlog: stamp, plumb line, negative-space bomb
-- Upgrades: Tempo (T0002) ✅, Draft (T0012) ✅, Contrast crit (T0013) ✅, Plate armor (T0016) ✅, Staccato speed combo (T0018) ✅, Emphasis damage ramp (T0020) ✅, Allegro fire-rate-for-speed trade-off (T0026) ✅, Ostinato pierce + fire-rate build card (T0029) ✅, Dynamics damage-for-mobility trade-off (T0031) ✅, Fugue damage + projectile-speed combo (T0033) ✅, Pressure damage + fire-rate DPS build (T0034) ✅, Gather pickup-radius + shard-XP economy build (T0035) ✅, Accent crit + damage build (T0037) ✅, Presto projectile-speed + move-speed build (T0038) ✅, Pulse fire-rate + crit crit-shred build (T0041) ✅, Sweep move-speed + pickup-radius mobility build (T0042) ✅, Trill rare repeat-fire build (T0046) ✅, Tessitura max-HP survival ramp (T0048) ✅, Glissando shard-XP + fire-rate economy-DPS build (T0051, design, yoga), Adagio max-HP + regen sustain build (T0052, design, yoga); backlog: weapon-specific lines, evolutions, Kerning (projectile size + knockback), Full Bleed (damage at full HP)
+- Weapons: Orbit (T0008) ✅, Arc chain beam (T0022) ✅, Counterpoint wall-bounce (T0055, in queue, desktop-4070); backlog: stamp, plumb line, negative-space bomb
+- Upgrades: Tempo (T0002) ✅, Draft (T0012) ✅, Contrast crit (T0013) ✅, Plate armor (T0016) ✅, Staccato speed combo (T0018) ✅, Emphasis damage ramp (T0020) ✅, Allegro fire-rate-for-speed trade-off (T0026) ✅, Ostinato pierce + fire-rate build card (T0029) ✅, Dynamics damage-for-mobility trade-off (T0031) ✅, Fugue damage + projectile-speed combo (T0033) ✅, Pressure damage + fire-rate DPS build (T0034) ✅, Gather pickup-radius + shard-XP economy build (T0035) ✅, Accent crit + damage build (T0037) ✅, Presto projectile-speed + move-speed build (T0038) ✅, Pulse fire-rate + crit crit-shred build (T0041) ✅, Sweep move-speed + pickup-radius mobility build (T0042) ✅, Trill rare repeat-fire build (T0046) ✅, Tessitura max-HP survival ramp (T0048) ✅, Glissando shard-XP + fire-rate economy-DPS build (T0051) ✅, Adagio max-HP + regen sustain build (T0052, in progress, yoga), Pizzicato fast-pierce build (T0056, design, yoga); backlog: weapon-specific lines, evolutions, Kerning (projectile size + knockback), Full Bleed (damage at full HP)
 - Actives: Understudy decoy — drop a blue decoy that taunts enemies for 3 s, 8 s cooldown (T0015) ✅; Still Life — a 5 s bubble that slows nearby enemies to 50% speed, 12 s cooldown (T0050) ✅
 - Systems: Crop marks — after 12:00 the arena's safe area shrinks to 70% by 17:00; the cropped margin burns the player for 5 damage/s (T0045, todo, desktop)
 
@@ -33,7 +33,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Later: boss sting + boss music (low hit, music swell, 64 BPM boss tempo on any boss spawn), boss corpse decals, The Palette — third boss (five sliding color bars, same pattern: content data file + pure timing module + unit tests)
 
 ## M4 — Meta-progression
-- Score: kills earn points (normal 1, elite 5, boss 50); HUD shows the running score, game over shows score + persisted best (T0054, design, desktop-4070)
+- Score: kills earn points (normal 1, elite 5, boss 50); HUD shows the running score, game over shows score + persisted best (T0054, in queue, desktop-4070)
 - Persistent currency between runs, a studio to unlock starting options
 - Settings: volume, screen shake, auto-fire
 
@@ -45,6 +45,7 @@ The PO keeps this file current. Milestones are loose; scope creep is expected.
 - Vector math tests: length, normalize, add, scale, distance (T0043) ✅
 - Level-up XP curve tests: required XP strictly increasing, exact-XP boundary, finite at level 100 (T0049) ✅
 - Stat stacking tests: same-stat upgrades combine consistently (damage, fire rate), untouched stats stay at base (T0053, designing, yoga)
+- Kill-streak tests: streak grows per kill, resets when hit, bestStreak keeps the longest run (T0057, design, yoga)
 
 ## Later
 - Alternate "paper" palettes (De Stijl, Constructivist), run modifiers, daily seed, achievements, PWA install
