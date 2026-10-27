@@ -4,10 +4,12 @@ title: The Gallery — three studies with fixed seeds
 assignee: asus
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T17:13:57Z
+claimed_at: 2026-10-27T17:20:42Z
+designer: desktop
 ---
 
 ## Goal
