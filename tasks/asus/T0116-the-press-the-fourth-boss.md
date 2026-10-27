@@ -4,10 +4,11 @@ title: The Press — the fourth boss
 assignee: asus
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0098]
-attempts: 0
+attempts: 1
 created: 2026-10-27T14:32:00Z
+claimed_at: 2026-10-27T16:09:15Z
 ---
 
 ## Goal
