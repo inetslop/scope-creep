@@ -4,10 +4,12 @@ title: Orbit hum — the orbiting circles make a sound
 assignee: yoga
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T12:29:53Z
+claimed_at: 2026-10-27T12:41:16Z
+designer: yoga
 ---
 
 ## Goal
