@@ -4,10 +4,11 @@ title: Weapon SFX timbres — Point, Line and Arc sound like themselves
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T08:45:39Z
+claimed_at: 2026-10-27T09:30:23Z
 ---
 
 ## Goal
