@@ -4,10 +4,11 @@ title: Rest ripple — the page exhales when your free hit is in hand
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T21:17:36Z
+claimed_at: 2026-10-27T21:51:45Z
 ---
 
 ## Goal
