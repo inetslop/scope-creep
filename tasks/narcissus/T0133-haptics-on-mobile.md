@@ -4,10 +4,11 @@ title: Haptics on mobile
 assignee: narcissus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0131]
-attempts: 0
+attempts: 1
 created: 2026-10-27T19:10:00Z
+claimed_at: 2026-10-27T20:11:20Z
 ---
 
 ## Goal
