@@ -4,11 +4,12 @@ title: Boss tick — the bar shows what is left
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0114]
 attempts: 1
 created: 2026-10-27T15:11:35Z
 claimed_at: 2026-10-27T16:50:57Z
+finished_at: 2026-10-27T17:07:34Z
 ---
 
 ## Goal
@@ -101,3 +102,15 @@ private drawBossTicks(g: Phaser.GameObjects.Graphics, x: number, y: number, w: n
 
 ### Tests
 none (pure HUD drawing, no src/core rule change).
+
+## Result (attempt 1, yoga)
+
+The boss health bar now prints a small flat ink tick (2 u × 6 u, no outline/shadow) at each of the 75/50/25% marks the first time the boss's HP drops below that fraction, and each tick stays for the rest of that boss's life. Implementation is a `bossTickSeen` bitmask on `HudScene` (set once per threshold in the boss block of `update()`, redrawn every frame via a new `drawBossTicks()` after `drawBar()`, cleared when the boss leaves so a fresh spawn starts clean and the ticks fade out with the bar's 0.5 s post-kill fade); the bar's fill, width, position, nameplate, warning, sting and music are untouched. `npm run check` (256 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 16.6 min
+
+```
+game/src/scenes/HudScene.ts | 44 +++++++++++++++++++++++++++++++++++---------
+ 1 file changed, 35 insertions(+), 9 deletions(-)
+```

@@ -51,6 +51,8 @@ export class HudScene extends Phaser.Scene {
   private approachAge = 0;
   /** Boss bar alpha while fading out after a kill. */
   private bossFade = 1;
+  /** Boss bar ticks: bitmask (bits 1, 2, 4) of the 75/50/25% thresholds first crossed this boss's life; cleared when the boss leaves. */
+  private bossTickSeen = 0;
   /** HP fraction the yellow "just lost" chunk reaches to. */
   private hpGhost = 1;
   /** Seconds since the player was last hit. */
@@ -97,6 +99,7 @@ export class HudScene extends Phaser.Scene {
     this.inkNote = this.add.text(0, 0, 'A FULL WELL BURSTS', textStyle(13, PALETTE.ink)).setOrigin(1, 0).setVisible(false);
 
     this.bossFade = 1;
+    this.bossTickSeen = 0;
     this.bossPlateActive = false;
     this.bossPlateAge = 0;
     this.approachEdge = false;
@@ -191,15 +194,27 @@ export class HudScene extends Phaser.Scene {
       const top = (narrow ? PAD + 40 : PAD) + 26;
       this.bossName.setPosition(width / 2, top).setAlpha(1).setText(bossName);
       this.bossG.clear().setAlpha(1);
-      this.drawBar(this.bossG, (width - width * 0.6) / 2, top + 18, width * 0.6, 12, Phaser.Math.Clamp(run.bossHp / run.bossMaxHp, 0, 1), PALETTE.red);
-    } else if (this.bossFade > 0) {
-      // Fade out over 0.5 s without clearing: lower the alpha of the last-drawn pixels.
-      this.bossFade = Math.max(0, this.bossFade - dt / 0.5);
-      this.bossG.setAlpha(this.bossFade);
-      this.bossName.setAlpha(this.bossFade);
-      if (this.bossFade === 0) {
-        this.bossG.clear();
-        this.bossG.setAlpha(1);
+      const bossFrac = Phaser.Math.Clamp(run.bossHp / run.bossMaxHp, 0, 1);
+      const bx = (width - width * 0.6) / 2;
+      const by = top + 18;
+      const bw = width * 0.6;
+      this.drawBar(this.bossG, bx, by, bw, 12, bossFrac, PALETTE.red);
+      // Ink ticks print once, as the boss first drops below 75/50/25% of max, and stay for the rest of this spawn.
+      if (bossFrac < 0.75) this.bossTickSeen |= 1;
+      if (bossFrac < 0.5) this.bossTickSeen |= 2;
+      if (bossFrac < 0.25) this.bossTickSeen |= 4;
+      this.drawBossTicks(this.bossG, bx, by, bw, 12);
+    } else {
+      this.bossTickSeen = 0; // a fresh spawn starts clean; the fading bar keeps its ticks until it fully clears
+      if (this.bossFade > 0) {
+        // Fade out over 0.5 s without clearing: lower the alpha of the last-drawn pixels.
+        this.bossFade = Math.max(0, this.bossFade - dt / 0.5);
+        this.bossG.setAlpha(this.bossFade);
+        this.bossName.setAlpha(this.bossFade);
+        if (this.bossFade === 0) {
+          this.bossG.clear();
+          this.bossG.setAlpha(1);
+        }
       }
     }
 
@@ -320,6 +335,17 @@ export class HudScene extends Phaser.Scene {
     }
     g.lineStyle(2, PALETTE.ink, 1);
     g.strokeRect(x, y, w, h);
+  }
+
+  /** Flat ink ticks (2 u wide, 6 u tall, no outline, no shadow) at the 75/50/25% marks of the boss bar, one per threshold first crossed this boss's life. */
+  private drawBossTicks(g: Phaser.GameObjects.Graphics, x: number, y: number, w: number, h: number): void {
+    const fractions = [0.75, 0.5, 0.25];
+    for (let i = 0; i < fractions.length; i++) {
+      if (this.bossTickSeen & (1 << i)) {
+        g.fillStyle(PALETTE.ink, 1);
+        g.fillRect(x + w * fractions[i]! - 1, y + h / 2 - 3, 2, 6);
+      }
+    }
   }
 
   private drawStick(stick: StickState, hintX: number, hintY: number, radius: number): void {
