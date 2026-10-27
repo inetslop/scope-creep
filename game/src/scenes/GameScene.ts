@@ -13,6 +13,7 @@ import { length } from '../core/vec';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import type { Enemy } from '../entities/Enemy';
+import type { Projectile } from '../entities/Projectile';
 import { Player } from '../entities/Player';
 import { Controls } from '../input/Controls';
 import { ArcSystem } from '../systems/ArcSystem';
@@ -318,6 +319,15 @@ export class GameScene extends Phaser.Scene {
       return null;
     });
     hook.addInvariant('projectile-count', () => (this.weapons.activeCount <= 400 ? null : `${this.weapons.activeCount} projectiles alive`));
+    hook.addInvariant('bouncing-points', () => {
+      const half = ARENA_SIZE / 2 + 16;
+      for (const obj of this.weapons.projectiles.getChildren()) {
+        const p = obj as Projectile;
+        if (!p.active || !p.bouncing) continue;
+        if (Math.abs(p.x) > half || Math.abs(p.y) > half) return `bouncing point outside the arena at (${p.x}, ${p.y})`;
+      }
+      return null;
+    });
     hook.addInvariant('damage-numbers-pool', () => (this.damageNumbers.activeCount <= 60 ? null : `${this.damageNumbers.activeCount} damage numbers active`));
     hook.addInvariant('platemark-pool', () => (this.fx.platemarkCount <= 12 ? null : `${this.fx.platemarkCount} platemarks on screen`));
     hook.addInvariant('orbit-circles', () => {
@@ -371,4 +381,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'inkwell', 'streak', 'score', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'platemark-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'inkwell', 'streak', 'score', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake', 'boss-approach-pulse', 'bouncing-points'];

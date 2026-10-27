@@ -22,6 +22,10 @@ export class Projectile extends Phaser.Physics.Arcade.Image {
   /** Remaining enemies it may pass through. Below 0 = gone. */
   pierceLeft = 0;
   lifeLeft = 0;
+  /** Bouncing weapon: mirrors off the arena walls instead of dying at them. */
+  bouncing = false;
+  bouncesLeft = 0;
+  bounceDamageMul = 1;
   /** Serials of enemies already hit, so piercing shots hit each enemy once. */
   readonly hitSerials = new Set<number>();
 
@@ -30,6 +34,10 @@ export class Projectile extends Phaser.Physics.Arcade.Image {
   }
 
   fire(p: ShotParams): void {
+    // Pooled bodies keep physics config, so reset the bounce state for every shot.
+    this.bouncing = false;
+    this.bouncesLeft = 0;
+    this.bounceDamageMul = 1;
     const { look } = p.weapon;
     this.setTexture(projectileTextureKey(p.weapon.id));
     this.enableBody(true, p.x, p.y, true, true);

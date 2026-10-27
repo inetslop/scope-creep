@@ -108,6 +108,10 @@ describe('weapons', () => {
     for (const key of ['fireRate', 'count', 'speed', 'lifetimeSec'] as const) expect(positive(w[key]), `${key} > 0`).toBe(true);
     for (const key of ['spreadDeg', 'jitterDeg', 'pierce'] as const) expect(nonNegative(w[key]), `${key} >= 0`).toBe(true);
     expect(Number.isInteger(w.count) && Number.isInteger(w.pierce), 'count and pierce are integers').toBe(true);
+    if (w.bounce) {
+      expect(Number.isInteger(w.bounce.maxBounces) && w.bounce.maxBounces >= 0, 'bounce.maxBounces is an integer >= 0').toBe(true);
+      expect(w.bounce.damageMul > 0 && w.bounce.damageMul <= 1, 'bounce.damageMul in (0, 1]').toBe(true);
+    }
   });
 
   it('starting weapon exists', () => {

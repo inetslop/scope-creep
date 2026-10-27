@@ -4,11 +4,12 @@ title: Add the Counterpoint weapon
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T00:59:33Z
 claimed_at: 2026-10-27T11:27:34Z
+finished_at: 2026-10-27T12:59:37Z
 ---
 
 ## Goal
@@ -168,3 +169,36 @@ and append `'bouncing-points'` to the `INVARIANTS` array at the bottom.
 
 ### Tests
 - `tests/content.test.ts` gains the `bounce` validation above (runs under `npm run check`). No new `tests/core/` tests: the bounce state machine lives on the Phaser entity, and no new pure logic was added to `core/`.
+
+## Result (attempt 1, desktop-4070)
+
+Diff is clean — the Counterpoint feature is complete. Summary of what was implemented:
+
+**Counterpoint weapon** (T0055) — a volley projectile that mirrors off arena walls, losing damage per bounce, dying on the contact after its bounces run out.
+
+**Changes:**
+- `src/content/types.ts` — optional `bounce: { maxBounces, damageMul }` on `WeaponDef`. No bounce factors in data: physics default factor 1 gives perfect reflection; only "when to stop" is content.
+- `src/content/weapons/counterpoint.ts` — new weapon: ink point (round, radius 5), 14 dmg, fireRate 1.25, speed 260, 3 s lifetime, knockback 40, `bounce: { maxBounces: 2, damageMul: 0.75 }`.
+- `src/content/weapons/index.ts` — registered in `WEAPONS`.
+- `src/content/upgrades/index.ts` — single-level granting upgrade (`grantsWeapon: 'counterpoint'`).
+- `src/entities/Projectile.ts` — pooled bounce state (`bouncing`, `bouncesLeft`, `bounceDamageMul`), reset in `fire()` since pooled bodies keep physics config.
+- `src/systems/WeaponSystem.ts` — WORLD_BOUNDS listener (no SHUTDOWN cleanup needed: the physics world is destroyed with the scene): each contact decrements bounces, multiplies damage, plays the hit sound; after the last allowed bounce it zeroes the bounce factors so the *next* wall contact stops dead and despawns. `fireVolley` arms/disarms `setCollideWorldBounds` per shot.
+- `tests/content.test.ts` — validates `bounce.maxBounces` integer ≥ 0 and `damageMul` in (0, 1].
+
+**One design deviation:** the PickupSystem dead-projecti…
+
+- Self-review: APPROVE
+- Time: 92.1 min
+- Self-review made fixes (kept; checks pass).
+
+```
+game/src/content/types.ts                |  7 +++++++
+ game/src/content/upgrades/index.ts       | 10 ++++++++++
+ game/src/content/weapons/counterpoint.ts | 20 ++++++++++++++++++++
+ game/src/content/weapons/index.ts        |  3 ++-
+ game/src/entities/Projectile.ts          |  8 ++++++++
+ game/src/scenes/GameScene.ts             | 12 +++++++++++-
+ game/src/systems/WeaponSystem.ts         | 27 +++++++++++++++++++++++++++
+ game/tests/content.test.ts               |  4 ++++
+ 8 files changed, 89 insertions(+), 2 deletions(-)
+```

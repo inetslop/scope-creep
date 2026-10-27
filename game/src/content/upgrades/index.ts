@@ -138,6 +138,16 @@ export const UPGRADES: readonly UpgradeDef[] = [
     mods: [{ stat: 'critChance', op: 'add', value: 0.1 }],
     color: PALETTE.red,
   },
+  {
+    id: 'counterpoint',
+    name: 'Counterpoint',
+    description: 'New weapon: a point that bounces off the arena walls',
+    maxLevel: 1,
+    weight: 5,
+    mods: [],
+    grantsWeapon: 'counterpoint',
+    color: PALETTE.ink,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));

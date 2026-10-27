@@ -140,6 +140,13 @@ export interface WeaponDef {
   orbit?: OrbitSpec;
   /** Arc weapon (handled by src/systems/ArcSystem); projectile fields unused. */
   arc?: ArcSpec;
+  /** Bounce weapon (handled by src/systems/WeaponSystem): mirrors off the arena walls, losing damage per bounce. */
+  bounce?: {
+    /** Bounces before the next wall contact destroys the projectile. */
+    maxBounces: number;
+    /** Multiplied into the damage on each bounce. */
+    damageMul: number;
+  };
 }
 
 export interface UpgradeDef {

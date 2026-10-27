@@ -26,7 +26,25 @@ export class WeaponSystem {
     this.fx = fx;
     this.sfx = sfx;
     this.projectiles = scene.physics.add.group({ classType: Projectile, maxSize: 400, runChildUpdate: false });
+
+    // Emitted by the physics world (per scene; the world is destroyed with the scene, so no
+    // listener cleanup is needed — do NOT add one to GameScene's SHUTDOWN handler).
+    scene.physics.world.on(Phaser.Physics.Arcade.Events.WORLD_BOUNDS, this.onWorldBounds);
   }
+
+  /** A Counterpoint point touched a wall: take a bounce, or die on the third contact. */
+  private readonly onWorldBounds = (body: Phaser.Physics.Arcade.Body): void => {
+    const p = body.gameObject as Projectile | null;
+    if (!p || !p.active || !p.bouncing) return;
+    if (p.bouncesLeft > 0) {
+      p.bouncesLeft -= 1;
+      p.damage *= p.bounceDamageMul;
+      this.sfx.hit();
+      if (p.bouncesLeft === 0) body.setCollideWorldBounds(true, 0, 0); // no third bounce: next contact stops it here, then kills it below
+    } else {
+      p.despawn();
+    }
+  };
 
   update(dt: number, firing: boolean): void {
     for (const id of this.run.weapons) {
@@ -74,6 +92,15 @@ export class WeaponSystem {
         pierce: def.pierce + stats.extraPierce,
         knockback: def.knockback * (burst ? INKWELL.burstKnockback : 1),
       });
+      if (def.bounce) {
+        p.bouncing = true;
+        p.bouncesLeft = def.bounce.maxBounces;
+        p.bounceDamageMul = def.bounce.damageMul;
+        (p.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(true, 1, 1, true); // physics default factor: perfect reflection
+      } else {
+        // Pooled bodies keep physics config: kill any bounce the previous shot had.
+        (p.body as Phaser.Physics.Arcade.Body).setCollideWorldBounds(false, 0, 0, false);
+      }
       hook.stats.shotsFired += 1;
     }
     this.fx.muzzle(muzzle.x, muzzle.y, def.look.color);
