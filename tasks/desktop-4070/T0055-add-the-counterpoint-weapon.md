@@ -4,10 +4,11 @@ title: Add the Counterpoint weapon
 assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-27T00:59:33Z
+claimed_at: 2026-10-27T11:27:34Z
 ---
 
 ## Goal
