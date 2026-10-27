@@ -4,10 +4,12 @@ title: Boss music — the score drops low while a boss is alive
 assignee: desktop
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T13:08:21Z
+claimed_at: 2026-10-27T13:28:38Z
+designer: desktop
 ---
 
 ## Goal
