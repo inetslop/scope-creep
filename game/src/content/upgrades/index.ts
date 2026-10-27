@@ -312,6 +312,15 @@ export const UPGRADES: readonly UpgradeDef[] = [
     ],
     color: PALETTE.red,
   },
+  {
+    id: 'tessitura',
+    name: 'Tessitura',
+    description: '+10 max HP',
+    maxLevel: 5,
+    weight: 4,
+    mods: [{ stat: 'maxHp', op: 'add', value: 10 }],
+    color: PALETTE.yellow,
+  },
 ];
 
 export const UPGRADE_BY_ID: ReadonlyMap<string, UpgradeDef> = new Map(UPGRADES.map((u) => [u.id, u]));

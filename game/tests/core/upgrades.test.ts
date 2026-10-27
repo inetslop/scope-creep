@@ -91,4 +91,19 @@ describe('rollUpgradeChoices', () => {
     expect(run.upgradeLevel('trill')).toBe(2);
     expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
   });
+
+  it('tessitura offers 5 levels, then stops', () => {
+    const run = new RunState(1);
+    const def = UPGRADE_BY_ID.get('tessitura')!;
+    expect(def).toBeDefined();
+    expect(def.mods).toEqual([
+      { stat: 'maxHp', op: 'add', value: 10 },
+    ]);
+    for (let i = 0; i < def.maxLevel; i++) {
+      expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(true);
+      run.applyUpgrade(def);
+    }
+    expect(run.upgradeLevel('tessitura')).toBe(5);
+    expect(isUpgradeAvailable(def, (id) => run.upgradeLevel(id), run.weapons)).toBe(false);
+  });
 });

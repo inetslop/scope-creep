@@ -4,11 +4,12 @@ title: Add the Tessitura upgrade
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T00:03:46Z
 claimed_at: 2026-10-27T00:05:28Z
+finished_at: 2026-10-27T00:11:28Z
 ---
 
 ## Goal
@@ -77,3 +78,16 @@ No new types or signatures. One data entry of the existing `UpgradeDef` type (`s
 
 ### Tests
 - New unit test in `tests/core/upgrades.test.ts` (exact code above). `tests/content.test.ts` and `core.test.ts` "never offers maxed upgrades" cover the entry automatically.
+
+## Result (attempt 1, yoga)
+
+Added the Tessitura upgrade — a yellow defensive card (+10 max HP per level, 5 levels, weight 4, max +50 HP) — as a new `UpgradeDef` entry appended to `UPGRADES` in `src/content/upgrades/index.ts`, plus its unit test in `tests/core/upgrades.test.ts` asserting the exact mod, 5 offerable levels, and that it stops after maxing. It stacks with Mass and Plate via the existing stat pipeline, and both `npm run check` and `npm run smoke` pass.
+
+- Self-review: APPROVE
+- Time: 6.0 min
+
+```
+game/src/content/upgrades/index.ts |  9 +++++++++
+ game/tests/core/upgrades.test.ts   | 15 +++++++++++++++
+ 2 files changed, 24 insertions(+)
+```
