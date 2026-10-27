@@ -4,10 +4,12 @@ title: Enemy ink trails — the fast shapes leave their path
 assignee: inet-racing
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-27T15:42:50Z
+claimed_at: 2026-10-27T16:23:17Z
+designer: inet-racing
 ---
 
 ## Goal
