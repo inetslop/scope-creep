@@ -41,7 +41,7 @@ The PO adds ideas here. Good ones become tasks.
 - Ring enemy: a large hollow ink circle that slowly chases; its rim hurts, its center is safe
 - Shard value escalation: every 60 s shard XP is +1, with a small "VALUE UP" flash in the HUD
 - ~~Marginalia: when a new enemy type first appears in a run, a small dry ink annotation fades in beside it for 2 s ("RED RUSHES", "HEAVY HITS HARD", "THE PENTAGON SHOTS")~~ → T0027
-- Counterpoint weapon: fires a point that bounces off arena walls up to 2 times, losing 25% damage per bounce
+- ~~Counterpoint weapon: fires a point that bounces off arena walls up to 2 times, losing 25% damage per bounce~~ → T0055
 - "Overprint" upgrade: +5% damage per 30 s survived — the longer you last, the harder you hit
 - ~~Understudy active: drop a decoy blue circle that taunts every enemy for 3 s; 8 s cooldown~~ → T0015
 - ~~Crop marks: after 12:00 the arena's safe area slowly shrinks, marked by crop-mark corners; the boundary burns for 5 damage/s~~ → T0045
@@ -58,7 +58,7 @@ The PO adds ideas here. Good ones become tasks.
 - Shard vacuum: the moment a level-up card is picked, every shard on screen is pulled to you
 - Echo: every 5th volley is fired twice (stacks with Repetition)
 - Wedge ghost: a pale blue wedge that mirrors your position with a 1 s delay, unlocks at 90 s
-- Score: kills give points (elite ×5, boss ×50); game over shows score and best score
+- ~~Score: kills give points (elite ×5, boss ×50); game over shows score and best score~~ → T0054
 - ~~Emphasis upgrade: +15% damage per level, maxLevel 5 — a slower damage ramp alongside Weight~~ → T0020
 - ~~Second active "Still Life": a 5 s bubble that slows enemies to 50% speed around you, 12 s cooldown (reuses the Understudy active system)~~ → T0050
 - The Curator: at 8:00 every enemy freezes for 2 s, then a spiral wave of 20 Motes sweeps in
