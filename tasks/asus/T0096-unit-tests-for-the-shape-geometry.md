@@ -4,11 +4,12 @@ title: Unit tests for the shape geometry
 assignee: asus
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 3
 created: 2026-10-27T09:18:11Z
 claimed_at: 2026-10-27T09:27:28Z
+finished_at: 2026-10-27T09:44:53Z
 ---
 
 ## Goal
@@ -65,3 +66,15 @@ The runner stopped mid-task (crash, restart or reboot). Requeued.
 ## Attempt 2 interrupted (asus)
 
 The runner stopped mid-task (crash, restart or reboot). Requeued.
+
+## Result (attempt 3, asus)
+
+Added `tests/art/shapes.test.ts`, the first unit tests for the outline geometry in `src/art/shapes.ts`: 10 tests locking down `polygonPoints` (corner order, on-circle radii, rotation), `starPoints` (tip/valley alternation), and all eight `ShapeKind`s of `shapePoints` (including the square-vs-diamond distinction and the exact 2:1 rect), so a geometry change can no longer silently turn a square into a diamond. No source, content or scene files were modified; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 17.4 min
+
+```
+game/tests/art/shapes.test.ts | 115 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 115 insertions(+)
+```
