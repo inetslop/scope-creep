@@ -5,6 +5,7 @@ import { TEX } from '../art/textures';
 import { ARENA_SIZE, DEPTH, VIEW_SHORT_SIDE } from '../config';
 import { PALETTE } from '../content/palette';
 import { UPGRADES } from '../content/upgrades';
+import { loadBestScore, saveBestScore } from '../core/bestScore';
 import { RunState } from '../core/run';
 import { STREAK_FIRE_BONUS, STREAK_FIRE_BONUS_STREAK, streakFireBonus } from '../core/stats';
 import { rollUpgradeChoices } from '../core/upgrades';
@@ -33,6 +34,10 @@ export interface RunSummary {
   level: number;
   kills: number;
   bestStreak: number;
+  /** Points earned this run. */
+  score: number;
+  /** All-time best score (max of this run and the stored one). */
+  best: number;
   seed: number;
 }
 
@@ -61,6 +66,8 @@ export class GameScene extends Phaser.Scene {
   private bounds!: Phaser.Geom.Rectangle;
   private trailTimer = 0;
   private ending = false;
+  /** All-time best score loaded at run start; written back in endRun(). */
+  private storedBest = 0;
 
   constructor() {
     super(SCENES.game);
@@ -74,6 +81,7 @@ export class GameScene extends Phaser.Scene {
 
     this.run = new RunState(flags.seed ?? Math.floor(Math.random() * 2 ** 31));
     this.registry.set('run', this.run);
+    this.storedBest = loadBestScore();
 
     const half = ARENA_SIZE / 2;
     this.bounds = new Phaser.Geom.Rectangle(-half, -half, ARENA_SIZE, ARENA_SIZE);
@@ -173,12 +181,14 @@ export class GameScene extends Phaser.Scene {
   private endRun(): void {
     this.ending = true;
     hook.stats.deaths += 1;
+    const score = this.run.score;
+    if (score > this.storedBest) saveBestScore(score);
     this.physics.pause();
     this.fx.death(this.player.x, this.player.y, PALETTE.blue, PALETTE.yellow, 40);
     this.sfx.enemyDeath(40);
     this.fx.shake(16, 400);
     this.player.setVisible(false);
-    const summary: RunSummary = { timeSec: this.run.timeSec, level: this.run.level, kills: this.run.kills, bestStreak: this.run.bestStreak, seed: this.run.seed };
+    const summary: RunSummary = { timeSec: this.run.timeSec, level: this.run.level, kills: this.run.kills, bestStreak: this.run.bestStreak, score, best: Math.max(score, this.storedBest), seed: this.run.seed };
     this.time.delayedCall(700, () => {
       this.scene.stop(SCENES.hud);
       this.scene.start(SCENES.gameOver, summary);
@@ -265,6 +275,7 @@ export class GameScene extends Phaser.Scene {
     s.level = this.run.level;
     s.hp = this.run.hp;
     s.maxHp = this.run.stats.maxHp;
+    s.score = this.run.score;
     s.enemiesAlive = this.spawns.activeCount;
     s.cropDamageTaken = this.crop.totalDamage;
     s.streakFireBonus = streakFireBonus(this.run.streak);
@@ -327,6 +338,7 @@ export class GameScene extends Phaser.Scene {
       return g >= MUSIC_VOLUME - 1e-6 && g <= MUSIC_VOLUME * 1.6 + 1e-6 ? null : `music swell gain ${g}`;
     });
     hook.addInvariant('streak', () => (this.run.streak >= 0 && this.run.bestStreak >= this.run.streak ? null : `streak ${this.run.streak} / best ${this.run.bestStreak}`));
+    hook.addInvariant('score', () => (Number.isFinite(this.run.score) && this.run.score >= 0 ? null : `score ${this.run.score}`));
     hook.addInvariant('crop-damage', () => Number.isFinite(this.crop.totalDamage) && this.crop.totalDamage >= 0 ? null : `crop damage ${this.crop.totalDamage}`);
     hook.addInvariant('gutter-damage', () => Number.isFinite(this.gutter.totalDamage) && this.gutter.totalDamage >= 0 ? null : `gutter damage ${this.gutter.totalDamage}`);
     hook.addInvariant('gutter-band', () => (!this.gutter.bandActive || Number.isFinite(this.gutter.bandX) ? null : `gutter band at (${this.gutter.bandX})`));
@@ -346,4 +358,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'score', 'crop-damage', 'gutter-damage', 'gutter-band', 'upgrade-history', 'streak-fire-bonus', 'camera-shake'];

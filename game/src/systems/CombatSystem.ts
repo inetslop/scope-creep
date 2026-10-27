@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { ELITE } from '../config';
+import { ELITE, SCORE_POINTS } from '../config';
 import type { Sfx } from '../audio/Sfx';
 import { getEnemy } from '../content/enemies';
 import type { RunState } from '../core/run';
@@ -112,6 +112,7 @@ export class CombatSystem {
     }
     this.run.kills += 1;
     this.run.registerKill();
+    this.run.addScore(e.elite ? SCORE_POINTS.elite : SCORE_POINTS.enemy);
     hook.stats.enemiesKilled += 1;
     if (e.def.splitsInto) this.split(e);
     e.despawn();

@@ -24,6 +24,7 @@ export interface HookStats {
   level: number;
   hp: number;
   maxHp: number;
+  score: number;
   enemiesAlive: number;
   /** Screen shake on heavy deaths (smoke test / future settings toggle). */
   screenShake: boolean;
@@ -60,6 +61,7 @@ export class TestHook {
     level: 0,
     hp: 0,
     maxHp: 0,
+    score: 0,
     enemiesAlive: 0,
     screenShake: true,
     streakFireBonus: 1,

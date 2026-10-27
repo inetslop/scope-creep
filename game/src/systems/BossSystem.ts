@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import type { Music } from '../audio/Music';
 import type { Sfx } from '../audio/Sfx';
 import { TEX } from '../art/textures';
-import { ARENA_SIZE, DEPTH, PLAYER_RADIUS } from '../config';
+import { ARENA_SIZE, DEPTH, PLAYER_RADIUS, SCORE_POINTS } from '../config';
 import type { FrameBossDef, GridBossDef } from '../content/bosses';
 import { getEnemy } from '../content/enemies';
 import { PALETTE } from '../content/palette';
@@ -315,6 +315,7 @@ export class BossSystem {
     this.run.bossAlive = false;
     this.run.bossHp = 0;
     this.run.bossKills += 1;
+    this.run.addScore(SCORE_POINTS.boss);
     hook.stats.bossKills += 1;
     if (def.behavior === 'grid') {
       hook.stats.gridKills += 1;

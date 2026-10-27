@@ -17,6 +17,9 @@ export const ELITE = {
   knockbackResistBonus: 0.5, xpMul: 6, shardCount: 6, shardSpread: 26, extraDeathRings: 2,
 } as const;
 
+/** Points per kill, by enemy class (normal, elite, boss). */
+export const SCORE_POINTS = { enemy: 1, elite: 5, boss: 50 } as const;
+
 /** Draw order. Higher is on top. */
 export const DEPTH = {
   floor: 0,

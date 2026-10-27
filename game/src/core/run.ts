@@ -19,6 +19,8 @@ export class RunState {
   /** Level-ups earned but not yet spent on an upgrade choice. */
   pendingLevelUps = 0;
   kills = 0;
+  /** Points earned this run (see SCORE_POINTS in config.ts). */
+  score = 0;
   /** Consecutive kills without taking damage. */
   streak = 0;
   /** Highest streak reached this run. */
@@ -93,6 +95,11 @@ export class RunState {
   registerKill(): void {
     this.streak += 1;
     this.bestStreak = Math.max(this.bestStreak, this.streak);
+  }
+
+  /** Awards points for a kill; only ever grows, so the score is monotonic within a run. */
+  addScore(points: number): void {
+    if (points > 0) this.score += points;
   }
 
   upgradeLevel(id: string): number {

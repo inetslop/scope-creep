@@ -22,6 +22,7 @@ export class HudScene extends Phaser.Scene {
   private levelText!: Phaser.GameObjects.Text;
   private timeText!: Phaser.GameObjects.Text;
   private killText!: Phaser.GameObjects.Text;
+  private scoreText!: Phaser.GameObjects.Text;
   private streakText!: Phaser.GameObjects.Text;
   private rhythmText!: Phaser.GameObjects.Text;
   private cropText!: Phaser.GameObjects.Text;
@@ -56,6 +57,7 @@ export class HudScene extends Phaser.Scene {
     this.levelText = this.add.text(0, 0, '', textStyle(18, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
     this.timeText = this.add.text(0, 0, '', textStyle(22, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0);
     this.killText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5);
+    this.scoreText = this.add.text(0, 0, 'SCORE 0', textStyle(14, PALETTE.ink)).setOrigin(0, 0.5);
     this.streakText = this.add.text(0, 0, '', textStyle(16, PALETTE.ink)).setOrigin(1, 0.5).setVisible(false);
     this.rhythmText = this.add.text(0, 0, 'RHYTHM', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
     this.cropText = this.add.text(0, 0, 'CROPPING', textStyle(13, PALETTE.red, { fontStyle: 'bold' })).setOrigin(1, 0.5).setVisible(false);
@@ -134,6 +136,7 @@ export class HudScene extends Phaser.Scene {
 
     this.pauseButton.setPosition(width - PAD - 22, PAD + 22);
     this.killText.setPosition(width - PAD - 54, PAD + 22).setText(`${run.kills} kills`);
+    this.scoreText.setPosition(PAD, PAD + 48).setText(`SCORE ${run.score}`);
     this.updateStreak(run, width);
     if (!this.cropFlashed && run.timeSec >= CROP.startSec) {
       this.cropFlashed = true;

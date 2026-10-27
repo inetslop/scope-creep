@@ -129,6 +129,18 @@ describe('RunState', () => {
     expect(run.streak).toBe(5);
     expect(run.bestStreak).toBe(5);
   });
+
+  it('awards score per kill class and ignores zero/negative points', () => {
+    const run = new RunState(1);
+    expect(run.score).toBe(0);
+    run.addScore(1);
+    run.addScore(5);
+    run.addScore(50);
+    expect(run.score).toBe(56);
+    run.addScore(-5);
+    run.addScore(0);
+    expect(run.score).toBe(56);
+  });
 });
 
 describe('upgrades', () => {

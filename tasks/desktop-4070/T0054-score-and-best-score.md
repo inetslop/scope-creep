@@ -4,11 +4,12 @@ title: Score and best score
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0040]
 attempts: 1
 created: 2026-10-27T00:59:33Z
 claimed_at: 2026-10-27T10:33:52Z
+finished_at: 2026-10-27T11:21:48Z
 ---
 
 ## Goal
@@ -93,3 +94,43 @@ score: number;
 
 ### Tests
 - `tests/core/core.test.ts`: the `RunState` addScore test from step 10 (storage helpers are untestable in the node env and mirror `Sfx.readMuted`, which has no tests).
+
+## Result (attempt 1, desktop-4070)
+
+Both gates pass:
+
+- **`npm run check`** — typecheck, lint, and all 164 unit tests (18 files) green
+- **`npm run smoke`** — desktop (571 frames) and mobile (726 frames) both PASS in real browsers
+
+The score system is complete:
+
+| Piece | Where |
+| --- | --- |
+| Points per kill class (`enemy 1 / elite 5 / boss 50`) | `config.ts:21` → `SCORE_POINTS` |
+| Monotonic `score` + `addScore()` (ignores ≤ 0) | `core/run.ts:101` |
+| Kill scoring — normal/elite via CombatSystem, boss via BossSystem | `CombatSystem.ts:115`, `BossSystem.ts:318` |
+| All-time best persisted across reloads, safe when storage is blocked | `core/bestScore.ts` (`scope-creep.best-score`) |
+| Best loaded at run start, saved on a new record, shown in summary | `GameScene.ts` (`storedBest`, `RunSummary.score`/`.best`) |
+| Live "SCORE N" under the HP/XP bars, top-left | `HudScene.ts` |
+| SCORE + BEST lines on the game-over card | `GameOverScene.ts` |
+| Hook stats `score`, `'score'` invariant (finite, ≥ 0), removed on shutdown | `testHook.ts`, `GameScene.registerInvariants()` |
+| Unit test: awards per-class points, ignores zero/negative | `tests/core/core.test.ts` |
+
+Everything is in the working tree (uncommitted) on `main` — say the word if you want it committed.
+
+- Self-review: APPROVE
+- Time: 47.9 min
+
+```
+game/src/config.ts               |  3 +++
+ game/src/core/bestScore.ts       | 22 ++++++++++++++++++++++
+ game/src/core/run.ts             |  7 +++++++
+ game/src/debug/testHook.ts       |  2 ++
+ game/src/scenes/GameOverScene.ts |  2 +-
+ game/src/scenes/GameScene.ts     | 16 ++++++++++++++--
+ game/src/scenes/HudScene.ts      |  3 +++
+ game/src/systems/BossSystem.ts   |  3 ++-
+ game/src/systems/CombatSystem.ts |  3 ++-
+ game/tests/core/core.test.ts     | 12 ++++++++++++
+ 10 files changed, 68 insertions(+), 5 deletions(-)
+```
