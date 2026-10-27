@@ -162,6 +162,7 @@ export class BossSystem {
     this.run.bossMaxHp = hp;
     this.sfx.bossSting(); // the boss is on the page: one deep thump and a music swell, same frame
     this.music.bossSwell();
+    this.music.bossEnter(this.run.timeSec); // the score glides down to the 64 BPM boss hold
     if (this.run.firstBossSighting(this.def.id)) this.scene.events.emit(GAME_EVENTS.bossNameplate, this.def.name);
     this.phase = 'entering';
     this.phaseTimer = ENTER_SEC;
@@ -356,6 +357,7 @@ export class BossSystem {
     this.fx.shatter(x, y, 40);
     this.fx.shake(14, 500);
     this.sfx.enemyDeath(80);
+    this.music.bossLeave(this.run.timeSec); // the score glides back to the run tempo curve
     for (let i = 0; i < def.deathPickups; i++) {
       const a = this.run.rng.range(0, Math.PI * 2);
       const r = this.run.rng.range(20, 140);

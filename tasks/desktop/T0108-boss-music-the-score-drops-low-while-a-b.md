@@ -4,11 +4,12 @@ title: Boss music — the score drops low while a boss is alive
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T13:08:21Z
 claimed_at: 2026-10-27T13:58:56Z
+finished_at: 2026-10-27T14:08:59Z
 ---
 
 ## Goal
@@ -131,3 +132,19 @@ Append to `tests/core/music.test.ts` (import `BossTempo, BOSS_BPM, BOSS_GLIDE_SE
 - `bossLeave(360)` (curve 104): `bpmFor(360)===64`, `bpmFor(360.75)===84`, `bpmFor(361.5)===104`, `holding(360)===false`, `bpmFor(361.51)===bpmForTime(361.51)` (curve, not frozen 104)
 - re-target: `bossEnter(300)`, `bossLeave(600)` (curve 120), `bpmFor(600.75)===92`, `bossEnter(600.75)`, then `bpmFor(601.5)===78`, `bpmFor(602.25)===64`
 All test times are exactly representable in binary; use `toBe`, matching the existing pins.
+
+## Result (attempt 1, desktop)
+
+Added the boss tempo hold: a pure `BossTempo` class in `src/core/music.ts` (BOSS_BPM 64, BOSS_GLIDE_SEC 1.5, glide on spawn/death, re-target on mid-glide spawn) that `Music` now schedules against, with a dissonant semitone-above second voice on alternating beats while a boss is alive; `BossSystem` calls `bossEnter`/`bossLeave` at the existing sting/death moments, and the logic is locked by four new tests in `tests/core/music.test.ts` (one-char `t > 1` boundary fix vs the design snippet, noted above). `npm run check` (224 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 10.1 min
+
+```
+game/docs/ARCHITECTURE.md      |  2 +-
+ game/src/audio/Music.ts        | 31 +++++++++++++++++++++---
+ game/src/core/music.ts         | 55 ++++++++++++++++++++++++++++++++++++++++++
+ game/src/systems/BossSystem.ts |  2 ++
+ game/tests/core/music.test.ts  | 42 +++++++++++++++++++++++++++++++-
+ 5 files changed, 126 insertions(+), 6 deletions(-)
+```

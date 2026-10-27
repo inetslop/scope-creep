@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { bpmForTime, secondVoiceActive } from '../core/music';
+import { BossTempo, bpmForTime, secondVoiceActive } from '../core/music';
 import { MASTER_VOLUME, type Sfx } from './Sfx';
 
 export const MUSIC_VOLUME = MASTER_VOLUME * 0.25;
@@ -7,6 +7,9 @@ const LOOKAHEAD_SEC = 0.12;
 // A-minor pentatonic, and the same set one octave up for the second voice.
 const NOTES = [220, 261.63, 293.66, 329.63, 392];
 const NOTES_HIGH = [440, 523.25, 587.33, 659.25, 783.99];
+// The low pulse, and a semitone above it for the boss-hold dissonant pair.
+const PULSE_HZ = 110;
+const PULSE_SEMITONE_HZ = PULSE_HZ * 2 ** (1 / 12);
 
 /**
  * A quiet generative score on the same WebAudio context as Sfx: a low ink
@@ -15,13 +18,16 @@ const NOTES_HIGH = [440, 523.25, 587.33, 659.25, 783.99];
  * higher off-beat voice joins at 100 BPM. Beats are scheduled a short
  * lookahead ahead; note choice uses Math.random() on purpose so the gameplay
  * RNG stream is untouched. Every call is a silent no-op until the context is
- * unlocked by the first user gesture, and it follows the SFX mute.
+ * unlocked by the first user gesture, and it follows the SFX mute. While a
+ * boss is alive the tempo holds at 64 BPM (core/music.ts BossTempo) with a
+ * dissonant second voice a semitone above the pulse on alternating beats.
  */
 export class Music {
   private readonly ctx: AudioContext | null;
   private readonly master: GainNode | null;
   private readonly noiseBuffer: AudioBuffer | null;
   private readonly sfx: Sfx;
+  private readonly bossTempo = new BossTempo();
   private playing = false;
   private nextBeat = 0;
   private beatIndex = 0;
@@ -70,7 +76,7 @@ export class Music {
     if (this.nextBeat < this.ctx.currentTime - 0.1) this.nextBeat = this.ctx.currentTime + 0.1;
     while (this.nextBeat < this.ctx.currentTime + LOOKAHEAD_SEC) {
       this.scheduleBeat(this.nextBeat, this.beatIndex, timeSec);
-      this.nextBeat += 60 / bpmForTime(timeSec);
+      this.nextBeat += 60 / this.bossTempo.bpmFor(timeSec);
       this.beatIndex += 1;
     }
   }
@@ -89,10 +95,27 @@ export class Music {
     gain.linearRampToValueAtTime(MUSIC_VOLUME, t + 2.7);
   }
 
+  /** Boss spawn: the tempo glides down to the 64 BPM hold. No mute check — the hold is
+   * time-based and must survive mute toggles (update() is already the mute gate). */
+  bossEnter(timeSec: number): void {
+    this.bossTempo.bossEnter(timeSec);
+  }
+
+  /** Boss death: the dissonant voice stops and the tempo glides back to the run curve. */
+  bossLeave(timeSec: number): void {
+    this.bossTempo.bossLeave(timeSec);
+  }
+
   private scheduleBeat(t: number, beat: number, timeSec: number): void {
     const barBeat = beat % 4;
     // Low ink pulse on every beat.
-    this.tone('sine', 110, 55, 0.3, 0.5, t);
+    this.tone('sine', PULSE_HZ, PULSE_HZ / 2, 0.3, 0.5, t);
+    // Boss hold: pulse plus, on alternating beats, a tone a semitone above it —
+    // the dissonant pair. No other voices while a boss is alive.
+    if (this.bossTempo.holding(timeSec)) {
+      if (barBeat % 2 === 0) this.tone('sine', PULSE_SEMITONE_HZ, PULSE_SEMITONE_HZ / 2, 0.3, 0.5, t);
+      return;
+    }
     // One sparse note, mostly on the "and" of beats 2 and 4.
     if (barBeat === 1 || (barBeat === 3 && Math.random() < 0.5)) {
       const hz = NOTES[Math.floor(Math.random() * NOTES.length)];
