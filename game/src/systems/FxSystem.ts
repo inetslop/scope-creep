@@ -104,6 +104,12 @@ export class FxSystem {
     this.scene.events.emit(GAME_EVENTS.playerHit);
   }
 
+  /** Decoy expires: a small burst of ink fragments. */
+  decoyPop(x: number, y: number): void {
+    this.fragments.setParticleTint(PALETTE.ink);
+    this.fragments.explode(8, x, y);
+  }
+
   /** Boss death: a shower of ink fragments. */
   shatter(x: number, y: number, count: number): void {
     this.fragments.setParticleTint(PALETTE.ink);

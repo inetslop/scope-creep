@@ -4,11 +4,12 @@ title: Understudy active — decoy circle
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0005, T0011, T0014]
 attempts: 1
 created: 2026-10-26T19:20:22Z
 claimed_at: 2026-10-27T00:07:31Z
+finished_at: 2026-10-27T00:26:29Z
 ---
 
 ## Goal
@@ -91,3 +92,28 @@ export class UnderstudySystem {
 - Decoy has no body: weapons/shards/damage numbers ignore it and it blocks nothing for free; don't add one. All timing in seconds via the clamped `dt`.
 ### Tests
 - `tests/core/understudy.test.ts` (Step 1): ready at start; not ready for 8 s after a drop; ready again; pop after 3 s.
+
+## Result (attempt 1, desktop)
+
+Added the Understudy active ability: a 3 s stationary decoy (blue disc + dashed ink ring, no physics body) dropped with Space or a new 60 px bottom-left touch button that pulls all normal enemy steering and shots to its position for its life, then pops with an ink-fragment burst and two new synthesized pop SFX. Timing lives in pure `core/understudy.ts` (3 s life, 8 s cooldown from the drop) with a unit test in `tests/core/understudy.test.ts`; the HUD shows a clockwise-filling cooldown icon (solid blue when ready) on desktop and a dimmed round button on mobile; Space no longer fires (mouse click only), and a `decoy` invariant guards the decoy position. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 19.0 min
+
+```
+game/docs/ARCHITECTURE.md            |  7 +++--
+ game/src/art/textures.ts             | 20 ++++++++++++
+ game/src/audio/Sfx.ts                | 14 +++++++++
+ game/src/core/understudy.ts          | 48 ++++++++++++++++++++++++++++
+ game/src/debug/testHook.ts           |  2 ++
+ game/src/input/Controls.ts           |  7 +++--
+ game/src/scenes/GameScene.ts         | 21 +++++++++++--
+ game/src/scenes/HudScene.ts          | 47 ++++++++++++++++++++++++++-
+ game/src/scenes/MenuScene.ts         |  2 +-
+ game/src/scenes/keys.ts              |  5 +++
+ game/src/systems/FxSystem.ts         |  6 ++++
+ game/src/systems/SpawnSystem.ts      | 18 ++++++++---
+ game/src/systems/UnderstudySystem.ts | 61 ++++++++++++++++++++++++++++++++++++
+ game/tests/core/understudy.test.ts   | 37 ++++++++++++++++++++++
+ 14 files changed, 281 insertions(+), 14 deletions(-)
+```

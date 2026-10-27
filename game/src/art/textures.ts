@@ -23,6 +23,8 @@ export const TEX = {
   player: 'player',
   /** The player in red, shown for a moment after a hit. */
   playerHurt: 'playerHurt',
+  /** The understudy decoy: the player's disc without the core, ringed with dashed ink. */
+  decoy: 'decoy',
   barrel: 'barrel',
   /** XP pickup. */
   shard: 'shard',
@@ -59,6 +61,7 @@ export function generateTextures(scene: Phaser.Scene): void {
     g.fillTriangle(0, 10, 5, 0, 10, 10);
   });
   drawPlayer(scene);
+  drawDecoy(scene);
   graphicsTexture(scene, TEX.barrel, 34, 10, (g) => {
     g.fillStyle(PALETTE.ink, 1);
     g.fillRoundedRect(0, 1, 34, 8, 3);
@@ -95,6 +98,23 @@ function drawPlayer(scene: Phaser.Scene): void {
       drawShape(g, 'circle', c, c, 7, PALETTE.yellow, { outlineWidth: 2, shadow: false });
     });
   }
+}
+
+/** The understudy decoy: the player's disc without the yellow core, plus a thin dashed ink ring so it reads as "not you". */
+function drawDecoy(scene: Phaser.Scene): void {
+  const size = 64;
+  const c = size / 2 - SHADOW_OFFSET / 2;
+  graphicsTexture(scene, TEX.decoy, size, size, (g) => {
+    drawShape(g, 'circle', c, c, PLAYER_RADIUS + 2, PALETTE.blue, { outlineWidth: 3 });
+    g.lineStyle(2, PALETTE.ink, 1);
+    const r = PLAYER_RADIUS + 7;
+    const step = (Math.PI * 2) / 12;
+    for (let i = 0; i < 12; i++) {
+      g.beginPath();
+      g.arc(c, c, r, i * step, i * step + step * 0.55, false);
+      g.stroke();
+    }
+  });
 }
 
 /** Graph paper: faint lines every 32 units, a stronger line every 128. */

@@ -21,7 +21,8 @@ const AIM_DEAD_ZONE = 0.25;
 
 /**
  * Twin-stick controls:
- *   keyboard+mouse  WASD/arrows move, mouse aims, hold left button (or Space) to fire
+ *   keyboard+mouse  WASD/arrows move, mouse aims, hold left button to fire
+ *                   (Space drops the decoy; GameScene handles it, not ControlState)
  *   touch           left thumb = floating move stick, right thumb = aim + fire
  *   gamepad         left stick move, right stick aim + fire (or hold RT)
  */
@@ -36,7 +37,7 @@ export class Controls {
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     this.touch = new TouchSticks(scene);
-    this.keys = scene.input.keyboard?.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT,SPACE', false) as Record<string, Phaser.Input.Keyboard.Key> | undefined;
+    this.keys = scene.input.keyboard?.addKeys('W,A,S,D,UP,DOWN,LEFT,RIGHT', false) as Record<string, Phaser.Input.Keyboard.Key> | undefined;
   }
 
   /** Call when the scene resumes so no stick or button stays "held". */
@@ -94,6 +95,6 @@ export class Controls {
     } else if (length(move) > 0) {
       this.lastAim = move; // keyboard-only players aim where they walk
     }
-    return { move, aim: this.lastAim, firing: mouseDown || down('SPACE'), device: this.device };
+    return { move, aim: this.lastAim, firing: mouseDown, device: this.device };
   }
 }

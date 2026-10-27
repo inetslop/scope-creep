@@ -7,7 +7,7 @@ import { flags } from '../debug/flags';
 import type { StickState } from '../input/TouchSticks';
 import { makeButton } from '../ui/button';
 import { textStyle } from '../ui/text';
-import { GAME_EVENTS, getControls, getRun, SCENES } from './keys';
+import { GAME_EVENTS, getControls, getRun, getUnderstudy, SCENES } from './keys';
 
 const PAD = 12;
 /** After a hit the HP just lost shows as a yellow chunk that waits, then drains, while the bar gives a small shake. */
@@ -35,6 +35,9 @@ export class HudScene extends Phaser.Scene {
   /** Seconds since the player was last hit. */
   private sinceHit = Number.POSITIVE_INFINITY;
   /** Kill-streak tally state. The scene instance survives stop/launch, so reset in create(). */
+  /** Understudy button (touch only): a 60 px round target, redrawn every frame. */
+  private understudyButton?: Phaser.GameObjects.Container;
+  private understudyG?: Phaser.GameObjects.Graphics;
   private streakShown = false;
   private lastStreak = 0;
   private flashUntil = 0;
@@ -58,6 +61,12 @@ export class HudScene extends Phaser.Scene {
     this.bossG = this.add.graphics();
     this.bossName = this.add.text(0, 0, '', textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0);
     this.bossWarnText = this.add.text(0, 0, FRAME.name, textStyle(48, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0.5).setAlpha(0);
+    if (this.sys.game.device.input.touch) {
+      // Captured by this top scene, so the touch never reaches the sticks below (globalTopOnly).
+      this.understudyG = this.add.graphics();
+      this.understudyButton = this.add.container(0, 0, [this.understudyG]).setSize(60, 60).setInteractive({ useHandCursor: true });
+      this.understudyButton.on('pointerdown', () => getUnderstudy(this)?.trigger());
+    }
 
     this.bossFade = 1;
     this.hpGhost = 1;
@@ -123,6 +132,7 @@ export class HudScene extends Phaser.Scene {
 
     this.pauseButton.setPosition(width - PAD - 22, PAD + 22);
     this.killText.setPosition(width - PAD - 54, PAD + 22).setText(`${run.kills} kills`);
+    this.drawUnderstudy(height);
     this.updateStreak(run, width);
     this.fpsText?.setPosition(PAD, height - 24).setText(`${Math.round(this.game.loop.actualFps)} fps`);
 
@@ -186,6 +196,41 @@ export class HudScene extends Phaser.Scene {
     }
     g.lineStyle(2, PALETTE.ink, 1);
     g.strokeRect(x, y, w, h);
+  }
+
+  /** Bottom-left understudy cooldown: a small icon (desktop) or a 60 px round button (touch). */
+  private drawUnderstudy(height: number): void {
+    const us = getUnderstudy(this);
+    if (!us) return;
+    if (this.understudyButton && this.understudyG) {
+      this.understudyButton.setPosition(PAD + 40, height - PAD - 36).setAlpha(us.ready ? 1 : 0.55);
+      this.understudyG.clear();
+      this.drawCooldownIcon(this.understudyG, 30, 30, 30, us.cooldownFrac);
+    } else {
+      this.drawCooldownIcon(this.g, PAD + 22, height - PAD - 36, 18, us.cooldownFrac);
+    }
+  }
+
+  /** Round icon: paper base, blue wedge sweeping clockwise from the top as the cooldown recovers; solid blue when ready. */
+  private drawCooldownIcon(g: Phaser.GameObjects.Graphics, cx: number, cy: number, r: number, frac: number): void {
+    g.fillStyle(PALETTE.paperLight, 1);
+    g.fillCircle(cx, cy, r);
+    if (frac >= 1) {
+      g.fillStyle(PALETTE.blue, 1);
+      g.fillCircle(cx, cy, r);
+    } else {
+      g.fillStyle(PALETTE.blue, 1);
+      g.beginPath();
+      g.moveTo(cx, cy);
+      g.arc(cx, cy, r, -Math.PI / 2, -Math.PI / 2 + frac * Math.PI * 2, false);
+      g.closePath();
+      g.fill();
+      const a = -Math.PI / 2 + frac * Math.PI * 2;
+      g.lineStyle(2, PALETTE.ink, 1);
+      g.lineBetween(cx, cy, cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+    }
+    g.lineStyle(2, PALETTE.ink, 1);
+    g.strokeCircle(cx, cy, r);
   }
 
   /** Active sticks are drawn where the thumb is; idle ones as faint hints. */

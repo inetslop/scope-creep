@@ -118,6 +118,20 @@ export class Sfx {
     this.noise(0.15, 0.15, 500, 'lowpass');
   }
 
+  /** Soft high pop when the decoy drops. */
+  decoyDrop(): void {
+    if (!this.canPlay()) return;
+    this.tone('sine', 740, 990, 0.07, 0.18);
+    this.noise(0.04, 0.08, 3500, 'highpass');
+  }
+
+  /** Lower pop when the decoy expires. */
+  decoyPop(): void {
+    if (!this.canPlay()) return;
+    this.tone('sine', 320, 140, 0.12, 0.25);
+    this.noise(0.08, 0.14, 1000, 'bandpass');
+  }
+
   /** Three-note rising arp. */
   levelUp(): void {
     if (!this.canPlay()) return;

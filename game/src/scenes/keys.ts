@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import type { RunState } from '../core/run';
 import type { Controls } from '../input/Controls';
+import type { UnderstudySystem } from '../systems/UnderstudySystem';
 
 /** Scene keys. Use these constants instead of string literals. */
 export const SCENES = {
@@ -27,6 +28,10 @@ export function getRun(scene: Phaser.Scene): RunState {
 
 export function getControls(scene: Phaser.Scene): Controls | undefined {
   return scene.registry.get('controls') as Controls | undefined;
+}
+
+export function getUnderstudy(scene: Phaser.Scene): UnderstudySystem | undefined {
+  return scene.registry.get('understudy') as UnderstudySystem | undefined;
 }
 
 /** Runs `fn` on every resize until the scene shuts down (avoids leaked listeners). */

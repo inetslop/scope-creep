@@ -17,6 +17,7 @@ export interface HookStats {
   shotsFired: number;
   shardsCollected: number;
   upgradesTaken: number;
+  understudyDrops: number;
   /** Live values from the current run. */
   timeSec: number;
   level: number;
@@ -48,6 +49,7 @@ export class TestHook {
     shotsFired: 0,
     shardsCollected: 0,
     upgradesTaken: 0,
+    understudyDrops: 0,
     timeSec: 0,
     level: 0,
     hp: 0,

@@ -22,6 +22,7 @@ import { FxSystem } from '../systems/FxSystem';
 import { OrbitSystem } from '../systems/OrbitSystem';
 import { PickupSystem } from '../systems/PickupSystem';
 import { SpawnSystem } from '../systems/SpawnSystem';
+import { UnderstudySystem } from '../systems/UnderstudySystem';
 import { WeaponSystem } from '../systems/WeaponSystem';
 import { GAME_EVENTS, onResize, SCENES } from './keys';
 
@@ -45,6 +46,7 @@ export class GameScene extends Phaser.Scene {
   private damageNumbers!: DamageNumbers;
   private marginalia!: Marginalia;
   private sfx!: Sfx;
+  private understudy!: UnderstudySystem;
   private music!: Music;
   private weapons!: WeaponSystem;
   private combat!: CombatSystem;
@@ -81,10 +83,12 @@ export class GameScene extends Phaser.Scene {
     this.damageNumbers = new DamageNumbers(this);
     this.marginalia = new Marginalia(this, this.bounds);
     this.sfx = new Sfx(this);
+    this.understudy = new UnderstudySystem(this, this.player, this.fx, this.sfx);
+    this.registry.set('understudy', this.understudy);
     this.music = new Music(this, this.sfx);
     this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx);
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
-    this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia);
+    this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia, this.understudy);
     this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.spawns);
     this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.damageNumbers, this.pickups);
     this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
@@ -126,6 +130,7 @@ export class GameScene extends Phaser.Scene {
     this.boss.update(dt);
     this.marginalia.update(dt);
     this.pickups.update(dt);
+    this.understudy.update(dt);
     if (run.stats.regenPerSec > 0) run.heal(run.stats.regenPerSec * dt);
 
     this.trailTimer -= dt;
@@ -215,6 +220,9 @@ export class GameScene extends Phaser.Scene {
     const onMute = (): void => {
       this.sfx.toggleMute();
     };
+    const onUnderstudy = (): void => {
+      this.understudy.trigger();
+    };
     // Physics writes body positions back to sprites in POST_UPDATE (after update()), so anything pinned
     // to the player is placed here, or it trails the player by a frame and wobbles.
     const onPostUpdate = (): void => {
@@ -229,6 +237,7 @@ export class GameScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-ESC', onPauseRequest);
     this.input.keyboard?.on('keydown-P', onPauseRequest);
     this.input.keyboard?.on('keydown-M', onMute);
+    this.input.keyboard?.on('keydown-SPACE', onUnderstudy);
     // Auto-pause when the tab/app is backgrounded (important on mobile). Not in smoke mode.
     if (!flags.smoke) this.game.events.on(Phaser.Core.Events.HIDDEN, onHidden);
 
@@ -239,11 +248,13 @@ export class GameScene extends Phaser.Scene {
       this.input.keyboard?.off('keydown-ESC', onPauseRequest);
       this.input.keyboard?.off('keydown-P', onPauseRequest);
       this.input.keyboard?.off('keydown-M', onMute);
+      this.input.keyboard?.off('keydown-SPACE', onUnderstudy);
       this.sfx.dispose();
       this.music.dispose();
       this.game.events.off(Phaser.Core.Events.HIDDEN, onHidden);
       for (const name of INVARIANTS) hook.removeInvariant(name);
       this.registry.remove('controls');
+      this.registry.remove('understudy');
     });
   }
 
@@ -300,7 +311,13 @@ export class GameScene extends Phaser.Scene {
       Number.isFinite(this.music.nextBeatTime) && this.music.nextBeatTime >= 0 ? null : `music nextBeatTime ${this.music.nextBeatTime}`,
     );
     hook.addInvariant('streak', () => (this.run.streak >= 0 && this.run.bestStreak >= this.run.streak ? null : `streak ${this.run.streak} / best ${this.run.bestStreak}`));
+    hook.addInvariant('decoy', () => {
+      const t = this.understudy.target;
+      if (t === null) return null;
+      if (!Number.isFinite(t.x) || !Number.isFinite(t.y)) return `decoy at (${t.x}, ${t.y})`;
+      return arena.contains(t.x, t.y) ? null : `decoy outside arena at (${t.x}, ${t.y})`;
+    });
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels', 'boss-state', 'streak'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'marginalia-labels', 'boss-state', 'streak', 'decoy'];
