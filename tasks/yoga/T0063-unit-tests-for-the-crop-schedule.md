@@ -4,11 +4,12 @@ title: Unit tests for the crop schedule
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T02:46:28Z
 claimed_at: 2026-10-27T03:15:58Z
+finished_at: 2026-10-27T03:21:26Z
 ---
 
 ## Goal
@@ -88,3 +89,15 @@ describe('crop', () => {
 - Assert only the returned scale. Do not import or test `CropSystem`, burn damage, crop marks, or any scene.
 ### Tests
 - `tests/core/crop.test.ts` as above: no shrink before 12:00, 1.0 at 720 s, 0.85 at 870 s, non-increasing 720 ≥ 810 ≥ 900 ≥ 1020, clamped 0.7 at 1020/1021/3600 s.
+
+## Result (attempt 1, yoga)
+
+Replaced `tests/core/crop.test.ts` with the architect's full test suite for the T0045 crop schedule, locking down `cropSafeFraction`: no shrink before 12:00 (1.0 at 719 s), 1.0 at 12:00, 0.85 at the 14:30 midpoint, non-increasing across 720/810/900/1020 s, and clamped at exactly 0.7 from 17:00 through 3600 s, plus an exact `CROP` constants check. No source files changed — the diff is only the test file. `npm run check` passes (212 tests green) and `npm run smoke` passes on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 5.5 min
+
+```
+game/tests/core/crop.test.ts | 26 +++++++++++++++++++-------
+ 1 file changed, 19 insertions(+), 7 deletions(-)
+```

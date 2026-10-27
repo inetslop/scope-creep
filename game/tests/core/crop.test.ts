@@ -11,15 +11,27 @@ describe('crop', () => {
     expect(cropSafeFraction(719)).toBe(1);
   });
 
-  it('shrinks linearly between 12:00 and 17:00', () => {
-    const mid = cropSafeFraction(870);
-    expect(mid).toBeGreaterThan(0.7);
-    expect(mid).toBeLessThan(1);
-    expect(mid).toBeCloseTo(0.85);
+  it('is still 1.0 at 12:00 — the shrink has just begun', () => {
+    expect(cropSafeFraction(720)).toBe(1);
   });
 
-  it('holds at 0.7 from 17:00 onward', () => {
+  it('reaches 0.85 at the 14:30 midpoint', () => {
+    expect(cropSafeFraction(870)).toBeCloseTo(0.85);
+  });
+
+  it('never increases between 12:00 and 17:00', () => {
+    const a = cropSafeFraction(720);
+    const b = cropSafeFraction(810);
+    const c = cropSafeFraction(900);
+    const d = cropSafeFraction(1020);
+    expect(a).toBeGreaterThanOrEqual(b);
+    expect(b).toBeGreaterThanOrEqual(c);
+    expect(c).toBeGreaterThanOrEqual(d);
+  });
+
+  it('clamps at 0.7 from 17:00 onward', () => {
     expect(cropSafeFraction(1020)).toBe(0.7);
-    expect(cropSafeFraction(1200)).toBe(0.7);
+    expect(cropSafeFraction(1021)).toBe(0.7);
+    expect(cropSafeFraction(3600)).toBe(0.7);
   });
 });
