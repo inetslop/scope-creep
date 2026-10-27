@@ -105,7 +105,7 @@ The PO adds ideas here. Good ones become tasks.
 - Trio: a third active — fires 3 slow ink lines in a fan, 10 s cooldown (reuses the Understudy active system)
 - ~~Adagio upgrade: +6 max HP and +0.5 HP/s regen per level, maxLevel 3 — the defensive sustain build, reusing the Mass and Balance stats~~ → T0052
 - ~~Unit tests for stat stacking: same-stat upgrades combine consistently (weight×3, weight+emphasis, rhythm+allegro), untouched stats stay at base~~ → T0053
-- ~~Tube: a long yellow rectangle (120×16) that spawns at one edge and slides straight across the arena at speed 40 — 80 hp, 10 contact damage, splits into two 60×16 halves on death; the first non-square, non-circle silhouette (yellow = heavy)~~ → T0083 (chasing variant, same split)
+- ~~Tube: a long yellow rectangle (120×16) that spawns at one edge and slides straight across the arena at speed 40 — 80 hp, 10 contact damage, splits into two 60×16 halves on death; the first non-square, non-circle silhouette (yellow = heavy)~~ → T0083 (chasing variant, same split) — **rejected**: the rect shape is hard-coded 2:1, so a 7.5:1 bar needs the shape-aspect change (below) before Tube can ship
 - The Grid's corpse: after the second boss dies, a faint compass outline with four tick marks stays on the paper as a permanent decal (sibling of The Frame's corpse decal)
 - Boss music: while a boss is alive the generative score drops to a slow 64 BPM low pulse with a dissonant second voice; on boss death it snaps back to the run tempo
 - The Plumb weapon: a thin ink line hangs from the top of the page at your aim X and re-aims instantly; 12 damage to anything that crosses it; new level-up card (weight 4, ink)
@@ -179,11 +179,11 @@ The PO adds ideas here. Good ones become tasks.
 - Halftone drift: after 20:00 a faint halftone dot grid fades onto the paper and rotates slowly (pure art; the page ages as the run goes on)
 - Overline: every 100 kills a thin ink rule is drawn across the page at a random height and fades over 4 s (pure art, a printshop beat)
 - Wash: a pale blue circle that leaves a 120-unit puddle as it moves, slowing the player 20% while inside (the first slow-field enemy; pairs with the ink-rain idea)
-- Riff upgrade: +1 projectile per volley and +1 pierce per level, maxLevel 2, weight 3 — the last untapped pair on the projectile axis (Repetition's projectiles + Vector's pierce; sibling of Trill, Vivace, Impasto and Arpeggio)
+- ~~Riff upgrade: +1 projectile per volley and +1 pierce per level, maxLevel 2, weight 3 — the last untapped pair on the projectile axis (Repetition's projectiles + Vector's pierce; sibling of Trill, Vivace, Impasto and Arpeggio)~~ → T0084
 - Hatch weapon: fires 5 small points in a narrow 24° cone every 0.5 s — 8 damage each, 220 u range — a close-range spread (new level-up card, weight 4, red)
 - Baseline weapon: fires a thin ink line that sticks to the paper at impact for 3 s and burns 10 damage every 0.5 s to any enemy that crosses it — a hazard you place (new level-up card, weight 4, ink)
 - Bracket: a small grey square (20 hp, 8 contact damage) that orbits a fixed point on the page at radius 60 and speed 90 — a circling hazard you can't kite (needs a new `orbit` behavior, so an M for a strong machine)
-- The Rail: a long grey bar (160×12) that slides slowly across the arena, 6 contact damage, and shoves any enemy it touches sideways — it reshapes the swarm's flow (hold until T0083's Tube has shipped, to keep the two long-bar silhouettes apart)
+- The Rail: a long grey bar (160×12) that slides slowly across the arena, 6 contact damage, and shoves any enemy it touches sideways — it reshapes the swarm's flow (hold: long-bar silhouettes need the shape-aspect change first — see Tube/T0083; M for a strong machine)
 - Pickup cascade: collecting 8 or more shards within 1 s plays a small three-note rising arpeggio — the Gather builds feel rich (small audio, pairs with T0035)
 - Watermark: a faint large ink circle at the center of the paper pulses once per second while a boss is alive (pure art; pairs with the Frame's heartbeat idea)
 - The Press — fourth boss: a giant printing press at the top of the page slowly pushes a wall of ink down the page; you must shoot the type blocks in its path to hold it back (after The Palette; same pattern: content file + pure timing module + unit tests)
@@ -191,3 +191,7 @@ The PO adds ideas here. Good ones become tasks.
 - Fold: every 8 minutes the page folds in half for 10 s — the arena temporarily becomes a rectangle half as wide, with a paper-crease SFX on fold and unfold (stretch)
 - Ligature: two red squares joined by a thin ink line; if both die within 2 s of each other the line shatters and both drop double shards (stretch)
 - Elite tick: a short high tick plays the moment an elite spawns, so a sharp ear hears the page getting meaner (small audio)
+- Shape aspect: add a width:height aspect to the shape system (the rect shape is hard-coded 2:1) so long-bar enemies — Tube (120×16), The Rail (160×12) — can exist; touches the enemy content types, the shape draw, the texture sizing and the enemy hitbox, so an M for a strong machine (unblocks Tube and The Rail)
+- ~~Unit tests for the Arc chain: the bolt targets the first enemy within 260 u of the aim, each hop jumps to the nearest un-hit enemy within the chain radius, damage falls off per hop, and the chain ends when a hop finds no target (locks T0022)~~ → T0085
+- Plate tone: while the Still Life bubble is active, every shard you pick up is worth 50% more XP — the bubble becomes a collector's window (pairs with T0050)
+- Rhythm section: while the kill streak is 8 or higher (Crescendo), shard pickup radius +25% and crit rings render 50% larger — the streak pays out in reach (pairs with T0065 and T0019)
