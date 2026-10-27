@@ -11,6 +11,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   invulnerableUntil = 0;
   /** scene.time.now until which the player is drawn red after a hit. */
   private hurtUntil = 0;
+  /** One-shot shove velocity (e.g. a Platen slam). Decays like Enemy knockback; drive() folds it into the set velocity. */
+  private knock: Vec2 = { x: 0, y: 0 };
   private readonly barrel: Phaser.GameObjects.Image;
 
   constructor(scene: Phaser.Scene, x: number, y: number) {
@@ -27,7 +29,12 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   /** `dir` has length 0..1. */
   drive(dir: Vec2, speed: number): void {
-    this.setVelocity(dir.x * speed, dir.y * speed);
+    this.setVelocity(dir.x * speed + this.knock.x, dir.y * speed + this.knock.y);
+  }
+
+  /** Adds a one-shot shove in `dir` (unit vector). Decays exponentially, like an enemy's knock. */
+  knockback(dir: Vec2, strength: number): void {
+    this.knock = { x: this.knock.x + dir.x * strength, y: this.knock.y + dir.y * strength };
   }
 
   /** World position of the barrel tip, where projectiles spawn. */
@@ -52,6 +59,8 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
 
   protected preUpdate(time: number, delta: number): void {
     super.preUpdate(time, delta);
+    const knockDecay = Math.exp(-8 * (delta / 1000));
+    this.knock = { x: this.knock.x * knockDecay, y: this.knock.y * knockDecay };
     const hurt = time < this.hurtUntil;
     const texture = hurt ? TEX.playerHurt : TEX.player;
     if (this.texture.key !== texture) this.setTexture(texture);

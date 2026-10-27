@@ -89,7 +89,7 @@ export class GameScene extends Phaser.Scene {
     this.music = new Music(this, this.sfx);
     this.pickups = new PickupSystem(this, this.run, this.player, this.fx, this.sfx);
     this.weapons = new WeaponSystem(this, this.run, this.player, this.fx, this.sfx);
-    this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia);
+    this.spawns = new SpawnSystem(this, this.run, this.player, this.bounds, this.marginalia, this.fx, this.sfx);
     this.combat = new CombatSystem(this, this.run, this.player, { enemies: this.spawns.enemies, projectiles: this.weapons.projectiles, enemyShots: this.spawns.enemyShots }, this.fx, this.pickups, this.sfx, this.damageNumbers, this.spawns);
     this.boss = new BossSystem(this, this.run, this.player, this.spawns, this.weapons.projectiles, this.fx, this.sfx, this.music, this.damageNumbers, this.pickups);
     this.orbit = new OrbitSystem(this, this.run, this.player, this.spawns.enemies, this.fx, this.sfx, this.damageNumbers, (e) => this.combat.killEnemy(e));
@@ -289,6 +289,14 @@ export class GameScene extends Phaser.Scene {
       }
       return null;
     });
+    hook.addInvariant('slam-ring', () => {
+      for (const obj of this.spawns.enemies.getChildren()) {
+        const e = obj as Enemy;
+        if (!e.active) continue;
+        if (e.slamRing.visible && e.def.behavior !== 'slam') return `slam ring visible on non-slam enemy ${e.def.id}`;
+      }
+      return null;
+    });
     hook.addInvariant('projectile-count', () => (this.weapons.activeCount <= 400 ? null : `${this.weapons.activeCount} projectiles alive`));
     hook.addInvariant('damage-numbers-pool', () => (this.damageNumbers.activeCount <= 60 ? null : `${this.damageNumbers.activeCount} damage numbers active`));
     hook.addInvariant('orbit-circles', () => {
@@ -332,4 +340,4 @@ export class GameScene extends Phaser.Scene {
   }
 }
 
-const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'crop-damage', 'upgrade-history', 'streak-fire-bonus', 'camera-shake'];
+const INVARIANTS = ['player-position', 'player-in-arena', 'hp-range', 'stats-finite', 'enemy-count', 'enemy-shot-count', 'elite-markers', 'slam-ring', 'projectile-count', 'damage-numbers-pool', 'orbit-circles', 'arc-lines', 'music-scheduler', 'music-swell', 'marginalia-labels', 'boss-state', 'streak', 'crop-damage', 'upgrade-history', 'streak-fire-bonus', 'camera-shake'];

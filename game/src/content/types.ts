@@ -18,7 +18,9 @@ export type EnemyBehavior =
   /** Chases while weaving side to side. */
   | 'weaver'
   /** Holds 240-300 units from the player, strafes, fires ink points (speed 0 = holds its ground). */
-  | 'shoot';
+  | 'shoot'
+  /** Crawls at the player, then flattens and slams: a radial knockback wave that shoves everything nearby, dealing no damage. */
+  | 'slam';
 
 /** Flat geometric shapes, drawn by src/art/shapes.ts. Pointed shapes point to the right (angle 0). */
 export type ShapeKind = 'circle' | 'triangle' | 'square' | 'rect' | 'diamond' | 'pentagon' | 'hexagon' | 'star';

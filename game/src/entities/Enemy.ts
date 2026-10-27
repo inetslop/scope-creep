@@ -3,6 +3,7 @@ import { enemyTextureKey, TEX } from '../art/textures';
 import { DEPTH, ELITE } from '../config';
 import { PALETTE } from '../content/palette';
 import type { EnemyDef } from '../content/types';
+import { SLAM, SlamCycle } from '../core/slam';
 import type { Rng } from '../core/rng';
 import { distance, normalize, sub, type Vec2 } from '../core/vec';
 import { takeSerial } from './serial';
@@ -39,6 +40,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   /** Elite ring and badge: separate display objects, hidden while pooled. */
   readonly ring: Phaser.GameObjects.Image;
   readonly badge: Phaser.GameObjects.Image;
+  /** 'slam' telegraph ring: a thin ink ring at slam radius, hidden except during the telegraph. */
+  readonly slamRing: Phaser.GameObjects.Image;
   private baseScale = 1;
   private ringAngle = 0;
   private knock: Vec2 = { x: 0, y: 0 };
@@ -52,6 +55,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   // 'shoot' state machine
   private shootTimer = 0;
   private shotPending = false;
+  // 'slam' state machine
+  private readonly slamCycle = new SlamCycle();
+  private slamPending = false;
   private get shootPeriod(): number {
     return this.def.shoot?.periodSec ?? SHOOT_PERIOD;
   }
@@ -66,6 +72,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, TEX.dot);
     this.ring = scene.add.image(0, 0, TEX.ring).setTint(PALETTE.ink).setDepth(DEPTH.enemies + 1).setVisible(false);
     this.badge = scene.add.image(0, 0, TEX.badge).setDepth(DEPTH.enemies + 2).setVisible(false);
+    this.slamRing = scene.add.image(0, 0, TEX.ringWide).setTint(PALETTE.ink).setDepth(DEPTH.enemies + 1).setVisible(false);
   }
 
   spawn(def: EnemyDef, x: number, y: number, hpScale: number, rng: Rng, elite: boolean = false): void {
@@ -89,6 +96,9 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.stateTimer = rng.range(1.5, 3.5);
     this.shootTimer = rng.range(0.8, this.shootPeriod);
     this.shotPending = false;
+    this.slamCycle.reset();
+    this.slamPending = false;
+    this.slamRing.setVisible(false).setAlpha(0);
     this.ringAngle = rng.range(0, Math.PI * 2);
     this.ring.setVisible(elite);
     this.badge.setVisible(elite);
@@ -108,9 +118,12 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
 
   protected preUpdate(_time: number, delta: number): void {
     super.preUpdate(_time, delta);
-    if (!this.active || !this.elite) return;
-    this.ringAngle += (delta / 1000) * RING_SPIN;
-    this.syncEliteMarker();
+    if (!this.active) return;
+    if (this.elite) {
+      this.ringAngle += (delta / 1000) * RING_SPIN;
+      this.syncEliteMarker();
+    }
+    if (this.slamRing.visible) this.slamRing.setPosition(this.x, this.y);
   }
 
   /** Sets velocity toward `target` according to the behavior. Called every frame by SpawnSystem. */
@@ -176,6 +189,21 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
         }
         break;
       }
+      case 'slam': {
+        vx = toTarget.x * this.def.speed;
+        vy = toTarget.y * this.def.speed;
+        const fired = this.slamCycle.update(dt);
+        if (this.slamCycle.phase === 'telegraph') {
+          // Route through baseScale: a plain setScale(0.4) would crush an elite Platen to normal height.
+          this.setScale(this.baseScale, this.baseScale * SLAM.flatten);
+          this.slamRing.setVisible(true).setAlpha(this.slamCycle.phaseProgress * 0.7);
+        } else {
+          this.setScale(this.baseScale);
+          this.slamRing.setVisible(false);
+        }
+        if (fired) this.slamPending = true;
+        break;
+      }
     }
     const decay = Math.exp(-8 * dt);
     this.knock = { x: this.knock.x * decay, y: this.knock.y * decay };
@@ -194,6 +222,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   consumeShot(): boolean {
     const pending = this.shotPending;
     this.shotPending = false;
+    return pending;
+  }
+
+  /** True exactly once, the frame a 'slam' enemy's wave fires. SpawnSystem consumes it. */
+  consumeSlam(): boolean {
+    const pending = this.slamPending;
+    this.slamPending = false;
     return pending;
   }
 
@@ -217,11 +252,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.disableBody(true, true);
     this.ring.setVisible(false);
     this.badge.setVisible(false);
+    this.slamRing.setVisible(false);
   }
 
   destroy(fromScene?: boolean): void {
     this.ring.destroy();
     this.badge.destroy();
+    this.slamRing.destroy();
     super.destroy(fromScene);
   }
 }

@@ -17,6 +17,8 @@ import { drawShape, SHADOW_OFFSET } from './shapes';
 export const TEX = {
   /** White circle outline; tint it. Used for impact rings. */
   ring: 'ring',
+  /** Thin white ring at radius 160 in a 320x320 texture; tint it. The Platen's slam telegraph and ripple. */
+  ringWide: 'ringWide',
   /** Small white dot; tint it. Sparks and trails. */
   dot: 'dot',
   /** Small white triangle; tint it. Debris when something is destroyed. */
@@ -56,6 +58,10 @@ export function generateTextures(scene: Phaser.Scene): void {
   graphicsTexture(scene, TEX.ring, 64, 64, (g) => {
     g.lineStyle(5, 0xffffff, 1);
     g.strokeCircle(32, 32, 28);
+  });
+  graphicsTexture(scene, TEX.ringWide, 320, 320, (g) => {
+    g.lineStyle(3, 0xffffff, 1);
+    g.strokeCircle(160, 160, 160);
   });
   graphicsTexture(scene, TEX.dot, 8, 8, (g) => {
     g.fillStyle(0xffffff, 1);

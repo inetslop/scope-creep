@@ -24,6 +24,7 @@ export class Sfx {
   private lastPickupCallAt = 0;
   private lastCardFlipAt = 0;
   private lastBossStingAt = 0;
+  private lastSlamAt = 0;
   private comboStep = 0;
 
   constructor(scene: Phaser.Scene) {
@@ -137,6 +138,16 @@ export class Sfx {
     if (!this.canPlay()) return;
     this.tone('sawtooth', 160, 70, 0.22, 0.22);
     this.noise(0.15, 0.15, 500, 'lowpass');
+  }
+
+  /** Heavy Platen slam: a deep dull thud. No damage tone — it only shoves. */
+  slam(): void {
+    if (!this.canPlay()) return;
+    const now = performance.now();
+    if (now - this.lastSlamAt < 300) return;
+    this.lastSlamAt = now;
+    this.tone('sine', 120, 50, 0.28, 0.3);
+    this.noise(0.15, 0.18, 600, 'lowpass');
   }
 
   /** Three-note rising arp. */

@@ -4,11 +4,12 @@ title: Add the Platen enemy — it shoves you off the page
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-27T08:45:39Z
 claimed_at: 2026-10-27T10:47:32Z
+finished_at: 2026-10-27T11:04:46Z
 ---
 
 ## Goal
@@ -125,3 +126,26 @@ consumeSlam(): boolean; // mirrors consumeShot()
 
 ### Tests
 - `tests/core/slam.test.ts` (new, SlamCycle + SLAM tuning). Existing `tests/content.test.ts` and `tests/content/spawn.test.ts` cover the new def and the 150 s unlock automatically.
+
+## Result (attempt 1, desktop)
+
+Added the Platen, the first enemy that shoves instead of hurting: a yellow circle (r26, 60 hp, speed 20, unlocks 150 s) that crawls at you, flattens to 40% height behind an ink ring at 160 units every 5 s, then ripples a zero-damage wave that knocks the player (220) and the swarm (120) away — Platens resist half of any push, and elite Platens roll on the normal schedule. New files: `src/core/slam.ts` (pure SlamCycle timing + SLAM tuning), `src/content/enemies/platen.ts`, `tests/core/slam.test.ts`; the shove reuses existing knockback plumbing (`Player.knockback()`, `Enemy.hit(0, …)`) with a `slamRings` FxSystem emitter, a `slam()` thud, the `ringWide` texture, and a new `slam-ring` invariant. `npm run check` and `npm run smoke` both pass on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 17.2 min
+
+```
+game/src/art/textures.ts           |   6 +++
+ game/src/audio/Sfx.ts              |  11 ++++
+ game/src/content/enemies/index.ts  |   3 +-
+ game/src/content/enemies/platen.ts |  25 +++++++++
+ game/src/content/types.ts          |   4 +-
+ game/src/core/slam.ts              |  65 +++++++++++++++++++++++
+ game/src/entities/Enemy.ts         |  43 ++++++++++++++--
+ game/src/entities/Player.ts        |  11 +++-
+ game/src/scenes/GameScene.ts       |  12 ++++-
+ game/src/systems/FxSystem.ts       |  17 ++++++-
+ game/src/systems/SpawnSystem.ts    |  32 +++++++++++-
+ game/tests/core/slam.test.ts       | 102 +++++++++++++++++++++++++++++++++++++
+ 12 files changed, 320 insertions(+), 11 deletions(-)
+```

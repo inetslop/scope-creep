@@ -3,6 +3,7 @@ import { TEX } from '../art/textures';
 import { DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
 import { CameraShake } from '../core/shake';
+import { SLAM } from '../core/slam';
 import { hook } from '../debug/testHook';
 import { GAME_EVENTS } from '../scenes/keys';
 
@@ -17,6 +18,7 @@ export class FxSystem {
   private readonly fragments: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly rings: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly critRings: Phaser.GameObjects.Particles.ParticleEmitter;
+  private readonly slamRings: Phaser.GameObjects.Particles.ParticleEmitter;
   private readonly trail: Phaser.GameObjects.Particles.ParticleEmitter;
   /** The camera shake state machine. Named `shakeState` (not `shake`) because the public method is `shake()`. */
   private readonly shakeState = new CameraShake();
@@ -53,6 +55,14 @@ export class FxSystem {
       tint: PALETTE.ink,
       emitting: false,
     });
+    // The 26 -> 160 ripple is baked into the emitter: ParticleEmitter has no per-call setScale in 3.90.
+    this.slamRings = scene.add.particles(0, 0, TEX.ringWide, {
+      lifespan: 250,
+      scale: { start: 26 / SLAM.radius, end: 1 },
+      alpha: { start: 0.9, end: 0 },
+      tint: PALETTE.ink,
+      emitting: false,
+    });
     this.trail = scene.add.particles(0, 0, TEX.dot, {
       lifespan: { min: 400, max: 700 },
       speed: { min: 0, max: 12 },
@@ -62,7 +72,7 @@ export class FxSystem {
       emitting: false,
     });
     this.trail.setDepth(DEPTH.pickups - 1);
-    for (const e of [this.fragments, this.sparks, this.rings, this.critRings]) e.setDepth(DEPTH.fx);
+    for (const e of [this.fragments, this.sparks, this.rings, this.critRings, this.slamRings]) e.setDepth(DEPTH.fx);
   }
 
   /** Small burst where a projectile hits. */
@@ -74,6 +84,11 @@ export class FxSystem {
   /** Small ink ring at a crit impact point. */
   critRing(x: number, y: number): void {
     this.critRings.explode(1, x, y);
+  }
+
+  /** A Platen slam: one ink ring rippling outward from the body to the slam radius. */
+  slamRing(x: number, y: number): void {
+    this.slamRings.explode(1, x, y);
   }
 
   /** Enemy destroyed: a ring and fragments in its color. `extraRings` adds rings (elites). */
