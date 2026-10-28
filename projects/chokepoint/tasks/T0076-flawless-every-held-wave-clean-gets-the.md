@@ -3,11 +3,13 @@ id: T0076
 title: "Flawless: every held wave clean gets the star"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T21:24:45Z
+claimed_at: 2026-10-28T21:40:18Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
