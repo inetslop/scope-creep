@@ -13,6 +13,14 @@ const MARKS: readonly Mark[] = [
   (g, e) => {
     if (e.rootLeft > 0) fillRing(g, e.x, e.y + 2, e.def.look.size * 64 + 12, 3.5, 0, Math.PI * 2, PALETTE.ice, 0.95);
   },
+  // Ablaze: a small orange dash orbiting it, one full turn a second, for as long as the burn lasts.
+  (g, e) => {
+    if (e.burn.left <= 0) return;
+    const a = Math.PI * 2 * (e.age % 1);
+    const r = e.def.look.size * 64 + 9;
+    g.fillStyle(PALETTE.orange, 1);
+    g.fillRoundedRect(e.x + Math.cos(a) * r - 3, e.y + Math.sin(a) * r - 1.5, 6, 3, 1.5);
+  },
   // Slowed: a thin ice-blue frost ring.
   (g, e) => {
     if (e.slowPct > 0) fillRing(g, e.x, e.y + 2, e.def.look.size * 64 + 7, 2.5, 0, Math.PI * 2, PALETTE.ice, 0.95);

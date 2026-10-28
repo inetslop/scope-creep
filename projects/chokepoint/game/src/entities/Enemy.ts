@@ -3,6 +3,9 @@ import { CELL, DEPTH } from '../config';
 import type { EnemyDef } from '../content/types';
 import type { PathLine } from '../core/path';
 import { ART_SCALE, enemyTexture } from '../art/textures';
+import { ignite } from '../core/burn';
+import type { LiveBurn } from '../core/burn';
+import type { Tower } from './Tower';
 
 /** Seconds an enemy takes to pop up to full size when it spawns. */
 const POP_SEC = 0.18;
@@ -43,6 +46,10 @@ export class Enemy extends Phaser.GameObjects.Image {
   markPct = 0;
   /** Seconds since it was marked (the chevron's pop-in); 0 until marked. */
   markAge = 0;
+  /** The burn on it (Ember): its rate and the seconds left; left 0: not ablaze. */
+  burn: LiveBurn = { dps: 0, left: 0 };
+  /** The tower that lit the burn: when the tick kills, its mints pay like a normal kill. */
+  burnSource: Tower | undefined;
   /** Which leg of its dash cycle (Dasher) it is in: the slow crawl, the stop-and-flash, the surge. */
   dashLeg: 'crawl' | 'pause' | 'dash' = 'crawl';
   dashLeft = 0; // seconds left of the current leg
@@ -71,6 +78,9 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.pushLeft = 0;
     this.markPct = 0;
     this.markAge = 0;
+    this.burn.dps = 0;
+    this.burn.left = 0;
+    this.burnSource = undefined;
     this.dashLeg = 'crawl';
     this.dashLeft = this.def.dashCycle?.crawlSec ?? 0;
     this.pauseAge = 0;
@@ -163,15 +173,24 @@ export class Enemy extends Phaser.GameObjects.Image {
     return this.distance >= path.length;
   }
 
-  /** Takes damage (a marked enemy takes `markPct` more, from everything). Returns true when this killed it. */
-  hit(damage: number): boolean {
+  /** Takes damage (a marked enemy takes `markPct` more, from everything); `flash` false for a
+   * burn tick, so it doesn't blink white on every tick. Returns true when this killed it. */
+  hit(damage: number, flash = true): boolean {
     if (!this.active) return false;
     this.hp -= damage * (1 + this.markPct);
-    this.flash = 0.06;
-    this.setTintFill(0xffffff);
+    if (flash) {
+      this.flash = 0.06;
+      this.setTintFill(0xffffff);
+    }
     const ramp = this.def.speedRamp;
     if (ramp && this.speed < ramp.max * CELL) this.speed = Math.min(this.speed + ramp.perHit * CELL, ramp.max * CELL);
     return this.hp <= 0;
+  }
+
+  /** Sets ablaze, or re-ignites: the duration refreshes and the rate keeps the higher of the two.
+   * True when it was not ablaze before (that is the moment that whooshes). */
+  ignite(dps: number, sec: number): boolean {
+    return ignite(this.burn, dps, sec);
   }
 
   /** Slows it by `pct` for `sec` seconds; a weaker slow doesn't replace a stronger one. */

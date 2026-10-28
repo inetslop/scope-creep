@@ -1,9 +1,10 @@
 import type Phaser from 'phaser';
 import { CELL, DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
-import type { EnemyDef } from '../content/types';
+import type { Burn, EnemyDef } from '../content/types';
 import type { RunState } from '../core/run';
 import { mintGoldBonus } from '../core/mint';
+import { burnTick } from '../core/burn';
 import { hook } from '../debug/testHook';
 import { Enemy } from '../entities/Enemy';
 import type { Tower } from '../entities/Tower';
@@ -26,6 +27,8 @@ export interface HitPayload {
   push: number;
   /** The mark this hit applies to the enemies it hits; `x`, `y` are the tower's base (the flash spot). */
   mark: { pct: number; x: number; y: number } | undefined;
+  /** The burn this hit sets ablaze, `dps` per second for `sec` seconds (Ember); undefined without one. */
+  burn: Burn | undefined;
   /** The tower's color, for the shot and the burst. */
   color: number;
   /** The tower that made the hit: its mints (and the mints around the kill) decide the extra kill gold. */
@@ -79,8 +82,18 @@ export class EnemySystem {
   update(dt: number): void {
     for (const e of this.pool) {
       if (!e.active) continue;
-      if (e.advance(dt, this.board.path)) this.leak(e);
+      const leaked = e.advance(dt, this.board.path);
+      // The burn keeps ticking after the last shot; an enemy that leaks this frame is done.
+      if (!leaked) this.tickBurn(e, dt);
+      if (leaked) this.leak(e);
     }
+  }
+
+  /** One frame of the burn: its damage over the seconds still ablaze, through the normal hit. */
+  private tickBurn(e: Enemy, dt: number): void {
+    const damage = burnTick(e.burn, dt);
+    if (damage <= 0) return;
+    if (e.hit(damage, false)) this.kill(e, e.burnSource);
   }
 
   /**
@@ -110,17 +123,31 @@ export class EnemySystem {
     if (payload.push > 0) e.pushBack(payload.push);
     if (payload.root) e.root(payload.root.sec);
     if (payload.mark && e.mark(payload.mark.pct)) this.fx.markFlash(payload.mark.x, payload.mark.y, CELL * 0.43);
+    // The burn keeps ticking after the hit: refreshed on every hit, only the first ablaze whooshes.
+    if (payload.burn) {
+      // The tower whose rate is live gets the killing tick: a fresh ablaze is the igniter's, a
+      // refresh only moves it over when that tower burns at least as hot.
+      const overtook = e.burn.left <= 0 || payload.burn.dps >= e.burn.dps;
+      const fresh = e.ignite(payload.burn.dps, payload.burn.sec);
+      if (overtook) e.burnSource = payload.source;
+      if (fresh) this.sfx?.ignite();
+    }
     if (payload.damage <= 0 || !e.hit(payload.damage)) return false;
+    this.kill(e, payload.source);
+    return true;
+  }
+
+  /** The one kill: its gold (with the mints at the death spot), the chips, the chain, the sound. */
+  private kill(e: Enemy, source: Tower | undefined): void {
     // Mint towers (core/mint.ts): the killer's own copies, plus every mint tower within its radius, pay extra.
     const cell = this.board.cellAt(e.x, e.y);
-    const paid = this.run.addKill(e.def.gold + (cell ? mintGoldBonus(this.towers(), cell, payload.source) : 0));
+    const paid = this.run.addKill(e.def.gold + (cell && source ? mintGoldBonus(this.towers(), cell, source) : 0));
     const milestone = this.fx.killCount(e.x, e.y);
     this.fx.burst(e.x, e.y, PALETTE[e.def.look.color], milestone);
     this.fx.popText(e.x, e.y - 20, `+${paid}`);
     this.sfx?.kill();
     hook.stats.enemiesKilled += 1;
     e.despawn();
-    return true;
   }
 
   private leak(e: Enemy): void {
@@ -154,6 +181,12 @@ export class EnemySystem {
   brokenMark(): string | undefined {
     const bad = this.pool.find((e) => e.active && (!Number.isFinite(e.markPct) || e.markPct < 0 || e.markPct > 1));
     return bad ? `${bad.def.id} marked by ${bad.markPct}` : undefined;
+  }
+
+  /** Invariant: no active enemy carries a NaN or negative burn. */
+  brokenBurn(): string | undefined {
+    const bad = this.pool.find((e) => e.active && (!Number.isFinite(e.burn.dps) || e.burn.dps < 0 || !Number.isFinite(e.burn.left) || e.burn.left < 0));
+    return bad ? `${bad.def.id} burning at ${bad.burn.dps}/s for ${bad.burn.left}s` : undefined;
   }
 
   /** Invariant: no enemy has slid back before the road's start (the gust clamps at 0). */

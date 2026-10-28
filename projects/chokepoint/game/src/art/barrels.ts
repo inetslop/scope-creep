@@ -18,6 +18,10 @@ export interface BarrelLook {
   chevronTip?: boolean;
   /** Small green chevron ticks on the barrel face, one per extra Lead added. */
   chevrons?: number;
+  /** Short orange ticks on the barrel face, one per Ember added (the burn keeps ticking). */
+  emberTicks?: number;
+  /** A small ember dot at the muzzle: the burn is the tower's own attack (Ember first). */
+  emberMuzzle?: boolean;
 }
 
 /**
@@ -29,7 +33,9 @@ export function barrelTexture(scene: Phaser.Scene, color: Bright | undefined, lo
   const width = Math.round(look.width * 20) / 20;
   const bands = Math.max(0, Math.min(3, Math.round(look.bands)));
   const chevrons = Math.max(0, Math.round(look.chevrons ?? 0));
-  const key = `barrel:${color ?? 'empty'}:${length}:${width}:${look.bulb ? 'b' : 'p'}:${bands}:${look.chevronTip ? 'c' : 'n'}:${chevrons}`;
+  const emberTicks = Math.max(0, Math.round(look.emberTicks ?? 0));
+  const emberMuzzle = look.emberMuzzle ?? false;
+  const key = `barrel:${color ?? 'empty'}:${length}:${width}:${look.bulb ? 'b' : 'p'}:${bands}:${look.chevronTip ? 'c' : 'n'}:${chevrons}:${emberTicks}:${emberMuzzle ? 'e' : 'n'}`;
   const r = TOWER_BODY * CELL;
   const len = r * 1.6 * length;
   const w = r * 0.6 * width;
@@ -64,6 +70,19 @@ export function barrelTexture(scene: Phaser.Scene, color: Bright | undefined, lo
     for (let i = 0; i < chevrons; i++) {
       shapePath(ctx, 'chevron', c, c - len * (0.28 + 0.14 * i), w * 0.42);
       ctx.fillStyle = rgba(PALETTE.green, 1);
+      ctx.fill();
+    }
+    // Ember ticks: one short orange dash per Ember added, in the band's style.
+    for (let i = 0; i < emberTicks; i++) {
+      const at = c - len * (0.18 + 0.1 * i);
+      roundRectPath(ctx, c - w * 0.6, at - w * 0.19, w * 1.2, w * 0.38, w * 0.19);
+      ctx.fillStyle = rgba(color === 'orange' ? PALETTE.orangeDeep : PALETTE.orange, 1);
+      ctx.fill();
+    }
+    if (emberMuzzle) {
+      // The ember at the muzzle: a small dark-orange dot at the tip.
+      shapePath(ctx, 'circle', c, c - len, w * 0.3);
+      ctx.fillStyle = rgba(PALETTE.orangeDeep, 1);
       ctx.fill();
     }
   });

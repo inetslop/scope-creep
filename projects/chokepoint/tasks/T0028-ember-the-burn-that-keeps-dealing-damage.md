@@ -4,11 +4,12 @@ title: "Ember: the burn that keeps dealing damage"
 assignee: desktop
 size: L
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0021, T0006]
 attempts: 1
 created: 2026-10-28T06:24:55Z
 claimed_at: 2026-10-28T16:04:06Z
+finished_at: 2026-10-28T16:32:01Z
 epic: E4
 ---
 
@@ -92,3 +93,33 @@ Card lines exactly: asTower `'Sets ablaze the furthest enemy: 3 per second for 3
 
 ### Tests
 `tests/core/ember.test.ts` (pure, like `mark.test.ts`): Ember spec (`kind: 'burn'`, `damage: 0`, `burn {dps 3, sec 3}`, `rate ≈ 1/1.5`); burn total over life per tier (loop `burnTick` 0.5 s: ≈ 9/12/15); re-ignition refresh + higher rate, never additive (Common-over-Rare keeps 4/s); tier specs rare/epic first **and** added; strongest-of-tower (Bolt+Ember+Ember stays 3/s); added form through a Bolt tower (`kind: 'shot'` + `burn` set); card lines per tier (`tierTowerLine`/`tierAddedLine`) and panel lines (`describeSpec`); Ember offerable in the opening draft. Mark's +25% on ticks and the killing tick's kill credit are by construction (ticks go through `Enemy.hit()`'s one mark gate and the one `kill()` path) — covered by the browser smoke, not unit-testable without Phaser.
+
+## Result (attempt 1, desktop)
+
+Added Ember, the first damage-over-time augment: a pool card (circle/orange, opening-eligible, 3/4/5 per second for 3 s by tier) whose first form ignites the furthest enemy in range every 1.5 s and whose added form sets ablaze every hit. The burn ticks through the enemies' single hit/kill path (marked enemies take +25% from ticks; the killing tick is a normal kill for the tower that lit the burn, paying its Mints), re-ignition refreshes duration and keeps the higher rate, and it reads from the board via an orbiting orange dash, a muzzle dot, and orange barrel ticks. New pure rules in core/burn.ts with spec tests; smoke passes on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 27.9 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/art/barrels.ts        |  21 ++++-
+ projects/chokepoint/game/src/audio/Sfx.ts          |   5 +
+ .../chokepoint/game/src/content/augments/ember.ts  |  22 +++++
+ .../chokepoint/game/src/content/augments/index.ts  |   2 +
+ projects/chokepoint/game/src/content/types.ts      |  16 +++-
+ projects/chokepoint/game/src/core/augments.ts      |  23 ++++-
+ projects/chokepoint/game/src/core/burn.ts          |  31 ++++++
+ projects/chokepoint/game/src/core/tiers.ts         |   6 +-
+ projects/chokepoint/game/src/debug/runChecks.ts    |   1 +
+ projects/chokepoint/game/src/entities/Enemy.ts     |  27 +++++-
+ projects/chokepoint/game/src/entities/towerLook.ts |   8 +-
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  41 +++++++-
+ .../chokepoint/game/src/systems/TowerSystem.ts     |   5 +-
+ .../chokepoint/game/src/systems/attacks/burn.ts    |  14 +++
+ .../chokepoint/game/src/systems/attacks/index.ts   |   2 +
+ projects/chokepoint/game/src/systems/enemyMarks.ts |   8 ++
+ projects/chokepoint/game/tests/content.test.ts     |   3 +-
+ projects/chokepoint/game/tests/core/ember.test.ts  | 105 +++++++++++++++++++++
+ 18 files changed, 322 insertions(+), 18 deletions(-)
+```

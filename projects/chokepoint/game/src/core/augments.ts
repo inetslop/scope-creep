@@ -3,7 +3,7 @@ import { ANCHOR_EXTRA_ROOT_SEC, anchor } from '../content/augments/anchor';
 import { getAugment } from '../content/augments';
 import { bolt } from '../content/augments/bolt';
 import type { Bright } from '../content/palette';
-import type { AttackKind, AugmentCopy, AugmentDef } from '../content/types';
+import type { AttackKind, AugmentCopy, AugmentDef, Burn } from '../content/types';
 import type { Rng } from './rng';
 import { rollTier, tierAdded, tierFirst } from './tiers';
 
@@ -37,6 +37,10 @@ export interface TowerSpec {
   markPct: number;
   /** Marks in the tower: one ring tick each. */
   markCount: number;
+  /** The burn its hits set ablaze: the strongest Ember in the tower (the rate never stacks); undefined without one. */
+  burn: Burn | undefined;
+  /** Embers in the tower: a muzzle dot when one is the first, one barrel tick each added. */
+  burnCount: number;
   /** How far ahead of the enemy an aimed shot may land, in cells (0: the shots do not lead). */
   lead: number;
   /** Leads in the tower: the first aims the shots, each extra one raises the lead cap. */
@@ -70,6 +74,8 @@ const EMPTY: TowerSpec = {
   projectileSpeed: 0,
   markPct: 0,
   markCount: 0,
+  burn: undefined,
+  burnCount: 0,
   lead: 0,
   leadCount: 0,
   goldPerKill: 0,
@@ -109,6 +115,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     projectileSpeed: f.projectileSpeed ?? bolt.first.projectileSpeed ?? 10,
     markPct: 0,
     markCount: 0,
+    burn: undefined,
+    burnCount: 0,
     lead: 0,
     leadCount: 0,
     goldRadius: f.goldRadius ?? 0,
@@ -146,6 +154,14 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
       spec.markPct += pct;
       spec.markCount += 1;
     }
+  }
+  // Embers in any slot: the tower's burn is the strongest one in it — re-ignition refreshes, it never adds up.
+  for (let i = 0; i < augments.length; i++) {
+    const c = augments[i]!;
+    const b = i === 0 ? f.burn : tierAdded(getAugment(c.id), c.tier).burn;
+    if (!b) continue;
+    spec.burnCount += 1;
+    if (!spec.burn || b.dps > spec.burn.dps) spec.burn = { ...b };
   }
   // Pushes in any slot: the first is the tower's gust, each extra one adds per-hit push.
   for (let i = 0; i < augments.length; i++) {
@@ -196,6 +212,9 @@ export function describeSpec(spec: TowerSpec): string {
   } else if (spec.kind === 'mark') {
     line = `Marks the enemy furthest along: marked enemies take ${marked}% more damage`;
     if (slow) line += `, slowing them by ${slow}%`;
+  } else if (spec.kind === 'burn') {
+    line = spec.burn ? `Sets ablaze the furthest enemy: ${spec.burn.dps} per second for ${spec.burn.sec} s` : 'Does not attack';
+    if (slow) line += `, slowing them by ${slow}%`;
   } else if (spec.kind === 'rally') {
     const r = getAugment('rally');
     line = `Towers within ${r.first.range} cells attack ${Math.round((r.added.rally?.pct ?? 0) * 100)}% faster`;
@@ -216,6 +235,8 @@ export function describeSpec(spec: TowerSpec): string {
     if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;
     if (marked > 0) line += ', and its hits mark';
   }
+  // An Ember added to another first: its hits set ablaze too (an Ember first says it in its own line).
+  if (spec.kind !== 'burn' && spec.burn) line += ', and its hits set ablaze';
   // The mints in the tower (core/mint.ts): its kills, and the kills within its radius, drop extra gold.
   if (spec.goldRadius > 0) line += `, kills within ${spec.goldRadius} cells drop +${spec.goldPerKill} gold`;
   else if (spec.goldPerKill > 0) line += `, kills drop +${spec.goldPerKill} gold`;

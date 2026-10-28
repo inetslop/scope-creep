@@ -61,6 +61,8 @@ export interface TierValues {
   pierce?: number;
   /** Replaces this copy's gust distance in its first form (Push). */
   push?: number;
+  /** Replaces this copy's burn rate in both forms (Ember). */
+  burnDps?: number;
   addedRateMul?: number;
   addedRangeMul?: number;
   asAdded: string;
@@ -83,7 +85,15 @@ export type AttackKind =
   /** Support: nearby towers attack faster; the beacon never fires itself. */
   | 'rally'
   /** Marks the enemy furthest along: a marked enemy takes more damage from everything. */
-  | 'mark';
+  | 'mark'
+  /** Sets ablaze the enemy furthest along: the burn keeps dealing its rate after the shot (Ember). */
+  | 'burn';
+
+/** Damage over time: `dps` damage per second for `sec` seconds (Ember). */
+export interface Burn {
+  dps: number;
+  sec: number;
+}
 
 /** A tower's attack when this augment is the first one in it. */
 export interface FirstForm {
@@ -106,6 +116,8 @@ export interface FirstForm {
   push?: number;
   /** For a 'mark' attack: the fraction of extra damage a marked enemy takes from everything. */
   mark?: number;
+  /** For a 'burn' attack: the burn it sets ablaze, `dps` per second for `sec` seconds (Ember). */
+  burn?: Burn;
   /** For a predictive 'shot': the base lead cap, in cells ahead of the enemy (Lead). */
   lead?: number;
   /** Kills within this many cells of the tower (Chebyshev) drop +1 gold per mint copy in it (Mint). */
@@ -128,6 +140,8 @@ export interface AddedForm {
   root?: { sec: number };
   /** Hits apply the mark: enemies hit take this fraction of extra damage from everything. */
   mark?: number;
+  /** Hits set ablaze: the burn they apply, `dps` per second for `sec` seconds (Ember). */
+  burn?: Burn;
   /** Hits push enemies back this many cells along the road (Push). */
   push?: number;
   damageMul?: number;

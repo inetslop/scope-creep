@@ -1,6 +1,7 @@
 import type { AugmentDef } from '../types';
 import { anchor } from './anchor';
 import { bolt } from './bolt';
+import { ember } from './ember';
 import { frost } from './frost';
 import { lance } from './lance';
 import { lead } from './lead';
@@ -24,6 +25,7 @@ export const AUGMENTS: readonly AugmentDef[] = [
   mint,
   rally,
   mark,
+  ember,
   rapid,
   reach,
 ];

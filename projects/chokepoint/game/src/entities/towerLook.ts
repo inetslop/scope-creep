@@ -22,6 +22,7 @@ export const MAX_BARRELS = 4;
 export function barrelCount(spec: TowerSpec): number {
   if (!spec.attacks || spec.kind === 'rally') return 0; // a rally beacon has no barrels
   if (spec.gust > 0) return 1; // a gust: one short, wide mouth the wind comes out of
+  if (spec.kind === 'burn') return 1; // a burn: one barrel, the ember at its mouth
   return Math.min(MAX_BARRELS, spec.kind === 'shot' ? spec.shots : spec.kind === 'pulse' ? spec.bolts : 0);
 }
 
@@ -34,11 +35,12 @@ export function speedUps(spec: TowerSpec): number {
 /**
  * The barrels' look, as multiples of a plain Bolt barrel: longer for more range (Reach), thinner
  * for fast light shots and thicker for heavy ones, a bulb when shots burst (Splash), a yellow band
- * per speed-up (Rapid added), a chevron tip and green ticks when the shots lead (Lead).
+ * per speed-up (Rapid added), a chevron tip and green ticks when the shots lead (Lead), and orange
+ * ticks with a muzzle ember when its hits set ablaze (Ember).
  */
 export function barrelLook(spec: TowerSpec): BarrelLook {
   // A gust throws nothing: a short, wide flat mouth, wider than the body reads "wind, not a shot".
-  if (spec.gust > 0) return { length: 1.2, width: 2.2, bulb: false, bands: 0 };
+  if (spec.gust > 0) return { length: 1.2, width: 2.2, bulb: false, bands: 0, emberTicks: spec.burnCount, emberMuzzle: false };
   const plain = bolt.first;
   const damage = spec.kind === 'shot' ? spec.damage : spec.boltDamage;
   // A piercing shot shows as a long thin rod (fixed length: a range-scaled rod would reach past
@@ -53,6 +55,8 @@ export function barrelLook(spec: TowerSpec): BarrelLook {
     bands: speedUps(spec),
     chevronTip: leadFirst,
     chevrons: Math.max(0, spec.leadCount - (leadFirst ? 1 : 0)),
+    emberTicks: spec.burnCount - (spec.kind === 'burn' ? 1 : 0), // the first Ember is the muzzle dot; each added one is a tick
+    emberMuzzle: spec.kind === 'burn',
   };
 }
 

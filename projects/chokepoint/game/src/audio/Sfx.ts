@@ -63,6 +63,11 @@ export class Sfx {
     this.tone(660, 0.09, 'sine', 0.3, 990);
   }
 
+  /** A soft low whoosh: an enemy that was not ablaze catches fire (a refresh stays silent). */
+  ignite(): void {
+    this.tone(150, 0.25, 'sine', 0.3, 60);
+  }
+
   kill(): void {
     this.tone(520, 0.08, 'triangle', 0.18, 260);
   }
