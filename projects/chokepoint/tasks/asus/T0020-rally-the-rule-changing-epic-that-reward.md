@@ -4,10 +4,11 @@ title: "Rally: the rule-changing Epic that rewards clusters"
 assignee: asus
 size: L
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0012]
-attempts: 0
+attempts: 1
 created: 2026-10-28T04:12:01Z
+claimed_at: 2026-10-28T05:44:47Z
 epic: E4
 ---
 
