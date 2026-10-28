@@ -4,10 +4,11 @@ title: Tier pips on the tower
 assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0002]
-attempts: 0
+attempts: 1
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T04:41:59Z
 epic: E4
 ---
 
