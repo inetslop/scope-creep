@@ -3,11 +3,13 @@ id: T0039
 title: "Mint's gold pop: the aura's +1 pops at the kill"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0021, T0028, T0034]
 attempts: 0
 created: 2026-10-28T10:05:34Z
+claimed_at: 2026-10-28T10:05:53Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
