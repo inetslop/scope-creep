@@ -3,10 +3,11 @@ id: T0038
 title: "Ricochet: the shot that bounces off the board's rocks"
 size: L
 priority: 3
-status: todo
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-28T09:35:22Z
+finished_at: 2026-10-28T21:08:10Z
 epic: E4
 ---
 
@@ -114,3 +115,7 @@ if (slow) line += `, slowing them by ${slow}%`;
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0025, T0035: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Rejected (by hand, 2026-10-28)
+
+Cut before it was built: its premise doesn't hold in this game. Shots fly over rocks and home in on their target (there is no line of sight), so there is never an enemy "behind a rock" that a tower can't already hit; a bounce would only send a shot that was going to land somewhere else. Like Lead, it's a mechanic that only matters under conditions the game doesn't have (see the content bar). Don't re-propose a rock-bounce shot unless rocks start blocking shots.
