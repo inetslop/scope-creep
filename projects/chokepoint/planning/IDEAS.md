@@ -4,7 +4,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 
 - Sell a tower for 70% of what its slots cost (tap it, then Sell)
 - Take an augment back out of a tower into the hand, for a fee
-- Lance augment: first, a long piercing line that hits everything along it; added, shots pierce one more enemy — tasked as T0004 (desktop)
+- Lance augment: first, a long piercing line that hits everything along it; added, shots pierce one more enemy — tasked as T0004 (in flight)
 - Chain augment: first, a zap that jumps between nearby enemies; added, hits jump to one more enemy — tasked as T0025 (asus, cycle 8)
 - Push augment: first, a gust that pushes everything within 2.5 cells back along the road, no damage (a support pulse, like Frost's slow and Mark's mark); added, hits push struck enemies back 0.4 cells (+0.4 per Push) — the first augment that moves enemies along the road instead of slowing or stopping them — tasked as T0027 (asus, cycle 9)
 - Gust wind-up: a thin ring around a Push tower's base fills as the next gust charges, so the next shove is readable at a glance (small, after T0027)
@@ -12,10 +12,10 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Rare augments that change a rule (e.g. towers next to each other share their slows)
 - Splitter enemy: breaks into two smaller ones when it dies
 - Shield enemy: a ring that absorbs the first hits for its neighbours
-- Sprinter enemy: speeds up each time it is hit — tasked as T0006 (inet-racing)
+- Sprinter enemy: speeds up each time it is hit — tasked as T0006 (in queue)
 - Flyer: ignores the path and crosses the board in a straight line (only some towers can hit it)
 - Boss every 10 waves with a health bar and its own mechanic
-- Wave preview strip in the build phase: the shapes and counts of the next wave — tasked as T0015 (narcissus)
+- Wave preview strip in the build phase: the shapes and counts of the next wave — tasked as T0015 (in flight)
 - Interest: unspent gold at the end of a build phase earns 5% (capped)
 - Fast-forward button (2x speed) for the wave phase — tasked as T0019 (narcissus, cycle 4)
 - Daily seeded run with a shareable result
@@ -30,9 +30,9 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - First-run hints: on the very first run only (profile runsPlayed = 0), short hints on the board ("build beside the road"), dismissed by doing it
 - Sound on/off toggle on the pause screen, remembered in the profile
 - Wave banner: at wave start a small card slides in at the top — "Wave 8" — and fades after ~1s
-- Kill combo: kills within 1.5 s chain a rising "×2, ×3" counter above the last kill — tasked as T0031 (yoga, cycle 10)
+- Kill combo: kills within 1.5 s chain a rising "×2, ×3" counter above the last kill — built as T0031 (yoga)
 - Draft reveal: the three draft cards flip over when the draft opens (200 ms), Epic cards flip a little longer — tasked as T0024 (yoga, cycle 7)
-- Rally augment (Epic): every tower within 2 cells of a Rally tower attacks 10% faster — rewards building in clusters — tasked as T0020 (asus, cycle 5)
+- Rally augment (Epic): every tower within 2 cells of a Rally tower attacks 10% faster — rewards building in clusters — built as T0020 (asus)
 - Mint augment (Epic): no attack of its own — every kill within 2 cells of a Mint tower drops +1 extra gold; added, the host tower's kills drop +1 extra gold too; closest is Frost (a passive aura), new is that it changes the economy, not combat — tasked as T0021 (asus, cycle 6)
 - Wild card: one draft card is a wildcard that becomes the augment you pick, always at least Rare
 - Leaker: a big slow enemy that costs 2 lives when it leaks — the first enemy that hurts you twice as much
@@ -55,4 +55,8 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Burn on death: when a burning enemy dies, its burn jumps to the nearest enemy within 2 cells (one jump, same rate) — a small rule after T0028
 - Combo milestone: at ×10 the kill combo counter turns yellow and the next kill's chip burst is bigger — a small juice step after T0031
 - Beam hum: a very quiet hum under an active beam, one per tower, fading in and out with the line — a small audio touch after T0029, only if it stays quiet with several beams at once
-- Tier chime: on the draft reveal flip (T0024), each offered card lands with a short chime — one low note Common, two a third higher Rare, three the highest Epic, all at the soft UI-blip volume — so the tier is heard as well as seen — tasked as T0032 (yoga, cycle 11)
+- Tier chime: on the draft reveal flip (T0024), each offered card lands with a short chime — one low note Common, two a third higher Rare, three the highest Epic, all at the soft UI-blip volume — so the tier is heard as well as seen — tasked as T0032 (in flight, yoga)
+- Ricochet augment: first, a shot at the enemy furthest along that bounces off the first rock it hits once and strikes the nearest enemy it meets on the other side (same damage, same cadence as a Bolt shot); added, the shot bounces one more rock. Closest is Bolt (a straight shot at the furthest); new is that the board's rocks take part in the attack — the first augment that uses the board's shape in combat
+- Dasher enemy: a small shape that crawls at half speed, pauses with a short tell, then dashes three cells in a flash; closest is Dart (a fast constant walker); new is burst movement on a cycle — slow while it telegraphs, dangerous while it dashes, so a fixed slow build can't pin it
+- Streak: three clean waves in a row restore one life (the lives readout pops green), once per run — a perfect stretch pays back in survival, on top of the clean-wave coins
+- Demo at your level: the menu's live demo runs a wave from around your saved best wave instead of always an early one, so the menu shows how hard the game has gotten — no input, no card
