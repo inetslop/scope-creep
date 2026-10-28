@@ -4,11 +4,13 @@ title: "Push: the augment that moves enemies back along the road"
 assignee: asus
 size: L
 priority: 3
-status: design
+status: designing
 depends_on: [T0020]
 attempts: 0
 created: 2026-10-28T05:51:38Z
+claimed_at: 2026-10-28T05:51:42Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
