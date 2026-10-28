@@ -3,11 +3,13 @@ id: T0033
 title: "The rewards card says Clean: a green line for the waves you held"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T08:16:06Z
+claimed_at: 2026-10-28T08:16:31Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
