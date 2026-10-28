@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { artScale, STAR_TEXTURE } from '../art/textures';
 import { cssColor, PALETTE } from '../content/palette';
 import { recordRun } from '../core/profile';
 import { flags } from '../debug/flags';
@@ -36,6 +37,9 @@ export class GameOverScene extends Phaser.Scene {
     const title = this.add.text(0, -178, 'Overrun', titleStyle(44, PALETTE.red)).setOrigin(0.5);
     const waveText = this.add.text(0, -130, `Held until wave ${run.wave}`, titleStyle(22)).setOrigin(0.5);
     const score = this.add.text(0, -100, `${run.score} points · ${run.kills} kills`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
+    const flawless = run.wavesCleared === run.cleanWaves && run.wavesCleared > 0;
+    let flawlessStar: Phaser.GameObjects.Image | undefined;
+    if (flawless) flawlessStar = artScale(this.add.image(score.width / 2 + 13, -99, STAR_TEXTURE));
     const wavesText = this.add.text(0, -71, `Waves held ${run.wavesCleared}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
     const stoppedText = this.add.text(0, -54, `Stopped ${run.kills}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
     const cleanText = this.add.text(0, -37, `Clean ${run.cleanWaves}`, textStyle(15, run.cleanWaves > 0 ? PALETTE.greenDeep : PALETTE.muted)).setOrigin(0.5);
@@ -51,20 +55,10 @@ export class GameOverScene extends Phaser.Scene {
     const claimButton = makeButton(this, 0, 70, 'Claim rewards', claim, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
     const againButton = makeButton(this, 0, 134, 'Play again', again, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
     const menuButton = makeButton(this, 0, 196, 'Menu', () => this.scene.start(SCENES.menu), { width: 240, height: 52, radius: 26 });
-    const box = this.add.container(0, 0, [
-      panel,
-      title,
-      waveText,
-      score,
-      wavesText,
-      stoppedText,
-      cleanText,
-      coinsText,
-      bestText,
-      claimButton.container,
-      againButton.container,
-      menuButton.container,
-    ]);
+    const parts: Phaser.GameObjects.GameObject[] = [panel, title, waveText, score];
+    if (flawlessStar) parts.push(flawlessStar);
+    parts.push(wavesText, stoppedText, cleanText, coinsText, bestText, claimButton.container, againButton.container, menuButton.container);
+    const box = this.add.container(0, 0, parts);
 
     const layout = (width: number, height: number): void => {
       box.setPosition(width / 2, height / 2).setScale(Math.min(1, (width - 24) / panelW, (height - 24) / panelH));

@@ -4,11 +4,12 @@ title: "Flawless: every held wave clean gets the star"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T21:24:45Z
 claimed_at: 2026-10-28T22:27:12Z
+finished_at: 2026-10-28T23:27:00Z
 epic: E1
 ---
 
@@ -51,3 +52,16 @@ No new types/functions. One boolean per scene, both from the two values the card
 - Locate edit points by content, not line numbers — T0075 may have shifted `RewardsScene.ts`.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+A run that held every completed wave clean now earns the "Flawless" mark: on the claim card (RewardsScene) a muted "Flawless" line with the small yellow star sits under the Board line, and on the game-over card (GameOverScene) the same star sits beside the score line — both shown only when the ledger's clean count equals its waves-held count with at least one held. Everything is behind a single `flawless` boolean per scene reading the values the cards already read, so non-flawless runs render both cards exactly as before; coins, recipe line, score and best-wave star are untouched. Both cards keep their 16 px bottom margin at 1280x720 and 412x915; check and smoke pass on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 59.8 min
+
+```
+.../chokepoint/game/src/scenes/GameOverScene.ts    | 22 ++++++++--------------
+ .../chokepoint/game/src/scenes/RewardsScene.ts     | 17 +++++++++++++----
+ 2 files changed, 21 insertions(+), 18 deletions(-)
+```
