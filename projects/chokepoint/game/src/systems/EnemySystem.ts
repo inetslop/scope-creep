@@ -6,6 +6,7 @@ import { getEnemy } from '../content/enemies';
 import type { RunState } from '../core/run';
 import { mintGoldBonus } from '../core/mint';
 import { burnTick } from '../core/burn';
+import { ROOT_IMMUNE_SEC } from '../core/root';
 import { splitDistances } from '../core/split';
 import { hook } from '../debug/testHook';
 import { Enemy } from '../entities/Enemy';
@@ -180,10 +181,12 @@ export class EnemySystem {
     return bad ? `${bad.def.id} at (${bad.x}, ${bad.y}) hp ${bad.hp}` : undefined;
   }
 
-  /** Invariant: no active enemy carries a NaN or out-of-range root timer. */
+  /** Invariant: no active enemy carries a NaN or out-of-range root timer, or is rooted while immune. */
   brokenRoot(): string | undefined {
-    const bad = this.pool.find((e) => e.active && (!Number.isFinite(e.rootLeft) || e.rootLeft < 0 || e.rootLeft > 10));
-    return bad ? `${bad.def.id} rooted for ${bad.rootLeft}s` : undefined;
+    const bad = this.pool.find(
+      (e) => e.active && (!Number.isFinite(e.rootLeft) || e.rootLeft < 0 || e.rootLeft > 10 || !Number.isFinite(e.rootImmuneLeft) || e.rootImmuneLeft < 0 || e.rootImmuneLeft > ROOT_IMMUNE_SEC || (e.rootLeft > 0 && e.rootImmuneLeft > 0)),
+    );
+    return bad ? `${bad.def.id} rooted for ${bad.rootLeft}s, immune for ${bad.rootImmuneLeft}s` : undefined;
   }
 
   /** Invariant: no active enemy carries a NaN or out-of-[0, 1] mark. */

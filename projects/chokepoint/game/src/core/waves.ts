@@ -14,9 +14,13 @@ export interface WavePlan {
   hpMul: number;
 }
 
-/** Threat points a wave spends on enemies: wave 1 is five Dots, one well-placed tower's worth. */
+/**
+ * Threat points a wave spends on enemies: wave 1 is five Dots, one well-placed tower's worth, and
+ * every wave adds five more. Each wave also brings a new augment, and augments in one tower
+ * multiply each other, so the waves have to grow fast to keep up.
+ */
 export function waveBudget(wave: number): number {
-  return 2 + wave * 3;
+  return 5 * wave;
 }
 
 /** Seconds between enemies of a group: roomy at first, tighter every wave. */
@@ -24,10 +28,10 @@ export function waveSpacing(wave: number): number {
   return Math.max(0.6, 1.7 - 0.12 * (wave - 1));
 }
 
-/** Enemy hp grows 12% per wave, plus a little extra later on so towers alone never keep up. */
+/** Enemy hp grows 20% per wave, plus a little extra later on so towers alone never keep up. */
 export function waveHpMul(wave: number): number {
   const n = Math.max(0, wave - 1);
-  return 1 + 0.12 * n + 0.004 * n * n;
+  return 1 + 0.2 * n + 0.004 * n * n;
 }
 
 /** How many ramping enemies (faster when hit) a wave sends: two from wave 8, +1 every four waves, at most six. */

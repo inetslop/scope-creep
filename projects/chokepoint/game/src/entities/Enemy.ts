@@ -4,6 +4,7 @@ import type { EnemyDef } from '../content/types';
 import type { PathLine } from '../core/path';
 import { ART_SCALE, enemyTexture } from '../art/textures';
 import { ignite } from '../core/burn';
+import { applyRoot, tickRoot } from '../core/root';
 import type { LiveBurn } from '../core/burn';
 import type { Tower } from './Tower';
 
@@ -42,6 +43,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   slowLeft = 0;
   /** Seconds of a full stop left (Anchor): a rooted enemy does not move at all. */
   rootLeft = 0;
+  /** Seconds it still shrugs off roots after one wore off (core/root.ts). */
+  rootImmuneLeft = 0;
   /** Board units a gust (Push) still has to slide it back along the road. */
   pushLeft = 0;
   /** Fraction of extra damage it takes from everything until it dies (Mark); 0: unmarked. */
@@ -78,6 +81,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.slowPct = 0;
     this.slowLeft = 0;
     this.rootLeft = 0;
+    this.rootImmuneLeft = 0;
     this.pushLeft = 0;
     this.markPct = 0;
     this.markAge = 0;
@@ -104,10 +108,7 @@ export class Enemy extends Phaser.GameObjects.Image {
       if (this.slowLeft <= 0) this.slowPct = 0;
     }
     // The slow keeps counting down while rooted, so it still holds when the root wears off.
-    if (this.rootLeft > 0) {
-      this.rootLeft -= dt;
-      if (this.rootLeft <= 0) this.rootLeft = 0;
-    }
+    tickRoot(this, dt);
     // The gust slides it back along the road: a position change, never a speed change, clamped
     // at the start (no enemy slides before it) and at PUSH_RATE (the slide, not a teleport).
     if (this.pushLeft > 0) {
@@ -203,9 +204,9 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.slowLeft = Math.max(this.slowLeft, sec);
   }
 
-  /** Roots it: fully stopped for `sec` seconds. Overlapping roots do not stack; the longest holds. */
+  /** Roots it: fully stopped for `sec` seconds, unless it is rooted already or shrugs roots off (core/root.ts). */
   root(sec: number): void {
-    this.rootLeft = Math.max(this.rootLeft, sec);
+    applyRoot(this, sec);
   }
 
   /** Marks it: it takes `pct` extra damage from everything until it dies. The first mark wins. */

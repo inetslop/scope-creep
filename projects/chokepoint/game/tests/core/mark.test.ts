@@ -34,13 +34,13 @@ describe('the mark', () => {
     expect(describeSpec(spec('frost', 'mark'))).toMatch(/mark/i);
   });
 
-  it('is Epic-only and may open a run; only Rally and Mint limit a tier as well', () => {
+  it('is Epic-only and may open a run; only Rally, Mint and Anchor limit a tier as well', () => {
     const m = getAugment('mark');
     expect(m.tier).toBe('epic');
     expect(m.opening).toBe(true);
-    for (const a of AUGMENTS) if (a.id !== 'mark' && a.id !== 'rally' && a.id !== 'mint') expect(a.tier).toBeUndefined();
-    expect(getAugment('rally').tier).toBe('epic');
-    expect(getAugment('mint').tier).toBe('epic');
+    const epicOnly = ['mark', 'rally', 'mint', 'anchor'];
+    for (const a of AUGMENTS) if (!epicOnly.includes(a.id)) expect(a.tier).toBeUndefined();
+    for (const id of epicOnly) expect(getAugment(id).tier).toBe('epic');
   });
 
   it('the opening draft may offer a Mark, alongside the damaging augments', () => {
