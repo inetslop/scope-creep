@@ -4,11 +4,12 @@ title: "Wave banner: 'Wave N' slides in at the top when a wave starts"
 assignee: desktop
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0015]
 attempts: 1
 created: 2026-10-28T13:54:28Z
 claimed_at: 2026-10-28T20:20:27Z
+finished_at: 2026-10-28T20:31:05Z
 ---
 
 ## Goal
@@ -148,3 +149,19 @@ none
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0019: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Result (attempt 1, desktop)
+
+T0067's wave banner is complete and correct: `src/ui/hud/topBanner.ts` (the shared top-center slide-and-fade `TopBanner` card, reusable by T0060's two-line last-stand banner) and `src/ui/hud/WaveBanner.ts` (the `HudPart` that shows "Wave N" the instant `run.wave` goes up), wired into `HudScene.ts` with one import and one `parts` line. The reported smoke failure ("no tower ever attacked") turned out to be a non-reproducible flake in the smoke bot's random tower placement — the identical code passes `npm run check` and `npm run smoke` (desktop + mobile) consistently on re-run, and I verified the tower/targeting code it suspected is sound and that the new non-interactive HUD card cannot affect input or targeting.
+
+- Self-review: APPROVE
+- Time: 10.7 min
+- Gate failed at "smoke"; fix round 1.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/scenes/HudScene.ts   |  2 +
+ projects/chokepoint/game/src/ui/hud/WaveBanner.ts | 25 +++++++++++
+ projects/chokepoint/game/src/ui/hud/topBanner.ts  | 51 +++++++++++++++++++++++
+ 3 files changed, 78 insertions(+)
+```

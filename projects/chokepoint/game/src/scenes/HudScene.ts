@@ -11,6 +11,7 @@ import { PauseButton } from '../ui/hud/PauseButton';
 import { SpeedButton } from '../ui/hud/SpeedButton';
 import { StatsCard } from '../ui/hud/StatsCard';
 import { TowerPanel } from '../ui/hud/TowerPanel';
+import { WaveBanner } from '../ui/hud/WaveBanner';
 import { WaveCard } from '../ui/hud/WaveCard';
 import { ZoomButtons } from '../ui/hud/ZoomButtons';
 import { textStyle } from '../ui/text';
@@ -35,6 +36,7 @@ export class HudScene extends Phaser.Scene {
     this.parts = [
       new StatsCard(this),
       new WaveCard(this),
+      new WaveBanner(this),
       new PauseButton(this, game),
       new ZoomButtons(this, game),
       new NextWaveButton(this, game),
