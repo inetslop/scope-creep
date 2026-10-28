@@ -4,11 +4,12 @@ title: Rarity on the hand and the tower panel
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0002]
 attempts: 1
 created: 2026-10-28T01:07:07Z
 claimed_at: 2026-10-28T08:16:09Z
+finished_at: 2026-10-28T08:26:15Z
 epic: E4
 ---
 
@@ -76,3 +77,17 @@ export function gemRow(scene: Phaser.Scene, tier: Tier, x: number, y: number): P
 
 ### Tests
 none (UI only; the tier data and `tierAddedLine` rules are tested by T0002)
+
+## Result (attempt 1, desktop)
+
+Tier is now visible wherever an augment is visible. New `src/ui/tierLook.ts` holds the shared tier card look (frame color, gem tint/count, tier name, `drawTierFrame`, `gemRow`); hand cards get a tier frame plus gem row (icon/name repositioned to make room, frame inside the button content so it lifts on select); the tower panel replaced its joined-names title with one row-card per augment — icon, "Name · Tier", gems, and the exact `tierAddedLine` from the draft — and grows its height with the row count. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 10.1 min
+
+```
+projects/chokepoint/game/src/ui/hud/HandBar.ts    | 10 ++--
+ projects/chokepoint/game/src/ui/hud/TowerPanel.ts | 58 ++++++++++++++++-------
+ projects/chokepoint/game/src/ui/tierLook.ts       | 52 ++++++++++++++++++++
+ 3 files changed, 101 insertions(+), 19 deletions(-)
+```
