@@ -1,12 +1,14 @@
 ---
 id: T0037
 title: The Recent line stars your best run
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T09:20:45Z
+claimed_at: 2026-10-28T09:42:25Z
 epic: E1
 ---
 
