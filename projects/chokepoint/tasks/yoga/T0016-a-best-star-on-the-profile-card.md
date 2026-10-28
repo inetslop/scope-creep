@@ -1,13 +1,14 @@
 ---
 id: T0016
-title: "A \\\\\\\"Best\\\\\\\" star on the profile card"
+title: "A \\\\\\\\\\\\\\\"Best\\\\\\\\\\\\\\\" star on the profile card"
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T03:39:38Z
+claimed_at: 2026-10-28T04:18:12Z
 epic: E1
 ---
 
