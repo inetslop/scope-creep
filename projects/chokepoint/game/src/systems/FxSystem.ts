@@ -174,4 +174,19 @@ export class FxSystem {
       .setDepth(DEPTH.fx);
     this.track(t, 750, { y: y - 34, alpha: 0, ease: 'Quad.easeOut' });
   }
+
+  /** Mint's +1 pops: one small gold "+1" per bonus the kill was paid, side by side, 100 ms after the kill gold. */
+  mintPop(x: number, y: number, count: number): void {
+    const xs: number[] = [];
+    for (let i = 0; i < count; i++) xs.push(x + (i - (count - 1) / 2) * 22);
+    this.scene.time.delayedCall(100, () => {
+      for (const px of xs) {
+        if (this.live >= FxSystem.MAX) break;
+        const t = this.scene.add
+          .text(px, y, '+1', textStyle(14, PALETTE.goldText, { fontStyle: 'bold', stroke: cssColor(PALETTE.card), strokeThickness: 4 }))
+          .setOrigin(0.5).setDepth(DEPTH.fx);
+        this.track(t, 750, { y: y - 34, alpha: 0, ease: 'Quad.easeOut' });
+      }
+    });
+  }
 }

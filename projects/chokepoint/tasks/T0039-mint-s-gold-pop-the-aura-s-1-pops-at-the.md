@@ -4,11 +4,12 @@ title: "Mint's gold pop: the aura's +1 pops at the kill"
 assignee: baby-mama
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0021, T0028, T0034]
 attempts: 1
 created: 2026-10-28T10:05:34Z
 claimed_at: 2026-10-28T16:33:01Z
+finished_at: 2026-10-28T16:48:00Z
 epic: E4
 ---
 
@@ -66,3 +67,16 @@ mintPop(x: number, y: number, count: number): void {
 - Spacing 22 / font 14 mirror `killCount`'s style; two pops land at `x±11` (side by side), one at `x` (kill spot). T0034 also edits `FxSystem` (`killCount` only) — leave that method and the area above `popText` untouched.
 ### Tests
 none
+
+## Result (attempt 1, baby-mama)
+
+A Mint's +1 gold is now visible at the kill: whenever a kill pays a Mint bonus, a small gold "+1" pops at the kill spot ~100 ms after the normal kill-gold pop — one per bonus paid, side by side when several (two Mints → two pops at x±11). Added `FxSystem.mintPop()` (small gold bold "+1", rises 34 and fades over 750 ms, tracked like every other Fx, with the per-pop MAX cap) and two lines in `EnemySystem.kill()` that derive the bonus count as `paid - e.def.gold` and call it. Gold totals, the coin tally, sounds and the normal pop are untouched; a kill with no Mint in range shows only the normal pop, exactly as before. (The design's step 3 names the method `strike()`, but the `paid`/`popText` lines live in the private `kill()` it calls — same spot, so I edited there.)
+
+- Self-review: APPROVE
+- Time: 15.0 min
+
+```
+projects/chokepoint/game/src/systems/EnemySystem.ts |  2 ++
+ projects/chokepoint/game/src/systems/FxSystem.ts    | 15 +++++++++++++++
+ 2 files changed, 17 insertions(+)
+```
