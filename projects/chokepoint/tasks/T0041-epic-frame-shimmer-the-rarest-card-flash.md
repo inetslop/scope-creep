@@ -3,11 +3,13 @@ id: T0041
 title: "Epic frame shimmer: the rarest card flashes as it lands"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T10:59:21Z
+claimed_at: 2026-10-28T10:59:37Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
