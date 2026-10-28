@@ -1,12 +1,14 @@
 ---
 id: T0006
 title: "Sprinter: the enemy that gets faster when hit"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T07:56:40Z
 ---
 
 ## Goal
