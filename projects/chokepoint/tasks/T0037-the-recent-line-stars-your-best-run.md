@@ -3,11 +3,13 @@ id: T0037
 title: The Recent line stars your best run
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T09:20:45Z
+claimed_at: 2026-10-28T09:26:54Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
