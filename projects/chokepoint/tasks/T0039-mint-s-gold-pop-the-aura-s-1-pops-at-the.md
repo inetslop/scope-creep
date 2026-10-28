@@ -1,12 +1,14 @@
 ---
 id: T0039
 title: "Mint's gold pop: the aura's +1 pops at the kill"
+assignee: baby-mama
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0021, T0028, T0034]
-attempts: 0
+attempts: 1
 created: 2026-10-28T10:05:34Z
+claimed_at: 2026-10-28T16:33:01Z
 epic: E4
 ---
 
