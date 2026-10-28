@@ -3,13 +3,13 @@ id: T0053
 title: "Mute: the enemy that silences towers within 2 cells"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: [T0029]
 attempts: 0
 created: 2026-10-28T12:34:55Z
 claimed_at: 2026-10-28T13:46:30Z
-design_attempts: 1
-designer: baby-mama
+finished_at: 2026-10-28T14:16:18Z
+design_attempts: 2
 ---
 
 ## Goal
@@ -31,3 +31,11 @@ The first enemy that fights back: a slow, heavy walker that jams every tower wit
 - [ ] A Mute dies like any enemy (chips, kill gold) and leaks for exactly 1 life.
 - [ ] The jam blip plays once per tower per jam event, never per frame.
 - [ ] At 412x915 and 1280x720 the Mute reads as the biggest enemy on the board and the jam look is readable on a dimmed tower.
+
+## Architect could not design it (baby-mama)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+Prompt is too long · automatic compaction failed: summarization produced empty response
+```
