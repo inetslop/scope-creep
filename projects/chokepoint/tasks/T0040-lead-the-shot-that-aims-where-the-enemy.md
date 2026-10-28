@@ -3,11 +3,13 @@ id: T0040
 title: "Lead: the shot that aims where the enemy will be"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T10:05:34Z
+claimed_at: 2026-10-28T10:05:37Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
