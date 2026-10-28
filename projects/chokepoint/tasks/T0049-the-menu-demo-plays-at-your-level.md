@@ -1,12 +1,14 @@
 ---
 id: T0049
 title: The menu demo plays at your level
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0015]
-attempts: 0
+attempts: 1
 created: 2026-10-28T12:01:28Z
+claimed_at: 2026-10-28T19:09:44Z
 epic: E1
 ---
 
