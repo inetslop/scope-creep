@@ -4,11 +4,13 @@ title: "The menu shows what you have: a profile card"
 assignee: narcissus
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0001]
 attempts: 0
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T02:32:29Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
