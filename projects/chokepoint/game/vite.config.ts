@@ -9,7 +9,21 @@ function gitSha(): string {
   }
 }
 
+/**
+ * The last commit that changed this game's own folder. The site rebuilds the game on every deploy,
+ * also when only other folders changed; this only moves when the game did, so the in-game update
+ * notice (ui/updateNotice.ts) never announces a "new version" that is the same game.
+ */
+function gameSha(fallback: string): string {
+  try {
+    return execSync('git log -1 --format=%h -- .', { stdio: ['ignore', 'pipe', 'ignore'] }).toString().trim() || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 const sha = gitSha();
+const game = gameSha(sha);
 const builtAt = new Date().toISOString();
 
 export default defineConfig({
@@ -17,6 +31,7 @@ export default defineConfig({
   base: './',
   define: {
     __BUILD_SHA__: JSON.stringify(sha),
+    __GAME_SHA__: JSON.stringify(game),
     __BUILD_TIME__: JSON.stringify(builtAt),
   },
   build: {
@@ -36,7 +51,7 @@ export default defineConfig({
       // version.json lets the deploy workflow skip unchanged builds and lets humans check what's live.
       name: 'emit-version-json',
       generateBundle() {
-        this.emitFile({ type: 'asset', fileName: 'version.json', source: JSON.stringify({ sha, builtAt }, null, 2) });
+        this.emitFile({ type: 'asset', fileName: 'version.json', source: JSON.stringify({ sha, game, builtAt }, null, 2) });
       },
     },
   ],

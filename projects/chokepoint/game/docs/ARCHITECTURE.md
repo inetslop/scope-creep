@@ -6,6 +6,8 @@ Keep this document current when you add or change a system.
 
 `main.ts` installs the test hook (`window.__SC__`), creates the `Phaser.Game` and registers the scenes. The canvas is sized in device pixels, at least 2x (supersampling: WebGL doesn't antialias shapes) and shown at CSS size; every camera zooms by `display.ratio` so all scene code works in CSS pixels (`ui/display.ts`: `viewSize()`, `pointerCss()`, `uiCamera()`). `?smoke` renders at 1x. `BootScene` paints every texture (`art/generate.ts`), creates the shared `Sfx`, and starts `MenuScene`, or `GameScene` directly with `?smoke` or `?play`.
 
+`main.ts` also starts the update check (`ui/updateNotice.ts`): on load and every 10 minutes it fetches the live `version.json` past every cache and compares its `game` (the last commit that changed this game's folder, stamped by `vite.config.ts` as `__GAME_SHA__`) with the build's own. Once they differ, the menu and game-over screens show a "New version · Reload" card (never during a run). Off in the dev server and with `?smoke`.
+
 ## Scenes
 
 ```

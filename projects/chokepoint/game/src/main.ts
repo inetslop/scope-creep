@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { cssColor, PALETTE } from './content/palette';
 import { hook, installTestHook } from './debug/testHook';
 import { display, pixelRatio } from './ui/display';
+import { startUpdateCheck } from './ui/updateNotice';
 import { BootScene } from './scenes/BootScene';
 import { DraftScene } from './scenes/DraftScene';
 import { GameOverScene } from './scenes/GameOverScene';
@@ -12,6 +13,7 @@ import { PauseScene } from './scenes/PauseScene';
 import { RewardsScene } from './scenes/RewardsScene';
 
 installTestHook();
+startUpdateCheck();
 
 const parent = document.getElementById('game')!;
 /** The page size in CSS pixels. */

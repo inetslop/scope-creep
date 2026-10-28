@@ -7,6 +7,7 @@ import { artScale, augmentTexture } from '../art/textures';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
+import { addUpdateNotice } from '../ui/updateNotice';
 import { uiCamera, viewSize } from '../ui/display';
 import { textStyle, titleStyle } from '../ui/text';
 import { onKey, onResize, SCENES } from './keys';
@@ -99,6 +100,7 @@ export class MenuScene extends Phaser.Scene {
     };
     layout(viewSize(this).width, viewSize(this).height);
     onResize(this, layout);
+    addUpdateNotice(this);
     onKey(this, (e) => {
       if (e.key === 'Enter' || e.key === ' ') play();
     });

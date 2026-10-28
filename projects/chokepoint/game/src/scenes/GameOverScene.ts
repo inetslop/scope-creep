@@ -7,6 +7,7 @@ import { makeButton } from '../ui/button';
 import { makeCard } from '../ui/card';
 import { uiCamera, viewSize } from '../ui/display';
 import { textStyle, titleStyle } from '../ui/text';
+import { addUpdateNotice } from '../ui/updateNotice';
 import { getRun, getSfx, onKey, onResize, SCENES } from './keys';
 
 /** The run is over: how far it got, the best run, play again. In ?smoke mode it restarts on its own. */
@@ -70,6 +71,7 @@ export class GameOverScene extends Phaser.Scene {
     };
     layout(viewSize(this).width, viewSize(this).height);
     onResize(this, layout);
+    addUpdateNotice(this);
     onKey(this, (e) => {
       if (e.key === 'Enter' || e.key === ' ') again();
     });
