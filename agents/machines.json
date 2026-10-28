@@ -1,7 +1,6 @@
 {
   "machines": {
     "asus": {
-      "paused": true,
       "label": "ASUS RTX Spark (128 GB unified)",
       "model": "Qwen 3.8 UD-Q8_K_XL",
       "roles": ["dev"],
@@ -11,7 +10,6 @@
       "notes": "Best reasoning in the fleet, but the slowest. Give it the hardest design-heavy work: new systems, tricky bugs, cross-cutting changes."
     },
     "desktop": {
-      "paused": true,
       "label": "Ryzen 9800X3D + RTX 5090",
       "model": "Qwen 3.8 UD-Q4_K_XL",
       "roles": ["po", "architect", "dev"],
@@ -23,7 +21,6 @@
       "notes": "Fastest machine, but it plans and designs every task full time and only builds when there is nothing to plan or design, so it gets through fewer tasks than its speed suggests. Give it medium features: new mechanics, scenes, UI, juice, audio."
     },
     "yoga": {
-      "paused": true,
       "label": "Lenovo Yoga RTX Spark (32 GB unified)",
       "model": "Qwen 3.8 UD-Q2_K_XL",
       "roles": ["dev", "architect"],
@@ -58,7 +55,6 @@
       "notes": "Heavily quantized (IQ2_S): expect more mistakes. Give it medium features: new mechanics, scenes, UI, juice, audio."
     },
     "inet-racing": {
-      "paused": true,
       "label": "Ryzen 5 5600X + 32 GB RAM",
       "model": "Qwen 3.8 27B UD-IQ4_XS",
       "roles": ["dev", "architect"],
@@ -69,7 +65,6 @@
       "notes": "Mid quant (IQ4_XS) Runs on a 24GB card. Give it the hardest, design heavy work."
     },
     "narcissus": {
-      "paused": true,
       "label": "Apple M5 MacBook Pro (24 GB unified)",
       "model": "Qwen 3.8 27B UD-IQ3_XXS",
       "roles": ["dev", "architect"],
@@ -88,6 +83,7 @@
     "L": { "maxTurns": 160, "timeoutMin": 240 }
   },
   "loop": {
+    "project": "chokepoint",
     "pollSeconds": 60,
     "maxAttempts": 3,
     "fixRounds": 2,
@@ -103,7 +99,7 @@
     "architectMaxAttempts": 2,
     "designGraceMinutes": 20,
     "smokeSeconds": 24,
-    "effort": { "po": "xhigh", "architect": "xhigh", "dev": "xhigh" },
+    "effort": { "po": "xhigh", "architect": "medium", "dev": "medium" },
     "sampling": { "temperature": 1, "top_p": 0.95, "top_k": 20 }
   }
 }
