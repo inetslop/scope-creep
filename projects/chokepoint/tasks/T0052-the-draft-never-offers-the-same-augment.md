@@ -1,12 +1,14 @@
 ---
 id: T0052
 title: The draft never offers the same augment twice in a row
+assignee: inet-racing
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0048]
-attempts: 0
+attempts: 1
 created: 2026-10-28T12:34:55Z
+claimed_at: 2026-10-28T13:20:29Z
 epic: E4
 ---
 
