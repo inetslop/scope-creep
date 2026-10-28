@@ -3,11 +3,13 @@ id: T0073
 title: "Beam: the line that never stops (the T0029 re-task)"
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T21:24:45Z
+claimed_at: 2026-10-28T21:24:49Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
