@@ -4,11 +4,12 @@ title: "The run's coins so far, live in the HUD"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0001]
 attempts: 1
 created: 2026-10-28T02:08:37Z
 claimed_at: 2026-10-28T02:54:51Z
+finished_at: 2026-10-28T03:11:25Z
 epic: E1
 ---
 
@@ -83,3 +84,15 @@ export class StatsCard implements HudPart {
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Added a live "+N coins" run-tally line to the StatsCard HUD: a 12 px coin icon plus 13 px muted-gray text below the existing lives/gold line, growing the card 196x48 → 196x72. N is recomputed every frame with `coinsForRun` from the same `run.wavesCleared`/`kills`/`cleanWaves` fields the game-over card uses, so the final game-over number always matches the last HUD value; a fresh run reads "+0 coins". The gold readout stays bold ink and larger so it reads as spendable; the line starts at zero with no tween and no sound.
+
+- Self-review: APPROVE
+- Time: 16.6 min
+
+```
+projects/chokepoint/game/src/ui/hud/StatsCard.ts | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
+```
