@@ -3,11 +3,13 @@ id: T0056
 title: "The claim card says Board: the run's board as a four-letter code"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0051]
 attempts: 0
 created: 2026-10-28T13:04:03Z
+claimed_at: 2026-10-28T13:34:01Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
