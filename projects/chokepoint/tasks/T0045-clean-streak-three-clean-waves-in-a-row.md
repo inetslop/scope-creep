@@ -1,12 +1,14 @@
 ---
 id: T0045
 title: "Clean streak: three clean waves in a row give the run +1 life"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T11:47:03Z
+claimed_at: 2026-10-28T21:37:51Z
 epic: E1
 ---
 
