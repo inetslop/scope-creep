@@ -49,7 +49,7 @@ export class StatsCard implements HudPart {
     if (game.run.lives > this.lastLives) this.popLives();
     this.lastLives = game.run.lives;
     this.gold.setText(String(game.run.gold));
-    const n = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves });
+    const n = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed });
     this.coins.setText(`+${n} coins`);
     if (n > this.lastN) this.pop();
     this.lastN = n;

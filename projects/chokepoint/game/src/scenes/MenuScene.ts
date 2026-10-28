@@ -81,12 +81,31 @@ export class MenuScene extends Phaser.Scene {
         { width: 220, height: 60, fontSize: 24, radius: 30, fill: PALETTE.ink },
       );
     }
+    let ghost: Button | undefined;
+    let ghostLine: Phaser.GameObjects.Text | undefined;
+    if (p.bestSeed !== null) {
+      const seed = p.bestSeed;
+      ghost = makeButton(this, 0, 0, `Ghost · Wave ${p.bestWave}`, () => {
+        clearSavedRun(window.localStorage); // a new run abandons a saved one for nothing
+        this.registry.set('ghostSeed', seed);
+        this.scene.start(SCENES.game);
+      }, { width: 220, height: 60, fontSize: 24, radius: 30 }); // Resume's shape, white card: no fill
+      ghostLine = this.add.text(0, 0, 'the board of your best run', textStyle(14, PALETTE.muted)).setOrigin(0.5);
+    }
     const hint = this.add.text(0, 0, 'Enter or Space', textStyle(14, PALETTE.faint)).setOrigin(0.5);
 
     // Entrances: the title drops in with a bounce, the rest fades up after it; Play breathes.
     this.title.setAlpha(0).setScale(0.6);
     this.tweens.add({ targets: this.title, alpha: 1, scale: 1, duration: 650, ease: 'Back.easeOut' });
-    for (const [i, obj] of [profileCard, how, ...(resume ? [resume.container] : []), button.container, hint].entries()) {
+    const fadeIn: (Phaser.GameObjects.Container | Phaser.GameObjects.Text)[] = [profileCard, how];
+    if (resume) fadeIn.push(resume.container);
+    fadeIn.push(button.container);
+    if (ghost && ghostLine) {
+      fadeIn.push(ghost.container);
+      fadeIn.push(ghostLine);
+    }
+    fadeIn.push(hint);
+    for (const [i, obj] of fadeIn.entries()) {
       obj.setAlpha(0);
       this.tweens.add({ targets: obj, alpha: 1, duration: 400, delay: 350 + i * 120 });
     }
@@ -99,8 +118,9 @@ export class MenuScene extends Phaser.Scene {
     const layout = (width: number, height: number): void => {
       const cx = width / 2;
       const extra = resume ? 78 : 0; // the Resume button above Play
-      const k = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width, Math.max(0.6, (height - 460 - extra) / MENU_ROAD_SIZE.height));
-      const block = MENU_ROAD_SIZE.height * k + 460 + extra;
+      const room = extra + (ghost ? 91 : 0); // plus the Ghost button's line below Play
+      const k = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width, Math.max(0.6, (height - 460 - room) / MENU_ROAD_SIZE.height));
+      const block = MENU_ROAD_SIZE.height * k + 460 + room;
       const top = Math.max(16, (height - block) / 2);
       this.demo.layout(cx, top, k);
       const y = top + MENU_ROAD_SIZE.height * k + 40;
@@ -116,7 +136,11 @@ export class MenuScene extends Phaser.Scene {
       }
       if (resume) resume.container.setPosition(cx, y + 294);
       button.container.setPosition(cx, y + 290 + extra);
-      hint.setPosition(cx, y + 343 + extra);
+      if (ghost && ghostLine) {
+        ghost.container.setPosition(cx, y + 366 + extra);
+        ghostLine.setPosition(cx, y + 410 + extra);
+      }
+      hint.setPosition(cx, y + (ghost ? 434 : 343) + extra);
     };
     layout(viewSize(this).width, viewSize(this).height);
     onResize(this, layout);

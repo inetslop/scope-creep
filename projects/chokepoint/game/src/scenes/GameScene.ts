@@ -62,7 +62,8 @@ export class GameScene extends Phaser.Scene {
     const sfx = getSfx(this);
 
     const saved = this.registry.pop('resumeRun') as SavedRun | undefined;
-    this.run = new RunState(saved ? saved.seed : (flags.seed ?? Math.floor(Math.random() * 2 ** 31)));
+    const ghostSeed = this.registry.pop('ghostSeed') as number | undefined;
+    this.run = new RunState(saved ? saved.seed : (flags.seed ?? ghostSeed ?? Math.floor(Math.random() * 2 ** 31)));
     this.registry.set('run', this.run);
     const view = viewSize(this);
     const portrait = saved ? saved.rows > saved.cols : view.height > view.width;

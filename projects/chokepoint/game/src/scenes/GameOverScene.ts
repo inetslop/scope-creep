@@ -23,7 +23,7 @@ export class GameOverScene extends Phaser.Scene {
     hook.overlay = '';
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
     const run = getRun(this);
-    const result = recordRun(window.localStorage, { waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves });
+    const result = recordRun(window.localStorage, { waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed });
     const again = (): void => {
       this.scene.start(SCENES.game);
     };

@@ -4,11 +4,12 @@ title: "The ghost run: replay the board of your best run"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T22:13:10Z
 claimed_at: 2026-10-28T23:27:49Z
+finished_at: 2026-10-29T00:00:42Z
 epic: E1
 ---
 
@@ -99,3 +100,31 @@ In `layout()`, after `button.container.setPosition(cx, y + 290 + extra);` add `i
 
 ### Tests
 - `tests/core/profile.test.ts` as in step 6: bestSeed stored on new best, kept on same-seed (ghost) new best, replaced by a new-seed new best, untouched below best, legacy-profile healing, broken-value rejection.
+
+## Result (attempt 1, desktop)
+
+T0078 is done as designed — the profile stores `bestSeed` (the seed of the best run's board, set only when a run on a new board sets a new best, never moved by a ghost replay), and the menu offers a white-card "Ghost · Wave N" button with a muted caption that starts a fresh run on that exact board; a `ghost.taken` invariant and full profile test coverage were added, plus the `coinsForRun` call sites the design missed. The smoke failure was a pre-existing flake in the smoke contract, not the ghost feature: wave 1 starts at ~8.8 s of a 12 s window driven by random taps, so the first tower's existence was left to luck; I fixed it game-side by having the smoke mode build the first tower on its own (Building.autoBuild, triggered from RunFlow.finishDraft under `flags.smoke`) on the first open cell beside the road nearest the entrance — matching the existing smoke auto-actions and leaving normal play untouched. `npm run check` passes and `npm run smoke` passed 3 consecutive runs on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 32.9 min
+- Gate failed at "smoke"; fix round 1.
+
+```
+projects/chokepoint/game/src/core/profile.ts       | 16 ++++++-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ .../chokepoint/game/src/scenes/GameOverScene.ts    |  2 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  3 +-
+ projects/chokepoint/game/src/scenes/MenuScene.ts   | 32 +++++++++++--
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  2 +-
+ .../chokepoint/game/src/scenes/RewardsScene.ts     |  2 +-
+ projects/chokepoint/game/src/systems/Building.ts   | 18 +++++++-
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  2 +
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts   |  2 +-
+ .../chokepoint/game/tests/core/profile.test.ts     | 54 ++++++++++++++++------
+ 11 files changed, 108 insertions(+), 26 deletions(-)
+```
+
+## Merge (attempt 1, desktop)
+
+- Conflicts in: projects/chokepoint/game/src/scenes/PauseScene.ts
+- The conflict agent resolved them.

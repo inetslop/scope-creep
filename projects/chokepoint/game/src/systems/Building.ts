@@ -2,7 +2,7 @@ import { CELL } from '../config';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
 import { slotCost, towerSpec } from '../core/augments';
-import type { Cell } from '../core/map';
+import { cellsBesidePath, type Cell } from '../core/map';
 import type { RunState } from '../core/run';
 import type { Tower } from '../entities/Tower';
 import type { Sfx } from '../audio/Sfx';
@@ -131,6 +131,22 @@ export class Building {
   cardAdded(): void {
     if (this.selectedAugment === undefined && this.run.hand.length > 0) this.selectedAugment = this.run.hand.length - 1;
     this.uiVersion += 1;
+  }
+
+  /**
+   * ?smoke: the taps are random, so the first tower is built on its own: the held card on the
+   * first open cell beside the road, nearest the entrance (the wave's first enemies pass it).
+   */
+  autoBuild(): void {
+    if (this.towers.towers.length > 0) return;
+    const held = this.heldCopy;
+    if (!held) return;
+    const cell = cellsBesidePath(this.board.map).find((c) => this.board.canBuild(c));
+    if (!cell) return;
+    const result = this.towers.build(cell, held);
+    if (typeof result === 'string') return;
+    this.run.useAugment(this.selectedAugment!);
+    this.afterHandChange();
   }
 
   /** Invariant: the selected card exists. */

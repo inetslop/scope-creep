@@ -49,7 +49,7 @@ export class RewardsScene extends Phaser.Scene {
     this.clean = run.cleanWaves;
     this.combo = run.bestCombo;
     this.score = run.score; // the same number the end-of-run screen shows
-    this.coins = lastRun ? lastRun.coins : coinsForRun({ waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves });
+    this.coins = lastRun ? lastRun.coins : coinsForRun({ waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed });
     this.elapsed = 0;
     this.cleanText = undefined;
     this.comboText = undefined;
