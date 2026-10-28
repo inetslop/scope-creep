@@ -78,6 +78,8 @@ interface GameView {
   hasLog: boolean;
   counts: PoolCounts;
   lastDone?: string;
+  /** The gameplay screenshot (site/screenshots.ts) as a URL relative to the site, if one was taken. */
+  preview?: string;
 }
 
 function renderGame(g: GameView): string {
@@ -86,11 +88,14 @@ function renderGame(g: GameView): string {
   const open = g.counts.building + g.counts.ready + g.counts.designing + g.counts.design;
   const play = g.playable ? `<a class="btn primary" href="${esc(g.id)}/">Play</a>` : '<span class="btn off">Not built yet</span>';
   const log = g.hasLog ? `<a class="btn" href="${esc(g.id)}/build-log/">Build log</a>` : '';
-  return `<article class="card game${g.active ? ' active' : ''}">
-  <div class="row"><h3>${esc(g.title)}</h3>${badge}</div>
-  ${g.blurb ? `<p>${esc(g.blurb)}</p>` : ''}
-  <div class="meta">${done}${g.active && open ? ` · ${open} open` : ''}</div>
-  <div class="actions">${play}${log}</div>
+  const shot = g.preview ? ` style="background-image: url('${esc(g.preview)}')"` : '';
+  return `<article class="card game${g.active ? ' active' : ''}${g.preview ? ' shot' : ''}"${shot}>
+  <div class="panel">
+    <div class="row"><h3>${esc(g.title)}</h3>${badge}</div>
+    ${g.blurb ? `<p>${esc(g.blurb)}</p>` : ''}
+    <div class="meta">${done}${g.active && open ? ` · ${open} open` : ''}</div>
+    <div class="actions">${play}${log}</div>
+  </div>
 </article>`;
 }
 
@@ -152,6 +157,10 @@ function renderPage(d: { games: GameView[]; machines: MachineView[]; active?: Ga
   .card { background: ${C.card}; border-radius: 18px; padding: 16px 18px; box-shadow: 0 3px 0 ${C.cardDeep}, 0 8px 20px rgba(44, 58, 64, 0.08); min-width: 0; }
   .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .game p { margin: 8px 0 6px; color: ${C.ink}; }
+  .game { display: flex; flex-direction: column; justify-content: flex-end; }
+  /* The screenshot (16:9) across the full width at the top; the text panel overlaps only its bottom edge. */
+  .game.shot { padding: calc(56.25% - 40px) 10px 10px; background-color: ${C.island}; background-position: top center; background-size: 100% auto; background-repeat: no-repeat; }
+  .game.shot .panel { background: rgba(255, 255, 255, 0.96); border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 12px rgba(44, 58, 64, 0.14); }
   .game.active { box-shadow: 0 3px 0 ${C.greenDeep}, 0 8px 20px rgba(44, 58, 64, 0.1); }
   .badge { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: ${C.island}; color: ${C.muted}; }
   .badge.live { background: ${C.green}; color: #fff; }
@@ -251,6 +260,8 @@ function main(): void {
       hasLog: fs.existsSync(path.join(site, id, 'build-log', 'index.html')),
       counts: poolCounts(tasks),
       lastDone: lastFinished(tasks),
+      // The commit in the URL makes browsers fetch each deploy's new screenshot.
+      preview: fs.existsSync(path.join(site, id, 'preview.jpg')) ? `${id}/preview.jpg?v=${git(['rev-parse', '--short', 'HEAD']).trim()}` : undefined,
     };
   });
   games.sort((a, b) => Number(b.active) - Number(a.active));
