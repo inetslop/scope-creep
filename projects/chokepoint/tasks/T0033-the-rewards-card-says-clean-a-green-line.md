@@ -1,12 +1,14 @@
 ---
 id: T0033
 title: "The rewards card says Clean: a green line for the waves you held"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T08:16:06Z
+claimed_at: 2026-10-28T08:29:26Z
 epic: E1
 ---
 
