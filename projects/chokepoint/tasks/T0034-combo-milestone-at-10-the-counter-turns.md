@@ -3,10 +3,12 @@ id: T0034
 title: "Combo milestone: at ×10 the counter turns yellow"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T08:30:13Z
+claimed_at: 2026-10-28T08:44:58Z
+designer: yoga
 ---
 
 ## Goal
