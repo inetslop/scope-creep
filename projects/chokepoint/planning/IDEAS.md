@@ -22,13 +22,13 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Colorblind mode: patterns on the shapes, not just color
 - Map modifiers chosen in the draft instead of an augment (e.g. "the next wave comes from both ends")
 - Haptics on mobile for builds and leaks
-- Draft reroll: once per run, reroll the three offered cards for 15 gold
+- Draft reroll: once per run, reroll the three offered cards for 15 gold — tasked as T0036 (cycle 16)
 - Leak warning: the last 3 seconds before an enemy reaches the exit, the exit pulses red with a quiet tick — built as T0014 (yoga)
 - Ghost run: a menu option to replay your best run's exact board (same seed) and beat your own wave record
 - Slow zone: a light blue patch on the board slows enemies crossing it by 30%
 - DPS line in the tower panel: a damage-per-second number per tower, updated as augments are added
 - First-run hints: on the very first run only (profile runsPlayed = 0), short hints on the board ("build beside the road"), dismissed by doing it
-- Sound on/off toggle on the pause screen, remembered in the profile
+- Sound on/off toggle on the pause screen, remembered in the profile — tasked as T0035 (cycle 16)
 - Wave banner: at wave start a small card slides in at the top — "Wave 8" — and fades after ~1s
 - Kill combo: kills within 1.5 s chain a rising "×2, ×3" counter above the last kill — built as T0031 (yoga)
 - Draft reveal: the three draft cards flip over when the draft opens (200 ms), Epic cards flip a little longer — tasked as T0024 (yoga, cycle 7)
@@ -36,7 +36,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Mint augment (Epic): no attack of its own — every kill within 2 cells of a Mint tower drops +1 extra gold; added, the host tower's kills drop +1 extra gold too; closest is Frost (a passive aura), new is that it changes the economy, not combat — tasked as T0021 (asus, cycle 6)
 - Wild card: one draft card is a wildcard that becomes the augment you pick, always at least Rare
 - Leaker: a big slow enemy that costs 2 lives when it leaks — the first enemy that hurts you twice as much
-- Recent runs: the menu lists your last few runs (wave + coins) so you can see your trend — tasked as T0018 (narcissus, cycle 3)
+- Recent runs: the menu lists your last few runs (wave + coins) so you can see your trend — built as T0018 (desktop)
 - A "New best" star on the menu's profile card when your last run hit your best wave — tasked as T0016 (yoga, cycle 3)
 - Mender enemy: a slow round enemy that heals nearby enemies in a pulsing ring; closest is Block, new is that it heals other enemies, which no current enemy does
 - Anchor augment: first, roots (fully stops) everything within 2.5 cells for 0.75 s every 3 s; added, hits root for 0.5 s (+0.25 s per extra copy). Closest is Frost (a slow); new is a full timed stop that also applies when stacked on an attacking tower — tasked as T0023 (asus, cycle 7)
