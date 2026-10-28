@@ -4,13 +4,11 @@ title: "Ember: the burn that keeps dealing damage"
 assignee: asus
 size: L
 priority: 3
-status: designing
-depends_on: []
+status: todo
+depends_on: [T0021, T0006]
 attempts: 0
 created: 2026-10-28T06:24:55Z
-claimed_at: 2026-10-28T06:24:58Z
 epic: E4
-designer: desktop
 ---
 
 ## Goal
@@ -37,3 +35,59 @@ The draft can roll a new augment, Ember — the first damage over time in the ga
 - [ ] The tick that kills an enemy is a normal kill for the tower that lit the burn: gold pops where the enemy died, the run's stopped count grows, and a Mint within 2 cells pays its +1.
 - [ ] A Bolt tower with Ember in a later slot ignites every enemy its shots hit, and the tower shows one short orange tick per Ember in it.
 - [ ] A first-time player can read it from the board alone: enemies with the orbiting orange dash keep taking damage after the last shot.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/core/burn.ts` — pure burn rules: `LiveBurn`, `ignite()`, `burnTick()` (no Phaser; import only `Burn` type from content)
+- create `src/content/augments/ember.ts` — Ember `AugmentDef` (model on `mark.ts`)
+- create `src/systems/attacks/burn.ts` — the 'burn' attack: ignites the furthest enemy in range (model on `mark.ts`, but `pickTarget`, `aimAt` + `kick`, no sfx)
+- create `tests/core/ember.test.ts` — spec tests (see Tests)
+- edit `src/content/types.ts` — `Burn` interface; `AttackKind` += `| 'burn'`; `FirstForm.burn?`, `AddedForm.burn?`; `TierValues.burnDps?` + `TierValues.asTower?`
+- edit `src/content/augments/index.ts` — `ember,` one line after `mark,`
+- edit `src/core/tiers.ts` — `tierFirst`/`tierAdded` copy the burn and apply `burnDps`; new `tierTowerLine()` next to `tierAddedLine()`
+- edit `src/core/augments.ts` — `TowerSpec.burn`/`burnCount` (+ `EMPTY`); in `towerSpec` an Ember loop next to the Mark loop; `describeSpec` 'burn' branch + `', and its hits set ablaze'` suffix in the other branches
+- edit `src/systems/attacks/index.ts` — `burn` import + `burn,` in `ATTACKS`
+- edit `src/entities/Enemy.ts` — `burn` field (reset in `spawn()`), `ignite()` method, `hit()` gains a `flash` parameter
+- edit `src/systems/EnemySystem.ts` — `HitPayload.burn`; `strike()` ignites (+ whoosh only when fresh); extract the kill body into `private kill(e)`; `update()` ticks burns; `brokenBurn()`
+- edit `src/systems/TowerSystem.ts` — `burn: spec.burn,` in the payload literal (one line)
+- edit `src/systems/enemyMarks.ts` — orbiting dash as one `MARKS` line, inserted before the frost line
+- edit `src/entities/towerLook.ts` + `src/art/barrels.ts` — burn tower gets 1 barrel; `BarrelLook.emberTicks`/`emberMuzzle`, included in the texture key and painted
+- edit `src/audio/Sfx.ts` — `ignite()` after `mark()`; edit `src/scenes/DraftScene.ts` — tower line via `tierTowerLine(b, copy.tier)` (one line + import)
+- edit `src/debug/runChecks.ts` — `['enemies.burn', (g) => g.enemies.brokenBurn()],` after `enemies.mark`; edit `tests/content.test.ts` — first-form check gains `|| a.first.burn`; tier loop checks `burnDps > 0` and `asTower` length/label like `asAdded`
+
+### Interfaces
+```ts
+// content/types.ts
+export interface Burn { dps: number; sec: number; }          // FirstForm/AddedForm: burn?: Burn
+// TierValues: burnDps?: number;  asTower?: string;          // AttackKind: | 'burn'
+// core/burn.ts
+export interface LiveBurn { dps: number; left: number; }     // left 0 = not ablaze
+export function ignite(burn: LiveBurn, dps: number, sec: number): boolean;  // true = fresh ablaze; re-ignite: left = sec, dps = max
+export function burnTick(burn: LiveBurn, dt: number): number; // dps × seconds still ablaze this tick, 0 when spent
+// core/augments.ts: TowerSpec += burn: Burn | undefined; burnCount: number;
+// core/tiers.ts: export function tierTowerLine(def: AugmentDef, tier: Tier): string;
+// systems/EnemySystem.ts: HitPayload += burn: Burn | undefined;
+//   private kill(e: Enemy): void;  private tickBurn(e: Enemy, dt: number): void;  brokenBurn(): string | undefined;
+// entities/Enemy.ts: burn: LiveBurn = { dps: 0, left: 0 };  ignite(dps: number, sec: number): boolean;
+//   hit(damage: number, flash = true): boolean;
+// art/barrels.ts: BarrelLook += emberTicks: number; emberMuzzle: boolean;   // audio/Sfx.ts: ignite(): void
+```
+Ember values: `range: 2.6`, `rate: 1 / 1.5`, `damage: 0`, `first.burn = added.burn = { dps: 3, sec: 3 }`, `tiers.rare = { burnDps: 4, … }`, `epic = { burnDps: 5, … }`, `look: { shape: 'circle', color: 'orange', size: 0.2 }`, `opening: true` (its damage is the burn, which `first.damage` doesn't count — keep the `rollOffer` filter untouched). `tierSpec.burn` = strongest Ember in the tower (max dps, like slow — never summed); `burnCount` = Embers in any slot.
+Card lines exactly: asTower `'Sets ablaze the furthest enemy: 3 per second for 3 s.'`; asAdded `'Hits set ablaze: 3 per second for 3 s.'`; rare/epic replace the 3 with 4/5 in both (per-tier asTower via `tiers[?].asTower`). Panel: burn branch `Sets ablaze the furthest enemy: N per second for 3 s`; other kinds append `, and its hits set ablaze`. Sound: `ignite(): this.tone(150, 0.25, 'sine', 0.3, 60)`. Mark: dash `fillRoundedRect(x-3, y-1.5, 6, 3, 1.5)` in `PALETTE.orange` at radius `look.size * 64 + 9`, angle `2π (e.age % 1)`. Barrel: ticks are short rounded rects (≈ `w*1.2 × w*0.38`) at `c - len * (0.18 + 0.1*i)`, painted `orangeDeep` when the barrel color is orange else `orange`; muzzle dot: circle `w*0.3` at the tip in `orangeDeep`.
+
+### Steps
+1. `core/burn.ts`, 2. `content/types.ts`, 3. `content/augments/ember.ts` + registry line, 4. `core/tiers.ts`, 5. `core/augments.ts`, 6. `systems/attacks/burn.ts` + `ATTACKS`, 7. `entities/Enemy.ts`, 8. `systems/EnemySystem.ts`, 9. `systems/TowerSystem.ts` payload line, 10. `enemyMarks.ts`, 11. `towerLook.ts` + `barrels.ts`, 12. `Sfx.ts`, `DraftScene.ts`, `runChecks.ts`, 13. tests, 14. `npm run check`. No changes to GameScene, HudScene, main.ts, RunFlow or Building: the tick lives in `EnemySystem.update` (after `advance`, skip leaked; `if (e.hit(damage, false)) this.kill(e)`), the whoosh in `strike` (`if (payload.burn && e.ignite(payload.burn.dps, payload.burn.sec)) this.sfx?.ignite()`), and every attack already flows through `strike`/`hit` so Bolt's volley, Splash's burst and pulse all ignite via the shared payload.
+
+### Pitfalls
+- White flash: a burn tick every frame must not call the flashing `hit()` — pass `flash = false`, or burning enemies sit permanently white.
+- Pooling: reset `burn` in `spawn()`; the killing tick must go through the one extracted `kill()` (gold pop at the death spot, `addKill`, `enemiesKilled`, `sfx.kill`, `despawn`) — never a second kill path. Mint (T0021) will hook exactly this function: if it lands first, extract `kill()` around its lines.
+- Barrel textures are cached by key — `emberTicks` and `emberMuzzle` must be in the key or old textures get reused without ticks. Never rotate anything else; ticks are painted into the (rotating) barrel like Rapid's bands.
+- Refresh, don't add: `ignite` sets `left = sec` and `dps = max`; a tower with several Embers uses the strongest only (two Commons never make 6/s).
+- Content bar: `asTower` is ≤ 56 chars — the task's "Sets ablaze the enemy furthest along: …" is 59; use the shorter "the furthest enemy" wording (53) for card and panel.
+- `first.damage` is 0: `tests/content.test.ts` line 39 needs `|| a.first.burn`, and the opening draft needs `opening: true` (don't edit `rollOffer`).
+- Look: color stays `orange` (unused by any augment); if a parallel task has already taken the (circle, orange) pair in `content/augments/`, take the next shape whose (shape, orange) pair is free.
+- dt-based tick (`burnTick` = rate × active seconds); GameScene already clamps dt. Projectile payloads are shared references — read-only, never mutate `payload.burn`.
+
+### Tests
+`tests/core/ember.test.ts` (pure, like `mark.test.ts`): Ember spec (`kind: 'burn'`, `damage: 0`, `burn {dps 3, sec 3}`, `rate ≈ 1/1.5`); burn total over life per tier (loop `burnTick` 0.5 s: ≈ 9/12/15); re-ignition refresh + higher rate, never additive (Common-over-Rare keeps 4/s); tier specs rare/epic first **and** added; strongest-of-tower (Bolt+Ember+Ember stays 3/s); added form through a Bolt tower (`kind: 'shot'` + `burn` set); card lines per tier (`tierTowerLine`/`tierAddedLine`) and panel lines (`describeSpec`); Ember offerable in the opening draft. Mark's +25% on ticks and the killing tick's kill credit are by construction (ticks go through `Enemy.hit()`'s one mark gate and the one `kill()` path) — covered by the browser smoke, not unit-testable without Phaser.
