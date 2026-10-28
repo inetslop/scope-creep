@@ -1,12 +1,14 @@
 ---
 id: T0057
 title: "Hauler: the enemy whose leak costs gold"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0046]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:04:03Z
+claimed_at: 2026-10-28T20:40:19Z
 ---
 
 ## Goal
