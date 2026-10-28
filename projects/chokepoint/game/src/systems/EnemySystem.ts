@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { DEPTH } from '../config';
+import { CELL, DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
 import type { EnemyDef } from '../content/types';
 import type { RunState } from '../core/run';
@@ -16,6 +16,8 @@ export interface HitPayload {
   /** Board units around the hit enemy that are hit too (0: none). */
   splash: number;
   slow: { pct: number; sec: number } | undefined;
+  /** The mark this hit applies to the enemies it hits; `x`, `y` are the tower's base (the flash spot). */
+  mark: { pct: number; x: number; y: number } | undefined;
   /** The tower's color, for the shot and the burst. */
   color: number;
 }
@@ -93,6 +95,7 @@ export class EnemySystem {
   strike(e: Enemy, payload: HitPayload): boolean {
     if (!e.active) return false;
     if (payload.slow) e.slow(payload.slow.pct, payload.slow.sec);
+    if (payload.mark && e.mark(payload.mark.pct)) this.fx.markFlash(payload.mark.x, payload.mark.y, CELL * 0.43);
     if (payload.damage <= 0 || !e.hit(payload.damage)) return false;
     const paid = this.run.addKill(e.def.gold);
     this.fx.burst(e.x, e.y, PALETTE[e.def.look.color]);
@@ -122,5 +125,11 @@ export class EnemySystem {
   brokenEnemy(): string | undefined {
     const bad = this.pool.find((e) => e.active && (!Number.isFinite(e.x) || !Number.isFinite(e.y) || !Number.isFinite(e.hp)));
     return bad ? `${bad.def.id} at (${bad.x}, ${bad.y}) hp ${bad.hp}` : undefined;
+  }
+
+  /** Invariant: no active enemy carries a NaN or out-of-[0, 1] mark. */
+  brokenMark(): string | undefined {
+    const bad = this.pool.find((e) => e.active && (!Number.isFinite(e.markPct) || e.markPct < 0 || e.markPct > 1));
+    return bad ? `${bad.def.id} marked by ${bad.markPct}` : undefined;
   }
 }

@@ -23,6 +23,19 @@ const MARKS: readonly Mark[] = [
     g.fillStyle(PALETTE.green, 1);
     g.fillRoundedRect(x, y, Math.max(5, w * Math.max(0, e.hp / e.maxHp)), 5, 2.5);
   },
+  // Marked: a small ink down-chevron above the health bar, popping in over 0.1 s.
+  (g, e) => {
+    if (e.markPct <= 0) return;
+    const t = Math.min(1, e.markAge / 0.1);
+    const pop = t < 1 ? 1.15 * Math.sin((t * Math.PI) / 2) : 1;
+    const w = 6 * pop;
+    const h = 4 * pop;
+    const a = 3 * pop;
+    const y = e.y - e.def.look.size * 64 - 20;
+    g.fillStyle(PALETTE.ink, 0.9);
+    g.fillTriangle(e.x - w, y - h, e.x - a, y - h, e.x, y);
+    g.fillTriangle(e.x + w, y - h, e.x + a, y - h, e.x, y);
+  },
 ];
 
 /**

@@ -28,6 +28,10 @@ export interface TowerSpec {
   splash: number;
   slow: { pct: number; sec: number } | undefined;
   projectileSpeed: number;
+  /** Extra damage a marked enemy takes from everything, as a fraction (0.25 per Mark in the tower). */
+  markPct: number;
+  /** Marks in the tower: one ring tick each. */
+  markCount: number;
 }
 
 const EMPTY: TowerSpec = {
@@ -43,6 +47,8 @@ const EMPTY: TowerSpec = {
   splash: 0,
   slow: undefined,
   projectileSpeed: 0,
+  markPct: 0,
+  markCount: 0,
 };
 
 /**
@@ -71,6 +77,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     splash: 0,
     slow: f.slow ? { ...f.slow } : undefined,
     projectileSpeed: f.projectileSpeed ?? bolt.first.projectileSpeed ?? 10,
+    markPct: 0,
+    markCount: 0,
   };
   for (const a of augments.slice(1)) {
     const e = tierAdded(getAugment(a.id), a.tier);
@@ -80,8 +88,17 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     spec.range *= e.rangeMul ?? 1;
     spec.splash += e.splash ?? 0;
     if (spec.kind === 'shot') spec.shots += e.extraShots ?? 0;
-    else spec.bolts += e.extraShots ?? 0;
+    else if (spec.kind === 'pulse') spec.bolts += e.extraShots ?? 0;
     if (e.slow && (!spec.slow || e.slow.pct > spec.slow.pct)) spec.slow = { ...e.slow };
+  }
+  // Marks in any slot: a marked enemy takes this much more damage from everything.
+  for (let i = 0; i < augments.length; i++) {
+    const a = getAugment(augments[i]!.id);
+    const pct = i === 0 ? a.first.mark ?? 0 : a.added.mark ?? 0;
+    if (pct > 0) {
+      spec.markPct += pct;
+      spec.markCount += 1;
+    }
   }
   // A pulse already hits an area: splash makes it reach further.
   if (spec.kind === 'pulse') {
@@ -95,19 +112,25 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
 export function describeSpec(spec: TowerSpec): string {
   if (!spec.attacks) return 'Put an augment in to give it an attack.';
   const slow = spec.slow ? Math.round(spec.slow.pct * 100) : 0;
+  const marked = Math.round(spec.markPct * 100);
   let line: string;
   if (spec.kind === 'shot') {
     const target = spec.shots > 1 ? `${spec.shots} enemies at a time` : 'the enemy furthest along';
     const style = spec.range >= 4 ? 'Snipes' : spec.rate >= 3 ? 'Fires fast needles at' : 'Shoots';
-    line = `${style} ${target}${spec.splash > 0 ? ', and the shots burst' : ''}`;
+    line = `${style} ${target}${spec.splash > 0 ? ', and the shots burst' : ''}${marked > 0 ? ', and its hits mark' : ''}`;
+    if (slow) line += `, slowing them by ${slow}%`;
+  } else if (spec.kind === 'mark') {
+    line = `Marks the enemy furthest along: marked enemies take ${marked}% more damage`;
     if (slow) line += `, slowing them by ${slow}%`;
   } else if (spec.damage <= 0) {
     line = `Slows everything around it by ${slow}%`;
     if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;
+    if (marked > 0) line += ', and its hits mark';
   } else {
     line = 'Blasts everything around it';
     if (slow) line += `, slowing them by ${slow}%`;
     if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;
+    if (marked > 0) line += ', and its hits mark';
   }
   return `${line}.`;
 }
@@ -127,13 +150,22 @@ export function slotCost(index: number): number | undefined {
 }
 
 /**
- * The draft: `count` different augments, in random order, each with its own rolled tier. The
- * opening draft (`opening`) only offers augments that deal damage as a tower's first, since the
+ * The draft: `count` different augments. Each card rolls its tier first, then picks its augment
+ * from the pool for that tier: an augment with a `tier` (Mark) is only in the pool for cards that
+ * rolled that tier, so it can never exist as any other tier. The opening draft (`opening`) only
+ * offers augments that deal damage as a tower's first, or that may open (`opening`), since the
  * first one has to hold wave 1 alone.
  */
 export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, wave: number, opening = false): AugmentCopy[] {
-  return rng
-    .shuffle(opening ? pool.filter((a) => a.first.damage > 0) : pool)
-    .slice(0, count)
-    .map((a) => ({ id: a.id, tier: rollTier(rng, wave) }));
+  const open = opening ? pool.filter((a) => a.first.damage > 0 || a.opening) : pool;
+  const taken = new Set<string>();
+  const offers: AugmentCopy[] = [];
+  for (let i = 0; i < count; i++) {
+    const tier = rollTier(rng, wave);
+    const candidates = open.filter((a) => !taken.has(a.id) && (a.tier === undefined || a.tier === tier));
+    const picked = rng.pick(candidates);
+    taken.add(picked.id);
+    offers.push({ id: picked.id, tier });
+  }
+  return offers;
 }

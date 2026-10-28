@@ -52,6 +52,10 @@ export class Sfx {
     this.tone(160, 0.18, 'sine', 0.35, 90);
   }
 
+  mark(): void {
+    this.tone(660, 0.09, 'sine', 0.3, 990);
+  }
+
   kill(): void {
     this.tone(520, 0.08, 'triangle', 0.18, 260);
   }

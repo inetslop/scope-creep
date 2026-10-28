@@ -65,7 +65,9 @@ export type AttackKind =
   /** Projectiles that fly to one enemy each. */
   | 'shot'
   /** Hits every enemy in range at once. */
-  | 'pulse';
+  | 'pulse'
+  /** Marks the enemy furthest along: a marked enemy takes more damage from everything. */
+  | 'mark';
 
 /** A tower's attack when this augment is the first one in it. */
 export interface FirstForm {
@@ -80,6 +82,8 @@ export interface FirstForm {
   projectileSpeed?: number;
   /** Hits slow enemies by `pct` (0-1) for `sec` seconds. */
   slow?: { pct: number; sec: number };
+  /** For a 'mark' attack: the fraction of extra damage a marked enemy takes from everything. */
+  mark?: number;
 }
 
 /**
@@ -92,6 +96,8 @@ export interface AddedForm {
   /** Hits burst, hitting every enemy within this many cells (a pulse reaches this much further). */
   splash?: number;
   slow?: { pct: number; sec: number };
+  /** Hits apply the mark: enemies hit take this fraction of extra damage from everything. */
+  mark?: number;
   damageMul?: number;
   rateMul?: number;
   rangeMul?: number;
@@ -117,6 +123,10 @@ export interface AugmentDef {
   look: Look;
   first: FirstForm;
   added: AddedForm;
+  /** This augment only ever appears as cards of this tier (undefined: any tier). */
+  tier?: Tier;
+  /** May be offered in the opening draft despite dealing no damage as a tower's first. */
+  opening?: boolean;
   /** The Rare and Epic values of a copy (Common is `first`/`added` themselves; see core/tiers.ts). */
   tiers: { rare: TierValues; epic: TierValues };
 }

@@ -107,7 +107,13 @@ export class TowerSystem {
       tower: t,
       enemies,
       range: spec.range * CELL,
-      payload: { damage: spec.damage, splash: spec.splash * CELL, slow: spec.slow, color: color ? PALETTE[color] : PALETTE.faint },
+      payload: {
+        damage: spec.damage,
+        splash: spec.splash * CELL,
+        slow: spec.slow,
+        mark: spec.markPct > 0 ? { pct: spec.markPct, x: t.x, y: t.y } : undefined,
+        color: color ? PALETTE[color] : PALETTE.faint,
+      },
       fireBolt: (n, target, payload) => {
         const m = t.muzzle(n);
         this.projectiles.fire(m.x, m.y, target, payload, spec.projectileSpeed * CELL);

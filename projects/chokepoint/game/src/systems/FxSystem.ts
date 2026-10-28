@@ -53,6 +53,15 @@ export class FxSystem {
     this.track(g, 360, { scale: 1, alpha: 0, ease: 'Cubic.easeOut' });
   }
 
+  /** A quick ink ring at a tower's base when one of its hits marks an enemy. */
+  markFlash(x: number, y: number, radius: number): void {
+    if (this.live >= FxSystem.MAX) return;
+    const g = this.scene.add.graphics().setDepth(DEPTH.fx).setPosition(x, y);
+    fillRing(g, 0, 0, radius, 3, 0, Math.PI * 2, PALETTE.ink, 0.9);
+    g.setScale(0.5);
+    this.track(g, 200, { scale: 1.25, alpha: 0, ease: 'Quad.easeOut' });
+  }
+
   /** Rounded chips that scatter where an enemy died, plus a white pop. */
   burst(x: number, y: number, color: number): void {
     if (this.live < FxSystem.MAX) {

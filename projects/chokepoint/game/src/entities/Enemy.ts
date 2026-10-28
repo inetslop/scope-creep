@@ -29,6 +29,10 @@ export class Enemy extends Phaser.GameObjects.Image {
   /** Fraction of its speed it is slowed by (Frost), and for how many seconds more. */
   slowPct = 0;
   slowLeft = 0;
+  /** Fraction of extra damage it takes from everything until it dies (Mark); 0: unmarked. */
+  markPct = 0;
+  /** Seconds since it was marked (the chevron's pop-in); 0 until marked. */
+  markAge = 0;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0, '__DEFAULT');
@@ -47,6 +51,8 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.flash = 0;
     this.slowPct = 0;
     this.slowLeft = 0;
+    this.markPct = 0;
+    this.markAge = 0;
     this.setTexture(enemyTexture(def.id));
     this.clearTint();
     this.setScale(0);
@@ -68,6 +74,7 @@ export class Enemy extends Phaser.GameObjects.Image {
         break;
     }
     this.age += dt;
+    if (this.markPct > 0) this.markAge += dt;
     // Pop in with a little overshoot, then a gentle bob as it walks.
     const t = Math.min(1, this.age / POP_SEC);
     const pop = t < 1 ? 1.15 * Math.sin((t * Math.PI) / 2) : 1;
@@ -81,10 +88,10 @@ export class Enemy extends Phaser.GameObjects.Image {
     return this.distance >= path.length;
   }
 
-  /** Takes damage (with a short white flash). Returns true when this killed it. */
+  /** Takes damage (a marked enemy takes `markPct` more, from everything). Returns true when this killed it. */
   hit(damage: number): boolean {
     if (!this.active) return false;
-    this.hp -= damage;
+    this.hp -= damage * (1 + this.markPct);
     this.flash = 0.06;
     this.setTintFill(0xffffff);
     return this.hp <= 0;
@@ -95,6 +102,14 @@ export class Enemy extends Phaser.GameObjects.Image {
     if (pct < this.slowPct) return;
     this.slowPct = pct;
     this.slowLeft = Math.max(this.slowLeft, sec);
+  }
+
+  /** Marks it: it takes `pct` extra damage from everything until it dies. The first mark wins. */
+  mark(pct: number): boolean {
+    if (this.markPct > 0) return false;
+    this.markPct = pct;
+    this.markAge = 0;
+    return true;
   }
 
   despawn(): void {

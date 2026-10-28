@@ -1,5 +1,6 @@
 import type { AttackKind } from '../../content/types';
 import type { Attack } from './attack';
+import { mark } from './mark';
 import { pulse } from './pulse';
 import { shot } from './shot';
 
@@ -7,4 +8,5 @@ import { shot } from './shot';
 export const ATTACKS: Record<AttackKind, Attack> = {
   shot,
   pulse,
+  mark,
 };

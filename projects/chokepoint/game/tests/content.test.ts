@@ -36,7 +36,7 @@ describe('content', () => {
       expect(BRIGHTS).toContain(a.look.color);
       expect(a.first.range).toBeGreaterThan(0);
       expect(a.first.rate).toBeGreaterThan(0);
-      expect(a.first.damage > 0 || a.first.slow).toBeTruthy();
+      expect(a.first.damage > 0 || a.first.slow || a.first.mark).toBeTruthy();
       if (a.first.kind === 'shot') expect(a.first.projectileSpeed ?? 0).toBeGreaterThan(0);
       expect(Object.keys(a.added).length).toBeGreaterThan(0);
       // The card shows each line next to its glyph: short, and no "First:"-style labels.

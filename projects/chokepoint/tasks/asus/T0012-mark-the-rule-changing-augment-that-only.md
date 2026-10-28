@@ -4,11 +4,12 @@ title: "Mark: the rule-changing augment that only comes as Epic"
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0002, T0011]
 attempts: 1
 created: 2026-10-28T02:08:37Z
 claimed_at: 2026-10-28T04:05:34Z
+finished_at: 2026-10-28T05:44:05Z
 epic: E4
 ---
 
@@ -95,3 +96,31 @@ Mark data: `id 'mark'`, `look {shape: 'square', color: 'pink', size: 0.22}` (squ
 
 ### Tests
 - `tests/core/mark.test.ts`: `spec('mark')` → `{kind: 'mark', damage: 0, range: 3, markPct: 0.25, markCount: 1, bolts: 0}`, rate ≈ `1/1.2`; `spec('mark','mark')` 0.5/2; `spec('bolt','mark')` 0.25 kind 'shot'; `spec('bolt','mark','mark')` 0.5; `spec('splash','mark')`, `spec('frost','mark')` 0.25; `spec('mark','bolt').bolts === 0`; `spec('mark','reach').range ≈ 4.05`; `describeSpec` matches /mark/ for `mark` and `bolt+mark`; `getAugment('mark').tier === 'epic'`, `.opening === true`, all other augments' tier undefined; opening roll (30 seeds) every offer has `first.damage > 0 || opening`; after T0002: seeded tiered offers — `mark` appears only on epic cards.
+
+## Result (attempt 1, asus)
+
+Added Mark (T0012), the Epic-only rule-changing augment: new content file `content/augments/mark.ts` (pink square, 25% damage-from-all mark), a `mark` attack kind (`systems/attacks/mark.ts`) that marks the unmarked enemy furthest along every 1.2 s, mark mechanics in `core/augments.ts` (`markPct`/`markCount`, tier-first `rollOffer` so Mark only exists on Epic cards), `Enemy.mark()`/boosted `hit()`, mark-on-hits through `HitPayload`/`strike()`, the ink ring + ticks on the tower, the ink down-chevron above marked enemies, `markFlash` FX, `Sfx.mark()`, an `enemies.mark` invariant, and unit tests (`tests/core/mark.test.ts`) covering spec combos, Epic-only drafting over 300 seeds, and card lines. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 98.5 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          |  4 ++
+ .../chokepoint/game/src/content/augments/index.ts  |  2 +
+ .../chokepoint/game/src/content/augments/mark.ts   | 24 +++++++++
+ projects/chokepoint/game/src/content/types.ts      | 12 ++++-
+ projects/chokepoint/game/src/core/augments.ts      | 48 ++++++++++++++---
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/entities/Enemy.ts     | 19 ++++++-
+ projects/chokepoint/game/src/entities/towerLook.ts | 11 +++-
+ .../chokepoint/game/src/systems/EnemySystem.ts     | 11 +++-
+ projects/chokepoint/game/src/systems/FxSystem.ts   |  9 ++++
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  8 ++-
+ .../chokepoint/game/src/systems/attacks/index.ts   |  2 +
+ .../chokepoint/game/src/systems/attacks/mark.ts    | 34 ++++++++++++
+ projects/chokepoint/game/src/systems/enemyMarks.ts | 13 +++++
+ projects/chokepoint/game/tests/content.test.ts     |  2 +-
+ .../chokepoint/game/tests/core/augments.test.ts    |  5 +-
+ projects/chokepoint/game/tests/core/mark.test.ts   | 63 ++++++++++++++++++++++
+ 17 files changed, 251 insertions(+), 17 deletions(-)
+```

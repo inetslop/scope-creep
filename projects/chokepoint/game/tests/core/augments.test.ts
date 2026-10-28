@@ -132,8 +132,9 @@ describe('slotCost', () => {
 });
 
 describe('rollOffer', () => {
-  it('the opening draft only offers augments that deal damage', () => {
-    for (let seed = 1; seed <= 30; seed++) expect(rollOffer(new Rng(seed), AUGMENTS, 3, 1, true).every((c) => getAugment(c.id).first.damage > 0)).toBe(true);
+  it('the opening draft only offers augments that deal damage, or may open', () => {
+    for (let seed = 1; seed <= 30; seed++)
+      expect(rollOffer(new Rng(seed), AUGMENTS, 3, 1, true).every((c) => getAugment(c.id).first.damage > 0 || getAugment(c.id).opening)).toBe(true);
   });
 
   it('offers three different augments', () => {

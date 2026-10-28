@@ -21,7 +21,7 @@ export const MAX_BARRELS = 4;
 /** Barrels, one per shot (Bolt); a pulse tower with Bolt added gets them for its bolts. */
 export function barrelCount(spec: TowerSpec): number {
   if (!spec.attacks) return 0;
-  return Math.min(MAX_BARRELS, spec.kind === 'shot' ? spec.shots : spec.bolts);
+  return Math.min(MAX_BARRELS, spec.kind === 'shot' ? spec.shots : spec.kind === 'pulse' ? spec.bolts : 0);
 }
 
 /** Speed-ups on top of the first augment's own rate: one per Rapid added (x1.5 each). */
@@ -63,6 +63,15 @@ const DECORATIONS: readonly Decoration[] = [
   // Frost: an ice ring when its hits slow.
   (g, spec) => {
     if (spec.slow) fillRing(g, 0, 0, BODY * 1.45, 3, 0, Math.PI * 2, PALETTE.ice, 0.95);
+  },
+  // Mark: a thin ink ring at the base (below the pips), one small tick per Mark in the tower.
+  (g, spec) => {
+    if (spec.markCount === 0) return;
+    fillRing(g, 0, 0, BODY * 1.95, 2, 0, Math.PI * 2, PALETTE.ink, 0.85);
+    for (let i = 0; i < spec.markCount; i++) {
+      const a = (i * Math.PI) / 2;
+      fillRing(g, 0, 0, BODY * 1.95, 3, a - 0.14, a + 0.14, PALETTE.ink);
+    }
   },
   // Rapid on a tower without barrels: yellow ticks around the body, six per speed-up.
   (g, spec, barrels) => {
