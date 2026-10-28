@@ -1,7 +1,6 @@
 ---
 id: T0028
 title: "Ember: the burn that keeps dealing damage"
-assignee: asus
 size: L
 priority: 3
 status: todo

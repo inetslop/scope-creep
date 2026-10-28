@@ -1,7 +1,6 @@
 ---
 id: T0030
 title: "The pause screen: your run so far on one line"
-assignee: yoga
 size: S
 priority: 2
 status: todo
