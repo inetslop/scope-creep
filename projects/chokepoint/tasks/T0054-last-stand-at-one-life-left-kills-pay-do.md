@@ -4,11 +4,12 @@ title: "Last stand: at one life left, kills pay double gold"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0045, T0039]
 attempts: 1
 created: 2026-10-28T13:04:03Z
 claimed_at: 2026-10-28T22:18:36Z
+finished_at: 2026-10-28T22:58:03Z
 epic: E1
 ---
 
@@ -96,3 +97,18 @@ plus a private method next to `pop()`, same timing as the coin pop:
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0030: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Result (attempt 1, asus)
+
+Last stand is live: at exactly 1 life every kill pays double its own bounty (`src/core/lastStand.ts`, applied in `EnemySystem.kill()` with the Mint bonus paid whole on top, so the gold pop reads the doubled number), and the lives number in the stats card turns the leak-warning red and pops 1.15× at each wave start (`src/ui/hud/StatsCard.ts`) until a life comes back. Added `tests/core/lastStand.test.ts` covering on/off state, re-engagement, and the 2× rule; wave bonus, prices, coin tally, score and sounds are untouched. Deviated from two design snippets that didn't match the current code: kill gold is computed in `kill()` (not `strike()` with a `cell`), so `killGold` wraps the quiet-wave-adjusted base, and `Text.setColor` needs `cssColor()` (the codebase idiom) rather than a raw palette number.
+
+- Self-review: APPROVE
+- Time: 39.5 min
+
+```
+projects/chokepoint/game/src/core/lastStand.ts     | 11 ++++++++
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  4 ++-
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts   | 18 +++++++++++++-
+ .../chokepoint/game/tests/core/lastStand.test.ts   | 29 ++++++++++++++++++++++
+ 4 files changed, 60 insertions(+), 2 deletions(-)
+```

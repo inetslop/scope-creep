@@ -3,6 +3,7 @@ import { CELL, DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
 import type { Burn, EnemyDef } from '../content/types';
 import type { RunState } from '../core/run';
+import { killGold } from '../core/lastStand';
 import { mintGoldBonus } from '../core/mint';
 import { burnTick } from '../core/burn';
 import { ROOT_IMMUNE_SEC } from '../core/root';
@@ -153,7 +154,8 @@ export class EnemySystem {
   private kill(e: Enemy, source: Tower | undefined): void {
     // The kill's base gold is doubled on a quiet wave (core/waves.ts); on top, Mint towers (core/mint.ts)
     // pay extra: the killer's own copies, plus every mint tower within its radius.
-    const baseGold = e.def.gold * quietGoldMul(this.run.wave);
+    // Last stand (core/lastStand.ts): at one life the enemy's own gold doubles; the mint bonus on top stays whole.
+    const baseGold = killGold(this.run, e.def.gold * quietGoldMul(this.run.wave));
     const paid = this.run.addKill(baseGold + (source ? mintGoldBonus(this.towers(), e, source) : 0));
     const mint = paid - baseGold; // one per Mint bonus, each pays exactly +1 (T0021)
     const milestone = this.fx.killCount(e.x, e.y);

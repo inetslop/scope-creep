@@ -1,8 +1,9 @@
 import type Phaser from 'phaser';
 import { START } from '../../config';
-import { PALETTE } from '../../content/palette';
+import { cssColor, PALETTE } from '../../content/palette';
 import { artScale, COIN_TEXTURE, LIFE_TEXTURE } from '../../art/textures';
 import { coinsForRun } from '../../core/profile';
+import { isLastStand } from '../../core/lastStand';
 import type { GameScene } from '../../scenes/GameScene';
 import { makeCard } from '../card';
 import { textStyle } from '../text';
@@ -20,6 +21,8 @@ export class StatsCard implements HudPart {
   private popping = false;
   private lastLives: number = START.lives;
   private livesPop = false;
+  private lastWave = -1;
+  private livesPulsing = false;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -42,6 +45,7 @@ export class StatsCard implements HudPart {
 
   update(game: GameScene): void {
     this.lives.setText(String(game.run.lives));
+    this.lives.setColor(cssColor(isLastStand(game.run) ? PALETTE.red : PALETTE.ink));
     if (game.run.lives > this.lastLives) this.popLives();
     this.lastLives = game.run.lives;
     this.gold.setText(String(game.run.gold));
@@ -49,6 +53,11 @@ export class StatsCard implements HudPart {
     this.coins.setText(`+${n} coins`);
     if (n > this.lastN) this.pop();
     this.lastN = n;
+    if (this.lastWave < 0) this.lastWave = game.run.wave; // first frame (also for resumed runs): no pulse
+    else if (game.run.wave !== this.lastWave) {
+      this.lastWave = game.run.wave; // run.wave only moves in startWave()
+      if (isLastStand(game.run)) this.pulseLives();
+    }
   }
 
   /** One quiet pop per coin gain: tally and coin scale to 1.15 and back over ~150 ms; the coin
@@ -60,6 +69,13 @@ export class StatsCard implements HudPart {
     const base = this.coinTallyIcon.scale;
     this.scene.tweens.add({ targets: this.coins, scale: 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => this.coins.setScale(1) });
     this.scene.tweens.add({ targets: this.coinTallyIcon, scale: base * 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => { this.popping = false; this.coinTallyIcon.setScale(base); this.coinTallyIcon.clearTint(); } });
+  }
+
+  /** Last stand: the red lives number pops once at each wave start, same timing as the coin pop. */
+  private pulseLives(): void {
+    if (this.livesPulsing) return;
+    this.livesPulsing = true;
+    this.scene.tweens.add({ targets: this.lives, scale: 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => { this.livesPulsing = false; this.lives.setScale(1); } });
   }
 
   /** The streak's one payback: the lives number flashes green and scales 1.15 and back over ~150 ms. */
