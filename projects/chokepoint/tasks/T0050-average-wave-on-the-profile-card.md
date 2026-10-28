@@ -3,11 +3,13 @@ id: T0050
 title: Average wave on the profile card
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T12:34:55Z
+claimed_at: 2026-10-28T12:35:08Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
