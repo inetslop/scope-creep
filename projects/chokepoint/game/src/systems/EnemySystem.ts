@@ -99,6 +99,7 @@ export class EnemySystem {
     if (payload.damage <= 0 || !e.hit(payload.damage)) return false;
     const paid = this.run.addKill(e.def.gold);
     this.fx.burst(e.x, e.y, PALETTE[e.def.look.color]);
+    this.fx.killCount(e.x, e.y);
     this.fx.popText(e.x, e.y - 20, `+${paid}`);
     this.sfx?.kill();
     hook.stats.enemiesKilled += 1;

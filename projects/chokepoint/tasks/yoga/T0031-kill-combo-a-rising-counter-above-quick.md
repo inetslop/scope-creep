@@ -4,11 +4,12 @@ title: "Kill combo: a rising counter above quick kills"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T06:24:55Z
 claimed_at: 2026-10-28T07:04:53Z
+finished_at: 2026-10-28T07:22:21Z
 ---
 
 ## Goal
@@ -99,3 +100,16 @@ No changed types. `strike()` signature unchanged.
 - `T0005` also adds a method to `FxSystem` — add only the code above, next to `burst()`, and touch nothing else in the file.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Added the kill-combo ×N counter: a rising bold 14 px muted-ink counter above rapid kills in `src/systems/FxSystem.ts` (`killCount()` + private `comboFadeStart()` after `burst()`, six chain state fields after `MAX`), driven by one new line in `EnemySystem.strike()`. A kill within 1.5 s continues the chain — from ×2 up the counter pops 1.2→1.0 (150 ms, the T0017 coin-tally pop) at each kill, rising 8 px per step; after 1.5 s idle it fades out over 400 ms and the next quick pair restarts at ×2; isolated kills show nothing. The counter is a single world-space text at board scale (`DEPTH.fx`) that pans and zooms with the chip burst; no sound, input, or HUD changes.
+
+- Self-review: APPROVE
+- Time: 17.5 min
+
+```
+.../chokepoint/game/src/systems/EnemySystem.ts     |  1 +
+ projects/chokepoint/game/src/systems/FxSystem.ts   | 59 ++++++++++++++++++++++
+ 2 files changed, 60 insertions(+)
+```

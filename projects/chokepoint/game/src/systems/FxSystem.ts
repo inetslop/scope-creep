@@ -12,6 +12,14 @@ export class FxSystem {
   private live = 0;
   private static readonly MAX = 160;
 
+  /** Kill chain for the rising ×N counter: count, last kill time, live objects. */
+  private comboN = 0;
+  private lastKill = 0;
+  private comboText: Phaser.GameObjects.Text | null = null;
+  private comboPop: Phaser.Tweens.Tween | null = null;
+  private comboFade: Phaser.Tweens.Tween | null = null;
+  private comboTimer: Phaser.Time.TimerEvent | null = null;
+
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
   }
@@ -77,6 +85,57 @@ export class FxSystem {
       const chip = artScale(this.scene.add.image(x, y, CHIP_TEXTURE), 0.6 + Math.random() * 0.5).setTint(color).setDepth(DEPTH.fx);
       this.track(chip, 380, { x: x + Math.cos(a) * d, y: y + Math.sin(a) * d + 6, alpha: 0, angle: 120, scale: chip.scale * 0.5, ease: 'Quad.easeOut' });
     }
+  }
+
+  /** One kill for the chain: within 1.5 s it continues, a longer gap resets it. From ×2 up the
+   * counter sits above the latest kill's chips, each step 8 px up, popping 1.2 → 1.0; 1.5 s idle fades it. */
+  killCount(x: number, y: number): void {
+    const now = this.scene.time.now;
+    if (now - this.lastKill >= 1500) this.comboN = 0;
+    this.lastKill = now;
+    this.comboN += 1;
+    if (this.comboN < 2) return;
+    this.comboTimer?.remove();
+    if (this.comboFade) {
+      this.comboFade.remove();
+      this.comboFade = null;
+      this.comboText?.destroy();
+      this.comboText = null;
+      this.comboPop = null;
+    }
+    const fresh = !this.comboText;
+    const t = this.comboText ?? this.scene.add
+      .text(x, y - 40, '', textStyle(14, PALETTE.muted, { fontStyle: 'bold', stroke: cssColor(PALETTE.card), strokeThickness: 4 }))
+      .setOrigin(0.5)
+      .setDepth(DEPTH.fx);
+    this.comboText = t;
+    t.setText(`×${this.comboN}`);
+    if (!fresh) t.setY(t.y - 8);
+    t.setScale(1.2);
+    this.comboPop?.remove();
+    this.comboPop = this.scene.tweens.add({ targets: t, scale: 1, duration: 150, ease: 'Quad.easeOut' });
+    this.comboTimer = this.scene.time.delayedCall(1500, () => this.comboFadeStart());
+  }
+
+  /** The chain ended: fade the counter out over 400 ms, then destroy it. */
+  private comboFadeStart(): void {
+    this.comboTimer = null;
+    const t = this.comboText;
+    if (!t) return;
+    this.comboFade = this.scene.tweens.add({
+      targets: t,
+      alpha: 0,
+      duration: 400,
+      ease: 'Quad.easeOut',
+      onComplete: () => {
+        t.destroy();
+        if (this.comboText === t) {
+          this.comboText = null;
+          this.comboFade = null;
+          this.comboPop = null;
+        }
+      },
+    });
   }
 
   /** Floating text that rises and fades, e.g. "+4" gold. */
