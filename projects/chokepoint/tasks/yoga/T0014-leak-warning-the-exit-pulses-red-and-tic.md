@@ -4,10 +4,11 @@ title: "Leak warning: the exit pulses red and ticks before a leak"
 assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T02:08:37Z
+claimed_at: 2026-10-28T03:12:07Z
 ---
 
 ## Goal
