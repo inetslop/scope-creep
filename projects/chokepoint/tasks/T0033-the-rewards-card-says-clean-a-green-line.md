@@ -4,11 +4,12 @@ title: "The rewards card says Clean: a green line for the waves you held"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T08:16:06Z
 claimed_at: 2026-10-28T08:29:26Z
+finished_at: 2026-10-28T08:44:19Z
 epic: E1
 ---
 
@@ -73,3 +74,15 @@ const box = this.add.container(0, 0, parts).setDepth(2);
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+The rewards claim card now shows a fourth "Clean N" line between "Stopped" and "+N coins" whenever the run held at least one clean wave — N read from the run ledger (`run.cleanWaves`), in the same `PALETTE.greenDeep` as the exit chip and the game-over card's clean line, counting up in place with the other lines at the same pace. With zero clean waves the card is laid out exactly as before (same three lines, same 300 height, same timing). All changes are in `src/scenes/RewardsScene.ts`: a `clean` field, an optional `cleanText`, a `dy = 18` layout split when clean waves exist (top half up, bottom half down, card grows 36px, still centered and fitting at 412×915 and 1280×720), and one setText line; the coins line, its pop and chime are untouched. Verified with `npm run check` and `npm run smoke`, both passing.
+
+- Self-review: APPROVE
+- Time: 14.9 min
+
+```
+.../chokepoint/game/src/scenes/RewardsScene.ts     | 26 +++++++++++++++-------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
+```
