@@ -1,12 +1,14 @@
 ---
 id: T0036
 title: "Reroll: once per run, three new draft cards for 15 gold"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T08:43:02Z
+claimed_at: 2026-10-28T09:03:58Z
 epic: E4
 ---
 
