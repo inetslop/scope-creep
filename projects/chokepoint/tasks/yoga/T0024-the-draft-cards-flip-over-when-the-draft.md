@@ -4,10 +4,11 @@ title: The draft cards flip over when the draft opens
 assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T05:03:06Z
+claimed_at: 2026-10-28T05:44:49Z
 epic: E4
 ---
 
