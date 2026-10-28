@@ -21,6 +21,7 @@ export const MAX_BARRELS = 4;
 /** Barrels, one per shot (Bolt); a pulse tower with Bolt added gets them for its bolts. */
 export function barrelCount(spec: TowerSpec): number {
   if (!spec.attacks || spec.kind === 'rally') return 0; // a rally beacon has no barrels
+  if (spec.gust > 0) return 1; // a gust: one short, wide mouth the wind comes out of
   return Math.min(MAX_BARRELS, spec.kind === 'shot' ? spec.shots : spec.kind === 'pulse' ? spec.bolts : 0);
 }
 
@@ -36,6 +37,8 @@ export function speedUps(spec: TowerSpec): number {
  * per speed-up (Rapid added), a chevron tip and green ticks when the shots lead (Lead).
  */
 export function barrelLook(spec: TowerSpec): BarrelLook {
+  // A gust throws nothing: a short, wide flat mouth, wider than the body reads "wind, not a shot".
+  if (spec.gust > 0) return { length: 1.2, width: 2.2, bulb: false, bands: 0 };
   const plain = bolt.first;
   const damage = spec.kind === 'shot' ? spec.damage : spec.boltDamage;
   // A piercing shot shows as a long thin rod (fixed length: a range-scaled rod would reach past
@@ -96,6 +99,12 @@ const DECORATIONS: readonly Decoration[] = [
       fillRing(g, 0, 0, BODY * 1.95, 3, a - 0.14, a + 0.14, PALETTE.ink);
     }
   },
+  // Push: one small outward-pointing arrowhead per Push in the tower, around the base (below the pips).
+  (g, spec) => {
+    for (let i = 0; i < spec.pushCount; i++) {
+      drawArrowhead(g, BODY * 2.4, Math.PI / 2 + (i / spec.pushCount) * Math.PI * 2, PALETTE.ink);
+    }
+  },
   // Rapid on a tower without barrels: yellow ticks around the body, six per speed-up.
   (g, spec, barrels) => {
     if (spec.kind === 'rally') return; // a beacon has no speed to show
@@ -108,6 +117,16 @@ const DECORATIONS: readonly Decoration[] = [
     }
   },
 ];
+
+/** A small arrowhead pointing out along angle `a`: tip at radius R + 5, base at R - 3 (±0.34 rad). */
+function drawArrowhead(g: Phaser.GameObjects.Graphics, R: number, a: number, color: number): void {
+  g.fillStyle(color, 1);
+  g.fillTriangle(
+    Math.cos(a) * (R + 5), Math.sin(a) * (R + 5),
+    Math.cos(a - 0.34) * (R - 3), Math.sin(a - 0.34) * (R - 3),
+    Math.cos(a + 0.34) * (R - 3), Math.sin(a + 0.34) * (R - 3),
+  );
+}
 
 export function drawDecorations(g: Phaser.GameObjects.Graphics, spec: TowerSpec): void {
   g.clear();

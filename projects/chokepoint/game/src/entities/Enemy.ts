@@ -7,6 +7,9 @@ import { ART_SCALE, enemyTexture } from '../art/textures';
 /** Seconds an enemy takes to pop up to full size when it spawns. */
 const POP_SEC = 0.18;
 
+/** Cells per second a gust (Push) slides an enemy back: 0.8 cells in ~180 ms. */
+const PUSH_RATE = 4.5;
+
 /**
  * A pooled enemy walking the path. It stores how far along the path it is (`distance`, board
  * units); its position follows from that. spawn() resets every field; despawn() returns it to
@@ -34,6 +37,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   slowLeft = 0;
   /** Seconds of a full stop left (Anchor): a rooted enemy does not move at all. */
   rootLeft = 0;
+  /** Board units a gust (Push) still has to slide it back along the road. */
+  pushLeft = 0;
   /** Fraction of extra damage it takes from everything until it dies (Mark); 0: unmarked. */
   markPct = 0;
   /** Seconds since it was marked (the chevron's pop-in); 0 until marked. */
@@ -63,6 +68,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.slowPct = 0;
     this.slowLeft = 0;
     this.rootLeft = 0;
+    this.pushLeft = 0;
     this.markPct = 0;
     this.markAge = 0;
     this.dashLeg = 'crawl';
@@ -88,6 +94,13 @@ export class Enemy extends Phaser.GameObjects.Image {
     if (this.rootLeft > 0) {
       this.rootLeft -= dt;
       if (this.rootLeft <= 0) this.rootLeft = 0;
+    }
+    // The gust slides it back along the road: a position change, never a speed change, clamped
+    // at the start (no enemy slides before it) and at PUSH_RATE (the slide, not a teleport).
+    if (this.pushLeft > 0) {
+      const pushed = Math.min(this.pushLeft, PUSH_RATE * CELL * dt);
+      this.distance = Math.max(0, this.distance - pushed);
+      this.pushLeft -= pushed;
     }
     const speed = this.rootLeft > 0 ? 0 : this.speed * (1 - this.slowPct);
     switch (this.def.behavior) {
@@ -179,6 +192,12 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.markPct = pct;
     this.markAge = 0;
     return true;
+  }
+
+  /** Queues a slide back along the road by `units` board units (Push); advance() consumes it. */
+  pushBack(units: number): void {
+    if (!this.active || units <= 0) return;
+    this.pushLeft += units;
   }
 
   despawn(): void {

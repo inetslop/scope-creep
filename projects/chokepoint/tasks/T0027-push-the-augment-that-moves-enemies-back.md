@@ -4,11 +4,12 @@ title: "Push: the augment that moves enemies back along the road"
 assignee: desktop
 size: L
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0020, T0023, T0024, T0026]
 attempts: 1
 created: 2026-10-28T05:51:38Z
 claimed_at: 2026-10-28T15:41:46Z
+finished_at: 2026-10-28T15:59:46Z
 epic: E4
 ---
 
@@ -130,3 +131,28 @@ In `describeSpec`, make the first branch `if (spec.gust > 0) { line = \`Pushes e
 ### Tests
 - `tests/core/augments.test.ts`: gust distance/cadence per tier, per-hit push (1 and 2 Pushes), `gust === 0` for `bolt+push`, `pushCount`, the `describeSpec` push lines, and `tierFirstLine` card lines (mirrors the Frost slow-value tests).
 - `tests/content.test.ts`: accept `a.first.push` as a valid support first form; validate `t.asTower` when present.
+
+## Result (attempt 1, desktop)
+
+Added the Push augment (src/content/augments/push.ts, triangle/purple, opening, per-tier gust 0.8/1.0/1.2 cells at 2.4/2.0/1.8 s) plus the first position-changing mechanic: gusts and per-hit pushes queue `pushLeft` on enemies, slid back at 4.5 cells/s (≈180 ms) and clamped at the road's start in `Enemy.advance()`, applied via a new `HitPayload.push` in `EnemySystem.strike()` (so every attack kind carries it). `TowerSpec` gained `gust`/`pushPerHit`/`pushCount` with the tower-panel lines in `describeSpec`, the tower shows a short flat gust mouth and one outward arrowhead tick per Push, and a soft `sfx.gust()` whoosh plays only for support gusts; new spec/card tests mirror Frost's and an `enemies.push` invariant guards the clamp. Two small deviations: the design's `tierFirstLine()` already exists as `tierTowerLine()` (DraftScene untouched), and the pure-support skip in `TowerSystem.update()` now also allows `gust > 0` so a Push tower can actually fire. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 18.0 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          |  5 +++
+ .../chokepoint/game/src/content/augments/index.ts  |  2 ++
+ .../chokepoint/game/src/content/augments/push.ts   | 17 ++++++++++
+ projects/chokepoint/game/src/content/types.ts      |  6 ++++
+ projects/chokepoint/game/src/core/augments.ts      | 28 +++++++++++++++-
+ projects/chokepoint/game/src/core/tiers.ts         |  1 +
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/entities/Enemy.ts     | 19 +++++++++++
+ projects/chokepoint/game/src/entities/towerLook.ts | 19 +++++++++++
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  9 +++++
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  5 +--
+ .../chokepoint/game/src/systems/attacks/pulse.ts   |  3 +-
+ projects/chokepoint/game/tests/content.test.ts     |  2 +-
+ .../chokepoint/game/tests/core/augments.test.ts    | 39 +++++++++++++++++++++-
+ 14 files changed, 150 insertions(+), 6 deletions(-)
+```

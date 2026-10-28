@@ -54,6 +54,11 @@ export class Sfx {
     this.tone(160, 0.18, 'sine', 0.35, 90);
   }
 
+  /** A soft whoosh: the gust of a Push tower (quieter than the pulse blip). */
+  gust(): void {
+    this.tone(300, 0.18, 'sine', 0.15, 160);
+  }
+
   mark(): void {
     this.tone(660, 0.09, 'sine', 0.3, 990);
   }

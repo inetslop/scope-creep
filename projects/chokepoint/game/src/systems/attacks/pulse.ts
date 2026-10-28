@@ -21,6 +21,7 @@ export const pulse: Attack = ({ tower, enemies, range, payload, fireBolt, strike
     bolts.forEach((target, n) => fireBolt(n, enemies[target]!, boltPayload));
   }
   tower.kick();
-  sfx?.pulse();
+  // A gust (Push) is a soft whoosh; a damage- or slow-pulse keeps its low blip. Per-hit pushes stay silent.
+  if (spec.gust > 0) sfx?.gust(); else sfx?.pulse();
   return true;
 };

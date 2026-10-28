@@ -5,7 +5,7 @@ import { rapid } from '../../src/content/augments/rapid';
 import type { AugmentCopy, Tier } from '../../src/content/types';
 import { describeSpec, rollOffer, slotCost, towerColor, towerSpec } from '../../src/core/augments';
 import { Rng } from '../../src/core/rng';
-import { rollTier, tierAddedLine, tierFirst } from '../../src/core/tiers';
+import { rollTier, tierAddedLine, tierFirst, tierTowerLine } from '../../src/core/tiers';
 
 const copy = (id: string, tier: Tier = 'common'): AugmentCopy => ({ id, tier });
 const spec = (...ids: string[]) => towerSpec(ids.map((id) => copy(id)));
@@ -87,6 +87,43 @@ describe('mint gold (Mint)', () => {
     expect(describeSpec(spec('bolt', 'mint', 'mint'))).toContain('kills drop +2 gold');
     expect(describeSpec(spec('frost'))).toBe('Slows everything around it by 40%.');
     expect(describeSpec(spec('frost', 'bolt'))).toBe('Slows everything around it by 40%, and shoots the enemy furthest along.');
+  });
+});
+
+describe('push (Push)', () => {
+  it('a lone Push tower gusts everything within 2.5 cells back, without damage', () => {
+    expect(spec('push')).toMatchObject({ kind: 'pulse', damage: 0, range: 2.5, gust: 0.8, pushCount: 1, pushPerHit: 0 });
+    expect(spec('push').rate).toBeCloseTo(1 / 2.4);
+  });
+
+  it('the gust gets stronger and faster per tier', () => {
+    expect(towerSpec([copy('push', 'rare')]).gust).toBe(1.0);
+    expect(towerSpec([copy('push', 'rare')]).rate).toBeCloseTo(1 / 2.0);
+    expect(towerSpec([copy('push', 'epic')]).gust).toBe(1.2);
+    expect(towerSpec([copy('push', 'epic')]).rate).toBeCloseTo(1 / 1.8);
+    expect(towerSpec([copy('push', 'epic')]).range).toBe(2.5);
+    expect(towerSpec([copy('push', 'epic')]).damage).toBe(0);
+  });
+
+  it('a Push added to any tower pushes its hits back 0.4 cells; two stack; the first never adds per-hit', () => {
+    expect(spec('bolt', 'push')).toMatchObject({ gust: 0, pushPerHit: 0.4, pushCount: 1 });
+    expect(spec('bolt', 'push', 'push').pushPerHit).toBe(0.8);
+    expect(spec('bolt', 'push', 'push').pushCount).toBe(2);
+    expect(spec('push', 'push').gust).toBe(0.8);
+    expect(spec('push', 'push').pushPerHit).toBe(0.4);
+  });
+
+  it('the tower line reads the gust and the per-hit push', () => {
+    expect(describeSpec(spec('push'))).toMatch(/Pushes everything back 0\.8 cells/);
+    expect(describeSpec(spec('bolt', 'push'))).toMatch(/hits push back 0\.4 cells/);
+    expect(describeSpec(spec('bolt', 'push', 'push'))).toMatch(/hits push back 0\.8 cells/);
+  });
+
+  it("the card's tower line shows the tier's gust distance and cadence", () => {
+    const p = getAugment('push');
+    expect(tierTowerLine(p, 'rare')).toBe('Pushes everything back 1.0 cells, every 2.0 s.');
+    expect(tierTowerLine(p, 'epic')).toBe('Pushes everything back 1.2 cells, every 1.8 s.');
+    expect(tierTowerLine(p, 'common')).toBe(p.asTower);
   });
 });
 

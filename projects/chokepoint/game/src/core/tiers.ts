@@ -46,6 +46,7 @@ export function tierFirst(def: AugmentDef, tier: Tier): FirstForm {
     rate: f.rate / (t.cooldownMul ?? 1),
     range: f.range * (t.rangeMul ?? 1),
     pierce: t.pierce ?? f.pierce,
+    push: t.push ?? f.push,
     slow: f.slow ? { ...f.slow, pct: t.slowPct ?? f.slow.pct } : undefined,
     root: f.root ? { ...f.root, sec: t.rootSec ?? f.root.sec } : undefined,
   };

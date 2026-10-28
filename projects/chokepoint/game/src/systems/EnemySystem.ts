@@ -22,6 +22,8 @@ export interface HitPayload {
   root: { sec: number } | undefined;
   /** How many more enemies a shot strikes after the first hit; 0 = none. */
   pierce: number;
+  /** Board units the hit pushes its enemy back along the road (0: none). */
+  push: number;
   /** The mark this hit applies to the enemies it hits; `x`, `y` are the tower's base (the flash spot). */
   mark: { pct: number; x: number; y: number } | undefined;
   /** The tower's color, for the shot and the burst. */
@@ -105,6 +107,7 @@ export class EnemySystem {
   strike(e: Enemy, payload: HitPayload): boolean {
     if (!e.active) return false;
     if (payload.slow) e.slow(payload.slow.pct, payload.slow.sec);
+    if (payload.push > 0) e.pushBack(payload.push);
     if (payload.root) e.root(payload.root.sec);
     if (payload.mark && e.mark(payload.mark.pct)) this.fx.markFlash(payload.mark.x, payload.mark.y, CELL * 0.43);
     if (payload.damage <= 0 || !e.hit(payload.damage)) return false;
@@ -151,5 +154,11 @@ export class EnemySystem {
   brokenMark(): string | undefined {
     const bad = this.pool.find((e) => e.active && (!Number.isFinite(e.markPct) || e.markPct < 0 || e.markPct > 1));
     return bad ? `${bad.def.id} marked by ${bad.markPct}` : undefined;
+  }
+
+  /** Invariant: no enemy has slid back before the road's start (the gust clamps at 0). */
+  brokenPush(): string | undefined {
+    const bad = this.pool.find((e) => e.active && e.distance < 0);
+    return bad ? `${bad.def.id} at ${bad.distance.toFixed(1)} before the start` : undefined;
   }
 }

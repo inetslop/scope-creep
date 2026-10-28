@@ -45,6 +45,12 @@ export interface TowerSpec {
   goldPerKill: number;
   /** Kills within this many cells of the tower (Chebyshev) pay: 0 unless the first augment's form has it. */
   goldRadius: number;
+  /** The gust: cells back along the road every attack pushes everything in range (0: no gust, Push first). */
+  gust: number;
+  /** Cells back each hit pushes its enemy, per Push added after the first (0: none). */
+  pushPerHit: number;
+  /** Pushes in the tower: one outward tick each (the first is the gust, the rest add per-hit push). */
+  pushCount: number;
 }
 
 const EMPTY: TowerSpec = {
@@ -68,6 +74,9 @@ const EMPTY: TowerSpec = {
   leadCount: 0,
   goldPerKill: 0,
   goldRadius: 0,
+  gust: 0,
+  pushPerHit: 0,
+  pushCount: 0,
 };
 
 /**
@@ -104,6 +113,9 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     leadCount: 0,
     goldRadius: f.goldRadius ?? 0,
     goldPerKill: 0,
+    gust: f.push ?? 0,
+    pushPerHit: 0,
+    pushCount: 0,
   };
   // Anchors in any slot: the first sets the root's duration, each extra one lengthens it.
   let rootSec = 0;
@@ -135,6 +147,13 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
       spec.markCount += 1;
     }
   }
+  // Pushes in any slot: the first is the tower's gust, each extra one adds per-hit push.
+  for (let i = 0; i < augments.length; i++) {
+    const a = getAugment(augments[i]!.id);
+    if (a.id !== 'push') continue;
+    spec.pushCount += 1;
+    if (i > 0) spec.pushPerHit += a.added.push ?? 0;
+  }
   // Leads in any slot: the first gives the tower's shots their lead cap, each extra one raises it.
   let leads = 0;
   for (const a of augments) if (a.id === 'lead') leads++;
@@ -162,7 +181,13 @@ export function describeSpec(spec: TowerSpec): string {
   const root = spec.root ? `, and roots them for ${spec.root.sec}s` : '';
   const marked = Math.round(spec.markPct * 100);
   let line: string;
-  if (spec.kind === 'shot') {
+  if (spec.gust > 0) {
+    line = `Pushes everything back ${spec.gust.toFixed(1)} cells`;
+    if (slow) line += `, slowing them by ${slow}%`;
+    line += root;
+    if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;
+    if (marked > 0) line += ', and its hits mark';
+  } else if (spec.kind === 'shot') {
     const target = spec.shots > 1 ? `${spec.shots} enemies at a time` : 'the enemy furthest along';
     const style = spec.range >= 4 ? 'Snipes' : spec.rate >= 3 ? 'Fires fast needles at' : 'Shoots';
     line = `${style} ${target}${spec.splash > 0 ? ', and the shots burst' : ''}${spec.pierce > 0 ? `, and each hits ${spec.pierce + 1} in a line` : ''}${marked > 0 ? ', and its hits mark' : ''}`;
@@ -194,6 +219,7 @@ export function describeSpec(spec: TowerSpec): string {
   // The mints in the tower (core/mint.ts): its kills, and the kills within its radius, drop extra gold.
   if (spec.goldRadius > 0) line += `, kills within ${spec.goldRadius} cells drop +${spec.goldPerKill} gold`;
   else if (spec.goldPerKill > 0) line += `, kills drop +${spec.goldPerKill} gold`;
+  if (spec.pushPerHit > 0) line += `, and its hits push back ${spec.pushPerHit.toFixed(1)} cells`;
   return `${line}.`;
 }
 

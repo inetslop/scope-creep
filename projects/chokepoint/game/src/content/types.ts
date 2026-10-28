@@ -59,6 +59,8 @@ export interface TierValues {
   /** Replaces this copy's added root duration (Anchor). */
   addedRootSec?: number;
   pierce?: number;
+  /** Replaces this copy's gust distance in its first form (Push). */
+  push?: number;
   addedRateMul?: number;
   addedRangeMul?: number;
   asAdded: string;
@@ -100,6 +102,8 @@ export interface FirstForm {
   slow?: { pct: number; sec: number };
   /** Roots (fully stops) enemies for `sec` seconds (Anchor). */
   root?: { sec: number };
+  /** For a 'pulse': the gust pushes everything in range this many cells back along the road (Push). */
+  push?: number;
   /** For a 'mark' attack: the fraction of extra damage a marked enemy takes from everything. */
   mark?: number;
   /** For a predictive 'shot': the base lead cap, in cells ahead of the enemy (Lead). */
@@ -124,6 +128,8 @@ export interface AddedForm {
   root?: { sec: number };
   /** Hits apply the mark: enemies hit take this fraction of extra damage from everything. */
   mark?: number;
+  /** Hits push enemies back this many cells along the road (Push). */
+  push?: number;
   damageMul?: number;
   rateMul?: number;
   rangeMul?: number;
