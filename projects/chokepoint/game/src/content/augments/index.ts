@@ -4,6 +4,7 @@ import { frost } from './frost';
 import { lance } from './lance';
 import { lead } from './lead';
 import { mark } from './mark';
+import { mint } from './mint';
 import { rally } from './rally';
 import { rapid } from './rapid';
 import { reach } from './reach';
@@ -16,6 +17,7 @@ export const AUGMENTS: readonly AugmentDef[] = [
   lead,
   splash,
   frost,
+  mint,
   rally,
   mark,
   rapid,

@@ -38,6 +38,10 @@ export interface TowerSpec {
   lead: number;
   /** Leads in the tower: the first aims the shots, each extra one raises the lead cap. */
   leadCount: number;
+  /** Extra gold this tower's own kills drop: one per mint copy in the tower, any slot (core/mint.ts). */
+  goldPerKill: number;
+  /** Kills within this many cells of the tower (Chebyshev) pay: 0 unless the first augment's form has it. */
+  goldRadius: number;
 }
 
 const EMPTY: TowerSpec = {
@@ -58,6 +62,8 @@ const EMPTY: TowerSpec = {
   markCount: 0,
   lead: 0,
   leadCount: 0,
+  goldPerKill: 0,
+  goldRadius: 0,
 };
 
 /**
@@ -91,6 +97,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     markCount: 0,
     lead: 0,
     leadCount: 0,
+    goldRadius: f.goldRadius ?? 0,
+    goldPerKill: 0,
   };
   for (const a of augments.slice(1)) {
     const e = tierAdded(getAugment(a.id), a.tier);
@@ -121,6 +129,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     spec.lead = (leadDef.first.lead ?? 0) + (leads - 1) * (leadDef.added.lead ?? 0);
     spec.leadCount = leads;
   }
+  // Mints in any slot: this tower's kills drop this much extra gold (core/mint.ts).
+  for (const a of augments) spec.goldPerKill += tierAdded(getAugment(a.id), a.tier).goldPerKill ?? 0;
   // A pulse already hits an area: splash makes it reach further, and pierce turns into bolts
   // that fire with each pulse and keep going.
   if (spec.kind === 'pulse') {
@@ -149,15 +159,20 @@ export function describeSpec(spec: TowerSpec): string {
     const r = getAugment('rally');
     line = `Towers within ${r.first.range} cells attack ${Math.round((r.added.rally?.pct ?? 0) * 100)}% faster`;
   } else if (spec.damage <= 0) {
-    line = `Slows everything around it by ${slow}%`;
-    if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;
-    if (marked > 0) line += ', and its hits mark';
+    if (spec.slow) {
+      line = `Slows everything around it by ${slow}%`;
+      if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;
+      if (marked > 0) line += ', and its hits mark';
+    } else line = spec.bolts > 0 ? `Shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}` : 'Does not attack';
   } else {
     line = 'Blasts everything around it';
     if (slow) line += `, slowing them by ${slow}%`;
     if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;
     if (marked > 0) line += ', and its hits mark';
   }
+  // The mints in the tower (core/mint.ts): its kills, and the kills within its radius, drop extra gold.
+  if (spec.goldRadius > 0) line += `, kills within ${spec.goldRadius} cells drop +${spec.goldPerKill} gold`;
+  else if (spec.goldPerKill > 0) line += `, kills drop +${spec.goldPerKill} gold`;
   return `${line}.`;
 }
 

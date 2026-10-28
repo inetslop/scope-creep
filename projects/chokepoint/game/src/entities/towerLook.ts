@@ -71,6 +71,13 @@ const DECORATIONS: readonly Decoration[] = [
   (g, spec) => {
     if (spec.slow) fillRing(g, 0, 0, BODY * 1.45, 3, 0, Math.PI * 2, PALETTE.ice, 0.95);
   },
+  // Mint: a small gold coin on the plinth's right side — kills near it (or by it) drop extra gold.
+  (g, spec) => {
+    if (spec.goldPerKill === 0) return;
+    const r = 0.1 * CELL;
+    g.fillStyle(PALETTE.yellowDeep, 1); g.fillCircle(16.5, 14, r);
+    g.fillStyle(PALETTE.yellow, 1); g.fillCircle(16.5, 12, r);
+  },
   // Mark: a thin ink ring at the base (below the pips), one small tick per Mark in the tower.
   (g, spec) => {
     if (spec.markCount === 0) return;

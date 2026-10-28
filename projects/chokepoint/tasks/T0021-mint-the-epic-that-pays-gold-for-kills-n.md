@@ -4,11 +4,12 @@ title: "Mint: the Epic that pays gold for kills near it"
 assignee: desktop
 size: L
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0020, T0012, T0004, T010]
 attempts: 1
 created: 2026-10-28T04:43:01Z
 claimed_at: 2026-10-28T10:59:24Z
+finished_at: 2026-10-28T11:17:59Z
 epic: E4
 ---
 
@@ -99,3 +100,28 @@ towers: () => readonly Tower[] = () => []; // EnemySystem field; GameScene sets 
 ### Tests
 - `tests/core/mint.test.ts` (new): chebyshev values; kill at cell distance 2 (incl. diagonal) near a Mint tower → +1, distance 3 → 0; Bolt+Mint kills → +1, Bolt+Mint+Mint → +2; Bolt+Mint inside a Mint tower's radius → +2; a Mint tower that is also the (hypothetical) source pays its copies once; Mint+Mint tower aura → +2; two Mint towers in range → +2. (Use real `towerSpec` copies; do NOT test "Frost+Mint pays 0" — the rule pays the killer's copies, Frost simply never kills.)
 - `tests/core/augments.test.ts`: `spec('mint')` → `goldRadius 2`, `goldPerKill 1`, `damage 0`; `spec('bolt','mint','mint').goldPerKill === 2`; `describeSpec(spec('mint')) === 'Does not attack, kills within 2 cells drop +1 gold.'`; `describeSpec(spec('bolt','mint'))` contains 'kills drop +1 gold'; `describeSpec(spec('frost'))` unchanged.
+
+## Result (attempt 1, desktop)
+
+Added Mint, the third Epic-only augment: kills within 2 cells (Chebyshev) of a Mint tower and a Mint-added tower's own kills drop +1 extra gold per copy, shown in the existing gold pop. New content (`content/augments/mint.ts`), pure rule (`core/mint.ts` with `chebyshev`/`mintGoldBonus`), two optional form fields, TowerSpec `goldPerKill`/`goldRadius` with a "Does not attack, kills within 2 cells drop +1 gold." panel line, a gold-coin tower decoration, a `towers.gold` invariant, and unit tests (Epic-only rolls, 5×5 radius, copy stacking, combined payouts). Deviated minimally from the design: the support-tower skip in TowerSystem also excludes towers with marks (or it would have broken Mark), and mark.test.ts's "only mark and rally are tier-limited" assertion now admits Mint. `npm run check` (107 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 18.6 min
+
+```
+.../chokepoint/game/src/content/augments/index.ts  |  2 +
+ .../chokepoint/game/src/content/augments/mint.ts   | 23 ++++++++
+ projects/chokepoint/game/src/content/types.ts      |  4 ++
+ projects/chokepoint/game/src/core/augments.ts      | 21 ++++++-
+ projects/chokepoint/game/src/core/mint.ts          | 27 +++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  4 ++
+ projects/chokepoint/game/src/entities/towerLook.ts |  7 +++
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  1 +
+ .../chokepoint/game/src/systems/EnemySystem.ts     | 10 +++-
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  4 ++
+ projects/chokepoint/game/tests/content.test.ts     |  2 +-
+ .../chokepoint/game/tests/core/augments.test.ts    | 32 +++++++++++
+ projects/chokepoint/game/tests/core/mark.test.ts   |  5 +-
+ projects/chokepoint/game/tests/core/mint.test.ts   | 67 ++++++++++++++++++++++
+ 14 files changed, 202 insertions(+), 7 deletions(-)
+```

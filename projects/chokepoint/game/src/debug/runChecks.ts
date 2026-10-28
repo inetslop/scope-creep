@@ -21,6 +21,10 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['projectiles.stuck', (g) => g.projectiles.brokenProjectile()],
   ['projectiles.aim', (g) => g.projectiles.brokenAim()],
   ['towers.valid', (g) => g.towers.brokenTower()],
+  ['towers.gold', (g) => {
+    for (const t of g.towers.towers) if (!Number.isInteger(t.spec.goldPerKill) || t.spec.goldPerKill < 0 || t.spec.goldPerKill > t.augments.length) return `kill-gold ${t.spec.goldPerKill} at (${t.cell.col}, ${t.cell.row})`;
+    return null;
+  }],
   ['rally.valid', (g) => {
     for (const t of g.towers.towers) if (t.rallyRateMul < 1 - 1e-9 || t.rallyRateMul > 1.2) return `rally multiplier ${t.rallyRateMul}`;
     return null;

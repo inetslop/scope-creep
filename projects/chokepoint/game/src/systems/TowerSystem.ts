@@ -92,6 +92,9 @@ export class TowerSystem {
     const enemies = this.enemies.all;
     for (const t of this.towers) {
       if (!t.spec.attacks) continue;
+      // A pure support (no damage, slow, bolts or marks, like a bare Mint) never attacks:
+      // pulse.ts would only fire its wave fx, kick and sound around a tower that does nothing.
+      if (t.spec.damage <= 0 && !t.spec.slow && t.spec.bolts === 0 && t.spec.markPct === 0) continue;
       t.cooldown -= dt;
       if (t.cooldown > 0) continue;
       if (this.attack(t, enemies)) t.cooldown += 1 / (t.spec.rate * t.rallyRateMul);
@@ -115,6 +118,7 @@ export class TowerSystem {
         pierce: spec.pierce,
         mark: spec.markPct > 0 ? { pct: spec.markPct, x: t.x, y: t.y } : undefined,
         color: color ? PALETTE[color] : PALETTE.faint,
+        source: t,
       },
       fireBolt: (n, target, payload) => {
         const m = t.muzzle(n);

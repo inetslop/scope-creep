@@ -3,8 +3,10 @@ import { CELL, DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
 import type { EnemyDef } from '../content/types';
 import type { RunState } from '../core/run';
+import { mintGoldBonus } from '../core/mint';
 import { hook } from '../debug/testHook';
 import { Enemy } from '../entities/Enemy';
+import type { Tower } from '../entities/Tower';
 import { drawEnemyMarks } from './enemyMarks';
 import type { Sfx } from '../audio/Sfx';
 import type { Board } from './Board';
@@ -22,6 +24,8 @@ export interface HitPayload {
   mark: { pct: number; x: number; y: number } | undefined;
   /** The tower's color, for the shot and the burst. */
   color: number;
+  /** The tower that made the hit: its mints (and the mints around the kill) decide the extra kill gold. */
+  source: Tower;
 }
 
 /** Owns the enemy pool: spawning, walking, hits, kills, leaks, and the health bars. */
@@ -31,6 +35,8 @@ export class EnemySystem {
   private readonly run: RunState;
   private readonly fx: FxSystem;
   private readonly sfx: Sfx | undefined;
+  /** The run's towers (set by GameScene): a kill pays each mint tower that reaches it extra gold. */
+  towers: () => readonly Tower[] = () => [];
   private readonly pool: Enemy[] = [];
   private readonly bars: Phaser.GameObjects.Graphics;
 
@@ -99,7 +105,9 @@ export class EnemySystem {
     if (payload.slow) e.slow(payload.slow.pct, payload.slow.sec);
     if (payload.mark && e.mark(payload.mark.pct)) this.fx.markFlash(payload.mark.x, payload.mark.y, CELL * 0.43);
     if (payload.damage <= 0 || !e.hit(payload.damage)) return false;
-    const paid = this.run.addKill(e.def.gold);
+    // Mint towers (core/mint.ts): the killer's own copies, plus every mint tower within its radius, pay extra.
+    const cell = this.board.cellAt(e.x, e.y);
+    const paid = this.run.addKill(e.def.gold + (cell ? mintGoldBonus(this.towers(), cell, payload.source) : 0));
     this.fx.burst(e.x, e.y, PALETTE[e.def.look.color]);
     this.fx.killCount(e.x, e.y);
     this.fx.popText(e.x, e.y - 20, `+${paid}`);
