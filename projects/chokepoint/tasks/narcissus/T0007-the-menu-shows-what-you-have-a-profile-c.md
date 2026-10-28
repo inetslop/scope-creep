@@ -4,11 +4,12 @@ title: "The menu shows what you have: a profile card"
 assignee: narcissus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0001]
 attempts: 1
 created: 2026-10-28T01:07:07Z
 claimed_at: 2026-10-28T02:39:41Z
+finished_at: 2026-10-28T03:11:26Z
 epic: E1
 ---
 
@@ -110,3 +111,16 @@ Stack top→bottom: title (y), card (y+104), how-to-play (y+213), Play (y+290), 
 
 ### Tests
 - none (menu UI only; no `core/` rule added or changed)
+
+## Result (attempt 1, narcissus)
+
+The menu now shows a white profile card between the title and the Play button, built in a new file `src/scenes/menu/ProfileCard.ts`: a yellow coin icon (`ui:coin` at 1.4 scale) with the total coins in large bold type, plus "Best wave N", "Runs N", and a faint "Last: wave N · +N coins" line that only appears after at least one finished run. `MenuScene.ts` now builds this card from the already-loaded saved profile (replacing the old single "Best: wave N · M runs" text line), includes it in the entrance tween, and uses the new layout stack — title, card, how-to-play, Play, hint — with the road scale also respecting short screens so nothing overlaps at 412x915 or 1280x720. A fresh device shows 0 coins, "Best wave 0", "Runs 0" and no Last line via `loadProfile`'s existing zeros; starting a run is unchanged.
+
+- Self-review: APPROVE
+- Time: 31.8 min
+
+```
+projects/chokepoint/game/src/scenes/MenuScene.ts   | 18 +++++++--------
+ .../chokepoint/game/src/scenes/menu/ProfileCard.ts | 27 ++++++++++++++++++++++
+ 2 files changed, 36 insertions(+), 9 deletions(-)
+```

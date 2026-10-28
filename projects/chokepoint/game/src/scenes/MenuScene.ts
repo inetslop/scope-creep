@@ -11,6 +11,7 @@ import { uiCamera, viewSize } from '../ui/display';
 import { textStyle, titleStyle } from '../ui/text';
 import { onKey, onResize, SCENES } from './keys';
 import { MenuDemo } from './menu/MenuDemo';
+import { buildProfileCard, PROFILE_CARD_W } from './menu/ProfileCard';
 
 /** A faint augment shape drifting across the background. */
 interface Drifter {
@@ -58,15 +59,14 @@ export class MenuScene extends Phaser.Scene {
     const how = this.add
       .text(0, 0, 'Build towers beside the road.\nCombine augments into new kinds of tower.\nHold as many waves as you can.', textStyle(18, PALETTE.muted, { align: 'center', lineSpacing: 6 }))
       .setOrigin(0.5);
-    const bestLine = [p.bestWave > 0 ? `Best: wave ${p.bestWave}` : '', p.runsPlayed > 0 ? `${p.runsPlayed} runs` : ''].filter(Boolean).join(' · ');
-    const bestText = this.add.text(0, 0, bestLine, textStyle(16, PALETTE.muted, { fontStyle: 'bold' })).setOrigin(0.5);
+    const profileCard = buildProfileCard(this, p);
     const button = makeButton(this, 0, 0, 'Play', play, { width: 200, height: 60, fontSize: 24, radius: 30, fill: PALETTE.ink });
     const hint = this.add.text(0, 0, 'Enter or Space', textStyle(14, PALETTE.faint)).setOrigin(0.5);
 
     // Entrances: the title drops in with a bounce, the rest fades up after it; Play breathes.
     this.title.setAlpha(0).setScale(0.6);
     this.tweens.add({ targets: this.title, alpha: 1, scale: 1, duration: 650, ease: 'Back.easeOut' });
-    for (const [i, obj] of [how, button.container, hint, bestText].entries()) {
+    for (const [i, obj] of [profileCard, how, button.container, hint].entries()) {
       obj.setAlpha(0);
       this.tweens.add({ targets: obj, alpha: 1, duration: 400, delay: 350 + i * 120 });
     }
@@ -74,18 +74,18 @@ export class MenuScene extends Phaser.Scene {
 
     const layout = (width: number, height: number): void => {
       const cx = width / 2;
-      const k = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width);
-      const block = MENU_ROAD_SIZE.height * k + 330;
+      const k = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width, Math.max(0.6, (height - 460) / MENU_ROAD_SIZE.height));
+      const block = MENU_ROAD_SIZE.height * k + 460;
       const top = Math.max(16, (height - block) / 2);
       this.demo.layout(cx, top, k);
       const y = top + MENU_ROAD_SIZE.height * k + 40;
       const textScale = Math.min(1, (width - 32) / 420);
       this.titleY = y;
       this.title.setPosition(cx, y);
-      how.setPosition(cx, y + 78).setScale(textScale);
-      button.container.setPosition(cx, y + 172);
-      hint.setPosition(cx, y + 218);
-      bestText.setPosition(cx, y + 250);
+      profileCard.setPosition(cx, y + 104).setScale(Math.min(1, (width - 32) / PROFILE_CARD_W));
+      how.setPosition(cx, y + 213).setScale(textScale);
+      button.container.setPosition(cx, y + 290);
+      hint.setPosition(cx, y + 343);
     };
     layout(viewSize(this).width, viewSize(this).height);
     onResize(this, layout);
