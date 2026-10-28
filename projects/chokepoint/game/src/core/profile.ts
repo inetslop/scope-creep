@@ -1,9 +1,10 @@
-/** The device's profile: best wave, runs played, coins. Storage is passed in, so this stays pure and testable. */
+/** The device's profile: best wave, runs played, coins, and the four most recent runs. Storage is passed in, so this stays pure and testable. */
 export interface Profile {
   bestWave: number;
   runsPlayed: number;
   coins: number;
   lastRun: { wave: number; coins: number } | null;
+  recent: { wave: number; coins: number }[];
 }
 
 export interface KeyValueStore {
@@ -38,14 +39,21 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
       parsed.lastRun.coins >= 0
         ? { wave: Number(parsed.lastRun.wave), coins: Number(parsed.lastRun.coins) }
         : null;
+    const recent = Array.isArray(parsed.recent)
+      ? parsed.recent
+          .filter((r) => !!r && typeof r === 'object' && Number.isFinite(r.wave) && r.wave >= 0 && Number.isFinite(r.coins) && r.coins >= 0)
+          .slice(0, 4)
+          .map((r) => ({ wave: Number(r.wave), coins: Number(r.coins) }))
+      : [];
     return {
       bestWave: Number(parsed.bestWave) || 0,
       runsPlayed: Number(parsed.runsPlayed) || 0,
       coins: Number(parsed.coins) || 0,
       lastRun,
+      recent,
     };
   } catch {
-    return { bestWave: 0, runsPlayed: 0, coins: 0, lastRun: null };
+    return { bestWave: 0, runsPlayed: 0, coins: 0, lastRun: null, recent: [] };
   }
 }
 
@@ -63,6 +71,7 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
     runsPlayed: old.runsPlayed + 1,
     coins: old.coins + coins,
     lastRun: { wave: result.waves, coins },
+    recent: [{ wave: result.waves, coins }, ...old.recent].slice(0, 4),
   };
   try {
     store?.setItem(PROFILE_KEY, JSON.stringify(profile));

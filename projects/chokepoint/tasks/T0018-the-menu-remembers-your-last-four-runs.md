@@ -4,11 +4,12 @@ title: The menu remembers your last four runs
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T03:39:38Z
 claimed_at: 2026-10-28T08:30:17Z
+finished_at: 2026-10-28T08:36:27Z
 epic: E1
 ---
 
@@ -110,3 +111,17 @@ export interface Profile {
 
 ### Tests
 - `tests/core/profile.test.ts` updated as above (the prepend/cap rule is core logic a later change could silently break).
+
+## Result (attempt 1, desktop)
+
+The saved profile now keeps the four most recent finished runs (most recent first, capped at 4) — `recent` was added to `Profile` in src/core/profile.ts, parsed defensively in `loadProfile`, and prepended/capped in `recordRun`. The menu shows a small muted "Recent  W12 +9 · W8 +6 …" line under the profile card when there are finished runs (src/scenes/MenuScene.ts), fading in with the other entrance tweens and repositioned on resize. Unit tests cover the new field in every existing expectation plus order, cap, and corrupt-data cases. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 6.2 min
+
+```
+projects/chokepoint/game/src/core/profile.ts       | 13 ++++++++++--
+ projects/chokepoint/game/src/scenes/MenuScene.ts   | 12 ++++++++++-
+ .../chokepoint/game/tests/core/profile.test.ts     | 23 +++++++++++++++++-----
+ 3 files changed, 40 insertions(+), 8 deletions(-)
+```

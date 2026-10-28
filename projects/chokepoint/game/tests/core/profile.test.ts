@@ -15,12 +15,14 @@ describe('profile', () => {
   });
 
   it('loads an empty profile from missing or broken storage', () => {
-    const empty = { bestWave: 0, runsPlayed: 0, coins: 0, lastRun: null };
+    const empty = { bestWave: 0, runsPlayed: 0, coins: 0, lastRun: null, recent: [] };
     expect(loadProfile(undefined)).toEqual(empty);
     expect(loadProfile({ getItem: () => '{oops', setItem: () => undefined })).toEqual(empty);
     const store = memory();
     store.setItem('chokepoint:profile', JSON.stringify({ bestWave: 4, lastRun: { wave: 'x', coins: 2 } }));
-    expect(loadProfile(store)).toEqual({ bestWave: 4, runsPlayed: 0, coins: 0, lastRun: null });
+    expect(loadProfile(store)).toEqual({ bestWave: 4, runsPlayed: 0, coins: 0, lastRun: null, recent: [] });
+    store.setItem('chokepoint:profile', JSON.stringify({ recent: [{ wave: 7, coins: 2 }, null, { wave: 1, coins: -4 }] }));
+    expect(loadProfile(store).recent).toEqual([{ wave: 7, coins: 2 }]);
   });
 
   it('records the first run and keeps the best over later runs', () => {
@@ -28,11 +30,11 @@ describe('profile', () => {
     const first = recordRun(store, { waves: 5, stopped: 40, clean: 2 });
     expect(first.coins).toBe(11);
     expect(first.newBest).toBe(true);
-    expect(first.profile).toEqual({ bestWave: 5, runsPlayed: 1, coins: 11, lastRun: { wave: 5, coins: 11 } });
+    expect(first.profile).toEqual({ bestWave: 5, runsPlayed: 1, coins: 11, lastRun: { wave: 5, coins: 11 }, recent: [{ wave: 5, coins: 11 }] });
 
     const second = recordRun(store, { waves: 3, stopped: 10, clean: 1 });
     expect(second.newBest).toBe(false);
-    expect(second.profile).toEqual({ bestWave: 5, runsPlayed: 2, coins: 16, lastRun: { wave: 3, coins: 5 } });
+    expect(second.profile).toEqual({ bestWave: 5, runsPlayed: 2, coins: 16, lastRun: { wave: 3, coins: 5 }, recent: [{ wave: 3, coins: 5 }, { wave: 5, coins: 11 }] });
     expect(loadProfile(store).coins).toBe(16);
   });
 
@@ -40,6 +42,17 @@ describe('profile', () => {
     const store = memory();
     const result = recordRun(store, { waves: 0, stopped: 0, clean: 0 });
     expect(result.coins).toBe(0);
-    expect(result.profile).toEqual({ bestWave: 0, runsPlayed: 1, coins: 0, lastRun: { wave: 0, coins: 0 } });
+    expect(result.profile).toEqual({ bestWave: 0, runsPlayed: 1, coins: 0, lastRun: { wave: 0, coins: 0 }, recent: [{ wave: 0, coins: 0 }] });
+  });
+
+  it('keeps the four most recent runs, newest first', () => {
+    const store = memory();
+    for (const waves of [5, 3, 8, 2, 9]) recordRun(store, { waves, stopped: 0, clean: 0 });
+    expect(loadProfile(store).recent).toEqual([
+      { wave: 9, coins: 9 },
+      { wave: 2, coins: 2 },
+      { wave: 8, coins: 8 },
+      { wave: 3, coins: 3 },
+    ]);
   });
 });

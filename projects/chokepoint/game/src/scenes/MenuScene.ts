@@ -11,7 +11,7 @@ import { uiCamera, viewSize } from '../ui/display';
 import { textStyle, titleStyle } from '../ui/text';
 import { onKey, onResize, SCENES } from './keys';
 import { MenuDemo } from './menu/MenuDemo';
-import { buildProfileCard, PROFILE_CARD_W } from './menu/ProfileCard';
+import { buildProfileCard, PROFILE_CARD_H, PROFILE_CARD_W } from './menu/ProfileCard';
 
 /** A faint augment shape drifting across the background. */
 interface Drifter {
@@ -60,6 +60,11 @@ export class MenuScene extends Phaser.Scene {
       .text(0, 0, 'Build towers beside the road.\nCombine augments into new kinds of tower.\nHold as many waves as you can.', textStyle(18, PALETTE.muted, { align: 'center', lineSpacing: 6 }))
       .setOrigin(0.5);
     const profileCard = buildProfileCard(this, p);
+    const recent = p.recent.length
+      ? this.add
+          .text(0, 0, `Recent  ${p.recent.map((r) => `W${r.wave} +${r.coins}`).join(' · ')}`, textStyle(12, PALETTE.muted, { wordWrap: { width: 380 } }))
+          .setOrigin(0.5)
+      : null;
     const button = makeButton(this, 0, 0, 'Play', play, { width: 200, height: 60, fontSize: 24, radius: 30, fill: PALETTE.ink });
     const hint = this.add.text(0, 0, 'Enter or Space', textStyle(14, PALETTE.faint)).setOrigin(0.5);
 
@@ -69,6 +74,10 @@ export class MenuScene extends Phaser.Scene {
     for (const [i, obj] of [profileCard, how, button.container, hint].entries()) {
       obj.setAlpha(0);
       this.tweens.add({ targets: obj, alpha: 1, duration: 400, delay: 350 + i * 120 });
+    }
+    if (recent) {
+      recent.setAlpha(0);
+      this.tweens.add({ targets: recent, alpha: 1, duration: 400, delay: 460 });
     }
     this.tweens.add({ targets: button.container, scale: 1.05, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: 900 });
 
@@ -84,6 +93,7 @@ export class MenuScene extends Phaser.Scene {
       this.title.setPosition(cx, y);
       profileCard.setPosition(cx, y + 104).setScale(Math.min(1, (width - 32) / PROFILE_CARD_W));
       how.setPosition(cx, y + 213).setScale(textScale);
+      if (recent) recent.setPosition(cx, y + 104 + (PROFILE_CARD_H / 2) * Math.min(1, (width - 32) / PROFILE_CARD_W) + 7);
       button.container.setPosition(cx, y + 290);
       hint.setPosition(cx, y + 343);
     };
