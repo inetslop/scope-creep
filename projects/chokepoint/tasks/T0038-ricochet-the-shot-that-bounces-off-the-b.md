@@ -3,11 +3,13 @@ id: T0038
 title: "Ricochet: the shot that bounces off the board's rocks"
 size: L
 priority: 3
-status: design
+status: designing
 depends_on: [T0004]
 attempts: 0
 created: 2026-10-28T09:35:22Z
+claimed_at: 2026-10-28T09:35:24Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
