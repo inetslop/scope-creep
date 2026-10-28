@@ -4,16 +4,16 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 
 - Sell a tower for 70% of what its slots cost (tap it, then Sell)
 - Take an augment back out of a tower into the hand, for a fee
-- Lance augment: first, a long piercing line that hits everything along it; added, shots pierce one more enemy
-- Chain augment: first, a zap that jumps between nearby enemies; added, hits jump to one more enemy
-- Mark augment: first, marks the enemy furthest along so it takes 25% more damage; added, hits mark too
+- Lance augment: first, a long piercing line that hits everything along it; added, shots pierce one more enemy — tasked as T0004 (desktop)
+- Chain augment: first, a zap that jumps between nearby enemies; added, hits jump to one more enemy — tasked as T0025 (asus, cycle 8)
+- Mark augment: first, marks the enemy furthest along so it takes 25% more damage; added, hits mark too — tasked as T0012 (asus, cycle 2)
 - Rare augments that change a rule (e.g. towers next to each other share their slows)
 - Splitter enemy: breaks into two smaller ones when it dies
 - Shield enemy: a ring that absorbs the first hits for its neighbours
-- Sprinter enemy: speeds up each time it is hit
+- Sprinter enemy: speeds up each time it is hit — tasked as T0006 (inet-racing)
 - Flyer: ignores the path and crosses the board in a straight line (only some towers can hit it)
 - Boss every 10 waves with a health bar and its own mechanic
-- Wave preview strip in the build phase: the shapes and counts of the next wave
+- Wave preview strip in the build phase: the shapes and counts of the next wave — tasked as T0015 (narcissus)
 - Interest: unspent gold at the end of a build phase earns 5% (capped)
 - Fast-forward button (2x speed) for the wave phase — tasked as T0019 (narcissus, cycle 4)
 - Daily seeded run with a shareable result
@@ -21,7 +21,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Map modifiers chosen in the draft instead of an augment (e.g. "the next wave comes from both ends")
 - Haptics on mobile for builds and leaks
 - Draft reroll: once per run, reroll the three offered cards for 15 gold
-- Leak warning: the last 3 seconds before an enemy reaches the exit, the exit pulses red with a quiet tick
+- Leak warning: the last 3 seconds before an enemy reaches the exit, the exit pulses red with a quiet tick — built as T0014 (yoga)
 - Ghost run: a menu option to replay your best run's exact board (same seed) and beat your own wave record
 - Slow zone: a light blue patch on the board slows enemies crossing it by 30%
 - DPS line in the tower panel: a damage-per-second number per tower, updated as augments are added
@@ -39,8 +39,12 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Mender enemy: a slow round enemy that heals nearby enemies in a pulsing ring; closest is Block, new is that it heals other enemies, which no current enemy does
 - Anchor augment: first, roots (fully stops) everything within 2.5 cells for 0.75 s every 3 s; added, hits root for 0.5 s (+0.25 s per extra copy). Closest is Frost (a slow); new is a full timed stop that also applies when stacked on an attacking tower — tasked as T0023 (asus, cycle 7)
 - Enemy telegraph: an enemy whose behavior is special (a Sprinter, a Marked enemy, a Splitter) shows a small neutral icon on itself while its ability matters, so new behaviors are readable at a glance
-- Lives as a danger bar: the lives readout becomes a small bar that drifts toward red and pulses as you get close to losing your last life — tasked as T0022 (yoga, cycle 6)
+- Lives as a danger bar: the lives readout becomes a small bar that drifts toward red and pulses as you get close to losing your last life — was T0022 (rejected: the 196 px stats card has no room for 20 pips; would need single-digit starting lives or a growing card — revisit if either lands)
 - Tower earnings: the tower panel shows how much gold a tower has earned this run, so you can see which towers are paying for themselves
 - The clean wave's bonus shown during the build phase: a small line under the wave preview ("clean: +3 gold"), once the clean chip (T0005) and the wave preview (T0015) exist
 - A run-so-far line on the pause screen: wave, lives, gold, coins earned this run
 - The buy-slot button reads why it is quiet: when gold is short it dims and shows the price in red, so a first-time player sees the gap, not a dead button
+- Tier word on the draft card: the name line of Rare and Epic cards reads "Name · Rare" / "Name · Epic" (Common stays plain), the same line the tower panel shows — tasked as T0026 (yoga, cycle 8)
+- What-if preview: while an augment is held over a tower's free slot, the tower briefly shows the result (new barrel, ring or tick) before the gold is spent, so the decision is visible before it is paid for
+- Tight-pack waves: some waves send enemies bunched close together (a "tight" tag in the wave preview, once T0015 is in) so multi-hit augments (Splash, Lance, Chain) shine
+- A second pick: every 5th draft offers a 4th card
