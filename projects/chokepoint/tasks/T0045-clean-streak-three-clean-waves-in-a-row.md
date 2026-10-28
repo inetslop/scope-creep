@@ -3,11 +3,13 @@ id: T0045
 title: "Clean streak: three clean waves in a row give the run +1 life"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T11:47:03Z
+claimed_at: 2026-10-28T11:47:05Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
