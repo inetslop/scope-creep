@@ -13,8 +13,8 @@ describe('planWave', () => {
         const def = ENEMIES.find((e) => e.id === s.enemy)!;
         expect(def.fromWave).toBeLessThanOrEqual(wave);
         expect(s.delaySec).toBeGreaterThanOrEqual(0);
-        // Splitters are mixed in on top of the budget, like the rampers and dashing ones.
-        if (s.enemy !== 'splitter') spent += def.threat;
+        // Splitters and Haulers are mixed in on top of the budget, like the rampers and dashing ones.
+        if (s.enemy !== 'splitter' && s.enemy !== 'hauler') spent += def.threat;
       }
       expect(spent).toBeLessThanOrEqual(waveBudget(wave));
     }
@@ -74,6 +74,16 @@ describe('planWave', () => {
       const others = plan.spawns.filter((s) => s.enemy !== 'splitter').length;
       expect(plan.spawns.filter((s) => s.enemy === 'splitter').length).toBe(Math.floor(others / 7));
       expect(plan.spawns.filter((s) => s.enemy === 'splitter').length).toBeGreaterThan(0);
+    }
+  });
+
+  it('sends exactly one Hauler on 9, 13, 17, ..., walking in with the wave', () => {
+    for (let wave = 1; wave <= 30; wave++) {
+      const plan = planWave(wave, new Rng(wave), ENEMIES);
+      const haulers = plan.spawns.filter((s) => s.enemy === 'hauler').length;
+      const expected = wave >= 9 && (wave - 9) % 4 === 0 ? 1 : 0;
+      expect(haulers).toBe(expected);
+      if (expected === 1) expect(plan.spawns.some((s) => s.enemy !== 'hauler')).toBe(true); // never a Hauler-only wave
     }
   });
 

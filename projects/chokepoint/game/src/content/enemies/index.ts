@@ -3,6 +3,7 @@ import { block } from './block';
 import { dasher } from './dasher';
 import { dart } from './dart';
 import { dot } from './dot';
+import { hauler } from './hauler';
 import { splinter } from './splinter';
 import { splitter } from './splitter';
 import { sprinter } from './sprinter';
@@ -15,6 +16,7 @@ export const ENEMIES: readonly EnemyDef[] = [
   dasher,
   sprinter,
   splitter,
+  hauler,
   splinter,
 ];
 

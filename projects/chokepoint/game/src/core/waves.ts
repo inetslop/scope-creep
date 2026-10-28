@@ -64,7 +64,7 @@ export function splitterCount(total: number): number {
 export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): WavePlan {
   const unlocked = enemies.filter((e) => !e.spawnOnly && e.fromWave <= wave && e.threat > 0);
   const rampers = unlocked.filter((e) => e.speedRamp !== undefined);
-  const walkers = unlocked.filter((e) => e.speedRamp === undefined && e.dashCycle === undefined && e.splitsInto === undefined);
+  const walkers = unlocked.filter((e) => e.speedRamp === undefined && e.dashCycle === undefined && e.splitsInto === undefined && e.id !== 'hauler');
   let budget = waveBudget(wave);
   // Reserve the rampers first; no rng here, so the seeded picks of the walkers don't shift.
   const rampSpawns: string[] = [];
@@ -97,6 +97,8 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
     const n = splitterCount(spawns.length + reserved.length);
     for (let i = 0; i < n; i++) reserved.push(splitter.id);
   }
+  // The Hauler: one on 9, 13, 17, ... (it never comes from the budget; its threat is a placeholder).
+  if (wave >= 9 && (wave - 9) % 4 === 0) reserved.push('hauler');
   if (reserved.length === 0) return { number: wave, spawns, hpMul: waveHpMul(wave) };
   // Interleave the rampers and dashing ones evenly through the wave (no rng: seeded waves stay stable).
   let t = 0;

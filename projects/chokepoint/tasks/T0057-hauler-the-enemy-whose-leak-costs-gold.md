@@ -4,11 +4,12 @@ title: "Hauler: the enemy whose leak costs gold"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0046]
 attempts: 1
 created: 2026-10-28T13:04:03Z
 claimed_at: 2026-10-28T20:40:19Z
+finished_at: 2026-10-28T21:00:04Z
 ---
 
 ## Goal
@@ -106,3 +107,20 @@ Color: Dasher (T0046, landed) has purple, so per the task's condition the Hauler
 - The budget test keeps passing with the `spent` exclusion (walkers still drain to ≥ 1, so usual enemies stay on every wave).
 - `npm run check`: content test validates the def (warm color, size ≤ 0.45, threat > 0, fromWave ≥ 1); wave preview and textures pick the Hauler up by construction.
 - Smoke at 412x915 and 1280x720: the leak jolt + red "−5" pop at the exit, Hauler icon in the wave preview from wave 9.
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the Hauler — a big slow walker (hexagon token, 1.3× Block's size, red, 3× Block's hp at its speed, `src/content/enemies/hauler.ts`) that is worth 10 gold when killed (the normal gold pop) and costs 1 life plus 5 gold (floored at 0) when it leaks, with a red "-5" pop at the exit beside the usual leak jolt via a new enemy hook (`src/systems/enemyHooks/haulerLeak.ts`). It joins waves 9, 13, 17, … as exactly one Hauler per scheduled wave, reserved in `planWave` (`src/core/waves.ts`) and kept out of the budget picks, registered one line each in `ENEMIES` and `ENEMY_HOOKS` next to its kin, with the schedule pinned down and the budget test's `spent` adjusted in `tests/core/waves.test.ts`. The Hauler's icon, wave preview, sounds and HUD are picked up automatically and are otherwise untouched; typecheck, lint, all 143 unit tests and the desktop + phone smoke run all pass.
+
+- Self-review: APPROVE
+- Time: 19.8 min
+
+```
+projects/chokepoint/game/src/content/enemies/hauler.ts    | 15 +++++++++++++++
+ projects/chokepoint/game/src/content/enemies/index.ts     |  2 ++
+ projects/chokepoint/game/src/core/waves.ts                |  4 +++-
+ .../chokepoint/game/src/systems/enemyHooks/haulerLeak.ts  | 14 ++++++++++++++
+ projects/chokepoint/game/src/systems/enemyHooks/index.ts  |  2 ++
+ projects/chokepoint/game/tests/core/waves.test.ts         | 14 ++++++++++++--
+ 6 files changed, 48 insertions(+), 3 deletions(-)
+```
