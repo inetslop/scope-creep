@@ -103,13 +103,26 @@ export function poDue(fleet: FleetConfig, listing: TaskListing): string | null {
   if (!state.lastPoRunAt) return 'first cycle';
   if (minutes < fleet.loop.poMinGapMinutes) return null;
   if (minutes >= fleet.loop.poMaxGapMinutes) return 'scheduled review';
+  return planningReason(fleet, listing);
+}
+
+/**
+ * Whether there is planning to do right now, and why: the pool is low (overall or in the small
+ * sizes), a machine has nothing to take, a failed or rejected task needs a decision, or task files
+ * are broken. A task that was simply built is no reason: a PO cycle costs the fastest machine 10 to
+ * 30 minutes, and with the whole fleet finishing tasks it ran after nearly every one, to do nothing
+ * but archive (ten cycles in a row with no new task). Built tasks wait in the pool, which no machine
+ * picks from or waits on, until the next cycle reviews and archives them in one batch, at the
+ * latest at the scheduled review.
+ */
+export function planningReason(fleet: FleetConfig, listing: TaskListing, nowMs = Date.now()): string | null {
   const needs = poolNeeds(fleet, listing);
   if (needs.have < needs.want) return `the pool is low (${needs.have}/${needs.want})`;
   for (const s of needs.small) if (s.have < s.want) return `few size-${s.size} tasks for ${s.machines.join(', ')} (${s.have}/${s.want})`;
-  const idle = idleReason(fleet, listing);
+  const idle = idleReason(fleet, listing, nowMs);
   if (idle) return idle;
-  const finished = listing.tasks.filter(isFinished).length;
-  if (finished > 0) return `${finished} finished task(s) to review`;
+  const failed = listing.tasks.filter((t) => isFinished(t) && t.status === 'failed').length;
+  if (failed > 0) return `${failed} failed task(s) to decide on`;
   if (listing.invalid.size > 0) return 'invalid task files';
   return null;
 }

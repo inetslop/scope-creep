@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import type { FleetConfig } from '../config.ts';
 import { TASKS_DIR } from '../paths.ts';
-import { idleMachines, idleReason, poolNeeds } from '../po.ts';
+import { idleMachines, idleReason, planningReason, poolNeeds } from '../po.ts';
 import { parseTask, type Task, type TaskListing } from '../tasks.ts';
 
 const fleet = {
@@ -58,5 +58,20 @@ describe('idle machines', () => {
     const locked = Array.from({ length: 12 }, (_, i) => pool(`T01${String(i).padStart(2, '0')}`, { size: 'S', created: '2026-01-01T00:00:00Z', body: designed('src/a.ts') }));
     assert.equal(idleReason(fleet, listing([building, ...locked.slice(0, 11)])) !== null, true);
     assert.equal(idleReason(fleet, listing([building, ...locked])), null, 'want 4 x 3 = 12 queued: enough');
+  });
+});
+
+describe('planningReason', () => {
+  const ready = (n: number, size: 'S' | 'M' = 'M'): Task[] => Array.from({ length: n }, (_, i) => pool(`T0${size === 'S' ? 8 : 9}${String(i).padStart(2, '0')}`, { size, created: '2026-01-01T00:00:00Z' }));
+  const full = [...ready(2, 'S'), ...ready(2)]; // want 4: two each for big and weak
+
+  it('a built task is no reason to plan; a failed one is', () => {
+    assert.equal(planningReason(fleet, listing([...full, pool('T0100', { status: 'done' })])), null);
+    assert.match(planningReason(fleet, listing([...full, pool('T0101', { status: 'failed' })])) ?? '', /1 failed task\(s\) to decide on/);
+  });
+
+  it('a low pool or a broken task file still is', () => {
+    assert.match(planningReason(fleet, listing(full.slice(0, 3))) ?? '', /the pool is low/);
+    assert.equal(planningReason(fleet, { tasks: full, invalid: new Map([['tasks/x.md', 'bad']]) }), 'invalid task files');
   });
 });
