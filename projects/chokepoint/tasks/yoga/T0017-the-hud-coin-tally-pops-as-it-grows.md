@@ -4,11 +4,13 @@ title: The HUD coin tally pops as it grows
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T03:39:38Z
+claimed_at: 2026-10-28T03:56:17Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
