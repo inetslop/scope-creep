@@ -3,12 +3,10 @@ id: T0063
 title: "Panic pulse: buy your way out of a wave"
 size: M
 priority: 2
-status: designing
-depends_on: [T0039, T0059]
+status: todo
+depends_on: [T0039, T0059, T0015, T0019, T0030, T0035]
 attempts: 0
 created: 2026-10-28T13:29:40Z
-claimed_at: 2026-10-28T13:54:32Z
-designer: desktop
 ---
 
 ## Goal
@@ -27,3 +25,51 @@ A last gasp when a wave is getting away: during a wave, a "Panic · 25" button u
 - [ ] Vanished enemies pay no gold and count as nothing (no "stopped", no combo, no leak, no Mint +1, no burn jump); the button reads dimmed "Panic · used" for the rest of the wave and resets at the next wave.
 - [ ] The button is dimmed with a red price when gold is under 25, is absent during the build phase, and the pause screen's key list has the Panic line.
 - [ ] The stats card layout, gold rules, lives and all other sounds are unchanged; works at 412x915 and 1280x720.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/ui/hud/PanicButton.ts` — the wave's one "Panic" button under the stats card (a `HudPart`): its states, the tap, and the board wipe
+- edit `src/config.ts` — add `PANIC_COST` after the `REROLL_COST` line (line 33)
+- edit `src/core/run.ts` — `panicUsed` field, `panic(cost)` method, one reset line in `startWave()`
+- edit `src/audio/Sfx.ts` — `panic()` whoosh, after `waveClear()`
+- edit `src/systems/FxSystem.ts` — `panicFlash(x, y)` white ring, after `markFlash()`; add `CELL` to its `config` import
+- edit `src/scenes/HudScene.ts` — import + one `parts` line after `new StatsCard(this)`
+- edit `src/scenes/PauseScene.ts` — the key-list line + one more item in `box`; import `textStyle`
+- edit `tests/core/run.test.ts` — import `PANIC_COST`; two tests after the "cannot reroll" test
+
+### Interfaces
+```ts
+// config.ts
+export const PANIC_COST = 25;
+// core/run.ts (RunState): field `panicUsed = false;` next to `rerollUsed`; method next to `reroll()`:
+panic(cost: number): boolean; // true + gold -= cost only when !panicUsed && gold >= cost
+// startWave(): add `this.panicUsed = false;` right after `this.leaksThisWave = 0;`
+// audio/Sfx.ts
+panic(): void; // this.tone(300, 0.3, 'sine', 0.18, 90) — soft low whoosh, hit-blip volume, played once per pulse
+// systems/FxSystem.ts (import becomes `import { CELL, DEPTH } from '../config';`)
+panicFlash(x: number, y: number): void; // fillRing radius CELL*0.4 thickness 3, white, scale 0.4->1, alpha->0, 150 ms
+// ui/hud/PanicButton.ts
+export class PanicButton implements HudPart { constructor(scene: Phaser.Scene, game: GameScene); layout(): void; update(game: GameScene): void; }
+```
+
+### Steps
+1. `config.ts`: `/** The wave's one panic pulse: every enemy on the board vanishes. */` then `export const PANIC_COST = 25;` — after the `REROLL_COST` line.
+2. `core/run.ts`: field after `rerollUsed = false;` — `/** This wave's one panic pulse was spent (reset at the next wave's start). */` + `panicUsed = false;`. Method after `reroll()`, same shape as it: `panic(cost) { if (this.panicUsed) return false; if (!this.spend(cost)) return false; this.panicUsed = true; return true; }` with a doc comment. In `startWave()`, `this.panicUsed = false;` after `this.leaksThisWave = 0;`.
+3. `Sfx.ts` after `waveClear()`: `/** The wave's panic pulse: one soft low whoosh, at the hit-blip volume. */ panic(): void { this.tone(300, 0.3, 'sine', 0.18, 90); }`
+4. `FxSystem.ts` after `markFlash()`: `panicFlash(x, y)` — guard `if (this.live >= FxSystem.MAX) return;`, `graphics` at `DEPTH.fx` positioned at (x, y), `fillRing(g, 0, 0, CELL * 0.4, 3, 0, Math.PI * 2, 0xffffff, 0.9)`, `g.setScale(0.4)`, `this.track(g, 150, { scale: 1, alpha: 0, ease: 'Quad.easeOut' })`.
+5. Create `PanicButton.ts`: `makeButton(scene, 0, 0, '', () => this.pulse(game), { width: 148, height: 48, radius: 14, fadeWhenDisabled: false })`; content = coin `artScale(image, COIN_TEXTURE, 12 / 28)` + `word` text 'Panic ·' + `price` text `String(PANIC_COST)` (both `textStyle(14, ..., { fontStyle: 'bold' })`, origin (0, 0.5)), centered like DraftScene's `centerRow` (`w = 12 + 8 + word.width + 6 + price.width`; `coin.x = -w/2 + 6`; `word.x = -w/2 + 20`; `price.x = word.x + word.width + 6`), re-centered whenever the price text changes. `layout()`: `setPosition(EDGE + 98, 84 + 10 + 24)` (stats card is 16..212 × 12..84). `update(game)`: `visible = run.phase === 'wave'` (toggle only on change, and clear the cached state when it appears again); then state = `run.panicUsed ? 'used' : run.canAfford(PANIC_COST) ? 'ready' : 'poor'`, applied only when it changed: 'used' → word+price 'used' in `PALETTE.muted`, `content.setAlpha(0.5)`; 'poor' → price `PALETTE.red`, alpha 0.6; 'ready' → ink, alpha 1. `pulse(game)`: `if (game.run.phase !== 'wave' || !game.run.panic(PANIC_COST)) return;` then `for (const e of game.enemies.all) { if (!e.active) continue; game.fx.panicFlash(e.x, e.y); e.despawn(); }` then `getSfx(game)?.panic();` (whoosh outside the loop). Never call `setEnabled`.
+6. `HudScene.ts`: import `PanicButton` next to the other ui/hud imports; in `parts`, `new PanicButton(this, game),` on the line after `new StatsCard(this),`.
+7. `PauseScene.ts`: import becomes `import { textStyle, titleStyle } from '../ui/text';`; after the `quitButton` line add `const actionLine = this.add.text(0, 110, 'Panic — clear the board, 25 gold, once per wave', textStyle(12, PALETTE.muted)).setOrigin(0.5);` (the pause's key list, one line per action; small gray, under the buttons) and add `actionLine` to the `box` container's list.
+8. Run `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- The wipe is paid despawn, not kills: `e.despawn()` only — never `EnemySystem.hit/strike` (would pay gold, count kills, combo, Mint +1), never `destroy()` (pooled), and don't touch `hook.stats`. Remaining spawns and the wave-end check keep working untouched.
+- `panicUsed` resets in `startWave()` (called by `WaveSystem.start()` at the build→wave edge) — not in `clearWave()`/`startBuild()`.
+- The per-frame `update()` must not re-render text every frame: cache the state string, `setText`/`setColor` only on change; clear the cache when the button re-appears so a next wave never shows a stale "used".
+- A hidden container is non-interactive in Phaser, and `pulse()` re-checks phase + spend anyway — the button must never react in build/draft/over.
+- Insert every new line at the exact anchors given; other machines append to `Sfx`, `FxSystem`, the `parts` list and the pause `box` at other spots. No `HOTKEYS` entry (no key), no StatsCard/EnemySystem/GameScene/RunFlow edits.
+- Layout: at 412x915 the button (x 36..192, y 94..142) sits clear of WaveCard/PauseButton (top right) and HandBar (bottom); 48 px tall ≥ 44 touch target. Smoke's random clicks may press it — that's harmless (gold stays ≥ 0, counters untouched).
+
+### Tests
+- `tests/core/run.test.ts` (import `PANIC_COST`): (1) start a wave, `panic(PANIC_COST)` true and gold deducted, second call false with gold unchanged, `panicUsed` true; `clearWave()` → `startBuild(5)` → `startWave()` → `panicUsed` false and `panic()` true again. (2) spend down to `PANIC_COST - 1`, `panic()` false, `panicUsed` stays false, gold unchanged.
