@@ -25,6 +25,10 @@ describe('content', () => {
       expect(BRIGHTS).toContain(e.look.color);
       expect(e.look.size).toBeGreaterThan(0);
       expect(e.look.size).toBeLessThanOrEqual(0.45);
+      if (e.speedRamp) {
+        expect(e.speedRamp.perHit).toBeGreaterThan(0);
+        expect(e.speedRamp.max).toBeGreaterThan(e.speed);
+      }
     }
   });
 

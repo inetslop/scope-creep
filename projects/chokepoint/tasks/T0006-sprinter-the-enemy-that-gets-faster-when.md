@@ -4,11 +4,12 @@ title: "Sprinter: the enemy that gets faster when hit"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T01:07:07Z
 claimed_at: 2026-10-28T07:56:40Z
+finished_at: 2026-10-28T08:12:15Z
 ---
 
 ## Goal
@@ -102,3 +103,24 @@ dirX = 0; dirY = -1; // unit vector along the path where it walks
 ### Tests
 - `tests/core/waves.test.ts`: `rampCount` equals `[0,2,3,4,5,6,6]` for waves `[7,8,12,16,20,24,40]`; and for waves `[[1,0],[7,0],[8,2],[12,3],[16,4],[20,5],[24,6],[30,6]]`, `planWave(wave, new Rng(wave), ENEMIES).spawns.filter(s => s.enemy === 'sprinter').length` equals the expected count.
 - `tests/content.test.ts` (enemies loop): `if (e.speedRamp) { expect(e.speedRamp.perHit).toBeGreaterThan(0); expect(e.speedRamp.max).toBeGreaterThan(e.speed); }`
+
+## Result (attempt 1, desktop)
+
+Added the Sprinter enemy — a small orange chevron (new `chevron` shape in `art/shapes.ts`) that starts at 90% of Dart's speed and gains 10% of Dart's base speed per damaging hit, capped at 190% after 10 hits (`speedRamp` field on `EnemyDef`, ramped in `Enemy.hit()`). Two trailing speed ticks that grow with each speed step and pulse at the cap are drawn in `enemyMarks.ts` using a new `dirX/dirY` walk direction on `Enemy`; waves reserve 2 Sprinters from wave 8 (+1 every 4 waves, max 6) and interleave them evenly with no extra rng calls so waves 1–7 stay bit-identical (`rampCount` in `core/waves.ts`). Includes content/wave rule tests, a speed-cap smoke invariant, and Dart's kill gold (3). Only deviations: Phaser 3.90 `Graphics` has no `translate`/`rotate`, so the mark uses `translateCanvas`/`rotateCanvas` (verified equivalent in both renderers), and the chevron's y-values carry the design's +0.1-radius offset.
+
+- Self-review: APPROVE
+- Time: 15.6 min
+
+```
+projects/chokepoint/game/src/art/shapes.ts         | 12 ++++++-
+ .../chokepoint/game/src/content/enemies/index.ts   |  2 ++
+ .../game/src/content/enemies/sprinter.ts           | 16 ++++++++++
+ projects/chokepoint/game/src/content/types.ts      |  4 ++-
+ projects/chokepoint/game/src/core/waves.ts         | 37 +++++++++++++++++++---
+ projects/chokepoint/game/src/debug/runChecks.ts    |  2 ++
+ projects/chokepoint/game/src/entities/Enemy.ts     | 13 ++++++++
+ projects/chokepoint/game/src/systems/enemyMarks.ts | 21 +++++++++++-
+ projects/chokepoint/game/tests/content.test.ts     |  4 +++
+ projects/chokepoint/game/tests/core/waves.test.ts  | 23 +++++++++++++-
+ 10 files changed, 126 insertions(+), 8 deletions(-)
+```

@@ -1,7 +1,7 @@
 import type { Bright } from './palette';
 
 /** Flat shapes the art code can draw (see art/shapes.ts). */
-export type Shape = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'pillar';
+export type Shape = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'pillar' | 'chevron';
 
 export interface Look {
   shape: Shape;
@@ -23,6 +23,8 @@ export interface EnemyDef {
   hp: number;
   /** Cells per second. */
   speed: number;
+  /** Gets faster when hit: `perHit` cells/s added per hit taken, never past `max`. */
+  speedRamp?: { perHit: number; max: number };
   /** Gold for killing it. */
   gold: number;
   /** Lives lost when it reaches the exit. */

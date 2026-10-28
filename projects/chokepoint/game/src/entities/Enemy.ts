@@ -20,6 +20,9 @@ export class Enemy extends Phaser.GameObjects.Image {
   distance = 0;
   /** Board units per second. */
   speed = 0;
+  /** The way it is walking (unit vector along the path); speed lines trail behind it. */
+  dirX = 0;
+  dirY = -1;
   /** Bumped on every spawn, so a projectile can tell its target was recycled. */
   serial = 0;
   /** Seconds since it spawned. */
@@ -46,6 +49,8 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.hp = this.maxHp;
     this.distance = 0;
     this.speed = def.speed * CELL;
+    this.dirX = 0;
+    this.dirY = -1;
     this.serial += 1;
     this.age = 0;
     this.flash = 0;
@@ -80,6 +85,12 @@ export class Enemy extends Phaser.GameObjects.Image {
     const pop = t < 1 ? 1.15 * Math.sin((t * Math.PI) / 2) : 1;
     this.setScale(ART_SCALE * pop);
     const p = path.pointAt(this.distance);
+    const a = path.pointAt(this.distance + 4);
+    const dl = Math.hypot(a.x - p.x, a.y - p.y);
+    if (dl > 0) {
+      this.dirX = (a.x - p.x) / dl;
+      this.dirY = (a.y - p.y) / dl;
+    }
     this.setPosition(p.x, p.y - Math.abs(Math.sin(this.distance / 9)) * 2);
     if (this.flash > 0) {
       this.flash -= dt;
@@ -94,6 +105,8 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.hp -= damage * (1 + this.markPct);
     this.flash = 0.06;
     this.setTintFill(0xffffff);
+    const ramp = this.def.speedRamp;
+    if (ramp && this.speed < ramp.max * CELL) this.speed = Math.min(this.speed + ramp.perHit * CELL, ramp.max * CELL);
     return this.hp <= 0;
   }
 

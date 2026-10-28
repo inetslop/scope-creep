@@ -1,3 +1,4 @@
+import { CELL } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { TIER_ORDER } from '../core/tiers';
 import type { GameScene } from '../scenes/GameScene';
@@ -13,6 +14,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['run.ledger', (g) => (Number.isInteger(g.run.goldEarned) && g.run.goldEarned >= 0 && g.run.cleanWaves >= 0 && g.run.cleanWaves <= g.run.wavesCleared ? null : 'ledger')],
   ['enemies.valid', (g) => g.enemies.brokenEnemy()],
   ['enemies.count', (g) => (g.enemies.aliveCount > 400 ? `${g.enemies.aliveCount} enemies alive` : null)],
+  ['enemies.speedCap', (g) => (g.enemies.all.some((e) => e.active && e.def.speedRamp && e.speed > e.def.speedRamp.max * CELL + 0.01) ? 'a ramping enemy is over its speed cap' : null)],
   ['enemies.mark', (g) => g.enemies.brokenMark()],
   ['exitWarn.valid', (g) => g.exitWarn.broken()],
   ['projectiles.count', (g) => (g.projectiles.activeCount > 600 ? `${g.projectiles.activeCount} projectiles in flight` : null)],

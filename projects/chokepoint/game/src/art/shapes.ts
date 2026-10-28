@@ -2,7 +2,17 @@ import type { Shape } from '../content/types';
 
 /** Corner points of a regular shape of `radius` around (0, 0), pointing up. Empty for a circle. */
 export function shapePoints(shape: Shape, radius: number): { x: number; y: number }[] {
-  const sides: Record<Shape, number> = { circle: 0, triangle: 3, square: 4, diamond: 4, pentagon: 5, hexagon: 6, pillar: 0 };
+  // A chevron: an up arrow — a triangle with a notch cut up out of its base (sits a little low, like the triangle).
+  if (shape === 'chevron')
+    return [
+      { x: 0, y: -radius * 0.9 },
+      { x: radius * 0.85, y: radius * 0.8 },
+      { x: radius * 0.45, y: radius * 0.8 },
+      { x: 0, y: radius * 0.15 },
+      { x: -radius * 0.45, y: radius * 0.8 },
+      { x: -radius * 0.85, y: radius * 0.8 },
+    ];
+  const sides: Record<Shape, number> = { circle: 0, triangle: 3, square: 4, diamond: 4, pentagon: 5, hexagon: 6, pillar: 0, chevron: 6 };
   const n = sides[shape];
   if (n === 0) return [];
   // Squares sit flat; diamonds are squares on a corner; odd shapes point up.

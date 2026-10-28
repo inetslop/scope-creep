@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ENEMIES } from '../../src/content/enemies';
 import { Rng } from '../../src/core/rng';
-import { planWave, waveBudget, waveHpMul } from '../../src/core/waves';
+import { planWave, rampCount, waveBudget, waveHpMul } from '../../src/core/waves';
 
 describe('planWave', () => {
   it('spends the budget on unlocked enemies only', () => {
@@ -21,6 +21,27 @@ describe('planWave', () => {
 
   it('starts the first spawn at once', () => {
     expect(planWave(1, new Rng(1), ENEMIES).spawns[0]!.delaySec).toBe(0);
+  });
+
+  it('rampCount: none before wave 8, two from 8, +1 every four waves, capped at six', () => {
+    expect([7, 8, 12, 16, 20, 24, 40].map((w) => rampCount(w))).toEqual([0, 2, 3, 4, 5, 6, 6]);
+  });
+
+  it('mixes in the ramping enemies exactly as rampCount says', () => {
+    const expected: [number, number][] = [
+      [1, 0],
+      [7, 0],
+      [8, 2],
+      [12, 3],
+      [16, 4],
+      [20, 5],
+      [24, 6],
+      [30, 6],
+    ];
+    for (const [wave, count] of expected) {
+      const plan = planWave(wave, new Rng(wave), ENEMIES);
+      expect(plan.spawns.filter((s) => s.enemy === 'sprinter').length).toBe(count);
+    }
   });
 
   it('gets harder every wave', () => {
