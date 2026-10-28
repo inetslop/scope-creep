@@ -3,11 +3,13 @@ id: T0078
 title: "The ghost run: replay the board of your best run"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T22:13:10Z
+claimed_at: 2026-10-28T22:28:24Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
