@@ -14,18 +14,21 @@ The PO keeps this file current: the epics (what is active, their breakdown and p
 
 The game grows through epics: bigger features that take several tasks. One or two are active at a time; each is built in slices that leave the game playable. The PO orders them, breaks them down and keeps their progress here.
 
-### E1 — Rewards that carry over (active — started 2026-10-28, 1 of 6 done)
+### E1 — Rewards that carry over (active — started 2026-10-28, 3 of 9 done)
 **Goal:** a run is never wasted: every run earns something you keep.
-**When done:** the game remembers you between runs (a profile saved on the device). Every run ends on a rewards screen: waves held, enemies stopped, clean waves, and coins earned from them, kept in the profile. The menu shows what you have.
+**When done:** the game remembers you between runs (a profile saved on the device). Every run ends on a rewards screen: waves held, enemies stopped, clean waves, and coins earned from them, kept in the profile. The menu shows what you have, where your recent runs went, and celebrates a best-wave run.
 **Breakdown:**
 - T0001 (asus, L) — the profile + run ledger: device-saved profile, run stats, coin formula, game-over lines, menu best wave — **done** (2026-10-28)
-- T0003 (desktop, L) — the rewards scene: a claim moment after game over, with a count-up — design ready
-- T0007 (narcissus, M) — the menu profile card: coins, best wave, runs, last run — design
-- T0005 (inet-racing, M) — clean waves: green chip at the exit + green game-over line — design
-- T0009 (yoga, S) — coin chime + pop on payout — todo, waits on T0003
-- T0013 (yoga, S, cycle 2) — the run's coin tally live in the HUD, ending at the game-over number
+- T0003 (desktop, L) — the rewards scene: a claim moment after game over, with a count-up — in flight
+- T0007 (narcissus, M) — the menu profile card: coins, best wave, runs, last run — **done** (2026-10-28)
+- T0005 (inet-racing, M) — clean waves: green chip at the exit + green game-over line — in flight
+- T0009 (yoga, S) — coin chime + pop on payout — blocked, waits on T0003
+- T0013 (yoga, S) — the run's coin tally live in the HUD, ending at the game-over number — **done** (2026-10-28)
+- T0016 (yoga, S, cycle 3) — a yellow star on the profile card when the last run hit your best wave
+- T0017 (yoga, S, cycle 3) — the HUD coin tally pops as it grows during a run
+- T0018 (narcissus, M, cycle 3) — the menu remembers your last four runs (a "Recent" line under the profile card)
 
-Progress: the profile and the coin rule are in (T0001). All five display slices are in flight; E1 closes when the rewards scene and its dependents land.
+Progress: the profile, the menu card and the live coin tally are in (T0001, T0007, T0013). The rewards screen (T0003) is the keystone — T0009 waits on it; clean waves (T0005) and the three new menu/HUD slices (T0016, T0017, T0018) are in flight. E1 closes when the rewards screen and its dependents land.
 
 ### E2 — Tech tree (not started; needs E1)
 **Goal:** a reason to play one more run: spend what runs earn on lasting upgrades.
@@ -47,6 +50,8 @@ Progress: the profile and the coin rule are in (T0001). All five display slices 
 - T0012 (asus, L, cycle 2) — Mark: the rule-changing augment that only ever comes as Epic — design, after T0011
 - Later: a second rule-changing Epic augment (e.g. towers next to each other share their slows).
 
+Progress: the whole epic waits on T0002 (the tiers), which is in flight; T0008, T0010, T0011 and T0012 are all queued behind it, so no new E4 task this cycle. New augment content is already in flight (Lance T0004, Mark T0012), which also keeps the draft pool from getting a third simultaneous new-augment edit.
+
 ## Later
 
 Ideas that may become epics or tasks of one.
@@ -55,7 +60,7 @@ Ideas that may become epics or tasks of one.
 - Targeting modes per tower (first, strongest, closest)
 - More augments with new attacks and changes (e.g. a piercing line — T0004, a chain that jumps between enemies, a mark that makes enemies take more damage — T0012)
 - Enemies with new behaviors (e.g. one that speeds up when hit — T0006, one that shields neighbours, one that splits)
-- Wave preview: what the next wave sends, shown during the build phase
+- Wave preview: what the next wave sends, shown during the build phase — T0015 (in flight)
 - Bosses every 10 waves, each with its own mechanic
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
