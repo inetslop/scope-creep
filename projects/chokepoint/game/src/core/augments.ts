@@ -43,7 +43,7 @@ export interface TowerSpec {
   burnCount: number;
   /** Extra gold this tower's own kills drop: one per mint copy in the tower, any slot (core/mint.ts). */
   goldPerKill: number;
-  /** Kills within this many cells of the tower (Chebyshev) pay: 0 unless the first augment's form has it. */
+  /** Kills within this many cells of the tower (its range ring) pay: 0 unless the first augment's form has it. */
   goldRadius: number;
   /** The gust: cells back along the road every attack pushes everything in range (0: no gust, Push first). */
   gust: number;

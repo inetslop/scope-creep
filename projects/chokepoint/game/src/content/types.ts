@@ -122,7 +122,7 @@ export interface FirstForm {
   mark?: number;
   /** For a 'burn' attack: the burn it sets ablaze, `dps` per second for `sec` seconds (Ember). */
   burn?: Burn;
-  /** Kills within this many cells of the tower (Chebyshev) drop +1 gold per mint copy in it (Mint). */
+  /** Kills within this many cells of the tower (its range ring) drop +1 gold per mint copy in it (Mint). */
   goldRadius?: number;
 }
 

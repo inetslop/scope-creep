@@ -1,15 +1,17 @@
 import { getAugment } from '../content/augments';
 import type { Cell } from './map';
 
-/** How many cells around a Rally tower it reaches (a 5x5 square at 2). */
+/** How many cells around a Rally tower it reaches: the circle its range ring shows. */
 export const RALLY_RANGE: number = getAugment('rally').first.range;
 
 /** The flat attack-speed buff Rally grants (it never stacks, so this is all it is). */
 export const RALLY_PCT: number = getAugment('rally').added.rally?.pct ?? 0;
 
-/** Chebyshev distance: the rally reaches a square around the tower, not a circle. */
+/** The rally reaches a tower whose center is inside its range circle, the same circle the ring shows. */
 export function inRallyReach(a: Cell, b: Cell, range: number): boolean {
-  return Math.max(Math.abs(a.col - b.col), Math.abs(a.row - b.row)) <= range;
+  const dc = a.col - b.col;
+  const dr = a.row - b.row;
+  return dc * dc + dr * dr <= range * range;
 }
 
 /**

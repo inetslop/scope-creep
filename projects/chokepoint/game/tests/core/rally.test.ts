@@ -13,10 +13,13 @@ describe('rally range and reach', () => {
     expect(RALLY_PCT).toBeCloseTo(0.1);
   });
 
-  it('reaches a 5x5 square (Chebyshev), not a circle', () => {
-    expect(inRallyReach(cell(0, 0), cell(2, 2), RALLY_RANGE)).toBe(true); // the far corner is in
+  it('reaches the circle its range ring shows, not a square', () => {
+    expect(inRallyReach(cell(0, 0), cell(2, 0), RALLY_RANGE)).toBe(true); // two straight out is on the circle
+    expect(inRallyReach(cell(0, 0), cell(0, -2), RALLY_RANGE)).toBe(true);
+    expect(inRallyReach(cell(0, 0), cell(1, 1), RALLY_RANGE)).toBe(true);
+    expect(inRallyReach(cell(0, 0), cell(2, 1), RALLY_RANGE)).toBe(false); // 2.24 cells: outside the ring
+    expect(inRallyReach(cell(0, 0), cell(2, 2), RALLY_RANGE)).toBe(false); // the square's far corner is out
     expect(inRallyReach(cell(0, 0), cell(3, 0), RALLY_RANGE)).toBe(false);
-    expect(inRallyReach(cell(0, 0), cell(0, 3), RALLY_RANGE)).toBe(false);
   });
 });
 
