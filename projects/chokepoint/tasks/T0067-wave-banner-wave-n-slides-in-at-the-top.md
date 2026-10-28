@@ -1,12 +1,14 @@
 ---
 id: T0067
 title: "Wave banner: 'Wave N' slides in at the top when a wave starts"
+assignee: desktop
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0015]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T20:20:27Z
 ---
 
 ## Goal
