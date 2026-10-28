@@ -1,12 +1,14 @@
 ---
 id: T0034
 title: "Combo milestone: at ×10 the counter turns yellow"
+assignee: desktop-4070
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0021]
-attempts: 0
+attempts: 1
 created: 2026-10-28T08:30:13Z
+claimed_at: 2026-10-28T11:51:22Z
 ---
 
 ## Goal
