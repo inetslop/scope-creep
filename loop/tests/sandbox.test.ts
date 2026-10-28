@@ -1,24 +1,45 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { needsRestart } from '../restart.ts';
-import { permissionPath } from '../paths.ts';
+import path from 'node:path';
+import { ARCHIVE_REL, GAME_REL, ORIGINAL_PROJECT, permissionPath, PLANNING_REL, PROJECT, projectDir, REPO, TASKS_REL } from '../paths.ts';
 import { claudeSettings, isWritable } from '../sandbox.ts';
+
+// Paths of the project loop.project points at ("game/" for Scope Creep, "projects/<id>/game/" otherwise).
+const G = GAME_REL;
+const T = TASKS_REL;
+
+describe('projects', () => {
+  it('Scope Creep lives at the repo root, every other game in projects/<id>/', () => {
+    assert.equal(projectDir(ORIGINAL_PROJECT), REPO);
+    assert.equal(projectDir('tower'), path.join(REPO, 'projects', 'tower'));
+    assert.ok(GAME_REL.endsWith('game/') && TASKS_REL.endsWith('tasks/') && PLANNING_REL.endsWith('planning/'));
+  });
+
+  it('agents cannot see the other games', () => {
+    for (const profile of ['dev', 'po', 'architect'] as const) {
+      const s = claudeSettings(profile, {}) as { permissions: { deny: string[] } };
+      const hidden = PROJECT === ORIGINAL_PROJECT ? `${permissionPath(path.join(REPO, 'projects'))}/**` : `${permissionPath(path.join(REPO, 'game'))}/**`;
+      assert.ok(s.permissions.deny.includes(`Read(${hidden})`), profile);
+    }
+  });
+});
 
 describe('isWritable', () => {
   it('dev agents may only change the game, and not its CLAUDE.md', () => {
-    assert.equal(isWritable('dev', 'game/src/main.ts'), true);
-    assert.equal(isWritable('dev', 'game/CLAUDE.md'), false);
-    assert.equal(isWritable('dev', 'tasks/yoga/T0001-x.md'), false);
+    assert.equal(isWritable('dev', `${G}src/main.ts`), true);
+    assert.equal(isWritable('dev', `${G}CLAUDE.md`), false);
+    assert.equal(isWritable('dev', `${T}yoga/T0001-x.md`), false);
     assert.equal(isWritable('dev', 'loop/runner.ts'), false);
     assert.equal(isWritable('dev', 'package.json'), false);
-    assert.equal(isWritable('dev', 'gamey/x.ts'), false);
+    assert.equal(isWritable('dev', `${G.slice(0, -1)}y/x.ts`), false);
   });
 
   it('the PO may only change tasks and planning, never the archive or the game', () => {
-    assert.equal(isWritable('po', 'tasks/desktop/T0009-x.md'), true);
-    assert.equal(isWritable('po', 'planning/ROADMAP.md'), true);
-    assert.equal(isWritable('po', 'tasks/archive/T0001-x.md'), false);
-    assert.equal(isWritable('po', 'game/src/main.ts'), false);
+    assert.equal(isWritable('po', `${T}desktop/T0009-x.md`), true);
+    assert.equal(isWritable('po', `${PLANNING_REL}ROADMAP.md`), true);
+    assert.equal(isWritable('po', `${ARCHIVE_REL}T0001-x.md`), false);
+    assert.equal(isWritable('po', `${G}src/main.ts`), false);
     assert.equal(isWritable('po', 'agents/machines.json'), false);
   });
 });
@@ -37,7 +58,7 @@ describe('the public build log', () => {
 
 describe('architect profile', () => {
   it('may change nothing at all', () => {
-    for (const p of ['game/src/main.ts', 'tasks/asus/T0001-x.md', 'planning/IDEAS.md', 'loop/runner.ts']) {
+    for (const p of [`${G}src/main.ts`, `${T}asus/T0001-x.md`, `${PLANNING_REL}IDEAS.md`, 'loop/runner.ts']) {
       assert.equal(isWritable('architect', p), false, p);
     }
   });

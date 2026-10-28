@@ -1,7 +1,7 @@
 import path from 'node:path';
 import type { Role } from './config.ts';
 import type { ChangedPath, Git } from './git.ts';
-import { AGENT_DIR, AGENTS_DIR, GAME_DIR, PLANNING_DIR, permissionPath, REPO, TASKS_DIR } from './paths.ts';
+import { AGENT_DIR, AGENTS_DIR, ARCHIVE_REL, GAME_DIR, GAME_REL, ORIGINAL_PROJECT, permissionPath, PLANNING_DIR, PLANNING_REL, PROJECT, projectDir, projectIds, PROJECTS_DIR, REPO, TASKS_DIR, TASKS_REL } from './paths.ts';
 
 /**
  * Who may change what. This is the core of the separation between the game and
@@ -15,16 +15,16 @@ import { AGENT_DIR, AGENTS_DIR, GAME_DIR, PLANNING_DIR, permissionPath, REPO, TA
 export type Profile = Role;
 
 export const WRITABLE: Record<Profile, readonly string[]> = {
-  dev: ['game/'],
-  po: ['tasks/', 'planning/'],
+  dev: [GAME_REL],
+  po: [TASKS_REL, PLANNING_REL],
   // The architect only reads; the runner writes its design into the task file.
   architect: [],
 };
 
 /** Inside writable areas, but still human-owned. */
 export const PROTECTED: Record<Profile, readonly string[]> = {
-  dev: ['game/CLAUDE.md'],
-  po: ['tasks/archive/'],
+  dev: [`${GAME_REL}CLAUDE.md`],
+  po: [ARCHIVE_REL],
   architect: [],
 };
 
@@ -48,9 +48,16 @@ const rule = (tool: string, absPath: string, glob = '/**'): string => `${tool}($
 const LOOP_AREAS = [path.join(REPO, 'loop'), path.join(REPO, 'setup'), path.join(REPO, 'site'), AGENTS_DIR, AGENT_DIR, path.join(REPO, '.github'), path.join(REPO, 'node_modules')];
 const ROOT_FILES = ['package.json', 'package-lock.json', 'tsconfig.json', '.gitignore', 'README.md'].map((f) => path.join(REPO, f));
 
+/** The other games in the repo: agents see only the project they work on, so they never copy from or edit the wrong one. */
+function otherProjectAreas(): string[] {
+  if (PROJECT === ORIGINAL_PROJECT) return [PROJECTS_DIR];
+  const original = ['game', 'tasks', 'planning'].map((d) => path.join(REPO, d));
+  return [...original, ...projectIds().filter((id) => id !== PROJECT && id !== ORIGINAL_PROJECT).map(projectDir)];
+}
+
 const READ_ONLY_TOOLS = ['Read', 'Glob', 'Grep', 'LS', 'TodoWrite'];
 
-/** Shell commands a dev agent may run (inside game/). Everything else is denied. */
+/** Shell commands a dev agent may run (inside the game folder). Everything else is denied. */
 const DEV_BASH = [
   ...['check', 'typecheck', 'lint', 'test', 'build', 'smoke', 'verify'].flatMap((s) => [`Bash(npm run ${s})`, `Bash(npm run ${s} *)`]),
   'Bash(npx vitest *)',
@@ -92,8 +99,9 @@ const ALWAYS_DENY = [
 
 /** Claude Code settings for a profile, passed with --settings (rules use absolute paths). */
 export function claudeSettings(profile: Profile, env: Record<string, string>): object {
-  const loopReads = LOOP_AREAS.map((d) => rule('Read', d));
-  const loopEdits = [...LOOP_AREAS.map((d) => rule('Edit', d)), ...ROOT_FILES.map((f) => `Edit(${permissionPath(f)})`)];
+  const hidden = [...LOOP_AREAS, ...otherProjectAreas()];
+  const loopReads = hidden.map((d) => rule('Read', d));
+  const loopEdits = [...hidden.map((d) => rule('Edit', d)), ...ROOT_FILES.map((f) => `Edit(${permissionPath(f)})`)];
 
   // Agents never commit and can't use memory: keep those instructions out of their (small) context.
   const common = { autoMemoryEnabled: false, includeCoAuthoredBy: false, attribution: { commit: '', pr: '' } };

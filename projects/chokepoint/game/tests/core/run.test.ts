@@ -1,0 +1,59 @@
+import { describe, expect, it } from 'vitest';
+import { START } from '../../src/config';
+import { RunState } from '../../src/core/run';
+
+describe('RunState', () => {
+  it('starts with the starting gold and lives, in the build phase', () => {
+    const run = new RunState(1);
+    expect(run.gold).toBe(START.gold);
+    expect(run.lives).toBe(START.lives);
+    expect(run.phase).toBe('build');
+  });
+
+  it('only spends gold it has', () => {
+    const run = new RunState(1);
+    expect(run.spend(START.gold + 1)).toBe(false);
+    expect(run.gold).toBe(START.gold);
+    expect(run.spend(30)).toBe(true);
+    expect(run.gold).toBe(START.gold - 30);
+  });
+
+  it('pays kills', () => {
+    const run = new RunState(1);
+    expect(run.addKill(4)).toBe(4);
+    expect(run.gold).toBe(START.gold + 4);
+    expect(run.kills).toBe(1);
+  });
+
+  it('starts with the starting hand; picks go in, placing takes them out', () => {
+    const run = new RunState(1);
+    expect(run.hand).toEqual([...START.hand]);
+    run.takeAugment('frost');
+    run.takeAugment('bolt');
+    expect(run.useAugment(0)).toBe('frost');
+    expect(run.hand).toEqual(['bolt']);
+    expect(run.useAugment(5)).toBeUndefined();
+  });
+
+  it('ends the run when the lives run out, never below zero', () => {
+    const run = new RunState(1);
+    run.startWave();
+    expect(run.leak(START.lives - 1)).toBe(false);
+    expect(run.leak(5)).toBe(true);
+    expect(run.lives).toBe(0);
+    expect(run.phase).toBe('over');
+  });
+
+  it('counts cleared waves for the score', () => {
+    const run = new RunState(1);
+    run.startWave();
+    expect(run.wavesCleared).toBe(0);
+    run.clearWave();
+    expect(run.wavesCleared).toBe(1);
+    expect(run.phase).toBe('draft');
+    run.startBuild(5);
+    run.startWave();
+    expect(run.wave).toBe(2);
+    expect(run.wavesCleared).toBe(1);
+  });
+});

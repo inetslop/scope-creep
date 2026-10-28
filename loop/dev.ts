@@ -5,7 +5,7 @@ import { ensureGameDeps, runGate } from './checks.ts';
 import { effortFor, type Effort, type FleetConfig, type LocalConfig } from './config.ts';
 import type { Git } from './git.ts';
 import { info, step, warn } from './log.ts';
-import { GAME_DIR, REPO, SALVAGE_DIR, rel } from './paths.ts';
+import { GAME_DIR, GAME_REL, REPO, SALVAGE_DIR, rel } from './paths.ts';
 import { autoResolvable, autoResolveAdditions } from './merge.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
@@ -22,7 +22,7 @@ export interface RunContext {
 const devEffort = (ctx: RunContext): Effort => effortFor(ctx.fleet, ctx.local.machineId, 'dev');
 
 const now = (): string => new Date().toISOString().slice(0, 19) + 'Z';
-const GAME = ['game/'];
+const GAME = [GAME_REL];
 const salvageRel = (id: string): string => rel(path.join(SALVAGE_DIR, `${id}.diff`));
 
 /**
@@ -104,7 +104,7 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
 
     const verdict = ctx.fleet.loop.review ? await selfReview(ctx, task, base, notes) : 'skipped';
 
-    const stat = await ctx.git.ok(['diff', '--stat', base, 'HEAD', '--', 'game/']);
+    const stat = await ctx.git.ok(['diff', '--stat', base, 'HEAD', '--', GAME_REL]);
     task.status = 'done';
     task.finishedAt = now();
     appendSection(
@@ -126,8 +126,8 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
     await ctx.git.amendPaths([taskRel]);
 
     // Kept in case it can't be merged: the next attempt re-applies it instead of starting over.
-    const work = await ctx.git.ok(['diff', base, 'HEAD', '--', 'game/']);
-    const workFiles = (await ctx.git.ok(['diff', '--name-only', base, 'HEAD', '--', 'game/'])).split(/\r?\n/).filter(Boolean);
+    const work = await ctx.git.ok(['diff', base, 'HEAD', '--', GAME_REL]);
+    const workFiles = (await ctx.git.ok(['diff', '--name-only', base, 'HEAD', '--', GAME_REL])).split(/\r?\n/).filter(Boolean);
 
     const outcome = await integrate(ctx, task, notes);
     if (outcome !== 'pushed') {
@@ -147,13 +147,13 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
 async function enforce(ctx: RunContext, notes: string[]): Promise<void> {
   const reverted = await enforceWritable(ctx.git, 'dev');
   if (reverted.length > 0) {
-    warn(`reverted ${reverted.length} change(s) outside game/: ${reverted.join(', ')}`);
+    warn(`reverted ${reverted.length} change(s) outside ${GAME_REL}: ${reverted.join(', ')}`);
     notes.push(`Reverted changes outside the game: ${reverted.join(', ')}`);
   }
 }
 
 async function hasGameChanges(git: Git): Promise<boolean> {
-  return (await git.changedPaths()).some((c) => c.path.startsWith('game/'));
+  return (await git.changedPaths()).some((c) => c.path.startsWith(GAME_REL));
 }
 
 function fixRound(ctx: RunContext, task: Task, session: AgentRunResult, stage: string, output: string, round: number): Promise<AgentRunResult> {
@@ -173,7 +173,7 @@ function fixRound(ctx: RunContext, task: Task, session: AgentRunResult, stage: s
 /** Fresh-context review of the committed change. Fixes are kept only if the gate still passes. */
 async function selfReview(ctx: RunContext, task: Task, base: string, notes: string[]): Promise<string> {
   const limits = ctx.fleet.sizes[task.size];
-  let diff = await ctx.git.ok(['diff', base, 'HEAD', '--', 'game/']);
+  let diff = await ctx.git.ok(['diff', base, 'HEAD', '--', GAME_REL]);
   if (diff.length > 40_000) diff = diff.slice(0, 40_000) + '\n… (diff truncated)';
   const review = await runAgent(ctx.local, {
     label: `${task.id}-review`,
@@ -207,7 +207,7 @@ async function integrate(ctx: RunContext, task: Task, notes: string[]): Promise<
   for (let attempt = 1; attempt <= 3; attempt++) {
     await git.fetch();
     if ((await git.behindCount()) > 0) {
-      const upstreamGame = (await git.ok(['diff', '--name-only', 'HEAD...origin/main', '--', 'game/'])).trim() !== '';
+      const upstreamGame = (await git.ok(['diff', '--name-only', 'HEAD...origin/main', '--', GAME_REL])).trim() !== '';
       const mine = await git.head();
       if ((await git.rebase()) === 'conflict') {
         const unresolved = await resolveConflicts(ctx, task, mine, notes);
@@ -232,7 +232,7 @@ async function integrate(ctx: RunContext, task: Task, notes: string[]): Promise<
 }
 
 /**
- * Lets an agent resolve rebase conflicts in game/, telling it which commits on main caused them.
+ * Lets an agent resolve rebase conflicts in the game, telling it which commits on main caused them.
  * `mine` is our commit before the rebase. Returns null once the rebase is through, else why not.
  */
 async function resolveConflicts(ctx: RunContext, task: Task, mine: string, notes: string[]): Promise<string | null> {
@@ -241,7 +241,7 @@ async function resolveConflicts(ctx: RunContext, task: Task, mine: string, notes
   for (let round = 0; round < 3 && git.isRebasing(); round++) {
     let files = await git.conflictedFiles();
     if (files.length > 0) {
-      const outside = files.filter((f) => !f.startsWith('game/'));
+      const outside = files.filter((f) => !f.startsWith(GAME_REL));
       if (outside.length) return `conflicts outside the game in ${outside.join(', ')}`;
       notes.push(`Conflicts in: ${files.join(', ')}`);
       files = await autoResolve(git, files, notes);
@@ -254,7 +254,7 @@ async function resolveConflicts(ctx: RunContext, task: Task, mine: string, notes
           TASK_ID: task.id,
           TASK_TITLE: task.title,
           TASK_BODY: task.body,
-          FILES: files.map((f) => `- ${f.replace(/^game\//, '')}`).join('\n'),
+          FILES: files.map((f) => `- ${f.slice(GAME_REL.length)}`).join('\n'),
           UPSTREAM: await upstreamLog(git, mine, files),
         }),
         cwd: GAME_DIR,

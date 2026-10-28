@@ -7,7 +7,7 @@ import path from 'node:path';
 import { LOCAL_CONFIG_FILE, loadFleet, loadLocalConfig } from './config.ts';
 import { run } from './exec.ts';
 import { detectContextSize, isHealthy } from './llama.ts';
-import { ARCHIVE_DIR, REPO } from './paths.ts';
+import { ARCHIVE_DIR, GAME_REL, PROJECT, REPO } from './paths.ts';
 import { loadState } from './state.ts';
 import { designedFiles, listTasks, unblockedTaskIds } from './tasks.ts';
 
@@ -17,7 +17,7 @@ const { tasks, invalid } = listTasks(ids, true);
 const unblocked = unblockedTaskIds(tasks);
 const done = new Set(tasks.filter((t) => t.status === 'done').map((t) => t.id));
 
-console.log('\nQUEUES');
+console.log(`\nQUEUES (project ${PROJECT})`);
 for (const id of ids) {
   const m = fleet.machines[id]!;
   const mine = tasks.filter((t) => path.basename(path.dirname(t.file)) === id);
@@ -32,7 +32,7 @@ for (const id of ids) {
     console.log(`      ${t.id} ${marks[t.status]} [${t.size}] ${t.title}${who}${blocked}`);
     // What a task being built will touch, so a hand edit to the same files can wait for it.
     const files = t.status === 'in-progress' ? designedFiles(t) : [];
-    if (files.length) console.log(`          touches ${files.map((f) => `game/${f}`).join(', ')}`);
+    if (files.length) console.log(`          touches ${files.map((f) => `${GAME_REL}${f}`).join(', ')}`);
   }
   console.log('      legend: ✎ waiting for design  ✍ being designed  · ready  ▶ in progress');
 }

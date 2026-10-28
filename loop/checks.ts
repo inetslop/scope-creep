@@ -14,7 +14,7 @@ export interface GateResult {
   durationMs: number;
 }
 
-/** Runs `npm ci` in game/ when game/package-lock.json changed since the last install. */
+/** Runs `npm ci` in the game folder when its package-lock.json changed since the last install. */
 export async function ensureGameDeps(): Promise<void> {
   const lock = path.join(GAME_DIR, 'package-lock.json');
   const hash = createHash('sha1').update(fs.readFileSync(lock)).digest('hex');
@@ -27,7 +27,7 @@ export async function ensureGameDeps(): Promise<void> {
 
 /**
  * The merge gate. Owned by the loop, not the game:
- *   1. `npm run check` in game/ (typecheck + lint + unit tests)
+ *   1. `npm run check` in the game folder (typecheck + lint + unit tests)
  *   2. loop/smoke/smoke.ts: build, run the game in a real browser (desktop + mobile), fail on any error
  */
 export async function runGate(smokeSeconds: number): Promise<GateResult> {

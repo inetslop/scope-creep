@@ -1,0 +1,50 @@
+import { describe, expect, it } from 'vitest';
+import { AUGMENTS } from '../src/content/augments';
+import { ENEMIES } from '../src/content/enemies';
+import { BRIGHTS } from '../src/content/palette';
+
+const kebab = /^[a-z][a-z0-9-]*$/;
+
+function uniqueIds(items: readonly { id: string }[]): void {
+  expect(new Set(items.map((i) => i.id)).size).toBe(items.length);
+  for (const i of items) expect(i.id).toMatch(kebab);
+}
+
+describe('content', () => {
+  it('enemies are valid', () => {
+    uniqueIds(ENEMIES);
+    expect(ENEMIES.some((e) => e.fromWave === 1)).toBe(true);
+    for (const e of ENEMIES) {
+      expect(e.name && e.description).toBeTruthy();
+      expect(e.hp).toBeGreaterThan(0);
+      expect(e.speed).toBeGreaterThan(0);
+      expect(e.gold).toBeGreaterThanOrEqual(0);
+      expect(e.livesCost).toBeGreaterThanOrEqual(1);
+      expect(e.threat).toBeGreaterThan(0);
+      expect(e.fromWave).toBeGreaterThanOrEqual(1);
+      expect(BRIGHTS).toContain(e.look.color);
+      expect(e.look.size).toBeGreaterThan(0);
+      expect(e.look.size).toBeLessThanOrEqual(0.45);
+    }
+  });
+
+  it('augments are valid: a first form, an added form, short card lines', () => {
+    uniqueIds(AUGMENTS);
+    expect(AUGMENTS.filter((a) => a.first.damage > 0).length).toBeGreaterThanOrEqual(3);
+    for (const a of AUGMENTS) {
+      expect(a.name).toBeTruthy();
+      expect(BRIGHTS).toContain(a.look.color);
+      expect(a.first.range).toBeGreaterThan(0);
+      expect(a.first.rate).toBeGreaterThan(0);
+      expect(a.first.damage > 0 || a.first.slow).toBeTruthy();
+      if (a.first.kind === 'shot') expect(a.first.projectileSpeed ?? 0).toBeGreaterThan(0);
+      expect(Object.keys(a.added).length).toBeGreaterThan(0);
+      // The card shows each line next to its glyph: short, and no "First:"-style labels.
+      for (const text of [a.asTower, a.asAdded]) {
+        expect(text.length).toBeGreaterThan(5);
+        expect(text.length).toBeLessThanOrEqual(56);
+        expect(text).not.toMatch(/^(first|added|alone)\b/i);
+      }
+    }
+  });
+});

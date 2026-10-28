@@ -18,7 +18,7 @@ import { sleep } from './exec.ts';
 import { Git } from './git.ts';
 import { ensureLlama } from './llama.ts';
 import { error, info, warn } from './log.ts';
-import { REPO, STOP_FILE, TASKS_DIR, rel } from './paths.ts';
+import { configuredProject, PROJECT, REPO, STOP_FILE, TASKS_DIR, rel } from './paths.ts';
 import { poDue, runPoCycle } from './po.ts';
 import { EXIT_NO_MODEL, EXIT_RESTART, needsRestart } from './restart.ts';
 import { syncMain, updateTaskAndPush } from './sync.ts';
@@ -53,7 +53,7 @@ async function main(): Promise<number> {
   const once = process.argv.includes('--once');
   const local = loadLocalConfig();
   const git = new Git(REPO, `agent-${local.machineId}`);
-  info(`runner starting on "${local.machineId}" (pid ${process.pid}, node ${process.version})`);
+  info(`runner starting on "${local.machineId}" (project ${PROJECT}, pid ${process.pid}, node ${process.version})`);
   // Compare against the commit this process started on: loop updates can arrive through any
   // sync (recovery, task pushes that reset to origin/main), not just the one at the top of the loop.
   const startHead = await git.head();
@@ -74,6 +74,11 @@ async function main(): Promise<number> {
     await syncMain(git);
     if (needsRestart(await git.diffNames(startHead, 'HEAD'))) {
       info('loop code changed upstream; restarting to pick it up');
+      return EXIT_RESTART;
+    }
+    // The paths are fixed per process: switching loop.project takes a restart (between tasks, like a loop update).
+    if (!process.env.SCOPE_CREEP_PROJECT && configuredProject() !== PROJECT) {
+      info(`loop.project changed to "${configuredProject()}"; restarting to work on it`);
       return EXIT_RESTART;
     }
     // Paused in agents/machines.json: no model server, no work, but keep syncing so un-pausing applies.

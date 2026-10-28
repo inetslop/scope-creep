@@ -1,18 +1,18 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { AGENT_DIR } from './paths.ts';
+import { AGENT_DIR, ORIGINAL_PROJECT, PROJECT } from './paths.ts';
 
-/** Small per-machine runner state in .agent/state.json. */
+/** Small per-machine runner state, one file per project: .agent/state.json (Scope Creep), .agent/state-<project>.json. */
 export interface RunnerState {
   lastPoRunAt?: string;
   poCycles: number;
   /** Validation problems from the last PO cycle, shown to the PO next time so it can learn. */
   poFeedback: string[];
-  /** sha1 of game/package-lock.json the last time `npm ci` ran in game/. */
+  /** sha1 of the game's package-lock.json the last time `npm ci` ran in it. */
   gameDepsHash?: string;
 }
 
-const FILE = path.join(AGENT_DIR, 'state.json');
+const FILE = path.join(AGENT_DIR, PROJECT === ORIGINAL_PROJECT ? 'state.json' : `state-${PROJECT}.json`);
 
 export function loadState(): RunnerState {
   try {

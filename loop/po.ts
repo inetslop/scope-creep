@@ -5,7 +5,7 @@ import { devMachineIds, effortFor, hasArchitect, SIZE_ORDER, type FleetConfig } 
 import type { RunContext } from './dev.ts';
 import { info, step, warn } from './log.ts';
 import { buildInventory, CHANGELOG_HEADER, changelogLine } from './inventory.ts';
-import { ARCHIVE_DIR, GAME_DIR, PLANNING_DIR, REPO, SALVAGE_DIR, TASKS_DIR, rel } from './paths.ts';
+import { ARCHIVE_DIR, GAME_DIR, GAME_REL, PLANNING_DIR, PLANNING_REL, PROJECT_DIR, REPO, SALVAGE_DIR, TASKS_DIR, TASKS_REL, rel } from './paths.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { loadState, saveState } from './state.ts';
@@ -104,7 +104,7 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
     FINISHED: describeFinished(finished),
     FEEDBACK: state.poFeedback.length ? state.poFeedback.map((f) => `- ${f}`).join('\n') : '(none)',
     INVALID: listing.invalid.size ? [...listing.invalid].map(([f, e]) => `- ${rel(f)}: ${e}`).join('\n') : '(none)',
-    GIT_LOG: (await git.logOneline(20, ['game/'])) || '(no game commits yet)',
+    GIT_LOG: (await git.logOneline(20, [GAME_REL])) || '(no game commits yet)',
     INVENTORY: buildInventory(GAME_DIR),
     NEXT_IDS: ids.join(', '),
     MACHINE_IDS: devMachineIds(fleet).join(', '),
@@ -113,7 +113,8 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
   const session = await runAgent(ctx.local, {
     label: `po-cycle${cycle}`,
     prompt,
-    cwd: REPO,
+    // The project folder (the repo root for Scope Creep), so planning/ and tasks/ in the prompt are right.
+    cwd: PROJECT_DIR,
     profile: 'po',
     effort: effortFor(fleet, ctx.local.machineId, 'po'),
     maxTurns: fleet.loop.poMaxTurns,
@@ -122,7 +123,7 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
 
   const feedback: string[] = [];
   const reverted = await enforceWritable(git, 'po');
-  if (reverted.length) feedback.push(`You may only write in tasks/<machine>/ and planning/. Reverted: ${reverted.join(', ')}`);
+  if (reverted.length) feedback.push(`You may only write in ${TASKS_REL}<machine>/ and ${PLANNING_REL}. Reverted: ${reverted.join(', ')}`);
   const created = await validateTaskChanges(ctx, listing, first, feedback);
 
   // Record what got built (the PO's memory of the game, since it doesn't read code), then archive
@@ -147,7 +148,7 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
   }
 
   const summary = session.result.trim().split('\n').slice(-1)[0]?.slice(0, 120) ?? '';
-  const pushed = await commitAndPush(git, ['tasks/', 'planning/'], `po: cycle ${cycle}: ${created} new task(s), ${archived} archived${summary ? `\n\n${summary}` : ''}`);
+  const pushed = await commitAndPush(git, [TASKS_REL, PLANNING_REL], `po: cycle ${cycle}: ${created} new task(s), ${archived} archived${summary ? `\n\n${summary}` : ''}`);
   saveState({ ...loadState(), lastPoRunAt: new Date().toISOString(), poCycles: cycle, poFeedback: feedback });
   if (feedback.length) warn(`PO feedback for next cycle:\n  ${feedback.join('\n  ')}`);
   info(`PO cycle ${cycle}: ${created} new task(s), ${archived} archived${pushed ? '' : ' (push failed)'}`);
@@ -169,7 +170,7 @@ async function validateTaskChanges(ctx: RunContext, before: TaskListing, firstId
 
   // Pass 1: filter and normalize everything the PO touched.
   for (const change of await git.changedPaths()) {
-    if (!change.path.startsWith('tasks/') || !change.path.endsWith('.md')) continue;
+    if (!change.path.startsWith(TASKS_REL) || !change.path.endsWith('.md')) continue;
     const abs = path.join(REPO, change.path);
     const existedBefore = await git.existsAtHead(change.path);
     let originalId: string | undefined;
@@ -201,8 +202,8 @@ async function validateTaskChanges(ctx: RunContext, before: TaskListing, firstId
       continue;
     }
 
-    const parts = change.path.split('/');
-    let machine = parts.length === 3 && devIds.includes(parts[1]!) ? parts[1]! : task.assignee;
+    const parts = change.path.slice(TASKS_REL.length).split('/');
+    let machine = parts.length === 2 && devIds.includes(parts[0]!) ? parts[0]! : task.assignee;
     if (!devIds.includes(machine)) {
       await git.revertPath(change);
       feedback.push(`${change.path}: unknown machine "${machine}" (use one of ${devIds.join(', ')}). Removed.`);

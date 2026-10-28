@@ -59,7 +59,8 @@ export function buildInventory(gameDir: string): string {
     for (const folder of fs.readdirSync(contentDir).sort()) {
       const dir = path.join(contentDir, folder);
       if (!fs.statSync(dir).isDirectory()) continue;
-      const items = contentList(dir, folder === 'upgrades' || folder === 'weapons');
+      // Things the player picks or builds show their one-line description; enemies show their behavior.
+      const items = contentList(dir, ['upgrades', 'weapons', 'towers', 'boons', 'augments'].includes(folder));
       if (items.length) lines.push(`- **${folder[0]!.toUpperCase()}${folder.slice(1)}** (${items.length}): ${items.join(', ')}`);
     }
   }

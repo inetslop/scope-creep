@@ -2,7 +2,7 @@
 
 An abstract, Bauhaus-style twin-stick roguelite for desktop and mobile browsers, built continuously by a fleet of local LLM agents.
 
-- **The game** lives in [`game/`](game/): Phaser 3 + TypeScript + Vite. Deployed to GitHub Pages every 10 minutes.
+- **The games**: the fleet works on one game at a time, set by `loop.project` in [`agents/machines.json`](agents/machines.json) (see *Projects*). The first, Scope Creep, lives in [`game/`](game/); every other one in `projects/<id>/` (now [Chokepoint](projects/chokepoint/game/), a roguelite tower defence). Phaser 3 + TypeScript + Vite. All of them are deployed to GitHub Pages every 10 minutes.
 - **The loop** around it: a Product Owner agent writes tasks, an architect agent designs each one against the real code, developer agents on several machines (Windows, or Linux in Docker) implement them, a browser smoke test gates every change.
 - **The build log** ([`site/`](site/)): a public page next to the game (`/build-log/`, linked from the menu) listing every feature, which machine built it and how long it took. The deploy workflow generates it from runner-written records, so the agents can't change it.
 
@@ -89,7 +89,16 @@ Machines aren't hard-coded: choose **a new machine** in either setup. It detects
 | `npm run doctor` | health check (`-- --gate` also runs the merge gate) |
 | `New-Item .agent\STOP` | stop after the current task |
 | `"paused": true` in `agents/machines.json` | take a machine out of the loop while it's down: its runner idles (no model server, no work) and nobody plans or assigns tasks for it. Move its open tasks to another machine's `tasks/<machine>/` folder (an `in-progress` one back to `todo`) |
-| `cd game; npm run dev` | play the latest local code |
+| `"project": "<id>"` in `loop` of `agents/machines.json` | switch the whole fleet to another game (see *Projects*) |
+| `cd game; npm run dev` | play the latest local code (`cd projects/<id>/game` for another project) |
+
+## Projects
+
+The fleet builds one game at a time: `loop.project` in `agents/machines.json` (default `scope-creep`). Each project has the same three folders: `game/` (the code), `planning/` (the PO's docs) and `tasks/` (the queues and archive). Scope Creep's are at the repo root; every other project's are in `projects/<id>/`. The loop's per-game parts live outside them, where agents can't change them: the smoke test's play and checks in `loop/smoke/games/<id>.ts`, and the agents' prompts in `agents/prompts/<id>/` (any prompt a project doesn't have, like `fix.md`, comes from `agents/prompts/`). Agents can't see the other projects. Runner state is per project (`.agent/state-<id>.json`), so a new project starts with a fresh PO cycle.
+
+**Switching** is one push that changes `loop.project`. Each runner picks it up at its next sync, after it has pushed the task it is on, and restarts on the new project. The old project's open tasks stay where they are, parked, until the fleet switches back. To start without leftover work, pause every machine first, wait until nothing is ▶ in `npm run status`, then unpause them in the same push that switches.
+
+**A new project** needs `projects/<id>/game/` (a game with `npm run check`, `npm run build` and the `window.__SC__` hook the smoke test reads: `ready`, `scene`, `frame`, `errors`, `invariants()`, `stats`), `projects/<id>/planning/` (`VISION.md`, `ROADMAP.md`, `IDEAS.md`, `CHANGELOG.md`), `loop/smoke/games/<id>.ts` and `agents/prompts/<id>/`. The deploy publishes Scope Creep at the site root and every other project at `/<id>/`, each with its own build log.
 
 **Editing the game by hand** while the loop runs: a big change to files that a ▶ task in `npm run status` touches will conflict with it. Pause that machine first (it finishes and pushes its current task, then idles), make your change, then unpause it.
 

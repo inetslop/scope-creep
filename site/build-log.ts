@@ -2,6 +2,7 @@
  * Builds the public build log page into the game's dist folder (run by the deploy workflow):
  *
  *   node site/build-log.ts game/dist
+ *   SCOPE_CREEP_PROJECT=<id> node site/build-log.ts projects/<id>/game/dist   (any other project)
  *
  * Writes <dist>/build-log/index.html and adds a "Build log" link to <dist>/index.html that shows
  * on the menu and game-over screens. Everything here lives outside game/, and the data comes only
@@ -11,6 +12,7 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
+import { GAME_REL, ORIGINAL_PROJECT, PROJECT, TASKS_DIR } from '../loop/paths.ts';
 import { listTasks } from '../loop/tasks.ts';
 import {
   collectFeatures,
@@ -218,7 +220,7 @@ const LOCAL_TIME_SCRIPT = `for (const t of document.querySelectorAll('time[datet
 }`;
 
 /** localStorage key (per browser, shared by the game page and the log; namespaced because Pages sites share an origin). */
-const SEEN_KEY = 'scope-creep:build-log:seen';
+const SEEN_KEY = `${PROJECT === ORIGINAL_PROJECT ? 'scope-creep' : `scope-creep:${PROJECT}`}:build-log:seen`;
 
 /** Reads this browser's seen ids; null on a first visit or when storage is unavailable. */
 const READ_SEEN = `const readSeen = () => {
@@ -248,6 +250,8 @@ const SEEN_SCRIPT = `(() => {
 })();`;
 
 function renderPage(data: {
+  /** The game's name, from its <title>. */
+  title: string;
   features: Feature[];
   hand: HandChange[];
   stats: MachineStats[];
@@ -267,15 +271,15 @@ function renderPage(data: {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="${C.paper}">
-<title>Build log · Scope Creep</title>
+<title>Build log · ${esc(data.title)}</title>
 <style>${CSS}</style>
 </head>
 <body>
 <div class="wrap">
-<a class="back card" href="../">← Play Scope Creep</a>
+<a class="back card" href="../">← Play ${esc(data.title)}</a>
 <header class="top">
   <h1>Build log</h1>
-  <p class="lede">Every feature in <b>Scope Creep</b>, which machine built it and how long it took. The game is planned, designed and written by local LLM agents; this page is generated on every deploy from the loop's own records, outside anything the agents can edit.</p>
+  <p class="lede">Every feature in <b>${esc(data.title)}</b>, which machine built it and how long it took. The game is planned, designed and written by local LLM agents; this page is generated on every deploy from the loop's own records, outside anything the agents can edit.</p>
 </header>
 <section class="totals" aria-label="Totals">${renderTotals(data.features, data.hand)}</section>
 
@@ -350,17 +354,23 @@ function main(): void {
   if (!dist || !fs.existsSync(path.join(dist, 'index.html'))) throw new Error('usage: node site/build-log.ts <built game dist folder>');
 
   const machines = (JSON.parse(fs.readFileSync(path.join(REPO, 'agents', 'machines.json'), 'utf8')) as { machines: Record<string, MachineInfo> }).machines;
-  const folders = fs
-    .readdirSync(path.join(REPO, 'tasks'), { withFileTypes: true })
-    .filter((d) => d.isDirectory() && d.name !== 'archive')
-    .map((d) => d.name);
+  const folders = fs.existsSync(TASKS_DIR)
+    ? fs
+        .readdirSync(TASKS_DIR, { withFileTypes: true })
+        .filter((d) => d.isDirectory() && d.name !== 'archive' && d.name !== 'salvage')
+        .map((d) => d.name)
+    : [];
   const { tasks } = listTasks(folders, true);
   const commits = parseGitLog(git(['log', `--format=${GIT_LOG_FORMAT}`]));
-  const gameCommits = parseGitLog(git(['log', `--format=${GIT_LOG_FORMAT}`, '--', 'game/']));
+  const gameCommits = parseGitLog(git(['log', `--format=${GIT_LOG_FORMAT}`, '--', GAME_REL]));
+  const indexFile = path.join(dist, 'index.html');
+  const index = fs.readFileSync(indexFile, 'utf8');
+  const title = /<title>([^<]+)<\/title>/.exec(index)?.[1]?.trim() || PROJECT;
 
   const features = collectFeatures(tasks, commits, gameCommits);
   const hand = collectHandChanges(gameCommits);
   const html = renderPage({
+    title,
     features,
     hand,
     stats: machineStats(features, Object.keys(machines)),
@@ -372,8 +382,6 @@ function main(): void {
 
   fs.mkdirSync(path.join(dist, 'build-log'), { recursive: true });
   fs.writeFileSync(path.join(dist, 'build-log', 'index.html'), html);
-  const indexFile = path.join(dist, 'index.html');
-  const index = fs.readFileSync(indexFile, 'utf8');
   if (!index.includes('id="sc-build-log"')) {
     const link = gameLink(itemIds(features, hand));
     fs.writeFileSync(indexFile, index.includes('</body>') ? index.replace('</body>', `${link}</body>`) : index + link);

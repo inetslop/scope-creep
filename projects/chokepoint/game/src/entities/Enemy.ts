@@ -1,0 +1,104 @@
+import Phaser from 'phaser';
+import { CELL, DEPTH } from '../config';
+import type { EnemyDef } from '../content/types';
+import type { PathLine } from '../core/path';
+import { ART_SCALE, enemyTexture } from '../art/textures';
+
+/** Seconds an enemy takes to pop up to full size when it spawns. */
+const POP_SEC = 0.18;
+
+/**
+ * A pooled enemy walking the path. It stores how far along the path it is (`distance`, board
+ * units); its position follows from that. spawn() resets every field; despawn() returns it to
+ * the pool (never destroy() a pooled object). Enemies don't rotate: their shading is painted in.
+ */
+export class Enemy extends Phaser.GameObjects.Image {
+  def!: EnemyDef;
+  hp = 0;
+  maxHp = 0;
+  /** Board units walked along the path. */
+  distance = 0;
+  /** Board units per second. */
+  speed = 0;
+  /** Bumped on every spawn, so a projectile can tell its target was recycled. */
+  serial = 0;
+  /** Seconds since it spawned. */
+  age = 0;
+  /** Seconds left of the white hit flash. */
+  flash = 0;
+  /** Fraction of its speed it is slowed by (Frost), and for how many seconds more. */
+  slowPct = 0;
+  slowLeft = 0;
+
+  constructor(scene: Phaser.Scene) {
+    super(scene, 0, 0, '__DEFAULT');
+    this.setDepth(DEPTH.enemies);
+    this.setActive(false).setVisible(false);
+  }
+
+  spawn(def: EnemyDef, hpMul: number, path: PathLine): void {
+    this.def = def;
+    this.maxHp = Math.max(1, Math.round(def.hp * hpMul));
+    this.hp = this.maxHp;
+    this.distance = 0;
+    this.speed = def.speed * CELL;
+    this.serial += 1;
+    this.age = 0;
+    this.flash = 0;
+    this.slowPct = 0;
+    this.slowLeft = 0;
+    this.setTexture(enemyTexture(def.id));
+    this.clearTint();
+    this.setScale(0);
+    const p = path.pointAt(0);
+    this.setPosition(p.x, p.y);
+    this.setActive(true).setVisible(true);
+  }
+
+  /** Walks for `dt` seconds. Returns true when it reached the end of the path (a leak). */
+  advance(dt: number, path: PathLine): boolean {
+    if (this.slowLeft > 0) {
+      this.slowLeft -= dt;
+      if (this.slowLeft <= 0) this.slowPct = 0;
+    }
+    const speed = this.speed * (1 - this.slowPct);
+    switch (this.def.behavior) {
+      case 'walk':
+        this.distance += speed * dt;
+        break;
+    }
+    this.age += dt;
+    // Pop in with a little overshoot, then a gentle bob as it walks.
+    const t = Math.min(1, this.age / POP_SEC);
+    const pop = t < 1 ? 1.15 * Math.sin((t * Math.PI) / 2) : 1;
+    this.setScale(ART_SCALE * pop);
+    const p = path.pointAt(this.distance);
+    this.setPosition(p.x, p.y - Math.abs(Math.sin(this.distance / 9)) * 2);
+    if (this.flash > 0) {
+      this.flash -= dt;
+      if (this.flash <= 0) this.clearTint();
+    }
+    return this.distance >= path.length;
+  }
+
+  /** Takes damage (with a short white flash). Returns true when this killed it. */
+  hit(damage: number): boolean {
+    if (!this.active) return false;
+    this.hp -= damage;
+    this.flash = 0.06;
+    this.setTintFill(0xffffff);
+    return this.hp <= 0;
+  }
+
+  /** Slows it by `pct` for `sec` seconds; a weaker slow doesn't replace a stronger one. */
+  slow(pct: number, sec: number): void {
+    if (pct < this.slowPct) return;
+    this.slowPct = pct;
+    this.slowLeft = Math.max(this.slowLeft, sec);
+  }
+
+  despawn(): void {
+    this.clearTint();
+    this.setActive(false).setVisible(false);
+  }
+}

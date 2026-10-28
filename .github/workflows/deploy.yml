@@ -1,4 +1,5 @@
-# Builds game/ and deploys it to GitHub Pages every 10 minutes (only when main changed).
+# Builds every game and deploys them to GitHub Pages every 10 minutes (only when main changed):
+# Scope Creep (game/) at the site root, each projects/<id>/game/ at /<id>/.
 # One-time setup: repo Settings -> Pages -> Source: "GitHub Actions".
 name: Deploy game to GitHub Pages
 
@@ -43,22 +44,41 @@ jobs:
         with:
           node-version: 24
           cache: npm
-          cache-dependency-path: game/package-lock.json
+          cache-dependency-path: |
+            game/package-lock.json
+            projects/*/game/package-lock.json
 
       - name: Install, check and build
         if: steps.live.outputs.skip != 'true'
-        working-directory: game
         run: |
-          npm ci --no-audit --no-fund
-          npm run check
-          npm run build
+          set -e
+          for dir in game projects/*/game; do
+            [ -f "$dir/package.json" ] || continue
+            echo "::group::$dir"
+            (cd "$dir" && npm ci --no-audit --no-fund && npm run check && npm run build)
+            echo "::endgroup::"
+          done
 
-      # The public build log (site/), built from runner-written records. Agents can't edit site/ or
-      # this workflow. If it fails, the game still deploys, just without the page and its link.
-      - name: Build log page
+      # The public build logs (site/), built from runner-written records. Agents can't edit site/ or
+      # this workflow. If one fails, the games still deploy, just without the page and its link.
+      - name: Build log pages
         if: steps.live.outputs.skip != 'true'
         continue-on-error: true
-        run: node site/build-log.ts game/dist
+        run: |
+          node site/build-log.ts game/dist
+          for dir in projects/*/game; do
+            [ -d "$dir/dist" ] || continue
+            SCOPE_CREEP_PROJECT="$(basename "$(dirname "$dir")")" node site/build-log.ts "$dir/dist"
+          done
+
+      - name: Put the games together
+        if: steps.live.outputs.skip != 'true'
+        run: |
+          mkdir -p _site
+          cp -r game/dist/. _site/
+          for dir in projects/*/game; do
+            if [ -d "$dir/dist" ]; then cp -r "$dir/dist" "_site/$(basename "$(dirname "$dir")")"; fi
+          done
 
       - uses: actions/configure-pages@v6
         if: steps.live.outputs.skip != 'true'
@@ -66,7 +86,7 @@ jobs:
       - uses: actions/upload-pages-artifact@v5
         if: steps.live.outputs.skip != 'true'
         with:
-          path: game/dist
+          path: _site
 
       - id: deployment
         if: steps.live.outputs.skip != 'true'

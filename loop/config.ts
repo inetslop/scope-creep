@@ -82,6 +82,11 @@ export interface FleetConfig {
   machines: Record<string, MachineConfig>;
   sizes: Record<TaskSize, SizeLimits>;
   loop: {
+    /**
+     * The game the whole fleet works on: "scope-creep" (the original, at the repo root) or the id of
+     * a projects/<id>/ folder. Runners switch between tasks (they restart when it changes). Default "scope-creep".
+     */
+    project?: string;
     pollSeconds: number;
     /** Attempts per task (across machines restarts) before it is marked failed. */
     maxAttempts: number;

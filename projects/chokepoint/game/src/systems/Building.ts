@@ -1,0 +1,162 @@
+import { CELL } from '../config';
+import { getAugment } from '../content/augments';
+import { PALETTE } from '../content/palette';
+import { slotCost, towerSpec } from '../core/augments';
+import type { Cell } from '../core/map';
+import type { RunState } from '../core/run';
+import type { Tower } from '../entities/Tower';
+import type { Sfx } from '../audio/Sfx';
+import type { Board } from './Board';
+import type { FxSystem } from './FxSystem';
+import type { TowerSystem } from './TowerSystem';
+
+/**
+ * The player's building: which hand card is selected, which tower's panel is open, and what a
+ * tap on the board does with them. Augments wait in the run's hand until they go into a tower:
+ * tap a card, then an empty cell (a new tower with it) or a tower with a free slot. The HUD reads
+ * the selection and redraws when `uiVersion` changes.
+ */
+export class Building {
+  /** Hand index of the augment a tap on the board places, if any. */
+  selectedAugment: number | undefined;
+  /** The tower whose panel is open (ui/hud/TowerPanel.ts), if any. */
+  selectedTower: Tower | undefined;
+  /** Bumped whenever the hand, a tower's slots or a selection changes, so the HUD redraws them. */
+  uiVersion = 0;
+
+  constructor(
+    private readonly run: RunState,
+    private readonly board: Board,
+    private readonly towers: TowerSystem,
+    private readonly fx: FxSystem,
+    private readonly sfx: Sfx | undefined,
+  ) {
+    this.selectedAugment = run.hand.length > 0 ? 0 : undefined;
+  }
+
+  /** The augment id the selected card holds. */
+  get heldAugment(): string | undefined {
+    return this.selectedAugment === undefined ? undefined : this.run.hand[this.selectedAugment];
+  }
+
+  /**
+   * A tap on the board at a board point:
+   * - a tower: with a card held and a free slot, put the augment in; either way open its panel;
+   * - an empty cell with a card held: build a tower with that augment (pays the first slot);
+   * - an empty cell with nothing held: close the panel.
+   */
+  tap(x: number, y: number): void {
+    if (this.run.phase === 'over' || this.run.phase === 'draft') return;
+    const cell = this.board.cellAt(x, y);
+    if (!cell) return;
+    this.board.showHover(undefined, false, 0);
+    const held = this.heldAugment;
+    const tower = this.board.towerAt(cell);
+    if (tower) {
+      if (held && tower.freeSlots > 0) this.placeHeld(tower);
+      this.selectTower(tower);
+      return;
+    }
+    if (!held) {
+      this.closePanel();
+      if (this.run.hand.length === 0) this.hint(cell, 'New augment after each wave');
+      return;
+    }
+    const result = this.towers.build(cell, held);
+    if (typeof result === 'string') {
+      if (result === 'gold') this.hint(cell, `Need ${slotCost(0)} gold`, PALETTE.red);
+      else this.sfx?.deny();
+      return;
+    }
+    this.run.useAugment(this.selectedAugment!);
+    this.afterHandChange();
+    this.selectTower(result);
+  }
+
+  /**
+   * Desktop hover preview for the held augment at a board point (undefined: off the play area):
+   * on an empty cell, a new tower with it and its range; on a tower with a free slot, that tower's
+   * range with it added.
+   */
+  hover(x: number | undefined, y: number): void {
+    const cell = x === undefined ? undefined : this.board.cellAt(x, y);
+    const held = this.heldAugment;
+    if (!cell || !held) {
+      this.board.showHover(cell && !this.board.towerAt(cell) && this.board.canBuild(cell) ? cell : undefined, false, 0);
+      return;
+    }
+    const tower = this.board.towerAt(cell);
+    const augments = [...(tower?.augments ?? []), held].map(getAugment);
+    const ok = tower ? tower.freeSlots > 0 : this.board.canBuild(cell) && this.run.canAfford(slotCost(0)!);
+    this.board.showHover(cell, ok, ok ? towerSpec(augments).range * CELL : 0);
+  }
+
+  /**
+   * A hand card was tapped (or its key pressed). With a tower panel open on a tower with a free
+   * slot, the augment goes straight in; otherwise the card is selected.
+   */
+  pickCard(index: number): void {
+    if (index < 0 || index >= this.run.hand.length || this.run.phase === 'over') return;
+    const tower = this.selectedTower;
+    this.selectedAugment = index;
+    if (tower && tower.freeSlots > 0) this.placeHeld(tower);
+    this.uiVersion += 1;
+  }
+
+  /** Opens the panel of `tower` and shows its range. */
+  selectTower(tower: Tower): void {
+    this.selectedTower = tower;
+    this.board.showRange(tower, this.towers.rangeOf(tower));
+    this.uiVersion += 1;
+  }
+
+  closePanel(): void {
+    if (!this.selectedTower) return;
+    this.selectedTower = undefined;
+    this.board.showRange(undefined, 0);
+    this.uiVersion += 1;
+  }
+
+  /** The panel's unlock button: buys the open tower's next slot, and puts the held augment in it. */
+  unlockSlot(): void {
+    const tower = this.selectedTower;
+    if (!tower) return;
+    const result = this.towers.unlockSlot(tower);
+    if (result === 'gold') this.hint(tower.cell, `Need ${this.towers.nextSlotCost(tower)} gold`, PALETTE.red);
+    if (result === true && this.heldAugment) this.placeHeld(tower);
+    this.selectTower(tower);
+  }
+
+  /** The draft put a new card in the hand: select it if nothing is selected. */
+  cardAdded(): void {
+    if (this.selectedAugment === undefined && this.run.hand.length > 0) this.selectedAugment = this.run.hand.length - 1;
+    this.uiVersion += 1;
+  }
+
+  /** Invariant: the selected card exists. */
+  brokenSelection(): string | undefined {
+    const i = this.selectedAugment;
+    return i !== undefined && i >= this.run.hand.length ? `selected card ${i} of ${this.run.hand.length}` : undefined;
+  }
+
+  /** Puts the held augment into `tower`'s free slot. */
+  private placeHeld(tower: Tower): void {
+    const held = this.heldAugment;
+    if (!held || this.towers.place(tower, held) !== true) return;
+    this.run.useAugment(this.selectedAugment!);
+    this.afterHandChange();
+  }
+
+  /** After a card left the hand: keep a card selected if there is one, so the next tap places it. */
+  private afterHandChange(): void {
+    const n = this.run.hand.length;
+    this.selectedAugment = n === 0 ? undefined : Math.min(this.selectedAugment ?? 0, n - 1);
+    this.uiVersion += 1;
+  }
+
+  private hint(cell: Cell, text: string, color: number = PALETTE.muted): void {
+    const c = this.board.centerOf(cell);
+    this.fx.popText(c.x, c.y, text, color);
+    this.sfx?.deny();
+  }
+}
