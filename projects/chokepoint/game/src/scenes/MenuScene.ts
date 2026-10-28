@@ -2,11 +2,12 @@ import Phaser from 'phaser';
 import { AUGMENTS } from '../content/augments';
 import { cssColor, PALETTE } from '../content/palette';
 import { loadProfile } from '../core/profile';
+import { clearSavedRun, loadSavedRun } from '../core/saveRun';
 import { MENU_ROAD_SIZE } from '../art/menu';
 import { artScale, augmentTexture } from '../art/textures';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
-import { makeButton } from '../ui/button';
+import { makeButton, type Button } from '../ui/button';
 import { addUpdateNotice } from '../ui/updateNotice';
 import { uiCamera, viewSize } from '../ui/display';
 import { textStyle, titleStyle } from '../ui/text';
@@ -43,7 +44,9 @@ export class MenuScene extends Phaser.Scene {
     hook.overlay = '';
     this.clock = 0;
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
+    // A new run abandons a saved one for nothing.
     const play = (): void => {
+      clearSavedRun(window.localStorage);
       this.scene.start(SCENES.game);
     };
 
@@ -63,12 +66,27 @@ export class MenuScene extends Phaser.Scene {
     const profileCard = buildProfileCard(this, p);
     const recent = buildRecentLine(this, p);
     const button = makeButton(this, 0, 0, 'Play', play, { width: 200, height: 60, fontSize: 24, radius: 30, fill: PALETTE.ink });
+    const savedRun = loadSavedRun(window.localStorage);
+    let resume: Button | undefined;
+    if (savedRun) {
+      resume = makeButton(
+        this,
+        0,
+        0,
+        `Resume · Wave ${savedRun.phase === 'build' ? savedRun.wave + 1 : savedRun.wave}`,
+        () => {
+          this.registry.set('resumeRun', savedRun);
+          this.scene.start(SCENES.game);
+        },
+        { width: 220, height: 60, fontSize: 24, radius: 30, fill: PALETTE.ink },
+      );
+    }
     const hint = this.add.text(0, 0, 'Enter or Space', textStyle(14, PALETTE.faint)).setOrigin(0.5);
 
     // Entrances: the title drops in with a bounce, the rest fades up after it; Play breathes.
     this.title.setAlpha(0).setScale(0.6);
     this.tweens.add({ targets: this.title, alpha: 1, scale: 1, duration: 650, ease: 'Back.easeOut' });
-    for (const [i, obj] of [profileCard, how, button.container, hint].entries()) {
+    for (const [i, obj] of [profileCard, how, ...(resume ? [resume.container] : []), button.container, hint].entries()) {
       obj.setAlpha(0);
       this.tweens.add({ targets: obj, alpha: 1, duration: 400, delay: 350 + i * 120 });
     }
@@ -80,8 +98,9 @@ export class MenuScene extends Phaser.Scene {
 
     const layout = (width: number, height: number): void => {
       const cx = width / 2;
-      const k = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width, Math.max(0.6, (height - 460) / MENU_ROAD_SIZE.height));
-      const block = MENU_ROAD_SIZE.height * k + 460;
+      const extra = resume ? 78 : 0; // the Resume button above Play
+      const k = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width, Math.max(0.6, (height - 460 - extra) / MENU_ROAD_SIZE.height));
+      const block = MENU_ROAD_SIZE.height * k + 460 + extra;
       const top = Math.max(16, (height - block) / 2);
       this.demo.layout(cx, top, k);
       const y = top + MENU_ROAD_SIZE.height * k + 40;
@@ -95,8 +114,9 @@ export class MenuScene extends Phaser.Scene {
         recent.container.setScale(s);
         recent.container.setPosition(cx - (recent.width * s) / 2, y + 104 + (PROFILE_CARD_H / 2) * Math.min(1, (width - 32) / PROFILE_CARD_W) + 7);
       }
-      button.container.setPosition(cx, y + 290);
-      hint.setPosition(cx, y + 343);
+      if (resume) resume.container.setPosition(cx, y + 294);
+      button.container.setPosition(cx, y + 290 + extra);
+      hint.setPosition(cx, y + 343 + extra);
     };
     layout(viewSize(this).width, viewSize(this).height);
     onResize(this, layout);

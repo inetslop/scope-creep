@@ -4,11 +4,12 @@ title: "Resume a run: a run closed mid-way is kept and offered on the menu"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0015]
 attempts: 1
 created: 2026-10-28T11:24:34Z
 claimed_at: 2026-10-28T20:39:26Z
+finished_at: 2026-10-28T21:02:26Z
 epic: E1
 ---
 
@@ -84,3 +85,20 @@ export class RunSave { constructor(game: GameScene, store: RunStore); update(): 
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0019: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Result (attempt 1, desktop)
+
+A run closed mid-way is now kept in its own storage key and offered on the menu: new pure module `core/saveRun.ts` (validated save/load/clear), new GameScene-owned `systems/RunSave.ts` that writes the save when the run enters build or wave phase, clears it on game over, and re-enters a saved run (same seed/road, towers with slots and tier pips, gold, lives, hand, tally, full build countdown or the wave replayed from its first spawn), a `Resume · Wave N` button above Play in `MenuScene` (Play abandons the save; no saved run = exactly today's menu), the `resume.taken` invariant, and round-trip/validation unit tests. `npm run check` and `npm run smoke` both pass. Two minimal deviations: `restore()` plans the next wave on build resume (the existing `waves.next` invariant and next-wave preview require it), and the loader rejects towers outside the saved board (the spec's loose cell range could otherwise crash scene creation on a hand-edited save).
+
+- Self-review: APPROVE
+- Time: 23.0 min
+
+```
+projects/chokepoint/game/src/core/saveRun.ts       | 125 +++++++++++++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |   1 +
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  13 ++-
+ projects/chokepoint/game/src/scenes/MenuScene.ts   |  32 +++++-
+ projects/chokepoint/game/src/systems/RunSave.ts    |  87 ++++++++++++++
+ .../chokepoint/game/tests/core/saveRun.test.ts     |  84 ++++++++++++++
+ 6 files changed, 333 insertions(+), 9 deletions(-)
+```

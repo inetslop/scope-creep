@@ -3,6 +3,7 @@ import { GRID, HUD, ROCKS } from '../config';
 import { cssColor, PALETTE } from '../content/palette';
 import { cellsBesidePath, generateMap } from '../core/map';
 import { RunState } from '../core/run';
+import type { SavedRun } from '../core/saveRun';
 import { flags } from '../debug/flags';
 import { registerRunChecks, syncHookStats } from '../debug/runChecks';
 import { hook } from '../debug/testHook';
@@ -17,6 +18,7 @@ import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { PushWindup } from '../systems/PushWindup';
 import { RallySystem } from '../systems/RallySystem';
 import { RunFlow } from '../systems/RunFlow';
+import { RunSave } from '../systems/RunSave';
 import { TowerSystem } from '../systems/TowerSystem';
 import { WaveSpeed } from '../systems/WaveSpeed';
 import { WaveSystem } from '../systems/WaveSystem';
@@ -37,6 +39,7 @@ export class GameScene extends Phaser.Scene {
   board!: Board;
   building!: Building;
   flow!: RunFlow;
+  saver!: RunSave;
   speed!: WaveSpeed;
   rally!: RallySystem;
   towers!: TowerSystem;
@@ -58,10 +61,11 @@ export class GameScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
     const sfx = getSfx(this);
 
-    this.run = new RunState(flags.seed ?? Math.floor(Math.random() * 2 ** 31));
+    const saved = this.registry.pop('resumeRun') as SavedRun | undefined;
+    this.run = new RunState(saved ? saved.seed : (flags.seed ?? Math.floor(Math.random() * 2 ** 31)));
     this.registry.set('run', this.run);
     const view = viewSize(this);
-    const portrait = view.height > view.width;
+    const portrait = saved ? saved.rows > saved.cols : view.height > view.width;
     const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS);
 
     this.board = new Board(this, map);
@@ -85,6 +89,8 @@ export class GameScene extends Phaser.Scene {
     });
     this.speed = new WaveSpeed();
     this.rally = new RallySystem(this, this.towers, this.fx);
+    this.saver = new RunSave(this, window.localStorage);
+    if (saved) this.saver.restore(saved);
     this.windup = new PushWindup(this, this.towers);
 
     this.board.layout(view.width, view.height);
@@ -111,7 +117,7 @@ export class GameScene extends Phaser.Scene {
     });
 
     this.scene.launch(SCENES.hud);
-    this.flow.openDraft();
+    if (!saved) this.flow.openDraft();
   }
 
   /**
@@ -138,6 +144,7 @@ export class GameScene extends Phaser.Scene {
     const dt = Math.min(deltaMs / 1000, 0.05);
     const simDt = this.speed.scale(dt, this.run.phase === 'wave');
     this.flow.update(simDt);
+    this.saver.update();
     this.exitWarn.update(simDt);
     this.rally.update(simDt);
     this.windup.update(simDt);
