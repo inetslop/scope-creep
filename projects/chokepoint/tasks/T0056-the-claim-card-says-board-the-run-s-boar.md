@@ -4,11 +4,12 @@ title: "The claim card says Board: the run's board as a four-letter code"
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0051]
 attempts: 1
 created: 2026-10-28T13:04:03Z
 claimed_at: 2026-10-28T17:01:06Z
+finished_at: 2026-10-28T17:11:28Z
 epic: E1
 ---
 
@@ -69,3 +70,17 @@ export function boardCode(seed: number): string {
 
 ### Tests
 - `tests/core/boardCode.test.ts` as in step 2 (the code is a rule in `src/core` that a later replay/ghost task could silently change).
+
+## Result (attempt 1, yoga)
+
+The rewards claim card now names the run's board: a new "Board ABCD" line (four uppercase letters, muted ink, same size as the card's other secondary lines) sits below the "+N coins" line, derived purely from `run.seed` via a new pure `boardCode()` in `src/core/boardCode.ts`, so the same run always shows the same code and different boards show different ones. The card grew 72px (300→372) with the Menu button pushed down with it; the line is read-only — no button, copy, replay or gameplay effect. New unit tests pin the code's shape, determinism and distinctness for a later replay/ghost task, and `npm run check` + `npm run smoke` (desktop and mobile) pass.
+
+- Self-review: APPROVE
+- Time: 10.4 min
+
+```
+projects/chokepoint/game/src/core/boardCode.ts        | 11 +++++++++++
+ projects/chokepoint/game/src/scenes/RewardsScene.ts   |  8 +++++---
+ projects/chokepoint/game/tests/core/boardCode.test.ts | 17 +++++++++++++++++
+ 3 files changed, 33 insertions(+), 3 deletions(-)
+```
