@@ -2,9 +2,9 @@
 
 An abstract, Bauhaus-style twin-stick roguelite for desktop and mobile browsers, built continuously by a fleet of local LLM agents.
 
-- **The games**: the fleet works on one game at a time, set by `loop.project` in [`agents/machines.json`](agents/machines.json) (see *Projects*). The first, Scope Creep, lives in [`game/`](game/); every other one in `projects/<id>/` (now [Chokepoint](projects/chokepoint/game/), a roguelite tower defence). Phaser 3 + TypeScript + Vite. All of them are deployed to GitHub Pages every 10 minutes.
+- **The games**: the fleet works on one game at a time, set by `loop.project` in [`agents/machines.json`](agents/machines.json) (see *Projects*). The first, Scope Creep, lives in [`game/`](game/); every other one in `projects/<id>/` (now [Chokepoint](projects/chokepoint/game/), a roguelite tower defence). Phaser 3 + TypeScript + Vite. All of them are deployed to GitHub Pages every 10 minutes, each at `/<id>/` (Scope Creep at `/scope-creep/`).
 - **The loop** around it: a Product Owner agent writes tasks, an architect agent designs each one against the real code, developer agents on several machines (Windows, or Linux in Docker) implement them, a browser smoke test gates every change.
-- **The build log** ([`site/`](site/)): a public page next to the game (`/build-log/`, linked from the menu) listing every feature, which machine built it and how long it took. The deploy workflow generates it from runner-written records, so the agents can't change it.
+- **The site** ([`site/`](site/)): the front page lists the games and what every machine of the fleet is doing (building or designing which task, idle, paused, its last push). Each game has a build log next to it (`/<id>/build-log/`, linked from the menu) listing every feature, which machine built it and how long it took. The deploy workflow generates both from runner-written records, so the agents can't change them.
 
 ```
   ┌────────────┐ design  ┌─────────────────┐  todo   ┌──────────────────────────┐
@@ -152,7 +152,7 @@ game/            the game (agents' sandbox) — see game/CLAUDE.md
 loop/            runner, supervisor, smoke test, doctor, status
 agents/          machines.json (fleet + loop tuning) and prompt templates
 setup/           setup.ps1
-site/            the public build log page (generated at deploy time, humans only)
+site/            the front page and the build log pages (generated at deploy time, humans only)
 tasks/           the shared pool (<id>-<slug>.md), archive/, salvage/ (unmerged work kept for a retry) — PO + runner only
 planning/        VISION, ROADMAP, IDEAS, CHANGELOG — PO-owned (the runner appends to CHANGELOG)
 .github/         Pages deployment
@@ -166,4 +166,4 @@ planning/        VISION, ROADMAP, IDEAS, CHANGELOG — PO-owned (the runner appe
 
 ## GitHub Pages
 
-One-time: repo **Settings → Pages → Source: GitHub Actions**. The workflow runs every 10 minutes, skips if the live `version.json` already matches `main`, otherwise runs `npm run check`, builds and deploys `game/dist`.
+One-time: repo **Settings → Pages → Source: GitHub Actions**. The workflow runs every 10 minutes, skips if the live `version.json` already matches `main`, otherwise runs `npm run check` and builds every game, puts each at `/<id>/` (`game/dist` at `/scope-creep/`), writes the front page and `version.json` at the root (`site/home.ts`) and deploys.

@@ -1,5 +1,6 @@
 # Builds every game and deploys them to GitHub Pages every 10 minutes (only when main changed):
-# Scope Creep (game/) at the site root, each projects/<id>/game/ at /<id>/.
+# Scope Creep (game/) at /scope-creep/, each projects/<id>/game/ at /<id>/, and at the root a
+# front page (site/home.ts) that lists the games and what every machine of the fleet is doing.
 # One-time setup: repo Settings -> Pages -> Source: "GitHub Actions".
 name: Deploy game to GitHub Pages
 
@@ -65,7 +66,8 @@ jobs:
         if: steps.live.outputs.skip != 'true'
         continue-on-error: true
         run: |
-          node site/build-log.ts game/dist
+          # Name the project: without it, build-log.ts reads loop.project (the game being built now).
+          SCOPE_CREEP_PROJECT=scope-creep node site/build-log.ts game/dist
           for dir in projects/*/game; do
             [ -d "$dir/dist" ] || continue
             SCOPE_CREEP_PROJECT="$(basename "$(dirname "$dir")")" node site/build-log.ts "$dir/dist"
@@ -75,10 +77,16 @@ jobs:
         if: steps.live.outputs.skip != 'true'
         run: |
           mkdir -p _site
-          cp -r game/dist/. _site/
+          cp -r game/dist _site/scope-creep
           for dir in projects/*/game; do
             if [ -d "$dir/dist" ]; then cp -r "$dir/dist" "_site/$(basename "$(dirname "$dir")")"; fi
           done
+
+      # Not optional like the build logs: it writes the root page and version.json, which the
+      # "already live" check above reads.
+      - name: Front page
+        if: steps.live.outputs.skip != 'true'
+        run: node site/home.ts _site
 
       - uses: actions/configure-pages@v6
         if: steps.live.outputs.skip != 'true'
