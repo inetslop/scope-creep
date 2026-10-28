@@ -4,7 +4,7 @@ title: Best combo on the claim card
 size: S
 priority: 3
 status: todo
-depends_on: [T0039, T0047, T0056]
+depends_on: [T0039]
 attempts: 0
 created: 2026-10-28T12:34:55Z
 epic: E1
