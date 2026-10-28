@@ -3,10 +3,12 @@ id: T0057
 title: "Hauler: the enemy whose leak costs gold"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0046]
 attempts: 0
 created: 2026-10-28T13:04:03Z
+claimed_at: 2026-10-28T19:29:23Z
+designer: cachyos-x8664
 ---
 
 ## Goal
