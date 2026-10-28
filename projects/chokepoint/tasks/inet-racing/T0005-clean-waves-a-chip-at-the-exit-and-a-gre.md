@@ -4,11 +4,13 @@ title: "Clean waves: a chip at the exit and a green line on the card"
 assignee: inet-racing
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0001]
 attempts: 0
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T02:13:47Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
