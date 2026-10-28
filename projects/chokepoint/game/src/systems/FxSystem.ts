@@ -70,8 +70,8 @@ export class FxSystem {
     this.track(g, 200, { scale: 1.25, alpha: 0, ease: 'Quad.easeOut' });
   }
 
-  /** Rounded chips that scatter where an enemy died, plus a white pop. */
-  burst(x: number, y: number, color: number): void {
+  /** Rounded chips that scatter where an enemy died, plus a white pop. `double` scatters 12 chips instead of 6 (the ×10 milestone kill). */
+  burst(x: number, y: number, color: number, double: boolean = false): void {
     if (this.live < FxSystem.MAX) {
       const pop = this.scene.add.graphics().setDepth(DEPTH.fx).setPosition(x, y);
       pop.fillStyle(0xffffff, 0.9);
@@ -79,8 +79,9 @@ export class FxSystem {
       pop.setScale(0.5);
       this.track(pop, 180, { scale: 1.3, alpha: 0 });
     }
-    for (let i = 0; i < 6 && this.live < FxSystem.MAX; i++) {
-      const a = (i / 6) * Math.PI * 2 + Math.random() * 0.6;
+    const n = double ? 12 : 6;
+    for (let i = 0; i < n && this.live < FxSystem.MAX; i++) {
+      const a = (i / n) * Math.PI * 2 + Math.random() * 0.6;
       const d = 22 + Math.random() * 14;
       const chip = artScale(this.scene.add.image(x, y, CHIP_TEXTURE), 0.6 + Math.random() * 0.5).setTint(color).setDepth(DEPTH.fx);
       this.track(chip, 380, { x: x + Math.cos(a) * d, y: y + Math.sin(a) * d + 6, alpha: 0, angle: 120, scale: chip.scale * 0.5, ease: 'Quad.easeOut' });
@@ -89,12 +90,12 @@ export class FxSystem {
 
   /** One kill for the chain: within 1.5 s it continues, a longer gap resets it. From ×2 up the
    * counter sits above the latest kill's chips, each step 8 px up, popping 1.2 → 1.0; 1.5 s idle fades it. */
-  killCount(x: number, y: number): void {
+  killCount(x: number, y: number): boolean {
     const now = this.scene.time.now;
     if (now - this.lastKill >= 1500) this.comboN = 0;
     this.lastKill = now;
     this.comboN += 1;
-    if (this.comboN < 2) return;
+    if (this.comboN < 2) return false;
     this.comboTimer?.remove();
     if (this.comboFade) {
       this.comboFade.remove();
@@ -110,11 +111,13 @@ export class FxSystem {
       .setDepth(DEPTH.fx);
     this.comboText = t;
     t.setText(`×${this.comboN}`);
+    if (this.comboN === 10) t.setStyle(textStyle(14, PALETTE.yellow, { fontStyle: 'bold', stroke: cssColor(PALETTE.card), strokeThickness: 4 }));
     if (!fresh) t.setY(t.y - 8);
     t.setScale(1.2);
     this.comboPop?.remove();
     this.comboPop = this.scene.tweens.add({ targets: t, scale: 1, duration: 150, ease: 'Quad.easeOut' });
     this.comboTimer = this.scene.time.delayedCall(1500, () => this.comboFadeStart());
+    return this.comboN === 10;
   }
 
   /** The chain ended: fade the counter out over 400 ms, then destroy it. */

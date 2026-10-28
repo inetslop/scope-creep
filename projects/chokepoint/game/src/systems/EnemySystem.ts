@@ -108,8 +108,8 @@ export class EnemySystem {
     // Mint towers (core/mint.ts): the killer's own copies, plus every mint tower within its radius, pay extra.
     const cell = this.board.cellAt(e.x, e.y);
     const paid = this.run.addKill(e.def.gold + (cell ? mintGoldBonus(this.towers(), cell, payload.source) : 0));
-    this.fx.burst(e.x, e.y, PALETTE[e.def.look.color]);
-    this.fx.killCount(e.x, e.y);
+    const milestone = this.fx.killCount(e.x, e.y);
+    this.fx.burst(e.x, e.y, PALETTE[e.def.look.color], milestone);
     this.fx.popText(e.x, e.y - 20, `+${paid}`);
     this.sfx?.kill();
     hook.stats.enemiesKilled += 1;

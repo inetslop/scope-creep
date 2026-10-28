@@ -4,11 +4,12 @@ title: "Combo milestone: at ×10 the counter turns yellow"
 assignee: desktop-4070
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0021]
 attempts: 1
 created: 2026-10-28T08:30:13Z
 claimed_at: 2026-10-28T11:51:22Z
+finished_at: 2026-10-28T11:58:44Z
 ---
 
 ## Goal
@@ -55,3 +56,16 @@ No other signature changes; `MenuDemo.ts:175` keeps its 3-arg `burst` call worki
 
 ### Tests
 - none
+
+## Result (attempt 1, desktop-4070)
+
+At ×10 the kill-combo counter now turns yellow (and stays yellow for the rest of that chain) and the milestone kill bursts with 12 chips instead of 6 — implemented in `src/systems/FxSystem.ts` (`killCount()` returns true only on the taking-kill and recolors the shared counter text; `burst()` gained an optional `double` flag) and a two-line swap in `EnemySystem.strike()` so the flag reaches the burst. No other effect, timing, style, position or sound was changed; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 7.4 min
+
+```
+projects/chokepoint/game/src/systems/EnemySystem.ts |  4 ++--
+ projects/chokepoint/game/src/systems/FxSystem.ts    | 15 +++++++++------
+ 2 files changed, 11 insertions(+), 8 deletions(-)
+```
