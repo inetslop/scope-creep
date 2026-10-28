@@ -158,9 +158,9 @@ function renderPage(d: { games: GameView[]; machines: MachineView[]; active?: Ga
   .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
   .game p { margin: 8px 0 6px; color: ${C.ink}; }
   .game { display: flex; flex-direction: column; justify-content: flex-end; }
-  /* The screenshot (16:9) across the full width at the top; the text panel overlaps only its bottom edge. */
-  .game.shot { padding: calc(56.25% - 40px) 10px 10px; background-color: ${C.island}; background-position: top center; background-size: 100% auto; background-repeat: no-repeat; }
-  .game.shot .panel { background: rgba(255, 255, 255, 0.96); border-radius: 14px; padding: 14px 16px; box-shadow: 0 2px 12px rgba(44, 58, 64, 0.14); }
+  /* The screenshot (16:9) fills the top of the card edge to edge; the white text part starts right below it. */
+  .game.shot { padding: 56.25% 0 0; overflow: hidden; background-color: ${C.card}; background-position: top center; background-size: 100% auto; background-repeat: no-repeat; }
+  .game.shot .panel { background: ${C.card}; padding: 14px 18px 16px; }
   .game.active { box-shadow: 0 3px 0 ${C.greenDeep}, 0 8px 20px rgba(44, 58, 64, 0.1); }
   .badge { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: ${C.island}; color: ${C.muted}; }
   .badge.live { background: ${C.green}; color: #fff; }
