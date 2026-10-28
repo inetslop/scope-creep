@@ -4,7 +4,7 @@ title: "Momentum: the Epic that grows every tower on a clean wave"
 size: L
 priority: 3
 status: todo
-depends_on: [T0025, T0045]
+depends_on: [T0038, T0045]
 attempts: 0
 created: 2026-10-28T13:54:28Z
 epic: E4

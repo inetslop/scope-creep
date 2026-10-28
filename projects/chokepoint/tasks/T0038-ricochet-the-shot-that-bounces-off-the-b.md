@@ -4,7 +4,7 @@ title: "Ricochet: the shot that bounces off the board's rocks"
 size: L
 priority: 3
 status: todo
-depends_on: [T0004, T0029, T0034, T0035]
+depends_on: [T0025, T0035]
 attempts: 0
 created: 2026-10-28T09:35:22Z
 epic: E4
