@@ -256,6 +256,7 @@ describe('designedFiles', () => {
       '- edit `src/scenes/GameScene.ts` - shake on death',
       '- create `src/systems/Shake.ts`',
       '- edit `src/scenes/GameScene.ts` again, and `tests/core/shake.test.ts`',
+      'No rule in `src/core` changes (a folder, not a file).',
     ].join('\n');
     const t = { ...parseTask(`---\nid: T0001\ntitle: x\n---\n${body}\n`, file) };
     assert.deepEqual(designedFiles(t), ['src/scenes/GameScene.ts', 'src/systems/Shake.ts', 'tests/core/shake.test.ts']);

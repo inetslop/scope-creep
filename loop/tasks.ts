@@ -304,11 +304,14 @@ export function pickTaskFor(me: string, fleet: FleetConfig, all: readonly Task[]
     )[0];
 }
 
-/** Files (relative to game/) named in a task's "## Design": what building it will touch. */
+/**
+ * Files (relative to game/) named in a task's "## Design": what building it will touch. Only
+ * paths with a file extension: a folder the design mentions (`src/core`) is not a file it edits.
+ */
 export function designedFiles(t: Task): string[] {
   const design = t.body.split(/\n## Design\b/)[1];
   if (!design) return [];
-  return [...new Set([...design.matchAll(/`((?:src|tests|docs)\/[^`\s]+)`/g)].map((m) => m[1]!))];
+  return [...new Set([...design.matchAll(/`((?:src|tests|docs)\/[^`\s]+\.[a-z]+)`/g)].map((m) => m[1]!))];
 }
 
 const OPEN_STATUSES = new Set<TaskStatus>(['design', 'designing', 'todo', 'in-progress']);
