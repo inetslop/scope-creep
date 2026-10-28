@@ -3,13 +3,11 @@ id: T0075
 title: The claim card says why the coins are what they are
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-28T21:24:45Z
-claimed_at: 2026-10-28T21:30:31Z
 epic: E1
-designer: yoga
 ---
 
 ## Goal
@@ -28,3 +26,33 @@ The run's coin payout is explained where it is claimed: one muted recipe line un
 - [ ] A resumed run's claim (T0042) shows the recipe of its own ledger.
 - [ ] The card fits 1280x720 and 412x915 with the new line.
 - [ ] `npm run check` and `npm run smoke` pass on desktop and mobile.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/scenes/RewardsScene.ts` - one muted recipe line under the "+N coins" line; card grows one line height
+
+### Interfaces
+No new types or signatures. Everything in `create()` of `RewardsScene`, no `update()` change, no new class field (local `const` like `boardText` is).
+
+### Steps
+In `create()`, exactly these 5 changes (all else untouched):
+1. `const panelH = 372 + 2 * dy;` → `const panelH = 372 + 2 * dy + 36;`
+2. Insert directly after the `this.coinIcon = artScale(...)` line:
+```ts
+const recipeText = this.add.text(0, 80 + dy, `waves +${this.waves} · stopped +${Math.floor(this.stopped / 10)} · clean +${this.clean}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
+```
+3. `boardText` y: `80 + dy` → `116 + dy`
+4. `menuButton` y: `144 + dy` → `180 + dy`
+5. `parts.push(...)` line: insert `recipeText, ` before `boardText`
+The line reads `this.waves`/`this.stopped`/`this.clean` — the exact values the payout used (live `coinsForRun` or `lastRun.coins` recorded from them by `GameOverScene`), so A+B+C === the "+N" shown, both for fresh and resumed runs.
+
+### Pitfalls
+- No count-up: the text is final in `create()`; never add it to `update()`.
+- Never recompute coins from `run` fields a second way; the three scene fields are the payout's own values.
+- Don't put the recipe in `mid` (it's always shown): the fixed `+36` in panelH and the two `+36` y-shifts are the whole growth.
+- 22px bold is the Board line's style and fits: worst-case string ≈ 320px < 360 card; max panelH 516 fits 720px (scale min 1).
+- `titleStyle` and `PALETTE` are already imported; the `·` separator is the codebase's usual one.
+
+### Tests
+none
