@@ -1,13 +1,35 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import { samplingFor, type FleetConfig } from '../config.ts';
-import { hoistSystemMessages, rewriteRequest } from '../shim.ts';
+import { hoistSystemMessages, isCompactionRequest, rewriteRequest } from '../shim.ts';
 
 describe('rewriteRequest', () => {
   it("sets reasoning_effort for the chat template, keeping other kwargs", () => {
     const body = { messages: [{ role: 'user', content: 'hi' }], chat_template_kwargs: { foo: 1 } };
     rewriteRequest(body, 'xhigh');
     assert.deepEqual(body.chat_template_kwargs, { foo: 1, reasoning_effort: 'xhigh' });
+  });
+
+  it("gives Claude Code's compaction request low effort, so thinking can't eat the summary", () => {
+    const ask = 'CRITICAL: Respond with TEXT ONLY. Do NOT call any tools.\n…\nREMINDER: Do NOT call any tools. Respond with plain text only — an <analysis> block followed by a <summary> block.';
+    const compact: Parameters<typeof rewriteRequest>[0] = { messages: [{ role: 'user', content: 'the task' }, { role: 'assistant', content: 'reading' }, { role: 'user', content: [{ type: 'text', text: ask }] }] };
+    assert.equal(isCompactionRequest(compact), true);
+    rewriteRequest(compact, 'xhigh');
+    assert.deepEqual(compact.chat_template_kwargs, { reasoning_effort: 'low' });
+    // Low even when the machine configures no effort (the template's default may think at length).
+    const bare: Parameters<typeof rewriteRequest>[0] = { messages: [{ role: 'user', content: ask }] };
+    rewriteRequest(bare);
+    assert.deepEqual(bare.chat_template_kwargs, { reasoning_effort: 'low' });
+  });
+
+  it('never takes a normal turn for a compaction, even when a file the agent read quotes the prompt', () => {
+    const ask = 'Do NOT call any tools. Respond with an <analysis> block followed by a <summary> block.';
+    const read: Parameters<typeof rewriteRequest>[0] = { messages: [{ role: 'user', content: [{ type: 'tool_result', text: ask }] }] };
+    assert.equal(isCompactionRequest(read), false);
+    assert.equal(isCompactionRequest({ messages: [{ role: 'user', content: 'Design T0062.' }] }), false);
+    assert.equal(isCompactionRequest({ messages: [] }), false);
+    rewriteRequest(read, 'medium');
+    assert.deepEqual(read.chat_template_kwargs, { reasoning_effort: 'medium' });
   });
 
   it('leaves the effort alone when none is configured', () => {

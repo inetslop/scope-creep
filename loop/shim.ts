@@ -17,6 +17,10 @@ import { warn } from './log.ts';
  *    so each role gets its configured effort per request.
  * 3. Sampling (temperature, top_p, top_k) from agents/machines.json is written into every
  *    request, so a push changes it without restarting the model servers.
+ * 4. Claude Code's compaction request (summarize the conversation so far) gets low effort:
+ *    thinking and the summary share one output budget, and a long think there leaves an empty
+ *    summary ("automatic compaction failed: summarization produced empty response"), which ends
+ *    the session and loses its work.
  * Everything else, including SSE streams, passes through untouched.
  */
 
@@ -50,10 +54,23 @@ export function hoistSystemMessages(body: MessagesBody): boolean {
   return true;
 }
 
+/**
+ * Claude Code's compaction request: its last user message tells the model to call no tools and
+ * answer with an <analysis> block and a <summary> block. Only text blocks count, so a file an
+ * agent read (a tool result) that quotes those words never looks like one.
+ */
+export function isCompactionRequest(body: MessagesBody): boolean {
+  const last = body.messages?.at(-1);
+  if (last?.role !== 'user') return false;
+  const text = typeof last.content === 'string' ? last.content : (last.content ?? []).filter((b) => b.type === 'text').map((b) => b.text ?? '').join('\n');
+  return /do not call any tools/i.test(text) && /<analysis>/i.test(text) && /<summary>/i.test(text);
+}
+
 /** Everything the shim does to a /v1/messages body. Configured sampling wins over what the client sent. */
 export function rewriteRequest(body: MessagesBody, effort?: string, sampling: Sampling = {}): void {
   hoistSystemMessages(body);
-  if (effort) body.chat_template_kwargs = { ...(body.chat_template_kwargs ?? {}), reasoning_effort: effort };
+  const level = isCompactionRequest(body) ? 'low' : effort;
+  if (level) body.chat_template_kwargs = { ...(body.chat_template_kwargs ?? {}), reasoning_effort: level };
   for (const key of REQUEST_SAMPLING_KEYS) {
     const value = sampling[key];
     if (typeof value === 'number' && Number.isFinite(value)) (body as Record<string, unknown>)[key] = value;

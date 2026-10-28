@@ -72,7 +72,6 @@ const DEV_BASH = [
 ];
 
 /** Read-only git for the architect. (The PO gets no shell: its git log is in the prompt.) */
-const GIT_READ_BASH = ['Bash(git status)', 'Bash(git status *)', 'Bash(git log *)', 'Bash(git show *)', 'Bash(git diff *)'];
 
 const ALWAYS_DENY = [
   'WebFetch',
@@ -103,8 +102,9 @@ export function claudeSettings(profile: Profile, env: Record<string, string>): o
   const loopReads = hidden.map((d) => rule('Read', d));
   const loopEdits = [...hidden.map((d) => rule('Edit', d)), ...ROOT_FILES.map((f) => `Edit(${permissionPath(f)})`)];
 
-  // Agents never commit and can't use memory: keep those instructions out of their (small) context.
-  const common = { autoMemoryEnabled: false, includeCoAuthoredBy: false, attribution: { commit: '', pr: '' } };
+  // Agents never commit and can't use memory: keep those instructions out of their (small) context,
+  // and the git status snapshot too (the branch and the fleet's latest commits say nothing about the task).
+  const common = { autoMemoryEnabled: false, includeCoAuthoredBy: false, includeGitInstructions: false, attribution: { commit: '', pr: '' } };
   // Same view of the repo as a dev (the game, not the queue or the loop).
   const devReadDenies = [rule('Read', TASKS_DIR), rule('Read', PLANNING_DIR), ...loopReads];
 
@@ -112,7 +112,7 @@ export function claudeSettings(profile: Profile, env: Record<string, string>): o
     return {
       ...common,
       permissions: {
-        allow: [...READ_ONLY_TOOLS, ...GIT_READ_BASH],
+        allow: [...READ_ONLY_TOOLS],
         deny: [...ALWAYS_DENY, ...devReadDenies, 'Edit', 'Write'],
       },
       env,

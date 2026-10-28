@@ -94,8 +94,10 @@ const TOOLS: Record<Profile, string> = {
   dev: 'Bash,Read,Edit,Write,Glob,Grep',
   // The PO plans from files in planning/ and tasks/; it needs no shell.
   po: 'Read,Edit,Write,Glob,Grep',
-  // Designs come back in the final message; the architect never edits files.
-  architect: 'Bash,Read,Glob,Grep',
+  // Designs come back in the final message; the architect never edits files. No shell: Grep and
+  // Glob find what it needs, its Bash description costs ~740 tokens of context, and most of its
+  // shell commands needed approval it can't get (denied, a wasted turn).
+  architect: 'Read,Glob,Grep',
 };
 
 /** Claude Code's own --effort levels; it is kept in step with the model's level. */

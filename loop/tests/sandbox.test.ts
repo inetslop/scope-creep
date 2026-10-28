@@ -70,6 +70,14 @@ describe('architect profile', () => {
     assert.ok(s.permissions.deny.some((r) => r.startsWith('Read(') && r.includes('/tasks/**')));
     assert.ok(s.permissions.deny.some((r) => r.startsWith('Read(') && r.includes('/loop/**')));
   });
+
+  it('gets no shell, and no agent gets the git status snapshot', () => {
+    const s = claudeSettings('architect', {}) as { permissions: { allow: string[] } };
+    assert.ok(!s.permissions.allow.some((r) => r.startsWith('Bash')));
+    for (const profile of ['dev', 'po', 'architect'] as const) {
+      assert.equal((claudeSettings(profile, {}) as { includeGitInstructions?: boolean }).includeGitInstructions, false, profile);
+    }
+  });
 });
 
 describe('permissionPath', () => {
