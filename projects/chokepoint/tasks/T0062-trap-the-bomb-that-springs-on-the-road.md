@@ -3,11 +3,13 @@ id: T0062
 title: "Trap: the bomb that springs on the road"
 size: M
 priority: 3
-status: design
+status: designing
 depends_on: [T0039, T0054, T0055]
 attempts: 0
 created: 2026-10-28T13:29:40Z
+claimed_at: 2026-10-28T14:57:52Z
 epic: E4
+designer: baby-mama
 ---
 
 ## Goal
