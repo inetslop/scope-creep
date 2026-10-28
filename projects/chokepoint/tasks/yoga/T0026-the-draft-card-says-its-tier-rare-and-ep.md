@@ -4,11 +4,13 @@ title: "The draft card says its tier: · Rare and · Epic on the name line"
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0024]
 attempts: 0
 created: 2026-10-28T05:31:15Z
+claimed_at: 2026-10-28T05:40:17Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
