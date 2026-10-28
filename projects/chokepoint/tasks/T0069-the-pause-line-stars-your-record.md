@@ -3,11 +3,13 @@ id: T0069
 title: The pause line stars your record
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0030, T0035]
 attempts: 0
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T15:25:35Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
