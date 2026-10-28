@@ -1,7 +1,6 @@
 ---
 id: T0019
 title: "Fast-forward: a 2x speed button for the wave phase"
-assignee: narcissus
 size: M
 priority: 2
 status: todo

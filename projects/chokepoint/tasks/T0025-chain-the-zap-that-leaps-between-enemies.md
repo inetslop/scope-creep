@@ -1,7 +1,6 @@
 ---
 id: T0025
 title: "Chain: the zap that leaps between enemies"
-assignee: asus
 size: L
 priority: 3
 status: todo

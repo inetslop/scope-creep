@@ -1,7 +1,6 @@
 ---
 id: T0006
 title: "Sprinter: the enemy that gets faster when hit"
-assignee: inet-racing
 size: M
 priority: 2
 status: todo

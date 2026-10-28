@@ -12,7 +12,7 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { GAME_REL, ORIGINAL_PROJECT, PROJECT, TASKS_DIR } from '../loop/paths.ts';
+import { GAME_REL, ORIGINAL_PROJECT, PROJECT } from '../loop/paths.ts';
 import { listTasks } from '../loop/tasks.ts';
 import {
   collectFeatures,
@@ -354,13 +354,7 @@ function main(): void {
   if (!dist || !fs.existsSync(path.join(dist, 'index.html'))) throw new Error('usage: node site/build-log.ts <built game dist folder>');
 
   const machines = (JSON.parse(fs.readFileSync(path.join(REPO, 'agents', 'machines.json'), 'utf8')) as { machines: Record<string, MachineInfo> }).machines;
-  const folders = fs.existsSync(TASKS_DIR)
-    ? fs
-        .readdirSync(TASKS_DIR, { withFileTypes: true })
-        .filter((d) => d.isDirectory() && d.name !== 'archive' && d.name !== 'salvage')
-        .map((d) => d.name)
-    : [];
-  const { tasks } = listTasks(folders, true);
+  const { tasks } = listTasks(true);
   const commits = parseGitLog(git(['log', `--format=${GIT_LOG_FORMAT}`]));
   const gameCommits = parseGitLog(git(['log', `--format=${GIT_LOG_FORMAT}`, '--', GAME_REL]));
   const indexFile = path.join(dist, 'index.html');

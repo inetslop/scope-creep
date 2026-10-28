@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { describe, it } from 'node:test';
-import { designedFiles, parseTask, pickNextTask, serializeTask, slugify, TaskFormatError, unblockedTaskIds, type Task } from '../tasks.ts';
+import type { FleetConfig } from '../config.ts';
+import { TASKS_DIR } from '../paths.ts';
+import { designedFiles, isPoolTask, parseTask, pickTaskFor, serializeTask, slugify, TaskFormatError, unblockedTaskIds, type Task } from '../tasks.ts';
 
 const file = path.join('tasks', 'yoga', 'T0007-thing.md');
 
@@ -59,24 +61,79 @@ describe('parseTask', () => {
   });
 });
 
-describe('pickNextTask', () => {
-  const mk = (id: string, extra: Partial<Task> = {}): Task => ({ ...parseTask(`---\nid: ${id}\ntitle: ${id}\n---\n`, file), status: 'todo', ...extra });
+/** A small fleet: a big slow machine, a medium one, a weak one that takes only S, one paused. */
+const fleet = {
+  machines: {
+    big: { roles: ['dev'], maxTaskSize: 'L', targetQueue: 2 },
+    mid: { roles: ['dev'], maxTaskSize: 'M', targetQueue: 2 },
+    weak: { roles: ['dev'], maxTaskSize: 'S', targetQueue: 2 },
+    off: { roles: ['dev'], maxTaskSize: 'S', targetQueue: 2, paused: true },
+  },
+  loop: { claimGraceMinutes: 20 },
+} as unknown as FleetConfig;
 
-  it('never picks tasks still waiting for the architect', () => {
-    const designing = mk('T0001', { status: 'design' });
-    assert.equal(pickNextTask([designing], [designing]), undefined);
+const pool = (id: string, extra: Partial<Task> = {}): Task => ({
+  ...parseTask(`---\nid: ${id}\ntitle: ${id}\n---\n`, path.join(TASKS_DIR, `${id}.md`)),
+  status: 'todo',
+  size: 'M',
+  ...extra,
+});
+
+describe('the shared pool', () => {
+  it('pool tasks belong to nobody until claimed, and are written without an assignee', () => {
+    const t = pool('T0001');
+    assert.ok(isPoolTask(t));
+    assert.equal(t.assignee, '');
+    assert.doesNotMatch(serializeTask(t), /assignee/);
   });
 
-  it('picks the best priority, then the lowest id, skipping blocked tasks', () => {
-    const done = mk('T0001', { status: 'done' });
-    const blocked = mk('T0002', { priority: 1, dependsOn: ['T0009'] });
-    const a = mk('T0004', { priority: 2 });
-    const b = mk('T0003', { priority: 2 });
-    const urgent = mk('T0005', { priority: 1, dependsOn: ['T0001'] });
-    const mine = [blocked, a, b, urgent];
-    assert.equal(pickNextTask(mine, [done, ...mine])?.id, 'T0005');
-    assert.equal(pickNextTask([blocked, a, b], [done, blocked, a, b])?.id, 'T0003');
-    assert.equal(pickNextTask([blocked], [blocked]), undefined);
+  it('an older task in a machine folder still belongs to that machine', () => {
+    const t = parseTask('---\ntitle: x\n---\nbody', path.join(TASKS_DIR, 'yoga', 'T0007-x.md'));
+    assert.equal(t.assignee, 'yoga');
+    assert.ok(!isPoolTask(t));
+  });
+});
+
+describe('pickTaskFor', () => {
+  const now = Date.parse('2026-10-28T12:00:00Z');
+  const fresh = '2026-10-28T11:55:00Z';
+  const old = '2026-10-28T11:00:00Z';
+
+  it('never picks tasks still waiting for the architect, claimed ones, or ones too big', () => {
+    const tasks = [pool('T0001', { status: 'design' }), pool('T0002', { assignee: 'big' }), pool('T0003', { size: 'L' })];
+    assert.equal(pickTaskFor('mid', fleet, tasks, now), undefined);
+  });
+
+  it('waits for dependencies, then takes the best priority, the biggest it can, the lowest id', () => {
+    const tasks = [
+      pool('T0001', { status: 'done' }),
+      pool('T0002', { priority: 1, dependsOn: ['T0009'] }),
+      pool('T0004', { priority: 2, size: 'L' }),
+      pool('T0003', { priority: 2, size: 'L' }),
+      pool('T0005', { priority: 2, size: 'M' }),
+    ];
+    assert.equal(pickTaskFor('big', fleet, tasks, now)?.id, 'T0003');
+    assert.equal(pickTaskFor('mid', fleet, tasks, now)?.id, 'T0005');
+  });
+
+  it('a task waiting on another task is free once that one is done, whoever built it', () => {
+    const tasks = [pool('T0001', { status: 'done', assignee: 'big' }), pool('T0002', { dependsOn: ['T0001'], size: 'S', created: old })];
+    assert.equal(pickTaskFor('weak', fleet, tasks, now)?.id, 'T0002');
+  });
+
+  it('bigger machines leave small tasks to the smaller ones for a while', () => {
+    const small = pool('T0001', { size: 'S', created: fresh });
+    assert.equal(pickTaskFor('big', fleet, [small], now), undefined);
+    assert.equal(pickTaskFor('weak', fleet, [small], now)?.id, 'T0001');
+    assert.equal(pickTaskFor('big', fleet, [{ ...small, created: old }], now)?.id, 'T0001');
+  });
+
+  it('a machine builds its own older folder tasks first, and never another machine\'s', () => {
+    const own = { ...pool('T0009', { priority: 3 }), file: path.join(TASKS_DIR, 'mid', 'T0009.md'), assignee: 'mid' };
+    const others = { ...pool('T0008'), file: path.join(TASKS_DIR, 'big', 'T0008.md'), assignee: 'big' };
+    const open = pool('T0001', { priority: 1 });
+    assert.equal(pickTaskFor('mid', fleet, [open, own, others], now)?.id, 'T0009');
+    assert.equal(pickTaskFor('weak', fleet, [others], now), undefined);
   });
 });
 

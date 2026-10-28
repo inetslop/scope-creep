@@ -1,7 +1,6 @@
 ---
 id: T0023
 title: "Anchor: a rooting augment that stops the road"
-assignee: asus
 size: L
 priority: 3
 status: todo

@@ -1,14 +1,17 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { ARCHIVE_DIR, TASKS_DIR } from './paths.ts';
+import { SIZE_ORDER, type FleetConfig } from './config.ts';
+import { ARCHIVE_DIR, SALVAGE_DIR, TASKS_DIR } from './paths.ts';
 
 /**
- * Task files: tasks/<machine-id>/T0042-short-slug.md
+ * Task files live in one shared pool, tasks/T0042-short-slug.md: any machine that can take the
+ * task's size claims it (pickTaskFor). Older tasks may sit in tasks/<machine-id>/ folders; those
+ * belong to that machine only.
  *
  *   ---
  *   id: T0042
  *   title: Add a pause menu
- *   assignee: desktop
+ *   assignee: desktop          (set when a machine claims it; absent while it waits in the pool)
  *   size: M
  *   priority: 2
  *   status: todo
@@ -20,7 +23,7 @@ import { ARCHIVE_DIR, TASKS_DIR } from './paths.ts';
  *   design       written by the PO, waiting for an architect
  *   designing    claimed by an architect (frontmatter `designer`), being designed
  *   todo         has an architect's "## Design" section; devs may pick it up
- *   in-progress  claimed by the assignee's runner
+ *   in-progress  claimed by a machine's runner (its id in `assignee`)
  *   done/failed  result written by the runner; the PO reviews it, then it is archived
  * The PO writes tasks. Only the runner changes status/attempts and appends designs and results.
  */
@@ -97,7 +100,8 @@ export function parseTask(text: string, file: string): Task {
   return {
     id,
     title,
-    assignee: unquote(fields.assignee ?? '') || path.basename(path.dirname(file)),
+    // Pool tasks belong to nobody until claimed; a task in a machine folder belongs to that machine.
+    assignee: unquote(fields.assignee ?? '') || (path.dirname(file) === TASKS_DIR || path.dirname(file) === ARCHIVE_DIR ? '' : path.basename(path.dirname(file))),
     size,
     priority: Number.isFinite(priority) ? Math.min(3, Math.max(1, Math.round(priority))) : 2,
     status,
@@ -121,7 +125,7 @@ export function serializeTask(t: Task): string {
   const lines = [
     `id: ${t.id}`,
     `title: ${quoteIfNeeded(t.title)}`,
-    `assignee: ${t.assignee}`,
+    ...(t.assignee ? [`assignee: ${t.assignee}`] : []),
     `size: ${t.size}`,
     `priority: ${t.priority}`,
     `status: ${t.status}`,
@@ -179,10 +183,24 @@ function mdFiles(dir: string): string[] {
     .map((d) => path.join(dir, d.name));
 }
 
-/** Tasks in tasks/<machine>/ folders. Pass `includeArchive` to also read tasks/archive/. */
-export function listTasks(machineIds: readonly string[], includeArchive = false): TaskListing {
+/** A task in the shared pool (tasks/ itself), not in an older per-machine folder. */
+export function isPoolTask(t: Task): boolean {
+  return path.dirname(t.file) === TASKS_DIR;
+}
+
+/**
+ * Every open task: the pool (tasks/) and any older per-machine folders (tasks/<machine>/).
+ * Pass `includeArchive` to also read tasks/archive/.
+ */
+export function listTasks(includeArchive = false): TaskListing {
   const listing: TaskListing = { tasks: [], invalid: new Map() };
-  const dirs = machineIds.map((m) => path.join(TASKS_DIR, m));
+  const folders = fs.existsSync(TASKS_DIR)
+    ? fs
+        .readdirSync(TASKS_DIR, { withFileTypes: true })
+        .filter((d) => d.isDirectory() && path.join(TASKS_DIR, d.name) !== ARCHIVE_DIR && path.join(TASKS_DIR, d.name) !== SALVAGE_DIR)
+        .map((d) => path.join(TASKS_DIR, d.name))
+    : [];
+  const dirs = [TASKS_DIR, ...folders.sort()];
   if (includeArchive) dirs.push(ARCHIVE_DIR);
   for (const dir of dirs) {
     for (const file of mdFiles(dir)) {
@@ -201,12 +219,36 @@ export function maxTaskNumber(tasks: readonly Task[]): number {
   return tasks.reduce((max, t) => Math.max(max, Number(t.id.slice(1)) || 0), 0);
 }
 
-/** Next task this machine should work on: todo, dependencies done, best priority, lowest id. */
-export function pickNextTask(mine: readonly Task[], all: readonly Task[]): Task | undefined {
+/** Minutes a bigger machine leaves a small task to the smaller machines that can take it (default 20). */
+const claimGrace = (fleet: FleetConfig): number => fleet.loop.claimGraceMinutes ?? fleet.loop.designGraceMinutes ?? 20;
+
+/**
+ * The task machine `me` should claim next: a todo task whose dependencies are done, that is its
+ * own (an older per-machine task) or in the pool, and no bigger than it takes. Its own come first,
+ * then best priority, then the biggest size it can take (big machines on big work), then lowest id.
+ * A task a smaller active machine could also take is left to it for the claim grace, so the weak
+ * machines always have something; after that anyone may take it.
+ */
+export function pickTaskFor(me: string, fleet: FleetConfig, all: readonly Task[], nowMs = Date.now()): Task | undefined {
+  const mine = fleet.machines[me];
+  if (!mine) return undefined;
+  const myMax = SIZE_ORDER[mine.maxTaskSize];
   const done = new Set(all.filter((t) => t.status === 'done').map((t) => t.id));
-  return mine
+  const smaller = Object.entries(fleet.machines)
+    .filter(([id, m]) => id !== me && !m.paused && m.roles.includes('dev') && SIZE_ORDER[m.maxTaskSize] < myMax)
+    .map(([, m]) => SIZE_ORDER[m.maxTaskSize]);
+  const leaveUpTo = Math.max(0, ...smaller);
+  const graceMs = claimGrace(fleet) * 60_000;
+  const waited = (t: Task): boolean => {
+    const since = t.created ? Date.parse(t.created) : Number.NaN;
+    return !Number.isFinite(since) || nowMs - since >= graceMs;
+  };
+  return all
     .filter((t) => t.status === 'todo' && t.dependsOn.every((d) => done.has(d)))
-    .sort((a, b) => a.priority - b.priority || a.id.localeCompare(b.id))[0];
+    .filter((t) => t.assignee === me || (isPoolTask(t) && !t.assignee))
+    .filter((t) => SIZE_ORDER[t.size] <= myMax)
+    .filter((t) => t.assignee === me || SIZE_ORDER[t.size] > leaveUpTo || waited(t))
+    .sort((a, b) => Number(b.assignee === me) - Number(a.assignee === me) || a.priority - b.priority || SIZE_ORDER[b.size] - SIZE_ORDER[a.size] || a.id.localeCompare(b.id))[0];
 }
 
 /** Files (relative to game/) named in a task's "## Design": what building it will touch. */
@@ -219,9 +261,10 @@ export function designedFiles(t: Task): string[] {
 const OPEN_STATUSES = new Set<TaskStatus>(['design', 'designing', 'todo', 'in-progress']);
 
 /**
- * Ids of the open tasks (design to in-progress) their machine can get to by itself: every
- * dependency is done, or is another such task in the same folder (a chain it builds in order).
- * A task waiting on another machine's unfinished work, or on a failed or unknown task, is blocked.
+ * Ids of the open tasks (design to in-progress) that will get built: every dependency is done, or
+ * is another such task in the same folder (in the pool, anyone builds the chain in order; in an
+ * older machine folder, that machine). A task waiting on a failed or unknown task, or on another
+ * machine's folder, is blocked.
  */
 export function unblockedTaskIds(all: readonly Task[]): Set<string> {
   const byId = new Map(all.map((t) => [t.id, t]));

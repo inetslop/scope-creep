@@ -1,7 +1,6 @@
 ---
 id: T0004
 title: "Lance: a piercing line augment"
-assignee: desktop
 size: M
 priority: 2
 status: todo

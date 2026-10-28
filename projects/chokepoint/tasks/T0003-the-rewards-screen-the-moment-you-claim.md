@@ -1,7 +1,6 @@
 ---
 id: T0003
 title: "The rewards screen: the moment you claim what a run earned"
-assignee: desktop
 size: L
 priority: 1
 status: todo

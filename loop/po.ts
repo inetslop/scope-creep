@@ -10,9 +10,8 @@ import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { loadState, saveState } from './state.ts';
 import { commitAndPush } from './sync.ts';
-import { formatTaskId, listTasks, maxTaskNumber, parseTask, taskFileName, unblockedTaskIds, writeTask, type Task, type TaskListing } from './tasks.ts';
+import { formatTaskId, listTasks, maxTaskNumber, parseTask, taskFileName, unblockedTaskIds, writeTask, type Task, type TaskListing, type TaskSize } from './tasks.ts';
 
-const folderOf = (t: Task): string => path.basename(path.dirname(t.file));
 const isArchived = (t: Task): boolean => path.dirname(t.file) === ARCHIVE_DIR;
 const isFinished = (t: Task): boolean => !isArchived(t) && (t.status === 'done' || t.status === 'failed');
 /** Waiting for a dev: still being designed, or designed and ready. */
@@ -21,10 +20,45 @@ const isQueued = (t: Task): boolean => t.status === 'design' || t.status === 'de
 const PO_EDITABLE = new Set<string>(['design', 'todo']);
 
 /**
+ * What the shared pool is short of. `have`: waiting tasks (design to todo) that will get built
+ * and that a running machine can take; `want`: the running dev machines' targetQueue added up.
+ * `small`: the same for each smaller task size some running machine is limited to, so the weak
+ * machines always have work they can take.
+ */
+export interface PoolNeeds {
+  have: number;
+  want: number;
+  small: { size: TaskSize; have: number; want: number; machines: string[] }[];
+}
+
+export function poolNeeds(fleet: FleetConfig, listing: TaskListing): PoolNeeds {
+  const unblocked = unblockedTaskIds(listing.tasks);
+  const devIds = devMachineIds(fleet);
+  const maxOf = (id: string): number => SIZE_ORDER[fleet.machines[id]!.maxTaskSize];
+  const biggest = Math.max(0, ...devIds.map(maxOf));
+  const waiting = listing.tasks.filter(
+    (t) => !isArchived(t) && isQueued(t) && unblocked.has(t.id) && (t.assignee ? devIds.includes(t.assignee) : SIZE_ORDER[t.size] <= biggest),
+  );
+  const want = devIds.reduce((sum, id) => sum + fleet.machines[id]!.targetQueue, 0);
+  const sizes = [...new Set(devIds.map((id) => fleet.machines[id]!.maxTaskSize))].filter((s) => SIZE_ORDER[s] < biggest);
+  const small = sizes.map((size) => {
+    const machines = devIds.filter((id) => fleet.machines[id]!.maxTaskSize === size);
+    return {
+      size,
+      machines,
+      want: machines.reduce((sum, id) => sum + fleet.machines[id]!.targetQueue, 0),
+      have: waiting.filter((t) => !t.assignee && SIZE_ORDER[t.size] <= SIZE_ORDER[size]).length,
+    };
+  });
+  return { have: waiting.length, want, small };
+}
+
+/**
  * Returns why the PO should plan now, or null if it shouldn't. Planning is driven by
- * backpressure: each dev machine has a targetQueue, and the PO only tops queues up to it,
- * so fast machines (that drain their queue sooner) trigger planning more often.
- * Pass a listing that includes the archive, so archived dependencies count as done.
+ * backpressure: the PO tops the shared pool up to what the running machines want (their
+ * targetQueue added up, and enough small tasks for the weak ones), so planning keeps pace with
+ * how fast the fleet builds. Pass a listing that includes the archive, so archived dependencies
+ * count as done.
  */
 export function poDue(fleet: FleetConfig, listing: TaskListing): string | null {
   const state = loadState();
@@ -33,10 +67,9 @@ export function poDue(fleet: FleetConfig, listing: TaskListing): string | null {
   if (!state.lastPoRunAt) return 'first cycle';
   if (minutes < fleet.loop.poMinGapMinutes) return null;
   if (minutes >= fleet.loop.poMaxGapMinutes) return 'scheduled review';
-  for (const id of devMachineIds(fleet)) {
-    const queued = queueSize(listing, id);
-    if (queued < fleet.machines[id]!.targetQueue) return `queue for ${id} is low (${queued}/${fleet.machines[id]!.targetQueue})`;
-  }
+  const needs = poolNeeds(fleet, listing);
+  if (needs.have < needs.want) return `the pool is low (${needs.have}/${needs.want})`;
+  for (const s of needs.small) if (s.have < s.want) return `few size-${s.size} tasks for ${s.machines.join(', ')} (${s.have}/${s.want})`;
   const finished = listing.tasks.filter(isFinished).length;
   if (finished > 0) return `${finished} finished task(s) to review`;
   if (listing.invalid.size > 0) return 'invalid task files';
@@ -46,31 +79,35 @@ export function poDue(fleet: FleetConfig, listing: TaskListing): string | null {
 function describeMachines(fleet: FleetConfig): string {
   return devMachineIds(fleet)
     .map((id) => [id, fleet.machines[id]!] as const)
-    .map(([id, m]) => `- **${id}**: ${m.label}, model ${m.model} (tier: ${m.tier}). Max task size **${m.maxTaskSize}**. Keep ${m.targetQueue} tasks queued. ${m.notes}`)
+    .map(([id, m]) => `- **${id}**: ${m.label}, model ${m.model} (tier: ${m.tier}). Takes tasks up to size **${m.maxTaskSize}**. ${m.notes}`)
     .join('\n');
 }
 
-function describeQueues(fleet: FleetConfig, listing: TaskListing): string {
+/** The pool for the PO: what it needs, then every open task with who builds it and what blocks it. */
+function describePool(fleet: FleetConfig, listing: TaskListing): string {
+  const needs = poolNeeds(fleet, listing);
   const unblocked = unblockedTaskIds(listing.tasks);
   const byId = new Map(listing.tasks.map((t) => [t.id, t]));
   const waitsOn = (t: Task): string =>
     t.dependsOn
       .filter((d) => byId.get(d)?.status !== 'done')
-      .map((d) => {
-        const dep = byId.get(d);
-        return dep ? `${d} (${folderOf(dep)}, ${dep.status})` : `${d} (missing)`;
-      })
+      .map((d) => `${d} (${byId.get(d)?.status ?? 'missing'})`)
       .join(', ');
-  return devMachineIds(fleet)
-    .map((id) => {
-      const open = listing.tasks.filter((t) => !isArchived(t) && folderOf(t) === id && (isQueued(t) || t.status === 'in-progress'));
-      const queued = queueSize(listing, id);
-      const blocked = open.filter((t) => isQueued(t) && !unblocked.has(t.id)).length;
-      const need = Math.max(0, fleet.machines[id]!.targetQueue - queued);
-      const lines = open.map((t) => `  - ${t.id} [${t.status}, size ${t.size}, priority ${t.priority}${unblocked.has(t.id) ? '' : `, blocked: waits on ${waitsOn(t)}`}] ${t.title}`);
-      return [`### ${id} — ${queued} queued${blocked ? `, ${blocked} blocked` : ''}, needs ${need} more`, ...(lines.length ? lines : ['  - (empty)'])].join('\n');
-    })
-    .join('\n\n');
+  const more = Math.max(0, needs.want - needs.have);
+  const smallLines = needs.small
+    .filter((s) => s.have < s.want)
+    .map((s) => `- at least ${s.want - s.have} of them size ${s.size} or smaller (for ${s.machines.join(', ')}, which take nothing bigger)`);
+  const header = [`The pool has ${needs.have} task(s) waiting that will get built; the running machines want ${needs.want}. Write **${more}** more.`, ...smallLines].join('\n');
+  const open = listing.tasks
+    .filter((t) => !isArchived(t) && (isQueued(t) || t.status === 'in-progress'))
+    .sort((a, b) => a.id.localeCompare(b.id));
+  const lines = open.map((t) => {
+    const who = t.status === 'in-progress' ? `, being built by ${t.assignee}` : t.assignee ? `, ${t.assignee}'s own` : '';
+    const epic = t.extra.epic ? `, epic ${t.extra.epic}` : '';
+    const blocked = unblocked.has(t.id) ? '' : `, blocked: waits on ${waitsOn(t)}`;
+    return `- ${t.id} [${t.status}, size ${t.size}, priority ${t.priority}${epic}${who}${blocked}] ${t.title}`;
+  });
+  return [header, '', ...(lines.length ? lines : ['- (the pool is empty)'])].join('\n');
 }
 
 function describeFinished(finished: Task[]): string {
@@ -89,8 +126,7 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
   const state = loadState();
   const cycle = state.poCycles + 1;
   step(`PO cycle ${cycle} (${reason})`);
-  const machineIds = Object.keys(fleet.machines);
-  const listing = listTasks(machineIds, true);
+  const listing = listTasks(true);
   const finished = listing.tasks.filter(isFinished);
   const first = maxTaskNumber(listing.tasks) + 1;
   const ids = Array.from({ length: 12 }, (_, i) => formatTaskId(first + i));
@@ -100,7 +136,7 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
     CYCLE: cycle,
     REASON: reason,
     MACHINES: describeMachines(fleet),
-    QUEUES: describeQueues(fleet, listing),
+    QUEUES: describePool(fleet, listing),
     FINISHED: describeFinished(finished),
     FEEDBACK: state.poFeedback.length ? state.poFeedback.map((f) => `- ${f}`).join('\n') : '(none)',
     INVALID: listing.invalid.size ? [...listing.invalid].map(([f, e]) => `- ${rel(f)}: ${e}`).join('\n') : '(none)',
@@ -123,7 +159,7 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
 
   const feedback: string[] = [];
   const reverted = await enforceWritable(git, 'po');
-  if (reverted.length) feedback.push(`You may only write in ${TASKS_REL}<machine>/ and ${PLANNING_REL}. Reverted: ${reverted.join(', ')}`);
+  if (reverted.length) feedback.push(`You may only write in ${TASKS_REL} and ${PLANNING_REL}. Reverted: ${reverted.join(', ')}`);
   const created = await validateTaskChanges(ctx, listing, first, feedback);
 
   // Record what got built (the PO's memory of the game, since it doesn't read code), then archive
@@ -142,7 +178,7 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
     archived++;
   }
   // Salvaged work is only for retries: drop it once its task is archived or deleted.
-  const open = new Set(listTasks(machineIds).tasks.map((t) => t.id));
+  const open = new Set(listTasks().tasks.map((t) => t.id));
   for (const f of fs.existsSync(SALVAGE_DIR) ? fs.readdirSync(SALVAGE_DIR) : []) {
     if (!open.has(path.basename(f, '.diff'))) fs.rmSync(path.join(SALVAGE_DIR, f), { force: true });
   }
@@ -156,17 +192,16 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
 
 /**
  * Makes everything the PO wrote under tasks/ well-formed:
- * - edits to tasks that are not `todo` are reverted (runner owns those)
- * - unparseable files are removed
- * - ids are made unique, files renamed to T0042-slug.md, assignee = folder
- * - tasks too big for a machine move to the most capable machine
+ * - edits to tasks that are not `design`/`todo` are reverted (runner owns those)
+ * - unparseable files are removed, and tasks bigger than any running machine takes
+ * - ids are made unique; new tasks go into the pool as tasks/T0042-slug.md with no assignee
  * Returns the number of new tasks.
  */
 async function validateTaskChanges(ctx: RunContext, before: TaskListing, firstId: number, feedback: string[]): Promise<number> {
   const { fleet, git } = ctx;
   const devIds = devMachineIds(fleet);
   const takenIds = new Set(before.tasks.map((t) => t.id));
-  const pending: { task: Task; abs: string; isNew: boolean; machine: string; path: string }[] = [];
+  const pending: { task: Task; abs: string; isNew: boolean; path: string }[] = [];
 
   // Pass 1: filter and normalize everything the PO touched.
   for (const change of await git.changedPaths()) {
@@ -202,27 +237,18 @@ async function validateTaskChanges(ctx: RunContext, before: TaskListing, firstId
       continue;
     }
 
-    const parts = change.path.slice(TASKS_REL.length).split('/');
-    let machine = parts.length === 2 && devIds.includes(parts[0]!) ? parts[0]! : task.assignee;
-    if (!devIds.includes(machine)) {
+    // Only a size some running machine takes; nobody is assigned: the pool is shared.
+    const capable = devIds.filter((id) => SIZE_ORDER[fleet.machines[id]!.maxTaskSize] >= SIZE_ORDER[task.size]);
+    if (capable.length === 0) {
       await git.revertPath(change);
-      feedback.push(`${change.path}: unknown machine "${machine}" (use one of ${devIds.join(', ')}). Removed.`);
+      feedback.push(`${change.path}: size ${task.size} is bigger than any running machine takes. Split it into smaller tasks.`);
       continue;
     }
-    const limit = fleet.machines[machine]!.maxTaskSize;
-    if (SIZE_ORDER[task.size] > SIZE_ORDER[limit]) {
-      const capable = devIds.filter((id) => SIZE_ORDER[fleet.machines[id]!.maxTaskSize] >= SIZE_ORDER[task.size]);
-      const target = capable.sort((a, b) => queueSize(before, a) - queueSize(before, b))[0];
-      feedback.push(`${task.id} is size ${task.size} but ${machine} only takes up to ${limit}; moved to ${target ?? '(nobody)'}. Split big work into smaller tasks for weak machines.`);
-      if (!target) {
-        await git.revertPath(change);
-        continue;
-      }
-      machine = target;
-    }
+    const inFolder = change.path.slice(TASKS_REL.length).includes('/');
+    if (!existedBefore && inFolder) feedback.push(`${change.path}: new tasks go straight into the pool (${TASKS_REL}<id>-<slug>.md), not into a machine folder. Moved.`);
     if (originalId) task.id = originalId; // existing tasks keep their id
     if (originalStatus) task.status = originalStatus; // and status: only the architect moves design -> todo
-    pending.push({ task, abs, isNew: !existedBefore, machine, path: change.path });
+    pending.push({ task, abs, isNew: !existedBefore, path: change.path });
   }
 
   // Pass 2: new tasks keep a fresh, unused id; only collisions/reused ids get renumbered.
@@ -241,28 +267,21 @@ async function validateTaskChanges(ctx: RunContext, before: TaskListing, firstId
     takenIds.add(id);
   }
 
-  for (const { task, abs, isNew, machine } of pending) {
-    task.assignee = machine;
+  for (const { task, abs, isNew } of pending) {
     if (isNew) {
-      // Every new task goes through the architect first (if the fleet has one).
+      // Every new task goes through the architect first (if the fleet has one), into the pool.
       task.status = hasArchitect(fleet) ? 'design' : 'todo';
       task.attempts = 0;
+      task.assignee = '';
       task.created = new Date().toISOString().slice(0, 19) + 'Z';
       task.claimedAt = task.finishedAt = task.commit = undefined;
     }
-    // New files get the canonical name; existing ones keep theirs unless they changed machine.
-    const inRightFolder = path.dirname(abs) === path.join(TASKS_DIR, machine);
-    const target = isNew || !inRightFolder ? path.join(TASKS_DIR, machine, taskFileName(task)) : abs;
+    // New files get the canonical name in the pool; existing ones stay where they are.
+    const target = isNew ? path.join(TASKS_DIR, taskFileName(task)) : abs;
     fs.mkdirSync(path.dirname(target), { recursive: true });
     if (target !== abs) fs.rmSync(abs, { force: true });
     task.file = target;
     writeTask(task);
   }
   return fresh.length;
-}
-
-/** Queued tasks the machine can get to by itself; blocked ones don't keep it busy. */
-function queueSize(listing: TaskListing, machine: string): number {
-  const unblocked = unblockedTaskIds(listing.tasks);
-  return listing.tasks.filter((t) => !isArchived(t) && folderOf(t) === machine && isQueued(t) && unblocked.has(t.id)).length;
 }

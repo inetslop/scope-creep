@@ -1,7 +1,6 @@
 ---
 id: T0008
 title: Rarity on the hand and the tower panel
-assignee: narcissus
 size: M
 priority: 2
 status: todo

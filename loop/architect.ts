@@ -7,7 +7,7 @@ import { GAME_DIR, REPO, rel } from './paths.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { updateTaskAndPush } from './sync.ts';
-import { appendSection, designedFiles, listTasks, readTask, type Task } from './tasks.ts';
+import { appendSection, designedFiles, isPoolTask, listTasks, readTask, type Task, type TaskSize } from './tasks.ts';
 
 /**
  * The architect stage: between the PO and the devs. For each task in `design` it reads
@@ -43,6 +43,16 @@ export function parseArchitectResult(text: string): ArchitectOutcome {
 const OPEN = new Set(['design', 'designing', 'todo', 'in-progress']);
 const folderOf = (t: Task): string => path.basename(path.dirname(t.file));
 const now = (): string => new Date().toISOString().slice(0, 19) + 'Z';
+
+/**
+ * The weakest active dev machine that can take a task of `size` (smallest maxTaskSize, then the
+ * one listed first): who a pool task's design must be detailed enough for.
+ */
+export function weakestFor(fleet: FleetConfig, size: TaskSize): string | undefined {
+  return Object.entries(fleet.machines)
+    .filter(([, m]) => !m.paused && m.roles.includes('dev') && SIZE_ORDER[m.maxTaskSize] >= SIZE_ORDER[size])
+    .sort(([, a], [, b]) => SIZE_ORDER[a.maxTaskSize] - SIZE_ORDER[b.maxTaskSize])[0]?.[0];
+}
 
 /** Minutes after which another architect may take over a `designing` claim. */
 export const staleClaimMinutes = (fleet: FleetConfig): number => fleet.loop.architectTimeoutMin + 30;
@@ -80,9 +90,10 @@ export function sizeFilter(fleet: FleetConfig, me: string, nowMs = Date.now()): 
 export function designCandidates(
   tasks: readonly Task[],
   me: string,
-  opts: { preferOwn: boolean; staleMinutes: number; nowMs?: number; mayDesign?: (t: Task) => boolean },
+  opts: { preferOwn: boolean; staleMinutes: number; nowMs?: number; mayDesign?: (t: Task) => boolean; isOwn?: (t: Task) => boolean },
 ): Task[] {
-  const own = (t: Task): number => (opts.preferOwn && folderOf(t) === me ? 0 : 1);
+  // "Own": tasks this machine could build next (its old folder, or pool tasks it can take).
+  const own = (t: Task): number => (opts.preferOwn && (opts.isOwn ? opts.isOwn(t) : folderOf(t) === me) ? 0 : 1);
   return tasks
     .filter((t) => t.status === 'design' || isStaleClaim(t, opts.staleMinutes, opts.nowMs))
     .filter((t) => opts.mayDesign?.(t) ?? true)
@@ -109,16 +120,18 @@ export async function runArchitectPass(ctx: RunContext, opts: ArchitectPassOptio
   let designed = 0;
   while (designed < opts.max) {
     // Re-read each time: claims and designs by other machines arrive with every sync.
-    const all = listTasks(Object.keys(ctx.fleet.machines)).tasks;
+    const all = listTasks().tasks;
+    const myMax = SIZE_ORDER[ctx.fleet.machines[me]?.maxTaskSize ?? 'S'];
+    const isOwn = (t: Task): boolean => t.assignee === me || (isPoolTask(t) && !t.assignee && SIZE_ORDER[t.size] <= myMax);
     let claimed: Task | undefined;
-    for (const candidate of designCandidates(all, me, { preferOwn: opts.preferOwn, staleMinutes, mayDesign: sizeFilter(ctx.fleet, me) })) {
+    for (const candidate of designCandidates(all, me, { preferOwn: opts.preferOwn, staleMinutes, mayDesign: sizeFilter(ctx.fleet, me), isOwn })) {
       if (await claimDesign(ctx, candidate, staleMinutes)) {
         claimed = readTask(path.join(REPO, rel(candidate.file)));
         break;
       }
     }
     if (!claimed) break;
-    await designTask(ctx, claimed, listTasks(Object.keys(ctx.fleet.machines)).tasks);
+    await designTask(ctx, claimed, listTasks().tasks);
     designed++;
   }
   return designed;
@@ -146,13 +159,14 @@ function claimDesign(ctx: RunContext, task: Task, staleMinutes: number): Promise
 async function designTask(ctx: RunContext, task: Task, all: Task[]): Promise<void> {
   const { fleet, git, local } = ctx;
   const me = local.machineId;
-  const assigneeId = folderOf(task);
+  // A pool task may go to any machine that takes its size: design it for the weakest of them.
+  const assigneeId = task.assignee || weakestFor(fleet, task.size) || 'any machine';
   const assignee = fleet.machines[assigneeId];
   step(`${task.id} "${task.title}": designing it for ${assigneeId}`);
 
   const others = all
     .filter((t) => t.id !== task.id && OPEN.has(t.status))
-    .map((t) => `- ${t.id} [${t.status}, ${folderOf(t)}] ${t.title}${touches(t)}`)
+    .map((t) => `- ${t.id} [${t.status}${t.assignee ? `, ${t.assignee}` : ''}] ${t.title}${touches(t)}`)
     .join('\n');
 
   let result = '';
@@ -223,9 +237,9 @@ async function designTask(ctx: RunContext, task: Task, all: Task[]): Promise<voi
 }
 
 /** On runner start: give back design claims this machine held when it stopped. */
-export async function releaseOwnDesignClaims(ctx: Pick<RunContext, 'git' | 'local'>, machineIds: readonly string[]): Promise<void> {
+export async function releaseOwnDesignClaims(ctx: Pick<RunContext, 'git' | 'local'>): Promise<void> {
   const me = ctx.local.machineId;
-  for (const t of listTasks(machineIds).tasks.filter((x) => x.status === 'designing' && x.extra.designer === me)) {
+  for (const t of listTasks().tasks.filter((x) => x.status === 'designing' && x.extra.designer === me)) {
     warn(`${t.id} was being designed when the runner stopped; releasing the claim`);
     await updateTaskAndPush(
       ctx.git,

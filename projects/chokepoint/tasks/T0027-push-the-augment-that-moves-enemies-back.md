@@ -1,7 +1,6 @@
 ---
 id: T0027
 title: "Push: the augment that moves enemies back along the road"
-assignee: asus
 size: L
 priority: 3
 status: todo

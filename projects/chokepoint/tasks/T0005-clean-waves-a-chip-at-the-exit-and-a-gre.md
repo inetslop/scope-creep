@@ -1,7 +1,6 @@
 ---
 id: T0005
 title: "Clean waves: a chip at the exit and a green line on the card"
-assignee: inet-racing
 size: M
 priority: 2
 status: todo

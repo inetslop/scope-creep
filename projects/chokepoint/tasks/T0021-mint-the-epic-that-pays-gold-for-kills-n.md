@@ -1,7 +1,6 @@
 ---
 id: T0021
 title: "Mint: the Epic that pays gold for kills near it"
-assignee: asus
 size: L
 priority: 3
 status: todo

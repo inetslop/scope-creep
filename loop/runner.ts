@@ -10,7 +10,6 @@
  *   76  model server unavailable: wait and restart
  */
 import fs from 'node:fs';
-import path from 'node:path';
 import { releaseOwnDesignClaims, runArchitectPass } from './architect.ts';
 import { loadFleet, loadLocalConfig } from './config.ts';
 import { runDevTask, type RunContext } from './dev.ts';
@@ -18,11 +17,11 @@ import { sleep } from './exec.ts';
 import { Git } from './git.ts';
 import { ensureLlama } from './llama.ts';
 import { error, info, warn } from './log.ts';
-import { configuredProject, PROJECT, REPO, STOP_FILE, TASKS_DIR, rel } from './paths.ts';
+import { configuredProject, PROJECT, REPO, STOP_FILE, rel } from './paths.ts';
 import { poDue, runPoCycle } from './po.ts';
 import { EXIT_NO_MODEL, EXIT_RESTART, needsRestart } from './restart.ts';
 import { syncMain, updateTaskAndPush } from './sync.ts';
-import { appendSection, listTasks, pickNextTask } from './tasks.ts';
+import { appendSection, isPoolTask, listTasks, pickTaskFor } from './tasks.ts';
 
 /** After a crash: put our own in-progress tasks back in the queue and clean the checkout. */
 async function recover(git: Git, machineId: string): Promise<void> {
@@ -32,7 +31,7 @@ async function recover(git: Git, machineId: string): Promise<void> {
     await git.raw(['stash', 'push', '--include-untracked', '-m', `runner-recovery ${new Date().toISOString()}`]);
   }
   await syncMain(git);
-  const mine = listTasks([machineId]).tasks.filter((t) => t.status === 'in-progress');
+  const mine = listTasks().tasks.filter((t) => t.status === 'in-progress' && t.assignee === machineId);
   for (const t of mine) {
     warn(`${t.id} was in progress when the runner stopped; putting it back in the queue`);
     await updateTaskAndPush(
@@ -41,6 +40,8 @@ async function recover(git: Git, machineId: string): Promise<void> {
       (task) => {
         if (task.status !== 'in-progress') return false;
         task.status = 'todo';
+        // Back into the pool, for any machine to take.
+        if (isPoolTask(task)) task.assignee = '';
         appendSection(task, `Attempt ${task.attempts} interrupted (${machineId})`, 'The runner stopped mid-task (crash, restart or reboot). Requeued.');
         return true;
       },
@@ -58,7 +59,7 @@ async function main(): Promise<number> {
   // sync (recovery, task pushes that reset to origin/main), not just the one at the top of the loop.
   const startHead = await git.head();
   await recover(git, local.machineId);
-  await releaseOwnDesignClaims({ git, local }, Object.keys(loadFleet().machines));
+  await releaseOwnDesignClaims({ git, local });
   let pausedLogged = false;
 
   for (;;) {
@@ -94,10 +95,9 @@ async function main(): Promise<number> {
 
     const ctx: RunContext = { local, fleet, git };
     let worked = false;
-    const allIds = Object.keys(fleet.machines);
 
     if (machine.roles.includes('po')) {
-      const reason = poDue(fleet, listTasks(allIds, true));
+      const reason = poDue(fleet, listTasks(true));
       if (reason) {
         await runPoCycle(ctx, reason);
         worked = true;
@@ -115,12 +115,8 @@ async function main(): Promise<number> {
 
     // An idle dev that just planned or designed loops straight back (no sleep) to look for more.
     if (dev && !(idleDev && worked)) {
-      const listing = listTasks(allIds, true);
-      const mineDir = path.join(TASKS_DIR, local.machineId);
-      const task = pickNextTask(
-        listing.tasks.filter((t) => path.dirname(t.file) === mineDir),
-        listing.tasks,
-      );
+      // From the shared pool: the best task this machine can take (see tasks.ts pickTaskFor).
+      const task = pickTaskFor(local.machineId, fleet, listTasks(true).tasks);
       if (task) {
         await runDevTask(ctx, task);
         worked = true;

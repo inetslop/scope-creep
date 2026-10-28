@@ -1,7 +1,6 @@
 ---
 id: T0018
 title: The menu remembers your last four runs
-assignee: narcissus
 size: M
 priority: 2
 status: todo

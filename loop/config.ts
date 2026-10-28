@@ -112,6 +112,11 @@ export interface FleetConfig {
      * before designing it itself (so small tasks never get stuck behind a busy small machine). Default 20.
      */
     designGraceMinutes?: number;
+    /**
+     * How long a bigger machine leaves a pool task that a smaller machine could also build to the
+     * smaller ones, before claiming it itself (so the weak machines always have work). Default: designGraceMinutes.
+     */
+    claimGraceMinutes?: number;
     smokeSeconds: number;
     /** Reasoning effort per role (see Effort). */
     effort: Record<Role, Effort>;

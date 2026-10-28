@@ -10,7 +10,7 @@ import { autoResolvable, autoResolveAdditions } from './merge.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { updateTaskAndPush } from './sync.ts';
-import { appendSection, readTask, writeTask, type Task } from './tasks.ts';
+import { appendSection, isPoolTask, readTask, writeTask, type Task } from './tasks.ts';
 
 export interface RunContext {
   local: LocalConfig;
@@ -41,8 +41,10 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
     ctx.git,
     taskRel,
     (t) => {
-      if (t.status !== 'todo') return false;
+      // Someone else claimed it first (the pool is shared): leave it to them.
+      if (t.status !== 'todo' || (t.assignee && t.assignee !== machine)) return false;
       t.status = 'in-progress';
+      t.assignee = machine;
       t.attempts += 1;
       t.claimedAt = now();
       t.finishedAt = undefined;
@@ -360,6 +362,8 @@ async function fail(ctx: RunContext, task: Task, reason: string, output: string,
     rel(task.file),
     (t) => {
       t.status = t.attempts >= max ? 'failed' : 'todo';
+      // A pool task goes back for any machine to retry (the attempt above records who tried).
+      if (t.status === 'todo' && isPoolTask(t)) t.assignee = '';
       t.finishedAt = now();
       appendSection(
         t,

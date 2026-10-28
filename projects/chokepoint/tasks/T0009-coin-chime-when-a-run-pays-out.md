@@ -1,7 +1,6 @@
 ---
 id: T0009
 title: Coin chime when a run pays out
-assignee: yoga
 size: S
 priority: 3
 status: todo

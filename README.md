@@ -25,7 +25,7 @@ An abstract, Bauhaus-style twin-stick roguelite for desktop and mobile browsers,
 | Path | Dev agents | Architect | PO agent | Runner | Humans |
 | --- | --- | --- | --- | --- | --- |
 | `game/` (except `game/CLAUDE.md`) | **write** | read | no access (gets a generated inventory) | commits it | ✔ |
-| `tasks/<machine>/` | no access | no access (gets its task in the prompt) | **write** new / `design` / `todo` tasks | status, designs, results | ✔ |
+| `tasks/` (the shared pool) | no access | no access (gets its task in the prompt) | **write** new / `design` / `todo` tasks | claims, status, designs, results | ✔ |
 | `planning/` | no access | no access | **write** | — | ✔ |
 | `loop/`, `agents/`, `setup/`, `site/`, `.github/`, root files | no access | no access | no access | — | ✔ |
 
@@ -85,16 +85,16 @@ Machines aren't hard-coded: choose **a new machine** in either setup. It detects
 | Command (repo root) | |
 | --- | --- |
 | `npm run agent` | start the loop on this machine (supervisor + runner) |
-| `npm run status` | queues per machine (✎ waiting for design, ✍ being designed, · ready, ▶ in progress, with the files each ▶ task touches), recent commits, model server health |
+| `npm run status` | what each machine is doing, the shared pool (✎ waiting for design, ✍ being designed, · ready, ▶ in progress, with the files each ▶ task touches), recent commits, model server health |
 | `npm run doctor` | health check (`-- --gate` also runs the merge gate) |
 | `New-Item .agent\STOP` | stop after the current task |
-| `"paused": true` in `agents/machines.json` | take a machine out of the loop while it's down: its runner idles (no model server, no work) and nobody plans or assigns tasks for it. Move its open tasks to another machine's `tasks/<machine>/` folder (an `in-progress` one back to `todo`) |
+| `"paused": true` in `agents/machines.json` | take a machine out of the loop while it's down: its runner idles (no model server, no work), the PO stops planning for it, and the other machines take the pool's tasks. A task it had `in-progress` stays claimed until its runner restarts (and requeues it): set it back to `todo` by hand if the machine won't come back soon |
 | `"project": "<id>"` in `loop` of `agents/machines.json` | switch the whole fleet to another game (see *Projects*) |
 | `cd game; npm run dev` | play the latest local code (`cd projects/<id>/game` for another project) |
 
 ## Projects
 
-The fleet builds one game at a time: `loop.project` in `agents/machines.json` (default `scope-creep`). Each project has the same three folders: `game/` (the code), `planning/` (the PO's docs) and `tasks/` (the queues and archive). Scope Creep's are at the repo root; every other project's are in `projects/<id>/`. The loop's per-game parts live outside them, where agents can't change them: the smoke test's play and checks in `loop/smoke/games/<id>.ts`, and the agents' prompts in `agents/prompts/<id>/` (any prompt a project doesn't have, like `fix.md`, comes from `agents/prompts/`). Agents can't see the other projects. Runner state is per project (`.agent/state-<id>.json`), so a new project starts with a fresh PO cycle.
+The fleet builds one game at a time: `loop.project` in `agents/machines.json` (default `scope-creep`). Each project has the same three folders: `game/` (the code), `planning/` (the PO's docs) and `tasks/` (the shared task pool and archive). Scope Creep's are at the repo root; every other project's are in `projects/<id>/`. The loop's per-game parts live outside them, where agents can't change them: the smoke test's play and checks in `loop/smoke/games/<id>.ts`, and the agents' prompts in `agents/prompts/<id>/` (any prompt a project doesn't have, like `fix.md`, comes from `agents/prompts/`). Agents can't see the other projects. Runner state is per project (`.agent/state-<id>.json`), so a new project starts with a fresh PO cycle.
 
 **Switching** is one push that changes `loop.project`. Each runner picks it up at its next sync, after it has pushed the task it is on, and restarts on the new project. The old project's open tasks stay where they are, parked, until the fleet switches back. To start without leftover work, pause every machine first, wait until nothing is ▶ in `npm run status`, then unpause them in the same push that switches.
 
@@ -114,24 +114,24 @@ Each machine runs `loop/start-agent.ps1`, a supervisor that keeps `loop/runner.t
 4. **Architect pass**: a read-only agent in `game/` reads the code and answers with a design — files to create/edit, exact interfaces, steps, pitfalls, tests, and dependencies on other open tasks. The runner appends it to the task as `## Design`, adds the dependencies and moves the task to `todo`. If the task can't be built as written, the architect rejects it and it goes back to the PO as `failed` with the reason.
    - **Who designs** (`architectMode` / `devMode` / `maxDesignSize` in `agents/machines.json`): the desktop is the main architect and, like planning, does it full time (`devMode: "idle"`): every iteration it plans if the PO is due, then designs every waiting task (best priority first, up to 4 before re-checking the PO), and only builds a task of its own when there is nothing to plan or design. Machines with `architectMode: "idle"` build first and design one task (their own first) only when they have nothing ready to build. `maxDesignSize` caps what an architect designs: the yoga designs only `S` tasks, and does it first (`devMode: "idle"`, like the desktop): it builds only when no small task is waiting for a design. A bigger architect leaves tasks a smaller one covers to it for `loop.designGraceMinutes` (20) before taking them, so the desktop spends its time on the big work while small tasks don't wait on it.
    - **Claims**: before designing, an architect pushes `status: designing` + `designer: <machine>`, so two architects never design the same task. A runner releases its own claims when it restarts, and a claim older than the architect timeout + 30 min is taken over by anyone (the claimer probably died).
-5. **Dev task** (if this machine has a `todo` task in `tasks/<machine>/` whose dependencies are done):
-   - claim it (status `in-progress`, pushed so everyone sees it);
+5. **Dev task**: tasks wait in one shared pool, `tasks/<id>-<slug>.md`, and every machine claims what it can take (`pickTaskFor` in `loop/tasks.ts`): a `todo` task whose dependencies are done and whose size is within the machine's `maxTaskSize`; best priority first, then the biggest size it can take (big machines on big work), then the lowest id. A bigger machine leaves a task that a smaller running machine could also build to it for `loop.claimGraceMinutes` (default: `designGraceMinutes`, 20), so the weak machines always have work. No machine waits on another's queue, and one that is down simply takes nothing. (Older tasks may still sit in `tasks/<machine>/` folders; only that machine takes those, first.)
+   - claim it (status `in-progress` + `assignee: <machine>`, pushed so everyone sees it; if someone else claimed it first, the push finds it taken and the machine picks again);
    - run the dev agent in `game/` with the task (including the architect's design) as its prompt;
    - revert anything outside `game/`;
    - **gate**: `npm run check` (typecheck, lint, unit tests) + **browser smoke test** (builds, then plays the game for ~24 s as a desktop player and as a phone with two-thumb touch; fails on any error, stalled frame loop, broken invariant, or if nothing gets shot); up to 2 fix rounds where the agent gets the failure output back;
    - **self-review** in a fresh session on the same machine (fixes kept only if the gate still passes);
    - rebase onto the latest main (conflict markers include the common ancestor), push. Spots where both sides only added lines are resolved by keeping both (`loop/merge.ts`); an agent resolves the rest, given the task and the messages of the commits on main that caused them; the gate re-runs. If the work still can't be merged, the runner saves its diff to `tasks/salvage/<id>.diff` and the next attempt re-applies it instead of starting over (the file goes when the task is archived);
-   - the runner writes the result (summary, diff stat, review verdict) or the failure reason into the task file. After 3 failed attempts a task is marked `failed`, and the PO sees why on its next cycle.
+   - the runner writes the result (summary, diff stat, review verdict) or the failure reason into the task file. A failed attempt puts the task back in the pool for any machine to retry (the attempt's section says who tried); after 3 failed attempts it is marked `failed`, and the PO sees why on its next cycle.
 
 ### Pacing: how much the PO plans
 
-The PO doesn't generate tasks continuously. It works by backpressure: every dev machine has a `targetQueue` in `agents/machines.json` (asus 2, desktop 2, yoga 2), counting its `design` + `todo` tasks that it can get to by itself. A task that waits on another machine's unfinished task (or on a failed one) is blocked and doesn't count, so a machine whose queue is all blocked gets new work instead of idling. A chain of dependencies on the same machine still counts in full. The PO runs when:
+The PO doesn't generate tasks continuously. It works by backpressure on the shared pool (`poolNeeds` in `loop/po.ts`): the running dev machines' `targetQueue`s in `agents/machines.json` add up to what the pool wants, and the waiting tasks (`design` to `todo`) that will get built are what it has. A chain of dependencies in the pool counts in full (anyone builds it in order); a task waiting on a failed or missing one doesn't. On top, every smaller size some running machine is limited to (the yoga takes only `S`) needs its own share, so the weak machines always have something they can take. The PO runs when:
 
-- some machine's queue is below its target — and it writes exactly enough tasks to refill it;
+- the pool, or its share of small tasks, is below what the machines want — and it writes exactly enough tasks to refill it;
 - tasks finished (done, failed or rejected) and need reviewing;
 - 90 minutes passed (`poMaxGapMinutes`) — a scheduled review of the roadmap and ideas, even if queues are full;
 
-…but never more often than every 5 minutes (`poMinGapMinutes`). A machine that finishes tasks faster drains its queue faster and so gets refilled more often; a slow machine's queue just stays full. Queues are short on purpose so plans stay fresh. To give a machine more buffer, raise its `targetQueue`.
+…but never more often than every 5 minutes (`poMinGapMinutes`). Fast machines drain the pool faster, so it gets refilled more often; the pool is short on purpose so plans stay fresh. To give the fleet more buffer, raise the machines' `targetQueue`.
 
 ### Agents and the model
 
@@ -153,14 +153,14 @@ loop/            runner, supervisor, smoke test, doctor, status
 agents/          machines.json (fleet + loop tuning) and prompt templates
 setup/           setup.ps1
 site/            the public build log page (generated at deploy time, humans only)
-tasks/           <machine>/ queues, archive/, salvage/ (unmerged work kept for a retry) — PO + runner only
+tasks/           the shared pool (<id>-<slug>.md), archive/, salvage/ (unmerged work kept for a retry) — PO + runner only
 planning/        VISION, ROADMAP, IDEAS, CHANGELOG — PO-owned (the runner appends to CHANGELOG)
 .github/         Pages deployment
 ```
 
 ## Tuning
 
-- `agents/machines.json` — per-machine task size limits, queue targets and notes the PO reads; turn limits and timeouts per task size; loop timings. Re-read every cycle, no restart needed.
+- `agents/machines.json` — per-machine task size limits, pool targets and notes the PO reads; turn limits and timeouts per task size; loop timings. Re-read every cycle, no restart needed.
 - `agents/prompts/*.md` — what each agent is told. Re-read every run.
 - `.agent/local.json` (per machine, from setup) — model path, model id, `ctxSize` (`0` = auto), llama-server args. Restart the model server after editing it: stop the runner, end `llama-server.exe`, start `npm run agent`.
 
