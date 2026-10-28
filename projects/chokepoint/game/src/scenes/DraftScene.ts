@@ -117,7 +117,12 @@ export class DraftScene extends Phaser.Scene {
           yoyo: true,
           repeat: 1,
           onYoyo: () => { back.setVisible(false); button.content.setVisible(true); frame?.setVisible(true); getSfx(this)?.tierChime(copy.tier); },
-          onComplete: () => { button.container.setScale(1); frame?.setScale(1); flipped[i] = true; },
+          onComplete: () => {
+            button.container.setScale(1);
+            frame?.setScale(1);
+            flipped[i] = true;
+            if (copy.tier === 'epic') { const p = cardSlot(i, size.width, size.height); epicShimmer(this, p.x, p.y); }
+          },
         });
         flipTweens.push(flip);
         return { button, frame };
@@ -204,4 +209,23 @@ function drawPlusGlyph(g: Phaser.GameObjects.Graphics, x: number, y: number): vo
   g.fillStyle(PALETTE.ink, 0.7);
   g.fillRoundedRect(x - 7, y - 1.75, 14, 3.5, 1.75);
   g.fillRoundedRect(x - 1.75, y - 7, 3.5, 14, 1.75);
+}
+
+/**
+ * The Epic card's one-shot shimmer: as its flip lands, a flat white band (the card's own color)
+ * sweeps the card from its left edge to its right edge in 150 ms. Invisible on the white card,
+ * so it reads as the purple frame flashing where the band crosses.
+ */
+function epicShimmer(scene: Phaser.Scene, x: number, y: number): void {
+  const band = scene.add.graphics();
+  band.fillStyle(PALETTE.card, 0.05);
+  band.fillRect(-36, -CARD_H / 2, 24, CARD_H);
+  band.fillRect(12, -CARD_H / 2, 24, CARD_H);
+  band.fillStyle(PALETTE.card, 0.18);
+  band.fillRect(-24, -CARD_H / 2, 24, CARD_H);
+  band.fillRect(0, -CARD_H / 2, 24, CARD_H);
+  band.fillStyle(PALETTE.card, 0.45);
+  band.fillRect(-12, -CARD_H / 2, 24, CARD_H);
+  band.setPosition(x - CARD_W / 2 + 36, y);
+  scene.tweens.add({ targets: band, x: x + CARD_W / 2 - 36, duration: 150, ease: 'Linear.easeNone', onComplete: () => band.destroy() });
 }

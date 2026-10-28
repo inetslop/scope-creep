@@ -4,11 +4,12 @@ title: "Epic frame shimmer: the rarest card flashes as it lands"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T10:59:21Z
 claimed_at: 2026-10-28T11:13:30Z
+finished_at: 2026-10-28T11:32:41Z
 epic: E4
 ---
 
@@ -80,3 +81,15 @@ The five `fillRect`s (width 24, centered at dx −36, 12, −24, 0, −12) form 
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The draft's rarest moment now gets a flash: when an Epic card's reveal flip lands in `DraftScene.ts`, a one-shot ~150 ms flat white band (the card's own `PALETTE.card` color, soft alpha edges — no glow, gradient, outline or sound) sweeps the card from its left edge to its right edge, reading as the purple frame flashing where the band crosses. I added the new module-level `epicShimmer` function and a one-line `copy.tier === 'epic'` condition in the flip tween's `onComplete` (the moment the flip lands face-up); Common and Rare land exactly as before, the band is destroyed the instant it ends so the card looks identical afterward, and the reroll's re-flip shimmers an Epic once more. Works at 412x915 and 1280x720, with no change to flip timing, tier chime, hand/tower panel or other scenes; typecheck, lint, unit tests and both desktop/mobile smoke tests pass.
+
+- Self-review: APPROVE
+- Time: 19.2 min
+
+```
+projects/chokepoint/game/src/scenes/DraftScene.ts | 26 ++++++++++++++++++++++-
+ 1 file changed, 25 insertions(+), 1 deletion(-)
+```
