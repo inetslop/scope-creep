@@ -3,11 +3,13 @@ id: T0058
 title: "Push windup: the ring that fills as the next gust charges"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0027]
 attempts: 0
 created: 2026-10-28T13:29:40Z
+claimed_at: 2026-10-28T14:02:41Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
