@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ENEMIES } from '../../src/content/enemies';
 import { Rng } from '../../src/core/rng';
-import { dashCount, planWave, rampCount, waveBudget, waveHpMul } from '../../src/core/waves';
+import { dashCount, planWave, rampCount, waveBudget, waveCounts, waveHpMul } from '../../src/core/waves';
 
 describe('planWave', () => {
   it('spends the budget on unlocked enemies only', () => {
@@ -76,5 +76,21 @@ describe('planWave', () => {
       expect(waveHpMul(wave)).toBeGreaterThan(waveHpMul(wave - 1));
     }
     expect(waveHpMul(1)).toBe(1);
+  });
+});
+
+describe('waveCounts', () => {
+  it('lists each type the wave sends, once, in first-arrival order', () => {
+    for (const seed of [1, 7, 42]) {
+      for (let wave = 1; wave <= 20; wave++) {
+        const plan = planWave(wave, new Rng(seed * 100 + wave), ENEMIES);
+        const counts = waveCounts(plan);
+        expect(counts.reduce((n, c) => n + c.count, 0)).toBe(plan.spawns.length);
+        const firstSeen: string[] = [];
+        for (const s of plan.spawns) if (!firstSeen.includes(s.enemy)) firstSeen.push(s.enemy);
+        expect(counts.map((c) => c.id)).toEqual(firstSeen);
+        for (const c of counts) expect(c.count).toBeGreaterThan(0);
+      }
+    }
   });
 });

@@ -4,11 +4,12 @@ title: "Wave preview: the next wave shown during the build phase"
 assignee: narcissus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 3
 created: 2026-10-28T02:08:37Z
 claimed_at: 2026-10-28T13:11:27Z
+finished_at: 2026-10-28T15:02:34Z
 ---
 
 ## Goal
@@ -227,3 +228,22 @@ The runner stopped mid-task (crash, restart or reboot). Requeued.
 ## Attempt 2 interrupted (narcissus)
 
 The runner stopped mid-task (crash, restart or reboot). Requeued.
+
+## Result (attempt 3, narcissus)
+
+Added a build-phase "next wave" preview card (src/ui/hud/NextWavePreview.ts) that pops in above the countdown showing each incoming enemy's board token and count ("×N"), driven by a new pure `waveCounts()` in core/waves.ts. WaveSystem now plans the next wave once at build start (`planNext()`, called from RunFlow.finishDraft) and consumes that stored plan in `start()`, so the preview and the real wave are identical with no double RNG use. Registered one line in HudScene, one invariant (`waves.next`) in runChecks, and a unit test for `waveCounts`; no enemy types are hardcoded, so future enemies appear automatically. `npm run check` and `npm run smoke` (desktop + phone) both pass.
+
+- Self-review: APPROVE
+- Time: 111.1 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/waves.ts         |   7 ++
+ projects/chokepoint/game/src/debug/runChecks.ts    |   1 +
+ projects/chokepoint/game/src/scenes/HudScene.ts    |   2 +
+ projects/chokepoint/game/src/systems/RunFlow.ts    |   1 +
+ projects/chokepoint/game/src/systems/WaveSystem.ts |  16 +++-
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  | 105 +++++++++++++++++++++
+ projects/chokepoint/game/tests/core/waves.test.ts  |  18 +++-
+ 7 files changed, 147 insertions(+), 3 deletions(-)
+```

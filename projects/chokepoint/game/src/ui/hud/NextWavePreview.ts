@@ -1,0 +1,105 @@
+import type Phaser from 'phaser';
+import { CELL, HUD } from '../../config';
+import { getEnemy } from '../../content/enemies';
+import { PALETTE } from '../../content/palette';
+import { waveCounts, type WavePlan } from '../../core/waves';
+import { artScale, enemyTexture } from '../../art/textures';
+import type { GameScene } from '../../scenes/GameScene';
+import { makeCard } from '../card';
+import { textStyle } from '../text';
+import { EDGE, isNarrow, NEXT_SIZE, type HudPart } from './hud';
+
+const H = 44;
+const PAD = 16;
+const GROUP_GAP = 8;
+
+/**
+ * Above the countdown while the build phase runs: what the next wave sends, straight from its
+ * plan (game.waves.nextPlan), so a new enemy shows up here with no change to this file. Each type
+ * is its on-board token (~16 px) and its count. Pops in at the build phase's start, gone by the
+ * wave's.
+ */
+export class NextWavePreview implements HudPart {
+  private readonly scene: Phaser.Scene;
+  private box: Phaser.GameObjects.Container | undefined;
+  private cardW = 0;
+  private size = { width: 0, height: 0 };
+  private planNumber = -1;
+
+  constructor(scene: Phaser.Scene) {
+    this.scene = scene;
+  }
+
+  layout(width: number, height: number): void {
+    this.size = { width, height };
+    if (this.box) this.place();
+  }
+
+  update(game: GameScene): void {
+    // On a narrow screen the tower panel grows up into this corner while it's open, so the card waits out of the way.
+    const hidden = isNarrow(this.size.width) && game.building.selectedTower !== undefined;
+    const plan = !hidden && game.run.phase === 'build' ? game.waves.nextPlan : undefined;
+    if (!plan) {
+      if (this.box) {
+        this.scene.tweens.killTweensOf(this.box);
+        this.box.setVisible(false);
+      }
+      return;
+    }
+    if (this.planNumber !== plan.number) {
+      this.planNumber = plan.number;
+      if (this.box) {
+        this.scene.tweens.killTweensOf(this.box);
+        this.box.destroy();
+      }
+      this.box = this.build(plan);
+      this.place();
+      this.box.setScale(0.4); // pop in like a new tower does
+      this.scene.tweens.add({ targets: this.box, scale: 1, duration: 200, ease: 'Back.easeOut' });
+    } else if (this.box && !this.box.visible) {
+      // The panel closed and the same wave is still coming: back to its corner.
+      this.scene.tweens.killTweensOf(this.box);
+      this.box.setScale(1); // a killed pop-in may have left it smaller
+      this.box.setVisible(true);
+    }
+  }
+
+  /** Above the countdown: above the words on narrow screens, above the button's ring on wide. */
+  private place(): void {
+    const box = this.box;
+    if (!box) return;
+    const { width, height } = this.size;
+    const bottom = height - HUD.bottom / 2;
+    const x = Math.min(width - EDGE - NEXT_SIZE / 2 - 4, width - EDGE - this.cardW / 2);
+    const above = isNarrow(width) ? bottom - NEXT_SIZE / 2 - 22 - 30 : bottom - (NEXT_SIZE / 2 + 7) - 10;
+    box.setPosition(x, above - H / 2);
+  }
+
+  private build(plan: WavePlan): Phaser.GameObjects.Container {
+    const scene = this.scene;
+    const counts = waveCounts(plan);
+    const pieces: (Phaser.GameObjects.Image | Phaser.GameObjects.Text)[] = [];
+    let cursor = 0;
+    counts.forEach((c, i) => {
+      if (i > 0) {
+        const dot = scene.add.text(0, 0, '·', textStyle(14, PALETTE.faint, { fontStyle: 'bold' })).setOrigin(0.5);
+        dot.setPosition(cursor + GROUP_GAP + dot.width / 2, 0);
+        pieces.push(dot);
+        cursor += GROUP_GAP * 2 + dot.width;
+      }
+      const icon = artScale(scene.add.image(0, 0, enemyTexture(c.id)), 8 / (getEnemy(c.id).look.size * CELL));
+      icon.setPosition(cursor + 8, 0);
+      pieces.push(icon);
+      cursor += 16;
+      const count = scene.add.text(0, 0, `×${c.count}`, textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
+      count.setPosition(cursor + 5, 0);
+      pieces.push(count);
+      cursor += 5 + count.width;
+    });
+    this.cardW = Math.ceil(cursor) + PAD * 2;
+    const left = -this.cardW / 2 + PAD;
+    for (const p of pieces) p.x += left;
+    pieces.unshift(makeCard(scene, 0, 0, this.cardW, H, H / 2)); // card under the row
+    return scene.add.container(0, 0, pieces);
+  }
+}

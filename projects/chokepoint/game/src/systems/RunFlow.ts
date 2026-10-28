@@ -120,6 +120,7 @@ export class RunFlow {
     const seconds = this.run.wave === 0 ? BUILD_SEC.first : BUILD_SEC.between;
     this.buildTotalSec = seconds;
     this.run.startBuild(seconds);
+    this.s.waves.planNext();
     this.scene.scene.resume();
   }
 

@@ -11,16 +11,28 @@ export class WaveSystem {
   private plan: WavePlan | undefined;
   private next = 0;
   private timer = 0;
+  private planned: WavePlan | undefined;
 
   constructor(run: RunState, enemies: EnemySystem) {
     this.run = run;
     this.enemies = enemies;
   }
 
-  /** Plans and starts the run's next wave. */
+  /** The wave the build phase leads to (the HUD's preview reads it; it is planned once at build start). */
+  get nextPlan(): WavePlan | undefined {
+    return this.planned;
+  }
+
+  /** Plans the run's next wave; RunFlow calls it when the build phase starts. */
+  planNext(): void {
+    this.planned = planWave(this.run.wave + 1, this.run.rng, ENEMIES);
+  }
+
+  /** Starts the run's next wave, planned at the build phase's start. */
   start(): void {
     this.run.startWave();
-    this.plan = planWave(this.run.wave, this.run.rng, ENEMIES);
+    this.plan = this.planned ?? planWave(this.run.wave, this.run.rng, ENEMIES);
+    this.planned = undefined;
     this.next = 0;
     this.timer = 0;
     hook.stats.wavesStarted += 1;

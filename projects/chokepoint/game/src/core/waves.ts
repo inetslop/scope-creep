@@ -93,3 +93,10 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
     hpMul: waveHpMul(wave),
   };
 }
+
+/** What a wave sends: each enemy type it sends, and how many (no zeros), in first-arrival order. */
+export function waveCounts(plan: WavePlan): { id: string; count: number }[] {
+  const counts = new Map<string, number>();
+  for (const s of plan.spawns) counts.set(s.enemy, (counts.get(s.enemy) ?? 0) + 1);
+  return [...counts].map(([id, count]) => ({ id, count }));
+}

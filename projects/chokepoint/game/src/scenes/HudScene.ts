@@ -6,6 +6,7 @@ import { uiCamera, viewSize } from '../ui/display';
 import { HandBar } from '../ui/hud/HandBar';
 import type { HudPart } from '../ui/hud/hud';
 import { NextWaveButton } from '../ui/hud/NextWaveButton';
+import { NextWavePreview } from '../ui/hud/NextWavePreview';
 import { PauseButton } from '../ui/hud/PauseButton';
 import { StatsCard } from '../ui/hud/StatsCard';
 import { TowerPanel } from '../ui/hud/TowerPanel';
@@ -36,6 +37,7 @@ export class HudScene extends Phaser.Scene {
       new PauseButton(this, game),
       new ZoomButtons(this, game),
       new NextWaveButton(this, game),
+      new NextWavePreview(this),
       new HandBar(this),
       new TowerPanel(this),
     ];
