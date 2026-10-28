@@ -3,11 +3,13 @@ id: T0044
 title: "Owned dot: the draft card marks the augment you already have"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T11:47:03Z
+claimed_at: 2026-10-28T11:47:54Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
