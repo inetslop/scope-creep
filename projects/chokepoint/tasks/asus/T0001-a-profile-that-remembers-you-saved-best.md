@@ -4,11 +4,13 @@ title: "A profile that remembers you: saved best wave, run stats, coins"
 assignee: asus
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T01:07:09Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
