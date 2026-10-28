@@ -131,7 +131,7 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
     const work = await ctx.git.ok(['diff', base, 'HEAD', '--', GAME_REL]);
     const workFiles = (await ctx.git.ok(['diff', '--name-only', base, 'HEAD', '--', GAME_REL])).split(/\r?\n/).filter(Boolean);
 
-    const outcome = await integrate(ctx, task, notes);
+    const outcome = await integrate(ctx, task, notes, machine);
     if (outcome !== 'pushed') {
       const upstream = await upstreamLog(ctx.git, base, workFiles);
       const header = `${task.id} attempt ${task.attempts} (${machine}) passed the checks on ${base.slice(0, 7)} but could not be merged into main (${outcome}).`;
@@ -204,8 +204,9 @@ async function selfReview(ctx: RunContext, task: Task, base: string, notes: stri
 }
 
 /** Rebases onto the latest main (agent resolves game conflicts), re-runs the gate if needed, pushes. */
-async function integrate(ctx: RunContext, task: Task, notes: string[]): Promise<'pushed' | 'conflict' | 'broken-after-rebase' | 'push-failed'> {
+async function integrate(ctx: RunContext, task: Task, notes: string[], machine: string): Promise<'pushed' | 'conflict' | 'broken-after-rebase' | 'push-failed'> {
   const git = ctx.git;
+  let recorded = notes.length; // the notes before this point are in the task's Result section already
   for (let attempt = 1; attempt <= 3; attempt++) {
     await git.fetch();
     if ((await git.behindCount()) > 0) {
@@ -227,6 +228,14 @@ async function integrate(ctx: RunContext, task: Task, notes: string[]): Promise<
         }
       }
     }
+    if (notes.length > recorded) {
+      // How the merge went (conflicts and who resolved them) goes into the task file with the work.
+      const merged = readTask(task.file);
+      appendSection(merged, `Merge (attempt ${task.attempts}, ${machine})`, notes.slice(recorded).map((n) => `- ${n}`).join('\n'));
+      writeTask(merged);
+      await git.amendPaths([rel(task.file)]);
+      recorded = notes.length;
+    }
     if ((await git.push()).code === 0) return 'pushed';
     warn(`${task.id}: push rejected (attempt ${attempt}); retrying`);
   }
@@ -240,6 +249,7 @@ async function integrate(ctx: RunContext, task: Task, notes: string[]): Promise<
 async function resolveConflicts(ctx: RunContext, task: Task, mine: string, notes: string[]): Promise<string | null> {
   const git = ctx.git;
   let agentRan = false;
+  let gitSaid = '';
   for (let round = 0; round < 3 && git.isRebasing(); round++) {
     let files = await git.conflictedFiles();
     if (files.length > 0) {
@@ -270,14 +280,20 @@ async function resolveConflicts(ctx: RunContext, task: Task, mine: string, notes
         return fs.existsSync(abs) && /^(<{7}|\|{7}|>{7}|={7})/m.test(fs.readFileSync(abs, 'utf8'));
       });
       if (marked.length) return `conflict markers left in ${marked.join(', ')} (agent: ${session.subtype})`;
-      await git.ok(['add', '-A', '--', ...files]);
     }
-    if ((await git.continueRebase()) === 'ok' && !git.isRebasing()) {
+    // Stage every change in the game, not just the conflicted files: to make the checks pass the
+    // agent may have changed other files too, and git will not continue past unstaged edits.
+    await git.ok(['add', '-A', '--', GAME_REL]);
+    const next = await git.continueRebase();
+    if (next.status === 'ok' && !git.isRebasing()) {
       notes.push(agentRan ? 'The conflict agent resolved them.' : 'Resolved without the conflict agent.');
       return null;
     }
+    gitSaid = next.output;
   }
-  return git.isRebasing() ? 'git could not continue the rebase after 3 rounds' : null;
+  if (!git.isRebasing()) return null;
+  const said = gitSaid.split(/\r?\n/).map((l) => l.trim()).filter(Boolean).slice(0, 3).join(' / ');
+  return `git could not continue the rebase after 3 rounds${said ? ` (git: ${said.slice(0, 300)})` : ''}`;
 }
 
 /**

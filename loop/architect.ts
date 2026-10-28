@@ -156,6 +156,13 @@ function claimDesign(ctx: RunContext, task: Task, staleMinutes: number): Promise
   );
 }
 
+/** The architect's role in one paragraph, kept in the system prompt so it survives compaction (runAgent). */
+export const ARCHITECT_ROLE =
+  'You are the software architect for one task. You only read the code and plan: you never edit files and never implement the task yourself; ' +
+  'a developer agent builds it from your design. If your instructions were summarized, this still holds. Your final message is the design: ' +
+  'DESIGN: followed by ## Files, ## Interfaces, ## Steps, ## Pitfalls and ## Tests, then a line DEPENDS_ON: <task ids or none>, then a line STATUS: READY. ' +
+  'If the task cannot be built as written, your final message is only STATUS: REJECT: <one-line reason>.';
+
 async function designTask(ctx: RunContext, task: Task, all: Task[]): Promise<void> {
   const { fleet, git, local } = ctx;
   const me = local.machineId;
@@ -185,6 +192,7 @@ async function designTask(ctx: RunContext, task: Task, all: Task[]): Promise<voi
       }),
       cwd: GAME_DIR,
       profile: 'architect',
+      systemPrompt: ARCHITECT_ROLE,
       effort: effortFor(fleet, me, 'architect'),
       maxTurns: fleet.loop.architectMaxTurns,
       timeoutMin: fleet.loop.architectTimeoutMin,

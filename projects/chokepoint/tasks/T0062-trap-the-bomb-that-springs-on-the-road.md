@@ -3,14 +3,11 @@ id: T0062
 title: "Trap: the bomb that springs on the road"
 size: M
 priority: 3
-status: failed
+status: design
 depends_on: [T0039, T0054, T0055]
 attempts: 0
 created: 2026-10-28T13:29:40Z
-claimed_at: 2026-10-28T15:21:59Z
-finished_at: 2026-10-28T16:06:40Z
 epic: E4
-design_attempts: 2
 ---
 
 ## Goal
@@ -33,11 +30,3 @@ A new pool augment with a new kind of attack: a trap that waits on the road and 
 - [ ] Any tower with an added Trap lays a disc at the kill spot when it makes kills (max 2 active per tower: home + newest kill-lay); a kill-laid disc fades after 6 s if untriggered and springs with the same values.
 - [ ] A rooted or slowed enemy on a disc triggers the spring; the disc is not a projectile, is not targeted and blocks nothing.
 - [ ] The draft offers Trap at normal tier odds from the opening draft; the card shows both lines; the tower shows one red tick per added copy; works at 412x915 and 1280x720.
-
-## Architect could not design it (baby-mama)
-
-no "STATUS: READY" line after 2 attempt(s). Last output:
-
-```
-Prompt is too long · automatic compaction failed: summarization produced empty response
-```

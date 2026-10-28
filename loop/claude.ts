@@ -21,6 +21,13 @@ export interface AgentRunOptions {
   effort?: Effort;
   /** Continue an earlier session (keeps the agent's context). */
   resumeSessionId?: string;
+  /**
+   * A short reminder of the agent's role, appended to the system prompt. Compaction summarizes
+   * the piped instructions but never the system prompt, so this survives a long session. Keep it
+   * the same for every session of a profile: it sits before the conversation in llama.cpp's
+   * prompt cache.
+   */
+  systemPrompt?: string;
 }
 
 export interface AgentRunResult {
@@ -152,6 +159,7 @@ export async function runAgent(local: LocalConfig, opts: AgentRunOptions): Promi
   ];
   if (opts.effort && CLAUDE_EFFORTS.has(opts.effort)) args.push('--effort', opts.effort);
   if (opts.resumeSessionId) args.push('--resume', opts.resumeSessionId);
+  if (opts.systemPrompt) args.push('--append-system-prompt', opts.systemPrompt);
 
   const useShell = /\.(cmd|bat)$/i.test(local.claudePath);
   let sessionId: string | undefined;

@@ -66,7 +66,7 @@ This cycle (36) the claim card's Board line landed (T0056, S, yoga) — a muted 
 **Groundwork (outside the epic):** T0015 (wave preview — done, 2026-10-28, narcissus) becomes the per-level wave preview once levels exist; T0014 (leak warning) teaches what a leak is before levels make leaking costlier; T0019 (fast-forward 2x) keeps runs in flow and pays off once a run spans several levels; the lives danger-pip idea was rejected as T0022 (the stats card has no room — see IDEAS) and is the one to revisit if levels make leaking costlier.
 **When done:** a run goes through levels, like the acts of a roguelite: each level is its own board with a set number of waves, ending in a tougher final wave. Clear it and the run moves on to the next level: a new, harder board (a longer or more winding road, tougher enemies) that starts empty. What you carry is your **pool**: the run starts with a small pool of augments that the drafts offer from, and every time you clear a level you pick one new augment to add to it, so each level offers more to combine. The HUD shows the level ("Level 2 · Wave 3/8"), the pick between levels is its own moment, and the game-over screen says how far you got. Clearing the last level wins the run.
 
-### E4 — Augment rarity (active — started 2026-10-28, 22 of 31 done; T0029 and T0062 failed — parked for re-task; T0043 parked for rewrite behind the Beam re-task)
+### E4 — Augment rarity (active — started 2026-10-28, 22 of 31 done; T0029 failed — parked for re-task; T0062 back in design (by hand, 2026-10-28); T0043 parked for rewrite behind the Beam re-task)
 **Goal:** the draft is exciting: sometimes a card is something special.
 **When done:** every augment card in the draft comes in a rarity: Common, Rare or Epic. A rarer card is the same augment with stronger numbers (a Rare Rapid attacks faster than a Common one), and a few rule-changing augments only ever come as Epic. Rarity shows everywhere the augment does: the card's frame and a small gem row on the draft, hand and tower-panel cards, and on the tower itself (its slot pip). Rarer cards turn up more often the further the run gets; the odds are shown in the draft.
 **Breakdown:**
@@ -127,8 +127,8 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 
 - Dasher (T0046, M) — **done** (2026-10-28, desktop-4070): telegraphs, then surges.
 - Splitter (T0068, M) — **done** (2026-10-28, desktop-4070): breaks into two — a bigger cracked Dot that, on death from any source, splits into two fast splinters at its spot, from wave 9 (one per seven of the wave's other enemies, no randomness); the enemy system, wave mix and art are settled for the next addition.
-- Hauler (T0057, M) — **failed** (2026-10-28, cycle 32): an environment failure, not a design one — the architect's machine had no write tools, and its complete plan (leakGold on EnemyDef, haulCount in the wave plan, the red "−5" leak pop) is in the failure log. Parked: rewrite when the pool has room, chained behind Splitter so the enemy system settles between additions; the rewrite re-uses the failed task's plan.
-- Mute (T0053, M) — **failed**: the idea stays in IDEAS; refine the note and re-task when the pool has room.
+- Hauler (T0057, M) — back in design (by hand, 2026-10-28): its design attempts failed because the architect ran out of context, not because of the task; the runner now keeps the architect's role through compaction and has it read less. Still chained behind Mute (T0053).
+- Mute (T0053, M) — back in design (by hand, 2026-10-28): its design attempts failed because the architect ran out of context, not because of the task; the runner now keeps the architect's role through compaction and has it read less. Its Beam dependency (T0029, failed) and beam mentions were dropped, and its 2-cell jam zone is a circle like Rally's range (Rally and Mint now reach what their range ring shows).
 - Feeder (IDEAS) — parked behind the Hauler and Mute re-tasks (from wave 13).
 
 Queue order (cycle 36): Hauler rewrite → Mute rewrite → Bulwark (IDEAS) → Ward (IDEAS) → Feeder. The Hauler rewrite is ready the moment the pool has room (it re-uses the failed task's plan: leakGold on the enemy definition, the haul count in the wave plan, the red "−5" leak pop at the exit); the pool is over-full (19 waiting for 12 machines), so no enemy re-tasks were written this cycle.
@@ -139,7 +139,7 @@ Ideas that may become epics or tasks of one.
 
 - Selling a tower, or taking an augment back out (for part of the gold)
 - Targeting modes per tower (first, strongest, closest)
-- More augments with new attacks and changes (a shot that bounces off the board's rocks — T0038, in queue; a gust — built T0027; a root — built T0023; a bomb that springs on the road — T0062 failed, re-task pending; the IDEAS backlog holds the list)
+- More augments with new attacks and changes (a shot that bounces off the board's rocks — T0038, in queue; a gust — built T0027; a root — built T0023; a bomb that springs on the road — T0062, back in design; the IDEAS backlog holds the list)
 - Enemies with new behaviors (e.g. one that speeds up when hit — built as T0006 (desktop); one that dashes in bursts, one that shields neighbours, one that splits)
 - Wave preview: what the next wave sends, shown during the build phase — done (T0015, 2026-10-28, narcissus)
 - Bosses every 10 waves, each with its own mechanic — now **E5** (not started; sketched in the epics above; the first boss design is in IDEAS)

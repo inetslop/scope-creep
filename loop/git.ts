@@ -171,9 +171,10 @@ export class Git {
     return r.code === 0 ? 'ok' : 'conflict';
   }
 
-  async continueRebase(): Promise<'ok' | 'conflict'> {
+  /** Continues a rebase. `output` is git's message when it stops again (a new conflict, or why it can't go on). */
+  async continueRebase(): Promise<{ status: 'ok' | 'conflict'; output: string }> {
     const r = await this.raw(['-c', `user.name=${this.author}`, '-c', `user.email=${this.author}@scope-creep.local`, '-c', await this.conflictStyle(), 'rebase', '--continue'], { GIT_EDITOR: 'true' });
-    return r.code === 0 ? 'ok' : 'conflict';
+    return { status: r.code === 0 ? 'ok' : 'conflict', output: `${r.stderr}\n${r.stdout}`.trim() };
   }
 
   async abortRebase(): Promise<void> {

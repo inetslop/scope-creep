@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { describe, it } from 'node:test';
-import { isTransientGitError } from '../git.ts';
+import { Git, isTransientGitError } from '../git.ts';
 
 describe('git network errors', () => {
   it('retries DNS and connection failures, never rejections or conflicts', () => {
@@ -19,5 +23,47 @@ describe('git network errors', () => {
     ]) {
       assert.equal(isTransientGitError(e), false, e);
     }
+  });
+});
+
+describe('continueRebase', () => {
+  it('stops while an edit outside the conflicted files is unstaged, and says why; staging the folder lets it go on', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rebase-'));
+    const sh = (...args: string[]): string =>
+      execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'init.defaultBranch=main', ...args], { cwd: dir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    const write = (f: string, text: string): void => {
+      fs.mkdirSync(path.dirname(path.join(dir, f)), { recursive: true });
+      fs.writeFileSync(path.join(dir, f), text);
+    };
+    sh('init', '-q');
+    write('game/a.ts', 'a\nb\nc\n');
+    write('game/b.ts', 'one\n');
+    sh('add', '.');
+    sh('commit', '-qm', 'base');
+    sh('checkout', '-qb', 'task');
+    write('game/a.ts', 'a\nmine\nc\n');
+    sh('commit', '-qam', 'mine');
+    sh('checkout', '-q', 'main');
+    write('game/a.ts', 'a\ntheirs\nc\n');
+    sh('commit', '-qam', 'theirs');
+    sh('checkout', '-q', 'task');
+    assert.throws(() => sh('rebase', 'main'));
+
+    // The conflict agent resolves a.ts and, to make the checks pass, also changes b.ts.
+    write('game/a.ts', 'a\ntheirs\nmine\nc\n');
+    write('game/b.ts', 'two\n');
+    const git = new Git(dir, 't');
+    sh('add', '--', 'game/a.ts');
+    const stuck = await git.continueRebase();
+    assert.equal(stuck.status, 'conflict');
+    assert.match(stuck.output, /git add/);
+    assert.equal(git.isRebasing(), true);
+
+    sh('add', '-A', '--', 'game');
+    assert.equal((await git.continueRebase()).status, 'ok');
+    assert.equal(git.isRebasing(), false);
+    assert.equal(fs.readFileSync(path.join(dir, 'game/b.ts'), 'utf8'), 'two\n');
+    assert.equal(sh('status', '--porcelain'), '');
+    fs.rmSync(dir, { recursive: true, force: true });
   });
 });
