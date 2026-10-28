@@ -4,11 +4,12 @@ title: The claim card says Score
 assignee: desktop
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T12:01:28Z
 claimed_at: 2026-10-28T12:34:58Z
+finished_at: 2026-10-28T12:50:19Z
 epic: E1
 ---
 
@@ -52,3 +53,17 @@ none — all changes are inside the existing `RewardsScene` class (one new priva
 - Do not re-derive `panelH`, `44 + dy` or `108 + dy`; they already follow `dy` and the layout() scale handles 412x915 and 1280x720 (tallest panel 372 fits).
 ### Tests
 none (UI-only; no core rule changes).
+
+## Result (attempt 1, desktop)
+
+(no summary)
+
+- Self-review: APPROVE
+- Time: 15.3 min
+- Gate failed at "smoke"; fix round 1.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/scenes/RewardsScene.ts | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+```
