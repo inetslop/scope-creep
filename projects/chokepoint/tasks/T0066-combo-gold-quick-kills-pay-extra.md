@@ -4,11 +4,12 @@ title: "Combo gold: quick kills pay extra"
 assignee: narcissus
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0039]
 attempts: 1
 created: 2026-10-28T13:54:28Z
 claimed_at: 2026-10-28T21:51:46Z
+finished_at: 2026-10-29T00:07:48Z
 epic: E1
 ---
 
@@ -111,3 +112,20 @@ Edit `src/systems/enemyHooks/index.ts`: add `import { comboGold } from './comboG
 
 ### Tests
 - `tests/core/comboGold.test.ts`: chain 5 → 2, chain 10 → 4, all other chains (0–4, 6–9, 11+) → 0.
+
+## Result (attempt 1, narcissus)
+
+T0066 combo gold is done and verified — the fifth kill of a chain pays +2 and the tenth +4, shown as a small gold pop at the kill spot ~100 ms after the normal kill gold, paid straight into the run's gold so it can buy slots (new files `core/comboGold.ts`, `systems/enemyHooks/comboGold.ts` hook, `systems/fx/comboGold.ts` effect, `tests/core/comboGold.test.ts`, plus one import line and one registry line in `enemyHooks/index.ts`; nothing else changed). The fix round resolved the failing `npm run check`: my fx file had imported `textStyle` from `ui/text`, which transitively imports `debug/flags`, which reads `window` at module load and crashes vitest's Node environment — so the small pop now inlines the identical style (same font, size 14, bold, gold with card stroke, 4 px stroke, and `resolution: 1 / fx.scene.scale.zoom` = `display.ratio` to keep it crisp) instead of importing it. `npm run check` (typecheck + lint + 21 test files, 151 tests) and `npm run smoke` (desktop and phone, real browser) both pass.
+
+- Self-review: NO VERDICT
+- Time: 136.0 min
+- Gate failed at "check"; fix round 1.
+
+```
+projects/chokepoint/game/src/core/comboGold.ts     |  6 +++++
+ .../game/src/systems/enemyHooks/comboGold.ts       | 14 +++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../chokepoint/game/src/systems/fx/comboGold.ts    | 29 ++++++++++++++++++++++
+ .../chokepoint/game/tests/core/comboGold.test.ts   | 13 ++++++++++
+ 5 files changed, 64 insertions(+)
+```

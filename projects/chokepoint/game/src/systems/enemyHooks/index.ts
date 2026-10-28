@@ -1,5 +1,6 @@
 import { burnLeap } from './burnLeap';
 import type { MakeEnemyHook } from './hook';
+import { comboGold } from './comboGold';
 import { haulerLeak } from './haulerLeak';
 import { mintRing } from './mintRing';
 import { split } from './split';
@@ -10,6 +11,7 @@ import { killCoin } from './killCoin';
  * A new one is a new file in this folder plus one line here, next to its kin.
  */
 export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
+  comboGold,
   split,
   killCoin,
   haulerLeak,
