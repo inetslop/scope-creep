@@ -4,11 +4,13 @@ title: The menu remembers your last four runs
 assignee: narcissus
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T03:39:38Z
+claimed_at: 2026-10-28T03:39:41Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
