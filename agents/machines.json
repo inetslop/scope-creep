@@ -77,7 +77,6 @@
       "notes": "Heavily quantized (IQ3_XXS) on a laptop GPU: expect more mistakes, and slow. Give it medium features: new mechanics, scenes, UI, juice, audio."
     },
     "baby-mama": {
-      "paused": true,
       "label": "Ryzen 7 9800X3D + RTX 5070 Ti (16 GB)",
       "model": "Qwen 3.8 27B UD-Q2_K_XL",
       "roles": ["dev", "architect"],
