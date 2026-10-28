@@ -4,10 +4,11 @@ title: "Rarity in the draft: tiers, odds, and card frames"
 assignee: asus
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: [T0001]
-attempts: 0
+attempts: 1
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T01:43:05Z
 epic: E4
 ---
 
