@@ -4,11 +4,13 @@ title: Rarity on the hand and the tower panel
 assignee: narcissus
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0002]
 attempts: 0
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T02:38:43Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
