@@ -1,12 +1,14 @@
 ---
 id: T0023
 title: "Anchor: a rooting augment that stops the road"
+assignee: desktop
 size: L
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0021, T0012]
-attempts: 0
+attempts: 1
 created: 2026-10-28T05:03:06Z
+claimed_at: 2026-10-28T12:01:32Z
 epic: E4
 ---
 
