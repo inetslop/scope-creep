@@ -20,3 +20,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Colorblind mode: patterns on the shapes, not just color
 - Map modifiers chosen in the draft instead of an augment (e.g. "the next wave comes from both ends")
 - Haptics on mobile for builds and leaks
+- Draft reroll: once per run, reroll the three offered cards for 15 gold
+- Leak warning: the last 3 seconds before an enemy reaches the exit, the exit pulses red with a quiet tick
+- Ghost run: a menu option to replay your best run's exact board (same seed) and beat your own wave record
+- Slow zone: a light blue patch on the board slows enemies crossing it by 30%

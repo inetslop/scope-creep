@@ -2,7 +2,7 @@
 
 **Pitch:** A white road winds across a light island, and shapes are coming down it. Every run is a new board. Towers have no types: they are what you put in them. Pick an augment, build a tower with it beside the road, and after every wave pick another and combine: a sniper that slows, exploding needles, a frost pulse that also shoots. Gold buys more slots, each dearer, so you choose between many simple towers and a few strong combos. Let enough through and it's over; see how many waves you can hold.
 
-**Genre:** Roguelite tower defence. Short runs (10-25 minutes), endless escalating waves, a new board and new choices every run.
+**Genre:** Roguelite tower defence. Short runs (10-25 minutes), endless escalating waves, a new board and new choices every run; between runs a profile on the device carries your best wave and your coins forward.
 
 **Platforms:** Desktop and mobile browsers, equally. Everything is a click or a tap; nothing needs precise aim or speed.
 
