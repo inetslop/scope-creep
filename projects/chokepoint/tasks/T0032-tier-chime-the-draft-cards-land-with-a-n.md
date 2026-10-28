@@ -1,12 +1,14 @@
 ---
 id: T0032
 title: "Tier chime: the draft cards land with a note per tier"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T07:16:57Z
+claimed_at: 2026-10-28T07:29:05Z
 epic: E4
 ---
 
