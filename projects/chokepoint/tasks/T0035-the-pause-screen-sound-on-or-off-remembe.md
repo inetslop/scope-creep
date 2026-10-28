@@ -3,11 +3,13 @@ id: T0035
 title: "The pause screen: sound on or off, remembered"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T08:43:02Z
+claimed_at: 2026-10-28T09:01:33Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
