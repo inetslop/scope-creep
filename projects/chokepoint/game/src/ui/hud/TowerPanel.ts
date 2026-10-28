@@ -28,6 +28,7 @@ export class TowerPanel implements HudPart {
   private readonly scene: Phaser.Scene;
   private box: Phaser.GameObjects.Container | undefined;
   private unlock: { button: Button; cost: number; price: Phaser.GameObjects.Text } | undefined;
+  private killsText: Phaser.GameObjects.Text | undefined;
   private size = { width: 0, height: 0 };
   private builtVersion = -1;
 
@@ -45,6 +46,8 @@ export class TowerPanel implements HudPart {
       this.builtVersion = game.building.uiVersion;
       this.build(game);
     }
+    const tower = game.building.selectedTower;
+    if (this.killsText && tower) this.killsText.setText(`kills ${tower.kills}`); // no-op while unchanged
     if (this.unlock) {
       const affordable = game.run.canAfford(this.unlock.cost);
       this.unlock.price.setColor(cssColor(affordable ? PALETTE.ink : PALETTE.red));
@@ -56,6 +59,7 @@ export class TowerPanel implements HudPart {
     this.box?.destroy();
     this.box = undefined;
     this.unlock = undefined;
+    this.killsText = undefined;
     const tower = game.building.selectedTower;
     if (!tower) return;
     const scene = this.scene;
@@ -63,7 +67,7 @@ export class TowerPanel implements HudPart {
     const w = Math.min(PANEL_W, width - EDGE * 2);
     const left = -w / 2 + 18;
     const n = tower.augments.length;
-    const H = (ROW_H + ROW_GAP) * n + 146;
+    const H = (ROW_H + ROW_GAP) * n + 146 + 18; // room for the kills line
     const top = -H / 2;
     // The card swallows taps, so tapping the panel never builds on the board under it.
     const card = makeCard(scene, 0, 0, w, H, 22).setInteractive();
@@ -91,6 +95,9 @@ export class TowerPanel implements HudPart {
       // Defensive: a tower always holds its first augment, so this should never show.
       items.push(scene.add.text(left, top + 80, 'Put an augment in a slot', textStyle(13, PALETTE.muted)).setOrigin(0, 0));
     }
+    // This run's kills by this tower, in the gap between the augment rows and the slot row.
+    this.killsText = scene.add.text(left, H / 2 - 79, `kills ${tower.kills}`, textStyle(11, PALETTE.muted)).setOrigin(0, 0);
+    items.push(this.killsText);
     items.push(...this.slots(game, tower, left, w, H));
     const x = isNarrow(width) ? width / 2 : EDGE + w / 2;
     this.box = scene.add.container(x, height - HUD.bottom - 10 - H / 2, items);

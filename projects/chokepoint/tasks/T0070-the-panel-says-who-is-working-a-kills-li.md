@@ -4,11 +4,12 @@ title: "The panel says who is working: a kills line per tower"
 assignee: desktop
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T13:54:28Z
 claimed_at: 2026-10-28T19:19:14Z
+finished_at: 2026-10-28T19:38:40Z
 epic: E1
 ---
 
@@ -84,3 +85,19 @@ kills = 0;
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0061: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Result (attempt 1, desktop)
+
+(no summary)
+
+- Self-review: APPROVE
+- Time: 19.4 min
+- Gate failed at "smoke"; fix round 1.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/entities/Tower.ts      | 2 ++
+ projects/chokepoint/game/src/systems/EnemySystem.ts | 1 +
+ projects/chokepoint/game/src/ui/hud/TowerPanel.ts   | 9 ++++++++-
+ 3 files changed, 11 insertions(+), 1 deletion(-)
+```

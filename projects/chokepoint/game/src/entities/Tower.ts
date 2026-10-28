@@ -40,6 +40,8 @@ export class Tower extends Phaser.GameObjects.Image {
   cooldown = 0;
   /** Attack speed from Rally (set by systems/RallySystem.ts; 1 when not buffed). */
   rallyRateMul = 1;
+  /** Enemies this tower killed with its own damage this run (the panel's "kills N" line). */
+  kills = 0;
   /** Where the barrels point, in radians (0 = up, clockwise). */
   aim = 0;
   /** Length of the barrels in board units, and their side offsets (for the muzzles). */

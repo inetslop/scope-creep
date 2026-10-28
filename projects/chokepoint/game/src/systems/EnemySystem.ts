@@ -162,6 +162,7 @@ export class EnemySystem {
     // Everything else that reacts to a kill (systems/enemyHooks/, e.g. a splitter splitting); the enemy is still at its spot.
     for (const h of this.hooks) h.onKill?.({ enemy: e, source, paid });
     hook.stats.enemiesKilled += 1;
+    if (source) source.kills += 1; // its own damage dealt the killing blow: the kill is its
     e.despawn();
   }
 
