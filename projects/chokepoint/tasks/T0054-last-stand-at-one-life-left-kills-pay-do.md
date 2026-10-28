@@ -1,12 +1,14 @@
 ---
 id: T0054
 title: "Last stand: at one life left, kills pay double gold"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0045, T0039]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:04:03Z
+claimed_at: 2026-10-28T22:18:36Z
 epic: E1
 ---
 
