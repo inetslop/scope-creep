@@ -1,12 +1,12 @@
-# T0029 attempt 1 (asus) passed the checks on 94b1616 but could not be merged into main (conflict).
+# T0029 attempt 2 (asus) passed the checks on f297a4d but could not be merged into main (conflict).
 # Commits on main since then that touch the same files:
-# - c8fbb48 agent-desktop-4070: T0034: Combo milestone: at ×10 the counter turns yellow
+# - dc2f0f1 agent-desktop-4070: T0046: Dasher: the enemy that telegraphs, then surges
 #
-# - a14a0fb agent-yoga: T0041: Epic frame shimmer: the rarest card flashes as it lands
+# - 0d024cf agent-inet-racing: T0052: The draft never offers the same augment twice in a row
 #
-# - e465499 agent-desktop: T0021: Mint: the Epic that pays gold for kills near it
+# - 1f3eed0 agent-baby-mama: T0048: The first draft always offers the default shot
 #
-# - b6d0598 agent-desktop: T0040: Lead: the shot that aims where the enemy will be
+# - 9b73d69 agent-desktop: T0023: Anchor: a rooting augment that stops the road
 
 diff --git a/projects/chokepoint/game/docs/ARCHITECTURE.md b/projects/chokepoint/game/docs/ARCHITECTURE.md
 index fa2e03f..14835cc 100644
@@ -66,7 +66,7 @@ index 0000000..378542d
 +  },
 +};
 diff --git a/projects/chokepoint/game/src/content/augments/index.ts b/projects/chokepoint/game/src/content/augments/index.ts
-index 7b3d850..5fdd2cb 100644
+index 6a7cf65..aa7e159 100644
 --- a/projects/chokepoint/game/src/content/augments/index.ts
 +++ b/projects/chokepoint/game/src/content/augments/index.ts
 @@ -1,4 +1,5 @@
@@ -75,16 +75,16 @@ index 7b3d850..5fdd2cb 100644
  import { bolt } from './bolt';
  import { frost } from './frost';
  import { lance } from './lance';
-@@ -11,6 +12,7 @@ import { splash } from './splash';
+@@ -13,6 +14,7 @@ import { splash } from './splash';
  /** Every augment. The draft after each wave offers three different ones. */
  export const AUGMENTS: readonly AugmentDef[] = [
    bolt,
 +  beam,
    lance,
+   lead,
    splash,
-   frost,
 diff --git a/projects/chokepoint/game/src/content/types.ts b/projects/chokepoint/game/src/content/types.ts
-index ed3ab66..bb67491 100644
+index 62e48f8..c61e4fa 100644
 --- a/projects/chokepoint/game/src/content/types.ts
 +++ b/projects/chokepoint/game/src/content/types.ts
 @@ -43,8 +43,8 @@ export type Tier = 'common' | 'rare' | 'epic';
@@ -94,22 +94,19 @@ index ed3ab66..bb67491 100644
 - * slow % in both forms, `pierce` its pierce, `splash` its added splash cells, and `asAdded` is
 - * the card's added line.
 + * slow % in both forms, `pierce` its pierce, `splash` its added splash cells, `beam` its second
-+ * beam's rate per second, `asAdded` is the card's added line and `asTower` its tower line.
++ * beam's rate per second, and `asAdded` is the card's added line.
   */
  export interface TierValues {
    damageMul?: number;
-@@ -53,8 +53,10 @@ export interface TierValues {
+@@ -53,6 +53,7 @@ export interface TierValues {
    slowPct?: number;
    splash?: number;
    pierce?: number;
 +  beam?: number;
    addedRateMul?: number;
    addedRangeMul?: number;
-+  asTower?: string;
    asAdded: string;
- }
- 
-@@ -73,7 +75,9 @@ export type AttackKind =
+@@ -75,7 +76,9 @@ export type AttackKind =
    /** Support: nearby towers attack faster; the beacon never fires itself. */
    | 'rally'
    /** Marks the enemy furthest along: a marked enemy takes more damage from everything. */
@@ -120,16 +117,16 @@ index ed3ab66..bb67491 100644
  
  /** A tower's attack when this augment is the first one in it. */
  export interface FirstForm {
-@@ -92,6 +96,8 @@ export interface FirstForm {
+@@ -94,6 +97,8 @@ export interface FirstForm {
    slow?: { pct: number; sec: number };
    /** For a 'mark' attack: the fraction of extra damage a marked enemy takes from everything. */
    mark?: number;
 +  /** For a 'beam' attack: damage per second on the held enemy (`damage` is 0, `rate` a formality). */
 +  beam?: number;
- }
- 
- /**
-@@ -108,6 +114,8 @@ export interface AddedForm {
+   /** For a predictive 'shot': the base lead cap, in cells ahead of the enemy (Lead). */
+   lead?: number;
+   /** Kills within this many cells of the tower (Chebyshev) drop +1 gold per mint copy in it (Mint). */
+@@ -114,6 +119,8 @@ export interface AddedForm {
    slow?: { pct: number; sec: number };
    /** Hits apply the mark: enemies hit take this fraction of extra damage from everything. */
    mark?: number;
@@ -139,7 +136,7 @@ index ed3ab66..bb67491 100644
    rateMul?: number;
    rangeMul?: number;
 diff --git a/projects/chokepoint/game/src/core/augments.ts b/projects/chokepoint/game/src/core/augments.ts
-index 8e17e27..77c1f82 100644
+index 72624a4..19e3708 100644
 --- a/projects/chokepoint/game/src/core/augments.ts
 +++ b/projects/chokepoint/game/src/core/augments.ts
 @@ -34,6 +34,12 @@ export interface TowerSpec {
@@ -152,30 +149,30 @@ index 8e17e27..77c1f82 100644
 +  addedBeamDps: number;
 +  /** Beam copies beyond the first: one teal dash each. */
 +  addedBeamCount: number;
- }
- 
- const EMPTY: TowerSpec = {
-@@ -52,6 +58,9 @@ const EMPTY: TowerSpec = {
+   /** How far ahead of the enemy an aimed shot may land, in cells (0: the shots do not lead). */
+   lead: number;
+   /** Leads in the tower: the first aims the shots, each extra one raises the lead cap. */
+@@ -60,6 +66,9 @@ const EMPTY: TowerSpec = {
    projectileSpeed: 0,
    markPct: 0,
    markCount: 0,
 +  beamDps: 0,
 +  addedBeamDps: 0,
 +  addedBeamCount: 0,
- };
- 
- /**
-@@ -83,6 +92,9 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
+   lead: 0,
+   leadCount: 0,
+   goldPerKill: 0,
+@@ -95,6 +104,9 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
      projectileSpeed: f.projectileSpeed ?? bolt.first.projectileSpeed ?? 10,
      markPct: 0,
      markCount: 0,
 +    beamDps: f.beam ?? 0,
 +    addedBeamDps: 0,
 +    addedBeamCount: 0,
-   };
-   for (const a of augments.slice(1)) {
-     const e = tierAdded(getAugment(a.id), a.tier);
-@@ -95,6 +107,10 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
+     lead: 0,
+     leadCount: 0,
+     goldRadius: f.goldRadius ?? 0,
+@@ -111,6 +123,10 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
      if (spec.kind === 'shot') spec.shots += e.extraShots ?? 0;
      else if (spec.kind === 'pulse') spec.bolts += e.extraShots ?? 0;
      if (e.slow && (!spec.slow || e.slow.pct > spec.slow.pct)) spec.slow = { ...e.slow };
@@ -186,7 +183,7 @@ index 8e17e27..77c1f82 100644
    }
    // Marks in any slot: a marked enemy takes this much more damage from everything.
    for (let i = 0; i < augments.length; i++) {
-@@ -132,6 +148,9 @@ export function describeSpec(spec: TowerSpec): string {
+@@ -158,6 +174,9 @@ export function describeSpec(spec: TowerSpec): string {
    } else if (spec.kind === 'rally') {
      const r = getAugment('rally');
      line = `Towers within ${r.first.range} cells attack ${Math.round((r.added.rally?.pct ?? 0) * 100)}% faster`;
@@ -194,8 +191,8 @@ index 8e17e27..77c1f82 100644
 +    line = `A continuous beam on the furthest enemy: ${Math.round(spec.beamDps)} per second`;
 +    if (spec.addedBeamDps > 0) line += ', and a second beam on the nearest enemy';
    } else if (spec.damage <= 0) {
-     line = `Slows everything around it by ${slow}%`;
-     if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;
+     if (spec.slow) {
+       line = `Slows everything around it by ${slow}%`;
 diff --git a/projects/chokepoint/game/src/core/beam.ts b/projects/chokepoint/game/src/core/beam.ts
 new file mode 100644
 index 0000000..d53b9c4
@@ -263,7 +260,7 @@ index 0000000..d53b9c4
 +  return best;
 +}
 diff --git a/projects/chokepoint/game/src/core/tiers.ts b/projects/chokepoint/game/src/core/tiers.ts
-index 3b7763e..184a38a 100644
+index 16bf0eb..0414ada 100644
 --- a/projects/chokepoint/game/src/core/tiers.ts
 +++ b/projects/chokepoint/game/src/core/tiers.ts
 @@ -46,6 +46,7 @@ export function tierFirst(def: AugmentDef, tier: Tier): FirstForm {
@@ -282,23 +279,14 @@ index 3b7763e..184a38a 100644
      slow: a.slow ? { ...a.slow, pct: t.slowPct ?? a.slow.pct } : undefined,
    };
  }
-@@ -71,3 +73,8 @@ export function tierAdded(def: AugmentDef, tier: Tier): AddedForm {
- export function tierAddedLine(def: AugmentDef, tier: Tier): string {
-   return tier === 'common' ? def.asAdded : def.tiers[tier].asAdded;
- }
-+
-+/** The card's tower line at `tier` (Common, and tiers without their own line: the base line). */
-+export function tierTowerLine(def: AugmentDef, tier: Tier): string {
-+  return tier === 'common' ? def.asTower : def.tiers[tier].asTower ?? def.asTower;
-+}
 diff --git a/projects/chokepoint/game/src/debug/runChecks.ts b/projects/chokepoint/game/src/debug/runChecks.ts
-index 79b24da..333ad4d 100644
+index 82c2b49..4a87ea9 100644
 --- a/projects/chokepoint/game/src/debug/runChecks.ts
 +++ b/projects/chokepoint/game/src/debug/runChecks.ts
-@@ -20,6 +20,13 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
-   ['projectiles.count', (g) => (g.projectiles.activeCount > 600 ? `${g.projectiles.activeCount} projectiles in flight` : null)],
-   ['projectiles.stuck', (g) => g.projectiles.brokenProjectile()],
-   ['towers.valid', (g) => g.towers.brokenTower()],
+@@ -25,6 +25,13 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
+     for (const t of g.towers.towers) if (!Number.isInteger(t.spec.goldPerKill) || t.spec.goldPerKill < 0 || t.spec.goldPerKill > t.augments.length) return `kill-gold ${t.spec.goldPerKill} at (${t.cell.col}, ${t.cell.row})`;
+     return null;
+   }],
 +  ['beams.valid', (g) => {
 +    for (const t of g.towers.towers) {
 +      if (t.spec.kind === 'beam' && (t.spec.beamDps <= 0 || t.spec.damage > 0)) return `beam tower at (${t.cell.col}, ${t.cell.row}) deals ${t.spec.beamDps} per second and ${t.spec.damage} damage`;
@@ -310,31 +298,36 @@ index 79b24da..333ad4d 100644
      for (const t of g.towers.towers) if (t.rallyRateMul < 1 - 1e-9 || t.rallyRateMul > 1.2) return `rally multiplier ${t.rallyRateMul}`;
      return null;
 diff --git a/projects/chokepoint/game/src/entities/Enemy.ts b/projects/chokepoint/game/src/entities/Enemy.ts
-index 58151b3..343f616 100644
+index 58151b3..6e5f90a 100644
 --- a/projects/chokepoint/game/src/entities/Enemy.ts
 +++ b/projects/chokepoint/game/src/entities/Enemy.ts
-@@ -99,12 +99,15 @@ export class Enemy extends Phaser.GameObjects.Image {
+@@ -99,14 +99,18 @@ export class Enemy extends Phaser.GameObjects.Image {
      return this.distance >= path.length;
    }
  
 -  /** Takes damage (a marked enemy takes `markPct` more, from everything). Returns true when this killed it. */
 -  hit(damage: number): boolean {
-+  /** Takes damage (a marked enemy takes `markPct` more, from everything); `noFlash` skips the
-+   * white flash (a beam strikes every frame). Returns true when this killed it. */
++  /** Takes damage (a marked enemy takes `markPct` more, from everything); `noFlash` marks a slice
++   * of a sustained strike (a beam strikes every frame): skip the white flash and the per-hit speed
++   * ramp, which assume a discrete hit. Returns true when this killed it. */
 +  hit(damage: number, noFlash = false): boolean {
      if (!this.active) return false;
      this.hp -= damage * (1 + this.markPct);
 -    this.flash = 0.06;
 -    this.setTintFill(0xffffff);
+-    const ramp = this.def.speedRamp;
+-    if (ramp && this.speed < ramp.max * CELL) this.speed = Math.min(this.speed + ramp.perHit * CELL, ramp.max * CELL);
 +    if (!noFlash) {
 +      this.flash = 0.06;
 +      this.setTintFill(0xffffff);
++      const ramp = this.def.speedRamp;
++      if (ramp && this.speed < ramp.max * CELL) this.speed = Math.min(this.speed + ramp.perHit * CELL, ramp.max * CELL);
 +    }
-     const ramp = this.def.speedRamp;
-     if (ramp && this.speed < ramp.max * CELL) this.speed = Math.min(this.speed + ramp.perHit * CELL, ramp.max * CELL);
      return this.hp <= 0;
+   }
+ 
 diff --git a/projects/chokepoint/game/src/entities/towerLook.ts b/projects/chokepoint/game/src/entities/towerLook.ts
-index 024f107..7a6c76e 100644
+index 23139fd..ac0d534 100644
 --- a/projects/chokepoint/game/src/entities/towerLook.ts
 +++ b/projects/chokepoint/game/src/entities/towerLook.ts
 @@ -21,6 +21,7 @@ export const MAX_BARRELS = 4;
@@ -346,7 +339,7 @@ index 024f107..7a6c76e 100644
  }
  
 @@ -36,6 +37,8 @@ export function speedUps(spec: TowerSpec): number {
-  * per speed-up (Rapid added).
+  * per speed-up (Rapid added), a chevron tip and green ticks when the shots lead (Lead).
   */
  export function barrelLook(spec: TowerSpec): BarrelLook {
 +  // The beam's barrel is a long thin rod (fixed: its line shows its reach, not its length).
@@ -354,7 +347,7 @@ index 024f107..7a6c76e 100644
    const plain = bolt.first;
    const damage = spec.kind === 'shot' ? spec.damage : spec.boltDamage;
    // A piercing shot shows as a long thin rod (fixed length: a range-scaled rod would reach past
-@@ -76,6 +79,14 @@ const DECORATIONS: readonly Decoration[] = [
+@@ -87,6 +90,14 @@ const DECORATIONS: readonly Decoration[] = [
        fillRing(g, 0, 0, BODY * 1.95, 3, a - 0.14, a + 0.14, PALETTE.ink);
      }
    },
@@ -369,30 +362,8 @@ index 024f107..7a6c76e 100644
    // Rapid on a tower without barrels: yellow ticks around the body, six per speed-up.
    (g, spec, barrels) => {
      if (spec.kind === 'rally') return; // a beacon has no speed to show
-diff --git a/projects/chokepoint/game/src/scenes/DraftScene.ts b/projects/chokepoint/game/src/scenes/DraftScene.ts
-index 675bc12..e869cc6 100644
---- a/projects/chokepoint/game/src/scenes/DraftScene.ts
-+++ b/projects/chokepoint/game/src/scenes/DraftScene.ts
-@@ -4,7 +4,7 @@ import { artScale, augmentTexture, COIN_TEXTURE, GEM_TEXTURE } from '../art/text
- import { getAugment } from '../content/augments';
- import { cssColor, PALETTE } from '../content/palette';
- import type { AugmentCopy } from '../content/types';
--import { TIER_ORDER, tierAddedLine, tierIndex, tierOdds } from '../core/tiers';
-+import { TIER_ORDER, tierAddedLine, tierIndex, tierOdds, tierTowerLine } from '../core/tiers';
- import { flags } from '../debug/flags';
- import { hook } from '../debug/testHook';
- import { makeButton } from '../ui/button';
-@@ -88,7 +88,7 @@ export class DraftScene extends Phaser.Scene {
-         for (let g = 0; g < gemCount; g++) gems.push(artScale(this.add.image((g - (gemCount - 1) / 2) * 12, -17, GEM_TEXTURE)).setTint(gemTint));
-         const textX = -CARD_W / 2 + 42;
-         const wrap = { wordWrap: { width: CARD_W - 58 } };
--        const towerLine = this.add.text(textX, -2, b.asTower, textStyle(14, PALETTE.ink, wrap)).setOrigin(0, 0);
-+        const towerLine = this.add.text(textX, -2, tierTowerLine(b, copy.tier), textStyle(14, PALETTE.ink, wrap)).setOrigin(0, 0);
-         const addedLine = this.add.text(textX, towerLine.y + towerLine.height + 10, tierAddedLine(b, copy.tier), textStyle(14, PALETTE.muted, wrap)).setOrigin(0, 0);
-         const glyphs = this.add.graphics();
-         drawTowerGlyph(glyphs, -CARD_W / 2 + 26, towerLine.y + 9);
 diff --git a/projects/chokepoint/game/src/scenes/GameScene.ts b/projects/chokepoint/game/src/scenes/GameScene.ts
-index 1430922..6fe4874 100644
+index e353259..68d8845 100644
 --- a/projects/chokepoint/game/src/scenes/GameScene.ts
 +++ b/projects/chokepoint/game/src/scenes/GameScene.ts
 @@ -8,6 +8,7 @@ import { registerRunChecks, syncHookStats } from '../debug/runChecks';
@@ -413,13 +384,13 @@ index 1430922..6fe4874 100644
    projectiles!: ProjectileSystem;
 @@ -67,6 +69,7 @@ export class GameScene extends Phaser.Scene {
      this.waves = new WaveSystem(this.run, this.enemies);
-     this.projectiles = new ProjectileSystem(this, this.enemies);
+     this.projectiles = new ProjectileSystem(this, this.enemies, this.fx);
      this.towers = new TowerSystem(this, this.board, this.run, this.enemies, this.projectiles, this.fx, sfx);
 +    this.beams = new BeamSystem(this, this.towers, this.enemies, this.fx, sfx);
+     this.enemies.towers = () => this.towers.towers; // a kill pays the mints around it (core/mint.ts)
      this.building = new Building(this.run, this.board, this.towers, this.fx, sfx);
      this.flow = new RunFlow(this, this.run, {
-       board: this.board,
-@@ -74,6 +77,7 @@ export class GameScene extends Phaser.Scene {
+@@ -75,6 +78,7 @@ export class GameScene extends Phaser.Scene {
        waves: this.waves,
        enemies: this.enemies,
        towers: this.towers,
@@ -429,10 +400,10 @@ index 1430922..6fe4874 100644
        sfx,
 diff --git a/projects/chokepoint/game/src/systems/BeamSystem.ts b/projects/chokepoint/game/src/systems/BeamSystem.ts
 new file mode 100644
-index 0000000..85ad19d
+index 0000000..151eccf
 --- /dev/null
 +++ b/projects/chokepoint/game/src/systems/BeamSystem.ts
-@@ -0,0 +1,104 @@
+@@ -0,0 +1,103 @@
 +import Phaser from 'phaser';
 +import { CELL, DEPTH } from '../config';
 +import { PALETTE } from '../content/palette';
@@ -488,10 +459,10 @@ index 0000000..85ad19d
 +    for (const t of this.towers.towers) {
 +      const spec = t.spec;
 +      if (spec.kind !== 'beam' && spec.addedBeamDps <= 0) continue;
++      const st = this.stateOf(t);
 +      const range = spec.range * CELL;
 +      let main = -1;
 +      if (spec.kind === 'beam') {
-+        const st = this.stateOf(t);
 +        main = beamTarget(t.x, t.y, range, st.main, enemies);
 +        st.main = main >= 0 ? { index: main, serial: enemies[main]!.serial } : null;
 +        if (main >= 0) {
@@ -508,7 +479,6 @@ index 0000000..85ad19d
 +        if (spec.kind !== 'beam') primary = second;
 +        if (second >= 0) this.beam(t, enemies[second]!, spec.addedBeamDps * dt, 1);
 +      }
-+      const st = this.stateOf(t);
 +      const serial = primary >= 0 ? enemies[primary]!.serial : 0;
 +      if (primary !== st.primaryIndex || serial !== st.primarySerial) {
 +        // A soft lock-on tick per new target; silent while beaming and when the beam breaks.
@@ -524,7 +494,7 @@ index 0000000..85ad19d
 +    const m = t.muzzle(0);
 +    this.lines.lineStyle(width, PALETTE.teal, 1);
 +    this.lines.lineBetween(m.x, m.y, e.x, e.y);
-+    this.enemies.strike(e, { damage, splash: 0, slow: undefined, pierce: 0, mark: undefined, color: PALETTE.teal, noFlash: true });
++    this.enemies.strike(e, { damage, splash: 0, slow: undefined, pierce: 0, mark: undefined, color: PALETTE.teal, source: t, noFlash: true });
 +    this.fx.beamImpact(e.x, e.y);
 +  }
 +
@@ -538,29 +508,29 @@ index 0000000..85ad19d
 +  }
 +}
 diff --git a/projects/chokepoint/game/src/systems/EnemySystem.ts b/projects/chokepoint/game/src/systems/EnemySystem.ts
-index eb67056..ad22252 100644
+index 4624fb7..a23e05d 100644
 --- a/projects/chokepoint/game/src/systems/EnemySystem.ts
 +++ b/projects/chokepoint/game/src/systems/EnemySystem.ts
-@@ -22,6 +22,8 @@ export interface HitPayload {
-   mark: { pct: number; x: number; y: number } | undefined;
-   /** The tower's color, for the shot and the burst. */
+@@ -26,6 +26,8 @@ export interface HitPayload {
    color: number;
+   /** The tower that made the hit: its mints (and the mints around the kill) decide the extra kill gold. */
+   source: Tower;
 +  /** Skip the white hit flash (a beam strikes every frame). */
 +  noFlash?: boolean;
  }
  
  /** Owns the enemy pool: spawning, walking, hits, kills, leaks, and the health bars. */
-@@ -98,7 +100,7 @@ export class EnemySystem {
+@@ -104,7 +106,7 @@ export class EnemySystem {
      if (!e.active) return false;
      if (payload.slow) e.slow(payload.slow.pct, payload.slow.sec);
      if (payload.mark && e.mark(payload.mark.pct)) this.fx.markFlash(payload.mark.x, payload.mark.y, CELL * 0.43);
 -    if (payload.damage <= 0 || !e.hit(payload.damage)) return false;
 +    if (payload.damage <= 0 || !e.hit(payload.damage, payload.noFlash)) return false;
-     const paid = this.run.addKill(e.def.gold);
-     this.fx.burst(e.x, e.y, PALETTE[e.def.look.color]);
-     this.fx.killCount(e.x, e.y);
+     // Mint towers (core/mint.ts): the killer's own copies, plus every mint tower within its radius, pay extra.
+     const cell = this.board.cellAt(e.x, e.y);
+     const paid = this.run.addKill(e.def.gold + (cell ? mintGoldBonus(this.towers(), cell, payload.source) : 0));
 diff --git a/projects/chokepoint/game/src/systems/FxSystem.ts b/projects/chokepoint/game/src/systems/FxSystem.ts
-index 37e16db..4e3bc84 100644
+index 57a4214..d06ce2a 100644
 --- a/projects/chokepoint/game/src/systems/FxSystem.ts
 +++ b/projects/chokepoint/game/src/systems/FxSystem.ts
 @@ -61,6 +61,15 @@ export class FxSystem {
@@ -580,17 +550,17 @@ index 37e16db..4e3bc84 100644
    markFlash(x: number, y: number, radius: number): void {
      if (this.live >= FxSystem.MAX) return;
 diff --git a/projects/chokepoint/game/src/systems/RunFlow.ts b/projects/chokepoint/game/src/systems/RunFlow.ts
-index 3f89ea3..bd9ec97 100644
+index 3f89ea3..3e4cd7b 100644
 --- a/projects/chokepoint/game/src/systems/RunFlow.ts
 +++ b/projects/chokepoint/game/src/systems/RunFlow.ts
-@@ -15,6 +15,7 @@ import type { FxSystem } from './FxSystem';
+@@ -13,6 +13,7 @@ import type { Building } from './Building';
+ import type { EnemySystem } from './EnemySystem';
+ import type { FxSystem } from './FxSystem';
  import type { ProjectileSystem } from './ProjectileSystem';
++import type { BeamSystem } from './BeamSystem';
  import type { TowerSystem } from './TowerSystem';
  import type { WaveSystem } from './WaveSystem';
-+import type { BeamSystem } from './BeamSystem';
  
- /** Everything RunFlow moves along each frame. */
- export interface RunSystems {
 @@ -23,6 +24,7 @@ export interface RunSystems {
    waves: WaveSystem;
    enemies: EnemySystem;
@@ -616,18 +586,18 @@ index 3f89ea3..bd9ec97 100644
      const bonus = this.run.clearWave();
      const clean = this.run.cleanWaves > cleanBefore;
 diff --git a/projects/chokepoint/game/src/systems/TowerSystem.ts b/projects/chokepoint/game/src/systems/TowerSystem.ts
-index 106f839..ecc174a 100644
+index 5698332..b2339e0 100644
 --- a/projects/chokepoint/game/src/systems/TowerSystem.ts
 +++ b/projects/chokepoint/game/src/systems/TowerSystem.ts
-@@ -90,7 +90,7 @@ export class TowerSystem {
+@@ -91,7 +91,7 @@ export class TowerSystem {
    update(dt: number): void {
      const enemies = this.enemies.all;
      for (const t of this.towers) {
 -      if (!t.spec.attacks) continue;
 +      if (!t.spec.attacks || t.spec.kind === 'beam') continue; // beams have no cooldown: BeamSystem
-       t.cooldown -= dt;
-       if (t.cooldown > 0) continue;
-       if (this.attack(t, enemies)) t.cooldown += 1 / (t.spec.rate * t.rallyRateMul);
+       // A pure support (no damage, slow, bolts or marks, like a bare Mint) never attacks:
+       // pulse.ts would only fire its wave fx, kick and sound around a tower that does nothing.
+       if (t.spec.damage <= 0 && !t.spec.slow && t.spec.bolts === 0 && t.spec.markPct === 0) continue;
 diff --git a/projects/chokepoint/game/src/systems/attacks/index.ts b/projects/chokepoint/game/src/systems/attacks/index.ts
 index 19f0ff6..5076bb6 100644
 --- a/projects/chokepoint/game/src/systems/attacks/index.ts
@@ -640,15 +610,15 @@ index 19f0ff6..5076bb6 100644
 +  beam: () => false,
  };
 diff --git a/projects/chokepoint/game/tests/content.test.ts b/projects/chokepoint/game/tests/content.test.ts
-index 84e99b6..89cf39d 100644
+index 2cba192..2a0abc2 100644
 --- a/projects/chokepoint/game/tests/content.test.ts
 +++ b/projects/chokepoint/game/tests/content.test.ts
 @@ -40,7 +40,7 @@ describe('content', () => {
        expect(BRIGHTS).toContain(a.look.color);
        expect(a.first.range).toBeGreaterThan(0);
        expect(a.first.rate).toBeGreaterThan(0);
--      expect(a.first.damage > 0 || a.first.slow || a.first.mark || a.first.kind === 'rally').toBeTruthy();
-+      expect(a.first.damage > 0 || a.first.slow || a.first.mark || a.first.beam || a.first.kind === 'rally').toBeTruthy();
+-      expect(a.first.damage > 0 || a.first.slow || a.first.mark || a.first.kind === 'rally' || a.first.goldRadius).toBeTruthy();
++      expect(a.first.damage > 0 || a.first.slow || a.first.mark || a.first.beam || a.first.kind === 'rally' || a.first.goldRadius).toBeTruthy();
        if (a.first.kind === 'shot') expect(a.first.projectileSpeed ?? 0).toBeGreaterThan(0);
        expect(Object.keys(a.added).length).toBeGreaterThan(0);
        // The card shows each line next to its glyph: short, and no "First:"-style labels.

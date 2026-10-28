@@ -4,11 +4,12 @@ title: "Beam: the line that never stops"
 assignee: asus
 size: L
 priority: 3
-status: in-progress
+status: todo
 depends_on: [T0004]
 attempts: 2
 created: 2026-10-28T06:24:55Z
 claimed_at: 2026-10-28T12:21:52Z
+finished_at: 2026-10-28T14:22:29Z
 epic: E4
 ---
 
@@ -104,4 +105,12 @@ lock():void
 Could not merge into main (conflict). The work was saved to projects/chokepoint/tasks/salvage/T0029.diff; the next attempt re-applies it on the latest code.
 - Conflicts in: projects/chokepoint/game/src/content/types.ts, projects/chokepoint/game/src/core/augments.ts, projects/chokepoint/game/src/core/tiers.ts, projects/chokepoint/game/src/debug/runChecks.ts, projects/chokepoint/game/src/scenes/GameScene.ts, projects/chokepoint/game/src/systems/EnemySystem.ts, projects/chokepoint/game/src/systems/TowerSystem.ts, projects/chokepoint/game/tests/content.test.ts
 - Auto-resolved 8 spot(s) where both sides only added lines (clean: projects/chokepoint/game/src/content/types.ts, projects/chokepoint/game/src/core/augments.ts, projects/chokepoint/game/src/core/tiers.ts, projects/chokepoint/game/src/debug/runChecks.ts, projects/chokepoint/game/src/scenes/GameScene.ts).
+- Could not resolve them: git could not continue the rebase after 3 rounds.
+
+## Attempt 2 failed (asus)
+
+Could not merge into main (conflict). The work was saved to projects/chokepoint/tasks/salvage/T0029.diff; the next attempt re-applies it on the latest code.
+- Self-review made fixes (kept; checks pass).
+- Conflicts in: projects/chokepoint/game/src/content/augments/index.ts, projects/chokepoint/game/src/content/types.ts, projects/chokepoint/game/src/core/augments.ts, projects/chokepoint/game/src/systems/FxSystem.ts, projects/chokepoint/game/src/systems/TowerSystem.ts, projects/chokepoint/game/tests/content.test.ts
+- Auto-resolved 3 spot(s) where both sides only added lines (clean: projects/chokepoint/game/src/content/augments/index.ts, projects/chokepoint/game/src/core/augments.ts, projects/chokepoint/game/src/systems/FxSystem.ts).
 - Could not resolve them: git could not continue the rebase after 3 rounds.
