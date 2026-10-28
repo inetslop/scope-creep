@@ -1,10 +1,9 @@
 ---
 id: T0065
 title: "Second pick: every 5th draft offers a fourth card"
-assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-28T13:54:28Z
@@ -72,3 +71,7 @@ DESIGN:
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0064: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Attempt 1 interrupted (desktop-4070)
+
+The runner stopped mid-task (crash, restart or reboot). Requeued.
