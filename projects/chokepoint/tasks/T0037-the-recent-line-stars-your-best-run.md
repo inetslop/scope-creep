@@ -4,11 +4,12 @@ title: The Recent line stars your best run
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T09:20:45Z
 claimed_at: 2026-10-28T09:42:25Z
+finished_at: 2026-10-28T10:03:11Z
 epic: E1
 ---
 
@@ -98,3 +99,17 @@ export function buildRecentLine(scene: Phaser.Scene, profile: Profile): RecentLi
 - The menu is relaunched after every run (Rewards/GameOver → menu), so the star appears/disappears by rebuild — no reactivity, no listener. Do not touch `ProfileCard.ts`, the profile card star, `core/profile.ts` or saved data; no invariant (no new system).
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The menu's Recent line now marks any of your last four runs that reached your best wave with the small yellow star — same star texture, size, yellow, and baseline as the profile card's "Best wave" star (13 px past the entry's numbers, 1 px below the text centre). Created `src/scenes/menu/RecentLine.ts` (`buildRecentLine`, sibling of `ProfileCard.ts`) building the row and its stars in one container, and rewired `MenuScene.ts` to use it: the row fades in with the rest of the menu and its `layout()` adds a fit-scale for narrow screens while keeping the position expression unchanged. Two runs at best wave both get the star; the line still hides when there are no recent runs, and it appears/disappears purely by menu rebuild after each run. Profile card, profile data, HUD and invariants are untouched; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 20.8 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/scenes/MenuScene.ts   | 17 ++++-----
+ .../chokepoint/game/src/scenes/menu/RecentLine.ts  | 42 ++++++++++++++++++++++
+ 2 files changed, 51 insertions(+), 8 deletions(-)
+```
