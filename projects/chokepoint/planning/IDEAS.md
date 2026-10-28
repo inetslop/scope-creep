@@ -53,7 +53,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Tight-pack waves: some waves send enemies bunched close together (a "tight" tag in the wave preview, once T0015 is in) so multi-hit augments (Splash, Lance, Chain) shine
 - A second pick: every 5th draft offers a 4th card
 - Burn on death: when a burning enemy dies, its burn jumps to the nearest enemy within 2 cells (one jump, same rate) — a small rule after T0028
-- Combo milestone: at ×10 the kill combo counter turns yellow and the next kill's chip burst is bigger — ready: T0031 is in (a yoga S)
+- Combo milestone: at ×10 the kill combo counter turns yellow and stays yellow for the rest of the chain, and the ×10 kill bursts with twice the chip count — T0031 is in — tasked as T0034 (yoga, cycle 15)
 - Beam hum: a very quiet hum under an active beam, one per tower, fading in and out with the line — a small audio touch after T0029, only if it stays quiet with several beams at once
 - Tier chime: on the draft reveal flip (T0024), each offered card lands with a short chime — one low note Common, two a third higher Rare, three the highest Epic, all at the soft UI-blip volume — so the tier is heard as well as seen — built as T0032 (yoga)
 - Ricochet augment: first, a shot at the enemy furthest along that bounces off the first rock it hits once and strikes the nearest enemy it meets on the other side (same damage, same cadence as a Bolt shot); added, the shot bounces one more rock. Closest is Bolt (a straight shot at the furthest); new is that the board's rocks take part in the attack — the first augment that uses the board's shape in combat
@@ -65,3 +65,5 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Working aura: a support tower (Rally, Mint, an Anchor with no attack) shimmers a quiet 1 s ring at its base each time its aura ticks, so you can see a tower that never fires is actually working — a small readability touch after T0020/T0021/T0023 land
 - The run's seed on the rewards card: a short code (four letters) under the coins line, so a run can be shared and replayed on its exact board — the bridge between the daily seeded run and the ghost run; small, after the rewards card settles (T0033)
 - Resume a run: closing the browser mid-run keeps the run (board, towers, wave, gold) in the profile; the menu offers "Resume" beside Play, and "New run" abandons it for nothing — a mobile lifesaver for 10-25 minute runs; the save pattern is E1's
+- Mint's gold pop: when a kill pays a Mint's +1 extra gold, a small gold "+1" pops up at the kill spot (the same pop as kill gold), so the aura's income is visible where it happens — a small juice after T0021
+- Wave-clear sweep: a soft two-note rising sweep (coin-chime family, same volume) in the beat between a wave ending and the draft opening, so the phase change is heard as well as seen — a small audio touch
