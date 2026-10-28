@@ -3,11 +3,13 @@ id: T0060
 title: "Last stand banner: the card that teaches the rule"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0054, T0067]
 attempts: 0
 created: 2026-10-28T13:29:40Z
+claimed_at: 2026-10-28T14:17:52Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
