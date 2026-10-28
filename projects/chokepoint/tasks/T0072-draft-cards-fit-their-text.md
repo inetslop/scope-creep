@@ -1,12 +1,14 @@
 ---
 id: T0072
 title: Draft cards fit their text
+assignee: cachyos-x8664
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T17:31:39Z
+claimed_at: 2026-10-28T20:05:43Z
 ---
 
 ## Goal
