@@ -3,11 +3,13 @@ id: T0064
 title: "Momentum: the Epic that grows every tower on a clean wave"
 size: L
 priority: 3
-status: design
+status: designing
 depends_on: [T0025]
 attempts: 0
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T14:58:20Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
