@@ -4,7 +4,7 @@ title: "Kill gold trail: the coin that slides to the tally"
 size: S
 priority: 3
 status: todo
-depends_on: [T0039, T0054]
+depends_on: [T0039, T0055]
 attempts: 0
 created: 2026-10-28T13:29:40Z
 epic: E1

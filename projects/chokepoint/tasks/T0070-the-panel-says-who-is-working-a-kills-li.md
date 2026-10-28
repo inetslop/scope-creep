@@ -4,7 +4,7 @@ title: "The panel says who is working: a kills line per tower"
 size: S
 priority: 3
 status: todo
-depends_on: [T0054]
+depends_on: [T0061]
 attempts: 0
 created: 2026-10-28T13:54:28Z
 epic: E1
@@ -19,7 +19,7 @@ A player can see which towers are doing the work this run: every tower's panel g
 - A pure support tower (Rally, Mint, a Momentum with no attack, T0064) shows "kills 0" — Rally's boost never lends kills to the boosted tower.
 - "kills 0" is shown (an idle tower reads as idle). N resets on a new run and on a resumed run (T0042) — the line is a display stat, not part of the save.
 - No rule change: gold, combo, score, coins and "stopped" are all untouched by this task.
-- Chained behind T0054 on purpose: it hooks the kill flow, so it lands after the kill flow's in-flight edits settle.
+- Chained in the kill-flow chain (behind T0061; cycle 35) on purpose: it inserts at the same line of the kill block in EnemySystem as the trail, so the kill block takes one edit at a time.
 
 ## Acceptance criteria
 - [ ] Selecting a tower shows a small muted-gray "kills N" line at the bottom of its panel; a freshly built tower shows "kills 0".

@@ -4,7 +4,7 @@ title: "Working aura: the quiet ring under support towers when their aura works"
 size: S
 priority: 3
 status: todo
-depends_on: [T0039, T0054, T0027]
+depends_on: [T0039, T0027, T0066]
 attempts: 0
 created: 2026-10-28T13:04:03Z
 epic: E4

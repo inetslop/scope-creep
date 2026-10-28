@@ -4,7 +4,7 @@ title: "Burn on death: the flame that jumps to the nearest"
 size: S
 priority: 3
 status: todo
-depends_on: [T0028, T0039, T0027, T0054]
+depends_on: [T0028, T0039, T0027, T0070]
 attempts: 0
 created: 2026-10-28T13:29:40Z
 epic: E4
