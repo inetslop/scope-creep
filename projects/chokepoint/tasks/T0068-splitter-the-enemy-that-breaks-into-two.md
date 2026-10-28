@@ -1,12 +1,14 @@
 ---
 id: T0068
 title: "Splitter: the enemy that breaks into two"
+assignee: desktop-4070
 size: M
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T16:00:39Z
 ---
 
 ## Goal
