@@ -32,6 +32,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
     for (const t of g.towers.towers) if (t.rallyRateMul < 1 - 1e-9 || t.rallyRateMul > 1.2) return `rally multiplier ${t.rallyRateMul}`;
     return null;
   }],
+  ['pushWindup.valid', (g) => g.windup.broken()],
   ['hand.selection', (g) => g.building.brokenSelection()],
   ['augments.valid', (g) => {
     for (const c of [...g.run.hand, ...g.towers.towers.flatMap((t) => t.augments)])

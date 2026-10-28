@@ -4,11 +4,12 @@ title: "Push windup: the ring that fills as the next gust charges"
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0027]
 attempts: 1
 created: 2026-10-28T13:29:40Z
 claimed_at: 2026-10-28T16:00:05Z
+finished_at: 2026-10-28T16:26:49Z
 epic: E4
 ---
 
@@ -118,3 +119,17 @@ export class PushWindup {
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Push towers now show a thin purple windup ring at their base that sweeps 0°→360° clockwise from 12 o'clock over the full gust charge interval (2.4/2.0/1.8 s by tier), completes and fades over 100 ms on each gust, then restarts — so the next shove is readable before it lands. Added `src/systems/PushWindup.ts` (one Graphics per Push tower, redrawn from the tower's own cooldown each frame in board units), four one-line wirings in `GameScene.ts` and one new `pushWindup.valid` invariant in `debug/runChecks.ts`. The gust's numbers, radius, cadence and all sounds are untouched, and no other tower gets a ring; verified with `npm run check` and `npm run smoke` (desktop + mobile).
+
+- Self-review: APPROVE
+- Time: 26.7 min
+
+```
+projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  4 ++
+ projects/chokepoint/game/src/systems/PushWindup.ts | 63 ++++++++++++++++++++++
+ 3 files changed, 68 insertions(+)
+```

@@ -14,6 +14,7 @@ import { EnemySystem } from '../systems/EnemySystem';
 import { ExitWarning } from '../systems/ExitWarning';
 import { FxSystem } from '../systems/FxSystem';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
+import { PushWindup } from '../systems/PushWindup';
 import { RallySystem } from '../systems/RallySystem';
 import { RunFlow } from '../systems/RunFlow';
 import { TowerSystem } from '../systems/TowerSystem';
@@ -42,6 +43,7 @@ export class GameScene extends Phaser.Scene {
   projectiles!: ProjectileSystem;
   fx!: FxSystem;
   exitWarn!: ExitWarning;
+  windup!: PushWindup;
 
   constructor() {
     super(SCENES.game);
@@ -80,6 +82,7 @@ export class GameScene extends Phaser.Scene {
       sfx,
     });
     this.rally = new RallySystem(this, this.towers, this.fx);
+    this.windup = new PushWindup(this, this.towers);
 
     this.board.layout(view.width, view.height);
     onResize(this, (w, h) => this.board.layout(w, h));
@@ -133,6 +136,7 @@ export class GameScene extends Phaser.Scene {
     this.flow.update(dt);
     this.exitWarn.update(dt);
     this.rally.update(dt);
+    this.windup.update(dt);
     syncHookStats(this);
   }
 }
