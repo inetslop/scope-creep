@@ -3,11 +3,13 @@ id: T0066
 title: "Combo gold: quick kills pay extra"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0039, T0054]
 attempts: 0
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T15:11:19Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
