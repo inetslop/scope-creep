@@ -3,11 +3,13 @@ id: T0070
 title: "The panel says who is working: a kills line per tower"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0054]
 attempts: 0
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T15:28:34Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
