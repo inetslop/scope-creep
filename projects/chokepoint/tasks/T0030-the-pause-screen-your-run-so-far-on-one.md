@@ -1,10 +1,9 @@
 ---
 id: T0030
 title: "The pause screen: your run so far on one line"
-assignee: narcissus
 size: S
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-28T06:24:55Z
@@ -64,3 +63,7 @@ none
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0019: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Attempt 1 interrupted (narcissus)
+
+The runner stopped mid-task (crash, restart or reboot). Requeued.
