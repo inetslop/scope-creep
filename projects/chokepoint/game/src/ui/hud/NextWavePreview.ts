@@ -2,7 +2,7 @@ import type Phaser from 'phaser';
 import { CELL, HUD } from '../../config';
 import { getEnemy } from '../../content/enemies';
 import { PALETTE } from '../../content/palette';
-import { waveCounts, type WavePlan } from '../../core/waves';
+import { isQuietWave, waveCounts, type WavePlan } from '../../core/waves';
 import { artScale, enemyTexture } from '../../art/textures';
 import type { GameScene } from '../../scenes/GameScene';
 import { makeCard } from '../card';
@@ -54,14 +54,19 @@ export class NextWavePreview implements HudPart {
       }
       this.box = this.build(plan);
       this.place();
-      this.box.setScale(0.4); // pop in like a new tower does
-      this.scene.tweens.add({ targets: this.box, scale: 1, duration: 200, ease: 'Back.easeOut' });
+      this.box.setScale(0.4 * this.fitScale()); // pop in like a new tower does
+      this.scene.tweens.add({ targets: this.box, scale: this.fitScale(), duration: 200, ease: 'Back.easeOut' });
     } else if (this.box && !this.box.visible) {
       // The panel closed and the same wave is still coming: back to its corner.
       this.scene.tweens.killTweensOf(this.box);
-      this.box.setScale(1); // a killed pop-in may have left it smaller
+      this.box.setScale(this.fitScale()); // a killed pop-in may have left it smaller
       this.box.setVisible(true);
     }
+  }
+
+  /** Full size, or shrunk to fit the screen's corner: a row wider than it must keep its chip and every count on screen. */
+  private fitScale(): number {
+    return Math.min(1, (this.size.width - EDGE * 2) / Math.max(1, this.cardW));
   }
 
   /** Above the countdown: above the words on narrow screens, above the button's ring on wide. */
@@ -72,14 +77,24 @@ export class NextWavePreview implements HudPart {
     const bottom = height - HUD.bottom / 2;
     const x = Math.min(width - EDGE - NEXT_SIZE / 2 - 4, width - EDGE - this.cardW / 2);
     const above = isNarrow(width) ? bottom - NEXT_SIZE / 2 - 22 - 30 : bottom - (NEXT_SIZE / 2 + 7) - 10;
-    box.setPosition(x, above - H / 2);
+    box.setScale(this.fitScale()).setPosition(x, above - H / 2);
   }
 
   private build(plan: WavePlan): Phaser.GameObjects.Container {
     const scene = this.scene;
-    const counts = waveCounts(plan);
-    const pieces: (Phaser.GameObjects.Image | Phaser.GameObjects.Text)[] = [];
+    const counts = waveCounts(plan); // a quiet wave's plan is already halved, so the counts come out small
+    const pieces: (Phaser.GameObjects.Image | Phaser.GameObjects.Text | Phaser.GameObjects.Container)[] = [];
     let cursor = 0;
+    if (isQuietWave(plan.number)) {
+      // A small muted-blue "quiet" tag at the card's left edge: relief, so blue (never the red leak warning).
+      const label = scene.add.text(0, 0, 'quiet', textStyle(11, PALETTE.card, { fontStyle: 'bold' })).setOrigin(0.5);
+      const chipW = Math.ceil(label.width) + 14;
+      const chip = scene.add.graphics();
+      chip.fillStyle(PALETTE.blueDeep, 1);
+      chip.fillRoundedRect(-chipW / 2, -9, chipW, 18, 9);
+      pieces.push(scene.add.container(chipW / 2, 0, [chip, label])); // its left edge sits on the card's content edge
+      cursor += chipW + GROUP_GAP;
+    }
     counts.forEach((c, i) => {
       if (i > 0) {
         const dot = scene.add.text(0, 0, '·', textStyle(14, PALETTE.faint, { fontStyle: 'bold' })).setOrigin(0.5);

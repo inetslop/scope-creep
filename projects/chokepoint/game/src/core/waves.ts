@@ -56,6 +56,35 @@ export function splitterCount(total: number): number {
   return Math.floor(total / 7);
 }
 
+/** Every 4th wave is a quiet breather wave (wave 0 is not). */
+export function isQuietWave(wave: number): boolean {
+  return wave > 0 && wave % 4 === 0;
+}
+
+/** A quiet wave's enemy count: half the usual, rounded up, minimum 3. */
+export function quietCount(total: number): number {
+  return Math.max(3, Math.ceil(total / 2));
+}
+
+/** The multiplier a kill's base gold takes on wave `wave` (quiet waves pay double). */
+export function quietGoldMul(wave: number): number {
+  return isQuietWave(wave) ? 2 : 1;
+}
+
+/**
+ * A quiet wave keeps every other enemy: same types and proportions, half the count.
+ * A kept spawn takes on the gaps of the spawn(s) that left, so the kept enemies still
+ * arrive on schedule; the first kept one stays at delay 0.
+ */
+export function quietHalve(spawns: WaveSpawn[]): WaveSpawn[] {
+  const want = quietCount(spawns.length);
+  if (Math.ceil(spawns.length / 2) < 3) return spawns.slice(0, want); // the min-3 floor wins
+  const kept: WaveSpawn[] = [];
+  for (let i = 0; i < spawns.length; i += 2)
+    kept.push({ enemy: spawns[i]!.enemy, delaySec: i === 0 ? 0 : spawns[i]!.delaySec + spawns[i - 1]!.delaySec });
+  return kept;
+}
+
 /**
  * Which enemies a wave sends, in order, and when. Spends the wave's budget on enemies that are
  * unlocked (fromWave) and affordable; groups of the same type come in quick succession. Ramping
@@ -99,21 +128,24 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
   }
   // The Hauler: one on 9, 13, 17, ... (it never comes from the budget; its threat is a placeholder).
   if (wave >= 9 && (wave - 9) % 4 === 0) reserved.push('hauler');
-  if (reserved.length === 0) return { number: wave, spawns, hpMul: waveHpMul(wave) };
-  // Interleave the rampers and dashing ones evenly through the wave (no rng: seeded waves stay stable).
-  let t = 0;
-  const at: { enemy: string; t: number }[] = spawns.map((s) => {
-    t += s.delaySec;
-    return { enemy: s.enemy, t };
-  });
-  const span = t + waveSpacing(wave) * 1.5;
-  reserved.forEach((enemy, i) => at.push({ enemy, t: ((i + 0.5) / reserved.length) * span }));
-  at.sort((a, b) => a.t - b.t);
-  return {
-    number: wave,
-    spawns: at.map((s, i) => ({ enemy: s.enemy, delaySec: i === 0 ? 0 : s.t - at[i - 1]!.t })),
-    hpMul: waveHpMul(wave),
-  };
+  let finalSpawns: WaveSpawn[];
+  if (reserved.length === 0) {
+    finalSpawns = spawns;
+  } else {
+    // Interleave the rampers and dashing ones evenly through the wave (no rng: seeded waves stay stable).
+    let t = 0;
+    const at: { enemy: string; t: number }[] = spawns.map((s) => {
+      t += s.delaySec;
+      return { enemy: s.enemy, t };
+    });
+    const span = t + waveSpacing(wave) * 1.5;
+    reserved.forEach((enemy, i) => at.push({ enemy, t: ((i + 0.5) / reserved.length) * span }));
+    at.sort((a, b) => a.t - b.t);
+    finalSpawns = at.map((s, i) => ({ enemy: s.enemy, delaySec: i === 0 ? 0 : s.t - at[i - 1]!.t }));
+  }
+  // A quiet wave halves the plan at the single exit, so both paths above get it.
+  if (isQuietWave(wave)) finalSpawns = quietHalve(finalSpawns);
+  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave) };
 }
 
 /** What a wave sends: each enemy type it sends, and how many (no zeros), in first-arrival order. */

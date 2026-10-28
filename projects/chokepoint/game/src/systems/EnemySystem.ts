@@ -6,6 +6,7 @@ import type { RunState } from '../core/run';
 import { mintGoldBonus } from '../core/mint';
 import { burnTick } from '../core/burn';
 import { ROOT_IMMUNE_SEC } from '../core/root';
+import { quietGoldMul } from '../core/waves';
 import { hook } from '../debug/testHook';
 import { Enemy } from '../entities/Enemy';
 import type { Tower } from '../entities/Tower';
@@ -150,9 +151,11 @@ export class EnemySystem {
 
   /** The one kill: its gold (with the mints at the death spot), the chips, the chain, the sound. */
   private kill(e: Enemy, source: Tower | undefined): void {
-    // Mint towers (core/mint.ts): the killer's own copies, plus every mint tower within its radius, pay extra.
-    const paid = this.run.addKill(e.def.gold + (source ? mintGoldBonus(this.towers(), e, source) : 0));
-    const mint = paid - e.def.gold; // one per Mint bonus, each pays exactly +1 (T0021)
+    // The kill's base gold is doubled on a quiet wave (core/waves.ts); on top, Mint towers (core/mint.ts)
+    // pay extra: the killer's own copies, plus every mint tower within its radius.
+    const baseGold = e.def.gold * quietGoldMul(this.run.wave);
+    const paid = this.run.addKill(baseGold + (source ? mintGoldBonus(this.towers(), e, source) : 0));
+    const mint = paid - baseGold; // one per Mint bonus, each pays exactly +1 (T0021)
     const milestone = this.fx.killCount(e.x, e.y);
     this.run.noteCombo(this.fx.chain);
     this.fx.burst(e.x, e.y, PALETTE[e.def.look.color], milestone);

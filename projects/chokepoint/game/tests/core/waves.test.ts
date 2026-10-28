@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ENEMIES } from '../../src/content/enemies';
 import { Rng } from '../../src/core/rng';
-import { dashCount, demoWave, planWave, rampCount, waveBudget, waveCounts, waveHpMul } from '../../src/core/waves';
+import { dashCount, demoWave, isQuietWave, planWave, quietCount, quietGoldMul, quietHalve, rampCount, waveBudget, waveCounts, waveHpMul } from '../../src/core/waves';
 
 describe('planWave', () => {
   it('spends the budget on unlocked enemies only', () => {
@@ -28,15 +28,15 @@ describe('planWave', () => {
     expect([7, 8, 12, 16, 20, 24, 40].map((w) => rampCount(w))).toEqual([0, 2, 3, 4, 5, 6, 6]);
   });
 
-  it('mixes in the ramping enemies exactly as rampCount says', () => {
+  it('mixes in the ramping enemies exactly as rampCount says (non-quiet waves; quiet waves are halved)', () => {
     const expected: [number, number][] = [
       [1, 0],
       [7, 0],
-      [8, 2],
-      [12, 3],
-      [16, 4],
-      [20, 5],
-      [24, 6],
+      [9, 2],
+      [13, 3],
+      [17, 4],
+      [21, 5],
+      [25, 6],
       [30, 6],
     ];
     for (const [wave, count] of expected) {
@@ -49,15 +49,15 @@ describe('planWave', () => {
     expect([4, 5, 6, 9, 12, 15, 20].map((w) => dashCount(w))).toEqual([0, 1, 2, 3, 4, 5, 5]);
   });
 
-  it('mixes in the dashing enemies exactly as dashCount says', () => {
+  it('mixes in the dashing enemies exactly as dashCount says (non-quiet waves; quiet waves are halved)', () => {
     const expected: [number, number][] = [
       [4, 0],
       [5, 1],
       [6, 2],
       [9, 3],
-      [12, 4],
+      [13, 4],
       [15, 5],
-      [20, 5],
+      [21, 5],
     ];
     for (const [wave, count] of expected) {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
@@ -69,9 +69,10 @@ describe('planWave', () => {
     for (const wave of [1, 8]) {
       expect(planWave(wave, new Rng(wave), ENEMIES).spawns.filter((s) => s.enemy === 'splitter').length).toBe(0);
     }
-    for (const wave of [9, 12, 15, 20]) {
+    for (const wave of [9, 13, 15, 21]) { // non-quiet: a quiet wave halves the plan
       const plan = planWave(wave, new Rng(wave), ENEMIES);
-      const others = plan.spawns.filter((s) => s.enemy !== 'splitter').length;
+      // The Hauler is reserved after the splitters are counted, so it doesn't count toward them.
+      const others = plan.spawns.filter((s) => s.enemy !== 'splitter' && s.enemy !== 'hauler').length;
       expect(plan.spawns.filter((s) => s.enemy === 'splitter').length).toBe(Math.floor(others / 7));
       expect(plan.spawns.filter((s) => s.enemy === 'splitter').length).toBeGreaterThan(0);
     }
@@ -99,6 +100,47 @@ describe('planWave', () => {
       expect(waveHpMul(wave)).toBeGreaterThan(waveHpMul(wave - 1));
     }
     expect(waveHpMul(1)).toBe(1);
+  });
+});
+
+describe('quiet waves (every 4th)', () => {
+  it('isQuietWave: every 4th wave, not wave 0', () => {
+    expect([0,1,2,3,4,5,8,12].map(isQuietWave)).toEqual([false,false,false,false,true,false,true,true]);
+  });
+  it('quietGoldMul: double on quiet waves, 1 otherwise', () => {
+    expect([1,3,4,5,8,12].map(quietGoldMul)).toEqual([1,1,2,1,2,2]);
+  });
+  it('quietCount: half rounded up, minimum 3', () => {
+    expect([2,3,4,5,6,7,8,10].map(quietCount)).toEqual([3,3,3,3,3,4,4,5]);
+  });
+  it('quietHalve: keeps every other spawn, same types, delays take on the gaps', () => {
+    const full = [
+      { enemy: 'dot', delaySec: 0 }, { enemy: 'dart', delaySec: 1 }, { enemy: 'block', delaySec: 1 },
+      { enemy: 'dot', delaySec: 1 }, { enemy: 'dart', delaySec: 1 },
+    ];
+    expect(quietHalve(full)).toEqual([
+      { enemy: 'dot', delaySec: 0 },
+      { enemy: 'block', delaySec: 2 }, // own 1 + the dropped dart's 1
+      { enemy: 'dart', delaySec: 2 },
+    ]);
+    expect(quietHalve(full.slice(0, 4))).toEqual([ // ceil(4/2)=2 < 3, the min-3 floor wins
+      { enemy: 'dot', delaySec: 0 }, { enemy: 'dart', delaySec: 1 }, { enemy: 'block', delaySec: 1 },
+    ]);
+  });
+  it('a quiet wave sends between 3 and half the usual budget, deterministically', () => {
+    for (const wave of [4, 8, 12, 16, 20, 24]) {
+      const a = planWave(wave, new Rng(wave), ENEMIES);
+      expect(a.spawns).toEqual(planWave(wave, new Rng(wave), ENEMIES).spawns); // no rng in the halving
+      expect(a.spawns.length).toBeGreaterThanOrEqual(3);
+      expect(a.spawns.length).toBeLessThanOrEqual(Math.ceil(waveBudget(wave) / 2)); // full plan ≤ budget, so quiet ≤ half
+    }
+  });
+  it('non-quiet waves are not halved', () => {
+    for (const wave of [1, 2, 3, 5, 6, 7, 9, 10, 11, 13]) {
+      const plan = planWave(wave, new Rng(wave), ENEMIES);
+      expect(plan.spawns.length).toBeGreaterThan(0);
+      expect(plan.spawns.length).toBeLessThanOrEqual(waveBudget(wave)); // the whole budget is fair game
+    }
   });
 });
 

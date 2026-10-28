@@ -4,11 +4,12 @@ title: "Quiet wave: every 4th wave is a breather"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0015]
 attempts: 1
 created: 2026-10-28T13:54:28Z
 claimed_at: 2026-10-28T19:41:04Z
+finished_at: 2026-10-28T21:55:21Z
 epic: E1
 ---
 
@@ -166,3 +167,26 @@ it('non-quiet waves are not halved', () => {
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0059: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Result (attempt 1, asus)
+
+Every 4th wave is now a quiet breather: `core/waves.ts` gained `isQuietWave`/`quietCount`/`quietGoldMul`/`quietHalve` and `planWave` halves the plan (same mix, every-other spawn, min 3) at its single exit; kills on quiet waves pay 2× base gold with the doubled number in the gold pop (Mint bonus untouched, on top), and the wave-preview card shows the halved counts plus a small muted-blue "quiet" chip at its left edge on quiet waves only. Added unit tests for the new rules and a plan-level quiet-wave test, and shifted three existing reserved-count tests off the now-halved quiet waves to adjacent non-quiet ones (coverage of each formula step preserved). Check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 134.3 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/waves.ts         | 62 +++++++++++++++------
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  9 ++--
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  | 29 +++++++---
+ .../chokepoint/game/tests/core/__tmpProbe.test.ts  | 15 ++++++
+ .../chokepoint/game/tests/core/quietWaves.test.ts  | 19 +++++++
+ projects/chokepoint/game/tests/core/waves.test.ts  | 63 ++++++++++++++++++----
+ 6 files changed, 161 insertions(+), 36 deletions(-)
+```
+
+## Merge (attempt 1, asus)
+
+- Conflicts in: projects/chokepoint/game/src/core/waves.ts
+- The conflict agent resolved them.
