@@ -4,11 +4,12 @@ title: "The pause screen: your run so far on one line"
 assignee: narcissus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-10-28T06:24:55Z
 claimed_at: 2026-10-28T20:30:00Z
+finished_at: 2026-10-28T21:09:20Z
 epic: E1
 ---
 
@@ -68,3 +69,15 @@ No longer waits on T0019: that only kept the tasks from editing the same files a
 ## Attempt 1 interrupted (narcissus)
 
 The runner stopped mid-task (crash, restart or reboot). Requeued.
+
+## Result (attempt 2, narcissus)
+
+Re-applied T0030 onto current code: the pause card (`src/scenes/PauseScene.ts`, only file touched) now shows one line between "Paused" and the Controls heading — "Wave N · X lives · Y gold · +Z coins" (or "Ready" before wave 1) in the muted 13 px style of the HUD coin line, with the coin tally from the same `coinsForRun()` call `StatsCard.update()` uses, so it always matches the HUD. One deviation from the design steps: y offset is `+78` (not `+82`) because the design was written against an earlier card without the Controls section; I kept the offset from attempt 1's passed diff, which built on exactly this file. Check and smoke (desktop + mobile) pass.
+
+- Self-review: APPROVE
+- Time: 39.3 min
+
+```
+projects/chokepoint/game/src/scenes/PauseScene.ts | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+```

@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { PALETTE } from '../content/palette';
+import { coinsForRun } from '../core/profile';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
@@ -40,11 +41,14 @@ export class PauseScene extends Phaser.Scene {
     const panelH = 380;
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
     const title = this.add.text(0, -panelH / 2 + 54, 'Paused', titleStyle(34)).setOrigin(0.5);
+    const waveWord = game.run.wave > 0 ? `Wave ${game.run.wave}` : 'Ready';
+    const coins = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves });
+    const stats = this.add.text(0, -panelH / 2 + 78, `${waveWord} · ${game.run.lives} lives · ${game.run.gold} gold · +${coins} coins`, textStyle(13, PALETTE.muted)).setOrigin(0.5);
     const heading = this.add.text(0, -panelH / 2 + 96, 'Controls', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
     const keys = this.add.text(0, -panelH / 2 + 150, 'Space — start the wave early\nF — fast-forward (2x) during waves\n1-9 — pick a card from the hand\n+ / - — zoom the board', textStyle(12, PALETTE.muted, { align: 'center', lineSpacing: 6 })).setOrigin(0.5);
     const resumeButton = makeButton(this, 0, -panelH / 2 + 234, 'Resume', resume, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
     const quitButton = makeButton(this, 0, -panelH / 2 + 302, 'Quit run', quit, { width: 240, height: 52, radius: 26 });
-    const box = this.add.container(0, 0, [panel, title, heading, keys, resumeButton.container, quitButton.container]);
+    const box = this.add.container(0, 0, [panel, title, stats, heading, keys, resumeButton.container, quitButton.container]);
 
     const layout = (width: number, height: number): void => {
       shade.setSize(width, height);
