@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { generateTextures } from '../art/generate';
 import { Sfx } from '../audio/Sfx';
+import { loadProfile } from '../core/profile';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { SCENES } from './keys';
@@ -15,6 +16,7 @@ export class BootScene extends Phaser.Scene {
     hook.scene = SCENES.boot;
     generateTextures(this);
     const sfx = new Sfx();
+    sfx.muted = !loadProfile(window.localStorage).sound;
     this.registry.set('sfx', sfx);
     // Browsers only allow audio after a user gesture: unlock on the first one.
     window.addEventListener('pointerdown', () => sfx.unlock(), { once: true });

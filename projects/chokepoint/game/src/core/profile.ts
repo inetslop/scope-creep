@@ -5,6 +5,7 @@ export interface Profile {
   coins: number;
   lastRun: { wave: number; coins: number } | null;
   recent: { wave: number; coins: number }[];
+  sound: boolean;
 }
 
 export interface KeyValueStore {
@@ -51,9 +52,10 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
       coins: Number(parsed.coins) || 0,
       lastRun,
       recent,
+      sound: typeof parsed.sound === 'boolean' ? parsed.sound : true,
     };
   } catch {
-    return { bestWave: 0, runsPlayed: 0, coins: 0, lastRun: null, recent: [] };
+    return { bestWave: 0, runsPlayed: 0, coins: 0, lastRun: null, recent: [], sound: true };
   }
 }
 
@@ -72,6 +74,7 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
     coins: old.coins + coins,
     lastRun: { wave: result.waves, coins },
     recent: [{ wave: result.waves, coins }, ...old.recent].slice(0, 4),
+    sound: old.sound,
   };
   try {
     store?.setItem(PROFILE_KEY, JSON.stringify(profile));
@@ -79,4 +82,15 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
     /* private mode or full storage: the profile just isn't kept */
   }
   return { profile, coins, newBest: result.waves > old.bestWave };
+}
+
+/** Saves the sound preference; the profile's other fields keep what they had. */
+export function saveSound(store: KeyValueStore | undefined, on: boolean): void {
+  const profile = loadProfile(store);
+  profile.sound = on;
+  try {
+    store?.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    /* private mode or full storage: the preference just isn't kept */
+  }
 }

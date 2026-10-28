@@ -4,11 +4,12 @@ title: "The pause screen: sound on or off, remembered"
 assignee: narcissus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T08:43:02Z
 claimed_at: 2026-10-28T21:10:23Z
+finished_at: 2026-10-28T21:51:13Z
 epic: E1
 ---
 
@@ -123,3 +124,19 @@ it('the sound preference defaults to on and sticks through runs', () => {
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0019, T0030: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Result (attempt 1, narcissus)
+
+The pause screen now has a Sound row at the bottom of its card — a chunky speaker glyph, "Sound", and an On/Off state, the whole 280×48 row being one tap target that flips in place; the preference is stored as `sound` on the profile (default on), saved immediately via new `saveSound()`, carried through `recordRun`, and read at boot so a reloaded "Off" page stays silent before the first pause. Toggling to On plays one soft 523 Hz blip (`Sfx.blip()`, tier-chime note class); toggling to Off is silent, and "Off" silences every sound via the existing `muted` gate in `tone()`. Built against the current pause layout (panel already at 380 with Quit lowest), so per the design's formula: panel 380→434, row at `-panelH/2 + 374`, 22 px below Quit and 36 px above the card bottom; minor deviations only where the design didn't match the code (array-form `content.add([...])`, undefined-guard on `getSfx`), all as prescribed.
+
+- Self-review: APPROVE
+- Time: 40.8 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          |  5 +++
+ projects/chokepoint/game/src/core/profile.ts       | 16 ++++++++-
+ projects/chokepoint/game/src/scenes/BootScene.ts   |  2 ++
+ projects/chokepoint/game/src/scenes/PauseScene.ts  | 39 +++++++++++++++++++---
+ .../chokepoint/game/tests/core/profile.test.ts     | 23 +++++++++----
+ 5 files changed, 73 insertions(+), 12 deletions(-)
+```

@@ -79,6 +79,11 @@ export class Sfx {
     this.tone(784, 0.08, 'sine', 0.18, undefined, 0.08);
   }
 
+  /** One soft UI blip, the tier-chime note class. */
+  blip(): void {
+    this.tone(523, 0.08, 'sine', 0.1);
+  }
+
   /** The tier chime as a draft card lands face-up: one note per tier step, the top note rising. */
   tierChime(tier: Tier): void {
     const notes = tier === 'epic' ? [523, 659, 784] : tier === 'rare' ? [523, 659] : [523];
