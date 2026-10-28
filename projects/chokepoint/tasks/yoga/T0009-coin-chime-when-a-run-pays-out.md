@@ -4,11 +4,13 @@ title: Coin chime when a run pays out
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0001]
 attempts: 0
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T01:07:50Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
