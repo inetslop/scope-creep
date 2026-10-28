@@ -14,7 +14,7 @@ The PO keeps this file current: the epics (what is active, their breakdown and p
 
 The game grows through epics: bigger features that take several tasks. One or two are active at a time; each is built in slices that leave the game playable. The PO orders them, breaks them down and keeps their progress here.
 
-### E1 — Rewards that carry over (active — started 2026-10-28, 5 of 10 done, one slice unassigned)
+### E1 — Rewards that carry over (active — started 2026-10-28, 5 of 11 done, one slice unassigned)
 **Goal:** a run is never wasted: every run earns something you keep.
 **When done:** the game remembers you between runs (a profile saved on the device). Every run ends on a rewards screen: waves held, enemies stopped, clean waves, and coins earned from them, kept in the profile. The menu shows what you have, where your recent runs went, and celebrates a best-wave run.
 **Breakdown:**
@@ -27,9 +27,10 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0016 (yoga, S, cycle 3) — a yellow star on the profile card when the last run hit your best wave — **done** (2026-10-28)
 - T0017 (yoga, S, cycle 3) — the HUD coin tally pops as it grows during a run — **done** (2026-10-28)
 - T0018 (narcissus, M, cycle 3) — the menu remembers your last four runs (a "Recent" line under the profile card)
+- T0030 (yoga, S, cycle 10) — the pause screen's run-so-far line: wave, lives, gold and the run's coins on one line above the key list — design
 - (unassigned, S) — a "Clean N" line on the rewards screen (green when N > 0, like the game-over card's line after T0005) — E1's "when done" promises clean waves on the claim card; write it next cycle, once T0003 has landed
 
-Progress: the profile, the menu card, the live coin tally (and its pop) and the best-run star are in (T0001, T0007, T0013, T0016, T0017). The rewards screen (T0003) is the keystone, next in desktop's queue — T0009 waits on it; clean waves (T0005) and the recent-runs slice (T0018) are queued on their machines. One slice remains unwritten: the rewards card itself never shows the clean waves (T0003's fixed design has only waves/stopped/coins) — small, written once the card exists. E1 closes when the rewards screen, its dependents and that line land.
+Progress: the profile, the menu card, the live coin tally (and its pop) and the best-run star are in (T0001, T0007, T0013, T0016, T0017); the pause screen's run-so-far line (T0030) is queued on yoga. The rewards screen (T0003) is the keystone, next in desktop's queue — T0009 waits on it; clean waves (T0005) and the recent-runs slice (T0018) are queued on their machines. One slice remains unwritten: the rewards card itself never shows the clean waves (T0003's fixed design has only waves/stopped/coins) — small, written once the card exists. E1 closes when the rewards screen, its dependents and that line land.
 
 ### E2 — Tech tree (not started; needs E1)
 **Goal:** a reason to play one more run: spend what runs earn on lasting upgrades.
@@ -40,7 +41,7 @@ Progress: the profile, the menu card, the live coin tally (and its pop) and the 
 **Groundwork (outside the epic):** T0015 (wave preview) becomes the per-level wave preview once levels exist; T0014 (leak warning) teaches what a leak is before levels make leaking costlier; T0019 (fast-forward 2x, narcissus, cycle 4) keeps runs in flow and pays off once a run spans several levels; T0022 (lives danger pips, yoga, cycle 6) turns the lives readout red and pulsing on your last life, so a leak stings before levels make it costlier.
 **When done:** a run goes through levels, like the acts of a roguelite: each level is its own board with a set number of waves, ending in a tougher final wave. Clear it and the run moves on to the next level: a new, harder board (a longer or more winding road, tougher enemies) that starts empty. What you carry is your **pool**: the run starts with a small pool of augments that the drafts offer from, and every time you clear a level you pick one new augment to add to it, so each level offers more to combine. The HUD shows the level ("Level 2 · Wave 3/8"), the pick between levels is its own moment, and the game-over screen says how far you got. Clearing the last level wins the run.
 
-### E4 — Augment rarity (active — started 2026-10-28, 3 of 12 done)
+### E4 — Augment rarity (active — started 2026-10-28, 6 of 14 done)
 **Goal:** the draft is exciting: sometimes a card is something special.
 **When done:** every augment card in the draft comes in a rarity: Common, Rare or Epic. A rarer card is the same augment with stronger numbers (a Rare Rapid attacks faster than a Common one), and a few rule-changing augments only ever come as Epic. Rarity shows everywhere the augment does: the card's frame and a small gem row on the draft, hand and tower-panel cards, and on the tower itself (its slot pip). Rarer cards turn up more often the further the run gets; the odds are shown in the draft.
 **Breakdown:**
@@ -48,16 +49,18 @@ Progress: the profile, the menu card, the live coin tally (and its pop) and the 
 - T0008 (narcissus, M) — rarity on hand cards and the tower panel — in flight (unblocked by T0002)
 - T0010 (yoga, S) — tier pip per slot on the tower — **done** (2026-10-28)
 - T0011 (asus, M, cycle 2) — the odds shift: rarer cards the deeper the run, live odds line — **done** (2026-10-28)
-- T0012 (asus, L, cycle 2) — Mark: the rule-changing augment that only ever comes as Epic — in flight, after T0011
+- T0012 (asus, L, cycle 2) — Mark: the rule-changing augment that only ever comes as Epic — **done** (2026-10-28)
 - T0020 (asus, L, cycle 5) — Rally: the second rule-changing Epic; towers within 2 cells of a Rally tower attack 10% faster, rewarding clusters — todo, after T0012
 - T0021 (asus, L, cycle 6) — Mint: the third rule-changing Epic; kills within 2 cells of a Mint tower drop +1 extra gold, and each Mint in a tower makes that tower's kills drop +1 more — design, after T0020
 - T0023 (asus, L, cycle 7) — Anchor: a pool rooting augment; every 3 s it roots (fully stops) everything within 2.5 cells for 0.75 s, added hits root 0.5 s (+0.25 s per extra copy) — the first new behavior after the three Epics — design, after T0021
-- T0024 (yoga, S, cycle 7) — the draft reveal: the three offered cards flip face-up when the draft opens, the Epic card holding its flip a beat longer — todo (design done)
+- T0024 (yoga, S, cycle 7) — the draft reveal: the three offered cards flip face-up when the draft opens, the Epic card holding its flip a beat longer — **done** (2026-10-28)
 - T0025 (asus, L, cycle 8) — Chain: the leap-zap augment (pool, all tiers): first, a zap that strikes the enemy furthest along and leaps to the nearest unstruck enemy (3 leaps, 2.5-cell leaps, 15/18/20 damage per leap, every 1.2/1.05/0.9 s); added, +1 leap to any first augment's attack — the first attack that changes target mid-attack — todo, after T0020
-- T0026 (yoga, S, cycle 8) — the tier word on the draft card: the name line of Rare and Epic cards reads "Name · Rare" / "Name · Epic" (Common unchanged), the same line the tower panel shows — designing (claimed by yoga), after T0024
+- T0026 (yoga, S, cycle 8) — the tier word on the draft card: the name line of Rare and Epic cards reads "Name · Rare" / "Name · Epic" (Common unchanged), the same line the tower panel shows — **done** (2026-10-28)
 - T0027 (asus, L, cycle 9) — Push: a pool gust augment (all tiers, offered from the opening draft): first, a gust that pushes everything within 2.5 cells back along the road with no damage (Common 0.8 cells every 2.4 s, Rare 1.0/2.0 s, Epic 1.2/1.8 s); added, hits push back 0.4 cells (+0.4 per Push) — the first augment that moves enemies along the road — design, after T0020
+- T0028 (asus, L, cycle 10) — Ember: a pool burning augment (all tiers, offered from the opening draft): first, sets ablaze the enemy furthest along every 1.5 s (3/4/5 damage per second for 3 s by tier; re-ignition refreshes the duration and keeps the higher rate); added, hits set ablaze at the tower's tier rate — the first damage over time; the ticks are the source tower's damage, so Mark amplifies them and a killing tick is its kill — design, unblocked
+- T0029 (asus, L, cycle 10) — Beam: a pool beam augment (all tiers, offered from the opening draft): first, a continuous beam on the enemy furthest along (6/8/10 damage per second by tier, no shots, retargeting the instant its target dies or leaves range); added, a second beam on the enemy nearest the main target at half the per-second rate — the first sustained second target, on any first augment — design, unblocked
 
-Progress: T0002 (the tiers), the odds shift (T0011) and the tower pips (T0010) are done; the rarity display is nearly complete (T0008 on the hand and panel in flight; T0024's card flip is ready; T0026's tier word is being designed after it). asus carries the draft's new augments in sequence: Mark (T0012, in progress) → Rally (T0020, the first tower-to-tower interaction) → then Push (T0027, a pool gust: the first augment that moves enemies along the road), Chain (T0025, a pool leap-zap: the first attack that changes target mid-attack, and the first added form that makes any attack leap to a second target) and Mint (T0021, the economy rule: kills near a Mint tower pay +1 gold) all unblock (Chain and Mint with Lance, T0004, on desktop) → Anchor (T0023, a pool rooting augment: a timed full stop, the behavior gap Frost's partial slow leaves) last. New-augment content in flight: Lance (T0004, desktop) plus one asus chain task at a time — at most two simultaneous new-augment edits.
+Progress: the tiers (T0002), the odds shift (T0011), the tower pips (T0010), Mark (T0012, the first rule-changer), the card flip (T0024) and the tier word (T0026) are done; the rarity display is nearly complete (T0008 on the hand and panel in flight). asus carries the new augments in sequence: Rally (T0020, the first tower-to-tower interaction) in progress; behind it, unblocked, Ember (T0028, a pool burn: the first damage over time in the game) and Beam (T0029, a pool beam: a continuous line and the first sustained second target); then Mint (T0021, the economy rule: kills near a Mint tower pay +1 gold) and Chain (T0025, a pool leap-zap: the first attack that changes target mid-attack) as Lance (T0004, desktop) lands; Anchor (T0023, a pool rooting augment: a timed full stop, the behavior gap Frost's partial slow leaves) and Push (T0027, the first augment that moves enemies along the road) close the chain. New-augment content in flight: Lance (T0004, desktop) plus one asus task at a time — at most two simultaneous new-augment edits.
 
 ## Later
 
@@ -65,7 +68,7 @@ Ideas that may become epics or tasks of one.
 
 - Selling a tower, or taking an augment back out (for part of the gold)
 - Targeting modes per tower (first, strongest, closest)
-- More augments with new attacks and changes (e.g. a piercing line — T0004, a chain that leaps between enemies — T0025, a mark that makes enemies take more damage — T0012)
+- More augments with new attacks and changes (e.g. a piercing line — T0004, a chain that leaps between enemies — T0025, a mark that makes enemies take more damage — T0012, a burn that outlasts the shot — T0028, a beam that never stops — T0029)
 - Enemies with new behaviors (e.g. one that speeds up when hit — T0006, one that shields neighbours, one that splits)
 - Wave preview: what the next wave sends, shown during the build phase — T0015 (in flight)
 - Bosses every 10 waves, each with its own mechanic

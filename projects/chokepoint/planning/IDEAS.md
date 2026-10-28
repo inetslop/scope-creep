@@ -30,7 +30,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - First-run hints: on the very first run only (profile runsPlayed = 0), short hints on the board ("build beside the road"), dismissed by doing it
 - Sound on/off toggle on the pause screen, remembered in the profile
 - Wave banner: at wave start a small card slides in at the top — "Wave 8" — and fades after ~1s
-- Kill combo: kills within 1.5 s chain a rising "×2, ×3" counter above the last kill
+- Kill combo: kills within 1.5 s chain a rising "×2, ×3" counter above the last kill — tasked as T0031 (yoga, cycle 10)
 - Draft reveal: the three draft cards flip over when the draft opens (200 ms), Epic cards flip a little longer — tasked as T0024 (yoga, cycle 7)
 - Rally augment (Epic): every tower within 2 cells of a Rally tower attacks 10% faster — rewards building in clusters — tasked as T0020 (asus, cycle 5)
 - Mint augment (Epic): no attack of its own — every kill within 2 cells of a Mint tower drops +1 extra gold; added, the host tower's kills drop +1 extra gold too; closest is Frost (a passive aura), new is that it changes the economy, not combat — tasked as T0021 (asus, cycle 6)
@@ -40,13 +40,18 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - A "New best" star on the menu's profile card when your last run hit your best wave — tasked as T0016 (yoga, cycle 3)
 - Mender enemy: a slow round enemy that heals nearby enemies in a pulsing ring; closest is Block, new is that it heals other enemies, which no current enemy does
 - Anchor augment: first, roots (fully stops) everything within 2.5 cells for 0.75 s every 3 s; added, hits root for 0.5 s (+0.25 s per extra copy). Closest is Frost (a slow); new is a full timed stop that also applies when stacked on an attacking tower — tasked as T0023 (asus, cycle 7)
+- Ember augment: first, sets ablaze the enemy furthest along every 1.5 s — 3/4/5 damage per second for 3 s by tier; re-ignition refreshes the duration and keeps the higher rate (never additive); the ticks are the source tower's damage, so Mark amplifies them and a killing tick is its kill for gold and stats; added, hits set ablaze at the tower's tier rate. Closest is Mark (a cadence effect on the furthest enemy); new is damage that keeps ticking after the hit — the first damage over time — tasked as T0028 (asus, cycle 10)
+- Beam augment: first, a continuous beam on the enemy furthest along — 6/8/10 damage per second by tier, no shots, retargeting the instant its target dies or leaves range; added, a second beam on the enemy nearest the main target at half the per-second rate. Closest is Reach (a long single-target attack); new is the sustained line and the sustained second target on any first augment — tasked as T0029 (asus, cycle 10)
 - Enemy telegraph: an enemy whose behavior is special (a Sprinter, a Marked enemy, a Splitter) shows a small neutral icon on itself while its ability matters, so new behaviors are readable at a glance
 - Lives as a danger bar: the lives readout becomes a small bar that drifts toward red and pulses as you get close to losing your last life — was T0022 (rejected: the 196 px stats card has no room for 20 pips; would need single-digit starting lives or a growing card — revisit if either lands)
 - Tower earnings: the tower panel shows how much gold a tower has earned this run, so you can see which towers are paying for themselves
 - The clean wave's bonus shown during the build phase: a small line under the wave preview ("clean: +3 gold"), once the clean chip (T0005) and the wave preview (T0015) exist
-- A run-so-far line on the pause screen: wave, lives, gold, coins earned this run
+- A run-so-far line on the pause screen: wave, lives, gold, coins earned this run — tasked as T0030 (yoga, cycle 10)
 - The buy-slot button reads why it is quiet: when gold is short it dims and shows the price in red, so a first-time player sees the gap, not a dead button
 - Tier word on the draft card: the name line of Rare and Epic cards reads "Name · Rare" / "Name · Epic" (Common stays plain), the same line the tower panel shows — tasked as T0026 (yoga, cycle 8)
 - What-if preview: while an augment is held over a tower's free slot, the tower briefly shows the result (new barrel, ring or tick) before the gold is spent, so the decision is visible before it is paid for
 - Tight-pack waves: some waves send enemies bunched close together (a "tight" tag in the wave preview, once T0015 is in) so multi-hit augments (Splash, Lance, Chain) shine
 - A second pick: every 5th draft offers a 4th card
+- Burn on death: when a burning enemy dies, its burn jumps to the nearest enemy within 2 cells (one jump, same rate) — a small rule after T0028
+- Combo milestone: at ×10 the kill combo counter turns yellow and the next kill's chip burst is bigger — a small juice step after T0031
+- Beam hum: a very quiet hum under an active beam, one per tower, fading in and out with the line — a small audio touch after T0029, only if it stays quiet with several beams at once
