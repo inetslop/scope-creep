@@ -3,11 +3,13 @@ id: T0054
 title: "Last stand: at one life left, kills pay double gold"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0045, T0039]
 attempts: 0
 created: 2026-10-28T13:04:03Z
+claimed_at: 2026-10-28T13:29:44Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
