@@ -4,10 +4,11 @@ title: "The menu shows what you have: a profile card"
 assignee: narcissus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0001]
-attempts: 0
+attempts: 1
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T02:39:41Z
 epic: E1
 ---
 
