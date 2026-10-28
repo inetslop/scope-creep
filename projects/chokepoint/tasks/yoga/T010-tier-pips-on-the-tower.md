@@ -4,11 +4,13 @@ title: Tier pips on the tower
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0002]
 attempts: 0
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T01:07:54Z
 epic: E4
+designer: narcissus
 ---
 
 ## Goal
