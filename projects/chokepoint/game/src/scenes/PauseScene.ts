@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
+import { artScale, STAR_TEXTURE } from '../art/textures';
 import { cssColor, PALETTE } from '../content/palette';
-import { coinsForRun, saveSound } from '../core/profile';
+import { coinsForRun, loadProfile, saveSound } from '../core/profile';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
@@ -41,9 +42,21 @@ export class PauseScene extends Phaser.Scene {
     const panelH = 434;
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
     const title = this.add.text(0, -panelH / 2 + 54, 'Paused', titleStyle(34)).setOrigin(0.5);
+    const profile = loadProfile(window.localStorage);
+    const starred = profile.bestWave > 0 && game.run.wave >= profile.bestWave;
     const waveWord = game.run.wave > 0 ? `Wave ${game.run.wave}` : 'Ready';
     const coins = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves });
-    const stats = this.add.text(0, -panelH / 2 + 78, `${waveWord} · ${game.run.lives} lives · ${game.run.gold} gold · +${coins} coins`, textStyle(13, PALETTE.muted)).setOrigin(0.5);
+    const lineStyle = textStyle(13, PALETTE.muted);
+    const kids: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
+    let x = 0;
+    const waveText = this.add.text(0, 0, waveWord, lineStyle).setOrigin(0, 0.5);
+    kids.push(waveText);
+    x += waveText.width;
+    if (starred) { kids.push(artScale(this.add.image(x + 13, 1, STAR_TEXTURE))); x += 21; }
+    const restText = this.add.text(x, 0, ` · ${game.run.lives} lives · ${game.run.gold} gold · +${coins} coins`, lineStyle).setOrigin(0, 0.5);
+    kids.push(restText);
+    x += restText.width;
+    const stats = this.add.container(-x / 2, -panelH / 2 + 78, kids);
     const heading = this.add.text(0, -panelH / 2 + 96, 'Controls', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
     const keys = this.add.text(0, -panelH / 2 + 150, 'Space — start the wave early\nF — fast-forward (2x) during waves\n1-9 — pick a card from the hand\n+ / - — zoom the board', textStyle(12, PALETTE.muted, { align: 'center', lineSpacing: 6 })).setOrigin(0.5);
     const resumeButton = makeButton(this, 0, -panelH / 2 + 234, 'Resume', resume, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });

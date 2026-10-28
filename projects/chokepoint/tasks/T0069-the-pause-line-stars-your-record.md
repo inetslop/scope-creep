@@ -4,11 +4,12 @@ title: The pause line stars your record
 assignee: asus
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0030]
 attempts: 1
 created: 2026-10-28T13:54:28Z
 claimed_at: 2026-10-28T23:17:57Z
+finished_at: 2026-10-28T23:34:25Z
 epic: E1
 ---
 
@@ -65,3 +66,15 @@ none
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0035: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Result (attempt 1, asus)
+
+The pause screen's run line now wears the best-run star: when the run's wave has reached the saved best wave (and stays there, including for resumed runs), a small yellow star — same texture, size and color as the profile card's and Recent line's — appears right after "Wave N" in `src/scenes/PauseScene.ts`, computed once from `loadProfile()` at scene creation. No other part of the pause card moved or changed.
+
+- Self-review: APPROVE
+- Time: 16.5 min
+
+```
+projects/chokepoint/game/src/scenes/PauseScene.ts | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+```
