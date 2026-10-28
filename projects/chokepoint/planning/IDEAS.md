@@ -24,3 +24,9 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Leak warning: the last 3 seconds before an enemy reaches the exit, the exit pulses red with a quiet tick
 - Ghost run: a menu option to replay your best run's exact board (same seed) and beat your own wave record
 - Slow zone: a light blue patch on the board slows enemies crossing it by 30%
+- DPS line in the tower panel: a damage-per-second number per tower, updated as augments are added
+- First-run hints: on the very first run only (profile runsPlayed = 0), short hints on the board ("build beside the road"), dismissed by doing it
+- Sound on/off toggle on the pause screen, remembered in the profile
+- Wave banner: at wave start a small card slides in at the top — "Wave 8" — and fades after ~1s
+- Kill combo: kills within 1.5 s chain a rising "×2, ×3" counter above the last kill
+- Draft reveal: the three draft cards flip over when the draft opens (200 ms), Epic cards flip a little longer
