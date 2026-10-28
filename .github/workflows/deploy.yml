@@ -1,12 +1,20 @@
-# Builds every game and deploys them to GitHub Pages every 10 minutes (only when main changed):
-# Scope Creep (game/) at /scope-creep/, each projects/<id>/game/ at /<id>/, and at the root a
-# front page (site/home.ts) that lists the games and what every machine of the fleet is doing.
+# Builds every game and deploys them to GitHub Pages: Scope Creep (game/) at /scope-creep/, each
+# projects/<id>/game/ at /<id>/, and at the root a front page (site/home.ts) that lists the games
+# and what every machine of the fleet is doing.
+#
+# When: on every push to main, at most once per 10 minutes (the fleet pushes every few minutes, so
+# the first push after the 10 minutes deploys everything up to it), plus a schedule that catches
+# the last push once the pushes stop. GitHub runs schedules best-effort: asked for 6 an hour, it
+# delivered about 1.4, which is why pushes drive it. Pages' soft limit of 10 builds an hour does not
+# apply to sites published with a custom Actions workflow like this one.
 # One-time setup: repo Settings -> Pages -> Source: "GitHub Actions".
 name: Deploy game to GitHub Pages
 
 on:
+  push:
+    branches: [main]
   schedule:
-    - cron: '3,13,23,33,43,53 * * * *' # 6x/hour, off the top of the hour (GitHub drops busy-time runs)
+    - cron: '3,13,23,33,43,53 * * * *' # the backstop; off the top of the hour (GitHub drops busy-time runs)
   workflow_dispatch:
 
 permissions:
@@ -14,34 +22,57 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
 jobs:
-  deploy:
+  # A few seconds, no checkout: is there anything to deploy? A skipped run never reaches the
+  # Pages environment or the deploy queue below.
+  check:
     runs-on: ubuntu-latest
+    outputs:
+      skip: ${{ steps.live.outputs.skip }}
+    steps:
+      - name: Skip if main is already live, or a push comes too soon after the last deploy
+        id: live
+        env:
+          EVENT: ${{ github.event_name }}
+        run: |
+          site="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/version.json"
+          # The query string gets past the CDN's cache, which could hand back a copy up to 10 minutes old.
+          json=$(curl -fsSL "$site?t=$(date +%s)" 2>/dev/null || true)
+          live=$(echo "$json" | jq -r '.sha // empty' 2>/dev/null || true)
+          built=$(echo "$json" | jq -r '.builtAt // empty' 2>/dev/null || true)
+          # Steps run with -e and pipefail: anything that can fail here falls back instead, so a hiccup
+          # deploys once too often rather than blocking every deploy.
+          head=$( (git ls-remote "https://github.com/${GITHUB_REPOSITORY}.git" refs/heads/main || true) | cut -f1)
+          builtAt=$(date -d "$built" +%s 2>/dev/null || echo 0)
+          age=$(( $(date +%s) - builtAt ))
+          echo "event=$EVENT live=${live:-none} main=${head:-unknown} last deploy ${age}s ago"
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            echo "manual run: always deploys"
+          elif [ -n "$live" ] && [ -n "$head" ] && [[ "$head" == "$live"* ]]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "main is already live"
+          elif [ "$EVENT" = "push" ] && [ "$age" -lt 600 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "deployed ${age}s ago: the next push after 10 minutes, or the schedule, deploys this"
+          fi
+
+  deploy:
+    needs: check
+    if: needs.check.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: main # the latest main, not the commit that started the run: deploy everything up to now
           fetch-depth: 0 # full history: the build log reads who built what, and when
 
-      - name: Skip if this commit is already live
-        id: live
-        run: |
-          site="https://${GITHUB_REPOSITORY_OWNER}.github.io/${GITHUB_REPOSITORY#*/}/version.json"
-          live=$(curl -fsSL "$site" 2>/dev/null | jq -r '.sha // empty' || true)
-          head=$(git rev-parse HEAD)
-          echo "live=${live:-none} head=$head"
-          if [ -n "$live" ] && [[ "$head" == "$live"* ]] && [ "${{ github.event_name }}" = "schedule" ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-          fi
-
       - uses: actions/setup-node@v7
-        if: steps.live.outputs.skip != 'true'
         with:
           node-version: 24
           cache: npm
@@ -50,7 +81,6 @@ jobs:
             projects/*/game/package-lock.json
 
       - name: Install, check and build
-        if: steps.live.outputs.skip != 'true'
         run: |
           set -e
           for dir in game projects/*/game; do
@@ -63,7 +93,6 @@ jobs:
       # The public build logs (site/), built from runner-written records. Agents can't edit site/ or
       # this workflow. If one fails, the games still deploy, just without the page and its link.
       - name: Build log pages
-        if: steps.live.outputs.skip != 'true'
         continue-on-error: true
         run: |
           # Name the project: without it, build-log.ts reads loop.project (the game being built now).
@@ -74,7 +103,6 @@ jobs:
           done
 
       - name: Put the games together
-        if: steps.live.outputs.skip != 'true'
         run: |
           mkdir -p _site
           cp -r game/dist _site/scope-creep
@@ -83,19 +111,15 @@ jobs:
           done
 
       # Not optional like the build logs: it writes the root page and version.json, which the
-      # "already live" check above reads.
+      # check job reads.
       - name: Front page
-        if: steps.live.outputs.skip != 'true'
         run: node site/home.ts _site
 
       - uses: actions/configure-pages@v6
-        if: steps.live.outputs.skip != 'true'
 
       - uses: actions/upload-pages-artifact@v5
-        if: steps.live.outputs.skip != 'true'
         with:
           path: _site
 
       - id: deployment
-        if: steps.live.outputs.skip != 'true'
         uses: actions/deploy-pages@v5
