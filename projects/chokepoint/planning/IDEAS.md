@@ -55,3 +55,4 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Burn on death: when a burning enemy dies, its burn jumps to the nearest enemy within 2 cells (one jump, same rate) — a small rule after T0028
 - Combo milestone: at ×10 the kill combo counter turns yellow and the next kill's chip burst is bigger — a small juice step after T0031
 - Beam hum: a very quiet hum under an active beam, one per tower, fading in and out with the line — a small audio touch after T0029, only if it stays quiet with several beams at once
+- Tier chime: on the draft reveal flip (T0024), each offered card lands with a short chime — one low note Common, two a third higher Rare, three the highest Epic, all at the soft UI-blip volume — so the tier is heard as well as seen — tasked as T0032 (yoga, cycle 11)
