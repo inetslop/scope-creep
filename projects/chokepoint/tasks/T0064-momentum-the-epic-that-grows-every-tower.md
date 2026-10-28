@@ -75,7 +75,7 @@ momentumCount: number;              // Momentum copies in the tower: one notch e
 ### Steps
 1. `content/types.ts`: add `| 'disc'` after `'circle'` in `Shape`; the two `momentum` fields.
 2. Create `content/augments/momentum.ts` (code above); register in `content/augments/index.ts` (import after `mint`, `momentum,` after `mint,` in `AUGMENTS`).
-3. Create `core/momentum.ts`; add `RunState.momentum` + `momentumMul` in `core/run.ts`; add `momentumCount` to `TowerSpec`/`EMPTY` and in `towerSpec` after the Lead block: `for (const a of augments) if (a.id === 'momentum') spec.momentumCount += 1;`
+3. Create `core/momentum.ts`; add `RunState.momentum` + `momentumMul` in `core/run.ts`; add `momentumCount` to `TowerSpec`/`EMPTY` and in `towerSpec` after the Push block: `for (const a of augments) if (a.id === 'momentum') spec.momentumCount += 1;`
 4. `art/shapes.ts`: `disc: 0` in the `sides` Record (typecheck fails without it). `art/paint.ts` `shapePath`, after the circle case: `if (shape === 'disc') { ctx.beginPath(); ctx.ellipse(x, y, radius, radius * 0.4, 0, 0, Math.PI * 2); return; }` (as wide as a token, 40% of its height). `art/entities.ts` `paintTowerBody`: for `shape === 'disc'` the eye dot is `r * 0.13` at `c - r * 0.02`.
 5. `entities/towerLook.ts` `DECORATIONS`, after the Mint entry:
 ```ts

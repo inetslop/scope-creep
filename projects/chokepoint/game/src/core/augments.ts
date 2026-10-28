@@ -41,10 +41,6 @@ export interface TowerSpec {
   burn: Burn | undefined;
   /** Embers in the tower: a muzzle dot when one is the first, one barrel tick each added. */
   burnCount: number;
-  /** How far ahead of the enemy an aimed shot may land, in cells (0: the shots do not lead). */
-  lead: number;
-  /** Leads in the tower: the first aims the shots, each extra one raises the lead cap. */
-  leadCount: number;
   /** Extra gold this tower's own kills drop: one per mint copy in the tower, any slot (core/mint.ts). */
   goldPerKill: number;
   /** Kills within this many cells of the tower (Chebyshev) pay: 0 unless the first augment's form has it. */
@@ -76,8 +72,6 @@ const EMPTY: TowerSpec = {
   markCount: 0,
   burn: undefined,
   burnCount: 0,
-  lead: 0,
-  leadCount: 0,
   goldPerKill: 0,
   goldRadius: 0,
   gust: 0,
@@ -117,8 +111,6 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     markCount: 0,
     burn: undefined,
     burnCount: 0,
-    lead: 0,
-    leadCount: 0,
     goldRadius: f.goldRadius ?? 0,
     goldPerKill: 0,
     gust: f.push ?? 0,
@@ -169,14 +161,6 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     if (a.id !== 'push') continue;
     spec.pushCount += 1;
     if (i > 0) spec.pushPerHit += a.added.push ?? 0;
-  }
-  // Leads in any slot: the first gives the tower's shots their lead cap, each extra one raises it.
-  let leads = 0;
-  for (const a of augments) if (a.id === 'lead') leads++;
-  if (leads > 0) {
-    const leadDef = getAugment('lead');
-    spec.lead = (leadDef.first.lead ?? 0) + (leads - 1) * (leadDef.added.lead ?? 0);
-    spec.leadCount = leads;
   }
   // Mints in any slot: this tower's kills drop this much extra gold (core/mint.ts).
   for (const a of augments) spec.goldPerKill += tierAdded(getAugment(a.id), a.tier).goldPerKill ?? 0;

@@ -18,7 +18,7 @@ It goes into the shared pool: any machine that takes size {{TASK_SIZE}} tasks ma
 5. If the task cannot be built as written (contradicts the code, already exists, far too big for size {{TASK_SIZE}}, or depends on something that does not exist yet and is not in the open tasks), reject it with a clear reason for the product owner.
 6. Also reject a task that fails the content bar. Check the content files before deciding:
    - an enemy whose behavior an existing enemy already has (only hp, speed, size, shape or color differ);
-   - an augment without both forms (an attack or support role as a tower's first augment, a change with a number when added), or a copy of an existing augment with other numbers;
+   - an augment without both forms (an attack or support role as a tower's first augment, a change with a number when added), or a copy of an existing augment with other numbers, or an effect that only matters under conditions the game doesn't have (shots home in and never miss, so a shot that aims ahead adds nothing);
    - an augment that doesn't show on the tower;
    - themed art, names or text (fantasy, sci-fi, ink, paper...) instead of the game's bright minimal abstract style;
    - a new input or HUD element without its on-screen explanation: the key or button shown where it is used and on the pause screen, a touch control on mobile, a layout that works at 412x915 and 1280x720.

@@ -24,7 +24,6 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['exitWarn.valid', (g) => g.exitWarn.broken()],
   ['projectiles.count', (g) => (g.projectiles.activeCount > 600 ? `${g.projectiles.activeCount} projectiles in flight` : null)],
   ['projectiles.stuck', (g) => g.projectiles.brokenProjectile()],
-  ['projectiles.aim', (g) => g.projectiles.brokenAim()],
   ['towers.valid', (g) => g.towers.brokenTower()],
   ['towers.gold', (g) => {
     for (const t of g.towers.towers) if (!Number.isInteger(t.spec.goldPerKill) || t.spec.goldPerKill < 0 || t.spec.goldPerKill > t.augments.length) return `kill-gold ${t.spec.goldPerKill} at (${t.cell.col}, ${t.cell.row})`;

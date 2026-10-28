@@ -122,8 +122,6 @@ export interface FirstForm {
   mark?: number;
   /** For a 'burn' attack: the burn it sets ablaze, `dps` per second for `sec` seconds (Ember). */
   burn?: Burn;
-  /** For a predictive 'shot': the base lead cap, in cells ahead of the enemy (Lead). */
-  lead?: number;
   /** Kills within this many cells of the tower (Chebyshev) drop +1 gold per mint copy in it (Mint). */
   goldRadius?: number;
 }
@@ -153,8 +151,6 @@ export interface AddedForm {
   rangeMul?: number;
   /** Joins the tower's own rally (flat, never stacks; applied by systems/RallySystem.ts). */
   rally?: { pct: number };
-  /** Raises the tower's lead cap by this many cells, per copy after the first (Lead). */
-  lead?: number;
   /** This tower's own kills drop this much extra gold (Mint). */
   goldPerKill?: number;
 }

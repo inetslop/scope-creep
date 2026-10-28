@@ -19,8 +19,6 @@ export const TOWER_BASE = 'tower:base';
 export const BOLT_TEXTURE = 'fx:bolt';
 /** A thin straight tracer for a piercing shot (Lance): it keeps going after a hit. */
 export const TRACER_TEXTURE = 'fx:tracer';
-/** A small heavy dart for a predictive shot (Lead): it flies to a fixed point and does not home. */
-export const DART_TEXTURE = 'fx:dart';
 export const CHIP_TEXTURE = 'fx:chip';
 export const COIN_TEXTURE = 'ui:coin';
 export const LIFE_TEXTURE = 'ui:life';

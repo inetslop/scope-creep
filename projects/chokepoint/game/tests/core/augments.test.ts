@@ -261,7 +261,7 @@ describe('rollOffer', () => {
   });
 
   it('the rule relaxes, rather than hard-failing, when exclusions leave fewer than 3 eligible', () => {
-    const tiny = AUGMENTS.slice(0, 4); // bolt, lance, lead, splash
+    const tiny = AUGMENTS.slice(0, 4); // bolt, lance, splash, frost
     for (let seed = 1; seed <= 50; seed++) expect(rollOffer(new Rng(seed), tiny, 3, 5, false, ['bolt', 'lance'])).toHaveLength(3);
   });
 
