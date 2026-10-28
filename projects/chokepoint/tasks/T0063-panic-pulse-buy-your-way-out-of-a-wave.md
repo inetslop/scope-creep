@@ -1,12 +1,14 @@
 ---
 id: T0063
 title: "Panic pulse: buy your way out of a wave"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0039, T0015]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:29:40Z
+claimed_at: 2026-10-28T21:56:06Z
 ---
 
 ## Goal
