@@ -37,6 +37,7 @@ export class DraftScene extends Phaser.Scene {
     let cards: { button: ReturnType<typeof makeButton>; frame: Phaser.GameObjects.Graphics | undefined }[] = [];
     let flipTweens: Phaser.Tweens.Tween[] = [];
     let size = viewSize(this);
+    let H = CARD_H; // the offer's card height, set by buildRow
     const pick = (i: number): void => {
       if (this.picked || !flipped[i]) return;
       this.picked = true;
@@ -63,46 +64,63 @@ export class DraftScene extends Phaser.Scene {
       TIER_ORDER.map((t) => `${t.charAt(0).toUpperCase() + t.slice(1)} ${oddsLine[t]}`).join(' · '),
       textStyle(12, PALETTE.muted),
     ).setOrigin(0.5);
-    const cardSlot = (i: number, w: number, h: number) =>
-      w < 740 ? { x: w / 2, y: Math.max(70, (h - 3 * (CARD_H + 16) - 90) / 2) + 84 + CARD_H / 2 + i * (CARD_H + 16) }
-              : { x: w / 2 + (i - 1) * (CARD_W + 24), y: h / 2 + 10 };
-    const rerollSlot = (w: number, h: number) =>
-      w < 740 ? { x: w / 2, y: Math.max(70, (h - 3 * (CARD_H + 16) - 90) / 2) + 84 + 3 * CARD_H + 2 * 16 + 42 }
-              : { x: w / 2, y: h / 2 + 10 + CARD_H / 2 + 44 };
+    const portrait = (h: number, n: number): { top: number; header: number; gap: number } => {
+      let header = 84, gap = 16;
+      const col = () => header + n * H + (n - 1) * gap + 16 + 52;
+      if (70 + col() > h - 8) { header = 76; gap = 12; }
+      const c = col();
+      return { top: Math.min(Math.max(70, (h - c) / 2), h - c - 8), header, gap };
+    };
+    const cardSlot = (i: number, w: number, h: number, n: number): { x: number; y: number } => {
+      const p = portrait(h, n);
+      return w < 740 ? { x: w / 2, y: p.top + p.header + H / 2 + i * (H + p.gap) } : { x: w / 2 + (i - 1) * (CARD_W + 24), y: h / 2 + 10 };
+    };
+    const rerollSlot = (w: number, h: number, n: number): { x: number; y: number } => {
+      const p = portrait(h, n);
+      return w < 740 ? { x: w / 2, y: p.top + p.header + n * H + (n - 1) * p.gap + 16 + 26 } : { x: w / 2, y: h / 2 + 10 + H / 2 + 44 };
+    };
     const owns = (id: string): boolean => game.run.hand.some((c) => c.id === id) || game.towers.towers.some((t) => t.augments.some((a) => a.id === id));
     const buildRow = (copies: AugmentCopy[]): void => {
       for (const t of flipTweens) t.stop();
       flipTweens = [];
       for (const c of cards) { c.button.container.destroy(); c.frame?.destroy(); }
       flipped.fill(false);
-      cards = copies.map((copy, i) => {
+      const textX = -CARD_W / 2 + 42;
+      const wrap = { wordWrap: { width: CARD_W - 58 } };
+      // Pass 1: lay the two lines out at (0,0) to measure them, then let the card grow to fit.
+      const lines = copies.map((copy) => {
         const b = getAugment(copy.id);
-        const button = makeButton(this, 0, 0, '', () => pick(i), { width: CARD_W, height: CARD_H, radius: 22, accent: PALETTE[b.look.color] });
-        const icon = artScale(this.add.image(0, -72, augmentTexture(b.id)), 1.3);
+        const towerLine = this.add.text(0, 0, tierTowerLine(b, copy.tier), textStyle(14, PALETTE.ink, wrap)).setOrigin(0, 0);
+        const addedLine = this.add.text(0, 0, tierAddedLine(b, copy.tier), textStyle(14, PALETTE.muted, wrap)).setOrigin(0, 0);
+        return { copy, b, tier: copy.tier, towerLine, addedLine };
+      });
+      H = Math.max(CARD_H, ...lines.map((l) => l.towerLine.height + 10 + l.addedLine.height + 117));
+      cards = lines.map(({ copy, b, towerLine, addedLine }, i) => {
+        const t = -H / 2; // every y below is measured from the card's top edge
+        const button = makeButton(this, 0, 0, '', () => pick(i), { width: CARD_W, height: H, radius: 22, accent: PALETTE[b.look.color] });
+        const icon = artScale(this.add.image(0, t + 31, augmentTexture(b.id)), 1.3);
         // Rare and Epic say their tier on the name line; Common keeps the plain name, like its plain frame.
         const nameText = copy.tier === 'common' ? b.name : `${b.name} · ${copy.tier.charAt(0).toUpperCase() + copy.tier.slice(1)}`;
-        const name = this.add.text(0, -37, nameText, titleStyle(20)).setOrigin(0.5);
+        const name = this.add.text(0, t + 66, nameText, titleStyle(20)).setOrigin(0.5);
         // The tier's gems: one light gray, two blue, three purple.
         const gemCount = tierIndex(copy.tier) + 1;
         const gemTint = copy.tier === 'rare' ? PALETTE.blue : copy.tier === 'epic' ? PALETTE.purple : PALETTE.faint;
         const gems: Phaser.GameObjects.Image[] = [];
-        for (let g = 0; g < gemCount; g++) gems.push(artScale(this.add.image((g - (gemCount - 1) / 2) * 12, -17, GEM_TEXTURE)).setTint(gemTint));
-        const textX = -CARD_W / 2 + 42;
-        const wrap = { wordWrap: { width: CARD_W - 58 } };
-        const towerLine = this.add.text(textX, -2, tierTowerLine(b, copy.tier), textStyle(14, PALETTE.ink, wrap)).setOrigin(0, 0);
-        const addedLine = this.add.text(textX, towerLine.y + towerLine.height + 10, tierAddedLine(b, copy.tier), textStyle(14, PALETTE.muted, wrap)).setOrigin(0, 0);
+        for (let g = 0; g < gemCount; g++) gems.push(artScale(this.add.image((g - (gemCount - 1) / 2) * 12, t + 86, GEM_TEXTURE)).setTint(gemTint));
+        towerLine.setPosition(textX, t + 101);
+        addedLine.setPosition(textX, towerLine.y + towerLine.height + 10);
         const glyphs = this.add.graphics();
         drawTowerGlyph(glyphs, -CARD_W / 2 + 26, towerLine.y + 9);
         drawPlusGlyph(glyphs, -CARD_W / 2 + 26, addedLine.y + 9);
-        const key = this.add.text(-CARD_W / 2 + 14, -CARD_H / 2 + 10, String(i + 1), textStyle(12, PALETTE.faint, { fontStyle: 'bold' }));
+        const key = this.add.text(-CARD_W / 2 + 14, t + 10, String(i + 1), textStyle(12, PALETTE.faint, { fontStyle: 'bold' }));
         button.content.add([icon, name, ...gems, glyphs, towerLine, addedLine, key]);
         // The run already has this augment: a small dot in the top-right corner.
-        if (owns(copy.id)) glyphs.fillStyle(PALETTE.muted, 1).fillCircle(CARD_W / 2 - 14, -CARD_H / 2 + 14, 4);
+        if (owns(copy.id)) glyphs.fillStyle(PALETTE.muted, 1).fillCircle(CARD_W / 2 - 14, t + 14, 4);
         // The frame draws after the button so it shows on top of its white card.
         const frame = copy.tier === 'common' ? undefined : this.add.graphics();
         if (frame) {
           frame.lineStyle(2, copy.tier === 'rare' ? PALETTE.blue : PALETTE.purple, 1);
-          frame.strokeRoundedRect(-CARD_W / 2 - 1, -CARD_H / 2 - 1, CARD_W + 2, CARD_H + 2, 23);
+          frame.strokeRoundedRect(-CARD_W / 2 - 1, t - 1, CARD_W + 2, H + 2, 23);
         }
         // The card's back: one muted-gray gem in the center; hidden when face-up.
         const back = artScale(this.add.image(0, 0, GEM_TEXTURE)).setTint(PALETTE.faint);
@@ -124,13 +142,13 @@ export class DraftScene extends Phaser.Scene {
             button.container.setScale(1);
             frame?.setScale(1);
             flipped[i] = true;
-            if (copy.tier === 'epic') { const p = cardSlot(i, size.width, size.height); epicShimmer(this, p.x, p.y); }
+            if (copy.tier === 'epic') { const p = cardSlot(i, size.width, size.height, cards.length); epicShimmer(this, p.x, p.y, H); }
           },
         });
         flipTweens.push(flip);
         return { button, frame };
       });
-      cards.forEach((c, i) => { const p = cardSlot(i, size.width, size.height); c.button.container.setPosition(p.x, p.y); c.frame?.setPosition(p.x, p.y); });
+      cards.forEach((c, i) => { const p = cardSlot(i, size.width, size.height, cards.length); c.button.container.setPosition(p.x, p.y); c.frame?.setPosition(p.x, p.y); });
     };
     buildRow(game.flow.offer);
 
@@ -139,6 +157,7 @@ export class DraftScene extends Phaser.Scene {
       if (this.picked || !game.flow.rerollOffer()) return;
       refreshReroll();
       buildRow(game.flow.offer);
+      layout(size.width, size.height); // a reroll can change H
     };
     const rerollButton = makeButton(this, 0, 0, '', reroll, { width: 156, height: 52, fadeWhenDisabled: false });
     const rerollWord = this.add.text(0, 0, 'Reroll ·', textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
@@ -167,23 +186,22 @@ export class DraftScene extends Phaser.Scene {
       size = { width, height };
       shade.setSize(width, height);
       shade.input?.hitArea.setTo(0, 0, width, height);
-      const portrait = width < 740;
-      if (portrait) {
-        const top = Math.max(70, (height - 3 * (CARD_H + 16) - 90) / 2);
-        title.setPosition(width / 2, top).setScale(Math.min(1, (width - 32) / (title.width || 1)));
-        subtitle.setPosition(width / 2, top + 34);
-        odds.setPosition(width / 2, top + 58);
+      const p = portrait(height, cards.length);
+      if (width < 740) {
+        title.setPosition(width / 2, p.top).setScale(Math.min(1, (width - 32) / (title.width || 1)));
+        subtitle.setPosition(width / 2, p.top + 34);
+        odds.setPosition(width / 2, p.top + 58);
       } else {
-        title.setPosition(width / 2, height / 2 - CARD_H / 2 - 74);
-        subtitle.setPosition(width / 2, height / 2 - CARD_H / 2 - 40);
-        odds.setPosition(width / 2, height / 2 - CARD_H / 2 - 18);
+        title.setPosition(width / 2, height / 2 - H / 2 - 74);
+        subtitle.setPosition(width / 2, height / 2 - H / 2 - 40);
+        odds.setPosition(width / 2, height / 2 - H / 2 - 18);
       }
       cards.forEach((c, i) => {
-        const p = cardSlot(i, width, height);
-        c.button.container.setPosition(p.x, p.y);
-        c.frame?.setPosition(p.x, p.y);
+        const s = cardSlot(i, width, height, cards.length);
+        c.button.container.setPosition(s.x, s.y);
+        c.frame?.setPosition(s.x, s.y);
       });
-      const r = rerollSlot(width, height);
+      const r = rerollSlot(width, height, cards.length);
       rerollButton.container.setPosition(r.x, r.y);
     };
     layout(viewSize(this).width, viewSize(this).height);
@@ -219,16 +237,16 @@ function drawPlusGlyph(g: Phaser.GameObjects.Graphics, x: number, y: number): vo
  * sweeps the card from its left edge to its right edge in 150 ms. Invisible on the white card,
  * so it reads as the purple frame flashing where the band crosses.
  */
-function epicShimmer(scene: Phaser.Scene, x: number, y: number): void {
+function epicShimmer(scene: Phaser.Scene, x: number, y: number, h: number): void {
   const band = scene.add.graphics();
   band.fillStyle(PALETTE.card, 0.05);
-  band.fillRect(-36, -CARD_H / 2, 24, CARD_H);
-  band.fillRect(12, -CARD_H / 2, 24, CARD_H);
+  band.fillRect(-36, -h / 2, 24, h);
+  band.fillRect(12, -h / 2, 24, h);
   band.fillStyle(PALETTE.card, 0.18);
-  band.fillRect(-24, -CARD_H / 2, 24, CARD_H);
-  band.fillRect(0, -CARD_H / 2, 24, CARD_H);
+  band.fillRect(-24, -h / 2, 24, h);
+  band.fillRect(0, -h / 2, 24, h);
   band.fillStyle(PALETTE.card, 0.45);
-  band.fillRect(-12, -CARD_H / 2, 24, CARD_H);
+  band.fillRect(-12, -h / 2, 24, h);
   band.setPosition(x - CARD_W / 2 + 36, y);
   scene.tweens.add({ targets: band, x: x + CARD_W / 2 - 36, duration: 150, ease: 'Linear.easeNone', onComplete: () => band.destroy() });
 }

@@ -4,11 +4,12 @@ title: Draft cards fit their text
 assignee: cachyos-x8664
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T17:31:39Z
 claimed_at: 2026-10-28T20:05:43Z
+finished_at: 2026-10-28T20:39:46Z
 ---
 
 ## Goal
@@ -55,3 +56,15 @@ No exported API. Only `epicShimmer(scene, x, y, h: number)` gains `h`.
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0065: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Result (attempt 1, cachyos-x8664)
+
+Draft cards now grow to fit their text. In `src/scenes/DraftScene.ts`, `buildRow` lays out each card's two description lines offscreen to measure them, then sizes every card in the offer to `H = max(CARD_H, measured height + padding)`, so Rally, Anchor and Ember show both lines in full with 16px to spare under the last line while short cards (Bolt, Rapid) stay pixel-identical at `CARD_H`. Every element (icon, name, gems, key hint, glyphs, tier frame, owned dot, the Epic shimmer band) is anchored to the card's real top edge, and `cardSlot`/`rerollSlot`/`layout` — with a new `portrait()` helper that tightens header and gaps near the screen edge — place cards and the Reroll button from that height in both 1280×720 and 412×915, keeping ≥16px clear between them and everything on screen on the phone. `reroll()` re-runs `layout` since a reroll can change H, and `epicShimmer` takes the card height so its band matches the grown cards. `npm run check` (19 test files, 142 tests) and `npm run smoke` (desktop + phone) both pass.
+
+- Self-review: APPROVE
+- Time: 34.1 min
+
+```
+projects/chokepoint/game/src/scenes/DraftScene.ts | 96 ++++++++++++++---------
+ 1 file changed, 57 insertions(+), 39 deletions(-)
+```
