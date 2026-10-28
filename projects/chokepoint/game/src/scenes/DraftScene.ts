@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { artScale, augmentTexture, GEM_TEXTURE } from '../art/textures';
 import { getAugment } from '../content/augments';
 import { PALETTE } from '../content/palette';
-import { TIER_ODDS, TIER_ORDER, tierAddedLine, tierIndex } from '../core/tiers';
+import { TIER_ORDER, tierAddedLine, tierIndex, tierOdds } from '../core/tiers';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
@@ -51,11 +51,12 @@ export class DraftScene extends Phaser.Scene {
     drawTowerGlyph(legendGlyphs, -150, 0);
     drawPlusGlyph(legendGlyphs, 18, 0);
     const subtitle = this.add.container(0, 0, [legendGlyphs, legendText(-136, 'as a new tower'), legendText(32, 'added to a tower')]);
-    // The current odds of each tier, in small gray.
+    // The odds of this draft's wave, in small gray.
+    const oddsLine = tierOdds(game.flow.draftWave);
     const odds = this.add.text(
       0,
       0,
-      TIER_ORDER.map((t) => `${t.charAt(0).toUpperCase() + t.slice(1)} ${TIER_ODDS[t]}`).join(' · '),
+      TIER_ORDER.map((t) => `${t.charAt(0).toUpperCase() + t.slice(1)} ${oddsLine[t]}`).join(' · '),
       textStyle(12, PALETTE.muted),
     ).setOrigin(0.5);
     const cards = offered.map((b, i) => {

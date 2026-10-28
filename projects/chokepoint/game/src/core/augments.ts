@@ -131,9 +131,9 @@ export function slotCost(index: number): number | undefined {
  * opening draft (`opening`) only offers augments that deal damage as a tower's first, since the
  * first one has to hold wave 1 alone.
  */
-export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, opening = false): AugmentCopy[] {
+export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, wave: number, opening = false): AugmentCopy[] {
   return rng
     .shuffle(opening ? pool.filter((a) => a.first.damage > 0) : pool)
     .slice(0, count)
-    .map((a) => ({ id: a.id, tier: rollTier(rng) }));
+    .map((a) => ({ id: a.id, tier: rollTier(rng, wave) }));
 }

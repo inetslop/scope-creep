@@ -105,7 +105,7 @@ describe('tiers', () => {
     let rare = 0;
     let epic = 0;
     for (let i = 0; i < 6000; i++) {
-      const t = rollTier(rng);
+      const t = rollTier(rng, 5);
       if (t === 'common') common += 1;
       else if (t === 'rare') rare += 1;
       else epic += 1;
@@ -118,7 +118,7 @@ describe('tiers', () => {
 
   it('draft offers eventually include Rare and Epic copies', () => {
     const seen = new Set<Tier>();
-    for (let seed = 1; seed <= 300; seed++) for (const c of rollOffer(new Rng(seed), AUGMENTS, 3)) seen.add(c.tier);
+    for (let seed = 1; seed <= 300; seed++) for (const c of rollOffer(new Rng(seed), AUGMENTS, 3, 5)) seen.add(c.tier);
     expect(seen.has('rare')).toBe(true);
     expect(seen.has('epic')).toBe(true);
   });
@@ -133,12 +133,12 @@ describe('slotCost', () => {
 
 describe('rollOffer', () => {
   it('the opening draft only offers augments that deal damage', () => {
-    for (let seed = 1; seed <= 30; seed++) expect(rollOffer(new Rng(seed), AUGMENTS, 3, true).every((c) => getAugment(c.id).first.damage > 0)).toBe(true);
+    for (let seed = 1; seed <= 30; seed++) expect(rollOffer(new Rng(seed), AUGMENTS, 3, 1, true).every((c) => getAugment(c.id).first.damage > 0)).toBe(true);
   });
 
   it('offers three different augments', () => {
     for (let seed = 1; seed <= 30; seed++) {
-      const offer = rollOffer(new Rng(seed), AUGMENTS, 3);
+      const offer = rollOffer(new Rng(seed), AUGMENTS, 3, 1);
       expect(offer.length).toBe(3);
       expect(new Set(offer.map((a) => a.id)).size).toBe(3);
     }

@@ -4,11 +4,12 @@ title: "The odds shift: rarer cards the deeper the run goes"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: [T0002]
 attempts: 1
 created: 2026-10-28T02:08:37Z
 claimed_at: 2026-10-28T03:49:09Z
+finished_at: 2026-10-28T04:05:29Z
 epic: E4
 ---
 
@@ -96,3 +97,20 @@ this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.draftWave, this.run.wave 
 - Replay: with `new Rng(1234)`, collect `c.tier` from `rollOffer(rng, AUGMENTS, 3, wave, wave === 1)` for `wave` 1..25 (75 cards); two independent runs toEqual, and the list contains `'epic'`.
 - Share: 3000 rolls each with fresh `new Rng(7)`; `share(15) > share(5) + 0.02`.
 `tests/core/augments.test.ts`: pass a wave (e.g. 5) at the `rollOffer`/`rollTier` call sites T0002 left there.
+
+## Result (attempt 1, asus)
+
+The draft's tier odds now shift with the run: `tierOdds(wave)` in `core/tiers.ts` grows epic +1/wave (cap 15 at W 14) and rare +1/wave (cap 33 at W 12) from wave 5 on, with common as the remainder; `rollTier` and `rollOffer` take the wave, `RunFlow` records `draftWave` (`run.wave + 1`) in `openDraft`, and `DraftScene`'s odds line shows this draft's live odds while keeping T0002's style and positions. Added `tests/core/tiers.test.ts` (curve, sum-to-100, same-seed determinism and replay, epic-share at W 15 vs W 5) and updated the existing `rollTier`/`rollOffer` test call sites; check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 16.3 min
+
+```
+projects/chokepoint/game/src/core/augments.ts      |  4 +-
+ projects/chokepoint/game/src/core/tiers.ts         | 20 +++++--
+ projects/chokepoint/game/src/scenes/DraftScene.ts  |  7 +--
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  5 +-
+ .../chokepoint/game/tests/core/augments.test.ts    |  8 +--
+ projects/chokepoint/game/tests/core/tiers.test.ts  | 61 ++++++++++++++++++++++
+ 6 files changed, 91 insertions(+), 14 deletions(-)
+```

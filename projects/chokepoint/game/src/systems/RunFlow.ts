@@ -36,6 +36,8 @@ export interface RunSystems {
 export class RunFlow {
   /** Offered augment copies while the draft is open (DraftScene reads them). */
   offer: AugmentCopy[] = [];
+  /** The wave the open draft rolls its odds for (the one after run.wave). */
+  draftWave = 1;
   /** Length of the current build countdown (the HUD draws its ring from it). */
   buildTotalSec = 0;
 
@@ -84,7 +86,8 @@ export class RunFlow {
   /** Offers three augment copies (DraftScene); finishDraft starts the next build phase. */
   openDraft(): void {
     this.run.phase = 'draft';
-    this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.run.wave === 0);
+    this.draftWave = this.run.wave + 1;
+    this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.draftWave, this.run.wave === 0);
     if (this.offer.length === 0) {
       this.finishDraft(undefined);
       return;

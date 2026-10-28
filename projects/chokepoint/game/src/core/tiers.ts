@@ -7,11 +7,23 @@ export const TIER_ORDER: readonly Tier[] = ['common', 'rare', 'epic'];
 /** The odds the draft shows, in percent (they add up to 100). */
 export const TIER_ODDS: Record<Tier, number> = { common: 70, rare: 25, epic: 5 };
 
-/** The draft rolls each card's tier: `next()*100` against the odds. */
-export function rollTier(rng: Rng): Tier {
+/**
+ * The odds of the draft before wave `wave`, in percent (they add up to 100). From wave 5 on,
+ * epic grows +1 per wave up to 15 and rare +1 per wave up to 33; common is whatever is left.
+ */
+export function tierOdds(wave: number): Record<Tier, number> {
+  const grow = Math.max(0, wave - 4);
+  const rare = Math.min(33, TIER_ODDS.rare + grow);
+  const epic = Math.min(15, TIER_ODDS.epic + grow);
+  return { common: 100 - rare - epic, rare, epic };
+}
+
+/** The draft rolls each card's tier: `next()*100` against the odds of wave `wave`. */
+export function rollTier(rng: Rng, wave: number): Tier {
+  const odds = tierOdds(wave);
   const roll = rng.next() * 100;
-  if (roll < TIER_ODDS.epic) return 'epic';
-  if (roll < TIER_ODDS.epic + TIER_ODDS.rare) return 'rare';
+  if (roll < odds.epic) return 'epic';
+  if (roll < odds.epic + odds.rare) return 'rare';
   return 'common';
 }
 
