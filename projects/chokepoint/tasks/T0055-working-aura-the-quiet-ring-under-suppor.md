@@ -3,11 +3,13 @@ id: T0055
 title: "Working aura: the quiet ring under support towers when their aura works"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0039, T0054]
 attempts: 0
 created: 2026-10-28T13:04:03Z
+claimed_at: 2026-10-28T13:14:13Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
