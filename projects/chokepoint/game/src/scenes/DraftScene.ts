@@ -64,7 +64,9 @@ export class DraftScene extends Phaser.Scene {
       const copy = offer[i]!;
       const button = makeButton(this, 0, 0, '', () => pick(i), { width: CARD_W, height: CARD_H, radius: 22, accent: PALETTE[b.look.color] });
       const icon = artScale(this.add.image(0, -72, augmentTexture(b.id)), 1.3);
-      const name = this.add.text(0, -37, b.name, titleStyle(20)).setOrigin(0.5);
+      // Rare and Epic say their tier on the name line; Common keeps the plain name, like its plain frame.
+      const nameText = copy.tier === 'common' ? b.name : `${b.name} · ${copy.tier.charAt(0).toUpperCase() + copy.tier.slice(1)}`;
+      const name = this.add.text(0, -37, nameText, titleStyle(20)).setOrigin(0.5);
       // The tier's gems: one light gray, two blue, three purple.
       const gemCount = tierIndex(copy.tier) + 1;
       const gemTint = copy.tier === 'rare' ? PALETTE.blue : copy.tier === 'epic' ? PALETTE.purple : PALETTE.faint;

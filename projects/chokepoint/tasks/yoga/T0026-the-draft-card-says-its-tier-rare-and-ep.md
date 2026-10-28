@@ -4,11 +4,12 @@ title: "The draft card says its tier: · Rare and · Epic on the name line"
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0024]
 attempts: 1
 created: 2026-10-28T05:31:15Z
 claimed_at: 2026-10-28T05:57:35Z
+finished_at: 2026-10-28T06:03:44Z
 epic: E4
 ---
 
@@ -60,3 +61,15 @@ None. No types, exports or signatures change; `titleStyle(20)` keeps the name's 
 
 ### Tests
 - none (UI string change, no core rule).
+
+## Result (attempt 1, yoga)
+
+Rare and Epic draft cards now say their tier on the card's name line — "Name · Rare" / "Name · Epic" in the same ink, bold, 20 px name style the tower panel uses — while Common cards keep the plain name. One line changed in `src/scenes/DraftScene.ts`: the name text string is built from `copy.tier` (local capitalization, since T0008's tier-look helper isn't in the code yet); no card element moved or resized and the face-down back still shows no name. Verified with `npm run check` and `npm run smoke` (desktop + mobile pass).
+
+- Self-review: APPROVE
+- Time: 6.2 min
+
+```
+projects/chokepoint/game/src/scenes/DraftScene.ts | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+```
