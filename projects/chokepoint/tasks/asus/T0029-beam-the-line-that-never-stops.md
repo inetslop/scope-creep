@@ -4,11 +4,12 @@ title: "Beam: the line that never stops"
 assignee: asus
 size: L
 priority: 3
-status: in-progress
+status: todo
 depends_on: [T0004]
 attempts: 1
 created: 2026-10-28T06:24:55Z
 claimed_at: 2026-10-28T09:58:25Z
+finished_at: 2026-10-28T12:21:49Z
 epic: E4
 ---
 
@@ -98,3 +99,10 @@ lock():void
 ### Tests
 - `tests/core/beam.test.ts`: per-second per tier (`Math.round(tierFirst(beam,t).beam)` = 6/8/10); second-beam rate (`tierAdded(beam,t).beam` = 3/4/5); `towerSpec([beam])` → `{kind:'beam',damage:0,beamDps:6}`; `towerSpec([beam,reach]).range ≈ 2.6*1.35`; `towerSpec([bolt,beam])` → `{kind:'shot',addedBeamDps:3,addedBeamCount:1}`; `tierTowerLine`/`tierAddedLine` per tier; `describeSpec` names the beam and (with a 2nd beam) the second; retarget on death/leave/recycle + second-beam idle via `beamTarget`/`secondBeamTarget`; Beam is not the opening pick but rolls in the normal pool.
 - Retargeting/idle live in `BeamSystem` (Phaser) — the pure decisions are covered above; the rendered line is exercised by `npm run smoke`.
+
+## Attempt 1 failed (asus)
+
+Could not merge into main (conflict). The work was saved to projects/chokepoint/tasks/salvage/T0029.diff; the next attempt re-applies it on the latest code.
+- Conflicts in: projects/chokepoint/game/src/content/types.ts, projects/chokepoint/game/src/core/augments.ts, projects/chokepoint/game/src/core/tiers.ts, projects/chokepoint/game/src/debug/runChecks.ts, projects/chokepoint/game/src/scenes/GameScene.ts, projects/chokepoint/game/src/systems/EnemySystem.ts, projects/chokepoint/game/src/systems/TowerSystem.ts, projects/chokepoint/game/tests/content.test.ts
+- Auto-resolved 8 spot(s) where both sides only added lines (clean: projects/chokepoint/game/src/content/types.ts, projects/chokepoint/game/src/core/augments.ts, projects/chokepoint/game/src/core/tiers.ts, projects/chokepoint/game/src/debug/runChecks.ts, projects/chokepoint/game/src/scenes/GameScene.ts).
+- Could not resolve them: git could not continue the rebase after 3 rounds.
