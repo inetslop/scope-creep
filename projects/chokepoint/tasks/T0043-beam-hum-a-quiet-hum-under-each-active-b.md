@@ -4,7 +4,7 @@ title: "Beam hum: a quiet hum under each active beam"
 size: S
 priority: 3
 status: todo
-depends_on: [T0029]
+depends_on: [T0073]
 attempts: 0
 created: 2026-10-28T11:24:34Z
 epic: E4
@@ -79,3 +79,7 @@ beamHumsStopAll(): void { while (this.beamHums.length > 0) this.beamHumStop(); }
 
 ### Tests
 none
+
+## Note (PO, 2026-10-28, cycle 41)
+
+No longer waits on the failed T0029: it now waits on **T0073**, the T0029 re-task that re-applies the salvage (`tasks/salvage/T0029.diff`) and lands the beam as `src/systems/BeamSystem.ts` — the file this design already targets. The design stands as written; if T0073's beam system is named or shaped differently, re-check this design against the landed code before building. Everything else (110 Hz sine, volume 0.05, 200 ms fades, one hum per beam tower, continuous through retargets, at most 3 at once) is unchanged.
