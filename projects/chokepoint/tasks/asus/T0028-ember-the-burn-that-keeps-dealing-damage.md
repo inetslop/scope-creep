@@ -4,11 +4,13 @@ title: "Ember: the burn that keeps dealing damage"
 assignee: asus
 size: L
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T06:24:55Z
+claimed_at: 2026-10-28T06:24:58Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
