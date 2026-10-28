@@ -56,6 +56,8 @@ export interface TierValues {
   addedRateMul?: number;
   addedRangeMul?: number;
   asAdded: string;
+  /** The card's tower line at this tier (Common: `asTower` itself). */
+  asTower?: string;
 }
 
 /** One copy of an augment: which augment it is and what tier it rolled. A draft card and a hand card are copies. */
@@ -92,6 +94,8 @@ export interface FirstForm {
   slow?: { pct: number; sec: number };
   /** For a 'mark' attack: the fraction of extra damage a marked enemy takes from everything. */
   mark?: number;
+  /** For a predictive 'shot': the base lead cap, in cells ahead of the enemy (Lead). */
+  lead?: number;
 }
 
 /**
@@ -113,6 +117,8 @@ export interface AddedForm {
   rangeMul?: number;
   /** Joins the tower's own rally (flat, never stacks; applied by systems/RallySystem.ts). */
   rally?: { pct: number };
+  /** Raises the tower's lead cap by this many cells, per copy after the first (Lead). */
+  lead?: number;
 }
 
 /**

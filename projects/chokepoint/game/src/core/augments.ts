@@ -34,6 +34,10 @@ export interface TowerSpec {
   markPct: number;
   /** Marks in the tower: one ring tick each. */
   markCount: number;
+  /** How far ahead of the enemy an aimed shot may land, in cells (0: the shots do not lead). */
+  lead: number;
+  /** Leads in the tower: the first aims the shots, each extra one raises the lead cap. */
+  leadCount: number;
 }
 
 const EMPTY: TowerSpec = {
@@ -52,6 +56,8 @@ const EMPTY: TowerSpec = {
   projectileSpeed: 0,
   markPct: 0,
   markCount: 0,
+  lead: 0,
+  leadCount: 0,
 };
 
 /**
@@ -83,6 +89,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     projectileSpeed: f.projectileSpeed ?? bolt.first.projectileSpeed ?? 10,
     markPct: 0,
     markCount: 0,
+    lead: 0,
+    leadCount: 0,
   };
   for (const a of augments.slice(1)) {
     const e = tierAdded(getAugment(a.id), a.tier);
@@ -104,6 +112,14 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
       spec.markPct += pct;
       spec.markCount += 1;
     }
+  }
+  // Leads in any slot: the first gives the tower's shots their lead cap, each extra one raises it.
+  let leads = 0;
+  for (const a of augments) if (a.id === 'lead') leads++;
+  if (leads > 0) {
+    const leadDef = getAugment('lead');
+    spec.lead = (leadDef.first.lead ?? 0) + (leads - 1) * (leadDef.added.lead ?? 0);
+    spec.leadCount = leads;
   }
   // A pulse already hits an area: splash makes it reach further, and pierce turns into bolts
   // that fire with each pulse and keep going.

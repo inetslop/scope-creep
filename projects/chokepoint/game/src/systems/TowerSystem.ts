@@ -3,6 +3,7 @@ import { CELL } from '../config';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
 import { slotCost, towerColor } from '../core/augments';
+import { leadAim } from '../core/lead';
 import type { Cell } from '../core/map';
 import type { RunState } from '../core/run';
 import { hook } from '../debug/testHook';
@@ -117,7 +118,9 @@ export class TowerSystem {
       },
       fireBolt: (n, target, payload) => {
         const m = t.muzzle(n);
-        this.projectiles.fire(m.x, m.y, target, payload, spec.projectileSpeed * CELL);
+        // Each bolt flies to where its target will be: the lead from the muzzle's own distance.
+        const aim = spec.lead > 0 ? leadAim(m.x, m.y, target, spec.projectileSpeed * CELL, spec.lead) : undefined;
+        this.projectiles.fire(m.x, m.y, target, payload, spec.projectileSpeed * CELL, aim?.x, aim?.y);
       },
       strike: (target, payload) => this.enemies.strike(target, payload),
       fx: this.fx,

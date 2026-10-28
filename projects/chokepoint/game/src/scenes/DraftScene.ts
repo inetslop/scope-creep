@@ -4,7 +4,7 @@ import { artScale, augmentTexture, COIN_TEXTURE, GEM_TEXTURE } from '../art/text
 import { getAugment } from '../content/augments';
 import { cssColor, PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
-import { TIER_ORDER, tierAddedLine, tierIndex, tierOdds } from '../core/tiers';
+import { TIER_ORDER, tierAddedLine, tierIndex, tierOdds, tierTowerLine } from '../core/tiers';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
@@ -88,7 +88,7 @@ export class DraftScene extends Phaser.Scene {
         for (let g = 0; g < gemCount; g++) gems.push(artScale(this.add.image((g - (gemCount - 1) / 2) * 12, -17, GEM_TEXTURE)).setTint(gemTint));
         const textX = -CARD_W / 2 + 42;
         const wrap = { wordWrap: { width: CARD_W - 58 } };
-        const towerLine = this.add.text(textX, -2, b.asTower, textStyle(14, PALETTE.ink, wrap)).setOrigin(0, 0);
+        const towerLine = this.add.text(textX, -2, tierTowerLine(b, copy.tier), textStyle(14, PALETTE.ink, wrap)).setOrigin(0, 0);
         const addedLine = this.add.text(textX, towerLine.y + towerLine.height + 10, tierAddedLine(b, copy.tier), textStyle(14, PALETTE.muted, wrap)).setOrigin(0, 0);
         const glyphs = this.add.graphics();
         drawTowerGlyph(glyphs, -CARD_W / 2 + 26, towerLine.y + 9);

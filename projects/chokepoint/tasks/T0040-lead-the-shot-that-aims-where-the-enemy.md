@@ -4,11 +4,12 @@ title: "Lead: the shot that aims where the enemy will be"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T10:05:34Z
 claimed_at: 2026-10-28T10:29:47Z
+finished_at: 2026-10-28T10:53:31Z
 epic: E4
 ---
 
@@ -110,3 +111,32 @@ brokenAim(): string | undefined; // active aimed projectile with non-finite aimX
 
 ### Tests
 `tests/core/lead.test.ts`: `leadCells` (still → 0; 4 cells @2 cells/s vs 8 cells/s shot → 1.0; over cap → cap; 0 shot speed → 0); `leadAim` (still enemy → its position; 4 cells @2 cells/s → +64 units along dir; slowPct 0.5 → half lead; fast enemy → capped at 1.2 cells); caps through `towerSpec` (`lead` → 1.2; `bolt,lead` → 1.2; `lead,lead` → 1.8; `lead,lead,lead` → 2.4; `splash,lead` → 1.2 but kind `pulse`; `bolt` → 0); Lead-first spec (shot, 16 dmg, 4.5 range, rate 1/1.2, projectileSpeed 8); tier specs via `tierFirst` (16/20/24, rates 1/1.2, 1/1.05, 1/0.9, range 4.5, lead 1.2); card lines (`tierTowerLine` per tier, `tierAddedLine` identical at all tiers); look `{ shape: 'chevron', color: 'green' }`.
+
+## Result (attempt 1, desktop)
+
+Lead is in: a new pool augment (all tiers) whose heavy green dart shoots at where the enemy will be — lead = shot travel time × the enemy's current speed (ramp and slow both count), capped at 1.2 cells plus 0.6 per extra Lead in the tower (core/lead.ts, content/augments/lead.ts, core/augments.ts). Shots fly to a fixed impact point and never home: against a still or steady enemy the lead is small or zero and they always connect, while a full-ramp Sprinter that outruns the cap makes the shot fizzle into a small quiet gray puff (systems/ProjectileSystem.ts) until enough Leads are stacked. A Lead-first tower shows the game's thinnest, longest barrel tipped with the Sprinter's chevron and gains a green chevron tick per extra Lead (art/barrels.ts, entities/towerLook.ts); cards show each tier's damage line (core/tiers.ts, scenes/DraftScene.ts), and 11 new spec tests plus a `projectiles.aim` invariant cover it — `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 23.7 min
+
+```
+projects/chokepoint/game/src/art/barrels.ts        |  22 ++++-
+ projects/chokepoint/game/src/art/entities.ts       |   9 +-
+ projects/chokepoint/game/src/art/textures.ts       |   2 +
+ .../chokepoint/game/src/content/augments/index.ts  |   2 +
+ .../chokepoint/game/src/content/augments/lead.ts   |  22 +++++
+ projects/chokepoint/game/src/content/types.ts      |   6 ++
+ projects/chokepoint/game/src/core/augments.ts      |  16 ++++
+ projects/chokepoint/game/src/core/lead.ts          |  32 +++++++
+ projects/chokepoint/game/src/core/tiers.ts         |   5 +
+ projects/chokepoint/game/src/debug/runChecks.ts    |   1 +
+ .../chokepoint/game/src/entities/Projectile.ts     |  33 ++++---
+ projects/chokepoint/game/src/entities/towerLook.ts |  10 +-
+ projects/chokepoint/game/src/scenes/DraftScene.ts  |   4 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |   2 +-
+ .../game/src/systems/ProjectileSystem.ts           |  24 ++++-
+ .../chokepoint/game/src/systems/TowerSystem.ts     |   5 +-
+ .../chokepoint/game/src/systems/attacks/shot.ts    |   6 +-
+ projects/chokepoint/game/tests/core/lead.test.ts   | 104 +++++++++++++++++++++
+ 18 files changed, 280 insertions(+), 25 deletions(-)
+```

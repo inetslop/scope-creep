@@ -71,3 +71,8 @@ export function tierAdded(def: AugmentDef, tier: Tier): AddedForm {
 export function tierAddedLine(def: AugmentDef, tier: Tier): string {
   return tier === 'common' ? def.asAdded : def.tiers[tier].asAdded;
 }
+
+/** The card's tower line at `tier` (Common: the base line). */
+export function tierTowerLine(def: AugmentDef, tier: Tier): string {
+  return tier === 'common' ? def.asTower : def.tiers[tier].asTower ?? def.asTower;
+}

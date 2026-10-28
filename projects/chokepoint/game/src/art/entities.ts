@@ -5,7 +5,7 @@ import { ENEMIES } from '../content/enemies';
 import { deepOf, PALETTE, rgba, type Bright } from '../content/palette';
 import type { Shape } from '../content/types';
 import { paintToken, roundRectPath, setShadow, shapePath } from './paint';
-import { BOLT_TEXTURE, CHIP_TEXTURE, enemyTexture, paintTexture, TOWER_BASE, TOWER_BODY, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
+import { BOLT_TEXTURE, CHIP_TEXTURE, DART_TEXTURE, enemyTexture, paintTexture, TOWER_BASE, TOWER_BODY, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
 
 /** Enemies, tower plinths and bodies, bolts and chips: everything that stands or flies on the board. */
 export function paintEntityTextures(scene: Phaser.Scene): void {
@@ -33,6 +33,13 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
   // where it flies. Tinted to the tower's color, so it is flat (no shading) and may rotate.
   paintTexture(scene, TRACER_TEXTURE, 4, 16, (ctx) => {
     roundRectPath(ctx, 0.25, 2, 3.5, 12, 1.75);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+  });
+  // The dart: a short heavy capsule for the predictive shot (Lead), tinted to the tower's color.
+  // Flat like the tracer, so it may rotate; visibly chunkier than the thin tracer.
+  paintTexture(scene, DART_TEXTURE, 8, 14, (ctx) => {
+    roundRectPath(ctx, 1, 3, 6, 11, 3);
     ctx.fillStyle = '#ffffff';
     ctx.fill();
   });

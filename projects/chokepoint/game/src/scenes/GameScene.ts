@@ -65,7 +65,7 @@ export class GameScene extends Phaser.Scene {
     this.enemies = new EnemySystem(this, this.board, this.run, this.fx, sfx);
     this.exitWarn = new ExitWarning(this, this.board, this.enemies, sfx);
     this.waves = new WaveSystem(this.run, this.enemies);
-    this.projectiles = new ProjectileSystem(this, this.enemies);
+    this.projectiles = new ProjectileSystem(this, this.enemies, this.fx);
     this.towers = new TowerSystem(this, this.board, this.run, this.enemies, this.projectiles, this.fx, sfx);
     this.building = new Building(this.run, this.board, this.towers, this.fx, sfx);
     this.flow = new RunFlow(this, this.run, {

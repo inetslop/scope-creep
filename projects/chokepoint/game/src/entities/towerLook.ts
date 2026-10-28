@@ -33,7 +33,7 @@ export function speedUps(spec: TowerSpec): number {
 /**
  * The barrels' look, as multiples of a plain Bolt barrel: longer for more range (Reach), thinner
  * for fast light shots and thicker for heavy ones, a bulb when shots burst (Splash), a yellow band
- * per speed-up (Rapid added).
+ * per speed-up (Rapid added), a chevron tip and green ticks when the shots lead (Lead).
  */
 export function barrelLook(spec: TowerSpec): BarrelLook {
   const plain = bolt.first;
@@ -41,11 +41,15 @@ export function barrelLook(spec: TowerSpec): BarrelLook {
   // A piercing shot shows as a long thin rod (fixed length: a range-scaled rod would reach past
   // the road's edge beside the tower); ~2x a standard barrel's visible part, ~1/3 its width.
   const rod = spec.pierce > 0;
+  // A Lead first tower gets the thinnest, longest barrel in the game, like a Reach barrel.
+  const leadFirst = spec.firstId === 'lead';
   return {
-    length: rod ? 1.4 : Phaser.Math.Clamp(spec.range / plain.range, 0.85, 2),
-    width: rod ? 0.34 : Phaser.Math.Clamp(Math.pow(damage / plain.damage, 0.3) / Math.pow(Math.max(1, spec.rate / plain.rate), 0.35), 0.55, 1.4),
+    length: rod ? 1.4 : leadFirst ? 2 : Phaser.Math.Clamp(spec.range / plain.range, 0.85, 2),
+    width: rod ? 0.34 : leadFirst ? 0.32 : Phaser.Math.Clamp(Math.pow(damage / plain.damage, 0.3) / Math.pow(Math.max(1, spec.rate / plain.rate), 0.35), 0.55, 1.4),
     bulb: spec.splash > 0,
     bands: speedUps(spec),
+    chevronTip: leadFirst,
+    chevrons: Math.max(0, spec.leadCount - (leadFirst ? 1 : 0)),
   };
 }
 
