@@ -3,12 +3,10 @@ id: T0057
 title: "Hauler: the enemy whose leak costs gold"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: [T0046]
 attempts: 0
 created: 2026-10-28T13:04:03Z
-claimed_at: 2026-10-28T19:29:23Z
-designer: cachyos-x8664
 ---
 
 ## Goal
@@ -36,3 +34,73 @@ No longer waits on T0053, T0071: that only kept the tasks from editing the same 
 ## Design reset (by hand, 2026-10-28)
 
 The old design edited shared hub files that the game now has extension points for (CLAUDE.md recipes: enemy hooks in `systems/enemyHooks/`, effects in `systems/fx/`). Design it so it edits as few shared files as possible: a task that only adds its own files and registry lines can be built while other tasks run; one that edits a shared file waits until nobody else is editing it. The gold a leak costs is an enemy hook (`onLeak`, the enemy is still at its spot; the hook runs just before the lives are taken) with its red pop; no `EnemySystem.leak()` or `FxSystem` edit. The content, wave and run-state parts stay.
+
+## Design (architect, cachyos-x8664)
+
+### Files
+- create `src/content/enemies/hauler.ts` — the Hauler's `EnemyDef` (copy `block.ts`'s shape)
+- edit `src/content/enemies/index.ts` — `hauler` import (alphabetical, between `dot` and `splinter`) + one line in `ENEMIES` after `splitter` (next to the other fromWave-9 entry)
+- create `src/systems/enemyHooks/haulerLeak.ts` — the Hauler's leak: −5 gold (floor 0) + the red "−5" pop next to the life pop
+- edit `src/systems/enemyHooks/index.ts` — one line: `haulerLeak` in `ENEMY_HOOKS`, next to `split`
+- edit `src/core/waves.ts` — keep the Hauler out of the budget picks + reserve one on 9, 13, 17, …
+- edit `tests/core/waves.test.ts` — exclude the Hauler from the budget test's `spent` + the new schedule test
+
+### Interfaces
+No new types or signatures (`planWave`, `EnemyDef`, `MakeEnemyHook` all unchanged). Exact added values:
+```ts
+// src/content/enemies/hauler.ts
+export const hauler: EnemyDef = {
+  id: 'hauler',
+  name: 'Hauler',
+  description: 'Big and slow, and it hauls a small fortune: 10 gold for the kill, a life and 5 gold if it gets through.',
+  behavior: 'walk',
+  hp: 360, // 3× Block's 120
+  speed: 0.9, // Block's speed
+  gold: 10,
+  livesCost: 1,
+  threat: 1, // placeholder: the Hauler never gets drawn from the budget
+  fromWave: 9,
+  look: { shape: 'hexagon', color: 'red', size: 0.34 }, // 1.3× Block's 0.26; round, no enemy shape has it
+};
+```
+```ts
+// src/systems/enemyHooks/haulerLeak.ts
+export const haulerLeak: MakeEnemyHook = ({ run, fx }) => ({
+  onLeak(enemy) {
+    if (enemy.def.id !== 'hauler') return;
+    run.gold = Math.max(0, run.gold - 5);
+    fx.popText(enemy.x + 40, enemy.y - 20, '-5', PALETTE.red);
+  },
+});
+```
+```ts
+// the two lines in planWave (src/core/waves.ts)
+// walkers filter (line 62): append the last clause
+const walkers = unlocked.filter((e) => e.speedRamp === undefined && e.dashCycle === undefined && e.splitsInto === undefined && e.id !== 'hauler');
+// after the splitter block, before the `reserved.length === 0` early return:
+if (wave >= 9 && (wave - 9) % 4 === 0) reserved.push('hauler');
+```
+Color: Dasher (T0046, landed) has purple, so per the task's condition the Hauler takes the next warm — red over orange (the darker of the two); the acceptance is shape-based anyway.
+
+### Steps
+1. Create the def (exact values above; texture is painted automatically).
+2. One import line + one `ENEMIES` line in `content/enemies/index.ts`.
+3. The two lines in `waves.ts`.
+4. Create the hook, add one line to `ENEMY_HOOKS` (the guard on `def.id` keeps the other seven no-ops).
+5. The test in `tests/core/waves.test.ts`.
+6. `npm run check` (typecheck + lint + unit, incl. content and waves tests).
+
+### Pitfalls
+- The walkers exclusion is mandatory: without it the Hauler is a normal budget pick and gets drawn 0–3 times on 9+ waves, breaking "exactly one".
+- `threat` must stay > 0 (`tests/content.test.ts`), but it's unused: the exclusion keeps it out of every `threat` read, so the number is a placeholder.
+- The reservation is free (like the splitter's): it does not touch `budget`, and the budget test's `spent` must skip `s.enemy === 'hauler'` too or it fails on every scheduled wave (spent = budget + 1).
+- The push sits after the splitter block and before the `reserved.length === 0` early return; on 9+ `reserved` is never empty, but the spot keeps the schedule next to the splitter's.
+- `onLeak` runs while the enemy is still active at the exit, just before `run.leak()` takes the life — so the pop's spot is valid and the gold lands before the lives; the hook mutates the public `run.gold` field directly (no `RunState` edit).
+- The "−5" pop is offset +40 in x (≤ 1 cell, `CELL` is 64), same y as the "−1" life pop: `fx.popText` exists, no `FxSystem` method, no new `fx/` file, no `EnemySystem` edit (life, jolt and `sfx.leak` stay the usual leak).
+- Kill gold needs no code: `gold: 10` rides the existing `kill()` pop; Mark bonus damage and every other hit already go through the generic hit path (no def flag).
+
+### Tests
+- `tests/core/waves.test.ts`: for waves 1–30, `plan.spawns.filter((s) => s.enemy === 'hauler').length` is 1 on 9, 13, 17, 21, 25, 29 and 0 otherwise; on scheduled waves the plan has other spawns (never a Hauler-only wave).
+- The budget test keeps passing with the `spent` exclusion (walkers still drain to ≥ 1, so usual enemies stay on every wave).
+- `npm run check`: content test validates the def (warm color, size ≤ 0.45, threat > 0, fromWave ≥ 1); wave preview and textures pick the Hauler up by construction.
+- Smoke at 412x915 and 1280x720: the leak jolt + red "−5" pop at the exit, Hauler icon in the wave preview from wave 9.
