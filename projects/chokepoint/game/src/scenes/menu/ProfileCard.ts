@@ -9,6 +9,14 @@ import { textStyle } from '../../ui/text';
 export const PROFILE_CARD_W = 300;
 export const PROFILE_CARD_H = 124;
 
+/** The card's muted runs line: the total, plus the average wave of the recent runs once there is one. */
+function runsText(profile: Profile): string {
+  if (!profile.recent.length) return `runs ${profile.runsPlayed}`;
+  let sum = 0;
+  for (const r of profile.recent) sum += r.wave;
+  return `runs ${profile.runsPlayed} · avg ${Math.floor(sum / profile.recent.length)}`;
+}
+
 /**
  * The menu's profile card: total coins (coin icon and big number), best wave, runs played, and
  * the last run (only once there is one). The menu is relaunched after every run, so it always
@@ -21,7 +29,7 @@ export function buildProfileCard(scene: Phaser.Scene, profile: Profile): Phaser.
   const best = scene.add.text(0, 0, `Best wave ${profile.bestWave}`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
   const star = artScale(scene.add.image(best.width / 2 + 13, 1, STAR_TEXTURE));
   star.setVisible(profile.lastRun !== null && profile.lastRun.wave === profile.bestWave);
-  const runs = scene.add.text(0, 24, `Runs ${profile.runsPlayed}`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
+  const runs = scene.add.text(0, 24, runsText(profile), textStyle(17, PALETTE.muted)).setOrigin(0.5);
   const last = scene
     .add.text(0, 48, profile.lastRun ? `Last: wave ${profile.lastRun.wave} · +${profile.lastRun.coins} coins` : '', textStyle(15, PALETTE.faint))
     .setOrigin(0.5);

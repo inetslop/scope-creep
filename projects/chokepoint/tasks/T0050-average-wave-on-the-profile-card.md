@@ -4,11 +4,12 @@ title: Average wave on the profile card
 assignee: desktop
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T12:34:55Z
 claimed_at: 2026-10-28T13:07:55Z
+finished_at: 2026-10-28T13:10:56Z
 epic: E1
 ---
 
@@ -56,3 +57,15 @@ function runsText(profile: Profile): string {
 - Do NOT touch `src/core/profile.ts` or `tests/core/profile.test.ts` (open tasks T0035 and T0042 both edit them): the formula stays in the card file, which no other open task touches. No Math.random, no listeners, no pooling — nothing to clean up.
 ### Tests
 none
+
+## Result (attempt 1, desktop)
+
+The menu profile card's runs line now shows an average of the last up-to-4 finished runs: in `src/scenes/menu/ProfileCard.ts` I added a private `runsText()` that returns "runs N" when there are no recent runs and "runs N · avg M" (floor of the mean recent wave) otherwise, and pointed the card's muted line at it. Fresh devices read exactly "runs 0", the card keeps its size, position, and single-line layout at both phone and desktop sizes, and typecheck, lint, tests, and the browser smoke test all pass.
+
+- Self-review: APPROVE
+- Time: 3.0 min
+
+```
+projects/chokepoint/game/src/scenes/menu/ProfileCard.ts | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+```
