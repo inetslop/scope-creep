@@ -1,12 +1,14 @@
 ---
 id: T0071
 title: "Quiet wave: every 4th wave is a breather"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0015]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T19:41:04Z
 epic: E1
 ---
 
