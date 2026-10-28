@@ -1,14 +1,14 @@
 ---
 id: T0025
 title: "Chain: the zap that leaps between enemies"
-assignee: inet-racing
 size: L
 priority: 3
-status: in-progress
+status: todo
 depends_on: [T0020, T0004]
 attempts: 1
 created: 2026-10-28T05:31:15Z
 claimed_at: 2026-10-28T13:39:32Z
+finished_at: 2026-10-28T18:05:29Z
 epic: E4
 ---
 
@@ -138,3 +138,10 @@ struck: number[];
 - `tests/core/chain.test.ts`, fixture `[{x:10,d:1},{x:25,d:2},{x:40,d:3},{x:100,d:9}]` (y=0, active): `pickChain(0,0,45,20,e,3)` → `[2,1,0]`; `count 5` → `[2,1,0]` (early stop); range 5 → `[]`; with index 1 inactive → `[2]`. `pickLeaps(2,20,e,[2,1],2)` → `[0]`; `pickLeaps(0,20,e,[],3)` → `[1,2]`.
 - `tests/core/augments.test.ts`: `spec('chain')` → kind 'chain', chainLeaps 3, damage 15; `spec('bolt','chain')` → leaps 1, leapDamage 15; `spec('bolt','chain','chain')` → leaps 2; epic added → leapDamage 20; rare first → damage ≈ 18, rate ≈ 1/1.05.
 - `tests/content.test.ts`: validate `t.asTower` with the same rules as `t.asAdded` when present; `kind === 'chain'` requires `first.leaps >= 1`.
+
+## Attempt 1 failed (inet-racing)
+
+Could not merge into main (conflict). The work was saved to projects/chokepoint/tasks/salvage/T0025.diff; the next attempt re-applies it on the latest code.
+- Conflicts in: projects/chokepoint/game/src/art/barrels.ts, projects/chokepoint/game/src/audio/Sfx.ts, projects/chokepoint/game/src/content/augments/index.ts, projects/chokepoint/game/src/content/types.ts, projects/chokepoint/game/src/entities/towerLook.ts, projects/chokepoint/game/src/systems/TowerSystem.ts, projects/chokepoint/game/src/systems/attacks/index.ts, projects/chokepoint/game/tests/core/augments.test.ts
+- Auto-resolved 3 spot(s) where both sides only added lines (clean: projects/chokepoint/game/src/audio/Sfx.ts, projects/chokepoint/game/src/content/augments/index.ts, projects/chokepoint/game/src/systems/attacks/index.ts).
+- Could not resolve them: git could not continue the rebase after 3 rounds.

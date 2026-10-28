@@ -1,0 +1,765 @@
+# T0025 attempt 1 (inet-racing) passed the checks on 9b69fc8 but could not be merged into main (conflict).
+# Commits on main since then that touch the same files:
+# - 062413c Mattias S: Rally and Mint reach what their range ring shows
+#   Both reached a 5x5 square (Chebyshev) while the ring draws a 2-cell
+#   circle, so towers and kills on the square's corners counted outside the
+#   ring. Rally now reaches towers whose center is inside the circle; Mint
+#   pays for kills whose spot is inside it. T0055's design follows the new
+#   mint check (inMintReach, kill spot in board units).
+#
+#
+# - a578f2a Mattias S: Remove the Lead augment from Chokepoint
+#   Every shot already homes in and never misses, so Lead's aimed darts only
+#   added a way to miss: it played as a weaker Reach. Removes the augment,
+#   its aimed-shot path (fixed impact point, fizzle, dart texture, aim
+#   invariant) and its chevron barrel look. Planning docs record the removal,
+#   and the PO/architect content bar now asks that an augment's effect
+#   matters in the game as it is.
+#
+#
+# - 15e3443 agent-desktop-4070: T0068: Splitter: the enemy that breaks into two
+#
+# - 8ee85df agent-yoga: T0051: Best combo on the claim card
+#
+# - def1b4f agent-baby-mama: T0039: Mint's gold pop: the aura's +1 pops at the kill
+#
+# - 08406d1 agent-desktop: T0028: Ember: the burn that keeps dealing damage
+#
+# - 7d063eb agent-yoga: T0058: Push windup: the ring that fills as the next gust charges
+#
+# - 49fe32b agent-desktop: T0027: Push: the augment that moves enemies back along the road
+#
+# - 619ecda agent-narcissus: T0015: Wave preview: the next wave shown during the build phase
+#
+# - dc2f0f1 agent-desktop-4070: T0046: Dasher: the enemy that telegraphs, then surges
+
+diff --git a/projects/chokepoint/game/src/art/barrels.ts b/projects/chokepoint/game/src/art/barrels.ts
+index 68cc165..4766fac 100644
+--- a/projects/chokepoint/game/src/art/barrels.ts
++++ b/projects/chokepoint/game/src/art/barrels.ts
+@@ -18,6 +18,8 @@ export interface BarrelLook {
+   chevronTip?: boolean;
+   /** Small green chevron ticks on the barrel face, one per extra Lead added. */
+   chevrons?: number;
++  /** A white barrel (the Chain zap throws nothing). */
++  white?: boolean;
+ }
+ 
+ /**
+@@ -29,7 +31,7 @@ export function barrelTexture(scene: Phaser.Scene, color: Bright | undefined, lo
+   const width = Math.round(look.width * 20) / 20;
+   const bands = Math.max(0, Math.min(3, Math.round(look.bands)));
+   const chevrons = Math.max(0, Math.round(look.chevrons ?? 0));
+-  const key = `barrel:${color ?? 'empty'}:${length}:${width}:${look.bulb ? 'b' : 'p'}:${bands}:${look.chevronTip ? 'c' : 'n'}:${chevrons}`;
++  const key = `barrel:${color ?? 'empty'}:${length}:${width}:${look.bulb ? 'b' : 'p'}:${bands}:${look.chevronTip ? 'c' : 'n'}:${chevrons}:${look.white ? 'w' : 'c'}`;
+   const r = TOWER_BODY * CELL;
+   const len = r * 1.6 * length;
+   const w = r * 0.6 * width;
+@@ -38,10 +40,15 @@ export function barrelTexture(scene: Phaser.Scene, color: Bright | undefined, lo
+   const size = (len + (look.chevronTip ? w * 2.4 : 0) + bulb + 4) * 2;
+   paintTexture(scene, key, size, size, (ctx) => {
+     const c = size / 2;
+-    const deep = rgba(color ? deepOf(color) : PALETTE.rockDeep, 1);
+-    roundRectPath(ctx, c - w / 2, c - len, w, len, w / 2);
++    const deep = rgba(color ? deepOf(color) : look.white ? PALETTE.cardDeep : PALETTE.rockDeep, 1);
++    roundRectPath(ctx, c - w / 2, c - len + (look.white ? 2 : 0), w, len, w / 2);
+     ctx.fillStyle = deep;
+     ctx.fill();
++    if (look.white) {
++      roundRectPath(ctx, c - w / 2, c - len, w, len, w / 2);
++      ctx.fillStyle = rgba(PALETTE.card, 1);
++      ctx.fill();
++    }
+     if (look.bulb) {
+       shapePath(ctx, 'circle', c, c - len, bulb);
+       ctx.fillStyle = deep;
+diff --git a/projects/chokepoint/game/src/audio/Sfx.ts b/projects/chokepoint/game/src/audio/Sfx.ts
+index 0fc5ea6..33b9218 100644
+--- a/projects/chokepoint/game/src/audio/Sfx.ts
++++ b/projects/chokepoint/game/src/audio/Sfx.ts
+@@ -54,6 +54,11 @@ export class Sfx {
+     this.tone(160, 0.18, 'sine', 0.35, 90);
+   }
+ 
++  /** One leap of a Chain zap: a soft bright blip, quieter than a kill. */
++  zap(): void {
++    this.tone(1500, 0.04, 'square', 0.1, 700);
++  }
++
+   mark(): void {
+     this.tone(660, 0.09, 'sine', 0.3, 990);
+   }
+diff --git a/projects/chokepoint/game/src/content/augments/chain.ts b/projects/chokepoint/game/src/content/augments/chain.ts
+new file mode 100644
+index 0000000..7e28951
+--- /dev/null
++++ b/projects/chokepoint/game/src/content/augments/chain.ts
+@@ -0,0 +1,19 @@
++import type { AugmentDef } from '../types';
++
++/** How far one leap of the zap reaches from the enemy it just struck, in cells. */
++export const LEAP_REACH = 2.5;
++
++export const chain: AugmentDef = {
++  id: 'chain',
++  name: 'Chain',
++  description: 'A zap that leaps between enemies. Added: each attack leaps to 1 more enemy.',
++  asTower: 'A zap that leaps: 15 damage, 3 leaps, every 1.2s.',
++  asAdded: 'Each attack leaps to 1 more enemy.',
++  look: { shape: 'diamond', color: 'pink', size: 0.22 },
++  first: { kind: 'chain', damage: 15, range: 2.8, rate: 1 / 1.2, leaps: 3 },
++  added: { leaps: 1, leapDamage: 15 },
++  tiers: {
++    rare: { damageMul: 1.2, cooldownMul: 0.875, leapDamage: 18, asTower: 'A zap that leaps: 18 damage, 3 leaps, every 1.05s.', asAdded: 'Each attack leaps to 1 more enemy.' },
++    epic: { damageMul: 4 / 3, cooldownMul: 0.75, leapDamage: 20, asTower: 'A zap that leaps: 20 damage, 3 leaps, every 0.9s.', asAdded: 'Each attack leaps to 1 more enemy.' },
++  },
++};
+diff --git a/projects/chokepoint/game/src/content/augments/index.ts b/projects/chokepoint/game/src/content/augments/index.ts
+index fc8639f..44c72c2 100644
+--- a/projects/chokepoint/game/src/content/augments/index.ts
++++ b/projects/chokepoint/game/src/content/augments/index.ts
+@@ -1,6 +1,7 @@
+ import type { AugmentDef } from '../types';
+ import { anchor } from './anchor';
+ import { bolt } from './bolt';
++import { chain } from './chain';
+ import { frost } from './frost';
+ import { lance } from './lance';
+ import { lead } from './lead';
+@@ -14,6 +15,7 @@ import { splash } from './splash';
+ /** Every augment. The draft after each wave offers three different ones. */
+ export const AUGMENTS: readonly AugmentDef[] = [
+   bolt,
++  chain,
+   lance,
+   lead,
+   splash,
+diff --git a/projects/chokepoint/game/src/content/types.ts b/projects/chokepoint/game/src/content/types.ts
+index 3d51b7d..1bd1808 100644
+--- a/projects/chokepoint/game/src/content/types.ts
++++ b/projects/chokepoint/game/src/content/types.ts
+@@ -43,8 +43,9 @@ export type Tier = 'common' | 'rare' | 'epic';
+  * What a tier changes about its copy of an augment. Unset fields keep the Common value.
+  * The multipliers scale the FIRST form (`damageMul`, `cooldownMul` (divides the rate), `rangeMul`)
+  * and replace the ADDED form's (`addedRateMul`, `addedRangeMul`); `slowPct` replaces this copy's
+- * slow % in both forms, `pierce` its pierce, `splash` its added splash cells, `rootSec` its root
+- * seconds and `addedRootSec` its added root seconds, and `asAdded` is the card's added line.
++ * slow % in both forms, `pierce` its pierce, `splash` its added splash cells, `leapDamage` its
++ * added leap damage, `rootSec` its root seconds and `addedRootSec` its added root seconds, and
++ * `asAdded` is the card's added line.
+  */
+ export interface TierValues {
+   damageMul?: number;
+@@ -52,6 +53,8 @@ export interface TierValues {
+   rangeMul?: number;
+   slowPct?: number;
+   splash?: number;
++  /** Replaces this copy's added leap damage (Chain). */
++  leapDamage?: number;
+   /** Replaces this copy's root duration in both forms, unless `addedRootSec` says otherwise (Anchor). */
+   rootSec?: number;
+   /** Replaces this copy's added root duration (Anchor). */
+@@ -79,7 +82,9 @@ export type AttackKind =
+   /** Support: nearby towers attack faster; the beacon never fires itself. */
+   | 'rally'
+   /** Marks the enemy furthest along: a marked enemy takes more damage from everything. */
+-  | 'mark';
++  | 'mark'
++  /** A zap that strikes, then leaps between unstruck enemies. */
++  | 'chain';
+ 
+ /** A tower's attack when this augment is the first one in it. */
+ export interface FirstForm {
+@@ -104,6 +109,8 @@ export interface FirstForm {
+   lead?: number;
+   /** Kills within this many cells of the tower (Chebyshev) drop +1 gold per mint copy in it (Mint). */
+   goldRadius?: number;
++  /** For 'chain': strikes per attack (the first strike plus its leaps). */
++  leaps?: number;
+ }
+ 
+ /**
+@@ -131,6 +138,10 @@ export interface AddedForm {
+   lead?: number;
+   /** This tower's own kills drop this much extra gold (Mint). */
+   goldPerKill?: number;
++  /** Each attack leaps this many further enemies after its normal hits (Chain). */
++  leaps?: number;
++  /** Damage of those leaps (Chain); the strongest copy's value wins. */
++  leapDamage?: number;
+ }
+ 
+ /**
+diff --git a/projects/chokepoint/game/src/core/augments.ts b/projects/chokepoint/game/src/core/augments.ts
+index 5f0f056..f02f769 100644
+--- a/projects/chokepoint/game/src/core/augments.ts
++++ b/projects/chokepoint/game/src/core/augments.ts
+@@ -2,6 +2,7 @@ import { MAX_SLOTS, SLOT_COSTS } from '../config';
+ import { ANCHOR_EXTRA_ROOT_SEC, anchor } from '../content/augments/anchor';
+ import { getAugment } from '../content/augments';
+ import { bolt } from '../content/augments/bolt';
++import { LEAP_REACH } from '../content/augments/chain';
+ import type { Bright } from '../content/palette';
+ import type { AttackKind, AugmentCopy, AugmentDef } from '../content/types';
+ import type { Rng } from './rng';
+@@ -27,6 +28,14 @@ export interface TowerSpec {
+   boltDamage: number;
+   /** Hits burst, hitting every enemy within this many cells (pulses: already in `range`). */
+   splash: number;
++  /** Chain towers: strikes per attack (the first strike plus its leaps). */
++  chainLeaps: number;
++  /** Added Chain copies: each attack leaps this many further enemies. */
++  leaps: number;
++  /** Damage of those added leaps (the strongest copy's value wins, never host-scaled). */
++  leapDamage: number;
++  /** How far one leap reaches, from the previous hit (cells). */
++  leapReach: number;
+   /** How many more enemies a shot strikes after the first hit; 0 = none (a pulse fires that many bolts). */
+   pierce: number;
+   slow: { pct: number; sec: number } | undefined;
+@@ -58,6 +67,10 @@ const EMPTY: TowerSpec = {
+   bolts: 0,
+   boltDamage: 0,
+   splash: 0,
++  chainLeaps: 0,
++  leaps: 0,
++  leapDamage: 0,
++  leapReach: 0,
+   pierce: 0,
+   slow: undefined,
+   root: undefined,
+@@ -94,6 +107,10 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
+     bolts: 0,
+     boltDamage: bolt.first.damage,
+     splash: 0,
++    chainLeaps: f.kind === 'chain' ? f.leaps ?? 0 : 0,
++    leaps: 0,
++    leapDamage: 0,
++    leapReach: LEAP_REACH,
+     pierce: f.pierce ?? 0,
+     slow: f.slow ? { ...f.slow } : undefined,
+     root: undefined,
+@@ -120,6 +137,10 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
+     spec.range *= e.rangeMul ?? 1;
+     spec.splash += e.splash ?? 0;
+     spec.pierce += e.pierce ?? 0;
++    if (e.leaps) {
++      spec.leaps += e.leaps;
++      spec.leapDamage = Math.max(spec.leapDamage, e.leapDamage ?? 0);
++    }
+     if (spec.kind === 'shot') spec.shots += e.extraShots ?? 0;
+     else if (spec.kind === 'pulse') spec.bolts += e.extraShots ?? 0;
+     if (e.slow && (!spec.slow || e.slow.pct > spec.slow.pct)) spec.slow = { ...e.slow };
+@@ -168,6 +189,11 @@ export function describeSpec(spec: TowerSpec): string {
+     line = `${style} ${target}${spec.splash > 0 ? ', and the shots burst' : ''}${spec.pierce > 0 ? `, and each hits ${spec.pierce + 1} in a line` : ''}${marked > 0 ? ', and its hits mark' : ''}`;
+     if (slow) line += `, slowing them by ${slow}%`;
+     line += root;
++  } else if (spec.kind === 'chain') {
++    line = 'Zaps the enemy furthest along, then leaps';
++    if (spec.leaps > 0) line += spec.leaps === 1 ? ' to 1 more enemy' : ` to ${spec.leaps} more enemies`;
++    if (slow) line += `, slowing them by ${slow}%`;
++    line += root;
+   } else if (spec.kind === 'mark') {
+     line = `Marks the enemy furthest along: marked enemies take ${marked}% more damage`;
+     if (slow) line += `, slowing them by ${slow}%`;
+diff --git a/projects/chokepoint/game/src/core/chain.ts b/projects/chokepoint/game/src/core/chain.ts
+new file mode 100644
+index 0000000..7de3252
+--- /dev/null
++++ b/projects/chokepoint/game/src/core/chain.ts
+@@ -0,0 +1,51 @@
++import { pickTarget, type TargetCandidate } from './targeting';
++
++/**
++ * The zap: the index of the first strike, then up to `count - 1` further strikes. The first is
++ * the active enemy furthest along within `range` (board units); each further strike is the
++ * nearest active enemy not in `struck` and within `reach` of the previous strike. Stops early
++ * when nothing is in reach — a leap never goes to air. Every index it returns is different.
++ */
++export function pickChain(x: number, y: number, range: number, reach: number, enemies: readonly TargetCandidate[], count: number): number[] {
++  const first = pickTarget(x, y, range, enemies);
++  if (first < 0) return [];
++  return [first, ...pickLeaps(first, reach, enemies, [first], count - 1)];
++}
++
++/**
++ * Up to `count` further strikes continuing from enemy `from`: each is the nearest active enemy
++ * not in `struck` (and not `from` itself) within `reach` (board units) of the previous strike.
++ * Ties go to the enemy later in the list; a gap exactly at the reach is included. Stops early
++ * when nothing is in reach.
++ */
++export function pickLeaps(from: number, reach: number, enemies: readonly TargetCandidate[], struck: readonly number[], count: number): number[] {
++  const out: number[] = [];
++  const skipped = new Set<number>(struck);
++  skipped.add(from);
++  let px = enemies[from]!.x;
++  let py = enemies[from]!.y;
++  const r2 = reach * reach;
++  for (let n = 0; n < count; n++) {
++    let best = -1;
++    let bestD2 = Infinity;
++    for (let i = 0; i < enemies.length; i++) {
++      if (skipped.has(i)) continue;
++      const e = enemies[i]!;
++      if (!e.active) continue;
++      const dx = e.x - px;
++      const dy = e.y - py;
++      const d2 = dx * dx + dy * dy;
++      if (d2 > r2) continue;
++      if (d2 <= bestD2) {
++        best = i;
++        bestD2 = d2;
++      }
++    }
++    if (best < 0) break;
++    skipped.add(best);
++    out.push(best);
++    px = enemies[best]!.x;
++    py = enemies[best]!.y;
++  }
++  return out;
++}
+diff --git a/projects/chokepoint/game/src/core/tiers.ts b/projects/chokepoint/game/src/core/tiers.ts
+index 0aa8b9d..9bc6bb2 100644
+--- a/projects/chokepoint/game/src/core/tiers.ts
++++ b/projects/chokepoint/game/src/core/tiers.ts
+@@ -64,6 +64,7 @@ export function tierAdded(def: AugmentDef, tier: Tier): AddedForm {
+     rateMul: t.addedRateMul ?? a.rateMul,
+     rangeMul: t.addedRangeMul ?? a.rangeMul,
+     splash: t.splash ?? a.splash,
++    leapDamage: t.leapDamage ?? a.leapDamage,
+     slow: a.slow ? { ...a.slow, pct: t.slowPct ?? a.slow.pct } : undefined,
+     root: a.root ? { ...a.root, sec: t.addedRootSec ?? t.rootSec ?? a.root.sec } : undefined,
+   };
+diff --git a/projects/chokepoint/game/src/debug/runChecks.ts b/projects/chokepoint/game/src/debug/runChecks.ts
+index 557598f..338c008 100644
+--- a/projects/chokepoint/game/src/debug/runChecks.ts
++++ b/projects/chokepoint/game/src/debug/runChecks.ts
+@@ -26,6 +26,16 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
+     for (const t of g.towers.towers) if (!Number.isInteger(t.spec.goldPerKill) || t.spec.goldPerKill < 0 || t.spec.goldPerKill > t.augments.length) return `kill-gold ${t.spec.goldPerKill} at (${t.cell.col}, ${t.cell.row})`;
+     return null;
+   }],
++  ['towers.chain', (g) => {
++    for (const t of g.towers.towers) {
++      const s = t.spec;
++      if (!s.attacks) continue;
++      if (!Number.isFinite(s.damage) || !Number.isFinite(s.rate)) return `attacking tower at (${t.cell.col}, ${t.cell.row}) has NaN damage/rate`;
++      if (s.kind === 'chain' && (s.chainLeaps < 1 || s.leapReach <= 0)) return `chain tower at (${t.cell.col}, ${t.cell.row}) has ${s.chainLeaps} strikes, leap reach ${s.leapReach}`;
++      if (s.leaps > 0 && s.leapDamage <= 0) return `tower at (${t.cell.col}, ${t.cell.row}) leaps to enemies but its zap has no damage`;
++    }
++    return null;
++  }],
+   ['rally.valid', (g) => {
+     for (const t of g.towers.towers) if (t.rallyRateMul < 1 - 1e-9 || t.rallyRateMul > 1.2) return `rally multiplier ${t.rallyRateMul}`;
+     return null;
+diff --git a/projects/chokepoint/game/src/entities/towerLook.ts b/projects/chokepoint/game/src/entities/towerLook.ts
+index 5f68bfc..fcdf4b1 100644
+--- a/projects/chokepoint/game/src/entities/towerLook.ts
++++ b/projects/chokepoint/game/src/entities/towerLook.ts
+@@ -21,7 +21,7 @@ export const MAX_BARRELS = 4;
+ /** Barrels, one per shot (Bolt); a pulse tower with Bolt added gets them for its bolts. */
+ export function barrelCount(spec: TowerSpec): number {
+   if (!spec.attacks || spec.kind === 'rally') return 0; // a rally beacon has no barrels
+-  return Math.min(MAX_BARRELS, spec.kind === 'shot' ? spec.shots : spec.kind === 'pulse' ? spec.bolts : 0);
++  return Math.min(MAX_BARRELS, spec.kind === 'shot' ? spec.shots : spec.kind === 'pulse' ? spec.bolts : spec.kind === 'chain' ? 1 : 0);
+ }
+ 
+ /** Speed-ups on top of the first augment's own rate: one per Rapid added (x1.5 each). */
+@@ -43,6 +43,8 @@ export function barrelLook(spec: TowerSpec): BarrelLook {
+   const rod = spec.pierce > 0;
+   // A Lead first tower gets the thinnest, longest barrel in the game, like a Reach barrel.
+   const leadFirst = spec.firstId === 'lead';
++  // A Chain zap throws nothing: a short stubby white barrel.
++  if (spec.kind === 'chain') return { length: 0.5, width: 1.25, bulb: false, bands: 0, white: true };
+   return {
+     length: rod ? 1.4 : leadFirst ? 2 : Phaser.Math.Clamp(spec.range / plain.range, 0.85, 2),
+     width: rod ? 0.34 : leadFirst ? 0.32 : Phaser.Math.Clamp(Math.pow(damage / plain.damage, 0.3) / Math.pow(Math.max(1, spec.rate / plain.rate), 0.35), 0.55, 1.4),
+@@ -107,6 +109,27 @@ const DECORATIONS: readonly Decoration[] = [
+       fillRing(g, 0, 0, BODY * 1.8, 3, a, a + 0.28, PALETTE.yellow);
+     }
+   },
++  // Chain: one small white zigzag tick on the base ring per Chain in the tower.
++  (g, spec) => {
++    const n = (spec.firstId === 'chain' ? 1 : 0) + spec.leaps;
++    if (n === 0) return;
++    const r = BODY * 1.8;
++    g.lineStyle(2.5, PALETTE.card, 1);
++    for (let i = 0; i < n; i++) {
++      const a = (i / n) * Math.PI * 2;
++      const px = Math.cos(a) * r;
++      const py = Math.sin(a) * r;
++      // The tick lies along the circle's tangent, wobbling 2.5 radially.
++      const tx = -Math.sin(a);
++      const ty = Math.cos(a);
++      g.beginPath();
++      g.moveTo(px - tx * 5, py - ty * 5);
++      g.lineTo(px - tx * 1.67 - Math.cos(a) * 1.25, py - ty * 1.67 - Math.sin(a) * 1.25);
++      g.lineTo(px + tx * 1.67 + Math.cos(a) * 1.25, py + ty * 1.67 + Math.sin(a) * 1.25);
++      g.lineTo(px + tx * 5, py + ty * 5);
++      g.strokePath();
++    }
++  },
+ ];
+ 
+ export function drawDecorations(g: Phaser.GameObjects.Graphics, spec: TowerSpec): void {
+diff --git a/projects/chokepoint/game/src/systems/FxSystem.ts b/projects/chokepoint/game/src/systems/FxSystem.ts
+index 869c138..0655303 100644
+--- a/projects/chokepoint/game/src/systems/FxSystem.ts
++++ b/projects/chokepoint/game/src/systems/FxSystem.ts
+@@ -61,6 +61,32 @@ export class FxSystem {
+     this.track(g, 360, { scale: 1, alpha: 0, ease: 'Cubic.easeOut' });
+   }
+ 
++  /** A white zigzag bolt between two points, with a flash at the end: one strike of a Chain zap. */
++  zap(x1: number, y1: number, x2: number, y2: number): void {
++    if (this.live >= FxSystem.MAX) return;
++    const g = this.scene.add.graphics().setDepth(DEPTH.fx);
++    const dx = x2 - x1;
++    const dy = y2 - y1;
++    const len = Math.hypot(dx, dy);
++    // Five segments; the interior points step off the straight line, alternating sides.
++    g.lineStyle(3.5, PALETTE.card, 1);
++    const off = Math.min(4, len / 4);
++    const px = len > 0 ? -dy / len : 0;
++    const py = len > 0 ? dx / len : 0;
++    g.beginPath();
++    g.moveTo(x1, y1);
++    for (let i = 1; i <= 4; i++) {
++      const t = i / 5;
++      const side = i % 2 === 0 ? 1 : -1;
++      g.lineTo(x1 + dx * t + px * off * side, y1 + dy * t + py * off * side);
++    }
++    g.lineTo(x2, y2);
++    g.strokePath();
++    g.fillStyle(PALETTE.card, 0.9);
++    g.fillCircle(x2, y2, 6);
++    this.track(g, 110, { alpha: 0 });
++  }
++
+   /** A flat light-blue ring out to `radius`: the anchor's root coming. */
+   rootWave(x: number, y: number, radius: number): void {
+     if (this.live >= FxSystem.MAX) return;
+diff --git a/projects/chokepoint/game/src/systems/TowerSystem.ts b/projects/chokepoint/game/src/systems/TowerSystem.ts
+index b0aaba9..7fd90d9 100644
+--- a/projects/chokepoint/game/src/systems/TowerSystem.ts
++++ b/projects/chokepoint/game/src/systems/TowerSystem.ts
+@@ -3,15 +3,17 @@ import { CELL } from '../config';
+ import { PALETTE } from '../content/palette';
+ import type { AugmentCopy } from '../content/types';
+ import { slotCost, towerColor } from '../core/augments';
++import { pickLeaps } from '../core/chain';
+ import { leadAim } from '../core/lead';
+ import type { Cell } from '../core/map';
+ import type { RunState } from '../core/run';
+ import { hook } from '../debug/testHook';
++import type { Enemy } from '../entities/Enemy';
+ import { Tower } from '../entities/Tower';
+ import type { Sfx } from '../audio/Sfx';
+ import type { Board } from './Board';
+ import { ATTACKS } from './attacks';
+-import type { EnemySystem } from './EnemySystem';
++import type { EnemySystem, HitPayload } from './EnemySystem';
+ import type { FxSystem } from './FxSystem';
+ import type { ProjectileSystem } from './ProjectileSystem';
+ 
+@@ -107,34 +109,62 @@ export class TowerSystem {
+     const spec = t.spec;
+     if (spec.kind === 'none') return false;
+     const color = towerColor(t.augments);
++    const payload: HitPayload = {
++      damage: spec.damage,
++      splash: spec.splash * CELL,
++      slow: spec.slow,
++      root: spec.root,
++      pierce: spec.pierce,
++      mark: spec.markPct > 0 ? { pct: spec.markPct, x: t.x, y: t.y } : undefined,
++      color: color ? PALETTE[color] : PALETTE.faint,
++      source: t,
++    };
++    const struck: number[] = [];
+     const attacked = ATTACKS[spec.kind]({
+       tower: t,
+       enemies,
+       range: spec.range * CELL,
+-      payload: {
+-        damage: spec.damage,
+-        splash: spec.splash * CELL,
+-        slow: spec.slow,
+-        root: spec.root,
+-        pierce: spec.pierce,
+-        mark: spec.markPct > 0 ? { pct: spec.markPct, x: t.x, y: t.y } : undefined,
+-        color: color ? PALETTE[color] : PALETTE.faint,
+-        source: t,
+-      },
+-      fireBolt: (n, target, payload) => {
++      payload,
++      fireBolt: (n, target, p) => {
+         const m = t.muzzle(n);
+         // Each bolt flies to where its target will be: the lead from the muzzle's own distance.
+         const aim = spec.lead > 0 ? leadAim(m.x, m.y, target, spec.projectileSpeed * CELL, spec.lead) : undefined;
+-        this.projectiles.fire(m.x, m.y, target, payload, spec.projectileSpeed * CELL, aim?.x, aim?.y);
++        this.projectiles.fire(m.x, m.y, target, p, spec.projectileSpeed * CELL, aim?.x, aim?.y);
+       },
+-      strike: (target, payload) => this.enemies.strike(target, payload),
++      strike: (target, p) => this.enemies.strike(target, p),
++      hit: (target, p) => this.enemies.hit(target, p),
++      struck,
+       fx: this.fx,
+       sfx: this.sfx,
+     });
+-    if (attacked) hook.stats.shotsFired += 1;
++    if (attacked) {
++      hook.stats.shotsFired += 1;
++      if (spec.leaps > 0) this.leap(t, enemies, struck, payload);
++    }
+     return attacked;
+   }
+ 
++  /** Added Chain copies: after the attack's normal hits, the zap leaps to `spec.leaps` more unstruck enemies. */
++  private leap(t: Tower, enemies: readonly Enemy[], struck: number[], payload: HitPayload): void {
++    const spec = t.spec;
++    // The zap starts from the struck enemy furthest along, not from the muzzle.
++    let start = -1;
++    for (const i of struck) if (start < 0 || enemies[i]!.distance > enemies[start]!.distance) start = i;
++    if (start < 0) return;
++    const leaps = pickLeaps(start, spec.leapReach * CELL, enemies, struck, spec.leaps);
++    if (leaps.length === 0) return;
++    let px = enemies[start]!.x;
++    let py = enemies[start]!.y;
++    for (const i of leaps) {
++      const e = enemies[i]!;
++      this.fx.zap(px, py, e.x, e.y);
++      px = e.x;
++      py = e.y;
++      this.enemies.hit(e, { ...payload, damage: spec.leapDamage });
++      this.sfx?.zap();
++    }
++  }
++
+   /** Invariant: every tower stands on an open cell and holds no more augments than slots. */
+   brokenTower(): string | undefined {
+     for (const t of this.towers) {
+diff --git a/projects/chokepoint/game/src/systems/attacks/attack.ts b/projects/chokepoint/game/src/systems/attacks/attack.ts
+index 448ea60..0ffcc9d 100644
+--- a/projects/chokepoint/game/src/systems/attacks/attack.ts
++++ b/projects/chokepoint/game/src/systems/attacks/attack.ts
+@@ -16,6 +16,10 @@ export interface AttackContext {
+   fireBolt(n: number, target: Enemy, payload: HitPayload): void;
+   /** Hits one enemy right away (damage and slow, handling the kill). */
+   strike(target: Enemy, payload: HitPayload): void;
++  /** Hits one enemy right away, with the payload's splash (a burst ring where it lands). */
++  hit(target: Enemy, payload: HitPayload): void;
++  /** Indexes (into `enemies`) of the enemies this attack struck; attacks append, so added Chain leaps know whom to skip. */
++  struck: number[];
+   fx: FxSystem;
+   sfx: Sfx | undefined;
+ }
+diff --git a/projects/chokepoint/game/src/systems/attacks/chain.ts b/projects/chokepoint/game/src/systems/attacks/chain.ts
+new file mode 100644
+index 0000000..342d7bd
+--- /dev/null
++++ b/projects/chokepoint/game/src/systems/attacks/chain.ts
+@@ -0,0 +1,27 @@
++import { CELL } from '../../config';
++import { pickChain } from '../../core/chain';
++import type { Attack } from './attack';
++
++/** The zap: strikes the enemy furthest along, then leaps from hit to hit; a white bolt per strike. */
++export const chain: Attack = ({ tower, enemies, range, payload, hit, struck, fx, sfx }) => {
++  const spec = tower.spec;
++  const strikes = pickChain(tower.x, tower.y, range, spec.leapReach * CELL, enemies, spec.chainLeaps);
++  if (strikes.length === 0) return false;
++  struck.push(...strikes);
++  const first = enemies[strikes[0]!]!;
++  tower.aimAt(first.x, first.y);
++  tower.kick();
++  // The first bolt flies from the barrel tip to the first strike; each leap jumps hit to hit.
++  const muzzle = tower.muzzle(0);
++  let px = muzzle.x;
++  let py = muzzle.y;
++  for (const i of strikes) {
++    const e = enemies[i]!;
++    fx.zap(px, py, e.x, e.y);
++    px = e.x;
++    py = e.y;
++    hit(e, payload);
++    sfx?.zap();
++  }
++  return true;
++};
+diff --git a/projects/chokepoint/game/src/systems/attacks/index.ts b/projects/chokepoint/game/src/systems/attacks/index.ts
+index 19f0ff6..cacdfa3 100644
+--- a/projects/chokepoint/game/src/systems/attacks/index.ts
++++ b/projects/chokepoint/game/src/systems/attacks/index.ts
+@@ -1,5 +1,6 @@
+ import type { AttackKind } from '../../content/types';
+ import type { Attack } from './attack';
++import { chain } from './chain';
+ import { mark } from './mark';
+ import { pulse } from './pulse';
+ import { rally } from './rally';
+@@ -8,6 +9,7 @@ import { shot } from './shot';
+ /** Every kind of tower attack, by TowerSpec.kind. A new kind: its file here and one line below. */
+ export const ATTACKS: Record<AttackKind, Attack> = {
+   shot,
++  chain,
+   pulse,
+   rally,
+   mark,
+diff --git a/projects/chokepoint/game/src/systems/attacks/mark.ts b/projects/chokepoint/game/src/systems/attacks/mark.ts
+index 7fd736b..59d55c2 100644
+--- a/projects/chokepoint/game/src/systems/attacks/mark.ts
++++ b/projects/chokepoint/game/src/systems/attacks/mark.ts
+@@ -25,9 +25,10 @@ function furthestUnmarked(x: number, y: number, range: number, enemies: readonly
+ }
+ 
+ /** Marks the unmarked enemy furthest along (no damage of its own; the mark makes everything hurt it more). */
+-export const mark: Attack = ({ tower, enemies, range, payload, strike, sfx }) => {
++export const mark: Attack = ({ tower, enemies, range, payload, strike, struck, sfx }) => {
+   const i = furthestUnmarked(tower.x, tower.y, range, enemies);
+   if (i === -1 || !payload.mark) return false;
++  struck.push(i);
+   strike(enemies[i]!, payload);
+   sfx?.mark();
+   return true;
+diff --git a/projects/chokepoint/game/src/systems/attacks/pulse.ts b/projects/chokepoint/game/src/systems/attacks/pulse.ts
+index 1634e60..f29244e 100644
+--- a/projects/chokepoint/game/src/systems/attacks/pulse.ts
++++ b/projects/chokepoint/game/src/systems/attacks/pulse.ts
+@@ -5,10 +5,11 @@ import type { Attack } from './attack';
+  * A wave that hits everything in range at once (Splash added already widened the range, see
+  * core/augments.ts). With Bolt added it also shoots the enemies furthest along, with Bolt's damage.
+  */
+-export const pulse: Attack = ({ tower, enemies, range, payload, fireBolt, strike, fx, sfx }) => {
++export const pulse: Attack = ({ tower, enemies, range, payload, fireBolt, strike, struck, fx, sfx }) => {
+   const spec = tower.spec;
+   const hits = inRange(tower.x, tower.y, range, enemies);
+   if (hits.length === 0) return false;
++  struck.push(...hits);
+   for (const i of hits) strike(enemies[i]!, payload);
+   // A damage-0 rooting pulse (Anchor) shows a flat light-blue ring instead of the colored wave.
+   if (spec.damage > 0 || !spec.root) fx.wave(tower.x, tower.y, range, payload.color);
+diff --git a/projects/chokepoint/game/src/systems/attacks/shot.ts b/projects/chokepoint/game/src/systems/attacks/shot.ts
+index 7d0c8b7..fdfc1ed 100644
+--- a/projects/chokepoint/game/src/systems/attacks/shot.ts
++++ b/projects/chokepoint/game/src/systems/attacks/shot.ts
+@@ -4,9 +4,10 @@ import { pickTargets } from '../../core/targeting';
+ import type { Attack } from './attack';
+ 
+ /** Bolts at the enemies furthest along: one per shot, each from its own barrel. */
+-export const shot: Attack = ({ tower, enemies, range, payload, fireBolt, sfx }) => {
++export const shot: Attack = ({ tower, enemies, range, payload, fireBolt, struck, sfx }) => {
+   const targets = pickTargets(tower.x, tower.y, range, enemies, tower.spec.shots);
+   if (targets.length === 0) return false;
++  struck.push(...targets);
+   const first = enemies[targets[0]!]!;
+   // With a Lead in the tower the barrels point where the first target is going, not where it is.
+   const aim = tower.spec.lead > 0 ? leadAim(tower.x, tower.y, first, tower.spec.projectileSpeed * CELL, tower.spec.lead) : undefined;
+diff --git a/projects/chokepoint/game/tests/content.test.ts b/projects/chokepoint/game/tests/content.test.ts
+index 4d7d835..5fd6a3f 100644
+--- a/projects/chokepoint/game/tests/content.test.ts
++++ b/projects/chokepoint/game/tests/content.test.ts
+@@ -42,6 +42,7 @@ describe('content', () => {
+       expect(a.first.rate).toBeGreaterThan(0);
+       expect(a.first.damage > 0 || a.first.slow || a.first.root || a.first.mark || a.first.kind === 'rally' || a.first.goldRadius).toBeTruthy();
+       if (a.first.kind === 'shot') expect(a.first.projectileSpeed ?? 0).toBeGreaterThan(0);
++      if (a.first.kind === 'chain') expect(a.first.leaps ?? 0).toBeGreaterThanOrEqual(1);
+       expect(Object.keys(a.added).length).toBeGreaterThan(0);
+       // The card shows each line next to its glyph: short, and no "First:"-style labels.
+       for (const text of [a.asTower, a.asAdded]) {
+diff --git a/projects/chokepoint/game/tests/core/augments.test.ts b/projects/chokepoint/game/tests/core/augments.test.ts
+index 9a4765a..2f15cb7 100644
+--- a/projects/chokepoint/game/tests/core/augments.test.ts
++++ b/projects/chokepoint/game/tests/core/augments.test.ts
+@@ -74,6 +74,30 @@ describe('pierce (Lance)', () => {
+   });
+ });
+ 
++describe('chain (Chain)', () => {
++  it('a lone Chain tower is a three-strike zap', () => {
++    expect(spec('chain')).toMatchObject({ kind: 'chain', chainLeaps: 3, damage: 15 });
++  });
++
++  it('Chain added makes any attack leap to one more enemy; copies stack, the strongest zap wins', () => {
++    expect(spec('bolt', 'chain')).toMatchObject({ leaps: 1, leapDamage: 15 });
++    expect(spec('bolt', 'chain', 'chain').leaps).toBe(2);
++    expect(towerSpec([copy('bolt'), copy('chain', 'epic')]).leapDamage).toBe(20);
++    expect(towerSpec([copy('bolt'), copy('chain', 'epic'), copy('chain')]).leapDamage).toBe(20);
++  });
++
++  it('a second Chain in its own tower adds a leap to its strikes', () => {
++    expect(spec('chain', 'chain')).toMatchObject({ chainLeaps: 3, leaps: 1 });
++  });
++
++  it('a Rare Chain tower zaps for 18 every 1.05s; Epic for 20 every 0.9s', () => {
++    expect(towerSpec([copy('chain', 'rare')]).damage).toBeCloseTo(18);
++    expect(towerSpec([copy('chain', 'rare')]).rate).toBeCloseTo(1 / 1.05);
++    expect(towerSpec([copy('chain', 'epic')]).damage).toBeCloseTo(20);
++    expect(towerSpec([copy('chain', 'epic')]).rate).toBeCloseTo(1 / 0.9);
++  });
++});
++
+ describe('mint gold (Mint)', () => {
+   it('a Mint tower does not attack; kills within 2 cells pay +1 per copy in it', () => {
+     expect(spec('mint')).toMatchObject({ goldRadius: 2, goldPerKill: 1, damage: 0 });
+@@ -224,7 +248,7 @@ describe('rollOffer', () => {
+   });
+ 
+   it('the rule relaxes, rather than hard-failing, when exclusions leave fewer than 3 eligible', () => {
+-    const tiny = AUGMENTS.slice(0, 4); // bolt, lance, lead, splash
++    const tiny = AUGMENTS.slice(0, 4); // bolt, chain, lance, lead
+     for (let seed = 1; seed <= 50; seed++) expect(rollOffer(new Rng(seed), tiny, 3, 5, false, ['bolt', 'lance'])).toHaveLength(3);
+   });
+ 
+diff --git a/projects/chokepoint/game/tests/core/chain.test.ts b/projects/chokepoint/game/tests/core/chain.test.ts
+new file mode 100644
+index 0000000..e657dd8
+--- /dev/null
++++ b/projects/chokepoint/game/tests/core/chain.test.ts
+@@ -0,0 +1,46 @@
++import { describe, expect, it } from 'vitest';
++import { pickChain, pickLeaps } from '../../src/core/chain';
++import type { TargetCandidate } from '../../src/core/targeting';
++
++const enemies: TargetCandidate[] = [
++  { x: 10, y: 0, distance: 1, active: true },
++  { x: 25, y: 0, distance: 2, active: true },
++  { x: 40, y: 0, distance: 3, active: true },
++  { x: 100, y: 0, distance: 9, active: true },
++];
++
++describe('pickChain', () => {
++  it('strikes the furthest-along in range, then leaps nearest-first, every strike a different enemy', () => {
++    expect(pickChain(0, 0, 45, 20, enemies, 3)).toEqual([2, 1, 0]);
++  });
++
++  it('stops early when nothing is in leap reach, instead of wasting a leap', () => {
++    expect(pickChain(0, 0, 45, 20, enemies, 5)).toEqual([2, 1, 0]);
++  });
++
++  it('does not attack when nothing is in range', () => {
++    expect(pickChain(0, 0, 5, 20, enemies, 3)).toEqual([]);
++  });
++
++  it('skips dead enemies on the way', () => {
++    const dead = enemies.map((e, i) => (i === 1 ? { ...e, active: false } : e));
++    expect(pickChain(0, 0, 45, 20, dead, 3)).toEqual([2]);
++  });
++});
++
++describe('pickLeaps', () => {
++  it('each leap is the nearest unstruck enemy within the reach of the previous strike', () => {
++    expect(pickLeaps(0, 20, enemies, [], 3)).toEqual([1, 2]);
++  });
++
++  it('skips the struck, and never leaps to air', () => {
++    expect(pickLeaps(1, 20, enemies, [2, 1], 2)).toEqual([0]);
++    expect(pickLeaps(2, 20, enemies, [2, 1], 2)).toEqual([]);
++  });
++
++  it('includes a gap exactly at the reach, and not one beyond it', () => {
++    const one = { x: 0, y: 0, distance: 1, active: true };
++    expect(pickLeaps(0, 20, [one, { x: 20, y: 0, distance: 2, active: true }], [0], 1)).toEqual([1]);
++    expect(pickLeaps(0, 20, [one, { x: 21, y: 0, distance: 2, active: true }], [0], 1)).toEqual([]);
++  });
++});
