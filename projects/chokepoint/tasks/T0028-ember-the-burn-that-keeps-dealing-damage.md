@@ -1,12 +1,14 @@
 ---
 id: T0028
 title: "Ember: the burn that keeps dealing damage"
+assignee: desktop
 size: L
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0021, T0006]
-attempts: 0
+attempts: 1
 created: 2026-10-28T06:24:55Z
+claimed_at: 2026-10-28T16:04:06Z
 epic: E4
 ---
 
