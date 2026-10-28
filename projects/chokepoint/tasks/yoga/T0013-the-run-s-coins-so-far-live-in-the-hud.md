@@ -4,10 +4,11 @@ title: "The run's coins so far, live in the HUD"
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0001]
-attempts: 0
+attempts: 1
 created: 2026-10-28T02:08:37Z
+claimed_at: 2026-10-28T02:54:51Z
 epic: E1
 ---
 
