@@ -33,8 +33,9 @@ export class DraftScene extends Phaser.Scene {
     const game = getGameScene(this);
     const offer = game.flow.offer;
     const offered = offer.map((c) => getAugment(c.id));
+    const flipped: boolean[] = offer.map(() => false);
     const pick = (i: number): void => {
-      if (this.picked || !offer[i]) return;
+      if (this.picked || !flipped[i]) return;
       this.picked = true;
       hook.overlay = '';
       this.scene.stop();
@@ -84,6 +85,24 @@ export class DraftScene extends Phaser.Scene {
         frame.lineStyle(2, copy.tier === 'rare' ? PALETTE.blue : PALETTE.purple, 1);
         frame.strokeRoundedRect(-CARD_W / 2 - 1, -CARD_H / 2 - 1, CARD_W + 2, CARD_H + 2, 23);
       }
+      // The card's back: one muted-gray gem in the center; hidden when face-up.
+      const back = artScale(this.add.image(0, 0, GEM_TEXTURE)).setTint(PALETTE.faint);
+      button.content.setVisible(false);
+      frame?.setVisible(false);
+      button.container.add(back);
+      // The flip: the card narrows to a line and widens back face-up; the Epic card's is a bit longer.
+      const leg = (copy.tier === 'epic' ? 350 : 200) / 2;
+      this.tweens.add({
+        targets: [button.container, ...(frame ? [frame] : [])],
+        scaleX: 0.03,
+        delay: 100 + i * 60,
+        duration: leg,
+        ease: 'Quad.easeIn',
+        yoyo: true,
+        repeat: 1,
+        onYoyo: () => { back.setVisible(false); button.content.setVisible(true); frame?.setVisible(true); },
+        onComplete: () => { button.container.setScale(1); frame?.setScale(1); flipped[i] = true; },
+      });
       return { button, frame };
     });
 

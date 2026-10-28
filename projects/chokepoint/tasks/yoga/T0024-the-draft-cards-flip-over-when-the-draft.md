@@ -4,11 +4,12 @@ title: The draft cards flip over when the draft opens
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T05:03:06Z
 claimed_at: 2026-10-28T05:44:49Z
+finished_at: 2026-10-28T05:57:29Z
 epic: E4
 ---
 
@@ -76,3 +77,15 @@ none — all local to `DraftScene.create()`.
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The three draft cards in DraftScene now open face-down — a plain white card with one small muted-gray gem in the center (name, numbers, frame and gem row hidden) — and flip face-up one after another in display order: a ~200 ms horizontal turn per card with a ~60 ms stagger, and the Epic card's flip runs ~350 ms so the rarest card finishes last. A per-card `flipped` flag gates `pick` (taps, keys 1–3 and the smoke auto-pick all go through it), so each card is tappable the instant its own flip ends, and the flip plays on every draft open including the first. Card sizes, positions, frames and gem rows are exactly T0002's, and both `npm run check` and `npm run smoke` pass.
+
+- Self-review: APPROVE
+- Time: 12.8 min
+
+```
+projects/chokepoint/game/src/scenes/DraftScene.ts | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
+```
