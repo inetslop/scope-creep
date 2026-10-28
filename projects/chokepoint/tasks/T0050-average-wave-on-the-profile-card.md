@@ -1,12 +1,14 @@
 ---
 id: T0050
 title: Average wave on the profile card
+assignee: desktop
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T12:34:55Z
+claimed_at: 2026-10-28T13:07:55Z
 epic: E1
 ---
 
