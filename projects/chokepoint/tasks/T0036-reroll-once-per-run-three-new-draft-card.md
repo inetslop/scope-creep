@@ -3,13 +3,11 @@ id: T0036
 title: "Reroll: once per run, three new draft cards for 15 gold"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-28T08:43:02Z
-claimed_at: 2026-10-28T08:43:05Z
 epic: E4
-designer: desktop
 ---
 
 ## Goal
@@ -33,3 +31,106 @@ When all three offered cards are wrong, the player gets one way out: pay 15 gold
 - [ ] With gold < 15 and the reroll unused, the button is dimmed with the price in red and does nothing when clicked.
 - [ ] The button fits the draft layout at 412x915 and 1280x720: a full finger-width tap target, no overlap with the cards.
 - [ ] Nothing else in the draft changes: the odds line, the hand, the wave and the three-card layout are untouched by the button's presence.
+
+## Design (architect, desktop)
+
+### Files
+- edit `src/config.ts` — one constant next to `WAVE_BONUS`
+- edit `src/core/run.ts` — reroll flag + pay method on `RunState`
+- edit `src/systems/RunFlow.ts` — one new method `rerollOffer()` between `openDraft()` and `finishDraft()`
+- edit `src/scenes/DraftScene.ts` — make the card row rebuildable and add the reroll button under the cards
+- edit `tests/core/run.test.ts` — tests for the once-per-run rule
+
+### Interfaces
+```ts
+// config.ts, after WAVE_BONUS:
+export const REROLL_COST = 15; // the run's one draft reroll
+
+// core/run.ts, on RunState (field after cleanWaves; method after spend()):
+rerollUsed = false;
+/** Pays for the run's one reroll: takes the gold and marks it spent. */
+reroll(cost: number): boolean {
+  if (this.rerollUsed) return false;
+  if (!this.spend(cost)) return false;
+  this.rerollUsed = true;
+  return true;
+}
+
+// systems/RunFlow.ts (import REROLL_COST from '../config'):
+/** The draft's one reroll: if the run has it, pay REROLL_COST and roll three new offers. */
+rerollOffer(): boolean {
+  if (this.run.phase !== 'draft') return false;
+  if (!this.run.reroll(REROLL_COST)) return false;
+  this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.draftWave, this.run.wave === 0);
+  return true;
+}
+```
+(The `this.run.wave === 0` keeps the opening draft's opener-only pool; `draftWave` is untouched, so the odds line stays correct.)
+
+### Steps
+1. `config.ts`, `core/run.ts`, `systems/RunFlow.ts`: exactly the code above.
+2. `DraftScene.ts` imports: add `REROLL_COST` from `'../config'`, `cssColor` next to `PALETTE`, `COIN_TEXTURE` to the `art/textures` import, `import type { AugmentCopy } from '../content/types';`.
+3. In `create()`: delete lines 34-36 (`offer`, `offered`, `flipped`) and the whole `const cards = offered.map(...)` block (63-109). Add instead:
+   `const flipped: boolean[] = [false, false, false];` `let cards: { button: ReturnType<typeof makeButton>; frame: Phaser.GameObjects.Graphics | undefined }[] = [];` `let flipTweens: Phaser.Tweens.Tween[] = [];` `let size = viewSize(this);`
+4. Move the deleted map body verbatim into `const buildRow = (copies: AugmentCopy[]): void => { cards = copies.map((copy, i) => { ...same body... }); ...placement... }` with three changes: the map param is now `copy` and the first line is `const b = getAugment(copy.id);` (replacing `const copy = offer[i]!`); capture the tween: `const flip = this.tweens.add({...}); flipTweens.push(flip);`; prepend at the top of `buildRow`:
+   ```ts
+   for (const t of flipTweens) t.stop();
+   flipTweens = [];
+   for (const c of cards) { c.button.container.destroy(); c.frame?.destroy(); }
+   flipped.fill(false);
+   ```
+   and end `buildRow` placing the row at the current size (same loop the layout used, via `cardSlot(i, size.width, size.height)`). Call `buildRow(game.flow.offer);` where the old map was.
+5. Position helpers, same formulas as today's `layout()`:
+   ```ts
+   const cardSlot = (i: number, w: number, h: number) =>
+     w < 740 ? { x: w / 2, y: Math.max(70, (h - 3 * (CARD_H + 16) - 90) / 2) + 84 + CARD_H / 2 + i * (CARD_H + 16) }
+             : { x: w / 2 + (i - 1) * (CARD_W + 24), y: h / 2 + 10 };
+   const rerollSlot = (w: number, h: number) =>
+     w < 740 ? { x: w / 2, y: Math.max(70, (h - 3 * (CARD_H + 16) - 90) / 2) + 84 + 3 * CARD_H + 2 * 16 + 42 }
+             : { x: w / 2, y: h / 2 + 10 + CARD_H / 2 + 44 };
+   ```
+6. After `buildRow(...)`, the button (white card, coin glyph, key hint on it):
+   ```ts
+   const reroll = (): void => {
+     if (this.picked || !game.flow.rerollOffer()) return;
+     refreshReroll();
+     buildRow(game.flow.offer);
+   };
+   const rerollButton = makeButton(this, 0, 0, '', reroll, { width: 156, height: 52, fadeWhenDisabled: false });
+   const rerollWord = this.add.text(0, 0, 'Reroll ·', textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
+   const rerollPrice = this.add.text(0, 0, String(REROLL_COST), textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
+   const rerollCoin = artScale(this.add.image(0, 0, COIN_TEXTURE), 12 / 28); // the HUD "+N coins" glyph
+   const rerollHint = this.add.text(-156 / 2 + 12, -52 / 2 + 12, 'R', textStyle(11, PALETTE.faint, { fontStyle: 'bold' }));
+   const centerRow = (): void => {
+     const w = 12 + 8 + rerollWord.width + 6 + rerollPrice.width;
+     rerollCoin.x = -w / 2 + 6; rerollWord.x = -w / 2 + 20; rerollPrice.x = rerollWord.x + rerollWord.width + 6;
+   };
+   const refreshReroll = (): void => {
+     const used = game.run.rerollUsed;
+     const afford = game.run.canAfford(REROLL_COST);
+     rerollButton.setEnabled(!used && afford);
+     rerollPrice.setText(used ? 'used' : String(REROLL_COST));
+     rerollWord.setColor(cssColor(used ? PALETTE.muted : PALETTE.ink));
+     rerollPrice.setColor(cssColor(used ? PALETTE.muted : afford ? PALETTE.ink : PALETTE.red));
+     rerollButton.content.setAlpha(used ? 0.5 : afford ? 1 : 0.6);
+     centerRow();
+   };
+   rerollButton.content.add([rerollCoin, rerollWord, rerollPrice, rerollHint]);
+   refreshReroll();
+   if (flags.smoke) rerollButton.setEnabled(false);
+   ```
+7. `pick(i)`: replace `game.flow.finishDraft(offer[i])` with `game.flow.finishDraft(game.flow.offer[i])`.
+8. `layout()`: set `size = { width, height };` first, keep the title/subtitle/odds lines unchanged, replace the card `place` loop with `cards.forEach((c, i) => { const p = cardSlot(i, width, height); c.button.container.setPosition(p.x, p.y); c.frame?.setPosition(p.x, p.y); });` and add `const r = rerollSlot(width, height); rerollButton.container.setPosition(r.x, r.y);`.
+9. `onKey`: add `if (e.key === 'r' || e.key === 'R') reroll();` next to the 1-3 line. Leave the smoke auto-pick as is.
+10. Tests in `tests/core/run.test.ts` (import `REROLL_COST`): (a) `reroll(REROLL_COST)` true → gold down exactly 15, `rerollUsed` true; second call false with gold unchanged; (b) with gold `REROLL_COST - 1`: false, `rerollUsed` still false, gold unchanged.
+
+### Pitfalls
+- After a reroll `game.flow.offer` is a **new array**; picking the captured old one would make `finishDraft` silently drop the pick — hence step 7.
+- A reroll clicked while the opening flip is mid-flight: stop every flip tween, destroy the old row, and `flipped.fill(false)` before rebuilding, or a dead tween's `onComplete` marks a still-face-down card pickable.
+- `centerRow()` must run after every text change: "Reroll · used" is wider than "15" and the row would drift off-center.
+- Keep the reroll button disabled in `flags.smoke`: a random smoke click could spend the reroll or re-flip the cards right after the 800 ms auto-pick and strand the draft.
+- Layout is already checked: 412x915 button spans y 820-872 (cards end 804, screen 915); 1280x720 center y 517 (cards end 473). Do not retune.
+- Keep the new RunFlow method its own hunk between `openDraft`/`finishDraft` (T0015 also edits RunFlow) and the config line next to `WAVE_BONUS` (T0004 also edits config.ts). No tween/dt changes, no pooling, no new scene listeners beyond `onResize`/`onKey` (auto-removed on shutdown).
+
+### Tests
+- `tests/core/run.test.ts`: the two cases in step 10 (rule in `src/core/run.ts` a later change could silently break).
