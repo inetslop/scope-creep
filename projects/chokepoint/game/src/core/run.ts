@@ -25,6 +25,7 @@ export class RunState {
   /** Augment copies (id + tier) picked but not put into a tower yet. */
   hand: AugmentCopy[] = [...START.hand];
   kills = 0;
+  bestCombo = 0; // the longest kill chain the run reached (the ×N counter's high mark)
   goldEarned = 0; // gold earned this run: kill gold + wave bonuses
   cleanWaves = 0; // waves that ended without a leak
   rerollUsed = false; // the run's one draft reroll was spent
@@ -76,6 +77,11 @@ export class RunState {
     this.kills += 1;
     this.goldEarned += paid;
     return paid;
+  }
+
+  /** The chain counter rose to `n`: the ledger keeps the longest one the run reached. */
+  noteCombo(n: number): void {
+    if (n > this.bestCombo) this.bestCombo = n;
   }
 
   /** An enemy got through. Returns true when that ended the run. */

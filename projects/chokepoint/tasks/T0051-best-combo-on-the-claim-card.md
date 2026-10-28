@@ -4,11 +4,12 @@ title: Best combo on the claim card
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0039]
 attempts: 1
 created: 2026-10-28T12:34:55Z
 claimed_at: 2026-10-28T16:48:25Z
+finished_at: 2026-10-28T17:01:00Z
 epic: E1
 ---
 
@@ -67,3 +68,19 @@ this.run.noteCombo(this.fx.chain);
 
 ### Tests
 - `tests/core/run.test.ts`: the `noteCombo` max test above (the ledger rule lives in `src/core`).
+
+## Result (attempt 1, yoga)
+
+The rewards claim card now shows a "Best combo ×N" line for the run's longest kill-combo chain. The ledger records it via a new `bestCombo` field and `noteCombo()` in `RunState` (core/run.ts), filled on every kill from `EnemySystem` using a new `chain` getter on `FxSystem`; the card (RewardsScene.ts) renders the line only when the best chain is 2+, counts it up with the other lines just above "Score", muted under ×10 and milestone yellow at ×10 and up. No-combo runs keep the card byte-identical.
+
+- Self-review: APPROVE
+- Time: 12.6 min
+
+```
+projects/chokepoint/game/src/core/run.ts            |  6 ++++++
+ projects/chokepoint/game/src/scenes/RewardsScene.ts | 11 +++++++++--
+ projects/chokepoint/game/src/systems/EnemySystem.ts |  1 +
+ projects/chokepoint/game/src/systems/FxSystem.ts    |  5 +++++
+ projects/chokepoint/game/tests/core/run.test.ts     | 10 ++++++++++
+ 5 files changed, 31 insertions(+), 2 deletions(-)
+```

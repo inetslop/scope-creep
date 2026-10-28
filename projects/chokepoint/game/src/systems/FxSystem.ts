@@ -28,6 +28,11 @@ export class FxSystem {
     return this.live;
   }
 
+  /** The current kill chain (the rising ×N counter), 0 between chains. */
+  get chain(): number {
+    return this.comboN;
+  }
+
   private track<T extends Phaser.GameObjects.GameObject>(obj: T, durationMs: number, props: Record<string, number | string>): void {
     this.live += 1;
     this.scene.tweens.add({

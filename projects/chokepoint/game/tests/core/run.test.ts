@@ -25,6 +25,16 @@ describe('RunState', () => {
     expect(run.kills).toBe(1);
   });
 
+  it("remembers the run's longest kill chain", () => {
+    const run = new RunState(1);
+    run.noteCombo(1);
+    run.noteCombo(3);
+    run.noteCombo(2);
+    run.noteCombo(5);
+    run.noteCombo(4);
+    expect(run.bestCombo).toBe(5);
+  });
+
   it('starts with the starting hand; picks go in, placing takes them out', () => {
     const run = new RunState(1);
     expect(run.hand).toEqual([...START.hand]);

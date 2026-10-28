@@ -20,12 +20,14 @@ export class RewardsScene extends Phaser.Scene {
   private waves = 0;
   private stopped = 0;
   private clean = 0;
+  private combo = 0;
   private score = 0;
   private coins = 0;
   private elapsed = 0;
   private wavesText!: Phaser.GameObjects.Text;
   private stoppedText!: Phaser.GameObjects.Text;
   private cleanText?: Phaser.GameObjects.Text;
+  private comboText?: Phaser.GameObjects.Text;
   private scoreText!: Phaser.GameObjects.Text;
   private coinText!: Phaser.GameObjects.Text;
   private coinIcon!: Phaser.GameObjects.Image;
@@ -44,10 +46,12 @@ export class RewardsScene extends Phaser.Scene {
     this.waves = lastRun ? lastRun.wave : run.wavesCleared;
     this.stopped = run.kills; // the ledger stores no stopped count; the card printed run.kills
     this.clean = run.cleanWaves;
+    this.combo = run.bestCombo;
     this.score = run.score; // the same number the end-of-run screen shows
     this.coins = lastRun ? lastRun.coins : coinsForRun({ waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves });
     this.elapsed = 0;
     this.cleanText = undefined;
+    this.comboText = undefined;
     let closed = false;
     const menu = (): void => {
       if (closed) return;
@@ -65,7 +69,7 @@ export class RewardsScene extends Phaser.Scene {
     const board = this.add.image(0, 0, Board.TEXTURE).setDepth(0);
     const shade = this.add.rectangle(0, 0, 10, 10, PALETTE.ground, 0.78).setOrigin(0).setDepth(1).setInteractive();
 
-    const mid = run.cleanWaves > 0 ? 2 : 1; // middle lines: Score always, Clean when there were clean waves
+    const mid = 1 + (run.cleanWaves > 0 ? 1 : 0) + (run.bestCombo >= 2 ? 1 : 0); // middle lines: Score always, Clean and Best combo when they were earned
     const dy = 18 * mid; // each middle line: top half up 18, bottom half down 18, panel grows 36
     const panelW = 360;
     const panelH = 300 + 2 * dy;
@@ -74,12 +78,14 @@ export class RewardsScene extends Phaser.Scene {
     this.wavesText = this.add.text(0, -44 - dy, 'Waves held 0', titleStyle(22)).setOrigin(0.5);
     this.stoppedText = this.add.text(0, -8 - dy, 'Stopped 0', titleStyle(22)).setOrigin(0.5);
     if (run.cleanWaves > 0) this.cleanText = this.add.text(0, 28 - dy, 'Clean 0', titleStyle(22, PALETTE.greenDeep)).setOrigin(0.5);
-    this.scoreText = this.add.text(0, 28 - dy + (run.cleanWaves > 0 ? 36 : 0), 'Score 0', titleStyle(22)).setOrigin(0.5);
+    if (run.bestCombo >= 2) this.comboText = this.add.text(0, 28 - dy + (run.cleanWaves > 0 ? 36 : 0), 'Best combo ×0', titleStyle(22, run.bestCombo >= 10 ? PALETTE.yellow : PALETTE.muted)).setOrigin(0.5);
+    this.scoreText = this.add.text(0, 28 - dy + (run.cleanWaves > 0 ? 36 : 0) + (run.bestCombo >= 2 ? 36 : 0), 'Score 0', titleStyle(22)).setOrigin(0.5);
     this.coinText = this.add.text(0, 44 + dy, '+0 coins', titleStyle(28, PALETTE.goldText)).setOrigin(0.5);
     this.coinIcon = artScale(this.add.image(0, 44 + dy, COIN_TEXTURE), 1.5);
     const menuButton = makeButton(this, 0, 108 + dy, 'Menu', menu, { width: 240, height: 52, radius: 26 });
     const parts: Phaser.GameObjects.GameObject[] = [panel, title, this.wavesText, this.stoppedText];
     if (this.cleanText) parts.push(this.cleanText);
+    if (this.comboText) parts.push(this.comboText);
     parts.push(this.scoreText, this.coinText, this.coinIcon, menuButton.container);
     const box = this.add.container(0, 0, parts).setDepth(2);
 
@@ -102,6 +108,7 @@ export class RewardsScene extends Phaser.Scene {
     this.wavesText.setText(`Waves held ${Math.round(this.waves * k)}`);
     this.stoppedText.setText(`Stopped ${Math.round(this.stopped * k)}`);
     this.cleanText?.setText(`Clean ${Math.round(this.clean * k)}`);
+    this.comboText?.setText(`Best combo ×${Math.round(this.combo * k)}`);
     this.scoreText.setText(`Score ${Math.round(this.score * k)}`);
     this.coinText.setText(`+${Math.round(this.coins * kc)} coins`);
     this.coinIcon.setX(-this.coinText.width / 2 - 33); // the coin sits left of the number; the row stays centered
