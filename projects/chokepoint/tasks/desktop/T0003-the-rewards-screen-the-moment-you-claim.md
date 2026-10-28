@@ -4,11 +4,13 @@ title: "The rewards screen: the moment you claim what a run earned"
 assignee: desktop
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: [T0001]
 attempts: 0
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T01:24:35Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
