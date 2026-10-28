@@ -3,11 +3,13 @@ id: T0075
 title: The claim card says why the coins are what they are
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T21:24:45Z
+claimed_at: 2026-10-28T21:30:31Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
