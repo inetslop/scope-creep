@@ -51,10 +51,10 @@ export class HandBar implements HudPart {
     }
     const gap = 8;
     const w = Math.max(56, Math.min(CARD, (space - gap * (ids.length - 1)) / Math.max(1, ids.length)));
-    ids.forEach((id, i) => {
-      const a = getAugment(id);
+    ids.forEach((copy, i) => {
+      const a = getAugment(copy.id);
       const b = makeButton(scene, EDGE + w / 2 + i * (w + gap), bottom, '', () => game.building.pickCard(i), { width: w, height: CARD, radius: 20, accent: PALETTE[a.look.color] });
-      const icon = artScale(scene.add.image(0, -10, augmentTexture(id)), Math.min(1.25, w / 70));
+      const icon = artScale(scene.add.image(0, -10, augmentTexture(copy.id)), Math.min(1.25, w / 70));
       const name = scene.add.text(0, 24, a.name, textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
       const key = i < 9 ? [scene.add.text(-w / 2 + 9, -CARD / 2 + 7, String(i + 1), textStyle(11, PALETTE.faint, { fontStyle: 'bold' }))] : [];
       b.content.add([icon, name, ...key]);

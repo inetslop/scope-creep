@@ -1,4 +1,5 @@
 /** Global tuning constants that are not content (content lives in src/content). */
+import type { AugmentCopy } from './content/types';
 
 /** Size of one board cell in board units. Everything on the board is measured in these. */
 export const CELL = 64;
@@ -9,8 +10,8 @@ export const GRID = { long: 14, short: 8 } as const;
 /** Rocks (blocked cells) scattered on each new map. */
 export const ROCKS = 5;
 
-/** A new run starts with this: gold, lives, and the augments in hand (the opening draft adds the first). */
-export const START = { gold: 100, lives: 20, hand: [] as readonly string[] } as const;
+/** A new run starts with this: gold, lives, and the augment copies in hand (the opening draft adds the first). */
+export const START = { gold: 100, lives: 20, hand: [] as readonly AugmentCopy[] } as const;
 
 /**
  * Gold to unlock each slot of one tower: the first is building the tower, every further one on the

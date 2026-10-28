@@ -1,7 +1,8 @@
 import Phaser from 'phaser';
+import { artScale, augmentTexture, GEM_TEXTURE } from '../art/textures';
 import { getAugment } from '../content/augments';
 import { PALETTE } from '../content/palette';
-import { artScale, augmentTexture } from '../art/textures';
+import { TIER_ODDS, TIER_ORDER, tierAddedLine, tierIndex } from '../core/tiers';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
@@ -30,13 +31,14 @@ export class DraftScene extends Phaser.Scene {
     hook.overlay = SCENES.draft;
     this.picked = false;
     const game = getGameScene(this);
-    const offered = game.flow.offer.map(getAugment);
+    const offer = game.flow.offer;
+    const offered = offer.map((c) => getAugment(c.id));
     const pick = (i: number): void => {
-      if (this.picked || !offered[i]) return;
+      if (this.picked || !offer[i]) return;
       this.picked = true;
       hook.overlay = '';
       this.scene.stop();
-      game.flow.finishDraft(offered[i].id);
+      game.flow.finishDraft(offer[i]);
     };
 
     // Veils the board and swallows clicks, so nothing underneath reacts.
@@ -49,35 +51,60 @@ export class DraftScene extends Phaser.Scene {
     drawTowerGlyph(legendGlyphs, -150, 0);
     drawPlusGlyph(legendGlyphs, 18, 0);
     const subtitle = this.add.container(0, 0, [legendGlyphs, legendText(-136, 'as a new tower'), legendText(32, 'added to a tower')]);
+    // The current odds of each tier, in small gray.
+    const odds = this.add.text(
+      0,
+      0,
+      TIER_ORDER.map((t) => `${t.charAt(0).toUpperCase() + t.slice(1)} ${TIER_ODDS[t]}`).join(' · '),
+      textStyle(12, PALETTE.muted),
+    ).setOrigin(0.5);
     const cards = offered.map((b, i) => {
+      const copy = offer[i]!;
       const button = makeButton(this, 0, 0, '', () => pick(i), { width: CARD_W, height: CARD_H, radius: 22, accent: PALETTE[b.look.color] });
-      const icon = artScale(this.add.image(0, -64, augmentTexture(b.id)), 1.3);
-      const name = this.add.text(0, -26, b.name, titleStyle(20)).setOrigin(0.5);
+      const icon = artScale(this.add.image(0, -72, augmentTexture(b.id)), 1.3);
+      const name = this.add.text(0, -37, b.name, titleStyle(20)).setOrigin(0.5);
+      // The tier's gems: one light gray, two blue, three purple.
+      const gemCount = tierIndex(copy.tier) + 1;
+      const gemTint = copy.tier === 'rare' ? PALETTE.blue : copy.tier === 'epic' ? PALETTE.purple : PALETTE.faint;
+      const gems: Phaser.GameObjects.Image[] = [];
+      for (let g = 0; g < gemCount; g++) gems.push(artScale(this.add.image((g - (gemCount - 1) / 2) * 12, -17, GEM_TEXTURE)).setTint(gemTint));
       const textX = -CARD_W / 2 + 42;
       const wrap = { wordWrap: { width: CARD_W - 58 } };
-      const towerLine = this.add.text(textX, -6, b.asTower, textStyle(14, PALETTE.ink, wrap)).setOrigin(0, 0);
-      const addedLine = this.add.text(textX, towerLine.y + towerLine.height + 10, b.asAdded, textStyle(14, PALETTE.muted, wrap)).setOrigin(0, 0);
+      const towerLine = this.add.text(textX, -2, b.asTower, textStyle(14, PALETTE.ink, wrap)).setOrigin(0, 0);
+      const addedLine = this.add.text(textX, towerLine.y + towerLine.height + 10, tierAddedLine(b, copy.tier), textStyle(14, PALETTE.muted, wrap)).setOrigin(0, 0);
       const glyphs = this.add.graphics();
       drawTowerGlyph(glyphs, -CARD_W / 2 + 26, towerLine.y + 9);
       drawPlusGlyph(glyphs, -CARD_W / 2 + 26, addedLine.y + 9);
       const key = this.add.text(-CARD_W / 2 + 14, -CARD_H / 2 + 10, String(i + 1), textStyle(12, PALETTE.faint, { fontStyle: 'bold' }));
-      button.content.add([icon, name, glyphs, towerLine, addedLine, key]);
-      return button;
+      button.content.add([icon, name, ...gems, glyphs, towerLine, addedLine, key]);
+      // The frame draws after the button so it shows on top of its white card.
+      const frame = copy.tier === 'common' ? undefined : this.add.graphics();
+      if (frame) {
+        frame.lineStyle(2, copy.tier === 'rare' ? PALETTE.blue : PALETTE.purple, 1);
+        frame.strokeRoundedRect(-CARD_W / 2 - 1, -CARD_H / 2 - 1, CARD_W + 2, CARD_H + 2, 23);
+      }
+      return { button, frame };
     });
 
     const layout = (width: number, height: number): void => {
       shade.setSize(width, height);
       shade.input?.hitArea.setTo(0, 0, width, height);
       const portrait = width < 740;
+      const place = (c: { button: ReturnType<typeof makeButton>; frame: Phaser.GameObjects.Graphics | undefined }, x: number, y: number): void => {
+        c.button.container.setPosition(x, y);
+        c.frame?.setPosition(x, y);
+      };
       if (portrait) {
         const top = Math.max(70, (height - 3 * (CARD_H + 16) - 90) / 2);
         title.setPosition(width / 2, top).setScale(Math.min(1, (width - 32) / (title.width || 1)));
         subtitle.setPosition(width / 2, top + 34);
-        cards.forEach((c, i) => c.container.setPosition(width / 2, top + 84 + CARD_H / 2 + i * (CARD_H + 16)));
+        odds.setPosition(width / 2, top + 58);
+        cards.forEach((c, i) => place(c, width / 2, top + 84 + CARD_H / 2 + i * (CARD_H + 16)));
       } else {
         title.setPosition(width / 2, height / 2 - CARD_H / 2 - 74);
         subtitle.setPosition(width / 2, height / 2 - CARD_H / 2 - 40);
-        cards.forEach((c, i) => c.container.setPosition(width / 2 + (i - (cards.length - 1) / 2) * (CARD_W + 24), height / 2 + 10));
+        odds.setPosition(width / 2, height / 2 - CARD_H / 2 - 18);
+        cards.forEach((c, i) => place(c, width / 2 + (i - (cards.length - 1) / 2) * (CARD_W + 24), height / 2 + 10));
       }
     };
     layout(viewSize(this).width, viewSize(this).height);

@@ -1,3 +1,5 @@
+import { AUGMENTS } from '../content/augments';
+import { TIER_ORDER } from '../core/tiers';
 import type { GameScene } from '../scenes/GameScene';
 import { hook } from './testHook';
 
@@ -15,6 +17,11 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['projectiles.count', (g) => (g.projectiles.activeCount > 600 ? `${g.projectiles.activeCount} projectiles in flight` : null)],
   ['towers.valid', (g) => g.towers.brokenTower()],
   ['hand.selection', (g) => g.building.brokenSelection()],
+  ['augments.valid', (g) => {
+    for (const c of [...g.run.hand, ...g.towers.towers.flatMap((t) => t.augments)])
+      if (!AUGMENTS.some((a) => a.id === c.id) || !TIER_ORDER.includes(c.tier)) return `unknown augment copy ${c.id}:${c.tier}`;
+    return null;
+  }],
   ['fx.count', (g) => (g.fx.count > 200 ? `${g.fx.count} effects alive` : null)],
 ];
 

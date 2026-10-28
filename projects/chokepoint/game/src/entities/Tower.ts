@@ -3,6 +3,7 @@ import { CELL, DEPTH } from '../config';
 import { getAugment } from '../content/augments';
 import { PALETTE } from '../content/palette';
 import { towerColor, towerSpec, type TowerSpec } from '../core/augments';
+import type { AugmentCopy } from '../content/types';
 import type { Cell } from '../core/map';
 import { barrelTexture } from '../art/barrels';
 import { ART_SCALE, artScale, TOWER_BASE, TOWER_BODY, towerTexture } from '../art/textures';
@@ -29,8 +30,8 @@ export class Tower extends Phaser.GameObjects.Image {
   readonly gun: Phaser.GameObjects.Container;
   private readonly deco: Phaser.GameObjects.Graphics;
   private readonly pips: Phaser.GameObjects.Graphics;
-  /** Augment ids in its slots, in the order they were put in. */
-  readonly augments: string[] = [];
+  /** Augment copies (id + tier) in its slots, in the order they were put in. */
+  readonly augments: AugmentCopy[] = [];
   /** Unlocked slots (augments.length of them are filled). */
   slots = 1;
   spec: TowerSpec = towerSpec([]);
@@ -65,10 +66,10 @@ export class Tower extends Phaser.GameObjects.Image {
     return this.slots - this.augments.length;
   }
 
-  /** Puts an augment into a free slot. Returns false when every slot is full. */
-  addAugment(id: string): boolean {
+  /** Puts an augment copy into a free slot. Returns false when every slot is full. */
+  addAugment(copy: AugmentCopy): boolean {
     if (this.freeSlots <= 0) return false;
-    this.augments.push(id);
+    this.augments.push(copy);
     this.refresh();
     return true;
   }
@@ -80,11 +81,10 @@ export class Tower extends Phaser.GameObjects.Image {
 
   /** Recomputes the spec and rebuilds the look after a change (entities/towerLook.ts). */
   private refresh(): void {
-    const defs = this.augments.map(getAugment);
-    const spec = towerSpec(defs);
+    const spec = towerSpec(this.augments);
     this.spec = spec;
     this.setTexture(towerTexture(spec.firstId));
-    this.buildGun(spec, towerColor(defs));
+    this.buildGun(spec, towerColor(this.augments));
     drawDecorations(this.deco, spec);
     this.drawPips();
   }
@@ -117,10 +117,10 @@ export class Tower extends Phaser.GameObjects.Image {
     const gap = 9;
     const left = -((this.slots - 1) * gap) / 2;
     for (let i = 0; i < this.slots; i++) {
-      const id = this.augments[i];
+      const copy = this.augments[i];
       const x = left + i * gap;
-      if (id) {
-        g.fillStyle(PALETTE[getAugment(id).look.color], 1);
+      if (copy) {
+        g.fillStyle(PALETTE[getAugment(copy.id).look.color], 1);
         g.fillCircle(x, 19, 3.4);
       } else {
         g.lineStyle(1.5, PALETTE.faint, 1);

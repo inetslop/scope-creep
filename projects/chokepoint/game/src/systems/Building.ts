@@ -1,6 +1,6 @@
 import { CELL } from '../config';
-import { getAugment } from '../content/augments';
 import { PALETTE } from '../content/palette';
+import type { AugmentCopy } from '../content/types';
 import { slotCost, towerSpec } from '../core/augments';
 import type { Cell } from '../core/map';
 import type { RunState } from '../core/run';
@@ -34,8 +34,8 @@ export class Building {
     this.selectedAugment = run.hand.length > 0 ? 0 : undefined;
   }
 
-  /** The augment id the selected card holds. */
-  get heldAugment(): string | undefined {
+  /** The augment copy the selected card holds. */
+  get heldCopy(): AugmentCopy | undefined {
     return this.selectedAugment === undefined ? undefined : this.run.hand[this.selectedAugment];
   }
 
@@ -50,7 +50,7 @@ export class Building {
     const cell = this.board.cellAt(x, y);
     if (!cell) return;
     this.board.showHover(undefined, false, 0);
-    const held = this.heldAugment;
+    const held = this.heldCopy;
     const tower = this.board.towerAt(cell);
     if (tower) {
       if (held && tower.freeSlots > 0) this.placeHeld(tower);
@@ -80,13 +80,13 @@ export class Building {
    */
   hover(x: number | undefined, y: number): void {
     const cell = x === undefined ? undefined : this.board.cellAt(x, y);
-    const held = this.heldAugment;
+    const held = this.heldCopy;
     if (!cell || !held) {
       this.board.showHover(cell && !this.board.towerAt(cell) && this.board.canBuild(cell) ? cell : undefined, false, 0);
       return;
     }
     const tower = this.board.towerAt(cell);
-    const augments = [...(tower?.augments ?? []), held].map(getAugment);
+    const augments = [...(tower?.augments ?? []), held];
     const ok = tower ? tower.freeSlots > 0 : this.board.canBuild(cell) && this.run.canAfford(slotCost(0)!);
     this.board.showHover(cell, ok, ok ? towerSpec(augments).range * CELL : 0);
   }
@@ -123,7 +123,7 @@ export class Building {
     if (!tower) return;
     const result = this.towers.unlockSlot(tower);
     if (result === 'gold') this.hint(tower.cell, `Need ${this.towers.nextSlotCost(tower)} gold`, PALETTE.red);
-    if (result === true && this.heldAugment) this.placeHeld(tower);
+    if (result === true && this.heldCopy) this.placeHeld(tower);
     this.selectTower(tower);
   }
 
@@ -139,9 +139,9 @@ export class Building {
     return i !== undefined && i >= this.run.hand.length ? `selected card ${i} of ${this.run.hand.length}` : undefined;
   }
 
-  /** Puts the held augment into `tower`'s free slot. */
+  /** Puts the held augment copy into `tower`'s free slot. */
   private placeHeld(tower: Tower): void {
-    const held = this.heldAugment;
+    const held = this.heldCopy;
     if (!held || this.towers.place(tower, held) !== true) return;
     this.run.useAugment(this.selectedAugment!);
     this.afterHandChange();

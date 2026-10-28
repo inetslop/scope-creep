@@ -34,6 +34,32 @@ export interface EnemyDef {
   look: Look;
 }
 
+/** How special an augment is. Common is the numbers the augment has; Rare and Epic change them (see core/tiers.ts). */
+export type Tier = 'common' | 'rare' | 'epic';
+
+/**
+ * What a tier changes about its copy of an augment. Unset fields keep the Common value.
+ * The multipliers scale the FIRST form (`damageMul`, `cooldownMul` (divides the rate), `rangeMul`)
+ * and replace the ADDED form's (`addedRateMul`, `addedRangeMul`); `slowPct` replaces this copy's
+ * slow % in both forms, `splash` its added splash cells, and `asAdded` is the card's added line.
+ */
+export interface TierValues {
+  damageMul?: number;
+  cooldownMul?: number;
+  rangeMul?: number;
+  slowPct?: number;
+  splash?: number;
+  addedRateMul?: number;
+  addedRangeMul?: number;
+  asAdded: string;
+}
+
+/** One copy of an augment: which augment it is and what tier it rolled. A draft card and a hand card are copies. */
+export interface AugmentCopy {
+  id: string;
+  tier: Tier;
+}
+
 /** How a tower attacks: set by the first augment put into it (see core/augments.ts). */
 export type AttackKind =
   /** Projectiles that fly to one enemy each. */
@@ -91,4 +117,6 @@ export interface AugmentDef {
   look: Look;
   first: FirstForm;
   added: AddedForm;
+  /** The Rare and Epic values of a copy (Common is `first`/`added` themselves; see core/tiers.ts). */
+  tiers: { rare: TierValues; epic: TierValues };
 }

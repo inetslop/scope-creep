@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import { BUILD_SEC } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { PALETTE } from '../content/palette';
+import type { AugmentCopy } from '../content/types';
 import { rollOffer } from '../core/augments';
 import type { RunState } from '../core/run';
 import { hook } from '../debug/testHook';
@@ -33,8 +34,8 @@ export interface RunSystems {
  * opens with a draft for the first augment. update() runs the systems that belong to the phase.
  */
 export class RunFlow {
-  /** Offered augments while the draft is open (DraftScene reads them). */
-  offer: string[] = [];
+  /** Offered augment copies while the draft is open (DraftScene reads them). */
+  offer: AugmentCopy[] = [];
   /** Length of the current build countdown (the HUD draws its ring from it). */
   buildTotalSec = 0;
 
@@ -80,10 +81,10 @@ export class RunFlow {
     if (this.run.phase === 'build' && this.scene.scene.isActive()) this.run.buildLeftSec = 0;
   }
 
-  /** Offers three augments (DraftScene); finishDraft starts the next build phase. */
+  /** Offers three augment copies (DraftScene); finishDraft starts the next build phase. */
   openDraft(): void {
     this.run.phase = 'draft';
-    this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.run.wave === 0).map((a) => a.id);
+    this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.run.wave === 0);
     if (this.offer.length === 0) {
       this.finishDraft(undefined);
       return;
@@ -92,11 +93,11 @@ export class RunFlow {
     this.scene.scene.pause();
   }
 
-  /** DraftScene picked an augment (or none): it goes into the hand, and the next build phase starts. */
-  finishDraft(augmentId: string | undefined): void {
+  /** DraftScene picked an augment copy (or none): it goes into the hand, and the next build phase starts. */
+  finishDraft(pick: AugmentCopy | undefined): void {
     if (this.run.phase !== 'draft') return;
-    if (augmentId && this.offer.includes(augmentId)) {
-      this.run.takeAugment(augmentId);
+    if (pick && this.offer.some((o) => o.id === pick.id && o.tier === pick.tier)) {
+      this.run.takeAugment(pick);
       hook.stats.augmentsTaken += 1;
       this.s.building.cardAdded();
     }

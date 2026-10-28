@@ -28,7 +28,7 @@ describe('content', () => {
     }
   });
 
-  it('augments are valid: a first form, an added form, short card lines', () => {
+  it('augments are valid: a first form, an added form, short card lines, tier values', () => {
     uniqueIds(AUGMENTS);
     expect(AUGMENTS.filter((a) => a.first.damage > 0).length).toBeGreaterThanOrEqual(3);
     for (const a of AUGMENTS) {
@@ -44,6 +44,25 @@ describe('content', () => {
         expect(text.length).toBeGreaterThan(5);
         expect(text.length).toBeLessThanOrEqual(56);
         expect(text).not.toMatch(/^(first|added|alone)\b/i);
+      }
+      // The tier values: the added line at that tier, and sane multipliers where present.
+      for (const t of [a.tiers.rare, a.tiers.epic]) {
+        expect(t.asAdded.length).toBeGreaterThanOrEqual(6);
+        expect(t.asAdded.length).toBeLessThanOrEqual(56);
+        expect(t.asAdded).not.toMatch(/^(first|added|alone)\b/i);
+        if (t.damageMul !== undefined) expect(t.damageMul).toBeGreaterThan(1);
+        if (t.rangeMul !== undefined) expect(t.rangeMul).toBeGreaterThan(1);
+        if (t.addedRateMul !== undefined) expect(t.addedRateMul).toBeGreaterThan(1);
+        if (t.addedRangeMul !== undefined) expect(t.addedRangeMul).toBeGreaterThan(1);
+        if (t.cooldownMul !== undefined) {
+          expect(t.cooldownMul).toBeGreaterThan(0);
+          expect(t.cooldownMul).toBeLessThan(1);
+        }
+        if (t.slowPct !== undefined) {
+          expect(t.slowPct).toBeGreaterThan(0);
+          expect(t.slowPct).toBeLessThan(1);
+        }
+        if (t.splash !== undefined) expect(t.splash).toBeGreaterThan(0);
       }
     }
   });

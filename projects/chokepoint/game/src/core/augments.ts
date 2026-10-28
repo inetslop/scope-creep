@@ -1,8 +1,10 @@
 import { MAX_SLOTS, SLOT_COSTS } from '../config';
+import { getAugment } from '../content/augments';
 import { bolt } from '../content/augments/bolt';
 import type { Bright } from '../content/palette';
-import type { AttackKind, AugmentDef } from '../content/types';
+import type { AttackKind, AugmentCopy, AugmentDef } from '../content/types';
 import type { Rng } from './rng';
+import { rollTier, tierAdded, tierFirst } from './tiers';
 
 /** What a tower does, worked out from its augments in order (see towerSpec). Distances in cells. */
 export interface TowerSpec {
@@ -44,17 +46,18 @@ const EMPTY: TowerSpec = {
 };
 
 /**
- * Combines a tower's augments, in the order they were put in:
- * 1. The first augment's `first` form is the tower's attack: its kind, damage, range and rate.
- * 2. Every later augment (a second copy of the first one too) applies its `added` form:
+ * Combines a tower's augment copies, in the order they were put in:
+ * 1. The first copy's `first` form (at its tier, core/tiers.ts) is the tower's attack:
+ *    its kind, damage, range and rate.
+ * 2. Every later copy (a second copy of the first one too) applies its `added` form (at its tier):
  *    multipliers multiply, extra shots and splash add up, the strongest slow wins.
  * A pulse tower given extra shots fires that many bolts (Bolt's damage) with each pulse; a pulse
  * given splash reaches that much further.
  */
-export function towerSpec(augments: readonly AugmentDef[]): TowerSpec {
+export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
   const first = augments[0];
   if (!first) return EMPTY;
-  const f = first.first;
+  const f = tierFirst(getAugment(first.id), first.tier);
   const spec: TowerSpec = {
     attacks: true,
     kind: f.kind,
@@ -70,7 +73,7 @@ export function towerSpec(augments: readonly AugmentDef[]): TowerSpec {
     projectileSpeed: f.projectileSpeed ?? bolt.first.projectileSpeed ?? 10,
   };
   for (const a of augments.slice(1)) {
-    const e = a.added;
+    const e = tierAdded(getAugment(a.id), a.tier);
     spec.damage *= e.damageMul ?? 1;
     spec.boltDamage *= e.damageMul ?? 1;
     spec.rate *= e.rateMul ?? 1;
@@ -110,8 +113,9 @@ export function describeSpec(spec: TowerSpec): string {
 }
 
 /** The color a tower shows: its first augment's, or none while empty. */
-export function towerColor(augments: readonly AugmentDef[]): Bright | undefined {
-  return augments[0]?.look.color;
+export function towerColor(augments: readonly AugmentCopy[]): Bright | undefined {
+  const first = augments[0];
+  return first ? getAugment(first.id).look.color : undefined;
 }
 
 /**
@@ -123,9 +127,13 @@ export function slotCost(index: number): number | undefined {
 }
 
 /**
- * The draft: `count` different augments, in random order. The opening draft (`opening`) only
- * offers augments that deal damage as a tower's first, since the first one has to hold wave 1 alone.
+ * The draft: `count` different augments, in random order, each with its own rolled tier. The
+ * opening draft (`opening`) only offers augments that deal damage as a tower's first, since the
+ * first one has to hold wave 1 alone.
  */
-export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, opening = false): AugmentDef[] {
-  return rng.shuffle(opening ? pool.filter((a) => a.first.damage > 0) : pool).slice(0, count);
+export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, opening = false): AugmentCopy[] {
+  return rng
+    .shuffle(opening ? pool.filter((a) => a.first.damage > 0) : pool)
+    .slice(0, count)
+    .map((a) => ({ id: a.id, tier: rollTier(rng) }));
 }

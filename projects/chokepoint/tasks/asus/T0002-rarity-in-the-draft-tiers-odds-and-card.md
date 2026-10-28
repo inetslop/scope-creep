@@ -4,11 +4,12 @@ title: "Rarity in the draft: tiers, odds, and card frames"
 assignee: asus
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: [T0001]
 attempts: 1
 created: 2026-10-28T01:07:07Z
 claimed_at: 2026-10-28T01:43:05Z
+finished_at: 2026-10-28T03:48:31Z
 epic: E4
 ---
 
@@ -100,3 +101,39 @@ DraftScene: odds line `TIER_ORDER.map((t) => `${t.charAt(0).toUpperCase() + t.sl
 - `tests/core/augments.test.ts`: helper `const copy = (id: string, tier: Tier = 'common'): AugmentCopy => ({ id, tier })`; `spec(...ids)` maps ids through `copy`. New `describe('tiers')`: Rare Rapid as tower → damage 6.5, rate `toBeCloseTo(4 / 0.85)` (Epic: 8.5, `4 / 0.7`); Rare Rapid added to a Bolt tower → rate `1.6 * 1.65`, damage still `12 * 0.75`; Reach added → range `2.6 * 1.45` / `2.6 * 1.55`; Splash added → splash 1.5/2; Rare Frost first → `slow.pct 0.5`; `tierAddedLine(rapid, 'rare')` is `'Attacks 65% faster, hits 25% lighter.'`; `tierFirst(rapid, 'common')` deep-equals the base form. `rollTier` over 6000 seeded rolls: common > 0.55, epic < 0.15, epic > 0; rolling `rollOffer` across 300 seeds eventually yields both `rare` and `epic` tiers.
 - `tests/content.test.ts`: in the augment loop, for each of `a.tiers.rare`/`a.tiers.epic`: `asAdded` 6–56 chars, no `first|added|alone` prefix; if present `damageMul`/`rangeMul`/`addedRateMul`/`addedRangeMul` > 1, `0 < cooldownMul < 1`, `0 < slowPct < 1`, `splash > 0`.
 - `tests/core/run.test.ts`: `takeAugment({ id: 'frost', tier: 'common' })` / `{ id: 'bolt', tier: 'rare' }`; `useAugment(0)` toEqual the frost copy; hand toEqual `[{ id: 'bolt', tier: 'rare' }]`.
+
+## Result (attempt 1, asus)
+
+Added tiers to the draft: each augment in `content/` now carries `tiers` (Rare/Epic) values, the new `src/core/tiers.ts` rolls tiers at 70/25/5 and computes the effective first/added forms and card line, the run's hand/offer/towers carry `AugmentCopy` (id + tier) end to end, and the draft shows the odds line, a blue/purple 2px frame and a 1/2/3 gem row per tier. Towers built from a tiered copy keep that tier's numbers for the rest of the run (unit-tested: Rare Rapid attacks at 4/0.85 vs 4/s). `npm run check` and `npm run smoke` (desktop + phone) pass.
+
+- Self-review: APPROVE
+- Time: 125.4 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/docs/ARCHITECTURE.md      |  2 +-
+ projects/chokepoint/game/src/art/icons.ts          | 10 ++-
+ projects/chokepoint/game/src/art/textures.ts       |  1 +
+ projects/chokepoint/game/src/config.ts             |  5 +-
+ .../chokepoint/game/src/content/augments/bolt.ts   |  4 ++
+ .../chokepoint/game/src/content/augments/frost.ts  |  4 ++
+ .../chokepoint/game/src/content/augments/rapid.ts  |  4 ++
+ .../chokepoint/game/src/content/augments/reach.ts  |  4 ++
+ .../chokepoint/game/src/content/augments/splash.ts |  4 ++
+ projects/chokepoint/game/src/content/types.ts      | 28 ++++++++
+ projects/chokepoint/game/src/core/augments.ts      | 34 ++++++----
+ projects/chokepoint/game/src/core/run.ts           | 13 ++--
+ projects/chokepoint/game/src/core/tiers.ts         | 60 +++++++++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  7 ++
+ projects/chokepoint/game/src/entities/Tower.ts     | 22 +++----
+ projects/chokepoint/game/src/scenes/DraftScene.ts  | 51 +++++++++++----
+ projects/chokepoint/game/src/systems/Building.ts   | 18 +++---
+ projects/chokepoint/game/src/systems/RunFlow.ts    | 17 ++---
+ .../chokepoint/game/src/systems/TowerSystem.ts     | 18 +++---
+ projects/chokepoint/game/src/ui/hud/HandBar.ts     |  6 +-
+ projects/chokepoint/game/src/ui/hud/TowerPanel.ts  |  8 +--
+ projects/chokepoint/game/tests/content.test.ts     | 21 +++++-
+ .../chokepoint/game/tests/core/augments.test.ts    | 75 +++++++++++++++++++++-
+ projects/chokepoint/game/tests/core/run.test.ts    |  8 +--
+ 24 files changed, 336 insertions(+), 88 deletions(-)
+```

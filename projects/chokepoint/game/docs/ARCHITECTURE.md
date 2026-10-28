@@ -20,7 +20,7 @@ Scene order in `main.ts` is draw order: Hud draws over Game, Draft and Pause ove
 
 - **GameScene** only wires the run together: it creates the `RunState`, the `Board` and the systems, the gestures and hotkeys, and the invariants, and calls `RunFlow.update()` every frame. Other scenes reach the systems through `getGameScene()` (`game.flow`, `game.building`, `game.board`, ...).
 - **HudScene** lists the HUD parts (`ui/hud/`, one per element) and calls their `layout()` and `update()`.
-- **DraftScene** shows the three augments in `RunFlow.offer`; picking one calls `RunFlow.finishDraft(id)`.
+- **DraftScene** shows the three augment copies in `RunFlow.offer`; picking one calls `RunFlow.finishDraft(copy)`.
 - **MenuScene** shows the title over a live demo (`scenes/menu/MenuDemo.ts`, purely for show).
 
 ## The run (`systems/RunFlow.ts`)

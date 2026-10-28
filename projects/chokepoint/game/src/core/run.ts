@@ -1,4 +1,5 @@
 import { START, WAVE_BONUS } from '../config';
+import type { AugmentCopy } from '../content/types';
 import { Rng } from './rng';
 
 /**
@@ -21,8 +22,8 @@ export class RunState {
   phase: RunPhase = 'build';
   /** Build time left before the next wave starts on its own. */
   buildLeftSec = 0;
-  /** Augment ids picked but not put into a tower yet. */
-  hand: string[] = [...START.hand];
+  /** Augment copies (id + tier) picked but not put into a tower yet. */
+  hand: AugmentCopy[] = [...START.hand];
   kills = 0;
   goldEarned = 0; // gold earned this run: kill gold + wave bonuses
   cleanWaves = 0; // waves that ended without a leak
@@ -100,12 +101,12 @@ export class RunState {
   }
 
   /** The draft's pick goes into the hand. */
-  takeAugment(id: string): void {
-    this.hand.push(id);
+  takeAugment(copy: AugmentCopy): void {
+    this.hand.push(copy);
   }
 
-  /** Takes the augment at `index` out of the hand (to put it into a tower). */
-  useAugment(index: number): string | undefined {
+  /** Takes the augment copy at `index` out of the hand (to put it into a tower). */
+  useAugment(index: number): AugmentCopy | undefined {
     if (index < 0 || index >= this.hand.length) return undefined;
     return this.hand.splice(index, 1)[0];
   }

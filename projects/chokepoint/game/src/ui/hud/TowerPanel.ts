@@ -60,7 +60,7 @@ export class TowerPanel implements HudPart {
     const left = -w / 2 + 18;
     // The card swallows taps, so tapping the panel never builds on the board under it.
     const card = makeCard(scene, 0, 0, w, PANEL_H, 22).setInteractive();
-    const names = tower.augments.map((id) => getAugment(id).name);
+    const names = tower.augments.map((c) => getAugment(c.id).name);
     const title = scene.add.text(left, -PANEL_H / 2 + 16, names.length ? names.join(' + ') : 'Empty tower', titleStyle(18)).setOrigin(0, 0);
     const desc = scene.add.text(left, -PANEL_H / 2 + 42, describeSpec(tower.spec), textStyle(13, PALETTE.muted, { wordWrap: { width: w - 36 } })).setOrigin(0, 0);
     const stats = scene.add.text(left, -PANEL_H / 2 + 80, statsLine(tower), textStyle(13, PALETTE.ink, { fontStyle: 'bold', wordWrap: { width: w - 36 } })).setOrigin(0, 0);
@@ -77,9 +77,9 @@ export class TowerPanel implements HudPart {
     const y = PANEL_H / 2 - 16 - SLOT / 2;
     for (let i = 0; i < MAX_SLOTS; i++) {
       const x = left + SLOT / 2 + i * (SLOT + 8);
-      const id = tower.augments[i];
-      if (id) {
-        items.push(makeCard(scene, x, y, SLOT, SLOT, 14), artScale(scene.add.image(x, y - 1, augmentTexture(id)), 0.95));
+      const copy = tower.augments[i];
+      if (copy) {
+        items.push(makeCard(scene, x, y, SLOT, SLOT, 14), artScale(scene.add.image(x, y - 1, augmentTexture(copy.id)), 0.95));
       } else if (i < tower.slots) {
         const g = scene.add.graphics();
         g.lineStyle(2, PALETTE.faint, 1);

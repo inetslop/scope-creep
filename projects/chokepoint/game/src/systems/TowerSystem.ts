@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
 import { CELL } from '../config';
-import { getAugment } from '../content/augments';
 import { PALETTE } from '../content/palette';
+import type { AugmentCopy } from '../content/types';
 import { slotCost, towerColor } from '../core/augments';
 import type { Cell } from '../core/map';
 import type { RunState } from '../core/run';
@@ -52,8 +52,8 @@ export class TowerSystem {
     return slotCost(tower.slots);
   }
 
-  /** Builds a tower on `cell` with `augmentId` in its first slot, paying for that slot. */
-  build(cell: Cell, augmentId: string): Tower | Refusal {
+  /** Builds a tower on `cell` with `copy` in its first slot, paying for that slot. */
+  build(cell: Cell, copy: AugmentCopy): Tower | Refusal {
     if (!this.board.canBuild(cell)) return 'blocked';
     if (!this.run.spend(slotCost(0)!)) return 'gold';
     const c = this.board.centerOf(cell);
@@ -62,15 +62,15 @@ export class TowerSystem {
     this.towers.push(tower);
     hook.stats.towersBuilt += 1;
     this.sfx?.build();
-    this.place(tower, augmentId);
+    this.place(tower, copy);
     return tower;
   }
 
-  /** Puts an augment into a free slot of `tower`. */
-  place(tower: Tower, augmentId: string): true | Refusal {
-    if (!tower.addAugment(augmentId)) return 'full';
+  /** Puts an augment copy into a free slot of `tower`. */
+  place(tower: Tower, copy: AugmentCopy): true | Refusal {
+    if (!tower.addAugment(copy)) return 'full';
     hook.stats.augmentsPlaced += 1;
-    const color = towerColor(tower.augments.map(getAugment));
+    const color = towerColor(tower.augments);
     this.fx.ring(tower.x, tower.y, CELL * 0.55, color ? PALETTE[color] : PALETTE.faint);
     return true;
   }
@@ -102,7 +102,7 @@ export class TowerSystem {
   private attack(t: Tower, enemies: EnemySystem['all']): boolean {
     const spec = t.spec;
     if (spec.kind === 'none') return false;
-    const color = towerColor(t.augments.map(getAugment));
+    const color = towerColor(t.augments);
     const attacked = ATTACKS[spec.kind]({
       tower: t,
       enemies,
