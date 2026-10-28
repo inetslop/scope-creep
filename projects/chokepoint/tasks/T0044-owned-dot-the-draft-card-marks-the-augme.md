@@ -1,12 +1,14 @@
 ---
 id: T0044
 title: "Owned dot: the draft card marks the augment you already have"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T11:47:03Z
+claimed_at: 2026-10-28T11:58:54Z
 epic: E4
 ---
 
