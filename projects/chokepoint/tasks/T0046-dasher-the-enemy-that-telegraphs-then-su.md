@@ -4,11 +4,12 @@ title: "Dasher: the enemy that telegraphs, then surges"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T12:01:28Z
 claimed_at: 2026-10-28T13:11:05Z
+finished_at: 2026-10-28T13:59:13Z
 ---
 
 ## Goal
@@ -118,3 +119,22 @@ tests/core/waves.test.ts (add `dashCount` to the import):
 - `mixes in the dashing enemies exactly as dashCount says`: for each `[w,n]` in `[[4,0],[5,1],[6,2],[9,3],[12,4],[15,5],[20,5]]`, `planWave(w, new Rng(w), ENEMIES).spawns.filter(s => s.enemy === 'dasher').length === n`.
 - `never builds a wave of only dashers`: for waves 5..30, `some(s => s.enemy !== 'dasher')`.
 tests/content.test.ts: in the enemies loop add `if (e.behavior === 'dash') { const c = e.dashCycle!; expect([c.crawlSec, c.pauseSec, c.dashCells, c.dashSec]).toEqual(expect.arrayContaining([expect.any(Number)])); expect(c.crawlSec).toBeGreaterThan(0); expect(c.pauseSec).toBeGreaterThan(0); expect(c.dashCells).toBeGreaterThan(0); expect(c.dashSec).toBeGreaterThan(0); expect(c.dashCells / c.dashSec).toBeGreaterThan(e.speed); }`. All existing tests stay green; gates: `npm run check`, `npm run smoke`.
+
+## Result (attempt 1, desktop-4070)
+
+Added the Dasher enemy — a small purple diamond with a new `dash` behavior that crawls at 1.4 cells/s for 2.5 s, stops for 0.5 s flashing white for its first half (unified with the hit flash in one tint state), then surges 3 cells in 0.3 s. Waves reserve Dashing enemies after the rampers without touching `run.rng`, so seeded waves stay stable: one on wave 5, two on 6, +1 every three waves capped at five, interleaved among ordinary walkers so no wave is all-Dashers. Frost slows only the crawl leg, and hit flashes still work mid-dash. `npm run check` (typecheck + lint + 120 tests) and `npm run smoke` (desktop + mobile browser play) both pass; every edit was verified in place since the session auto-denied the standalone `git diff` command.
+
+- Self-review: APPROVE
+- Time: 48.1 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../chokepoint/game/src/content/enemies/dasher.ts  | 16 +++++++
+ .../chokepoint/game/src/content/enemies/index.ts   |  2 +
+ projects/chokepoint/game/src/content/types.ts      |  4 +-
+ projects/chokepoint/game/src/core/waves.ts         | 19 +++++++--
+ projects/chokepoint/game/src/entities/Enemy.ts     | 49 ++++++++++++++++++++--
+ projects/chokepoint/game/tests/content.test.ts     |  8 ++++
+ projects/chokepoint/game/tests/core/waves.test.ts  | 28 ++++++++++++-
+ 7 files changed, 117 insertions(+), 9 deletions(-)
+```

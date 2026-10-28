@@ -29,6 +29,14 @@ describe('content', () => {
         expect(e.speedRamp.perHit).toBeGreaterThan(0);
         expect(e.speedRamp.max).toBeGreaterThan(e.speed);
       }
+      if (e.behavior === 'dash') {
+        const c = e.dashCycle!;
+        expect(c.crawlSec).toBeGreaterThan(0);
+        expect(c.pauseSec).toBeGreaterThan(0);
+        expect(c.dashCells).toBeGreaterThan(0);
+        expect(c.dashSec).toBeGreaterThan(0);
+        expect(c.dashCells / c.dashSec).toBeGreaterThan(e.speed); // the surge outpaces the crawl
+      }
     }
   });
 

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ENEMIES } from '../../src/content/enemies';
 import { Rng } from '../../src/core/rng';
-import { planWave, rampCount, waveBudget, waveHpMul } from '../../src/core/waves';
+import { dashCount, planWave, rampCount, waveBudget, waveHpMul } from '../../src/core/waves';
 
 describe('planWave', () => {
   it('spends the budget on unlocked enemies only', () => {
@@ -41,6 +41,32 @@ describe('planWave', () => {
     for (const [wave, count] of expected) {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
       expect(plan.spawns.filter((s) => s.enemy === 'sprinter').length).toBe(count);
+    }
+  });
+
+  it('dashCount: none before wave 5, one on 5, two on 6, +1 every three waves, capped at five', () => {
+    expect([4, 5, 6, 9, 12, 15, 20].map((w) => dashCount(w))).toEqual([0, 1, 2, 3, 4, 5, 5]);
+  });
+
+  it('mixes in the dashing enemies exactly as dashCount says', () => {
+    const expected: [number, number][] = [
+      [4, 0],
+      [5, 1],
+      [6, 2],
+      [9, 3],
+      [12, 4],
+      [15, 5],
+      [20, 5],
+    ];
+    for (const [wave, count] of expected) {
+      const plan = planWave(wave, new Rng(wave), ENEMIES);
+      expect(plan.spawns.filter((s) => s.enemy === 'dasher').length).toBe(count);
+    }
+  });
+
+  it('never sends a wave made only of dashing enemies', () => {
+    for (let wave = 5; wave <= 30; wave++) {
+      expect(planWave(wave, new Rng(wave), ENEMIES).spawns.some((s) => s.enemy !== 'dasher')).toBe(true);
     }
   });
 

@@ -11,7 +11,7 @@ export interface Look {
 }
 
 /** How an enemy moves along the path. Add a name here and a case in Enemy.update() for a new one. */
-export type EnemyBehavior = 'walk';
+export type EnemyBehavior = 'walk' | 'dash';
 
 export interface EnemyDef {
   /** kebab-case, unique. */
@@ -25,6 +25,8 @@ export interface EnemyDef {
   speed: number;
   /** Gets faster when hit: `perHit` cells/s added per hit taken, never past `max`. */
   speedRamp?: { perHit: number; max: number };
+  /** The dash cycle (Dasher): crawl for `crawlSec`, stop for `pauseSec` (its white telegraph is the first half), then surge `dashCells` cells in `dashSec`. */
+  dashCycle?: { crawlSec: number; pauseSec: number; dashCells: number; dashSec: number };
   /** Gold for killing it. */
   gold: number;
   /** Lives lost when it reaches the exit. */

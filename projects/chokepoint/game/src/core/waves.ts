@@ -35,6 +35,13 @@ export function rampCount(wave: number): number {
   return wave < 8 ? 0 : Math.min(6, 2 + Math.floor((wave - 8) / 4));
 }
 
+/** How many dashing enemies (crawl, stop-and-flash, surge) a wave sends: one on 5, two on 6, +1 every three waves after, at most five. */
+export function dashCount(wave: number): number {
+  if (wave < 5) return 0;
+  const n = wave === 5 ? 1 : 2 + Math.floor((wave - 6) / 3);
+  return Math.min(5, n);
+}
+
 /**
  * Which enemies a wave sends, in order, and when. Spends the wave's budget on enemies that are
  * unlocked (fromWave) and affordable; groups of the same type come in quick succession. Ramping
@@ -43,7 +50,7 @@ export function rampCount(wave: number): number {
 export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): WavePlan {
   const unlocked = enemies.filter((e) => e.fromWave <= wave && e.threat > 0);
   const rampers = unlocked.filter((e) => e.speedRamp !== undefined);
-  const walkers = unlocked.filter((e) => e.speedRamp === undefined);
+  const walkers = unlocked.filter((e) => e.speedRamp === undefined && e.dashCycle === undefined);
   let budget = waveBudget(wave);
   // Reserve the rampers first; no rng here, so the seeded picks of the walkers don't shift.
   const rampSpawns: string[] = [];
@@ -52,6 +59,9 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
     for (let i = 0; i < n; i++) rampSpawns.push(e.id);
     budget -= n * e.threat;
   }
+  // The dashing ones are reserved the same way, after the rampers.
+  const dashSpawns: string[] = [];
+  for (const e of unlocked) if (e.dashCycle !== undefined) { const n = Math.min(dashCount(wave), Math.floor(budget / e.threat)); for (let i = 0; i < n; i++) dashSpawns.push(e.id); budget -= n * e.threat; }
   const spawns: WaveSpawn[] = [];
   while (walkers.length > 0) {
     const affordable = walkers.filter((e) => e.threat <= budget);
@@ -66,15 +76,16 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
       budget -= pick.threat;
     }
   }
-  if (rampSpawns.length === 0) return { number: wave, spawns, hpMul: waveHpMul(wave) };
-  // Interleave the rampers evenly through the wave (no rng: seeded waves stay stable).
+  const reserved = [...rampSpawns, ...dashSpawns];
+  if (reserved.length === 0) return { number: wave, spawns, hpMul: waveHpMul(wave) };
+  // Interleave the rampers and dashing ones evenly through the wave (no rng: seeded waves stay stable).
   let t = 0;
   const at: { enemy: string; t: number }[] = spawns.map((s) => {
     t += s.delaySec;
     return { enemy: s.enemy, t };
   });
   const span = t + waveSpacing(wave) * 1.5;
-  rampSpawns.forEach((enemy, i) => at.push({ enemy, t: ((i + 0.5) / rampSpawns.length) * span }));
+  reserved.forEach((enemy, i) => at.push({ enemy, t: ((i + 0.5) / reserved.length) * span }));
   at.sort((a, b) => a.t - b.t);
   return {
     number: wave,

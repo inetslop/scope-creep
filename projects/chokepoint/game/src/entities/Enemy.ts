@@ -38,6 +38,10 @@ export class Enemy extends Phaser.GameObjects.Image {
   markPct = 0;
   /** Seconds since it was marked (the chevron's pop-in); 0 until marked. */
   markAge = 0;
+  /** Which leg of its dash cycle (Dasher) it is in: the slow crawl, the stop-and-flash, the surge. */
+  dashLeg: 'crawl' | 'pause' | 'dash' = 'crawl';
+  dashLeft = 0; // seconds left of the current leg
+  pauseAge = 0; // seconds into 'pause' (its telegraph is the first half)
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0, '__DEFAULT');
@@ -61,6 +65,9 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.rootLeft = 0;
     this.markPct = 0;
     this.markAge = 0;
+    this.dashLeg = 'crawl';
+    this.dashLeft = this.def.dashCycle?.crawlSec ?? 0;
+    this.pauseAge = 0;
     this.setTexture(enemyTexture(def.id));
     this.clearTint();
     this.setScale(0);
@@ -71,6 +78,8 @@ export class Enemy extends Phaser.GameObjects.Image {
 
   /** Walks for `dt` seconds. Returns true when it reached the end of the path (a leak). */
   advance(dt: number, path: PathLine): boolean {
+    const cycle = this.def.dashCycle;
+    const wasWhite = this.flash > 0 || (cycle !== undefined && this.dashLeg === 'pause' && this.pauseAge < cycle.pauseSec / 2);
     if (this.slowLeft > 0) {
       this.slowLeft -= dt;
       if (this.slowLeft <= 0) this.slowPct = 0;
@@ -85,6 +94,37 @@ export class Enemy extends Phaser.GameObjects.Image {
       case 'walk':
         this.distance += speed * dt;
         break;
+      case 'dash': {
+        // Crawl, stop and flash white for the first half of the stop, then surge. Slow only affects the crawl.
+        const c = this.def.dashCycle!;
+        // Rooted it does not move at all, and its cycle holds with it (a rooted pause still telegraphs).
+        if (this.rootLeft <= 0) {
+          if (this.dashLeg === 'crawl') {
+            this.distance += speed * dt;
+            this.dashLeft -= dt;
+            if (this.dashLeft <= 0) {
+              this.dashLeg = 'pause';
+              this.dashLeft = c.pauseSec;
+              this.pauseAge = 0;
+            }
+          } else if (this.dashLeg === 'pause') {
+            this.dashLeft -= dt;
+            this.pauseAge += dt;
+            if (this.dashLeft <= 0) {
+              this.dashLeg = 'dash';
+              this.dashLeft = c.dashSec;
+            }
+          } else {
+            this.distance += (c.dashCells / c.dashSec) * CELL * dt;
+            this.dashLeft -= dt;
+            if (this.dashLeft <= 0) {
+              this.dashLeg = 'crawl';
+              this.dashLeft = c.crawlSec;
+            }
+          }
+        }
+        break;
+      }
     }
     this.age += dt;
     if (this.markPct > 0) this.markAge += dt;
@@ -100,9 +140,12 @@ export class Enemy extends Phaser.GameObjects.Image {
       this.dirY = (a.y - p.y) / dl;
     }
     this.setPosition(p.x, p.y - Math.abs(Math.sin(this.distance / 9)) * 2);
-    if (this.flash > 0) {
-      this.flash -= dt;
-      if (this.flash <= 0) this.clearTint();
+    const tele = cycle !== undefined && this.dashLeg === 'pause' && this.pauseAge < cycle.pauseSec / 2;
+    if (this.flash > 0) this.flash -= dt;
+    const white = tele || this.flash > 0;
+    if (white !== wasWhite) {
+      if (white) this.setTintFill(0xffffff);
+      else this.clearTint();
     }
     return this.distance >= path.length;
   }
