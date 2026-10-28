@@ -1,12 +1,14 @@
 ---
 id: T0060
 title: "Last stand banner: the card that teaches the rule"
+assignee: cachyos-x8664
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0054, T0067]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:29:40Z
+claimed_at: 2026-10-28T23:17:33Z
 epic: E1
 ---
 
