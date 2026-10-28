@@ -1,12 +1,14 @@
 ---
 id: T0056
 title: "The claim card says Board: the run's board as a four-letter code"
+assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0051]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:04:03Z
+claimed_at: 2026-10-28T17:01:06Z
 epic: E1
 ---
 
