@@ -1,13 +1,14 @@
 ---
 id: T0030
 title: "The pause screen: your run so far on one line"
+assignee: narcissus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 1
+attempts: 2
 created: 2026-10-28T06:24:55Z
-claimed_at: 2026-10-28T19:59:14Z
+claimed_at: 2026-10-28T20:30:00Z
 epic: E1
 ---
 
