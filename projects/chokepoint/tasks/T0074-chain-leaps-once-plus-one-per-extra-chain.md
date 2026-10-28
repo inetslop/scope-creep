@@ -1,12 +1,14 @@
 ---
 id: T0074
-title: "Chain leaps once, plus one per extra Chain"
+title: Chain leaps once, plus one per extra Chain
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: [T0025]
 attempts: 0
 created: 2026-10-28T21:08:30Z
+claimed_at: 2026-10-28T21:09:48Z
+designer: yoga
 ---
 
 ## Goal
