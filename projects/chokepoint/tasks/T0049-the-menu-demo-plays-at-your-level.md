@@ -3,11 +3,13 @@ id: T0049
 title: The menu demo plays at your level
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T12:01:28Z
+claimed_at: 2026-10-28T12:22:23Z
 epic: E1
+designer: baby-mama
 ---
 
 ## Goal
