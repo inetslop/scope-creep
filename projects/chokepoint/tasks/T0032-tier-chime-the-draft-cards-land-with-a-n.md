@@ -4,11 +4,12 @@ title: "Tier chime: the draft cards land with a note per tier"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T07:16:57Z
 claimed_at: 2026-10-28T07:29:05Z
+finished_at: 2026-10-28T07:37:10Z
 epic: E4
 ---
 
@@ -62,3 +63,16 @@ onYoyo: () => { back.setVisible(false); button.content.setVisible(true); frame?.
 - T0009 adds its own method to `src/audio/Sfx.ts`; keep the edit to exactly these two insertions, no reformatting, so the merge is clean.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The draft cards now land face-up with a tier chime: new `Sfx.tierChime(tier)` plays one 80 ms sine per tier step, rising (Common C5; Rare +E5; Epic +G5) at volume 0.1 — the quiet leakWarn class, never above `kill()`'s 0.18. It's triggered from the existing `onYoyo` moment in `DraftScene.ts` where each card appears face-up, so the three chimes keep the existing flip stagger and the Epic's chime lands a beat later with its held flip (`leg` 350 vs 200). No change to the flip animation, stagger, Epic hold, card look, or any input/HUD element. `npm run check` (typecheck, lint, 68 tests) and `npm run smoke` (desktop + phone, drafts played in both) both pass.
+
+- Self-review: APPROVE
+- Time: 8.1 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts         | 8 ++++++++
+ projects/chokepoint/game/src/scenes/DraftScene.ts | 4 ++--
+ 2 files changed, 10 insertions(+), 2 deletions(-)
+```

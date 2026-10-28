@@ -2,6 +2,8 @@
  * Tiny procedural sound effects (WebAudio, no files). Every call is safe when audio is
  * unavailable or still locked by the browser: it just stays silent.
  */
+import type { Tier } from '../content/types';
+
 export class Sfx {
   private ctx: AudioContext | undefined;
   private master: GainNode | undefined;
@@ -58,6 +60,12 @@ export class Sfx {
 
   kill(): void {
     this.tone(520, 0.08, 'triangle', 0.18, 260);
+  }
+
+  /** The tier chime as a draft card lands face-up: one note per tier step, the top note rising. */
+  tierChime(tier: Tier): void {
+    const notes = tier === 'epic' ? [523, 659, 784] : tier === 'rare' ? [523, 659] : [523];
+    notes.forEach((f, n) => window.setTimeout(() => this.tone(f, 0.08, 'sine', 0.1), n * 80));
   }
 
   leak(): void {

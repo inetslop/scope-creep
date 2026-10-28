@@ -8,7 +8,7 @@ import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
 import { textStyle, titleStyle } from '../ui/text';
 import { uiCamera, viewSize } from '../ui/display';
-import { getGameScene, onKey, onResize, SCENES } from './keys';
+import { getGameScene, getSfx, onKey, onResize, SCENES } from './keys';
 
 const CARD_W = 220;
 const CARD_H = 206;
@@ -102,7 +102,7 @@ export class DraftScene extends Phaser.Scene {
         ease: 'Quad.easeIn',
         yoyo: true,
         repeat: 1,
-        onYoyo: () => { back.setVisible(false); button.content.setVisible(true); frame?.setVisible(true); },
+        onYoyo: () => { back.setVisible(false); button.content.setVisible(true); frame?.setVisible(true); getSfx(this)?.tierChime(copy.tier); },
         onComplete: () => { button.container.setScale(1); frame?.setScale(1); flipped[i] = true; },
       });
       return { button, frame };
