@@ -4,11 +4,12 @@ title: "Lance: a piercing line augment"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T01:07:07Z
 claimed_at: 2026-10-28T07:29:55Z
+finished_at: 2026-10-28T09:57:46Z
 ---
 
 ## Goal
@@ -108,3 +109,31 @@ private land(p: Projectile): void {
 ### Tests
 - tests/core/targeting.test.ts: `pickPierceTarget` — closest active enemy behind; skips the hit enemy itself, inactive, and ahead; gap == maxBehind is included, bigger is not; -1 when nothing behind.
 - tests/core/augments.test.ts: `spec('lance').pierce` is 1 and kind 'shot'; `spec('bolt','lance').pierce` 1; `spec('lance','lance').pierce` 2; `spec('frost','lance')` gives `bolts` 1 and `pierce` 1.
+
+## Result (attempt 1, asus)
+
+Added Lance, a new piercing augment — a thin teal tracer shot that keeps going after a hit and strikes enemies in a line behind it. New content in `src/content/augments/lance.ts`; the mechanic is a payload property, not a new attack kind: `pierce` flows from `TowerSpec`/`HitPayload` into `ProjectileSystem.land()`, which re-aims a landed shot at the closest enemy behind it (via new `core/targeting.pickPierceTarget`, reach `PIERCE_REACH=3` cells), so it works on the winding road. Lance shows as a long thin teal rod barrel (`towerLook`) and a thin rotated tracer projectile (`Projectile`, new `fx:tracer` texture). Two necessary deviations from the design: I added `pierce` to `FirstForm` too (a lone Lance tower must pierce — the design's own test and acceptance criterion require it, but its `core/augments.ts` change only added pierce in the 2nd-augment loop), and since the rarity system (T0002) has already landed I stored the Rare/Epic numbers in the `def.tiers` shape (adding a `pierce` field to `TierValues`, applied in `core/tiers.ts`) instead of a local `LANCE_TIERS` const. `npm run check` (typecheck + lint + 81 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 147.9 min
+
+```
+projects/chokepoint/game/src/art/entities.ts       |  9 +++++-
+ projects/chokepoint/game/src/art/textures.ts       |  2 ++
+ projects/chokepoint/game/src/config.ts             |  3 ++
+ .../chokepoint/game/src/content/augments/index.ts  |  2 ++
+ .../chokepoint/game/src/content/augments/lance.ts  | 20 +++++++++++++
+ projects/chokepoint/game/src/content/types.ts      |  8 +++++-
+ projects/chokepoint/game/src/core/augments.ts      | 11 ++++++--
+ projects/chokepoint/game/src/core/targeting.ts     | 21 ++++++++++++++
+ projects/chokepoint/game/src/core/tiers.ts         |  1 +
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ .../chokepoint/game/src/entities/Projectile.ts     | 13 +++++++--
+ projects/chokepoint/game/src/entities/towerLook.ts |  7 +++--
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  2 ++
+ .../game/src/systems/ProjectileSystem.ts           | 33 +++++++++++++++++++---
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  1 +
+ .../chokepoint/game/tests/core/augments.test.ts    | 15 ++++++++++
+ .../chokepoint/game/tests/core/targeting.test.ts   | 33 +++++++++++++++++++++-
+ 17 files changed, 169 insertions(+), 13 deletions(-)
+```

@@ -1,4 +1,6 @@
 import type Phaser from 'phaser';
+import { CELL, PIERCE_REACH } from '../config';
+import { pickPierceTarget } from '../core/targeting';
 import type { Enemy } from '../entities/Enemy';
 import { Projectile } from '../entities/Projectile';
 import type { EnemySystem, HitPayload } from './EnemySystem';
@@ -37,10 +39,33 @@ export class ProjectileSystem {
         p.despawn();
         continue;
       }
-      if (p.advance(dt)) {
-        this.enemies.hit(p.target!, p.payload!);
-        p.despawn();
-      }
+      if (p.advance(dt)) this.land(p);
     }
+  }
+
+  /**
+   * A shot that reached its target: with pierce it strikes the enemy (no burst: the shot is not
+   * done yet) and keeps going at the closest enemy behind it; without, it hits (bursting with
+   * splash) and despawns.
+   */
+  private land(p: Projectile): void {
+    const target = p.target!;
+    const payload = p.payload!;
+    const next = payload.pierce > 0 ? pickPierceTarget(target, this.enemies.all, PIERCE_REACH * CELL) : -1;
+    if (next < 0) {
+      this.enemies.hit(target, payload);
+      p.despawn();
+      return;
+    }
+    const x = target.x;
+    const y = target.y;
+    this.enemies.strike(target, payload); // no burst yet: the shot keeps going
+    p.fire(x, y, this.enemies.all[next]!, { ...payload, pierce: payload.pierce - 1 }, p.speed);
+  }
+
+  /** Invariant: an active projectile that has been flying for over 5s is stuck. */
+  brokenProjectile(): string | undefined {
+    const stuck = this.pool.find((p) => p.active && p.age > 5);
+    return stuck ? `a projectile has been flying for ${stuck.age.toFixed(1)}s` : undefined;
   }
 }

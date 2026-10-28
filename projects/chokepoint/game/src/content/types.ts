@@ -43,7 +43,8 @@ export type Tier = 'common' | 'rare' | 'epic';
  * What a tier changes about its copy of an augment. Unset fields keep the Common value.
  * The multipliers scale the FIRST form (`damageMul`, `cooldownMul` (divides the rate), `rangeMul`)
  * and replace the ADDED form's (`addedRateMul`, `addedRangeMul`); `slowPct` replaces this copy's
- * slow % in both forms, `splash` its added splash cells, and `asAdded` is the card's added line.
+ * slow % in both forms, `pierce` its pierce, `splash` its added splash cells, and `asAdded` is
+ * the card's added line.
  */
 export interface TierValues {
   damageMul?: number;
@@ -51,6 +52,7 @@ export interface TierValues {
   rangeMul?: number;
   slowPct?: number;
   splash?: number;
+  pierce?: number;
   addedRateMul?: number;
   addedRangeMul?: number;
   asAdded: string;
@@ -84,6 +86,8 @@ export interface FirstForm {
   rate: number;
   /** For 'shot': projectile speed in cells per second. */
   projectileSpeed?: number;
+  /** For a 'shot': how many more enemies the shot strikes after the first hit (0: none). */
+  pierce?: number;
   /** Hits slow enemies by `pct` (0-1) for `sec` seconds. */
   slow?: { pct: number; sec: number };
   /** For a 'mark' attack: the fraction of extra damage a marked enemy takes from everything. */
@@ -99,6 +103,8 @@ export interface AddedForm {
   extraShots?: number;
   /** Hits burst, hitting every enemy within this many cells (a pulse reaches this much further). */
   splash?: number;
+  /** Shot strikes this many more enemies behind the one it hit; a pulse fires that many bolts per pulse. */
+  pierce?: number;
   slow?: { pct: number; sec: number };
   /** Hits apply the mark: enemies hit take this fraction of extra damage from everything. */
   mark?: number;

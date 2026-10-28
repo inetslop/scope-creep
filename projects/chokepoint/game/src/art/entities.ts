@@ -5,7 +5,7 @@ import { ENEMIES } from '../content/enemies';
 import { deepOf, PALETTE, rgba, type Bright } from '../content/palette';
 import type { Shape } from '../content/types';
 import { paintToken, roundRectPath, setShadow, shapePath } from './paint';
-import { BOLT_TEXTURE, CHIP_TEXTURE, enemyTexture, paintTexture, TOWER_BASE, TOWER_BODY, tokenRoom, towerTexture } from './textures';
+import { BOLT_TEXTURE, CHIP_TEXTURE, enemyTexture, paintTexture, TOWER_BASE, TOWER_BODY, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
 
 /** Enemies, tower plinths and bodies, bolts and chips: everything that stands or flies on the board. */
 export function paintEntityTextures(scene: Phaser.Scene): void {
@@ -26,6 +26,13 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
   for (const a of AUGMENTS) paintTexture(scene, towerTexture(a.id), bodySize, bodySize, (ctx) => paintTowerBody(ctx, a.look.shape, a.look.color, bodySize / 2));
   paintTexture(scene, BOLT_TEXTURE, 16, 16, (ctx) => {
     shapePath(ctx, 'circle', 8, 8, 5);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+  });
+  // The tracer: a thin, long capsule pointing up from its center; the projectile rotates it to
+  // where it flies. Tinted to the tower's color, so it is flat (no shading) and may rotate.
+  paintTexture(scene, TRACER_TEXTURE, 4, 16, (ctx) => {
+    roundRectPath(ctx, 0.25, 2, 3.5, 12, 1.75);
     ctx.fillStyle = '#ffffff';
     ctx.fill();
   });

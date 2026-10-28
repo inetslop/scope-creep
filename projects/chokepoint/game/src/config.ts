@@ -4,6 +4,9 @@ import type { AugmentCopy } from './content/types';
 /** Size of one board cell in board units. Everything on the board is measured in these. */
 export const CELL = 64;
 
+/** Cells behind the last hit a piercing shot keeps striking. */
+export const PIERCE_REACH = 3;
+
 /** Board size in cells along its long and short side. Landscape screens get 14x8, portrait 8x14. */
 export const GRID = { long: 14, short: 8 } as const;
 

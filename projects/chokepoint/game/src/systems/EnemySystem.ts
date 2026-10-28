@@ -16,6 +16,8 @@ export interface HitPayload {
   /** Board units around the hit enemy that are hit too (0: none). */
   splash: number;
   slow: { pct: number; sec: number } | undefined;
+  /** How many more enemies a shot strikes after the first hit; 0 = none. */
+  pierce: number;
   /** The mark this hit applies to the enemies it hits; `x`, `y` are the tower's base (the flash spot). */
   mark: { pct: number; x: number; y: number } | undefined;
   /** The tower's color, for the shot and the burst. */

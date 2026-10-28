@@ -45,6 +45,7 @@ export function tierFirst(def: AugmentDef, tier: Tier): FirstForm {
     damage: f.damage * (t.damageMul ?? 1),
     rate: f.rate / (t.cooldownMul ?? 1),
     range: f.range * (t.rangeMul ?? 1),
+    pierce: t.pierce ?? f.pierce,
     slow: f.slow ? { ...f.slow, pct: t.slowPct ?? f.slow.pct } : undefined,
   };
 }

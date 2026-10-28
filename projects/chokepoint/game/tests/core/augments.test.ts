@@ -59,6 +59,21 @@ describe('towerSpec', () => {
   });
 });
 
+describe('pierce (Lance)', () => {
+  it('a lone Lance is a piercing shot', () => {
+    expect(spec('lance')).toMatchObject({ kind: 'shot', pierce: 1 });
+  });
+
+  it('Lance added gives one more pierce to any tower; a second Lance stacks', () => {
+    expect(spec('bolt', 'lance').pierce).toBe(1);
+    expect(spec('lance', 'lance').pierce).toBe(2);
+  });
+
+  it('a pulse given pierce fires that many bolts, which keep going', () => {
+    expect(spec('frost', 'lance')).toMatchObject({ bolts: 1, pierce: 1 });
+  });
+});
+
 describe('tiers', () => {
   it('a Rare and Epic Rapid tower deals more damage and attacks faster', () => {
     expect(towerSpec([copy('rapid', 'rare')]).damage).toBeCloseTo(5 * 1.3);

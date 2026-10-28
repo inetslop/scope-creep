@@ -17,6 +17,8 @@ export const towerTexture = (firstAugment: string | undefined): string => `tower
 export const augmentTexture = (id: string): string => `augment:${id}`;
 export const TOWER_BASE = 'tower:base';
 export const BOLT_TEXTURE = 'fx:bolt';
+/** A thin straight tracer for a piercing shot (Lance): it keeps going after a hit. */
+export const TRACER_TEXTURE = 'fx:tracer';
 export const CHIP_TEXTURE = 'fx:chip';
 export const COIN_TEXTURE = 'ui:coin';
 export const LIFE_TEXTURE = 'ui:life';

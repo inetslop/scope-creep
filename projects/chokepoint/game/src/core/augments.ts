@@ -26,6 +26,8 @@ export interface TowerSpec {
   boltDamage: number;
   /** Hits burst, hitting every enemy within this many cells (pulses: already in `range`). */
   splash: number;
+  /** How many more enemies a shot strikes after the first hit; 0 = none (a pulse fires that many bolts). */
+  pierce: number;
   slow: { pct: number; sec: number } | undefined;
   projectileSpeed: number;
   /** Extra damage a marked enemy takes from everything, as a fraction (0.25 per Mark in the tower). */
@@ -45,6 +47,7 @@ const EMPTY: TowerSpec = {
   bolts: 0,
   boltDamage: 0,
   splash: 0,
+  pierce: 0,
   slow: undefined,
   projectileSpeed: 0,
   markPct: 0,
@@ -75,6 +78,7 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     bolts: 0,
     boltDamage: bolt.first.damage,
     splash: 0,
+    pierce: f.pierce ?? 0,
     slow: f.slow ? { ...f.slow } : undefined,
     projectileSpeed: f.projectileSpeed ?? bolt.first.projectileSpeed ?? 10,
     markPct: 0,
@@ -87,6 +91,7 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     spec.rate *= e.rateMul ?? 1;
     spec.range *= e.rangeMul ?? 1;
     spec.splash += e.splash ?? 0;
+    spec.pierce += e.pierce ?? 0;
     if (spec.kind === 'shot') spec.shots += e.extraShots ?? 0;
     else if (spec.kind === 'pulse') spec.bolts += e.extraShots ?? 0;
     if (e.slow && (!spec.slow || e.slow.pct > spec.slow.pct)) spec.slow = { ...e.slow };
@@ -100,8 +105,10 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
       spec.markCount += 1;
     }
   }
-  // A pulse already hits an area: splash makes it reach further.
+  // A pulse already hits an area: splash makes it reach further, and pierce turns into bolts
+  // that fire with each pulse and keep going.
   if (spec.kind === 'pulse') {
+    spec.bolts += spec.pierce;
     spec.range += spec.splash;
     spec.splash = 0;
   }
@@ -117,7 +124,7 @@ export function describeSpec(spec: TowerSpec): string {
   if (spec.kind === 'shot') {
     const target = spec.shots > 1 ? `${spec.shots} enemies at a time` : 'the enemy furthest along';
     const style = spec.range >= 4 ? 'Snipes' : spec.rate >= 3 ? 'Fires fast needles at' : 'Shoots';
-    line = `${style} ${target}${spec.splash > 0 ? ', and the shots burst' : ''}${marked > 0 ? ', and its hits mark' : ''}`;
+    line = `${style} ${target}${spec.splash > 0 ? ', and the shots burst' : ''}${spec.pierce > 0 ? `, and each hits ${spec.pierce + 1} in a line` : ''}${marked > 0 ? ', and its hits mark' : ''}`;
     if (slow) line += `, slowing them by ${slow}%`;
   } else if (spec.kind === 'mark') {
     line = `Marks the enemy furthest along: marked enemies take ${marked}% more damage`;

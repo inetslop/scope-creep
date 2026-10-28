@@ -1,6 +1,7 @@
 import type { AugmentDef } from '../types';
 import { bolt } from './bolt';
 import { frost } from './frost';
+import { lance } from './lance';
 import { mark } from './mark';
 import { rally } from './rally';
 import { rapid } from './rapid';
@@ -10,6 +11,7 @@ import { splash } from './splash';
 /** Every augment. The draft after each wave offers three different ones. */
 export const AUGMENTS: readonly AugmentDef[] = [
   bolt,
+  lance,
   splash,
   frost,
   rally,
