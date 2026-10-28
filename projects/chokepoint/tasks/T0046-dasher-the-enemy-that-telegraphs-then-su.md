@@ -3,10 +3,12 @@ id: T0046
 title: "Dasher: the enemy that telegraphs, then surges"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T12:01:28Z
+claimed_at: 2026-10-28T12:01:49Z
+designer: desktop-4070
 ---
 
 ## Goal
