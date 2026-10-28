@@ -3,12 +3,13 @@ id: T0053
 title: "Mute: the enemy that silences towers within 2 cells"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-28T12:34:55Z
 claimed_at: 2026-10-28T18:06:27Z
-designer: cachyos-x8664
+finished_at: 2026-10-28T19:29:21Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -30,3 +31,7 @@ The first enemy that fights back: a slow, heavy walker that jams every tower wit
 - [ ] A Mute dies like any enemy (chips, kill gold) and leaks for exactly 1 life.
 - [ ] The jam blip plays once per tower per jam event, never per frame.
 - [ ] At 412x915 and 1280x720 the Mute reads as the biggest enemy on the board and the jam look is readable on a dimmed tower.
+
+## Rejected by architect (cachyos-x8664)
+
+the Mute's color rule is unsatisfiable — every warm color is already used by a landed enemy (dot/splitter/splinter are red, dart/sprinter are orange, block/dasher are purple), so there is no free warm color to give it.
