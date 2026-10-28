@@ -4,11 +4,12 @@ title: "The rewards screen: the moment you claim what a run earned"
 assignee: desktop
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: [T0001]
 attempts: 1
 created: 2026-10-28T01:07:07Z
 claimed_at: 2026-10-28T07:17:01Z
+finished_at: 2026-10-28T07:35:24Z
 epic: E1
 ---
 
@@ -77,3 +78,20 @@ Card: `makeCard(this, 0, 0, 360, 300, 28)`; container depth 2 with children in o
 
 ### Tests
 none
+
+## Result (attempt 1, desktop)
+
+Added the rewards claim screen: a new `src/scenes/RewardsScene.ts` (dimmed board behind, one centered white card counting up waves held, stopped, and +N coins from T0001's ledger — never recomputed — with a Menu button as the only input), registered via one line each in `scenes/keys.ts` and `main.ts`. The game-over card grew a primary "Claim rewards" button placed first (card 380→480 px, all rows re-positioned) while keeping its existing buttons, hotkey and smoke auto-restart; the scene graph in `docs/ARCHITECTURE.md` gained the claim branch. `npm run check` and `npm run smoke` both pass; the one deviation from the design is reading the board texture's size via `texture.get()` (base frame) because `Texture.width` doesn't exist in Phaser's type definitions.
+
+- Self-review: APPROVE
+- Time: 18.4 min
+- Self-review edits were discarded (checks failed at "smoke").
+
+```
+projects/chokepoint/game/docs/ARCHITECTURE.md      |  1 +
+ projects/chokepoint/game/src/main.ts               |  3 +-
+ .../chokepoint/game/src/scenes/GameOverScene.ts    | 27 ++++---
+ .../chokepoint/game/src/scenes/RewardsScene.ts     | 93 ++++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/keys.ts        |  1 +
+ 5 files changed, 113 insertions(+), 12 deletions(-)
+```

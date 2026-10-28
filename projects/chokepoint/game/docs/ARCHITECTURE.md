@@ -14,6 +14,7 @@ Boot -> Menu -> Game ──launch──> Hud (overlay, runs in parallel)
                   │  ├─pause──> Pause (overlay)                                              ─resume─┤
                   │  <──────────────────────────────────────────────────────────────────────────────┘
                   └─start──> GameOver -> Game | Menu
+             └─claim-> Rewards -> Menu
 ```
 
 Scene order in `main.ts` is draw order: Hud draws over Game, Draft and Pause over Hud.

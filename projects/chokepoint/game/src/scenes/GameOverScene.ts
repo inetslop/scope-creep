@@ -25,22 +25,26 @@ export class GameOverScene extends Phaser.Scene {
     const again = (): void => {
       this.scene.start(SCENES.game);
     };
+    const claim = (): void => {
+      this.scene.start(SCENES.rewards);
+    };
 
     const panelW = 360;
-    const panelH = 380;
+    const panelH = 480;
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
-    const title = this.add.text(0, -144, 'Overrun', titleStyle(44, PALETTE.red)).setOrigin(0.5);
-    const waveText = this.add.text(0, -96, `Held until wave ${run.wave}`, titleStyle(22)).setOrigin(0.5);
-    const score = this.add.text(0, -66, `${run.score} points · ${run.kills} kills`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
-    const wavesText = this.add.text(0, -37, `Waves held ${run.wavesCleared}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
-    const stoppedText = this.add.text(0, -20, `Stopped ${run.kills}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
-    const cleanText = this.add.text(0, -3, `Clean ${run.cleanWaves}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
-    const coinsText = this.add.text(0, 14, `+${result.coins} coins`, textStyle(15, PALETTE.goldText, { fontStyle: 'bold' })).setOrigin(0.5);
+    const title = this.add.text(0, -178, 'Overrun', titleStyle(44, PALETTE.red)).setOrigin(0.5);
+    const waveText = this.add.text(0, -130, `Held until wave ${run.wave}`, titleStyle(22)).setOrigin(0.5);
+    const score = this.add.text(0, -100, `${run.score} points · ${run.kills} kills`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
+    const wavesText = this.add.text(0, -71, `Waves held ${run.wavesCleared}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
+    const stoppedText = this.add.text(0, -54, `Stopped ${run.kills}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
+    const cleanText = this.add.text(0, -37, `Clean ${run.cleanWaves}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
+    const coinsText = this.add.text(0, -20, `+${result.coins} coins`, textStyle(15, PALETTE.goldText, { fontStyle: 'bold' })).setOrigin(0.5);
     const bestText = this.add
-      .text(0, 41, result.newBest ? 'New best!' : `Best: wave ${result.profile.bestWave}`, textStyle(15, result.newBest ? PALETTE.greenDeep : PALETTE.faint, { fontStyle: 'bold' }))
+      .text(0, 8, result.newBest ? 'New best!' : `Best: wave ${result.profile.bestWave}`, textStyle(15, result.newBest ? PALETTE.greenDeep : PALETTE.faint, { fontStyle: 'bold' }))
       .setOrigin(0.5);
-    const againButton = makeButton(this, 0, 88, 'Play again', again, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
-    const menuButton = makeButton(this, 0, 152, 'Menu', () => this.scene.start(SCENES.menu), { width: 240, height: 52, radius: 26 });
+    const claimButton = makeButton(this, 0, 70, 'Claim rewards', claim, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
+    const againButton = makeButton(this, 0, 134, 'Play again', again, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
+    const menuButton = makeButton(this, 0, 196, 'Menu', () => this.scene.start(SCENES.menu), { width: 240, height: 52, radius: 26 });
     const box = this.add.container(0, 0, [
       panel,
       title,
@@ -51,6 +55,7 @@ export class GameOverScene extends Phaser.Scene {
       cleanText,
       coinsText,
       bestText,
+      claimButton.container,
       againButton.container,
       menuButton.container,
     ]);

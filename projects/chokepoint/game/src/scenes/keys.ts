@@ -13,6 +13,7 @@ export const SCENES = {
   draft: 'Draft',
   pause: 'Pause',
   gameOver: 'GameOver',
+  rewards: 'Rewards',
 } as const;
 
 /** The current run (set by GameScene, kept for GameOver). */
