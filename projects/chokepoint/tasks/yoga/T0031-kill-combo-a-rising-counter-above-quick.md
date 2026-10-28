@@ -4,10 +4,11 @@ title: "Kill combo: a rising counter above quick kills"
 assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T06:24:55Z
+claimed_at: 2026-10-28T07:04:53Z
 ---
 
 ## Goal
