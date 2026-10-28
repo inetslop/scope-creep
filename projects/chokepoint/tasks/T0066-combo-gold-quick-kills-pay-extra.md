@@ -1,12 +1,14 @@
 ---
 id: T0066
 title: "Combo gold: quick kills pay extra"
+assignee: narcissus
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0039]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T21:51:46Z
 epic: E1
 ---
 
