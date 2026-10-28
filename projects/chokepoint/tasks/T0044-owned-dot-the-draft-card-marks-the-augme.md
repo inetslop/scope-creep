@@ -4,11 +4,12 @@ title: "Owned dot: the draft card marks the augment you already have"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T11:47:03Z
 claimed_at: 2026-10-28T11:58:54Z
+finished_at: 2026-10-28T12:10:10Z
 epic: E4
 ---
 
@@ -54,3 +55,15 @@ No new types or signatures. Two additions, both local:
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The draft card for an augment the run already carries (in the hand or in any tower) now shows a small 8 px muted-gray dot in its top-right corner, drawn into the per-card `glyphs` graphics so it appears with the reveal flip and stays hidden face-down. Implemented in `src/scenes/DraftScene.ts`: a local `owns` closure above `buildRow` and one conditional `fillCircle` after the card's content is assembled; rerolls recompute it automatically and nothing on the card shifts.
+
+- Self-review: APPROVE
+- Time: 11.3 min
+
+```
+projects/chokepoint/game/src/scenes/DraftScene.ts | 3 +++
+ 1 file changed, 3 insertions(+)
+```

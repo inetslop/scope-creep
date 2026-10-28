@@ -69,6 +69,7 @@ export class DraftScene extends Phaser.Scene {
     const rerollSlot = (w: number, h: number) =>
       w < 740 ? { x: w / 2, y: Math.max(70, (h - 3 * (CARD_H + 16) - 90) / 2) + 84 + 3 * CARD_H + 2 * 16 + 42 }
               : { x: w / 2, y: h / 2 + 10 + CARD_H / 2 + 44 };
+    const owns = (id: string): boolean => game.run.hand.some((c) => c.id === id) || game.towers.towers.some((t) => t.augments.some((a) => a.id === id));
     const buildRow = (copies: AugmentCopy[]): void => {
       for (const t of flipTweens) t.stop();
       flipTweens = [];
@@ -95,6 +96,8 @@ export class DraftScene extends Phaser.Scene {
         drawPlusGlyph(glyphs, -CARD_W / 2 + 26, addedLine.y + 9);
         const key = this.add.text(-CARD_W / 2 + 14, -CARD_H / 2 + 10, String(i + 1), textStyle(12, PALETTE.faint, { fontStyle: 'bold' }));
         button.content.add([icon, name, ...gems, glyphs, towerLine, addedLine, key]);
+        // The run already has this augment: a small dot in the top-right corner.
+        if (owns(copy.id)) glyphs.fillStyle(PALETTE.muted, 1).fillCircle(CARD_W / 2 - 14, -CARD_H / 2 + 14, 4);
         // The frame draws after the button so it shows on top of its white card.
         const frame = copy.tier === 'common' ? undefined : this.add.graphics();
         if (frame) {
