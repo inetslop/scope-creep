@@ -65,14 +65,14 @@
     },
     "narcissus": {
       "label": "Apple M5 MacBook Pro (24 GB unified)",
-      "model": "Qwen 3.8 27B UD-Q3_K_XL",
+      "model": "Qwen 3.8 27B UD-IQ3_XXS",
       "roles": ["dev", "architect"],
       "architectMode": "idle",
       "maxDesignSize": "S",
       "tier": "medium",
       "maxTaskSize": "S",
       "targetQueue": 2,
-      "notes": "Laptop that runs overnight only, and the slowest machine per token. Better quant than the other 3-bit machines, so fewer mistakes. Give it well-specified, self-contained features with a clear closest example; avoid cross-cutting changes that touch many files."
+      "notes": "Laptop that runs overnight only, and the slowest machine per token. 3-bit IQ quant (IQ3_XXS), so expect some mistakes. Give it well-specified, self-contained features with a clear closest example; avoid cross-cutting changes that touch many files."
     },
     "baby-mama": {
       "paused": true,
