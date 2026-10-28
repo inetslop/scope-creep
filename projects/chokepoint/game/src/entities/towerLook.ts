@@ -3,6 +3,7 @@ import { CELL } from '../config';
 import { bolt } from '../content/augments/bolt';
 import { getAugment } from '../content/augments';
 import { PALETTE } from '../content/palette';
+import type { Tier } from '../content/types';
 import type { TowerSpec } from '../core/augments';
 import type { BarrelLook } from '../art/barrels';
 import { TOWER_BODY } from '../art/textures';
@@ -43,6 +44,13 @@ export function barrelLook(spec: TowerSpec): BarrelLook {
     bulb: spec.splash > 0,
     bands: speedUps(spec),
   };
+}
+
+/** A slot's tier pip color, matching the card frame: light gray common, blue rare, purple epic. */
+export function pipColor(tier: Tier): number {
+  if (tier === 'rare') return PALETTE.blue;
+  if (tier === 'epic') return PALETTE.purple;
+  return PALETTE.faint;
 }
 
 /** Draws one decoration around a tower body (at 0, 0) if the spec calls for it. */

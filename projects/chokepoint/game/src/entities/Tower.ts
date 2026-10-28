@@ -1,13 +1,12 @@
 import Phaser from 'phaser';
 import { CELL, DEPTH } from '../config';
-import { getAugment } from '../content/augments';
 import { PALETTE } from '../content/palette';
 import { towerColor, towerSpec, type TowerSpec } from '../core/augments';
 import type { AugmentCopy } from '../content/types';
 import type { Cell } from '../core/map';
 import { barrelTexture } from '../art/barrels';
 import { ART_SCALE, artScale, TOWER_BASE, TOWER_BODY, towerTexture } from '../art/textures';
-import { barrelCount, barrelLook, drawDecorations } from './towerLook';
+import { barrelCount, barrelLook, drawDecorations, pipColor } from './towerLook';
 
 /** Where the body sits above the plinth's center, in board units. */
 const BODY_LIFT = 4;
@@ -30,6 +29,8 @@ export class Tower extends Phaser.GameObjects.Image {
   readonly gun: Phaser.GameObjects.Container;
   private readonly deco: Phaser.GameObjects.Graphics;
   private readonly pips: Phaser.GameObjects.Graphics;
+  private poppingSlot = -1; // slot mid pop-in; drawPips skips it until its tween lands
+  private pipPop: Phaser.GameObjects.Graphics | undefined;
   /** Augment copies (id + tier) in its slots, in the order they were put in. */
   readonly augments: AugmentCopy[] = [];
   /** Unlocked slots (augments.length of them are filled). */
@@ -70,7 +71,10 @@ export class Tower extends Phaser.GameObjects.Image {
   addAugment(copy: AugmentCopy): boolean {
     if (this.freeSlots <= 0) return false;
     this.augments.push(copy);
+    const slot = this.augments.length - 1;
+    this.poppingSlot = slot; // set before refresh(), so drawPips leaves room for the pop-in
     this.refresh();
+    this.popPip(slot);
     return true;
   }
 
@@ -111,21 +115,20 @@ export class Tower extends Phaser.GameObjects.Image {
     this.gun.setRotation(this.aim);
   }
 
+  private pipX(i: number): number {
+    const gap = 10;
+    return -((this.slots - 1) * gap) / 2 + i * gap;
+  }
+
   private drawPips(): void {
     const g = this.pips;
     g.clear();
-    const gap = 9;
-    const left = -((this.slots - 1) * gap) / 2;
     for (let i = 0; i < this.slots; i++) {
+      if (i === this.poppingSlot) continue; // its temp pip sits on top until the tween lands
+      const x = this.pipX(i);
       const copy = this.augments[i];
-      const x = left + i * gap;
-      if (copy) {
-        g.fillStyle(PALETTE[getAugment(copy.id).look.color], 1);
-        g.fillCircle(x, 19, 3.4);
-      } else {
-        g.lineStyle(1.5, PALETTE.faint, 1);
-        g.strokeCircle(x, 19, 3);
-      }
+      if (copy) g.fillStyle(pipColor(copy.tier), 1).fillCircle(x, 22, 4);
+      else { g.lineStyle(1.5, PALETTE.faint, 1); g.strokeCircle(x, 22, 4); }
     }
   }
 
@@ -156,7 +159,25 @@ export class Tower extends Phaser.GameObjects.Image {
     this.scene.tweens.add({ targets: this.gun, scale: 1, duration: ms, ease: 'Quad.easeOut' });
   }
 
+  /** The new pip grows in on the plinth with the same bounce as the tower's drop-in. */
+  private popPip(slot: number): void {
+    if (this.pipPop) { this.scene.tweens.killTweensOf(this.pipPop); this.pipPop.destroy(); }
+    const g = this.scene.add.graphics().setDepth(DEPTH.towers + 3).setPosition(this.pips.x + this.pipX(slot), this.pips.y + 22);
+    g.fillStyle(pipColor(this.augments[slot]!.tier), 1);
+    g.fillCircle(0, 0, 4);
+    g.setScale(0.4);
+    this.pipPop = g;
+    this.scene.tweens.add({ targets: g, scale: 1, duration: 260, ease: 'Back.easeOut', onComplete: () => {
+      if (this.pipPop !== g) return; // superseded by a newer addAugment, or the tower is gone
+      g.destroy();
+      this.pipPop = undefined;
+      this.poppingSlot = -1;
+      this.drawPips();
+    } });
+  }
+
   destroy(fromScene?: boolean): void {
+    if (this.pipPop) { this.scene.tweens.killTweensOf(this.pipPop); this.pipPop.destroy(); this.pipPop = undefined; }
     this.base.destroy();
     this.gun.destroy();
     this.deco.destroy();

@@ -4,11 +4,12 @@ title: Tier pips on the tower
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0002]
 attempts: 1
 created: 2026-10-28T01:07:07Z
 claimed_at: 2026-10-28T04:41:59Z
+finished_at: 2026-10-28T05:29:18Z
 epic: E4
 ---
 
@@ -103,3 +104,16 @@ private popPip(slot: number): void {
 
 ### Tests
 none (`npm run check`, then smoke at 412x915: a 3-slot tower shows 3 pips in slot order with tier colors, and an added augment's pip pops in)
+
+## Result (attempt 1, yoga)
+
+Tier pips now show on every tower slot on the board: a small rounded pip per slot (r=4, gap 10, slot order) on the front edge of the plinth, colored by tier — light gray common, blue rare, purple epic, matching the draft card frames — and a newly added augment's pip pops in with the same bounce as the tower drop-in. Implemented as designed: `pipColor(tier)` in `entities/towerLook.ts` and private pop/pip logic in `entities/Tower.ts` (r=4/gap=10/y=22 unchanged per the design). Two small deviations, both covered by the design's pitfall note: T0002 shipped the tier on the `AugmentCopy` (not on `AugmentDef`), so pips read `copy.tier`, and the pop's temp pip is positioned from the pips' graphics (`this.pips.x/y`) since the tower image's `this.y` is lifted 4 units and would have made the pop jump at the tween's end. `npm run check` and `npm run smoke` (desktop + mobile) pass.
+
+- Self-review: APPROVE
+- Time: 47.3 min
+
+```
+projects/chokepoint/game/src/entities/Tower.ts     | 45 ++++++++++++++++------
+ projects/chokepoint/game/src/entities/towerLook.ts |  8 ++++
+ 2 files changed, 41 insertions(+), 12 deletions(-)
+```
