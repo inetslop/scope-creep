@@ -4,10 +4,11 @@ title: "The odds shift: rarer cards the deeper the run goes"
 assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: [T0002]
-attempts: 0
+attempts: 1
 created: 2026-10-28T02:08:37Z
+claimed_at: 2026-10-28T03:49:09Z
 epic: E4
 ---
 
