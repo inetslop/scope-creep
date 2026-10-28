@@ -1,12 +1,14 @@
 ---
 id: T0009
 title: Coin chime when a run pays out
+assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0001, T0003]
-attempts: 0
+attempts: 1
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T07:37:51Z
 epic: E1
 ---
 
