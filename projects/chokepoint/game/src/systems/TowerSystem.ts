@@ -12,6 +12,7 @@ import type { Board } from './Board';
 import { ATTACKS } from './attacks';
 import type { EnemySystem } from './EnemySystem';
 import type { FxSystem } from './FxSystem';
+import { auraRing } from './fx/auraRing';
 import type { ProjectileSystem } from './ProjectileSystem';
 
 /** Why something didn't happen. */
@@ -130,7 +131,11 @@ export class TowerSystem {
       fx: this.fx,
       sfx: this.sfx,
     });
-    if (attacked) hook.stats.shotsFired += 1;
+    if (attacked) {
+      hook.stats.shotsFired += 1;
+      // The quiet aura ring: a tower whose first augment is Anchor shows its root pulse working (systems/fx/auraRing.ts).
+      if (t.spec.firstId === 'anchor') auraRing(this.fx, t.x, t.y, color ? PALETTE[color] : PALETTE.faint);
+    }
     return attacked;
   }
 

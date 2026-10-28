@@ -4,11 +4,12 @@ title: "Working aura: the quiet ring under support towers when their aura works"
 assignee: desktop
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0039, T0027]
 attempts: 1
 created: 2026-10-28T13:04:03Z
 claimed_at: 2026-10-28T19:56:34Z
+finished_at: 2026-10-28T20:02:04Z
 epic: E4
 ---
 
@@ -114,3 +115,18 @@ plus `import { auraRing } from './fx/auraRing';`
 
 ### Tests
 none
+
+## Result (attempt 1, desktop)
+
+Support towers that never fire now show a quiet sign of life: a thin ring in the tower's own color grows from the plinth out to one cell and fades over 1 s at ground level, each time a pure Anchor tower's root pulse lands (systems/TowerSystem.ts, gated on the pulse having hit) or a pure Mint tower's aura pays a kill's +1 gold (new enemy hook systems/enemyHooks/mintRing.ts, one ring per paying tower per kill). The ring itself is a new effect file systems/fx/auraRing.ts; the only other edit is the one-line registration in systems/enemyHooks/index.ts. Rally and attacking-first towers show no ring, and aura values, gold, sounds and the HUD are unchanged.
+
+- Self-review: APPROVE
+- Time: 5.5 min
+
+```
+projects/chokepoint/game/src/systems/TowerSystem.ts |  7 ++++++-
+ .../chokepoint/game/src/systems/enemyHooks/index.ts |  2 ++
+ .../game/src/systems/enemyHooks/mintRing.ts         | 21 +++++++++++++++++++++
+ projects/chokepoint/game/src/systems/fx/auraRing.ts | 12 ++++++++++++
+ 4 files changed, 41 insertions(+), 1 deletion(-)
+```

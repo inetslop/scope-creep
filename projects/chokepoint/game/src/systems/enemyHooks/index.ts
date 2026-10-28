@@ -1,4 +1,5 @@
 import type { MakeEnemyHook } from './hook';
+import { mintRing } from './mintRing';
 import { split } from './split';
 
 /**
@@ -7,4 +8,5 @@ import { split } from './split';
  */
 export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   split,
+  mintRing,
 ];
