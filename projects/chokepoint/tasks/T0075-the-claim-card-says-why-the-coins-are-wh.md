@@ -1,12 +1,14 @@
 ---
 id: T0075
 title: The claim card says why the coins are what they are
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T21:24:45Z
+claimed_at: 2026-10-28T21:51:40Z
 epic: E1
 ---
 
