@@ -6,6 +6,8 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Take an augment back out of a tower into the hand, for a fee
 - Lance augment: first, a long piercing line that hits everything along it; added, shots pierce one more enemy — tasked as T0004 (desktop)
 - Chain augment: first, a zap that jumps between nearby enemies; added, hits jump to one more enemy — tasked as T0025 (asus, cycle 8)
+- Push augment: first, a gust that pushes everything within 2.5 cells back along the road, no damage (a support pulse, like Frost's slow and Mark's mark); added, hits push struck enemies back 0.4 cells (+0.4 per Push) — the first augment that moves enemies along the road instead of slowing or stopping them — tasked as T0027 (asus, cycle 9)
+- Gust wind-up: a thin ring around a Push tower's base fills as the next gust charges, so the next shove is readable at a glance (small, after T0027)
 - Mark augment: first, marks the enemy furthest along so it takes 25% more damage; added, hits mark too — tasked as T0012 (asus, cycle 2)
 - Rare augments that change a rule (e.g. towers next to each other share their slows)
 - Splitter enemy: breaks into two smaller ones when it dies
