@@ -4,13 +4,11 @@ title: The draft cards flip over when the draft opens
 assignee: yoga
 size: S
 priority: 3
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-28T05:03:06Z
-claimed_at: 2026-10-28T05:29:24Z
 epic: E4
-designer: yoga
 ---
 
 ## Goal
@@ -30,3 +28,50 @@ The draft gets a moment: the three offered cards flip face-up when the draft ope
 - [ ] A face-down card is plain white with one small muted-gray gem in the center: no name, numbers, frame or gem row visible.
 - [ ] Cards are tappable the instant their flip ends, and the flip plays on every draft open including the first one.
 - [ ] Card layout is unchanged from T0002 at 412x915 and 1280x720.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/scenes/DraftScene.ts` - cards show face-down (plain white, one muted-gray gem in the center), flip face-up in display order with a stagger, and each card only picks after its own flip ends.
+
+### Interfaces
+none — all local to `DraftScene.create()`.
+
+### Steps
+1. In `src/scenes/DraftScene.ts`, before `const pick =` (line 36) add:
+   `const flipped: boolean[] = offer.map(() => false);`
+   and change pick's first line to `if (this.picked || !flipped[i]) return;`
+   (taps, keys 1–3 and the `?smoke` auto-pick all go through `pick`, so this one guard covers them).
+2. In the `cards` map, after the frame block (after line 86) and before `return { button, frame };` add exactly:
+```ts
+      // The card's back: one muted-gray gem in the center; hidden when face-up.
+      const back = artScale(this.add.image(0, 0, GEM_TEXTURE)).setTint(PALETTE.faint);
+      button.content.setVisible(false);
+      frame?.setVisible(false);
+      button.container.add(back);
+      // The flip: the card narrows to a line and widens back face-up; the Epic card's is a bit longer.
+      const leg = (copy.tier === 'epic' ? 350 : 200) / 2;
+      this.tweens.add({
+        targets: [button.container, ...(frame ? [frame] : [])],
+        scaleX: 0.03,
+        delay: 100 + i * 60,
+        duration: leg,
+        ease: 'Quad.easeIn',
+        yoyo: true,
+        repeat: 1,
+        onYoyo: () => { back.setVisible(false); button.content.setVisible(true); frame?.setVisible(true); },
+        onComplete: () => { button.container.setScale(1); frame?.setScale(1); flipped[i] = true; },
+      });
+```
+   (`artScale` and `GEM_TEXTURE` are already imported; `i` is the map index = display order, so flips run 1→2→3.)
+3. Nothing else: no changes to `CARD_W`/`CARD_H`, `layout()`, `place()`, the `makeButton` options, the frame drawing or the gem rows — card sizes, positions, frames and gem rows stay exactly T0002's.
+
+### Pitfalls
+- `back` must be a child of `button.container`, not `button.content` — into `content` it would be hidden with the face-up stuff.
+- `frame` stays in the tween's `targets` and hidden until `onYoyo` — otherwise a face-down card would show its purple/blue frame (must be plain white: no name, frame or gem row).
+- The flip is scaleX-only: all card children (content, back) follow the container automatically; never touch positions in the flip.
+- Latest flip ends at 100 + 120 + 350 = 570 ms, before the `?smoke` auto-pick at 800 ms — keep the stagger at 60 ms so this holds.
+- Durations are milliseconds in the tween manager — no frame-count assumptions.
+
+### Tests
+none
