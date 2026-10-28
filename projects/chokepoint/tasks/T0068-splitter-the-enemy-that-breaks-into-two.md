@@ -4,11 +4,12 @@ title: "Splitter: the enemy that breaks into two"
 assignee: desktop-4070
 size: M
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T13:54:28Z
 claimed_at: 2026-10-28T16:00:39Z
+finished_at: 2026-10-28T17:10:36Z
 ---
 
 ## Goal
@@ -123,3 +124,27 @@ One slightly-bent thin line = the crack; splinter has no `splitsInto` so no crac
 ### Tests
 - `tests/core/split.test.ts` (new): quarter-cell offsets and end clamping of `splitDistances`.
 - `tests/core/waves.test.ts`: budget test skips splitters; new mix test pins "one splitter per 7 enemies, none before wave 9".
+
+## Result (attempt 1, desktop-4070)
+
+The Splitter is in: a big red cracked Dot that walks in from wave 9 — worth twice the gold but three times the hp at three-quarters the speed — and any kill of it (tower shot, Frost, push, whatever) breaks it into two small fast splinters half a cell either side of the death spot, clamped to the road ends. A splitter's death is an ordinary kill: gold, Mint bonuses, the "stopped" milestone and combo chains all fire normally, and kills on the resulting splinters within 1.5 s keep chaining off it. Waves from 9 on mix in one splitter per seven of their other enemies with no randomness, so seeded wave previews stay identical to what actually spawns, and waves 1–8 never see one. Two small deviations from the written design: `Enemy.spawn` now takes a distance and positions at `path.pointAt(distance)` instead of a hard-coded start (a no-op for normal spawns, needed so splinters appear at the right spot), and both new enemy definitions carry name/description fields because content validation requires them.
+
+- Self-review: APPROVE
+- Time: 70.0 min
+
+```
+projects/chokepoint/game/src/art/entities.ts            | 17 ++++++++++++++++-
+ projects/chokepoint/game/src/content/enemies/index.ts   |  4 ++++
+ .../chokepoint/game/src/content/enemies/splinter.ts     | 16 ++++++++++++++++
+ .../chokepoint/game/src/content/enemies/splitter.ts     | 16 ++++++++++++++++
+ projects/chokepoint/game/src/content/types.ts           |  4 ++++
+ projects/chokepoint/game/src/core/split.ts              |  9 +++++++++
+ projects/chokepoint/game/src/core/waves.ts              | 15 +++++++++++++--
+ projects/chokepoint/game/src/debug/runChecks.ts         |  1 +
+ projects/chokepoint/game/src/entities/Enemy.ts          |  9 ++++++---
+ projects/chokepoint/game/src/scenes/menu/MenuDemo.ts    |  4 +++-
+ projects/chokepoint/game/src/systems/EnemySystem.ts     | 11 +++++++++--
+ projects/chokepoint/game/tests/core/split.test.ts       | 16 ++++++++++++++++
+ projects/chokepoint/game/tests/core/waves.test.ts       | 15 ++++++++++++++-
+ 13 files changed, 127 insertions(+), 10 deletions(-)
+```

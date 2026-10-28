@@ -106,7 +106,9 @@ export class MenuDemo {
   }
 
   private spawn(): void {
-    const def = ENEMIES[Math.floor(Math.random() * ENEMIES.length)]!;
+    // The show only uses enemies that walk in alone (no splinters: they exist only as a split).
+    const walkers = ENEMIES.filter((e) => !e.spawnOnly);
+    const def = walkers[Math.floor(Math.random() * walkers.length)]!;
     const img = this.scene.add.image(0, 0, enemyTexture(def.id));
     artScale(img, DEMO.enemyScale * this.k);
     this.enemies.push({ img, def, distance: 0, hp: def.livesCost > 1 ? 4 : 2, slowLeft: 0 });

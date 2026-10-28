@@ -22,6 +22,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   def!: EnemyDef;
   hp = 0;
   maxHp = 0;
+  /** The wave's hp multiplier it took; its split children take the same. */
+  hpMul = 1;
   /** Board units walked along the path. */
   distance = 0;
   /** Board units per second. */
@@ -61,11 +63,12 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.setActive(false).setVisible(false);
   }
 
-  spawn(def: EnemyDef, hpMul: number, path: PathLine): void {
+  spawn(def: EnemyDef, hpMul: number, path: PathLine, distance = 0): void {
     this.def = def;
     this.maxHp = Math.max(1, Math.round(def.hp * hpMul));
     this.hp = this.maxHp;
-    this.distance = 0;
+    this.hpMul = hpMul;
+    this.distance = distance;
     this.speed = def.speed * CELL;
     this.dirX = 0;
     this.dirY = -1;
@@ -87,7 +90,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.setTexture(enemyTexture(def.id));
     this.clearTint();
     this.setScale(0);
-    const p = path.pointAt(0);
+    const p = path.pointAt(distance);
     this.setPosition(p.x, p.y);
     this.setActive(true).setVisible(true);
   }

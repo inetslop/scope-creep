@@ -3,6 +3,8 @@ import { block } from './block';
 import { dasher } from './dasher';
 import { dart } from './dart';
 import { dot } from './dot';
+import { splinter } from './splinter';
+import { splitter } from './splitter';
 import { sprinter } from './sprinter';
 
 /** Every enemy type. Waves draw from the ones whose fromWave has been reached. */
@@ -12,6 +14,8 @@ export const ENEMIES: readonly EnemyDef[] = [
   block,
   dasher,
   sprinter,
+  splitter,
+  splinter,
 ];
 
 const byId = new Map(ENEMIES.map((e) => [e.id, e]));

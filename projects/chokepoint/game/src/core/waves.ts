@@ -42,15 +42,20 @@ export function dashCount(wave: number): number {
   return Math.min(5, n);
 }
 
+/** How many splitting enemies a wave sends: one per seven of its other enemies (none until it is unlocked). */
+export function splitterCount(total: number): number {
+  return Math.floor(total / 7);
+}
+
 /**
  * Which enemies a wave sends, in order, and when. Spends the wave's budget on enemies that are
  * unlocked (fromWave) and affordable; groups of the same type come in quick succession. Ramping
  * enemies are reserved up front (a fixed count per wave), then interleaved evenly through it.
  */
 export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): WavePlan {
-  const unlocked = enemies.filter((e) => e.fromWave <= wave && e.threat > 0);
+  const unlocked = enemies.filter((e) => !e.spawnOnly && e.fromWave <= wave && e.threat > 0);
   const rampers = unlocked.filter((e) => e.speedRamp !== undefined);
-  const walkers = unlocked.filter((e) => e.speedRamp === undefined && e.dashCycle === undefined);
+  const walkers = unlocked.filter((e) => e.speedRamp === undefined && e.dashCycle === undefined && e.splitsInto === undefined);
   let budget = waveBudget(wave);
   // Reserve the rampers first; no rng here, so the seeded picks of the walkers don't shift.
   const rampSpawns: string[] = [];
@@ -77,6 +82,12 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
     }
   }
   const reserved = [...rampSpawns, ...dashSpawns];
+  // Splitters: one per seven of the wave's other enemies, once its fromWave (9) is reached (no rng: seeded waves stay stable).
+  const splitter = unlocked.find((e) => e.splitsInto !== undefined);
+  if (splitter) {
+    const n = splitterCount(spawns.length + reserved.length);
+    for (let i = 0; i < n; i++) reserved.push(splitter.id);
+  }
   if (reserved.length === 0) return { number: wave, spawns, hpMul: waveHpMul(wave) };
   // Interleave the rampers and dashing ones evenly through the wave (no rng: seeded waves stay stable).
   let t = 0;

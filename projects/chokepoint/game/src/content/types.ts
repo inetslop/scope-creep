@@ -27,6 +27,8 @@ export interface EnemyDef {
   speedRamp?: { perHit: number; max: number };
   /** The dash cycle (Dasher): crawl for `crawlSec`, stop for `pauseSec` (its white telegraph is the first half), then surge `dashCells` cells in `dashSec`. */
   dashCycle?: { crawlSec: number; pauseSec: number; dashCells: number; dashSec: number };
+  /** When it dies, it splits into two of this enemy: one 0.25 cells ahead of the kill, one behind (core/split.ts). */
+  splitsInto?: string;
   /** Gold for killing it. */
   gold: number;
   /** Lives lost when it reaches the exit. */
@@ -35,6 +37,8 @@ export interface EnemyDef {
   threat: number;
   /** First wave it can appear in. */
   fromWave: number;
+  /** Never in a wave's mix: it exists only as a split of another enemy (core/waves.ts skips it). */
+  spawnOnly?: boolean;
   look: Look;
 }
 

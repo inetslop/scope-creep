@@ -13,7 +13,8 @@ describe('planWave', () => {
         const def = ENEMIES.find((e) => e.id === s.enemy)!;
         expect(def.fromWave).toBeLessThanOrEqual(wave);
         expect(s.delaySec).toBeGreaterThanOrEqual(0);
-        spent += def.threat;
+        // Splitters are mixed in on top of the budget, like the rampers and dashing ones.
+        if (s.enemy !== 'splitter') spent += def.threat;
       }
       expect(spent).toBeLessThanOrEqual(waveBudget(wave));
     }
@@ -61,6 +62,18 @@ describe('planWave', () => {
     for (const [wave, count] of expected) {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
       expect(plan.spawns.filter((s) => s.enemy === 'dasher').length).toBe(count);
+    }
+  });
+
+  it('mixes in one splitter per seven of its other enemies, none before wave 9', () => {
+    for (const wave of [1, 8]) {
+      expect(planWave(wave, new Rng(wave), ENEMIES).spawns.filter((s) => s.enemy === 'splitter').length).toBe(0);
+    }
+    for (const wave of [9, 12, 15, 20]) {
+      const plan = planWave(wave, new Rng(wave), ENEMIES);
+      const others = plan.spawns.filter((s) => s.enemy !== 'splitter').length;
+      expect(plan.spawns.filter((s) => s.enemy === 'splitter').length).toBe(Math.floor(others / 7));
+      expect(plan.spawns.filter((s) => s.enemy === 'splitter').length).toBeGreaterThan(0);
     }
   });
 

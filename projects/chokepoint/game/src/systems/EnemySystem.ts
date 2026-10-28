@@ -2,9 +2,11 @@ import type Phaser from 'phaser';
 import { CELL, DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
 import type { Burn, EnemyDef } from '../content/types';
+import { getEnemy } from '../content/enemies';
 import type { RunState } from '../core/run';
 import { mintGoldBonus } from '../core/mint';
 import { burnTick } from '../core/burn';
+import { splitDistances } from '../core/split';
 import { hook } from '../debug/testHook';
 import { Enemy } from '../entities/Enemy';
 import type { Tower } from '../entities/Tower';
@@ -67,14 +69,14 @@ export class EnemySystem {
     return n;
   }
 
-  spawn(def: EnemyDef, hpMul: number): Enemy {
+  spawn(def: EnemyDef, hpMul: number, distance = 0): Enemy {
     let enemy = this.pool.find((e) => !e.active);
     if (!enemy) {
       enemy = new Enemy(this.scene);
       this.scene.add.existing(enemy);
       this.pool.push(enemy);
     }
-    enemy.spawn(def, hpMul, this.board.path);
+    enemy.spawn(def, hpMul, this.board.path, distance);
     hook.stats.enemiesSpawned += 1;
     return enemy;
   }
@@ -149,6 +151,11 @@ export class EnemySystem {
     this.fx.popText(e.x, e.y - 20, `+${paid}`);
     if (mint > 0) this.fx.mintPop(e.x, e.y - 20, mint);
     this.sfx?.kill();
+    // A splitter dies into two splinters, 0.25 cells either side of the kill (core/split.ts).
+    if (e.def.splitsInto) {
+      const child = getEnemy(e.def.splitsInto);
+      for (const d of splitDistances(e.distance, this.board.path.length)) this.spawn(child, e.hpMul, d);
+    }
     hook.stats.enemiesKilled += 1;
     e.despawn();
   }

@@ -13,7 +13,22 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
     const r = e.look.size * CELL;
     const depth = Math.max(2, r * 0.18);
     const size = tokenRoom(r, depth) * 2;
-    paintTexture(scene, enemyTexture(e.id), size, size, (ctx) => paintToken(ctx, e.look.shape, size / 2, size / 2 - depth / 2, r, PALETTE[e.look.color], deepOf(e.look.color), { depth }));
+    paintTexture(scene, enemyTexture(e.id), size, size, (ctx) => {
+      paintToken(ctx, e.look.shape, size / 2, size / 2 - depth / 2, r, PALETTE[e.look.color], deepOf(e.look.color), { depth });
+      if (e.splitsInto !== undefined) {
+        // One thin crack across the face: the road's white, so it reads as a split line.
+        const cx = size / 2, cy = size / 2 - depth / 2;
+        ctx.strokeStyle = rgba(PALETTE.road, 1);
+        ctx.lineWidth = Math.max(1, r * 0.1);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(cx - r * 0.55, cy - r * 0.1);
+        ctx.lineTo(cx + r * 0.05, cy + r * 0.12);
+        ctx.lineTo(cx + r * 0.55, cy - r * 0.02);
+        ctx.stroke();
+      }
+    });
   }
   const plinth = CELL * 0.4;
   const base = tokenRoom(plinth, 5) * 2;
