@@ -191,4 +191,19 @@ describe('rollOffer', () => {
       expect(new Set(offer.map((a) => a.id)).size).toBe(3);
     }
   });
+
+  it('the opening draft (and its reroll) always offers a Common Bolt', () => {
+    for (let seed = 1; seed <= 200; seed++) {
+      const offer = rollOffer(new Rng(seed), AUGMENTS, 3, 1, true);
+      expect(offer.length).toBe(3);
+      expect(new Set(offer.map((a) => a.id)).size).toBe(3);
+      expect(offer.some((c) => c.id === 'bolt' && c.tier === 'common')).toBe(true);
+    }
+  });
+
+  it('no Bolt promise after wave 1: some later draft rolls no Bolt at all', () => {
+    let noBolt = 0;
+    for (let seed = 1; seed <= 200; seed++) if (!rollOffer(new Rng(seed), AUGMENTS, 3, 2).some((c) => c.id === 'bolt')) noBolt += 1;
+    expect(noBolt).toBeGreaterThan(0);
+  });
 });

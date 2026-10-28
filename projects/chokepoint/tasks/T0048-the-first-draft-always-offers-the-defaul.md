@@ -4,11 +4,12 @@ title: The first draft always offers the default shot
 assignee: baby-mama
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T12:01:28Z
 claimed_at: 2026-10-28T12:38:33Z
+finished_at: 2026-10-28T12:42:52Z
 epic: E4
 ---
 
@@ -86,3 +87,16 @@ it('no Bolt promise after wave 1: some later draft rolls no Bolt at all', () => 
 
 ### Tests
 - The two tests above (rule change in `src/core/augments.ts`).
+
+## Result (attempt 1, baby-mama)
+
+The pre-wave-1 draft (and its one reroll) now always includes a Common Bolt among its three cards: `rollOffer` in `src/core/augments.ts` reserves the first offer slot for the game's default shot when `opening` is true, and marks it taken so the other two slots roll different augments. From wave 1 onward the roll is untouched — no Bolt promise, tiers roll as usual. Two tests in `tests/core/augments.test.ts` pin the guarantee over 200 seeds each (opening always offers a Common Bolt; later drafts sometimes roll none). No types, signatures, or UI changed.
+
+- Self-review: APPROVE
+- Time: 4.3 min
+
+```
+projects/chokepoint/game/src/core/augments.ts        | 10 ++++++++--
+ projects/chokepoint/game/tests/core/augments.test.ts | 15 +++++++++++++++
+ 2 files changed, 23 insertions(+), 2 deletions(-)
+```

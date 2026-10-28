@@ -216,13 +216,19 @@ export function slotCost(index: number): number | undefined {
  * from the pool for that tier: an augment with a `tier` (Mark) is only in the pool for cards that
  * rolled that tier, so it can never exist as any other tier. The opening draft (`opening`) only
  * offers augments that deal damage as a tower's first, or that may open (`opening`), since the
- * first one has to hold wave 1 alone.
+ * first one has to hold wave 1 alone. Its first card is a Common Bolt, the game's default shot,
+ * so the opening pick is never a dead end.
  */
 export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, wave: number, opening = false): AugmentCopy[] {
   const open = opening ? pool.filter((a) => a.first.damage > 0 || a.opening) : pool;
   const taken = new Set<string>();
   const offers: AugmentCopy[] = [];
-  for (let i = 0; i < count; i++) {
+  if (opening) {
+    // The opening draft (and its one reroll) always offers the game's default shot: a Common Bolt.
+    offers.push({ id: bolt.id, tier: 'common' });
+    taken.add(bolt.id);
+  }
+  for (let i = offers.length; i < count; i++) {
     const tier = rollTier(rng, wave);
     const candidates = open.filter((a) => !taken.has(a.id) && (a.tier === undefined || a.tier === tier));
     const picked = rng.pick(candidates);
