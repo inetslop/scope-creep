@@ -3,11 +3,13 @@ id: T0071
 title: "Quiet wave: every 4th wave is a breather"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0015, T0054]
 attempts: 0
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T14:16:21Z
 epic: E1
+designer: baby-mama
 ---
 
 ## Goal
