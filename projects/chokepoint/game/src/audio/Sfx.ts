@@ -26,7 +26,8 @@ export class Sfx {
     }
   }
 
-  private tone(freq: number, durSec: number, type: OscillatorType, volume: number, slideTo?: number, delaySec = 0): void {
+  /** One note: `freq` Hz for `durSec` (sliding to `slideTo`), fading out; silent while audio is locked or muted. */
+  tone(freq: number, durSec: number, type: OscillatorType, volume: number, slideTo?: number, delaySec = 0): void {
     const ctx = this.ctx;
     if (!ctx || !this.master || this.muted || ctx.state !== 'running') return;
     const t = ctx.currentTime + delaySec;

@@ -5,9 +5,14 @@ import { artScale, CHIP_TEXTURE } from '../art/textures';
 import { fillRing } from '../ui/ring';
 import { textStyle } from '../ui/text';
 
-/** Short-lived feedback on the board: rings, waves, chips and floating text. Soft and quick. */
+/**
+ * Short-lived feedback on the board: rings, waves, chips and floating text. Soft and quick.
+ * A new effect goes in its own file, systems/fx/<name>.ts: a function that takes this FxSystem,
+ * returns early when `full`, creates its objects on `scene` and hands each to `track()`.
+ */
 export class FxSystem {
-  private readonly scene: Phaser.Scene;
+  /** The game scene (effects in systems/fx/ create their objects on it). */
+  readonly scene: Phaser.Scene;
   /** Live effects, capped so a big wave can't flood the scene. */
   private live = 0;
   private static readonly MAX = 160;
@@ -28,12 +33,18 @@ export class FxSystem {
     return this.live;
   }
 
+  /** At the cap of live effects: a new effect should not start (a big wave can't flood the scene). */
+  get full(): boolean {
+    return this.live >= FxSystem.MAX;
+  }
+
   /** The current kill chain (the rising ×N counter), 0 between chains. */
   get chain(): number {
     return this.comboN;
   }
 
-  private track<T extends Phaser.GameObjects.GameObject>(obj: T, durationMs: number, props: Record<string, number | string>): void {
+  /** Tweens `obj` to `props` over `durationMs`, then destroys it; it counts as a live effect until then. */
+  track<T extends Phaser.GameObjects.GameObject>(obj: T, durationMs: number, props: Record<string, number | string>): void {
     this.live += 1;
     this.scene.tweens.add({
       targets: obj,

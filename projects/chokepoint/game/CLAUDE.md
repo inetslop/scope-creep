@@ -9,8 +9,8 @@ This file is maintained by humans. Deeper docs: `docs/ARCHITECTURE.md`.
 
 Several developers change this game at the same time, and every edit two of them make at the same spot becomes a merge conflict. So:
 - **One concern per file.** Put new logic in a new file (a content file, a core module, an attack, a HUD part, a decoration) and touch shared files only for the one line that registers it.
-- **Registries are lists, one item per line.** Content (`ENEMIES`, `AUGMENTS`), attacks (`ATTACKS`), HUD parts (`HudScene`), hotkeys (`HOTKEYS`), invariants (`INVARIANTS`), tower decorations (`DECORATIONS`), enemy marks (`MARKS`), texture painters (`PAINTERS`). Add your line next to the related ones, never at the very end where everyone appends.
-- **Don't grow GameScene or HudScene.** GameScene only wires systems together; HudScene only lists HUD parts. Features live in systems/, ui/hud/, input/, entities/.
+- **Registries are lists, one item per line.** Content (`ENEMIES`, `AUGMENTS`), attacks (`ATTACKS`), enemy hooks (`ENEMY_HOOKS`), HUD parts (`HudScene`), hotkeys (`HOTKEYS`), invariants (`INVARIANTS`), tower decorations (`DECORATIONS`), enemy marks (`MARKS`), texture painters (`PAINTERS`). Add your line next to the related ones, never at the very end where everyone appends.
+- **Don't grow GameScene, HudScene, EnemySystem or FxSystem.** GameScene only wires systems together; HudScene only lists HUD parts. What reacts to kills, leaks or every frame of a wave is an enemy hook; a new effect is a file in `systems/fx/`. Features live in systems/, ui/hud/, input/, entities/.
 - No drive-by renames, reformatting or moving code you don't need to change.
 
 ## Art style: bright minimal
@@ -42,7 +42,7 @@ How to draw:
 | `art/` | Texture painters (one per kind: `entities`, `icons`, `barrels`, `board`, `menu`), their registry (`generate.ts`), helpers (`textures.ts`, `paint.ts`) | yes |
 | `audio/` | `Sfx`: tiny procedural sounds (WebAudio, no files) | yes |
 | `entities/` | Game objects: pooled `Enemy` and `Projectile`; `Tower` and its look rules (`towerLook.ts`) | yes |
-| `systems/` | Owned by GameScene: `RunFlow` (phases), `Building` (hand, selection, taps), `Board` (cells, camera), `WaveSystem`, `EnemySystem` (+ `enemyMarks.ts`), `TowerSystem`, `attacks/` (one file per attack kind), `ProjectileSystem`, `FxSystem` | yes |
+| `systems/` | Owned by GameScene: `RunFlow` (phases), `Building` (hand, selection, taps), `Board` (cells, camera), `WaveSystem`, `EnemySystem` (+ `enemyMarks.ts`), `enemyHooks/` (one file per reaction to kills, leaks or every frame of a wave), `TowerSystem`, `attacks/` (one file per attack kind), `ProjectileSystem`, `FxSystem` (+ `fx/`, one file per new effect) | yes |
 | `input/` | `BoardGestures` (tap, drag, pinch, wheel) and `hotkeys.ts` (the key table) | yes |
 | `scenes/` | Boot, Menu (+ `menu/MenuDemo.ts`), Game, Hud, Draft, Pause, GameOver. Keys in `scenes/keys.ts` | yes |
 | `ui/` | Text, cards, buttons, rings, the pixel ratio (`display.ts`), and the HUD parts (`ui/hud/`, one per element) | yes |
@@ -71,6 +71,12 @@ How to draw:
 **Add an augment** — copy `content/augments/frost.ts`, give it a new `id`, `look`, the two card lines (`asTower`: what it does as a tower's first augment; `asAdded`: what it changes when added, with its numbers) and its two forms: `first` (the tower's attack when it goes in first) and `added` (the change it makes to any attack after that). Add it to `AUGMENTS` in `content/augments/index.ts`. It shows up in the draft, its icon and tower body are painted automatically, and `core/augments.ts` combines it. A new kind of change needs a field in `AddedForm` (`content/types.ts`) and its handling in `towerSpec()`; give it a visual in `entities/towerLook.ts`.
 
 **Add an attack kind** — add the kind to `AttackKind` (`content/types.ts`), write `systems/attacks/<kind>.ts` (model it on `shot.ts`: it gets an `AttackContext` and returns whether it attacked), and add one line to `ATTACKS` in `systems/attacks/index.ts`.
+
+**React to kills, leaks or every frame of a wave** — write `systems/enemyHooks/<name>.ts` exporting a `MakeEnemyHook` (model it on `split.ts`): it gets the run's systems once per run (`EnemyHookContext`) and returns `onKill`, `onLeak` and/or `update`. Add one line to `ENEMY_HOOKS` in `systems/enemyHooks/index.ts`. Keep its state inside the function, never in module-level variables (a new run makes a new hook). Don't edit `EnemySystem` for it.
+
+**Add a visual effect** — write `systems/fx/<name>.ts`: a function that takes the `FxSystem` (and where and what to show), returns early when `fx.full`, creates its objects on `fx.scene` and hands each to `fx.track(obj, durationMs, tweenProps)`. Call it where the effect happens. Don't add methods to FxSystem.
+
+**Add a sound** — one method in `audio/Sfx.ts` that calls `this.tone(...)`, next to the sounds it belongs with. Only add a method; changing another sound is a task of its own.
 
 **Add a HUD element** — write `ui/hud/<Name>.ts` implementing `HudPart` (model it on `WaveCard.ts`: build in the constructor, place in `layout()`, refresh in `update()`), and add one line to the `parts` list in `HudScene.create()`.
 

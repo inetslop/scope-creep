@@ -2,16 +2,16 @@ import type Phaser from 'phaser';
 import { CELL, DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
 import type { Burn, EnemyDef } from '../content/types';
-import { getEnemy } from '../content/enemies';
 import type { RunState } from '../core/run';
 import { mintGoldBonus } from '../core/mint';
 import { burnTick } from '../core/burn';
 import { ROOT_IMMUNE_SEC } from '../core/root';
-import { splitDistances } from '../core/split';
 import { hook } from '../debug/testHook';
 import { Enemy } from '../entities/Enemy';
 import type { Tower } from '../entities/Tower';
 import { drawEnemyMarks } from './enemyMarks';
+import { ENEMY_HOOKS } from './enemyHooks';
+import type { EnemyHook } from './enemyHooks/hook';
 import type { Sfx } from '../audio/Sfx';
 import type { Board } from './Board';
 import type { FxSystem } from './FxSystem';
@@ -49,6 +49,8 @@ export class EnemySystem {
   towers: () => readonly Tower[] = () => [];
   private readonly pool: Enemy[] = [];
   private readonly bars: Phaser.GameObjects.Graphics;
+  /** What reacts to kills, leaks and every frame of a wave (systems/enemyHooks/), made fresh for this run. */
+  private readonly hooks: readonly EnemyHook[];
 
   constructor(scene: Phaser.Scene, board: Board, run: RunState, fx: FxSystem, sfx: Sfx | undefined) {
     this.scene = scene;
@@ -57,6 +59,8 @@ export class EnemySystem {
     this.fx = fx;
     this.sfx = sfx;
     this.bars = scene.add.graphics().setDepth(DEPTH.bars);
+    const ctx = { scene, board, run, fx, sfx, enemies: this, towers: () => this.towers() };
+    this.hooks = ENEMY_HOOKS.map((make) => make(ctx));
   }
 
   /** Every pooled enemy (check `active`). Targeting reads this. */
@@ -88,8 +92,12 @@ export class EnemySystem {
       const leaked = e.advance(dt, this.board.path);
       // The burn keeps ticking after the last shot; an enemy that leaks this frame is done.
       if (!leaked) this.tickBurn(e, dt);
-      if (leaked) this.leak(e);
+      if (leaked) {
+        for (const h of this.hooks) h.onLeak?.(e);
+        this.leak(e);
+      }
     }
+    for (const h of this.hooks) h.update?.(dt);
   }
 
   /** One frame of the burn: its damage over the seconds still ablaze, through the normal hit. */
@@ -151,11 +159,8 @@ export class EnemySystem {
     this.fx.popText(e.x, e.y - 20, `+${paid}`);
     if (mint > 0) this.fx.mintPop(e.x, e.y - 20, mint);
     this.sfx?.kill();
-    // A splitter dies into two splinters, 0.25 cells either side of the kill (core/split.ts).
-    if (e.def.splitsInto) {
-      const child = getEnemy(e.def.splitsInto);
-      for (const d of splitDistances(e.distance, this.board.path.length)) this.spawn(child, e.hpMul, d);
-    }
+    // Everything else that reacts to a kill (systems/enemyHooks/, e.g. a splitter splitting); the enemy is still at its spot.
+    for (const h of this.hooks) h.onKill?.({ enemy: e, source, paid });
     hook.stats.enemiesKilled += 1;
     e.despawn();
   }

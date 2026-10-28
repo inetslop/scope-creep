@@ -111,6 +111,8 @@
       "chokepoint": [
         "src/content/*/index.ts",
         "src/systems/attacks/index.ts",
+        "src/systems/enemyHooks/index.ts",
+        "src/audio/Sfx.ts",
         "src/input/hotkeys.ts",
         "src/debug/runChecks.ts",
         "src/art/generate.ts"
