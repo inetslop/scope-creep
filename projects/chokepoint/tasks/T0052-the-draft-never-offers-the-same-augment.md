@@ -3,11 +3,13 @@ id: T0052
 title: The draft never offers the same augment twice in a row
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0048]
 attempts: 0
 created: 2026-10-28T12:34:55Z
+claimed_at: 2026-10-28T12:45:21Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
