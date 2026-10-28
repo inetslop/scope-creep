@@ -4,10 +4,12 @@ title: "Sprinter: the enemy that gets faster when hit"
 assignee: inet-racing
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T02:21:12Z
+designer: desktop
 ---
 
 ## Goal
