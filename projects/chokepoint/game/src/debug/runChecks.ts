@@ -17,6 +17,10 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['exitWarn.valid', (g) => g.exitWarn.broken()],
   ['projectiles.count', (g) => (g.projectiles.activeCount > 600 ? `${g.projectiles.activeCount} projectiles in flight` : null)],
   ['towers.valid', (g) => g.towers.brokenTower()],
+  ['rally.valid', (g) => {
+    for (const t of g.towers.towers) if (t.rallyRateMul < 1 - 1e-9 || t.rallyRateMul > 1.2) return `rally multiplier ${t.rallyRateMul}`;
+    return null;
+  }],
   ['hand.selection', (g) => g.building.brokenSelection()],
   ['augments.valid', (g) => {
     for (const c of [...g.run.hand, ...g.towers.towers.flatMap((t) => t.augments)])

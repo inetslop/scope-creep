@@ -93,7 +93,7 @@ export class TowerSystem {
       if (!t.spec.attacks) continue;
       t.cooldown -= dt;
       if (t.cooldown > 0) continue;
-      if (this.attack(t, enemies)) t.cooldown += 1 / t.spec.rate;
+      if (this.attack(t, enemies)) t.cooldown += 1 / (t.spec.rate * t.rallyRateMul);
       else t.cooldown = 0; // nothing in range: ready the moment something walks in
     }
   }

@@ -53,8 +53,8 @@ function paintTowerBody(ctx: CanvasRenderingContext2D, shape: Shape, color: Brig
   shapePath(ctx, shape, c, c, r);
   ctx.fillStyle = rgba(fill, 1);
   ctx.fill();
-  // A small light dot: the eye of the tower.
-  shapePath(ctx, 'circle', c, c - r * 0.05, r * 0.2);
+  // A small light dot: the eye of the tower (on the cap for a pillar).
+  shapePath(ctx, 'circle', c, shape === 'pillar' ? c - r * 0.78 : c - r * 0.05, r * 0.2);
   ctx.fillStyle = rgba(PALETTE.card, 0.95);
   ctx.fill();
 }

@@ -1,0 +1,55 @@
+import { describe, expect, it } from 'vitest';
+import { AUGMENTS } from '../../src/content/augments';
+import { rollOffer } from '../../src/core/augments';
+import { RALLY_PCT, RALLY_RANGE, inRallyReach, rallyBuffed } from '../../src/core/rally';
+import type { Cell } from '../../src/core/map';
+import { Rng } from '../../src/core/rng';
+
+const cell = (col: number, row: number): Cell => ({ col, row });
+
+describe('rally range and reach', () => {
+  it('is 2 cells and a flat 10% buff', () => {
+    expect(RALLY_RANGE).toBe(2);
+    expect(RALLY_PCT).toBeCloseTo(0.1);
+  });
+
+  it('reaches a 5x5 square (Chebyshev), not a circle', () => {
+    expect(inRallyReach(cell(0, 0), cell(2, 2), RALLY_RANGE)).toBe(true); // the far corner is in
+    expect(inRallyReach(cell(0, 0), cell(3, 0), RALLY_RANGE)).toBe(false);
+    expect(inRallyReach(cell(0, 0), cell(0, 3), RALLY_RANGE)).toBe(false);
+  });
+});
+
+describe('rallyBuffed', () => {
+  it('a lone beacon is not buffed; a bolt two cells away is, three away is not', () => {
+    const cells = [cell(0, 0), cell(2, 0), cell(3, 0)];
+    expect(rallyBuffed(cells, [true, false, false], [false, true, true], RALLY_RANGE)).toEqual([false, true, false]);
+  });
+
+  it('two rallies around one bolt still buff it only once (a boolean never stacks)', () => {
+    const cells = [cell(-2, 0), cell(0, 0), cell(2, 0)];
+    expect(rallyBuffed(cells, [true, false, true], [false, true, false], RALLY_RANGE)).toEqual([false, true, false]);
+  });
+
+  it('an attacking tower with rally added is buffed while alone', () => {
+    expect(rallyBuffed([cell(0, 0)], [true], [true], RALLY_RANGE)).toEqual([true]);
+  });
+});
+
+describe('the draft rolls Rally only as Epic', () => {
+  it('every rally offered across many seeds is epic, and at least one comes up', () => {
+    let seen = 0;
+    for (let seed = 1; seed <= 40; seed++) {
+      for (const wave of [1, 5, 10]) {
+        const rng = new Rng(seed);
+        for (const c of rollOffer(rng, AUGMENTS, 3, wave, false)) {
+          if (c.id === 'rally') {
+            seen += 1;
+            expect(c.tier).toBe('epic');
+          }
+        }
+      }
+    }
+    expect(seen).toBeGreaterThan(0);
+  });
+});

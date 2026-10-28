@@ -2,7 +2,7 @@ import type { Shape } from '../content/types';
 
 /** Corner points of a regular shape of `radius` around (0, 0), pointing up. Empty for a circle. */
 export function shapePoints(shape: Shape, radius: number): { x: number; y: number }[] {
-  const sides: Record<Shape, number> = { circle: 0, triangle: 3, square: 4, diamond: 4, pentagon: 5, hexagon: 6 };
+  const sides: Record<Shape, number> = { circle: 0, triangle: 3, square: 4, diamond: 4, pentagon: 5, hexagon: 6, pillar: 0 };
   const n = sides[shape];
   if (n === 0) return [];
   // Squares sit flat; diamonds are squares on a corner; odd shapes point up.

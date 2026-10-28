@@ -4,11 +4,12 @@ title: "Rally: the rule-changing Epic that rewards clusters"
 assignee: asus
 size: L
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0012]
 attempts: 1
 created: 2026-10-28T04:12:01Z
 claimed_at: 2026-10-28T05:44:47Z
+finished_at: 2026-10-28T07:29:16Z
 epic: E4
 ---
 
@@ -105,3 +106,34 @@ export class RallySystem {
 
 ### Tests
 `tests/core/rally.test.ts`: (1) `RALLY_RANGE === 2`, `RALLY_PCT ≈ 0.1`, `inRallyReach` — (2,2) diagonal is IN (square, not circle), (3,0) and (0,3) are OUT; (2) a lone beacon: `attacks: false` for it → not buffed, no chevron; a bolt at Chebyshev 2 is buffed, one at 3 is not; (3) two rallies around one bolt → buffed (the boolean result proves no stacking); an attacking tower with rally added is buffed while alone; (4) across ~120 seeded `rollOffer` calls (seeds 1–40, waves 1/5/10, `opening = false`), every offered rally copy is `'epic'` and at least one rally is offered (guard against a vacuous pass). Adapt the `rollOffer` call to the signature T0012 leaves behind.
+
+## Result (attempt 1, asus)
+
+Added Rally, the second rule-changing Epic-only augment: it rolls only as an Epic card (reusing Mark's `tier` flag), builds as a tall teal pillar beacon that never fires but speeds every tower within a 2-cell (Chebyshev) square by a flat, non-stacking +10% (or joins its own rally when added), shown by a teal range ring pulsing once a second from each active rally tower and a yellow chevron over every buffed tower. New files: `content/augments/rally.ts`, `core/rally.ts` (pure rule + unit tests), `systems/attacks/rally.ts` (no-op), `systems/RallySystem.ts` (buff, chevrons, ring) plus one-line registrations and the `rally.valid` smoke invariant; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 104.5 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/art/entities.ts       |  4 +-
+ projects/chokepoint/game/src/art/paint.ts          |  6 ++
+ projects/chokepoint/game/src/art/shapes.ts         |  2 +-
+ .../chokepoint/game/src/content/augments/index.ts  |  2 +
+ .../chokepoint/game/src/content/augments/rally.ts  | 24 ++++++++
+ projects/chokepoint/game/src/content/types.ts      |  6 +-
+ projects/chokepoint/game/src/core/augments.ts      |  3 +
+ projects/chokepoint/game/src/core/rally.ts         | 27 +++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  4 ++
+ projects/chokepoint/game/src/entities/Tower.ts     |  2 +
+ projects/chokepoint/game/src/entities/towerLook.ts |  3 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  4 ++
+ .../chokepoint/game/src/systems/RallySystem.ts     | 66 ++++++++++++++++++++++
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  2 +-
+ .../chokepoint/game/src/systems/attacks/index.ts   |  2 +
+ .../chokepoint/game/src/systems/attacks/rally.ts   |  7 +++
+ projects/chokepoint/game/tests/content.test.ts     |  4 +-
+ projects/chokepoint/game/tests/core/mark.test.ts   |  5 +-
+ projects/chokepoint/game/tests/core/rally.test.ts  | 55 ++++++++++++++++++
+ 19 files changed, 218 insertions(+), 10 deletions(-)
+```

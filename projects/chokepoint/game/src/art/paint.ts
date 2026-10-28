@@ -45,6 +45,12 @@ export function shapePath(ctx: CanvasRenderingContext2D, shape: Shape, x: number
     ctx.arc(x, y, radius, 0, Math.PI * 2);
     return;
   }
+  // A pillar: a vertical capsule (Rally's beacon), corner radius = half its width.
+  if (shape === 'pillar') {
+    const w = radius * 0.72, h = radius * 1.5;
+    roundRectPath(ctx, x - w, y - h, w * 2, h * 2, w);
+    return;
+  }
   const pts = shapePoints(shape, radius).map((p) => ({ x: p.x + x, y: p.y + y }));
   roundedPolygon(ctx, pts, radius * 0.28);
 }

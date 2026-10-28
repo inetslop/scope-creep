@@ -122,6 +122,9 @@ export function describeSpec(spec: TowerSpec): string {
   } else if (spec.kind === 'mark') {
     line = `Marks the enemy furthest along: marked enemies take ${marked}% more damage`;
     if (slow) line += `, slowing them by ${slow}%`;
+  } else if (spec.kind === 'rally') {
+    const r = getAugment('rally');
+    line = `Towers within ${r.first.range} cells attack ${Math.round((r.added.rally?.pct ?? 0) * 100)}% faster`;
   } else if (spec.damage <= 0) {
     line = `Slows everything around it by ${slow}%`;
     if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;

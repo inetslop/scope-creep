@@ -1,7 +1,7 @@
 import type { Bright } from './palette';
 
 /** Flat shapes the art code can draw (see art/shapes.ts). */
-export type Shape = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon';
+export type Shape = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'pillar';
 
 export interface Look {
   shape: Shape;
@@ -66,6 +66,8 @@ export type AttackKind =
   | 'shot'
   /** Hits every enemy in range at once. */
   | 'pulse'
+  /** Support: nearby towers attack faster; the beacon never fires itself. */
+  | 'rally'
   /** Marks the enemy furthest along: a marked enemy takes more damage from everything. */
   | 'mark';
 
@@ -101,6 +103,8 @@ export interface AddedForm {
   damageMul?: number;
   rateMul?: number;
   rangeMul?: number;
+  /** Joins the tower's own rally (flat, never stacks; applied by systems/RallySystem.ts). */
+  rally?: { pct: number };
 }
 
 /**

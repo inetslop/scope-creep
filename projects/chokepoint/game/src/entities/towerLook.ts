@@ -20,7 +20,7 @@ export const MAX_BARRELS = 4;
 
 /** Barrels, one per shot (Bolt); a pulse tower with Bolt added gets them for its bolts. */
 export function barrelCount(spec: TowerSpec): number {
-  if (!spec.attacks) return 0;
+  if (!spec.attacks || spec.kind === 'rally') return 0; // a rally beacon has no barrels
   return Math.min(MAX_BARRELS, spec.kind === 'shot' ? spec.shots : spec.kind === 'pulse' ? spec.bolts : 0);
 }
 
@@ -75,6 +75,7 @@ const DECORATIONS: readonly Decoration[] = [
   },
   // Rapid on a tower without barrels: yellow ticks around the body, six per speed-up.
   (g, spec, barrels) => {
+    if (spec.kind === 'rally') return; // a beacon has no speed to show
     const ups = speedUps(spec);
     if (barrels > 0 || ups === 0) return;
     const ticks = 6 * Math.min(2, ups);

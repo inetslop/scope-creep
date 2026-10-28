@@ -38,6 +38,8 @@ export class Tower extends Phaser.GameObjects.Image {
   spec: TowerSpec = towerSpec([]);
   /** Seconds until it may attack again. */
   cooldown = 0;
+  /** Attack speed from Rally (set by systems/RallySystem.ts; 1 when not buffed). */
+  rallyRateMul = 1;
   /** Where the barrels point, in radians (0 = up, clockwise). */
   aim = 0;
   /** Length of the barrels in board units, and their side offsets (for the muzzles). */
