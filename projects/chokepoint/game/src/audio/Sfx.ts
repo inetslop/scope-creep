@@ -26,10 +26,10 @@ export class Sfx {
     }
   }
 
-  private tone(freq: number, durSec: number, type: OscillatorType, volume: number, slideTo?: number): void {
+  private tone(freq: number, durSec: number, type: OscillatorType, volume: number, slideTo?: number, delaySec = 0): void {
     const ctx = this.ctx;
     if (!ctx || !this.master || this.muted || ctx.state !== 'running') return;
-    const t = ctx.currentTime;
+    const t = ctx.currentTime + delaySec;
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.type = type;
@@ -60,6 +60,12 @@ export class Sfx {
 
   kill(): void {
     this.tone(520, 0.08, 'triangle', 0.18, 260);
+  }
+
+  /** The run pays out coins: E5 then G5. */
+  chime(): void {
+    this.tone(659, 0.08, 'sine', 0.18);
+    this.tone(784, 0.08, 'sine', 0.18, undefined, 0.08);
   }
 
   /** The tier chime as a draft card lands face-up: one note per tier step, the top note rising. */

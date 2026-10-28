@@ -4,11 +4,12 @@ title: Coin chime when a run pays out
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0001, T0003]
 attempts: 1
 created: 2026-10-28T01:07:07Z
 claimed_at: 2026-10-28T07:37:51Z
+finished_at: 2026-10-28T07:44:49Z
 epic: E1
 ---
 
@@ -55,3 +56,16 @@ chime(): void {
 - If T0003 puts the line in a scene other than `GameOverScene`, put the pop + chime in that scene instead — the line's scene owns its juice.
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+The game-over "+N coins" line now pays out with a two-note chime (sine E5 then G5, 80ms each, vol 0.18 — same level as the hit blip) and a 150ms pop from 1.15x to 1.0x when a run earns coins, per T0009. Added `chime()` and a `delaySec` param to `tone()` in `src/audio/Sfx.ts`, and the pop + chime go in `src/scenes/GameOverScene.ts` right after the coins line. A run earning 0 coins gets no sound and no pop. Verified with `npm run check` and `npm run smoke` (desktop + mobile), both pass.
+
+- Self-review: APPROVE
+- Time: 7.0 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts            | 10 ++++++++--
+ projects/chokepoint/game/src/scenes/GameOverScene.ts |  7 ++++++-
+ 2 files changed, 14 insertions(+), 3 deletions(-)
+```

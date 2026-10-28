@@ -7,7 +7,7 @@ import { makeButton } from '../ui/button';
 import { makeCard } from '../ui/card';
 import { uiCamera, viewSize } from '../ui/display';
 import { textStyle, titleStyle } from '../ui/text';
-import { getRun, onKey, onResize, SCENES } from './keys';
+import { getRun, getSfx, onKey, onResize, SCENES } from './keys';
 
 /** The run is over: how far it got, the best run, play again. In ?smoke mode it restarts on its own. */
 export class GameOverScene extends Phaser.Scene {
@@ -39,6 +39,11 @@ export class GameOverScene extends Phaser.Scene {
     const stoppedText = this.add.text(0, -54, `Stopped ${run.kills}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
     const cleanText = this.add.text(0, -37, `Clean ${run.cleanWaves}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
     const coinsText = this.add.text(0, -20, `+${result.coins} coins`, textStyle(15, PALETTE.goldText, { fontStyle: 'bold' })).setOrigin(0.5);
+    if (result.coins > 0) {
+      coinsText.setScale(1.15);
+      this.tweens.add({ targets: coinsText, scale: 1, duration: 150, ease: 'Quad.easeOut' });
+      getSfx(this)?.chime();
+    }
     const bestText = this.add
       .text(0, 8, result.newBest ? 'New best!' : `Best: wave ${result.profile.bestWave}`, textStyle(15, result.newBest ? PALETTE.greenDeep : PALETTE.faint, { fontStyle: 'bold' }))
       .setOrigin(0.5);
