@@ -3,13 +3,11 @@ id: T0055
 title: "Working aura: the quiet ring under support towers when their aura works"
 size: S
 priority: 3
-status: designing
+status: todo
 depends_on: [T0039, T0027]
 attempts: 0
 created: 2026-10-28T13:04:03Z
-claimed_at: 2026-10-28T19:34:07Z
 epic: E4
-designer: yoga
 ---
 
 ## Goal
@@ -36,3 +34,81 @@ No longer waits on T0066: that only kept the tasks from editing the same files a
 ## Design reset (by hand, 2026-10-28)
 
 The old design edited shared hub files that the game now has extension points for (CLAUDE.md recipes: enemy hooks in `systems/enemyHooks/`, effects in `systems/fx/`). Design it so it edits as few shared files as possible: a task that only adds its own files and registry lines can be built while other tasks run; one that edits a shared file waits until nobody else is editing it. The Mint ring is an enemy hook (`onKill`, with `core/mint.ts`'s payers) and the ring itself an effect file in `systems/fx/`; only the Anchor ring still needs `TowerSystem` (when its pulse lands). No `EnemySystem` or `FxSystem` edit.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/systems/fx/auraRing.ts` - the quiet ring effect (recipe: fx file taking `FxSystem`, early-returns when `fx.full`, objects to `fx.track`)
+- create `src/systems/enemyHooks/mintRing.ts` - `onKill` hook: one ring per paying Mint-first tower
+- edit `src/systems/enemyHooks/index.ts` - add import + one `mintRing,` line to `ENEMY_HOOKS` (after `split`)
+- edit `src/systems/TowerSystem.ts` - import `auraRing` + 3 lines in `private attack()`
+
+### Interfaces
+No new types. Exact code:
+
+`src/systems/fx/auraRing.ts`:
+```ts
+import { CELL, DEPTH } from '../../config';
+import type { FxSystem } from '../FxSystem';
+import { fillRing } from '../../ui/ring';
+
+/** The quiet ring at a support tower's base each time its aura works (T0055). */
+export function auraRing(fx: FxSystem, x: number, y: number, color: number): void {
+  if (fx.full) return;
+  const g = fx.scene.add.graphics().setDepth(DEPTH.preview).setPosition(x, y);
+  fillRing(g, 0, 0, CELL, 3, 0, Math.PI * 2, color, 0.9);
+  g.setScale(0.5);
+  fx.track(g, 1000, { scale: 1, alpha: 0, ease: 'Quad.easeOut' });
+}
+```
+
+`src/systems/enemyHooks/mintRing.ts`:
+```ts
+import { PALETTE } from '../../content/palette';
+import { towerColor } from '../../core/augments';
+import { inMintReach } from '../../core/mint';
+import { auraRing } from '../fx/auraRing';
+import type { MakeEnemyHook } from './hook';
+
+/**
+ * The quiet ring at a Mint tower's base, at the same beat as the +1 gold's pop: one ring each
+ * time its aura pays a kill (core/mint.ts), even when the tower pays several +1 at once (T0055).
+ */
+export const mintRing: MakeEnemyHook = ({ fx, towers }) => ({
+  onKill({ enemy, source }) {
+    const at = { x: enemy.x, y: enemy.y };
+    for (const t of towers()) {
+      if (t.spec.firstId !== 'mint' || t.spec.goldPerKill <= 0) continue;
+      if (!(t === source || inMintReach(t.cell, at, t.spec.goldRadius))) continue;
+      const color = towerColor(t.augments);
+      auraRing(fx, t.x, t.y, color ? PALETTE[color] : PALETTE.faint);
+    }
+  },
+});
+```
+
+`TowerSystem.attack()`, replace `if (attacked) hook.stats.shotsFired += 1;`:
+```ts
+    if (attacked) {
+      hook.stats.shotsFired += 1;
+      // The quiet aura ring: a tower whose first augment is Anchor shows its root pulse working (systems/fx/auraRing.ts).
+      if (t.spec.firstId === 'anchor') auraRing(this.fx, t.x, t.y, color ? PALETTE[color] : PALETTE.faint);
+    }
+```
+plus `import { auraRing } from './fx/auraRing';`
+
+### Steps
+1. Create `src/systems/fx/auraRing.ts` exactly as above.
+2. Create `src/systems/enemyHooks/mintRing.ts` exactly as above.
+3. `enemyHooks/index.ts`: add `import { mintRing } from './mintRing';` and `mintRing,` after `split,` in `ENEMY_HOOKS`.
+4. `TowerSystem.ts`: add the import, change the `if (attacked)` line in `attack()` as above.
+
+### Pitfalls
+- Gate the Anchor ring on `attacked` (pulse.ts returns false with no enemy in range) — no ring when the pulse roots nothing.
+- The gate is `firstId === 'anchor'` / `firstId === 'mint'`, not damage/root fields: Bolt+Anchor (firstId 'bolt') and Rally show no ring; a Mint+Bolt tower still rings (first is Mint).
+- Loop over towers, not gold copies: one ring per paying tower per kill even with `goldPerKill > 1`.
+- No sound, shake or screen effect on the ring; depth `DEPTH.preview` (ground, under the tower); radius `CELL`, 1000 ms, silent.
+- `fx.track` destroys the graphics on completion — no manual cleanup; no module state in the hook (fresh each run via `MakeEnemyHook`).
+
+### Tests
+none
