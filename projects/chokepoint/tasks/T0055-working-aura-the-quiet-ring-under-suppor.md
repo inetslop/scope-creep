@@ -1,12 +1,14 @@
 ---
 id: T0055
 title: "Working aura: the quiet ring under support towers when their aura works"
+assignee: desktop
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0039, T0027]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:04:03Z
+claimed_at: 2026-10-28T19:56:34Z
 epic: E4
 ---
 
