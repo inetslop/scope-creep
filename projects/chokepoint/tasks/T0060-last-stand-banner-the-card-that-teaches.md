@@ -4,11 +4,12 @@ title: "Last stand banner: the card that teaches the rule"
 assignee: cachyos-x8664
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0054, T0067]
 attempts: 1
 created: 2026-10-28T13:29:40Z
 claimed_at: 2026-10-28T23:17:33Z
+finished_at: 2026-10-29T00:04:51Z
 epic: E1
 ---
 
@@ -130,3 +131,17 @@ The trigger is a value edge in `update()`: HudScene updates after GameScene each
 
 ### Tests
 - none (UI/transient; no core rule added — invariant lists are for `systems/`, HUD parts add none).
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the last-stand banner: the moment a leak brings the run to 1 life, the shared top-center card slides in from above with "Last stand" (bold ink) over "kills pay double" (muted), holds ~1s, and fades out. Created `ui/hud/LastStandBanner.ts` — a HudPart owning one TopBanner that fires on the wasOne edge, so it shows on every entry into 1 life and never at 2 or more. Registered it as the last part in `scenes/HudScene.ts` (so it draws over the other cards) and minimally extended `ui/hud/topBanner.ts` with a 13px muted sub-line for the two-line card, keeping the single-line "Wave N" call byte-identical. It reuses T0067's card and motion and adds no second card system, key, sound, or pause-screen row.
+
+- Self-review: APPROVE
+- Time: 47.3 min
+
+```
+projects/chokepoint/game/src/scenes/HudScene.ts    |  2 ++
+ .../chokepoint/game/src/ui/hud/LastStandBanner.ts  | 29 ++++++++++++++++++++++
+ projects/chokepoint/game/src/ui/hud/topBanner.ts   | 10 +++++---
+ 3 files changed, 38 insertions(+), 3 deletions(-)
+```

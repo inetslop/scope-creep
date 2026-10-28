@@ -5,6 +5,7 @@ import { flags } from '../debug/flags';
 import { uiCamera, viewSize } from '../ui/display';
 import { HandBar } from '../ui/hud/HandBar';
 import type { HudPart } from '../ui/hud/hud';
+import { LastStandBanner } from '../ui/hud/LastStandBanner';
 import { NextWaveButton } from '../ui/hud/NextWaveButton';
 import { NextWavePreview } from '../ui/hud/NextWavePreview';
 import { PanicButton } from '../ui/hud/PanicButton';
@@ -46,6 +47,7 @@ export class HudScene extends Phaser.Scene {
       new NextWavePreview(this),
       new HandBar(this),
       new TowerPanel(this),
+      new LastStandBanner(this), // last on purpose: slides in over the other cards
     ];
     this.fps = flags.debug ? this.add.text(16, HUD.top + 4, '', textStyle(12, PALETTE.muted)) : undefined;
     const layout = (w: number, h: number): void => {

@@ -17,6 +17,7 @@ export class TopBanner {
   private readonly box: Phaser.GameObjects.Container;
   private readonly card: Phaser.GameObjects.Image;
   private readonly text: Phaser.GameObjects.Text;
+  private readonly sub: Phaser.GameObjects.Text;
   private playing = false;
   private top = 12;
   private h = 48;
@@ -25,7 +26,8 @@ export class TopBanner {
     this.scene = scene;
     this.card = makeCard(scene, 0, 0, W, 48, 24);
     this.text = scene.add.text(0, 0, '', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
-    this.box = scene.add.container(0, 0, [this.card, this.text]).setVisible(false);
+    this.sub = scene.add.text(0, 14, '', textStyle(13, PALETTE.muted)).setOrigin(0.5).setVisible(false);
+    this.box = scene.add.container(0, 0, [this.card, this.text, this.sub]).setVisible(false);
   }
 
   /** Top center: hanging from the top edge, or clear of the top HUD row on narrow screens. */
@@ -38,9 +40,11 @@ export class TopBanner {
   show(lines: string[]): void {
     if (this.playing) return;
     this.playing = true;
-    this.h = lines.length > 1 ? 72 : 48; // 72 tall is for T0060's two lines
+    const two = lines.length > 1;
+    this.h = two ? 72 : 48; // 72 tall is for T0060's two lines
     this.card.setTexture(cardTexture(this.scene, W, this.h, 24));
-    this.text.setText(lines.join('\n'));
+    this.text.setText(lines[0]).setY(two ? -12 : 0);
+    this.sub.setText(two ? lines[1] : '').setVisible(two);
     this.box.alpha = 1;
     this.box.setVisible(true);
     const y = this.top + this.h / 2;
