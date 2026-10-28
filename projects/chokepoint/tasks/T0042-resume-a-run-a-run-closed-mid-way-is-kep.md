@@ -1,12 +1,14 @@
 ---
 id: T0042
 title: "Resume a run: a run closed mid-way is kept and offered on the menu"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0015]
-attempts: 0
+attempts: 1
 created: 2026-10-28T11:24:34Z
+claimed_at: 2026-10-28T20:39:26Z
 epic: E1
 ---
 
