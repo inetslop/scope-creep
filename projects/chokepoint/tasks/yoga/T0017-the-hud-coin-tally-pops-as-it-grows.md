@@ -4,11 +4,12 @@ title: The HUD coin tally pops as it grows
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T03:39:38Z
 claimed_at: 2026-10-28T04:29:59Z
+finished_at: 2026-10-28T04:41:53Z
 epic: E1
 ---
 
@@ -74,3 +75,15 @@ That's all.
 - No sound, no new texture, no new invariant (not a system), no changes to HudScene/GameScene.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The "+N coins" line in the StatsCard now pops when the run's coin tally grows: the number scales to 1.15 and back over ~150 ms, and the little coin icon flashes white while scaling the same amount, once per increase (a wave-bonus jump pops once; a fresh run at +0 never pops). The whole change is in `src/ui/hud/StatsCard.ts` — no sound, no new files, card size and layout untouched; verified with typecheck/lint/tests and a real-browser smoke pass at both desktop and phone sizes.
+
+- Self-review: APPROVE
+- Time: 11.9 min
+
+```
+projects/chokepoint/game/src/ui/hud/StatsCard.ts | 25 +++++++++++++++++++++---
+ 1 file changed, 22 insertions(+), 3 deletions(-)
+```
