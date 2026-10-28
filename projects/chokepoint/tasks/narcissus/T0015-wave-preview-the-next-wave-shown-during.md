@@ -4,7 +4,7 @@ title: "Wave preview: the next wave shown during the build phase"
 assignee: narcissus
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-28T02:08:37Z
@@ -219,3 +219,7 @@ describe('waveCounts', () => {
 ### Tests
 - `tests/core/waves.test.ts`: the `waveCounts` case above (sum of counts = spawn count, each type once, first-arrival order, no zeros).
 - `npm run check` and `npm run smoke` must pass (smoke plays build phases where the card pops and disappears).
+
+## Attempt 1 interrupted (narcissus)
+
+The runner stopped mid-task (crash, restart or reboot). Requeued.
