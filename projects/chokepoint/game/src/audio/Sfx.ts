@@ -60,6 +60,10 @@ export class Sfx {
     this.tone(140, 0.3, 'sawtooth', 0.25, 70);
   }
 
+  leakWarn(): void {
+    this.tone(200, 0.08, 'sine', 0.1, 150);
+  }
+
   waveStart(): void {
     this.tone(220, 0.25, 'triangle', 0.35, 440);
   }

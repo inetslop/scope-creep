@@ -104,3 +104,23 @@ export function paintBoard(scene: Phaser.Scene, key: string, map: GameMap, path:
   });
   return key;
 }
+
+/** The leak warning: a red copy of the exit gate (same square, white ring), shown over the board. */
+export function paintExitWarn(scene: Phaser.Scene): string {
+  const c = CELL * 0.3;
+  const size = c * 2 + 32;
+  paintTexture(scene, 'exit-warn', size, size, (ctx) => {
+    const x = size / 2, y = size / 2;
+    ctx.save();
+    setShadow(ctx, 0.8);
+    roundRectPath(ctx, x - c, y - c, c * 2, c * 2, CELL * 0.16);
+    ctx.fillStyle = rgba(PALETTE.red, 1);
+    ctx.fill();
+    ctx.restore();
+    shapePath(ctx, 'circle', x, y, CELL * 0.12);
+    ctx.lineWidth = CELL * 0.07;
+    ctx.strokeStyle = '#ffffff';
+    ctx.stroke();
+  });
+  return 'exit-warn';
+}

@@ -4,11 +4,12 @@ title: "Leak warning: the exit pulses red and ticks before a leak"
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T02:08:37Z
 claimed_at: 2026-10-28T03:12:07Z
+finished_at: 2026-10-28T03:47:49Z
 ---
 
 ## Goal
@@ -106,3 +107,19 @@ export class ExitWarning {
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+Added the leak warning: a new `src/systems/ExitWarning.ts` that, when any alive enemy is within 3 s of the exit (slows included), shows a pulsing red copy of the exit gate (new `paintExitWarn` painter in `src/art/board.ts`) over it and plays a quiet 0.1-volume sine tick once per 0.4 s pulse (new `leakWarn()` in `src/audio/Sfx.ts`); the warning stops on leak or kill, continues across successive in-range enemies, and freezes while paused because it is driven by `dt` from `GameScene.update()`. Wired only in `GameScene` (construct + one update line) plus the `exitWarn.valid` invariant in `debug/runChecks.ts`. Typecheck, lint, unit tests and the desktop + mobile smoke tests all pass.
+
+- Self-review: APPROVE
+- Time: 35.7 min
+
+```
+projects/chokepoint/game/src/art/board.ts          | 20 ++++++
+ projects/chokepoint/game/src/audio/Sfx.ts          |  4 ++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  7 +-
+ .../chokepoint/game/src/systems/ExitWarning.ts     | 75 ++++++++++++++++++++++
+ 5 files changed, 106 insertions(+), 1 deletion(-)
+```

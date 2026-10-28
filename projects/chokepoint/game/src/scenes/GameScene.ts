@@ -11,6 +11,7 @@ import { bindHotkeys } from '../input/hotkeys';
 import { Board } from '../systems/Board';
 import { Building } from '../systems/Building';
 import { EnemySystem } from '../systems/EnemySystem';
+import { ExitWarning } from '../systems/ExitWarning';
 import { FxSystem } from '../systems/FxSystem';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { RunFlow } from '../systems/RunFlow';
@@ -38,6 +39,7 @@ export class GameScene extends Phaser.Scene {
   waves!: WaveSystem;
   projectiles!: ProjectileSystem;
   fx!: FxSystem;
+  exitWarn!: ExitWarning;
 
   constructor() {
     super(SCENES.game);
@@ -59,6 +61,7 @@ export class GameScene extends Phaser.Scene {
     this.board = new Board(this, map);
     this.fx = new FxSystem(this);
     this.enemies = new EnemySystem(this, this.board, this.run, this.fx, sfx);
+    this.exitWarn = new ExitWarning(this, this.board, this.enemies, sfx);
     this.waves = new WaveSystem(this.run, this.enemies);
     this.projectiles = new ProjectileSystem(this, this.enemies);
     this.towers = new TowerSystem(this, this.board, this.run, this.enemies, this.projectiles, this.fx, sfx);
@@ -122,7 +125,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   update(_time: number, deltaMs: number): void {
-    this.flow.update(Math.min(deltaMs / 1000, 0.05));
+    const dt = Math.min(deltaMs / 1000, 0.05);
+    this.flow.update(dt);
+    this.exitWarn.update(dt);
     syncHookStats(this);
   }
 }

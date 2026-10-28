@@ -11,6 +11,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['run.ledger', (g) => (Number.isInteger(g.run.goldEarned) && g.run.goldEarned >= 0 && g.run.cleanWaves >= 0 && g.run.cleanWaves <= g.run.wavesCleared ? null : 'ledger')],
   ['enemies.valid', (g) => g.enemies.brokenEnemy()],
   ['enemies.count', (g) => (g.enemies.aliveCount > 400 ? `${g.enemies.aliveCount} enemies alive` : null)],
+  ['exitWarn.valid', (g) => g.exitWarn.broken()],
   ['projectiles.count', (g) => (g.projectiles.activeCount > 600 ? `${g.projectiles.activeCount} projectiles in flight` : null)],
   ['towers.valid', (g) => g.towers.brokenTower()],
   ['hand.selection', (g) => g.building.brokenSelection()],
