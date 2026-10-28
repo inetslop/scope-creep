@@ -4,7 +4,7 @@ import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
 import { makeCard } from '../ui/card';
-import { titleStyle } from '../ui/text';
+import { textStyle, titleStyle } from '../ui/text';
 import { uiCamera, viewSize } from '../ui/display';
 import { getGameScene, onKey, onResize, SCENES } from './keys';
 
@@ -37,12 +37,14 @@ export class PauseScene extends Phaser.Scene {
 
     const shade = this.add.rectangle(0, 0, 10, 10, PALETTE.ground, 0.78).setOrigin(0).setInteractive();
     const panelW = 360;
-    const panelH = 260;
+    const panelH = 380;
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
-    const title = this.add.text(0, -panelH / 2 + 48, 'Paused', titleStyle(34)).setOrigin(0.5);
-    const resumeButton = makeButton(this, 0, -panelH / 2 + 124, 'Resume', resume, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
-    const quitButton = makeButton(this, 0, -panelH / 2 + 196, 'Quit run', quit, { width: 240, height: 52, radius: 26 });
-    const box = this.add.container(0, 0, [panel, title, resumeButton.container, quitButton.container]);
+    const title = this.add.text(0, -panelH / 2 + 54, 'Paused', titleStyle(34)).setOrigin(0.5);
+    const heading = this.add.text(0, -panelH / 2 + 96, 'Controls', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
+    const keys = this.add.text(0, -panelH / 2 + 150, 'Space — start the wave early\nF — fast-forward (2x) during waves\n1-9 — pick a card from the hand\n+ / - — zoom the board', textStyle(12, PALETTE.muted, { align: 'center', lineSpacing: 6 })).setOrigin(0.5);
+    const resumeButton = makeButton(this, 0, -panelH / 2 + 234, 'Resume', resume, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
+    const quitButton = makeButton(this, 0, -panelH / 2 + 302, 'Quit run', quit, { width: 240, height: 52, radius: 26 });
+    const box = this.add.container(0, 0, [panel, title, heading, keys, resumeButton.container, quitButton.container]);
 
     const layout = (width: number, height: number): void => {
       shade.setSize(width, height);

@@ -4,11 +4,12 @@ title: "Fast-forward: a 2x speed button for the wave phase"
 assignee: narcissus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0015]
 attempts: 1
 created: 2026-10-28T03:52:49Z
 claimed_at: 2026-10-28T15:07:23Z
+finished_at: 2026-10-28T19:57:01Z
 ---
 
 ## Goal
@@ -132,3 +133,23 @@ export class SpeedButton implements HudPart {
 
 ### Tests
 none (no rule in `src/core` changes; `WaveSpeed` lives in `systems/`)
+
+## Result (attempt 1, narcissus)
+
+Added 2x fast-forward for the wave phase: a new `WaveSpeed` system scales the simulation dt in GameScene so enemies, towers, projectiles and all wave effects run twice as fast at once, driven by a new `SpeedButton` HUD part (bottom right, left of the next-wave button; white card at 1x, filled yellow while active, tappable only during a wave) plus an F hotkey, with a `speed.value` invariant and hook stat, and the pause screen now lists "F — fast-forward (2x) during waves" among the controls. This fix round addressed two blockers: the wiring edits that make `game.speed` exist (GameScene field/initialization, HudScene parts list, hotkey, pause panel, invariants, hook stats) had not been applied, and Phaser 3.90 types a Container's children as a plain typed `list` array rather than `.children`/`.getChildren()`, so the card is now reached via `container.list[0]` (the button's first child, confirmed in `ui/button.ts`). Two minimal deviations from the design: I kept `rally.update()` on the scaled simDt (the rally banner ticks with the wave) and added a wide-screen x-offset so the 2x button clears the next-wave button's text label. Both `npm run check` and `npm run smoke` (desktop + phone) now pass.
+
+- Self-review: NO VERDICT
+- Time: 289.6 min
+- Gate failed at "check"; fix round 1.
+
+```
+projects/chokepoint/game/src/debug/runChecks.ts    |  2 +
+ projects/chokepoint/game/src/debug/testHook.ts     |  3 ++
+ projects/chokepoint/game/src/input/hotkeys.ts      |  1 +
+ projects/chokepoint/game/src/scenes/GameScene.ts   | 10 +++--
+ projects/chokepoint/game/src/scenes/HudScene.ts    |  2 +
+ projects/chokepoint/game/src/scenes/PauseScene.ts  | 14 +++---
+ projects/chokepoint/game/src/systems/WaveSpeed.ts  | 20 +++++++++
+ projects/chokepoint/game/src/ui/hud/SpeedButton.ts | 50 ++++++++++++++++++++++
+ 8 files changed, 93 insertions(+), 9 deletions(-)
+```

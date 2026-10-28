@@ -18,6 +18,7 @@ import { PushWindup } from '../systems/PushWindup';
 import { RallySystem } from '../systems/RallySystem';
 import { RunFlow } from '../systems/RunFlow';
 import { TowerSystem } from '../systems/TowerSystem';
+import { WaveSpeed } from '../systems/WaveSpeed';
 import { WaveSystem } from '../systems/WaveSystem';
 import { pointerCss, viewSize } from '../ui/display';
 import { getSfx, onResize, SCENES } from './keys';
@@ -36,6 +37,7 @@ export class GameScene extends Phaser.Scene {
   board!: Board;
   building!: Building;
   flow!: RunFlow;
+  speed!: WaveSpeed;
   rally!: RallySystem;
   towers!: TowerSystem;
   enemies!: EnemySystem;
@@ -81,6 +83,7 @@ export class GameScene extends Phaser.Scene {
       fx: this.fx,
       sfx,
     });
+    this.speed = new WaveSpeed();
     this.rally = new RallySystem(this, this.towers, this.fx);
     this.windup = new PushWindup(this, this.towers);
 
@@ -133,10 +136,11 @@ export class GameScene extends Phaser.Scene {
 
   update(_time: number, deltaMs: number): void {
     const dt = Math.min(deltaMs / 1000, 0.05);
-    this.flow.update(dt);
-    this.exitWarn.update(dt);
-    this.rally.update(dt);
-    this.windup.update(dt);
+    const simDt = this.speed.scale(dt, this.run.phase === 'wave');
+    this.flow.update(simDt);
+    this.exitWarn.update(simDt);
+    this.rally.update(simDt);
+    this.windup.update(simDt);
     syncHookStats(this);
   }
 }

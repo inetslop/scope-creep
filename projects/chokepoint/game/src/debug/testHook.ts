@@ -31,6 +31,8 @@ export interface HookStats {
   towers: number;
   /** Board zoom, as a multiple of the zoom that fits the whole board. */
   zoom: number;
+  /** The wave's speed: 1 or 2 (fast-forward). */
+  speed: number;
 }
 
 /** Returns an error message when something is wrong, otherwise null/undefined. */
@@ -69,6 +71,7 @@ export class TestHook {
     enemiesAlive: 0,
     towers: 0,
     zoom: 1,
+    speed: 1,
   };
   private readonly checks = new Map<string, InvariantCheck>();
   private spots: () => ScreenPoint[] = () => [];

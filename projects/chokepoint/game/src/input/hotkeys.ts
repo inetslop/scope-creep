@@ -9,6 +9,7 @@ const HOTKEYS: readonly { keys: readonly string[]; run: (game: GameScene, key: s
   { keys: ['Escape'], run: (g) => (g.building.selectedTower ? g.building.closePanel() : g.openPause()) },
   { keys: ['p', 'P'], run: (g) => g.openPause() },
   { keys: [' ', 'Enter'], run: (g) => g.flow.startWaveNow() },
+  { keys: ['f', 'F'], run: (g) => g.speed.toggle(g.scene.isActive() && g.run.phase === 'wave') },
   { keys: ['+', '='], run: (g) => g.board.zoomIn() },
   { keys: ['-', '_'], run: (g) => g.board.zoomOut() },
   { keys: ['0'], run: (g) => g.board.resetZoom() },
