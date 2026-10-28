@@ -3,13 +3,11 @@ id: T0038
 title: "Ricochet: the shot that bounces off the board's rocks"
 size: L
 priority: 3
-status: designing
-depends_on: [T0004]
+status: todo
+depends_on: [T0004, T0029, T0034, T0035]
 attempts: 0
 created: 2026-10-28T09:35:22Z
-claimed_at: 2026-10-28T09:35:24Z
 epic: E4
-designer: desktop
 ---
 
 ## Goal
@@ -36,3 +34,79 @@ The board's shape joins the fight: the draft can roll a new augment, Ricochet �
 - [ ] A second Ricochet in a tower lets its shots bounce off two rocks in one flight; the tower shows one Ricochet tick per copy and the tower panel says the shots bounce off 2 rocks.
 - [ ] Damage never drops after a bounce; rocks are never damaged, moved or consumed; a deflected shot that meets no enemy fizzles in a small white puff.
 - [ ] A first-time player can read it from the board alone: the deflection is visible mid-flight, and the struck enemy is the one behind the rock.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/augments/ricochet.ts` — the augment def (exact object in Steps)
+- create `src/core/rocks.ts` — pure (no Phaser): the board's rocks as circles, segment→rock hit, direction reflection
+- create `tests/core/rocks.test.ts` — unit tests for rocks.ts
+- edit `src/content/augments/index.ts` — add `ricochet,` directly after `bolt,`
+- edit `src/content/types.ts` — `bounces?: number;` in `FirstForm` (after `projectileSpeed`) and in `AddedForm` (after `rangeMul`), each with a one-line comment
+- edit `src/core/augments.ts` — `TowerSpec`/`EMPTY` gain `bounces: number`; `towerSpec` inits `bounces: f.bounces ?? 0` and adds `spec.bounces += e.bounces ?? 0;` in the loop after the `extraShots` line; `describeSpec` shot branch gets the ricochet line (below)
+- edit `src/systems/Board.ts` — `readonly rocks: Rock[]` set once in the constructor from `rockList(this.map)`
+- edit `src/entities/Projectile.ts` — `RicochetFlight` type, bounce fields, `fire()` resets, `lost` guard, `advance` split into homing/ricochet
+- edit `src/systems/ProjectileSystem.ts` — `fire()` takes `flight`, `update()` handles `'hit'`/`'fizzle'`, new `brokenBounce()`
+- edit `src/systems/TowerSystem.ts` — only the `fireBolt` closure in `attack()` passes the `RicochetFlight`
+- edit `src/systems/FxSystem.ts` — new `pop()`; edit `src/audio/Sfx.ts` — new `tink()`
+- edit `src/art/barrels.ts` — `BarrelLook` gains `arrow`/`ticks`, in the texture key; arrowhead tip + Ricochet-colored ticks
+- edit `src/entities/towerLook.ts` — `barrelLook()` sets `arrow`/`ticks` from the spec
+- edit `src/scenes/menu/MenuDemo.ts` — its inline `BarrelLook` literal at line 70 gains `arrow: false, ticks: 0`
+- edit `src/debug/runChecks.ts` — one invariant line after `projectiles.count`; edit `tests/core/augments.test.ts` — ricochet tests + widen the DPS bounds (below)
+
+### Interfaces
+```ts
+// core/rocks.ts (pure)
+export interface Rock { x: number; y: number; r: number }
+export interface RockHit { index: number; x: number; y: number; nx: number; ny: number; t: number } // t: 0..1 along the segment; n: unit normal from rock center
+export function rockList(map: GameMap): Rock[]
+export function firstRockHit(sx: number, sy: number, ex: number, ey: number, rocks: readonly Rock[], skip: readonly number[]): RockHit | undefined
+export function reflectDir(dx: number, dy: number, nx: number, ny: number): { x: number; y: number }
+// entities/Projectile.ts
+export interface RicochetFlight { bounces: number; rocks: readonly Rock[]; enemies: readonly Enemy[]; bounds: { w: number; h: number }; fx: FxSystem; sfx: Sfx | undefined }
+// Projectile: fire(x, y, target, payload, speed, flight: RicochetFlight); advance(dt): 'flew' | 'hit' | 'fizzle'; public fields bounces, life, struck: Enemy | undefined; get bouncesUsed(): number
+// art/barrels.ts BarrelLook gains: arrow: boolean; ticks: number
+```
+
+### Steps
+1. `core/rocks.ts`: `rockList` = every `'rock'` cell → `{ x: (col + 0.5) * CELL, y: (row + 0.5) * CELL - 3, r: CELL * 0.3 }` (matches `art/board.ts` exactly). `firstRockHit`: per rock not in `skip`, quadratic on the segment; skip when `c < 0` (starts inside) or no entry with `t` in `(1e-4, 1]`; keep smallest `t`; impact = `S + t*D`, normal = normalize(impact − center). `reflectDir`: `d = 2*(dx*nx + dy*ny); { x: dx − d*nx, y: dy − d*ny }`.
+2. `content/augments/ricochet.ts`:
+```ts
+export const ricochet: AugmentDef = {
+  id: 'ricochet', name: 'Ricochet',
+  description: 'Shots bounce off a rock and hit the enemy behind. Added: shots bounce off one more rock.',
+  asTower: 'Shots bounce off a rock and hit the enemy behind.', asAdded: 'Shots bounce off one more rock.',
+  look: { shape: 'chevron', color: 'teal', size: 0.22 },
+  first: { kind: 'shot', damage: 7, range: 4.5, rate: 1.25, projectileSpeed: 10, bounces: 1 },
+  added: { bounces: 1 },
+  tiers: { rare: { damageMul: 1.3, cooldownMul: 0.85, asAdded: 'Shots bounce off one more rock.' },
+           epic: { damageMul: 1.7, cooldownMul: 0.7, asAdded: 'Shots bounce off one more rock.' } },
+};
+```
+Verify the `(shape, color)` pair first against every file in `src/content/augments/` and `src/content/enemies/` (in-flight augments may have landed); if taken, use the next free of: chevron+blue, chevron+ice, circle+orange.
+3. `core/augments.ts` `describeSpec`, shot branch:
+```ts
+const tail = `${spec.splash > 0 ? ', and the shots burst' : ''}${marked > 0 ? ', and its hits mark' : ''}`;
+if (spec.firstId === 'ricochet') line = `Shots bounce off ${spec.bounces > 1 ? `${spec.bounces} rocks` : 'a rock'}: ${Math.round(spec.damage)} damage, every ${(1 / spec.rate).toFixed(1)} s${tail}`;
+else { /* existing target/style line + tail */ if (spec.bounces > 0) line += `, and its shots bounce off ${spec.bounces} rock${spec.bounces > 1 ? 's' : ''}`; }
+if (slow) line += `, slowing them by ${slow}%`;
+```
+(Tier multipliers give 9.1→"9"/0.68→"0.7" and 11.9→"12"/0.56→"0.6" once rounded, exactly the spec's numbers. The tower panel and draft need no changes: the panel's existing stats line shows the tier's damage/rate automatically; draft cards have no numbers line — do not invent one.)
+4. `Projectile`: keep the old homing body as `advanceHoming` (byte-identical for `bounces === 0`). Ricochet flight: `life += dt`; `life > 10` → fizzle. Consume `remaining = speed * dt` in at most `bounces + 1` segments: while `!straight` aim at the target (`travel = min(remaining, dist)`; endpoint on the target), else fixed `(dirX, dirY)`; `firstRockHit(pos→endpoint, rocks, bouncedOff)`; enemies only when `straight` — first active `e` whose center is within `e.def.look.size * CELL + 4` of the segment (smallest distance wins). Rock first at `at = rock.t * |endpoint−pos|`: if `bouncedOff.length < bounces` → move to impact, `reflectDir` into `(dirX,dirY)`, push index, `straight = true`, `fx.pop(impact)`, `sfx?.tink()`, `remaining −= at`, continue; else `fx.pop(impact, 18)` → `'fizzle'` (a rock after the last bounce stops the shot). Enemy first → `struck = e`, move to it → `'hit'`. Homing, no rock: `dist <= max(remaining, 6)` → `struck = target` → `'hit'`; else move, done. Straight, nothing: move; if outside `0..bounds.w / 0..bounds.h` → `fx.pop(pos, 18)` → `'fizzle'` (silent). `lost` = `!straight &&` old check. `fire()` resets every new field; `despawn()` clears `struck`/`bouncedOff`/`straight`/`life`.
+5. `ProjectileSystem.update`: `'hit'` → `this.enemies.hit(p.struck ?? p.target!, p.payload!)`; `'fizzle'` → `despawn()`. Add `brokenBounce(): string | undefined` — a live bolt with `bouncesUsed > bounces` or `bounces > MAX_SLOTS` or NaN position or `life > 12`. In `TowerSystem.attack`'s `fireBolt` closure, append one arg: `{ bounces: spec.bounces, rocks: this.board.rocks, enemies: this.enemies.all, bounds: { w: this.board.width, h: this.board.height }, fx: this.fx, sfx: this.sfx }`.
+6. `FxSystem.pop(x, y, radius = 12)` (before `burst`): white filled circle, scale 0.4→1.25, fade 200 ms, via `track`. `Sfx.tink()` (after `shoot`): `this.tone(1568, 0.05, 'sine', 0.08, 2093)` — never louder than the shoot blip.
+7. `barrelLook`: `arrow: spec.firstId === 'ricochet'`, `ticks: spec.bounces - (spec.firstId === 'ricochet' ? 1 : 0)`. In `barrels.ts`: key gains `:${look.arrow ? 'a' : 's'}:${ticks}`; add `w * 1.1` to the texture size when `arrow`; after the barrel, fill a triangle `(c − w*0.7, c − len + w*0.45) → (c + w*0.7, c − len + w*0.45) → (c + w*1.1, c − len − w*0.55)` in the bright body color (kinked tip); then `min(3, ticks)` thin rounded rings (`w*1.24 × w*0.22`, corner `w*0.11`) at `c − len * (0.82 − 0.12*i)` in `PALETTE[ricochet.look.color]` (import the def).
+8. `runChecks.ts`: `['projectiles.bounce', (g) => g.projectiles.brokenBounce()],` after `projectiles.count`.
+9. `npm run check` then `npm run smoke`.
+
+### Pitfalls
+- The `bounces === 0` path must behave exactly like today's homing bolt — Bolt/pulse bolts (and Lance, T0004) ride it.
+- Pooling: reset every field in `fire()`; a deflected (`straight`) bolt ignores target death (`lost` guard) but must still end via enemy, rock, board edge or the 10 s cap; `bouncedOff` skip prevents ping-pong between adjacent rocks; the segment loop is bounded (`bounces + 1`).
+- Rock circles must match the painted tokens (the `- 3` y-offset included); the road centerline never enters a rock circle, so a target is never inside one.
+- Arrowhead and ticks are painted into the barrel texture (it rotates with the gun) — never into `DECORATIONS` (around the body, where the tier pips live).
+- The 8.75 DPS common Ricochet is deliberate (deflected shots reach beyond the 4.5 range): widen `augments.test.ts`'s "hold wave 1" DPS test to `min > 7` and `ratio < 2.6` with a comment; do not change the task's numbers.
+- Fizzle and target-less shots are silent; one pop + one tink per rock only.
+
+### Tests
+- `tests/core/rocks.test.ts` (new): `rockList` on a seeded map (5 rocks, geometry matches the paint); `firstRockHit` (impact sits on the circle, nearest of two wins, `skip` honored, miss → undefined, starts-inside → undefined); `reflectDir` (head-on reverses, unit length, angle preserved).
+- `tests/core/augments.test.ts`: `towerSpec` bounces = Ricochet copies (lone ricochet 1, bolt+ricochet 1, bolt+2×ricochet 2, bolt 0); `describeSpec` per tier ("7 damage, every 0.8 s" / "9 … 0.7 s" / "12 … 0.6 s"); bolt+ricochet appends "bounce off 1 rock"; `tierAddedLine` identical at all tiers. Fizzle/no-falloff/Bolt-added flight is Phaser entity behavior: covered by the invariant + smoke, not unit tests.
