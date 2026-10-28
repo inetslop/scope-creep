@@ -1,12 +1,14 @@
 ---
 id: T0069
 title: The pause line stars your record
+assignee: asus
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0030]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T23:17:57Z
 epic: E1
 ---
 
