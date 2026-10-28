@@ -1,12 +1,14 @@
 ---
 id: T0058
 title: "Push windup: the ring that fills as the next gust charges"
+assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0027]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:29:40Z
+claimed_at: 2026-10-28T16:00:05Z
 epic: E4
 ---
 
