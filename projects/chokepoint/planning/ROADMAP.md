@@ -39,18 +39,18 @@ Progress: the profile, the menu card and the live coin tally are in (T0001, T000
 **Groundwork (outside the epic):** T0015 (wave preview) becomes the per-level wave preview once levels exist; T0014 (leak warning) teaches what a leak is before levels make leaking costlier; T0019 (fast-forward 2x, narcissus, cycle 4) keeps runs in flow and pays off once a run spans several levels.
 **When done:** a run goes through levels, like the acts of a roguelite: each level is its own board with a set number of waves, ending in a tougher final wave. Clear it and the run moves on to the next level: a new, harder board (a longer or more winding road, tougher enemies) that starts empty. What you carry is your **pool**: the run starts with a small pool of augments that the drafts offer from, and every time you clear a level you pick one new augment to add to it, so each level offers more to combine. The HUD shows the level ("Level 2 · Wave 3/8"), the pick between levels is its own moment, and the game-over screen says how far you got. Clearing the last level wins the run.
 
-### E4 — Augment rarity (active — started 2026-10-28, 0 of 5 done)
+### E4 — Augment rarity (active — started 2026-10-28, 1 of 6 done)
 **Goal:** the draft is exciting: sometimes a card is something special.
 **When done:** every augment card in the draft comes in a rarity: Common, Rare or Epic. A rarer card is the same augment with stronger numbers (a Rare Rapid attacks faster than a Common one), and a few rule-changing augments only ever come as Epic. Rarity shows everywhere the augment does: the card's frame and a small gem row on the draft, hand and tower-panel cards, and on the tower itself (its slot pip). Rarer cards turn up more often the further the run gets; the odds are shown in the draft.
-**Breakdown (cycle 1):**
-- T0002 (asus, L) — the tiers: Common/Rare/Epic numbers for the five augments, the 70/25/5 draft roll, card frame + gem row, odds line — in progress
-- T0008 (narcissus, M) — rarity on hand cards and the tower panel — design, waits on T0002
-- T0010 (yoga, S) — tier pip per slot on the tower — designing, waits on T0002
-- T0011 (asus, M, cycle 2) — the odds shift: rarer cards the deeper the run, live odds line — design, after T0002
-- T0012 (asus, L, cycle 2) — Mark: the rule-changing augment that only ever comes as Epic — design, after T0011
-- Later: a second rule-changing Epic augment (e.g. towers next to each other share their slows).
+**Breakdown:**
+- T0002 (asus, L) — the tiers: Common/Rare/Epic numbers for the five augments, the 70/25/5 draft roll, card frame + gem row, odds line — **done** (2026-10-28)
+- T0008 (narcissus, M) — rarity on hand cards and the tower panel — in flight (unblocked by T0002)
+- T0010 (yoga, S) — tier pip per slot on the tower — in flight (designing)
+- T0011 (asus, M, cycle 2) — the odds shift: rarer cards the deeper the run, live odds line — in progress
+- T0012 (asus, L, cycle 2) — Mark: the rule-changing augment that only ever comes as Epic — in flight, after T0011
+- T0020 (asus, L, cycle 5) — Rally: the second rule-changing Epic; towers within 2 cells of a Rally tower attack 10% faster, rewarding clusters — design, after T0012
 
-Progress: the whole epic waits on T0002 (the tiers), which is in flight; T0008, T0010, T0011 and T0012 are all queued behind it, so no new E4 task this cycle. New augment content is already in flight (Lance T0004, Mark T0012), which also keeps the draft pool from getting a third simultaneous new-augment edit.
+Progress: T0002 (the tiers) is done, so the rarity-display tasks are unblocked (T0008, T0010 in flight) and the odds shift (T0011) is in progress. Mark (T0012) is the first rule-changing Epic, in flight on asus; Rally (T0020) is the second rule-changing Epic, queued on asus behind Mark, and introduces the game's first tower-to-tower interaction. New-augment content in flight: Lance (T0004, desktop), Mark (T0012, asus), Rally (T0020, asus, after Mark) — asus's two are sequential, so at most two simultaneous new-augment edits (Lance + one asus task).
 
 ## Later
 
