@@ -1,14 +1,14 @@
 ---
 id: T0025
 title: "Chain: the zap that leaps between enemies"
-assignee: inet-racing
 size: L
 priority: 3
-status: in-progress
+status: todo
 depends_on: [T0020, T0004]
 attempts: 2
 created: 2026-10-28T05:31:15Z
 claimed_at: 2026-10-28T18:05:35Z
+finished_at: 2026-10-28T21:36:24Z
 epic: E4
 ---
 
@@ -145,3 +145,11 @@ Could not merge into main (conflict). The work was saved to projects/chokepoint/
 - Conflicts in: projects/chokepoint/game/src/art/barrels.ts, projects/chokepoint/game/src/audio/Sfx.ts, projects/chokepoint/game/src/content/augments/index.ts, projects/chokepoint/game/src/content/types.ts, projects/chokepoint/game/src/entities/towerLook.ts, projects/chokepoint/game/src/systems/TowerSystem.ts, projects/chokepoint/game/src/systems/attacks/index.ts, projects/chokepoint/game/tests/core/augments.test.ts
 - Auto-resolved 3 spot(s) where both sides only added lines (clean: projects/chokepoint/game/src/audio/Sfx.ts, projects/chokepoint/game/src/content/augments/index.ts, projects/chokepoint/game/src/systems/attacks/index.ts).
 - Could not resolve them: git could not continue the rebase after 3 rounds.
+
+## Attempt 2 failed (inet-racing)
+
+Could not merge into main (broken-after-rebase). The work was saved to projects/chokepoint/tasks/salvage/T0025.diff; the next attempt re-applies it on the latest code.
+- Self-review made fixes (kept; checks pass).
+- Conflicts in: projects/chokepoint/game/src/systems/TowerSystem.ts
+- The conflict agent resolved them.
+- After rebasing onto newer main the gate failed at "smoke".
