@@ -3,10 +3,12 @@ id: T0068
 title: "Splitter: the enemy that breaks into two"
 size: M
 priority: 3
-status: design
+status: designing
 depends_on: [T0057]
 attempts: 0
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T15:19:43Z
+designer: desktop
 ---
 
 ## Goal
