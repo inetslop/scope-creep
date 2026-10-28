@@ -1,12 +1,14 @@
 ---
 id: T0027
 title: "Push: the augment that moves enemies back along the road"
+assignee: desktop
 size: L
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0020, T0023, T0024, T0026]
-attempts: 0
+attempts: 1
 created: 2026-10-28T05:51:38Z
+claimed_at: 2026-10-28T15:41:46Z
 epic: E4
 ---
 
