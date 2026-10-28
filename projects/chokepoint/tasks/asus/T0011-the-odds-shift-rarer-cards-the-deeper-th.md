@@ -4,13 +4,11 @@ title: "The odds shift: rarer cards the deeper the run goes"
 assignee: asus
 size: M
 priority: 1
-status: designing
+status: todo
 depends_on: [T0002]
 attempts: 0
 created: 2026-10-28T02:08:37Z
-claimed_at: 2026-10-28T02:08:39Z
 epic: E4
-designer: desktop
 ---
 
 ## Goal
@@ -33,3 +31,67 @@ The draft gets more exciting the deeper a run goes: the rarity odds improve with
 - [ ] A unit test: the epic share of many seeded rolls at W 15 is higher than at W 5, and the three odds always sum to 100 for any wave.
 - [ ] A run replayed with the same seed produces the same card tiers as the original run.
 - [ ] The odds line keeps T0002's style and fits the draft at 412x915 and 1280x720.
+
+## Design (architect, desktop)
+
+### Files
+- edit `src/core/tiers.ts` - add the pure curve `tierOdds(wave)`; change `rollTier` to take the wave. Leave `TIER_ORDER`, `TIER_ODDS`, `tierIndex`, `tierFirst`, `tierAdded`, `tierAddedLine` untouched.
+- edit `src/core/augments.ts` - `rollOffer` gains a `wave` parameter, passed to `rollTier`.
+- edit `src/systems/RunFlow.ts` - new public field `draftWave`; `openDraft` sets it and passes it to `rollOffer`.
+- edit `src/scenes/DraftScene.ts` - the T0002 odds line is built from `tierOdds(game.flow.draftWave)` instead of `TIER_ODDS`; nothing else moves.
+- create `tests/core/tiers.test.ts` - curve, sum-to-100, determinism, epic-share tests.
+- edit `tests/core/augments.test.ts` - add the new `wave` argument to the existing `rollOffer`/`rollTier` call sites (T0002's versions of them).
+
+### Interfaces
+```ts
+// core/tiers.ts — added; the single source of the curve, readable by later tasks (E3 levels)
+export function tierOdds(wave: number): Record<Tier, number>;
+// core/tiers.ts — changed (one rng draw per call, exactly as T0002's rollTier)
+export function rollTier(rng: Rng, wave: number): Tier;
+
+export function tierOdds(wave: number): Record<Tier, number> {
+  const grow = Math.max(0, wave - 4);
+  const rare = Math.min(33, TIER_ODDS.rare + grow);
+  const epic = Math.min(15, TIER_ODDS.epic + grow);
+  return { common: 100 - rare - epic, rare, epic };
+}
+export function rollTier(rng: Rng, wave: number): Tier {
+  const odds = tierOdds(wave);
+  const n = rng.next() * 100;
+  if (n < odds.epic) return 'epic';
+  if (n < odds.epic + odds.rare) return 'rare';
+  return 'common';
+}
+
+// core/augments.ts — changed (wave is the new 4th arg, `opening` becomes 5th)
+export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, wave: number, opening?: boolean): AugmentCopy[]; // tiers roll via rollTier(rng, wave)
+
+// systems/RunFlow.ts — added next to `offer`, and inside openDraft before the rollOffer call
+draftWave = 1; // the wave the open draft rolls its odds for (the one after run.wave)
+this.draftWave = this.run.wave + 1;
+this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.draftWave, this.run.wave === 0);
+```
+`run.wave` is 0 before wave 1 and the last cleared N in the following draft (`core/run.ts`), so `run.wave + 1` is exactly the spec's W. DraftScene: replace `TIER_ODDS[t]` with `tierOdds(game.flow.draftWave)[t]` in the odds-line text, swap the import, keep `TIER_ORDER`, keep `textStyle(12, PALETTE.muted)` and both positions.
+
+### Steps
+1. `core/tiers.ts`: add `tierOdds` just above `rollTier`, replace `rollTier`'s signature and body.
+2. `core/augments.ts`: add `wave: number` before `opening` in `rollOffer`, pass it to `rollTier`.
+3. `RunFlow.ts`: add the field and the two lines in `openDraft` (typecheck lists any missed `rollOffer` call site — there is only RunFlow plus tests).
+4. `DraftScene.ts`: the one-line odds change.
+5. Tests, then `npm run check` and `npm run smoke`.
+
+### Pitfalls
+- The task text's "W 5 → 69/26/6" sums to 101; the rule "Common = 100 − Rare − Epic" (and the W 10/15 examples) win: W 5 is **68/26/6**. Do not special-case 69.
+- `rollTier` must stay one `rng.next()` per card or the run's rng stream shifts; determinism then holds for free.
+- Build the odds text once in `create()` as T0002 does — `draftWave` is fixed while the draft is open (GameScene paused); don't move it into `layout()`.
+- Don't touch the odds line's positions (portrait `top + 58`, landscape `-CARD_H/2 - 18`) or style; the new numbers are the same text length, so it still fits at 412x915 and 1280x720.
+- Keep `TIER_ODDS` exported (base odds, `tierOdds` derives from it). Don't touch HandBar/TowerPanel (T0008/T010 territory) or `towerLook.ts`.
+
+### Tests
+`tests/core/tiers.test.ts` (vitest, `Rng` from `src/core/rng`):
+- `tierOdds` exact: (1,4)→`{common:70,rare:25,epic:5}`, (5)→`{68,26,6}`, (10)→`{58,31,11}`, (12)→`{54,33,13}`, (14,15,40)→`{52,33,15}`.
+- For `wave` 0..60: `common + rare + epic === 100` and `common >= 0`.
+- Determinism: `seq(wave)` = 300× `rollTier(new Rng(42), wave)`; `seq(15)` toEqual `seq(15)`.
+- Replay: with `new Rng(1234)`, collect `c.tier` from `rollOffer(rng, AUGMENTS, 3, wave, wave === 1)` for `wave` 1..25 (75 cards); two independent runs toEqual, and the list contains `'epic'`.
+- Share: 3000 rolls each with fresh `new Rng(7)`; `share(15) > share(5) + 0.02`.
+`tests/core/augments.test.ts`: pass a wave (e.g. 5) at the `rollOffer`/`rollTier` call sites T0002 left there.
