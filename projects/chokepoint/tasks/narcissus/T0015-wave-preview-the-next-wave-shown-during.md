@@ -4,11 +4,11 @@ title: "Wave preview: the next wave shown during the build phase"
 assignee: narcissus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 2
+attempts: 3
 created: 2026-10-28T02:08:37Z
-claimed_at: 2026-10-28T13:09:49Z
+claimed_at: 2026-10-28T13:11:27Z
 ---
 
 ## Goal
