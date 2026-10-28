@@ -1,12 +1,14 @@
 ---
 id: T0047
 title: The claim card says Score
+assignee: desktop
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T12:01:28Z
+claimed_at: 2026-10-28T12:34:58Z
 epic: E1
 ---
 
