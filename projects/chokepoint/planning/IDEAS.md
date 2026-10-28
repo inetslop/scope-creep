@@ -15,7 +15,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Boss every 10 waves with a health bar and its own mechanic
 - Wave preview strip in the build phase: the shapes and counts of the next wave
 - Interest: unspent gold at the end of a build phase earns 5% (capped)
-- Fast-forward button (2x speed) for the wave phase
+- Fast-forward button (2x speed) for the wave phase — tasked as T0019 (narcissus, cycle 4)
 - Daily seeded run with a shareable result
 - Colorblind mode: patterns on the shapes, not just color
 - Map modifiers chosen in the draft instead of an augment (e.g. "the next wave comes from both ends")
@@ -35,3 +35,5 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Leaker: a big slow enemy that costs 2 lives when it leaks — the first enemy that hurts you twice as much
 - Recent runs: the menu lists your last few runs (wave + coins) so you can see your trend — tasked as T0018 (narcissus, cycle 3)
 - A "New best" star on the menu's profile card when your last run hit your best wave — tasked as T0016 (yoga, cycle 3)
+- Mender enemy: a slow round enemy that heals nearby enemies in a pulsing ring; closest is Block, new is that it heals other enemies, which no current enemy does
+- Anchor augment: first, roots (fully stops) enemies in range for a beat with no attack of its own; added, +0.5s of root. Closest is Frost (a slow); new is a full stop that also applies when stacked on an attacking tower

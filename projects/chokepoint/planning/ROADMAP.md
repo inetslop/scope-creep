@@ -36,7 +36,7 @@ Progress: the profile, the menu card and the live coin tally are in (T0001, T000
 
 ### E3 — Levels: a run is a journey (not started)
 **Goal:** a run has a shape: a few boards in a row, each harder, and a build that grows across them.
-**Groundwork (cycle 2, outside the epic):** T0015 (wave preview) becomes the per-level wave preview once levels exist; T0014 (leak warning) teaches what a leak is before levels make leaking costlier.
+**Groundwork (outside the epic):** T0015 (wave preview) becomes the per-level wave preview once levels exist; T0014 (leak warning) teaches what a leak is before levels make leaking costlier; T0019 (fast-forward 2x, narcissus, cycle 4) keeps runs in flow and pays off once a run spans several levels.
 **When done:** a run goes through levels, like the acts of a roguelite: each level is its own board with a set number of waves, ending in a tougher final wave. Clear it and the run moves on to the next level: a new, harder board (a longer or more winding road, tougher enemies) that starts empty. What you carry is your **pool**: the run starts with a small pool of augments that the drafts offer from, and every time you clear a level you pick one new augment to add to it, so each level offers more to combine. The HUD shows the level ("Level 2 · Wave 3/8"), the pick between levels is its own moment, and the game-over screen says how far you got. Clearing the last level wins the run.
 
 ### E4 — Augment rarity (active — started 2026-10-28, 0 of 5 done)
