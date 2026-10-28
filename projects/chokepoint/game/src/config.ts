@@ -26,6 +26,9 @@ export const BUILD_SEC = { first: 8, between: 10 } as const;
 /** Gold for clearing a wave: base + per wave number. */
 export const WAVE_BONUS = { base: 20, perWave: 2 } as const;
 
+/** The run's one draft reroll. */
+export const REROLL_COST = 15;
+
 /** Screen pixels the HUD cards take at the top and bottom; the board fits between them. */
 export const HUD = { top: 72, bottom: 116, margin: 10 } as const;
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { START } from '../../src/config';
+import { REROLL_COST, START } from '../../src/config';
 import { RunState } from '../../src/core/run';
 
 describe('RunState', () => {
@@ -55,6 +55,24 @@ describe('RunState', () => {
     run.startWave();
     expect(run.wave).toBe(2);
     expect(run.wavesCleared).toBe(1);
+  });
+
+  it('rerolls the draft once per run, for the cost', () => {
+    const run = new RunState(1);
+    expect(run.reroll(REROLL_COST)).toBe(true);
+    expect(run.gold).toBe(START.gold - REROLL_COST);
+    expect(run.rerollUsed).toBe(true);
+    expect(run.reroll(REROLL_COST)).toBe(false);
+    expect(run.gold).toBe(START.gold - REROLL_COST);
+  });
+
+  it('cannot reroll without the gold, and keeps the reroll', () => {
+    const run = new RunState(1);
+    run.spend(START.gold - (REROLL_COST - 1));
+    expect(run.gold).toBe(REROLL_COST - 1);
+    expect(run.reroll(REROLL_COST)).toBe(false);
+    expect(run.rerollUsed).toBe(false);
+    expect(run.gold).toBe(REROLL_COST - 1);
   });
 
   it('keeps the run ledger: gold earned and clean waves', () => {

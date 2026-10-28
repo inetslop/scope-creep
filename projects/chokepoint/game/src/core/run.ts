@@ -27,6 +27,7 @@ export class RunState {
   kills = 0;
   goldEarned = 0; // gold earned this run: kill gold + wave bonuses
   cleanWaves = 0; // waves that ended without a leak
+  rerollUsed = false; // the run's one draft reroll was spent
   private leaksThisWave = 0;
 
   constructor(seed: number) {
@@ -57,6 +58,14 @@ export class RunState {
   spend(cost: number): boolean {
     if (cost < 0 || this.gold < cost) return false;
     this.gold -= cost;
+    return true;
+  }
+
+  /** Pays for the run's one reroll: takes the gold and marks it spent. */
+  reroll(cost: number): boolean {
+    if (this.rerollUsed) return false;
+    if (!this.spend(cost)) return false;
+    this.rerollUsed = true;
     return true;
   }
 

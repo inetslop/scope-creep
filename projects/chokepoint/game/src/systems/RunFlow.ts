@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { BUILD_SEC, CELL } from '../config';
+import { BUILD_SEC, CELL, REROLL_COST } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
@@ -94,6 +94,14 @@ export class RunFlow {
     }
     this.scene.scene.launch(SCENES.draft);
     this.scene.scene.pause();
+  }
+
+  /** The draft's one reroll: if the run has it, pay REROLL_COST and roll three new offers. */
+  rerollOffer(): boolean {
+    if (this.run.phase !== 'draft') return false;
+    if (!this.run.reroll(REROLL_COST)) return false;
+    this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.draftWave, this.run.wave === 0);
+    return true;
   }
 
   /** DraftScene picked an augment copy (or none): it goes into the hand, and the next build phase starts. */

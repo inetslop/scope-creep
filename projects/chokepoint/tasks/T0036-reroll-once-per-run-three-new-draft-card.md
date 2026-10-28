@@ -4,11 +4,12 @@ title: "Reroll: once per run, three new draft cards for 15 gold"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T08:43:02Z
 claimed_at: 2026-10-28T09:03:58Z
+finished_at: 2026-10-28T09:16:35Z
 epic: E4
 ---
 
@@ -136,3 +137,19 @@ rerollOffer(): boolean {
 
 ### Tests
 - `tests/core/run.test.ts`: the two cases in step 10 (rule in `src/core/run.ts` a later change could silently break).
+
+## Result (attempt 1, desktop)
+
+Added the run's one draft reroll: a "Reroll · 15" coin-glyph button under the three draft cards that, once per run, pays 15 gold and re-rolls the offer with the same flip animation and tier chime. The spent flag and payment live on `RunState` (`rerollUsed`, `reroll()`), the re-roll in `RunFlow.rerollOffer()` (kept in its own hunk between `openDraft`/`finishDraft`), the cost in `config.ts` next to `WAVE_BONUS`, and the UI in `DraftScene.ts` where the card row is now rebuildable (`buildRow`) with the button reflecting used/can't-afford states and an "R" hotkey. Two new unit tests in `tests/core/run.test.ts` guard the once-per-run rule; check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 12.6 min
+
+```
+projects/chokepoint/game/src/config.ts            |   3 +
+ projects/chokepoint/game/src/core/run.ts          |   9 ++
+ projects/chokepoint/game/src/scenes/DraftScene.ts | 166 ++++++++++++++--------
+ projects/chokepoint/game/src/systems/RunFlow.ts   |  10 +-
+ projects/chokepoint/game/tests/core/run.test.ts   |  20 ++-
+ 5 files changed, 148 insertions(+), 60 deletions(-)
+```
