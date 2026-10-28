@@ -1,14 +1,14 @@
 ---
 id: T0025
 title: "Chain: the zap that leaps between enemies"
+assignee: inet-racing
 size: L
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0020, T0004]
-attempts: 1
+attempts: 2
 created: 2026-10-28T05:31:15Z
-claimed_at: 2026-10-28T13:39:32Z
-finished_at: 2026-10-28T18:05:29Z
+claimed_at: 2026-10-28T18:05:35Z
 epic: E4
 ---
 
