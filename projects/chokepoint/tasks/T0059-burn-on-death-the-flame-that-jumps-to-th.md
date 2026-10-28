@@ -1,12 +1,14 @@
 ---
 id: T0059
 title: "Burn on death: the flame that jumps to the nearest"
+assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0028, T0039, T0027]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:29:40Z
+claimed_at: 2026-10-28T20:39:36Z
 epic: E4
 ---
 
