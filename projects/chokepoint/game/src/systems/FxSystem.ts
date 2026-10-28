@@ -138,6 +138,21 @@ export class FxSystem {
     });
   }
 
+  /** A green "Clean" chip: the wave ended with no leak. Pops in at the exit, holds, fades out. */
+  cleanChip(x: number, y: number): void {
+    if (this.live >= FxSystem.MAX) return;
+    const g = this.scene.add.graphics();
+    g.fillStyle(PALETTE.greenDeep, 1);
+    g.fillRoundedRect(-33, -12, 66, 30, 15); // side face
+    g.fillStyle(PALETTE.green, 1);
+    g.fillRoundedRect(-33, -15, 66, 30, 15); // pill body
+    const label = this.scene.add.text(0, -1, 'Clean', textStyle(16, PALETTE.card, { fontStyle: 'bold' })).setOrigin(0.5);
+    const chip = this.scene.add.container(x, y, [g, label]).setDepth(DEPTH.fx).setScale(0);
+    this.live += 1;
+    this.scene.tweens.add({ targets: chip, scale: 1, duration: 200, ease: 'Back.easeOut' });
+    this.scene.tweens.add({ targets: chip, alpha: 0, delay: 1200, duration: 400, ease: 'Quad.easeIn', onComplete: () => { this.live -= 1; chip.destroy(); } });
+  }
+
   /** Floating text that rises and fades, e.g. "+4" gold. */
   popText(x: number, y: number, text: string, color: number = PALETTE.goldText): void {
     if (this.live >= FxSystem.MAX) return;

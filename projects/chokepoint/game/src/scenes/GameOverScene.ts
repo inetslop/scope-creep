@@ -37,7 +37,7 @@ export class GameOverScene extends Phaser.Scene {
     const score = this.add.text(0, -100, `${run.score} points · ${run.kills} kills`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
     const wavesText = this.add.text(0, -71, `Waves held ${run.wavesCleared}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
     const stoppedText = this.add.text(0, -54, `Stopped ${run.kills}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
-    const cleanText = this.add.text(0, -37, `Clean ${run.cleanWaves}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
+    const cleanText = this.add.text(0, -37, `Clean ${run.cleanWaves}`, textStyle(15, run.cleanWaves > 0 ? PALETTE.greenDeep : PALETTE.muted)).setOrigin(0.5);
     const coinsText = this.add.text(0, -20, `+${result.coins} coins`, textStyle(15, PALETTE.goldText, { fontStyle: 'bold' })).setOrigin(0.5);
     if (result.coins > 0) {
       coinsText.setScale(1.15);

@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { BUILD_SEC } from '../config';
+import { BUILD_SEC, CELL } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
@@ -112,11 +112,20 @@ export class RunFlow {
   }
 
   private clearWave(): void {
+    const cleanBefore = this.run.cleanWaves;
     const bonus = this.run.clearWave();
+    const clean = this.run.cleanWaves > cleanBefore;
     hook.stats.wavesCleared += 1;
     this.s.sfx?.waveClear();
     this.s.fx.popText(this.s.board.width / 2, this.s.board.height / 2, `Wave ${this.run.wave} cleared  +${bonus}`, PALETTE.greenDeep);
-    this.openDraft();
+    if (clean) {
+      // A beat for the chip to pop before the draft veils the board.
+      const exit = this.s.board.path.pointAt(this.s.board.path.length - CELL / 2);
+      this.s.fx.cleanChip(exit.x, exit.y);
+      this.scene.time.delayedCall(1000, () => this.openDraft());
+    } else {
+      this.openDraft();
+    }
   }
 
   private endRun(): void {

@@ -4,11 +4,12 @@ title: "Clean waves: a chip at the exit and a green line on the card"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0001]
 attempts: 1
 created: 2026-10-28T01:07:07Z
 claimed_at: 2026-10-28T07:42:49Z
+finished_at: 2026-10-28T07:52:17Z
 epic: E1
 ---
 
@@ -89,3 +90,17 @@ private clearWave(): void {
 
 ### Tests
 none (no `src/core` rule changed; the `cleanWaves` delta logic lives in a Phaser system and is covered by the smoke run).
+
+## Result (attempt 1, desktop)
+
+A perfectly held wave is now noticed: a green "Clean" chip pops at the exit gate when a wave ends with zero leaks (200 ms scale-in, holds, fades out on its own), with a 1 s beat before the draft opens so it's actually seen (FxSystem.cleanChip, RunFlow.clearWave). On the game-over card, the "Clean N" line turns green when N > 0 and stays plain at 0 (GameOverScene). No new inputs, no new invariants — the existing fx.count covers the chip's lifecycle. check and smoke pass; one smoke flake (a Rally-first-tower run with zero attacks) was unrelated and passed on re-run.
+
+- Self-review: APPROVE
+- Time: 9.5 min
+
+```
+projects/chokepoint/game/src/scenes/GameOverScene.ts |  2 +-
+ projects/chokepoint/game/src/systems/FxSystem.ts     | 15 +++++++++++++++
+ projects/chokepoint/game/src/systems/RunFlow.ts      | 13 +++++++++++--
+ 3 files changed, 27 insertions(+), 3 deletions(-)
+```
