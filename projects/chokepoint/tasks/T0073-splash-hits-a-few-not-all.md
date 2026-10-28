@@ -3,11 +3,13 @@ id: T0073
 title: "Splash hits a few, not all: 3 enemies per Splash"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T21:08:30Z
+claimed_at: 2026-10-28T22:23:27Z
 design_attempts: 1
+designer: baby-mama
 ---
 
 ## Goal
