@@ -61,6 +61,15 @@ export class FxSystem {
     this.track(g, 360, { scale: 1, alpha: 0, ease: 'Cubic.easeOut' });
   }
 
+  /** A flat light-blue ring out to `radius`: the anchor's root coming. */
+  rootWave(x: number, y: number, radius: number): void {
+    if (this.live >= FxSystem.MAX) return;
+    const g = this.scene.add.graphics().setDepth(DEPTH.preview).setPosition(x, y);
+    fillRing(g, 0, 0, radius, 4, 0, Math.PI * 2, PALETTE.ice, 0.9);
+    g.setScale(0.2);
+    this.track(g, 200, { scale: 1, alpha: 0, ease: 'Cubic.easeOut' });
+  }
+
   /** A quick ink ring at a tower's base when one of its hits marks an enemy. */
   markFlash(x: number, y: number, radius: number): void {
     if (this.live >= FxSystem.MAX) return;

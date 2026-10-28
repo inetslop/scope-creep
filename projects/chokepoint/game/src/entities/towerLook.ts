@@ -71,6 +71,15 @@ const DECORATIONS: readonly Decoration[] = [
   (g, spec) => {
     if (spec.slow) fillRing(g, 0, 0, BODY * 1.45, 3, 0, Math.PI * 2, PALETTE.ice, 0.95);
   },
+  // Anchor: a flat slate ring at the base with four ticks — it stops everything in range.
+  (g, spec) => {
+    if (!spec.root) return;
+    fillRing(g, 0, 0, BODY * 1.6, 3, 0, Math.PI * 2, PALETTE.muted, 0.95);
+    for (let i = 0; i < 4; i++) {
+      const a = Math.PI / 4 + i * (Math.PI / 2);
+      fillRing(g, 0, 0, BODY * 1.6, 6, a - 0.12, a + 0.12, PALETTE.muted, 1);
+    }
+  },
   // Mint: a small gold coin on the plinth's right side — kills near it (or by it) drop extra gold.
   (g, spec) => {
     if (spec.goldPerKill === 0) return;

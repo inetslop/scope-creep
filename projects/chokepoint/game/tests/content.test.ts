@@ -40,7 +40,7 @@ describe('content', () => {
       expect(BRIGHTS).toContain(a.look.color);
       expect(a.first.range).toBeGreaterThan(0);
       expect(a.first.rate).toBeGreaterThan(0);
-      expect(a.first.damage > 0 || a.first.slow || a.first.mark || a.first.kind === 'rally' || a.first.goldRadius).toBeTruthy();
+      expect(a.first.damage > 0 || a.first.slow || a.first.root || a.first.mark || a.first.kind === 'rally' || a.first.goldRadius).toBeTruthy();
       if (a.first.kind === 'shot') expect(a.first.projectileSpeed ?? 0).toBeGreaterThan(0);
       expect(Object.keys(a.added).length).toBeGreaterThan(0);
       // The card shows each line next to its glyph: short, and no "First:"-style labels.
@@ -67,6 +67,13 @@ describe('content', () => {
           expect(t.slowPct).toBeLessThan(1);
         }
         if (t.splash !== undefined) expect(t.splash).toBeGreaterThan(0);
+        if (t.rootSec !== undefined) expect(t.rootSec).toBeGreaterThan(0);
+        if (t.addedRootSec !== undefined) expect(t.addedRootSec).toBeGreaterThan(0);
+        if (t.asTower !== undefined) {
+          expect(t.asTower.length).toBeGreaterThanOrEqual(6);
+          expect(t.asTower.length).toBeLessThanOrEqual(56);
+          expect(t.asTower).not.toMatch(/^(first|added|alone)\b/i);
+        }
       }
     }
   });

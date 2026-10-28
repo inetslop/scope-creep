@@ -4,11 +4,12 @@ title: "Anchor: a rooting augment that stops the road"
 assignee: desktop
 size: L
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0021, T0012]
 attempts: 1
 created: 2026-10-28T05:03:06Z
 claimed_at: 2026-10-28T12:01:32Z
+finished_at: 2026-10-28T12:22:55Z
 epic: E4
 ---
 
@@ -138,3 +139,29 @@ No GameScene/HudScene/Sfx/hotkey changes; icon and tower body paint automaticall
 ### Tests
 - `tests/core/anchor.test.ts`: lone Anchor spec is pulse/0 damage/2.5 range/rate 1/3/root 0.75; Anchor+Anchor roots 1.0; Bolt+Anchor+Anchor roots 0.75; rare/epic first roots 1.0/1.5, epic added root 1.0, Epic Anchor first + extra copy = 1.75; Frost+Anchor spec has both slow 0.4 and root 0.5; `tierTowerLine(anchor,'rare')` and `tierAddedLine(anchor,'epic')` show the tier numbers; `describeSpec` of a lone Anchor matches /Roots everything around it for 0.75s/ and of Bolt+Anchor matches /roots them for 0.5s/.
 - `tests/content.test.ts`: the two validation edits above (no new rule tests there).
+
+## Result (attempt 1, desktop)
+
+Added Anchor (`src/content/augments/anchor.ts`), a pool support augment that roots (fully stops) everything in 2.5 cells every 3s as a tower, and roots on every hit when added, with +0.25s per extra copy in the same tower (tiered: pulse 0.75/1/1.5s, hit-root 0.5/0.75/1s); wired through `root` fields on the augment forms, `towerSpec`/`describeSpec`/tiers, `Enemy.rootLeft`, the hit payload, the pulse's light-blue `rootWave`, the enemy ground-ring mark, the slate tower decoration with four ticks, and a `enemies.root` invariant, plus `tests/core/anchor.test.ts` and the content-test validations. Two deviations from the design, both forced by it: the single `rootSec` field can't express its own tier table (pulse and hit-root scale differently), so I added `addedRootSec` to `TierValues` (following the `addedRateMul` naming), and the `TowerSystem` "pure support" gate needed `!t.spec.root` or a lone Anchor would never pulse; I also added `a.first.root` to the existing content-test disjunction rather than replacing it (the design's literal line would have dropped the mark/rally/goldRadius clauses), and gave the `describeSpec` support branch a root/slow/both structure that keeps the existing Frost and Mint lines byte-identical. Note: `tierTowerLine()`/`TierValues.asTower`/the DraftScene edit already existed, and the design's "unused" pink+square look is stale (Mark and Mint already use it), so the icon shares their look while the slate tower decoration distinguishes it.
+
+- Self-review: APPROVE
+- Time: 21.4 min
+
+```
+.../chokepoint/game/src/content/augments/anchor.ts | 23 ++++++++++
+ .../chokepoint/game/src/content/augments/index.ts  |  2 +
+ projects/chokepoint/game/src/content/types.ts      | 12 ++++-
+ projects/chokepoint/game/src/core/augments.ts      | 23 +++++++++-
+ projects/chokepoint/game/src/core/tiers.ts         |  6 ++-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/entities/Enemy.ts     | 15 ++++++-
+ projects/chokepoint/game/src/entities/towerLook.ts |  9 ++++
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  9 ++++
+ projects/chokepoint/game/src/systems/FxSystem.ts   |  9 ++++
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  5 ++-
+ .../chokepoint/game/src/systems/attacks/pulse.ts   |  4 +-
+ projects/chokepoint/game/src/systems/enemyMarks.ts |  4 ++
+ projects/chokepoint/game/tests/content.test.ts     |  9 +++-
+ projects/chokepoint/game/tests/core/anchor.test.ts | 51 ++++++++++++++++++++++
+ 15 files changed, 172 insertions(+), 10 deletions(-)
+```

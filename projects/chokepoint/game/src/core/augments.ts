@@ -1,4 +1,5 @@
 import { MAX_SLOTS, SLOT_COSTS } from '../config';
+import { ANCHOR_EXTRA_ROOT_SEC, anchor } from '../content/augments/anchor';
 import { getAugment } from '../content/augments';
 import { bolt } from '../content/augments/bolt';
 import type { Bright } from '../content/palette';
@@ -29,6 +30,8 @@ export interface TowerSpec {
   /** How many more enemies a shot strikes after the first hit; 0 = none (a pulse fires that many bolts). */
   pierce: number;
   slow: { pct: number; sec: number } | undefined;
+  /** The root (full stop) in seconds its hits apply; undefined when the tower has no Anchor. */
+  root: { sec: number } | undefined;
   projectileSpeed: number;
   /** Extra damage a marked enemy takes from everything, as a fraction (0.25 per Mark in the tower). */
   markPct: number;
@@ -57,6 +60,7 @@ const EMPTY: TowerSpec = {
   splash: 0,
   pierce: 0,
   slow: undefined,
+  root: undefined,
   projectileSpeed: 0,
   markPct: 0,
   markCount: 0,
@@ -92,6 +96,7 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     splash: 0,
     pierce: f.pierce ?? 0,
     slow: f.slow ? { ...f.slow } : undefined,
+    root: undefined,
     projectileSpeed: f.projectileSpeed ?? bolt.first.projectileSpeed ?? 10,
     markPct: 0,
     markCount: 0,
@@ -100,6 +105,13 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     goldRadius: f.goldRadius ?? 0,
     goldPerKill: 0,
   };
+  // Anchors in any slot: the first sets the root's duration, each extra one lengthens it.
+  let rootSec = 0;
+  const addRoot = (id: string, sec: number): void => {
+    if (id !== anchor.id) return;
+    rootSec += rootSec > 0 ? ANCHOR_EXTRA_ROOT_SEC : sec;
+  };
+  if (f.root) addRoot(first.id, f.root.sec);
   for (const a of augments.slice(1)) {
     const e = tierAdded(getAugment(a.id), a.tier);
     spec.damage *= e.damageMul ?? 1;
@@ -111,7 +123,9 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     if (spec.kind === 'shot') spec.shots += e.extraShots ?? 0;
     else if (spec.kind === 'pulse') spec.bolts += e.extraShots ?? 0;
     if (e.slow && (!spec.slow || e.slow.pct > spec.slow.pct)) spec.slow = { ...e.slow };
+    if (e.root) addRoot(a.id, e.root.sec);
   }
+  if (rootSec > 0) spec.root = { sec: rootSec };
   // Marks in any slot: a marked enemy takes this much more damage from everything.
   for (let i = 0; i < augments.length; i++) {
     const a = getAugment(augments[i]!.id);
@@ -145,6 +159,7 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
 export function describeSpec(spec: TowerSpec): string {
   if (!spec.attacks) return 'Put an augment in to give it an attack.';
   const slow = spec.slow ? Math.round(spec.slow.pct * 100) : 0;
+  const root = spec.root ? `, and roots them for ${spec.root.sec}s` : '';
   const marked = Math.round(spec.markPct * 100);
   let line: string;
   if (spec.kind === 'shot') {
@@ -152,6 +167,7 @@ export function describeSpec(spec: TowerSpec): string {
     const style = spec.range >= 4 ? 'Snipes' : spec.rate >= 3 ? 'Fires fast needles at' : 'Shoots';
     line = `${style} ${target}${spec.splash > 0 ? ', and the shots burst' : ''}${spec.pierce > 0 ? `, and each hits ${spec.pierce + 1} in a line` : ''}${marked > 0 ? ', and its hits mark' : ''}`;
     if (slow) line += `, slowing them by ${slow}%`;
+    line += root;
   } else if (spec.kind === 'mark') {
     line = `Marks the enemy furthest along: marked enemies take ${marked}% more damage`;
     if (slow) line += `, slowing them by ${slow}%`;
@@ -159,7 +175,11 @@ export function describeSpec(spec: TowerSpec): string {
     const r = getAugment('rally');
     line = `Towers within ${r.first.range} cells attack ${Math.round((r.added.rally?.pct ?? 0) * 100)}% faster`;
   } else if (spec.damage <= 0) {
-    if (spec.slow) {
+    if (spec.root) {
+      line = spec.slow ? `Slows everything around it by ${slow}%, and roots it for ${spec.root.sec}s` : `Roots everything around it for ${spec.root.sec}s`;
+      if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;
+      if (marked > 0) line += ', and its hits mark';
+    } else if (spec.slow) {
       line = `Slows everything around it by ${slow}%`;
       if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;
       if (marked > 0) line += ', and its hits mark';
@@ -167,6 +187,7 @@ export function describeSpec(spec: TowerSpec): string {
   } else {
     line = 'Blasts everything around it';
     if (slow) line += `, slowing them by ${slow}%`;
+    line += root;
     if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;
     if (marked > 0) line += ', and its hits mark';
   }

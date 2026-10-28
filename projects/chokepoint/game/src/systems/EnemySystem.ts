@@ -18,6 +18,8 @@ export interface HitPayload {
   /** Board units around the hit enemy that are hit too (0: none). */
   splash: number;
   slow: { pct: number; sec: number } | undefined;
+  /** The root (full stop) this hit applies, in seconds; undefined when it has no Anchor. */
+  root: { sec: number } | undefined;
   /** How many more enemies a shot strikes after the first hit; 0 = none. */
   pierce: number;
   /** The mark this hit applies to the enemies it hits; `x`, `y` are the tower's base (the flash spot). */
@@ -103,6 +105,7 @@ export class EnemySystem {
   strike(e: Enemy, payload: HitPayload): boolean {
     if (!e.active) return false;
     if (payload.slow) e.slow(payload.slow.pct, payload.slow.sec);
+    if (payload.root) e.root(payload.root.sec);
     if (payload.mark && e.mark(payload.mark.pct)) this.fx.markFlash(payload.mark.x, payload.mark.y, CELL * 0.43);
     if (payload.damage <= 0 || !e.hit(payload.damage)) return false;
     // Mint towers (core/mint.ts): the killer's own copies, plus every mint tower within its radius, pay extra.
@@ -136,6 +139,12 @@ export class EnemySystem {
   brokenEnemy(): string | undefined {
     const bad = this.pool.find((e) => e.active && (!Number.isFinite(e.x) || !Number.isFinite(e.y) || !Number.isFinite(e.hp)));
     return bad ? `${bad.def.id} at (${bad.x}, ${bad.y}) hp ${bad.hp}` : undefined;
+  }
+
+  /** Invariant: no active enemy carries a NaN or out-of-range root timer. */
+  brokenRoot(): string | undefined {
+    const bad = this.pool.find((e) => e.active && (!Number.isFinite(e.rootLeft) || e.rootLeft < 0 || e.rootLeft > 10));
+    return bad ? `${bad.def.id} rooted for ${bad.rootLeft}s` : undefined;
   }
 
   /** Invariant: no active enemy carries a NaN or out-of-[0, 1] mark. */

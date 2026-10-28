@@ -32,6 +32,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   /** Fraction of its speed it is slowed by (Frost), and for how many seconds more. */
   slowPct = 0;
   slowLeft = 0;
+  /** Seconds of a full stop left (Anchor): a rooted enemy does not move at all. */
+  rootLeft = 0;
   /** Fraction of extra damage it takes from everything until it dies (Mark); 0: unmarked. */
   markPct = 0;
   /** Seconds since it was marked (the chevron's pop-in); 0 until marked. */
@@ -56,6 +58,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.flash = 0;
     this.slowPct = 0;
     this.slowLeft = 0;
+    this.rootLeft = 0;
     this.markPct = 0;
     this.markAge = 0;
     this.setTexture(enemyTexture(def.id));
@@ -72,7 +75,12 @@ export class Enemy extends Phaser.GameObjects.Image {
       this.slowLeft -= dt;
       if (this.slowLeft <= 0) this.slowPct = 0;
     }
-    const speed = this.speed * (1 - this.slowPct);
+    // The slow keeps counting down while rooted, so it still holds when the root wears off.
+    if (this.rootLeft > 0) {
+      this.rootLeft -= dt;
+      if (this.rootLeft <= 0) this.rootLeft = 0;
+    }
+    const speed = this.rootLeft > 0 ? 0 : this.speed * (1 - this.slowPct);
     switch (this.def.behavior) {
       case 'walk':
         this.distance += speed * dt;
@@ -115,6 +123,11 @@ export class Enemy extends Phaser.GameObjects.Image {
     if (pct < this.slowPct) return;
     this.slowPct = pct;
     this.slowLeft = Math.max(this.slowLeft, sec);
+  }
+
+  /** Roots it: fully stopped for `sec` seconds. Overlapping roots do not stack; the longest holds. */
+  root(sec: number): void {
+    this.rootLeft = Math.max(this.rootLeft, sec);
   }
 
   /** Marks it: it takes `pct` extra damage from everything until it dies. The first mark wins. */

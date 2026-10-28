@@ -43,8 +43,8 @@ export type Tier = 'common' | 'rare' | 'epic';
  * What a tier changes about its copy of an augment. Unset fields keep the Common value.
  * The multipliers scale the FIRST form (`damageMul`, `cooldownMul` (divides the rate), `rangeMul`)
  * and replace the ADDED form's (`addedRateMul`, `addedRangeMul`); `slowPct` replaces this copy's
- * slow % in both forms, `pierce` its pierce, `splash` its added splash cells, and `asAdded` is
- * the card's added line.
+ * slow % in both forms, `pierce` its pierce, `splash` its added splash cells, `rootSec` its root
+ * seconds and `addedRootSec` its added root seconds, and `asAdded` is the card's added line.
  */
 export interface TierValues {
   damageMul?: number;
@@ -52,6 +52,10 @@ export interface TierValues {
   rangeMul?: number;
   slowPct?: number;
   splash?: number;
+  /** Replaces this copy's root duration in both forms, unless `addedRootSec` says otherwise (Anchor). */
+  rootSec?: number;
+  /** Replaces this copy's added root duration (Anchor). */
+  addedRootSec?: number;
   pierce?: number;
   addedRateMul?: number;
   addedRangeMul?: number;
@@ -92,6 +96,8 @@ export interface FirstForm {
   pierce?: number;
   /** Hits slow enemies by `pct` (0-1) for `sec` seconds. */
   slow?: { pct: number; sec: number };
+  /** Roots (fully stops) enemies for `sec` seconds (Anchor). */
+  root?: { sec: number };
   /** For a 'mark' attack: the fraction of extra damage a marked enemy takes from everything. */
   mark?: number;
   /** For a predictive 'shot': the base lead cap, in cells ahead of the enemy (Lead). */
@@ -112,6 +118,8 @@ export interface AddedForm {
   /** Shot strikes this many more enemies behind the one it hit; a pulse fires that many bolts per pulse. */
   pierce?: number;
   slow?: { pct: number; sec: number };
+  /** Hits root (fully stop) enemies for `sec` seconds (Anchor). */
+  root?: { sec: number };
   /** Hits apply the mark: enemies hit take this fraction of extra damage from everything. */
   mark?: number;
   damageMul?: number;

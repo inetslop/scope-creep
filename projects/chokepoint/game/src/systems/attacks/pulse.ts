@@ -10,7 +10,9 @@ export const pulse: Attack = ({ tower, enemies, range, payload, fireBolt, strike
   const hits = inRange(tower.x, tower.y, range, enemies);
   if (hits.length === 0) return false;
   for (const i of hits) strike(enemies[i]!, payload);
-  fx.wave(tower.x, tower.y, range, payload.color);
+  // A damage-0 rooting pulse (Anchor) shows a flat light-blue ring instead of the colored wave.
+  if (spec.damage > 0 || !spec.root) fx.wave(tower.x, tower.y, range, payload.color);
+  if (spec.root) fx.rootWave(tower.x, tower.y, range);
   const bolts = spec.bolts > 0 ? pickTargets(tower.x, tower.y, range, enemies, spec.bolts) : [];
   if (bolts.length > 0) {
     const first = enemies[bolts[0]!]!;

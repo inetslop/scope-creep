@@ -38,7 +38,7 @@ export function tierIndex(tier: Tier): number {
  */
 export function tierFirst(def: AugmentDef, tier: Tier): FirstForm {
   const f = def.first;
-  if (tier === 'common') return { ...f, slow: f.slow ? { ...f.slow } : undefined };
+  if (tier === 'common') return { ...f, slow: f.slow ? { ...f.slow } : undefined, root: f.root ? { ...f.root } : undefined };
   const t = def.tiers[tier];
   return {
     ...f,
@@ -47,6 +47,7 @@ export function tierFirst(def: AugmentDef, tier: Tier): FirstForm {
     range: f.range * (t.rangeMul ?? 1),
     pierce: t.pierce ?? f.pierce,
     slow: f.slow ? { ...f.slow, pct: t.slowPct ?? f.slow.pct } : undefined,
+    root: f.root ? { ...f.root, sec: t.rootSec ?? f.root.sec } : undefined,
   };
 }
 
@@ -56,7 +57,7 @@ export function tierFirst(def: AugmentDef, tier: Tier): FirstForm {
  */
 export function tierAdded(def: AugmentDef, tier: Tier): AddedForm {
   const a = def.added;
-  if (tier === 'common') return { ...a, slow: a.slow ? { ...a.slow } : undefined };
+  if (tier === 'common') return { ...a, slow: a.slow ? { ...a.slow } : undefined, root: a.root ? { ...a.root } : undefined };
   const t = def.tiers[tier];
   return {
     ...a,
@@ -64,6 +65,7 @@ export function tierAdded(def: AugmentDef, tier: Tier): AddedForm {
     rangeMul: t.addedRangeMul ?? a.rangeMul,
     splash: t.splash ?? a.splash,
     slow: a.slow ? { ...a.slow, pct: t.slowPct ?? a.slow.pct } : undefined,
+    root: a.root ? { ...a.root, sec: t.addedRootSec ?? t.rootSec ?? a.root.sec } : undefined,
   };
 }
 

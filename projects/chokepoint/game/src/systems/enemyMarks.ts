@@ -9,6 +9,10 @@ type Mark = (g: Phaser.GameObjects.Graphics, e: Enemy) => void;
 
 /** What shows on enemies, one per line, drawn in this order every frame. */
 const MARKS: readonly Mark[] = [
+  // Rooted: a flat light-blue ground ring for the duration of its stop.
+  (g, e) => {
+    if (e.rootLeft > 0) fillRing(g, e.x, e.y + 2, e.def.look.size * 64 + 12, 3.5, 0, Math.PI * 2, PALETTE.ice, 0.95);
+  },
   // Slowed: a thin ice-blue frost ring.
   (g, e) => {
     if (e.slowPct > 0) fillRing(g, e.x, e.y + 2, e.def.look.size * 64 + 7, 2.5, 0, Math.PI * 2, PALETTE.ice, 0.95);
