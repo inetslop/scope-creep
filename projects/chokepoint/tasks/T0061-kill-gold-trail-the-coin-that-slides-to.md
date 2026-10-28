@@ -3,11 +3,13 @@ id: T0061
 title: "Kill gold trail: the coin that slides to the tally"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0039, T0054]
 attempts: 0
 created: 2026-10-28T13:29:40Z
+claimed_at: 2026-10-28T14:36:39Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
