@@ -3,12 +3,11 @@ id: T0074
 title: "Mute: the enemy that silences your towers"
 size: M
 priority: 2
-status: designing
+status: design
 depends_on: []
 attempts: 0
 created: 2026-10-28T21:24:45Z
-claimed_at: 2026-10-28T21:36:30Z
-designer: inet-racing
+design_attempts: 1
 ---
 
 ## Goal
