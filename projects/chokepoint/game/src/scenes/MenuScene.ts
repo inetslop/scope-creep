@@ -53,9 +53,8 @@ export class MenuScene extends Phaser.Scene {
         vy: -4 + Math.random() * 8,
       })),
     );
-    this.demo = new MenuDemo(this);
-
     const p = loadProfile(window.localStorage);
+    this.demo = new MenuDemo(this, p.bestWave);
     this.title = this.add.text(0, 0, 'Chokepoint', titleStyle(60)).setOrigin(0.5);
     const how = this.add
       .text(0, 0, 'Build towers beside the road.\nCombine augments into new kinds of tower.\nHold as many waves as you can.', textStyle(18, PALETTE.muted, { align: 'center', lineSpacing: 6 }))

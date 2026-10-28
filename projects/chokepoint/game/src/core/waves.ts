@@ -34,6 +34,11 @@ export function waveHpMul(wave: number): number {
   return 1 + 0.2 * n + 0.004 * n * n;
 }
 
+/** What wave the menu demo plays: the player's saved best wave, clamped to at least 1. */
+export function demoWave(bestWave: number): number {
+  return Math.max(1, bestWave);
+}
+
 /** How many ramping enemies (faster when hit) a wave sends: two from wave 8, +1 every four waves, at most six. */
 export function rampCount(wave: number): number {
   return wave < 8 ? 0 : Math.min(6, 2 + Math.floor((wave - 8) / 4));

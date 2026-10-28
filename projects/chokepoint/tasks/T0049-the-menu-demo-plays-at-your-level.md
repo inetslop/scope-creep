@@ -4,11 +4,12 @@ title: The menu demo plays at your level
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0015]
 attempts: 1
 created: 2026-10-28T12:01:28Z
 claimed_at: 2026-10-28T19:09:44Z
+finished_at: 2026-10-28T19:40:24Z
 epic: E1
 ---
 
@@ -68,3 +69,19 @@ Tests:
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0042: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Result (attempt 1, asus)
+
+The menu's live demo now plays at the player's level: `core/waves.ts` gained a pure `demoWave(bestWave)` (clamped to ≥1), `MenuDemo` takes the saved best wave and, when one exists, spawns a real `planWave` plan with a fresh seeded Rng (escalated hp/counts and the rampers the game uses) instead of random early enemies — while first-time players get the byte-identical old random spawner. `MenuScene` loads the profile once and passes `p.bestWave` in. Nothing is written to the profile and the demo still autoplays and loops; a unit test pins `demoWave`'s clamping.
+
+- Self-review: APPROVE
+- Time: 30.7 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/waves.ts         |  5 ++
+ projects/chokepoint/game/src/scenes/MenuScene.ts   |  3 +-
+ .../chokepoint/game/src/scenes/menu/MenuDemo.ts    | 55 ++++++++++++++++++----
+ projects/chokepoint/game/tests/core/waves.test.ts  | 10 +++-
+ 4 files changed, 62 insertions(+), 11 deletions(-)
+```

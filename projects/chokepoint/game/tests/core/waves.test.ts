@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ENEMIES } from '../../src/content/enemies';
 import { Rng } from '../../src/core/rng';
-import { dashCount, planWave, rampCount, waveBudget, waveCounts, waveHpMul } from '../../src/core/waves';
+import { dashCount, demoWave, planWave, rampCount, waveBudget, waveCounts, waveHpMul } from '../../src/core/waves';
 
 describe('planWave', () => {
   it('spends the budget on unlocked enemies only', () => {
@@ -89,6 +89,14 @@ describe('planWave', () => {
       expect(waveHpMul(wave)).toBeGreaterThan(waveHpMul(wave - 1));
     }
     expect(waveHpMul(1)).toBe(1);
+  });
+});
+
+describe('demoWave', () => {
+  it('plays the saved best wave, at least 1 (a first-time player gets wave 1)', () => {
+    expect(demoWave(0)).toBe(1);
+    expect(demoWave(1)).toBe(1);
+    expect(demoWave(12)).toBe(12);
   });
 });
 

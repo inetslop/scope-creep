@@ -1,8 +1,10 @@
 import type Phaser from 'phaser';
-import { ENEMIES } from '../../content/enemies';
+import { ENEMIES, getEnemy } from '../../content/enemies';
 import { PALETTE } from '../../content/palette';
 import type { EnemyDef } from '../../content/types';
 import { PathLine } from '../../core/path';
+import { Rng } from '../../core/rng';
+import { demoWave, planWave, type WavePlan } from '../../core/waves';
 import { barrelTexture } from '../../art/barrels';
 import { MENU_ROAD_POINTS, MENU_ROAD_SIZE, paintMenuRoad } from '../../art/menu';
 import { artScale, BOLT_TEXTURE, enemyTexture, TOWER_BASE, TOWER_BODY, towerTexture } from '../../art/textures';
@@ -54,8 +56,15 @@ export class MenuDemo {
   /** Screen position of the road's top-left corner, and screen pixels per road unit. */
   private origin = { x: 0, y: 0 };
   private k = 1;
+  /** The wave's number the demo plays (the player's saved best); 0 is a first-time player. */
+  private readonly wave: number;
+  private plan: WavePlan | undefined;
+  private next = 0;
+  private spawnTimer = 0;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, bestWave: number) {
+    // A tampered profile can hold a non-finite best wave; planWave would never finish planning it.
+    this.wave = bestWave > 0 && Number.isFinite(bestWave) ? demoWave(bestWave) : 0;
     this.scene = scene;
     this.fx = new FxSystem(scene);
     this.road = scene.add.image(0, 0, paintMenuRoad(scene)).setOrigin(0);
@@ -71,6 +80,7 @@ export class MenuDemo {
     this.parts.push({ img: this.barrel, at: DEMO.bolt.at, dy: -4, size: DEMO.towerScale });
     this.frostRing.setDepth(1);
     this.road.setDepth(-1);
+    if (this.wave > 0) this.planNext();
   }
 
   /** Puts the road with its top center at (cx, top), `k` screen pixels per road unit. */
@@ -94,10 +104,14 @@ export class MenuDemo {
   }
 
   update(dt: number): void {
-    this.spawnIn -= dt;
-    if (this.spawnIn <= 0) {
-      this.spawnIn = DEMO.spawnEvery;
-      this.spawn();
+    if (this.wave === 0) {
+      this.spawnIn -= dt;
+      if (this.spawnIn <= 0) {
+        this.spawnIn = DEMO.spawnEvery;
+        this.spawn();
+      }
+    } else {
+      this.spawnWave(dt);
     }
     this.walk(dt);
     this.shoot(dt);
@@ -105,13 +119,38 @@ export class MenuDemo {
     this.flyBolts(dt);
   }
 
+  /** Plans this wave's enemies: seeded on the wave number, so the same saved best replans identically. */
+  private planNext(): void {
+    this.plan = planWave(this.wave, new Rng(this.wave), ENEMIES);
+    this.next = 0;
+    this.spawnTimer = 0;
+  }
+
+  /** Sends the planned wave on schedule, like WaveSystem.update; replans when it has all walked off. */
+  private spawnWave(dt: number): void {
+    const plan = this.plan;
+    if (!plan) return;
+    this.spawnTimer += dt;
+    while (this.next < plan.spawns.length && this.spawnTimer >= plan.spawns[this.next]!.delaySec) {
+      this.spawnTimer -= plan.spawns[this.next]!.delaySec;
+      const def = getEnemy(plan.spawns[this.next]!.enemy);
+      this.spawnDef(def, Math.max(1, Math.round((def.livesCost > 1 ? 4 : 2) * plan.hpMul)));
+      this.next++;
+    }
+    if (this.next >= plan.spawns.length && this.enemies.length === 0) this.planNext();
+  }
+
   private spawn(): void {
     // The show only uses enemies that walk in alone (no splinters: they exist only as a split).
     const walkers = ENEMIES.filter((e) => !e.spawnOnly);
     const def = walkers[Math.floor(Math.random() * walkers.length)]!;
+    this.spawnDef(def, def.livesCost > 1 ? 4 : 2);
+  }
+
+  private spawnDef(def: EnemyDef, hp: number): void {
     const img = this.scene.add.image(0, 0, enemyTexture(def.id));
     artScale(img, DEMO.enemyScale * this.k);
-    this.enemies.push({ img, def, distance: 0, hp: def.livesCost > 1 ? 4 : 2, slowLeft: 0 });
+    this.enemies.push({ img, def, distance: 0, hp, slowLeft: 0 });
   }
 
   private walk(dt: number): void {
