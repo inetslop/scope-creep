@@ -31,6 +31,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Kill combo: kills within 1.5 s chain a rising "×2, ×3" counter above the last kill
 - Draft reveal: the three draft cards flip over when the draft opens (200 ms), Epic cards flip a little longer
 - Rally augment (Epic): every tower within 2 cells of a Rally tower attacks 10% faster — rewards building in clusters — tasked as T0020 (asus, cycle 5)
+- Mint augment (Epic): no attack of its own — every kill within 2 cells of a Mint tower drops +1 extra gold; added, the host tower's kills drop +1 extra gold too; closest is Frost (a passive aura), new is that it changes the economy, not combat — tasked as T0021 (asus, cycle 6)
 - Wild card: one draft card is a wildcard that becomes the augment you pick, always at least Rare
 - Leaker: a big slow enemy that costs 2 lives when it leaks — the first enemy that hurts you twice as much
 - Recent runs: the menu lists your last few runs (wave + coins) so you can see your trend — tasked as T0018 (narcissus, cycle 3)
@@ -38,5 +39,5 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Mender enemy: a slow round enemy that heals nearby enemies in a pulsing ring; closest is Block, new is that it heals other enemies, which no current enemy does
 - Anchor augment: first, roots (fully stops) enemies in range for a beat with no attack of its own; added, +0.5s of root. Closest is Frost (a slow); new is a full stop that also applies when stacked on an attacking tower
 - Enemy telegraph: an enemy whose behavior is special (a Sprinter, a Marked enemy, a Splitter) shows a small neutral icon on itself while its ability matters, so new behaviors are readable at a glance
-- Lives as a danger bar: the lives readout becomes a small bar that drifts toward red and pulses as you get close to losing your last life
+- Lives as a danger bar: the lives readout becomes a small bar that drifts toward red and pulses as you get close to losing your last life — tasked as T0022 (yoga, cycle 6)
 - Tower earnings: the tower panel shows how much gold a tower has earned this run, so you can see which towers are paying for themselves
