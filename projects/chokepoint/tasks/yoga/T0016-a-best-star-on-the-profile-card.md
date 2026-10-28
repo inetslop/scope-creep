@@ -1,14 +1,15 @@
 ---
 id: T0016
-title: "A \\\\\\\\\\\\\\\"Best\\\\\\\\\\\\\\\" star on the profile card"
+title: "A \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"Best\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" star on the profile card"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T03:39:38Z
 claimed_at: 2026-10-28T04:18:12Z
+finished_at: 2026-10-28T04:29:54Z
 epic: E1
 ---
 
@@ -73,3 +74,17 @@ star.setVisible(profile.lastRun !== null && profile.lastRun.wave === profile.bes
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+Added a small yellow five-point star that appears to the right of the "Best wave N" line on the menu's profile card when the last finished run reached your best wave. It's a new `ui:star` texture painted in `src/art/icons.ts` (16x16, darker side face then yellow, like the other tokenless icons), registered in `src/art/textures.ts`, and placed/hidden in `src/scenes/menu/ProfileCard.ts` via `lastRun.wave === bestWave` — no data changes, no cleanup (the menu relaunches each run). Card size and all other lines are unchanged; the star fits at both 412x915 and 1280x720 where the card renders at scale 1.
+
+- Self-review: APPROVE
+- Time: 11.7 min
+
+```
+projects/chokepoint/game/src/art/icons.ts               | 17 +++++++++++++++--
+ projects/chokepoint/game/src/art/textures.ts            |  1 +
+ projects/chokepoint/game/src/scenes/menu/ProfileCard.ts |  6 ++++--
+ 3 files changed, 20 insertions(+), 4 deletions(-)
+```

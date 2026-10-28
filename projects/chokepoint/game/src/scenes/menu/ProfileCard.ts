@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { artScale, COIN_TEXTURE } from '../../art/textures';
+import { artScale, COIN_TEXTURE, STAR_TEXTURE } from '../../art/textures';
 import { PALETTE } from '../../content/palette';
 import type { Profile } from '../../core/profile';
 import { makeCard } from '../../ui/card';
@@ -19,9 +19,11 @@ export function buildProfileCard(scene: Phaser.Scene, profile: Profile): Phaser.
   const coin = artScale(scene.add.image(-116, -36, COIN_TEXTURE), 1.4);
   const coins = scene.add.text(-92, -36, String(profile.coins), textStyle(30, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
   const best = scene.add.text(0, 0, `Best wave ${profile.bestWave}`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
+  const star = artScale(scene.add.image(best.width / 2 + 13, 1, STAR_TEXTURE));
+  star.setVisible(profile.lastRun !== null && profile.lastRun.wave === profile.bestWave);
   const runs = scene.add.text(0, 24, `Runs ${profile.runsPlayed}`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
   const last = scene
     .add.text(0, 48, profile.lastRun ? `Last: wave ${profile.lastRun.wave} · +${profile.lastRun.coins} coins` : '', textStyle(15, PALETTE.faint))
     .setOrigin(0.5);
-  return scene.add.container(0, 0, [card, coin, coins, best, runs, last]);
+  return scene.add.container(0, 0, [card, coin, coins, best, star, runs, last]);
 }

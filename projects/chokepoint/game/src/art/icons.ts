@@ -2,8 +2,8 @@ import type Phaser from 'phaser';
 import { CELL } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { deepOf, PALETTE, rgba } from '../content/palette';
-import { paintToken, shapePath } from './paint';
-import { augmentTexture, COIN_TEXTURE, GEM_TEXTURE, LIFE_TEXTURE, paintTexture, tokenRoom } from './textures';
+import { paintToken, roundedPolygon, shapePath } from './paint';
+import { augmentTexture, COIN_TEXTURE, GEM_TEXTURE, LIFE_TEXTURE, paintTexture, STAR_TEXTURE, tokenRoom } from './textures';
 
 /** Icons for cards and the HUD: one per augment (its own token), the coin, the life. */
 export function paintIconTextures(scene: Phaser.Scene): void {
@@ -25,6 +25,19 @@ export function paintIconTextures(scene: Phaser.Scene): void {
     paintToken(ctx, 'square', 14, 12, 8.5, PALETTE.ink, PALETTE.ink, { depth: 0, shadow: false });
     shapePath(ctx, 'circle', 14, 12, 4.2);
     ctx.fillStyle = '#ffffff';
+    ctx.fill();
+  });
+  paintTexture(scene, STAR_TEXTURE, 16, 16, (ctx) => {
+    const pts = Array.from({ length: 10 }, (_, i) => {
+      const a = -Math.PI / 2 + (i * Math.PI) / 5;
+      const r = i % 2 === 0 ? 8 : 3.6;
+      return { x: 8 + Math.cos(a) * r, y: 8 + Math.sin(a) * r };
+    });
+    roundedPolygon(ctx, pts.map((p) => ({ ...p, y: p.y + 1.5 })), 1.6);
+    ctx.fillStyle = rgba(PALETTE.yellowDeep, 1);
+    ctx.fill();
+    roundedPolygon(ctx, pts, 1.6);
+    ctx.fillStyle = rgba(PALETTE.yellow, 1);
     ctx.fill();
   });
 }
