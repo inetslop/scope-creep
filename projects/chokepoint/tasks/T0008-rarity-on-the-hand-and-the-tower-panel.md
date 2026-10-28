@@ -1,12 +1,14 @@
 ---
 id: T0008
 title: Rarity on the hand and the tower panel
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0002]
-attempts: 0
+attempts: 1
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T08:16:09Z
 epic: E4
 ---
 
