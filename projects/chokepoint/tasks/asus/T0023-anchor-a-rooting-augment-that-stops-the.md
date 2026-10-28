@@ -4,11 +4,13 @@ title: "Anchor: a rooting augment that stops the road"
 assignee: asus
 size: L
 priority: 3
-status: design
+status: designing
 depends_on: [T0021]
 attempts: 0
 created: 2026-10-28T05:03:06Z
+claimed_at: 2026-10-28T05:06:50Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
