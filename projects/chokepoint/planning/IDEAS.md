@@ -8,7 +8,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Chain augment: first, a zap that jumps between nearby enemies; added, hits jump to one more enemy — tasked as T0025 (asus, cycle 8)
 - Push augment: first, a gust that pushes everything within 2.5 cells back along the road, no damage (a support pulse, like Frost's slow and Mark's mark); added, hits push struck enemies back 0.4 cells (+0.4 per Push) — the first augment that moves enemies along the road instead of slowing or stopping them — tasked as T0027 (asus, cycle 9)
 - Gust wind-up: a thin ring around a Push tower's base fills as the next gust charges, so the next shove is readable at a glance (small, after T0027)
-- Mark augment: first, marks the enemy furthest along so it takes 25% more damage; added, hits mark too — tasked as T0012 (asus, cycle 2)
+- Mark augment: first, marks the enemy furthest along so it takes 25% more damage; added, hits mark too — built as T0012 (asus)
 - Rare augments that change a rule (e.g. towers next to each other share their slows)
 - Splitter enemy: breaks into two smaller ones when it dies
 - Shield enemy: a ring that absorbs the first hits for its neighbours
@@ -31,13 +31,13 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Sound on/off toggle on the pause screen, remembered in the profile — tasked as T0035 (cycle 16)
 - Wave banner: at wave start a small card slides in at the top — "Wave 8" — and fades after ~1s
 - Kill combo: kills within 1.5 s chain a rising "×2, ×3" counter above the last kill — built as T0031 (yoga)
-- Draft reveal: the three draft cards flip over when the draft opens (200 ms), Epic cards flip a little longer — tasked as T0024 (yoga, cycle 7)
+- Draft reveal: the three draft cards flip over when the draft opens (200 ms), Epic cards flip a little longer — built as T0024 (yoga)
 - Rally augment (Epic): every tower within 2 cells of a Rally tower attacks 10% faster — rewards building in clusters — built as T0020 (asus)
 - Mint augment (Epic): no attack of its own — every kill within 2 cells of a Mint tower drops +1 extra gold; added, the host tower's kills drop +1 extra gold too; closest is Frost (a passive aura), new is that it changes the economy, not combat — tasked as T0021 (asus, cycle 6)
 - Wild card: one draft card is a wildcard that becomes the augment you pick, always at least Rare
 - Leaker: a big slow enemy that costs 2 lives when it leaks — the first enemy that hurts you twice as much
 - Recent runs: the menu lists your last few runs (wave + coins) so you can see your trend — built as T0018 (desktop)
-- A "New best" star on the menu's profile card when your last run hit your best wave — tasked as T0016 (yoga, cycle 3)
+- A "New best" star on the menu's profile card when your last run hit your best wave — built as T0016 (yoga)
 - Mender enemy: a slow round enemy that heals nearby enemies in a pulsing ring; closest is Block, new is that it heals other enemies, which no current enemy does
 - Anchor augment: first, roots (fully stops) everything within 2.5 cells for 0.75 s every 3 s; added, hits root for 0.5 s (+0.25 s per extra copy). Closest is Frost (a slow); new is a full timed stop that also applies when stacked on an attacking tower — tasked as T0023 (asus, cycle 7)
 - Ember augment: first, sets ablaze the enemy furthest along every 1.5 s — 3/4/5 damage per second for 3 s by tier; re-ignition refreshes the duration and keeps the higher rate (never additive); the ticks are the source tower's damage, so Mark amplifies them and a killing tick is its kill for gold and stats; added, hits set ablaze at the tower's tier rate. Closest is Mark (a cadence effect on the furthest enemy); new is damage that keeps ticking after the hit — the first damage over time — tasked as T0028 (asus, cycle 10)
@@ -48,7 +48,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The clean wave's bonus shown during the build phase: a small line under the wave preview ("clean: +3 gold") — the clean chip (T0005) is in; waiting only on the wave preview (T0015, in flight)
 - A run-so-far line on the pause screen: wave, lives, gold, coins earned this run — tasked as T0030 (yoga, cycle 10)
 - The buy-slot button reads why it is quiet: when gold is short it dims and shows the price in red, so a first-time player sees the gap, not a dead button
-- Tier word on the draft card: the name line of Rare and Epic cards reads "Name · Rare" / "Name · Epic" (Common stays plain), the same line the tower panel shows — tasked as T0026 (yoga, cycle 8)
+- Tier word on the draft card: the name line of Rare and Epic cards reads "Name · Rare" / "Name · Epic" (Common stays plain), the same line the tower panel shows — built as T0026 (yoga)
 - What-if preview: while an augment is held over a tower's free slot, the tower briefly shows the result (new barrel, ring or tick) before the gold is spent, so the decision is visible before it is paid for
 - Tight-pack waves: some waves send enemies bunched close together (a "tight" tag in the wave preview, once T0015 is in) so multi-hit augments (Splash, Lance, Chain) shine
 - A second pick: every 5th draft offers a 4th card
@@ -61,9 +61,12 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Streak: three clean waves in a row restore one life (the lives readout pops green), once per run — a perfect stretch pays back in survival, on top of the clean-wave coins
 - Demo at your level: the menu's live demo runs a wave from around your saved best wave instead of always an early one, so the menu shows how hard the game has gotten — no input, no card
 - Mute enemy: a slow walker that silences any tower within 2 cells while it is alive (that tower holds still, no attack; a jammed tower still counts for Rally's range); closest is Block (a plain walker); new is that it fights back — the first enemy that disables towers, and the one that makes cluster placement a real decision against Rally and Mint
-- Lead augment: first, a slow heavy shot at the enemy furthest along that lands where the target will be (lead by the target's current speed); added, the shot leads one beat further per copy. Closest is Reach (slow, heavy, long range); new is the first predictive attack — it only matters once a Sprinter or Dasher is on the board, so task it after one of them lands
+- Lead augment: first, a slow heavy shot at the enemy furthest along that lands where the target will be (lead by the target's current speed); added, the shot leads one beat further per copy. Closest is Reach (slow, heavy, long range); new is the first predictive attack — it only matters once a Sprinter or Dasher is on the board — Sprinter is in (T0006), ready to task
 - Working aura: a support tower (Rally, Mint, an Anchor with no attack) shimmers a quiet 1 s ring at its base each time its aura ticks, so you can see a tower that never fires is actually working — a small readability touch after T0020/T0021/T0023 land
-- The run's seed on the rewards card: a short code (four letters) under the coins line, so a run can be shared and replayed on its exact board — the bridge between the daily seeded run and the ghost run; small, after the rewards card settles (T0033)
+- The run's seed on the rewards card: a short code (four letters) under the coins line, so a run can be shared and replayed on its exact board — the bridge between the daily seeded run and the ghost run; the rewards card has settled (T0033 in) — ready to task when the pool has room
 - Resume a run: closing the browser mid-run keeps the run (board, towers, wave, gold) in the profile; the menu offers "Resume" beside Play, and "New run" abandons it for nothing — a mobile lifesaver for 10-25 minute runs; the save pattern is E1's
 - Mint's gold pop: when a kill pays a Mint's +1 extra gold, a small gold "+1" pops up at the kill spot (the same pop as kill gold), so the aura's income is visible where it happens — a small juice after T0021
 - Wave-clear sweep: a soft two-note rising sweep (coin-chime family, same volume) in the beat between a wave ending and the draft opening, so the phase change is heard as well as seen — a small audio touch
+- First boss: every 10th wave is a single big shape — six times Block's hp, Block's speed, 1 life on leak like anything else — with the run's first health bar (a small white card pinned to the top edge, centered, counting down as it is hit); at 50% hp it phases — translucent and untargetable for 2.5 s, every 8 s — so a pure single-target build needs a second line (Splash, Lance, Chain, Beam); closest existing enemy is Block, new is the timed untargetable phase — a survival behavior no enemy has — and the boss bar as a new HUD element; later bosses swap the mechanic (one shields its escort, one splits at half hp) — a bosses epic to task once E4's new augments are in
+- Owned dot: a draft card whose augment is already in the hand shows a small dot on its top-right corner, so "stack this one" vs "branch this one" reads at a glance — small readability, no rule change
+- Best-run star on the Recent line: the entry in the menu's Recent line (T0018) that reached your best wave gets the same small yellow star the profile card shows (T0016), so the trend line shows which run set the record — small, both T0018 and T0016 are in
