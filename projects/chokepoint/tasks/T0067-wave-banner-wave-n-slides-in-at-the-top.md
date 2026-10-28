@@ -3,10 +3,12 @@ id: T0067
 title: "Wave banner: 'Wave N' slides in at the top when a wave starts"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T14:00:47Z
+designer: yoga
 ---
 
 ## Goal
