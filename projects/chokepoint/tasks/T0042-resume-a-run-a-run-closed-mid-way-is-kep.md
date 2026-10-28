@@ -3,11 +3,13 @@ id: T0042
 title: "Resume a run: a run closed mid-way is kept and offered on the menu"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0015]
 attempts: 0
 created: 2026-10-28T11:24:34Z
+claimed_at: 2026-10-28T11:24:36Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
