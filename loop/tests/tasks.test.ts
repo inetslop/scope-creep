@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 import { describe, it } from 'node:test';
 import type { FleetConfig } from '../config.ts';
-import { TASKS_DIR } from '../paths.ts';
-import { designedFiles, isPoolTask, parseTask, pickTaskFor, serializeTask, slugify, TaskFormatError, unblockedTaskIds, type Task } from '../tasks.ts';
+import { PROJECT, TASKS_DIR } from '../paths.ts';
+import { designedFiles, isPoolTask, lockedBy, parseTask, pickTaskFor, serializeTask, slugify, TaskFormatError, unblockedTaskIds, type Task } from '../tasks.ts';
 
 const file = path.join('tasks', 'yoga', 'T0007-thing.md');
 
@@ -134,6 +134,79 @@ describe('pickTaskFor', () => {
     const open = pool('T0001', { priority: 1 });
     assert.equal(pickTaskFor('mid', fleet, [open, own, others], now)?.id, 'T0009');
     assert.equal(pickTaskFor('weak', fleet, [others], now), undefined);
+  });
+});
+
+describe('the file lock', () => {
+  const now = Date.parse('2026-10-28T12:00:00Z');
+  const old = '2026-10-28T11:00:00Z';
+  const designed = (files: string[]): string => `## Goal\nA thing.\n\n## Design (architect, big)\n\n### Files\n${files.map((f) => `- edit \`${f}\``).join('\n')}\n`;
+  const building = pool('T0001', { status: 'in-progress', assignee: 'big', body: designed(['src/systems/EnemySystem.ts', 'src/debug/runChecks.ts']) });
+
+  it('no task is claimed while another machine builds a task that edits one of its files', () => {
+    const overlapping = pool('T0002', { body: designed(['src/systems/EnemySystem.ts', 'src/ui/x.ts']), created: old });
+    const apart = pool('T0003', { body: designed(['src/ui/y.ts']), created: old });
+    assert.equal(lockedBy(overlapping, [building, overlapping], 'mid')?.id, 'T0001');
+    assert.equal(lockedBy(apart, [building, apart], 'mid'), undefined);
+    assert.equal(pickTaskFor('mid', fleet, [building, overlapping, apart], now)?.id, 'T0003');
+    assert.equal(pickTaskFor('mid', fleet, [building, overlapping], now), undefined);
+  });
+
+  it('one-line registry lists are lock-free, and a machine is never locked out by its own task', () => {
+    const registryOnly = pool('T0004', { body: designed(['src/debug/runChecks.ts', 'src/ui/z.ts']), created: old });
+    assert.equal(lockedBy(registryOnly, [building, registryOnly], 'mid', ['src/debug/runChecks.ts']), undefined);
+    assert.equal(lockedBy(registryOnly, [building, registryOnly], 'mid')?.id, 'T0001');
+    assert.equal(lockedBy(pool('T0005', { body: designed(['src/systems/EnemySystem.ts']) }), [building], 'big'), undefined);
+    const lockFree = { ...fleet, loop: { ...fleet.loop, lockFree: { [PROJECT]: ['src/debug/runChecks.ts'] } } } as FleetConfig;
+    assert.equal(pickTaskFor('mid', lockFree, [building, registryOnly], now)?.id, 'T0004');
+  });
+
+  it('lock-free globs: * stays within a folder, ** crosses folders', () => {
+    const t = pool('T0006', { body: designed(['src/content/augments/index.ts']) });
+    const b = pool('T0007', { status: 'in-progress', assignee: 'big', body: designed(['src/content/augments/index.ts']) });
+    assert.equal(lockedBy(t, [b, t], 'mid', ['src/content/*/index.ts']), undefined);
+    assert.equal(lockedBy(t, [b, t], 'mid', ['src/*/index.ts'])?.id, 'T0007');
+    assert.equal(lockedBy(t, [b, t], 'mid', ['src/**/index.ts']), undefined);
+  });
+});
+
+describe('blockers first', () => {
+  const now = Date.parse('2026-10-28T12:00:00Z');
+  const fresh = '2026-10-28T11:55:00Z';
+  const old = '2026-10-28T11:00:00Z';
+  const built = (id: string, machine: string, minutes: number): Task =>
+    pool(id, { status: 'done', body: `## Result (attempt 1, ${machine})\n\nBuilt it.\n- Time: ${minutes} min\n` });
+  const history = [built('T0101', 'big', 10), built('T0102', 'mid', 100)];
+
+  it('within a priority, the task the most others wait on comes first', () => {
+    const tasks = [pool('T0001', { created: old }), pool('T0002', { created: old }), pool('T0003', { status: 'design', dependsOn: ['T0002'] }), pool('T0004', { status: 'design', dependsOn: ['T0002'] })];
+    assert.equal(pickTaskFor('mid', fleet, tasks, now)?.id, 'T0002');
+  });
+
+  it('a slow machine leaves a blocker to a free machine twice as fast for the grace, then takes it', () => {
+    const blocker = pool('T0010', { created: fresh });
+    const waiting = pool('T0011', { status: 'design', dependsOn: ['T0010'] });
+    assert.equal(pickTaskFor('mid', fleet, [...history, blocker, waiting], now), undefined, 'big is free and 10x faster');
+    assert.equal(pickTaskFor('big', fleet, [...history, blocker, waiting], now)?.id, 'T0010');
+    assert.equal(pickTaskFor('mid', fleet, [...history, { ...blocker, created: old }, waiting], now)?.id, 'T0010', 'after the grace');
+    const bigBusy = pool('T0012', { status: 'in-progress', assignee: 'big' });
+    assert.equal(pickTaskFor('mid', fleet, [...history, blocker, waiting, bigBusy], now)?.id, 'T0010', 'the fast one is busy');
+  });
+
+  it('pace compares machines across sizes: a machine slow on big tasks leaves a small blocker to a fast small one', () => {
+    const paced = [built('T0101', 'big', 10), built('T0102', 'mid', 100), { ...built('T0103', 'big', 400), size: 'L' as const }, { ...built('T0104', 'mid', 40), size: 'L' as const }, { ...built('T0105', 'weak', 5), size: 'S' as const }, { ...built('T0106', 'mid', 50), size: 'S' as const }];
+    const blocker = pool('T0030', { size: 'S', created: fresh });
+    const waiting = pool('T0031', { status: 'design', dependsOn: ['T0030'] });
+    assert.equal(pickTaskFor('mid', fleet, [...paced, blocker, waiting], now), undefined, 'weak is free and much faster');
+    assert.equal(pickTaskFor('weak', fleet, [...paced, blocker, waiting], now)?.id, 'T0030');
+  });
+
+  it('a task nobody waits on, or a machine with no build history, is never held back', () => {
+    const lone = pool('T0020', { created: fresh });
+    assert.equal(pickTaskFor('mid', fleet, [...history, lone], now)?.id, 'T0020');
+    const blocker = pool('T0021', { created: fresh });
+    const waiting = pool('T0022', { status: 'design', dependsOn: ['T0021'] });
+    assert.equal(pickTaskFor('mid', fleet, [built('T0101', 'big', 10), blocker, waiting], now)?.id, 'T0021');
   });
 });
 

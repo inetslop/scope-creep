@@ -10,7 +10,7 @@ import { autoResolvable, autoResolveAdditions } from './merge.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { updateTaskAndPush } from './sync.ts';
-import { appendSection, isPoolTask, readTask, writeTask, type Task } from './tasks.ts';
+import { appendSection, isPoolTask, listTasks, lockedBy, lockFreeFor, readTask, writeTask, type Task } from './tasks.ts';
 
 export interface RunContext {
   local: LocalConfig;
@@ -43,6 +43,13 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
     (t) => {
       // Someone else claimed it first (the pool is shared): leave it to them.
       if (t.status !== 'todo' || (t.assignee && t.assignee !== machine)) return false;
+      // The pick was made on an older view of main. This runs on the latest one, and again if the
+      // push is rejected, so two machines can never both claim tasks that edit the same file.
+      const holder = lockedBy(t, listTasks(true).tasks, machine, lockFreeFor(ctx.fleet));
+      if (holder) {
+        warn(`${t.id}: ${holder.assignee} is building ${holder.id}, which edits the same files; leaving it for now`);
+        return false;
+      }
       t.status = 'in-progress';
       t.assignee = machine;
       t.attempts += 1;

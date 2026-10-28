@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { SIZE_ORDER, type FleetConfig } from './config.ts';
-import { ARCHIVE_DIR, SALVAGE_DIR, TASKS_DIR } from './paths.ts';
+import { ARCHIVE_DIR, PROJECT, SALVAGE_DIR, TASKS_DIR } from './paths.ts';
+import { buildPace } from './speed.ts';
 
 /**
  * Task files live in one shared pool, tasks/T0042-short-slug.md: any machine that can take the
@@ -222,33 +223,85 @@ export function maxTaskNumber(tasks: readonly Task[]): number {
 /** Minutes a bigger machine leaves a small task to the smaller machines that can take it (default 20). */
 const claimGrace = (fleet: FleetConfig): number => fleet.loop.claimGraceMinutes ?? fleet.loop.designGraceMinutes ?? 20;
 
+/** The project's lock-free files (loop.lockFree in agents/machines.json). */
+export const lockFreeFor = (fleet: FleetConfig): readonly string[] => fleet.loop.lockFree?.[PROJECT] ?? [];
+
+/** A glob relative to the game folder as a test: `*` stays within a folder, `**` crosses folders. */
+function globTest(glob: string): RegExp {
+  const body = glob
+    .split('**')
+    .map((part) => part.replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '[^/]*').replace(/\?/g, '[^/]'))
+    .join('.*');
+  return new RegExp(`^${body}$`);
+}
+
+/**
+ * The task another machine is building whose design names a file that `t`'s design names too,
+ * if any: two tasks never edit the same file at once, so no agent has to merge another's edits
+ * to the same code. Files matching `lockFree` (lists where tasks only add a line) don't count.
+ */
+export function lockedBy(t: Task, all: readonly Task[], me: string, lockFree: readonly string[] = []): Task | undefined {
+  const free = lockFree.map(globTest);
+  const files = designedFiles(t).filter((f) => !free.some((re) => re.test(f)));
+  if (files.length === 0) return undefined;
+  return all.find((o) => o.id !== t.id && o.status === 'in-progress' && o.assignee !== me && designedFiles(o).some((f) => files.includes(f)));
+}
+
 /**
  * The task machine `me` should claim next: a todo task whose dependencies are done, that is its
- * own (an older per-machine task) or in the pool, and no bigger than it takes. Its own come first,
- * then best priority, then the biggest size it can take (big machines on big work), then lowest id.
- * A task a smaller active machine could also take is left to it for the claim grace, so the weak
- * machines always have something; after that anyone may take it.
+ * own (an older per-machine task) or in the pool, no bigger than it takes, and whose files no
+ * other machine is editing right now (lockedBy). Its own come first, then best priority, then the
+ * tasks the most others wait on, then the biggest size it can take (big machines on big work),
+ * then lowest id.
+ * - A task a smaller active machine could also take is left to it for the claim grace, so the
+ *   weak machines always have something; after that anyone may take it. Not a task others wait
+ *   on: that one goes to the fastest machine that is free, whatever its size.
+ * - A task others wait on is left, for the claim grace after it could start, to a free machine
+ *   (no claim) that builds at least twice as fast (speed.ts buildPace): one blocker on a slow
+ *   machine holds up everything behind it.
  */
 export function pickTaskFor(me: string, fleet: FleetConfig, all: readonly Task[], nowMs = Date.now()): Task | undefined {
   const mine = fleet.machines[me];
   if (!mine) return undefined;
   const myMax = SIZE_ORDER[mine.maxTaskSize];
+  const byId = new Map(all.map((t) => [t.id, t]));
   const done = new Set(all.filter((t) => t.status === 'done').map((t) => t.id));
-  const smaller = Object.entries(fleet.machines)
-    .filter(([id, m]) => id !== me && !m.paused && m.roles.includes('dev') && SIZE_ORDER[m.maxTaskSize] < myMax)
-    .map(([, m]) => SIZE_ORDER[m.maxTaskSize]);
+  const devs = Object.entries(fleet.machines).filter(([id, m]) => id !== me && !m.paused && m.roles.includes('dev'));
+  const smaller = devs.filter(([, m]) => SIZE_ORDER[m.maxTaskSize] < myMax).map(([, m]) => SIZE_ORDER[m.maxTaskSize]);
   const leaveUpTo = Math.max(0, ...smaller);
   const graceMs = claimGrace(fleet) * 60_000;
-  const waited = (t: Task): boolean => {
-    const since = t.created ? Date.parse(t.created) : Number.NaN;
-    return !Number.isFinite(since) || nowMs - since >= graceMs;
+  const lockFree = lockFreeFor(fleet);
+  const withinGrace = (sinceIso: string | undefined): boolean => {
+    const since = sinceIso ? Date.parse(sinceIso) : Number.NaN;
+    return Number.isFinite(since) && nowMs - since < graceMs;
+  };
+  // How many open tasks wait on each task.
+  const waiting = new Map<string, number>();
+  for (const t of all) if (t.status !== 'done' && t.status !== 'failed') for (const d of t.dependsOn) waiting.set(d, (waiting.get(d) ?? 0) + 1);
+  const pace = buildPace(all);
+  const busy = new Set(all.filter((t) => t.status === 'in-progress').map((t) => t.assignee).concat(all.filter((t) => t.status === 'designing').map((t) => t.extra.designer ?? '')));
+  // When it could start: created, or the last of its dependencies finished.
+  const readySince = (t: Task): string | undefined => [t.created, ...t.dependsOn.map((d) => byId.get(d)?.finishedAt)].filter((x): x is string => !!x).sort().at(-1);
+  const fasterFree = (t: Task): boolean => {
+    const mine = pace.get(me);
+    if (mine === undefined) return false;
+    return devs.some(([id, m]) => SIZE_ORDER[m.maxTaskSize] >= SIZE_ORDER[t.size] && !busy.has(id) && (pace.get(id) ?? Infinity) * 2 <= mine);
   };
   return all
     .filter((t) => t.status === 'todo' && t.dependsOn.every((d) => done.has(d)))
     .filter((t) => t.assignee === me || (isPoolTask(t) && !t.assignee))
     .filter((t) => SIZE_ORDER[t.size] <= myMax)
-    .filter((t) => t.assignee === me || SIZE_ORDER[t.size] > leaveUpTo || waited(t))
-    .sort((a, b) => Number(b.assignee === me) - Number(a.assignee === me) || a.priority - b.priority || SIZE_ORDER[b.size] - SIZE_ORDER[a.size] || a.id.localeCompare(b.id))[0];
+    .filter((t) => t.assignee === me || SIZE_ORDER[t.size] > leaveUpTo || waiting.has(t.id) || !withinGrace(t.created))
+    .filter((t) => !lockedBy(t, all, me, lockFree))
+    .filter((t) => t.assignee === me || !(waiting.get(t.id) && fasterFree(t) && withinGrace(readySince(t))))
+    .sort(
+      (a, b) =>
+        Number(b.assignee === me) - Number(a.assignee === me) ||
+        a.priority - b.priority ||
+        (waiting.get(b.id) ?? 0) - (waiting.get(a.id) ?? 0) ||
+        SIZE_ORDER[b.size] - SIZE_ORDER[a.size] ||
+        a.id.localeCompare(b.id),
+    )[0];
 }
 
 /** Files (relative to game/) named in a task's "## Design": what building it will touch. */

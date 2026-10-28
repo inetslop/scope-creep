@@ -35,8 +35,9 @@ describe('poolNeeds', () => {
     assert.deepEqual(needs.small, [{ size: 'S', machines: ['weak'], want: 2, have: 1 }]);
   });
 
-  it('a chain in the pool is not blocked: anyone builds it in order', () => {
-    const needs = poolNeeds(fleet, listing([pool('T0001'), pool('T0002', { dependsOn: ['T0001'] })]));
-    assert.equal(needs.have, 2);
+  it('a task waiting on another counts only once that one is done: it keeps no machine busy', () => {
+    assert.equal(poolNeeds(fleet, listing([pool('T0001'), pool('T0002', { dependsOn: ['T0001'] })])).have, 1);
+    assert.equal(poolNeeds(fleet, listing([pool('T0001', { status: 'done' }), pool('T0002', { dependsOn: ['T0001'] })])).have, 1);
+    assert.equal(poolNeeds(fleet, listing([pool('T0001', { status: 'in-progress', assignee: 'big' }), pool('T0002', { status: 'design', dependsOn: ['T0001'] })])).have, 0);
   });
 });

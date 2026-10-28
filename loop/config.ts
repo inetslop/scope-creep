@@ -117,6 +117,13 @@ export interface FleetConfig {
      * smaller ones, before claiming it itself (so the weak machines always have work). Default: designGraceMinutes.
      */
     claimGraceMinutes?: number;
+    /**
+     * Per project: files (globs relative to the game folder, `*` within a folder, `**` across
+     * folders) where tasks only add a line to a list, so two tasks may edit them at the same time:
+     * merge.ts joins both sides' added lines without an agent. Every other file a task's design
+     * names is locked while that task is being built (tasks.ts lockedBy).
+     */
+    lockFree?: Record<string, string[]>;
     smokeSeconds: number;
     /** Reasoning effort per role (see Effort). */
     effort: Record<Role, Effort>;

@@ -107,6 +107,15 @@
     "architectMaxPerPass": 4,
     "architectMaxAttempts": 2,
     "designGraceMinutes": 20,
+    "lockFree": {
+      "chokepoint": [
+        "src/content/*/index.ts",
+        "src/systems/attacks/index.ts",
+        "src/input/hotkeys.ts",
+        "src/debug/runChecks.ts",
+        "src/art/generate.ts"
+      ]
+    },
     "smokeSeconds": 24,
     "effort": { "po": "xhigh", "architect": "medium", "dev": "medium" },
     "sampling": { "temperature": 1, "top_p": 0.95, "top_k": 20 }

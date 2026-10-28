@@ -31,13 +31,22 @@ export interface PoolNeeds {
   small: { size: TaskSize; have: number; want: number; machines: string[] }[];
 }
 
+/**
+ * What the pool has and what the running machines want. Only work that can start now counts: a
+ * queued task (being designed or ready) with no unfinished dependency. A task waiting on another
+ * keeps no machine busy, and a pool of chains leaves the whole fleet idle.
+ */
 export function poolNeeds(fleet: FleetConfig, listing: TaskListing): PoolNeeds {
-  const unblocked = unblockedTaskIds(listing.tasks);
+  const done = new Set(listing.tasks.filter((t) => t.status === 'done').map((t) => t.id));
   const devIds = devMachineIds(fleet);
   const maxOf = (id: string): number => SIZE_ORDER[fleet.machines[id]!.maxTaskSize];
   const biggest = Math.max(0, ...devIds.map(maxOf));
   const waiting = listing.tasks.filter(
-    (t) => !isArchived(t) && isQueued(t) && unblocked.has(t.id) && (t.assignee ? devIds.includes(t.assignee) : SIZE_ORDER[t.size] <= biggest),
+    (t) =>
+      !isArchived(t) &&
+      isQueued(t) &&
+      t.dependsOn.every((d) => done.has(d)) &&
+      (t.assignee ? devIds.includes(t.assignee) : SIZE_ORDER[t.size] <= biggest),
   );
   const want = devIds.reduce((sum, id) => sum + fleet.machines[id]!.targetQueue, 0);
   const sizes = [...new Set(devIds.map((id) => fleet.machines[id]!.maxTaskSize))].filter((s) => SIZE_ORDER[s] < biggest);
@@ -97,14 +106,20 @@ function describePool(fleet: FleetConfig, listing: TaskListing): string {
   const smallLines = needs.small
     .filter((s) => s.have < s.want)
     .map((s) => `- at least ${s.want - s.have} of them size ${s.size} or smaller (for ${s.machines.join(', ')}, which take nothing bigger)`);
-  const header = [`The pool has ${needs.have} task(s) waiting that will get built; the running machines want ${needs.want}. Write **${more}** more.`, ...smallLines].join('\n');
+  const chained = listing.tasks.filter((t) => !isArchived(t) && isQueued(t) && waitsOn(t) !== '').length;
+  const header = [
+    `The pool has ${needs.have} task(s) that can start now (no unfinished dependency); the running machines want ${needs.want}. Write **${more}** more.` +
+      (chained ? ` ${chained} more wait on other tasks and don't count: a task waiting on another keeps no machine busy.` : ''),
+    ...smallLines,
+  ].join('\n');
   const open = listing.tasks
     .filter((t) => !isArchived(t) && (isQueued(t) || t.status === 'in-progress'))
     .sort((a, b) => a.id.localeCompare(b.id));
   const lines = open.map((t) => {
     const who = t.status === 'in-progress' ? `, being built by ${t.assignee}` : t.assignee ? `, ${t.assignee}'s own` : '';
     const epic = t.extra.epic ? `, epic ${t.extra.epic}` : '';
-    const blocked = unblocked.has(t.id) ? '' : `, blocked: waits on ${waitsOn(t)}`;
+    const waits = waitsOn(t);
+    const blocked = !waits ? '' : unblocked.has(t.id) ? `, waits on ${waits}` : `, blocked for good: waits on ${waits}`;
     return `- ${t.id} [${t.status}, size ${t.size}, priority ${t.priority}${epic}${who}${blocked}] ${t.title}`;
   });
   return [header, '', ...(lines.length ? lines : ['- (the pool is empty)'])].join('\n');
