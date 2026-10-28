@@ -3,13 +3,13 @@ id: T0057
 title: "Hauler: the enemy whose leak costs gold"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: [T0046, T0053]
 attempts: 0
 created: 2026-10-28T13:04:03Z
 claimed_at: 2026-10-28T15:35:48Z
-design_attempts: 1
-designer: cachyos-x8664
+finished_at: 2026-10-28T16:31:26Z
+design_attempts: 2
 ---
 
 ## Goal
@@ -29,3 +29,31 @@ A big slow walker with a small fortune inside: killing it pays a few slots' wort
 - [ ] The Hauler has 3× Block's hp, and killing it pays 10 gold in the gold pop.
 - [ ] A leaking Hauler costs 1 life and 5 gold (gold floors at 0), with a red "−5" pop at the exit alongside the usual leak feedback.
 - [ ] The existing enemies, the wave preview's layout, sounds and the HUD are otherwise unchanged; works at 412x915 and 1280x720.
+
+## Architect could not design it (cachyos-x8664)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+hat creates/changes a file is denied ("asks before a shell command creates, changes or removes files there").
+- I do not have a dedicated `Write`/`Edit` tool in my available set (only `Bash`, `Glob`, `Grep`, `Read`, plus the Chrome MCP tools).
+
+So I cannot create `src/content/enemies/hauler.ts` or apply any of the edits to `types.ts`, `index.ts`, `waves.ts`, `run.ts`, `EnemySystem.ts`, or the tests.
+
+I have the complete, verified plan for all seven changes (from the summary), but I'm blocked from writing them. Can you:
+
+1. Enable file writes (e.g., grant approval for shell file-mutation commands, or make a `Write`/`Edit` tool available), **or**
+2. Confirm I should proceed and I'll use whatever write path becomes available — in which case, tell me which tool to call.
+
+Once I can write, I'll apply, in order:
+
+1. `content/types.ts` — add `leakGold?: number` to `EnemyDef`.
+2. `content/enemies/hauler.ts` — new file with the Hauler `EnemyDef`.
+3. `content/enemies/index.ts` — import + register `hauler`.
+4. `core/waves.ts` — add `haulCount()` and the Hauler reservation in `planWave`; exclude `leakGold`-bearing defs from the walkers pool.
+5. `core/run.ts` — `RunState.leak(livesCost, leakGold)` subtracting gold (floored at 0).
+6. `systems/EnemySystem.ts` — pass `e.def.leakGold` and add the red gold pop next to the life pop.
+7. `tests/core/waves.test.ts` — `haulCount` + reservation tests; `tests/content.test.ts` — a `leakGold` sanity check.
+
+Then run `npm run check` and `npm run smoke`.
+```
