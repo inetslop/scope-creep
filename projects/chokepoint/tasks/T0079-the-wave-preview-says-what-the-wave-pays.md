@@ -1,12 +1,14 @@
 ---
 id: T0079
 title: The wave preview says what the wave pays
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T23:26:44Z
+claimed_at: 2026-10-28T23:47:13Z
 epic: E1
 ---
 
