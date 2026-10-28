@@ -13,7 +13,7 @@ import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { ORIGINAL_PROJECT, projectDir, projectIds } from '../loop/paths.ts';
-import { lastFinished, machineView, poolCounts, projectTasks, sortMachines, type MachineConfig, type MachineView, type PoolCounts } from './home-data.ts';
+import { lastFinished, machineView, poolCounts, projectTasks, sortMachines, type LastCommit, type MachineConfig, type MachineView, type PoolCounts } from './home-data.ts';
 
 const REPO = path.resolve(import.meta.dirname, '..');
 
@@ -94,7 +94,7 @@ function renderGame(g: GameView): string {
 </article>`;
 }
 
-const STATE_TEXT: Record<MachineView['state'], string> = { building: 'Building', designing: 'Designing', idle: 'Idle', paused: 'Paused' };
+const STATE_TEXT: Record<MachineView['state'], string> = { building: 'Building', designing: 'Designing', planning: 'Planning the next tasks', idle: 'Idle', paused: 'Paused' };
 
 function renderMachine(m: MachineView, repo: string | undefined): string {
   let status = STATE_TEXT[m.state];
@@ -102,7 +102,8 @@ function renderMachine(m: MachineView, repo: string | undefined): string {
     const id = repo ? `<a href="${esc(`${repo}/blob/main/${path.relative(REPO, m.task.file).split(path.sep).join('/')}`)}">${esc(m.task.id)}</a>` : esc(m.task.id);
     status += ` ${id} <span class="title">${esc(m.task.title)}</span>`;
   }
-  const since = m.task?.since ? `<div class="since">since ${when(m.task.since)}</div>` : '';
+  const sinceAt = m.task?.since ?? m.planningSince;
+  const since = sinceAt ? `<div class="since">since ${when(sinceAt)}</div>` : '';
   const roles = m.roles.map((r) => (r === 'po' ? 'PO' : r)).join(' · ');
   const work = [m.built ? `${m.built} built` : '', m.designed ? `${m.designed} designed` : ''].filter(Boolean).join(' · ');
   const last = m.lastActive ? `last push ${when(m.lastActive)}` : 'no pushes yet';
@@ -123,7 +124,7 @@ function renderPool(title: string, c: PoolCounts): string {
 }
 
 function renderPage(d: { games: GameView[]; machines: MachineView[]; active?: GameView; repo?: string; sha: string; generatedAt: string }): string {
-  const busy = d.machines.filter((m) => m.state === 'building' || m.state === 'designing').length;
+  const busy = d.machines.filter((m) => m.state === 'building' || m.state === 'designing' || m.state === 'planning').length;
   const paused = d.machines.filter((m) => m.state === 'paused').length;
   const sha = d.repo ? `<a href="${esc(`${d.repo}/commit/${d.sha}`)}">${esc(d.sha.slice(0, 7))}</a>` : esc(d.sha.slice(0, 7));
   return `<!doctype html>
@@ -162,6 +163,7 @@ function renderPage(d: { games: GameView[]; machines: MachineView[]; active?: Ga
   .machine .dot { width: 12px; height: 12px; border-radius: 50%; background: ${C.faint}; flex: none; }
   .machine.building .dot { background: ${C.green}; box-shadow: 0 0 0 4px rgba(92, 184, 95, 0.2); }
   .machine.designing .dot { background: ${C.blue}; box-shadow: 0 0 0 4px rgba(60, 134, 214, 0.2); }
+  .machine.planning .dot { background: ${C.teal}; box-shadow: 0 0 0 4px rgba(36, 169, 156, 0.2); }
   .machine.idle .dot { background: ${C.yellow}; }
   .machine.paused { opacity: 0.6; }
   .roles { margin-left: auto; font-size: 12px; font-weight: 700; color: ${C.muted}; text-transform: uppercase; letter-spacing: 0.4px; }
@@ -221,9 +223,10 @@ ${d.active ? `\n<h2>Task pool · ${esc(d.active.title)}</h2>\n${renderPool(d.act
 }
 
 /** The last commit a machine's runner made (authors are agent-<id>), if any. */
-function lastPush(id: string): string | undefined {
+function lastPush(id: string): LastCommit | undefined {
   try {
-    return git(['log', '-1', '--format=%cI', `--author=^agent-${id} <`]).trim() || undefined;
+    const [at, subject] = git(['log', '-1', '--format=%cI%x1f%s', `--author=^agent-${id} <`]).trim().split('\x1f');
+    return at ? { at, subject: subject ?? '' } : undefined;
   } catch {
     return undefined;
   }

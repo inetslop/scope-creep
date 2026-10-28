@@ -9,7 +9,7 @@ import { ARCHIVE_DIR, GAME_DIR, GAME_REL, PLANNING_DIR, PLANNING_REL, PROJECT_DI
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { loadState, saveState } from './state.ts';
-import { commitAndPush } from './sync.ts';
+import { commitAndPush, pushMarker } from './sync.ts';
 import { formatTaskId, listTasks, lockFreeFor, maxTaskNumber, parseTask, pickTaskFor, sharedFiles, taskFileName, unblockedTaskIds, writeTask, type Task, type TaskListing, type TaskSize } from './tasks.ts';
 
 const isArchived = (t: Task): boolean => path.dirname(t.file) === ARCHIVE_DIR;
@@ -61,6 +61,11 @@ export function poolNeeds(fleet: FleetConfig, listing: TaskListing): PoolNeeds {
   });
   return { have: waiting.length, want, small };
 }
+
+/** The marker commit a PO cycle pushes when it starts; the cycle's own "po: cycle N: ..." commit ends it. */
+export const poStartedMessage = (cycle: number, reason: string): string => `po: cycle ${cycle} started (${reason})`;
+/** Matches that marker: a machine whose last commit it is, with no claim, is planning. */
+export const PO_STARTED = /^po: cycle \d+ started\b/;
 
 /** With machines idle, the PO may plan past what the machines want, up to this many queued tasks per wanted one. */
 const IDLE_POOL_CAP = 3;
@@ -186,6 +191,8 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
   const state = loadState();
   const cycle = state.poCycles + 1;
   step(`PO cycle ${cycle} (${reason})`);
+  // Planning holds no claim: without this marker the machine looks idle on the site and in `npm run status`.
+  await pushMarker(git, poStartedMessage(cycle, reason));
   const listing = listTasks(true);
   const finished = listing.tasks.filter(isFinished);
   const first = maxTaskNumber(listing.tasks) + 1;

@@ -67,3 +67,18 @@ describe('continueRebase', () => {
     fs.rmSync(dir, { recursive: true, force: true });
   });
 });
+
+describe('commitEmpty', () => {
+  it('adds a marker commit that changes no file', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'marker-'));
+    const sh = (...args: string[]): string => execFileSync('git', ['-c', 'user.name=t', '-c', 'user.email=t@t', '-c', 'init.defaultBranch=main', ...args], { cwd: dir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+    sh('init', '-q');
+    fs.writeFileSync(path.join(dir, 'a.txt'), 'a');
+    sh('add', '.');
+    sh('commit', '-qm', 'base');
+    await new Git(dir, 'agent-desktop').commitEmpty('po: cycle 40 started (scheduled review)');
+    assert.equal(sh('log', '-1', '--format=%an|%s').trim(), 'agent-desktop|po: cycle 40 started (scheduled review)');
+    assert.equal(sh('diff', '--stat', 'HEAD~1', 'HEAD').trim(), '');
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+});

@@ -19,7 +19,7 @@ describe('machineView', () => {
   ];
 
   it('says what each machine is doing, since when, and what it built and designed', () => {
-    const yoga = machineView('yoga', { label: 'Yoga', model: 'Q2', roles: ['dev', 'architect'] }, tasks, '2026-10-28T10:05:00Z');
+    const yoga = machineView('yoga', { label: 'Yoga', model: 'Q2', roles: ['dev', 'architect'] }, tasks, { at: '2026-10-28T10:05:00Z', subject: 'T0001: claimed by yoga' });
     assert.equal(yoga.state, 'building');
     assert.deepEqual({ id: yoga.task?.id, since: yoga.task?.since }, { id: 'T0001', since: '2026-10-28T10:00:00Z' });
     assert.equal(yoga.built, 1);
@@ -32,16 +32,26 @@ describe('machineView', () => {
     assert.equal(machineView('asus', { label: 'Asus', model: 'Q8' }, tasks).state, 'idle');
   });
 
+  it('with no claim, a last commit that starts a PO cycle means planning; its end commit means idle again', () => {
+    const started = { at: '2026-10-28T11:30:00Z', subject: 'po: cycle 40 started (3 finished task(s) to review)' };
+    const v = machineView('desktop', { label: 'Desktop', model: 'Q4' }, [], started);
+    assert.equal(v.state, 'planning');
+    assert.equal(v.planningSince, '2026-10-28T11:30:00Z');
+    assert.equal(machineView('desktop', { label: 'Desktop', model: 'Q4' }, [], { at: started.at, subject: 'po: cycle 40: 0 new task(s), 3 archived' }).state, 'idle');
+    assert.equal(machineView('desktop', { label: 'Desktop', model: 'Q4', paused: true }, [], started).state, 'paused');
+    assert.equal(machineView('yoga', { label: 'Yoga', model: 'Q2' }, tasks, started).state, 'building', 'a claim wins');
+  });
+
   it('a paused machine shows as paused, without the claim it may still hold', () => {
     const v = machineView('yoga', { label: 'Yoga', model: 'Q2', paused: true }, tasks);
     assert.equal(v.state, 'paused');
     assert.equal(v.task, undefined);
   });
 
-  it('sorts busy machines first, then idle, then paused, keeping config order within', () => {
-    const v = (id: string, state: 'building' | 'designing' | 'idle' | 'paused') => ({ ...machineView(id, { label: id, model: '' }, []), state });
-    const order = sortMachines([v('a', 'paused'), v('b', 'idle'), v('c', 'designing'), v('d', 'building'), v('e', 'idle')]).map((m) => m.id);
-    assert.deepEqual(order, ['d', 'c', 'b', 'e', 'a']);
+  it('sorts busy machines first (building, designing, planning), then idle, then paused, keeping config order within', () => {
+    const v = (id: string, state: 'building' | 'designing' | 'planning' | 'idle' | 'paused') => ({ ...machineView(id, { label: id, model: '' }, []), state });
+    const order = sortMachines([v('a', 'paused'), v('b', 'idle'), v('c', 'designing'), v('d', 'building'), v('e', 'idle'), v('f', 'planning')]).map((m) => m.id);
+    assert.deepEqual(order, ['d', 'c', 'f', 'b', 'e', 'a']);
   });
 });
 

@@ -4,6 +4,7 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { PO_STARTED } from '../loop/po.ts';
 import { readTask, type Task } from '../loop/tasks.ts';
 import { parseDesigner, parseResult } from './log-data.ts';
 
@@ -64,7 +65,15 @@ export function lastFinished(tasks: readonly Task[]): string | undefined {
     .at(-1);
 }
 
-export type MachineState = 'paused' | 'building' | 'designing' | 'idle';
+export type MachineState = 'paused' | 'building' | 'designing' | 'planning' | 'idle';
+
+/** A machine's last commit: when, and its subject line. */
+export interface LastCommit {
+  at: string;
+  subject: string;
+}
+
+
 
 export interface MachineView {
   id: string;
@@ -75,6 +84,8 @@ export interface MachineView {
   state: MachineState;
   /** The task it is building or designing: since when (its claim), and its file. */
   task?: { id: string; title: string; since?: string; file: string };
+  /** While planning (a PO cycle): since when. */
+  planningSince?: string;
   /** Tasks of the project it built (the last Result section names it). */
   built: number;
   /** Tasks of the project it designed. */
@@ -85,13 +96,15 @@ export interface MachineView {
 
 /**
  * What one machine is doing in the project the fleet builds. Paused wins: a paused machine may
- * still hold a claim from before the pause. Building wins over designing.
+ * still hold a claim from before the pause. Building wins over designing. With no claim, a last
+ * commit that is the PO's "cycle started" marker means it is planning (a PO cycle holds no claim).
  */
-export function machineView(id: string, m: MachineConfig, tasks: readonly Task[], lastActive?: string): MachineView {
+export function machineView(id: string, m: MachineConfig, tasks: readonly Task[], last?: LastCommit): MachineView {
   const building = tasks.find((t) => t.status === 'in-progress' && t.assignee === id);
   const designing = tasks.find((t) => t.status === 'designing' && t.extra.designer === id);
   const task = building ?? designing;
-  const state: MachineState = m.paused ? 'paused' : building ? 'building' : designing ? 'designing' : 'idle';
+  const planning = !!last && PO_STARTED.test(last.subject);
+  const state: MachineState = m.paused ? 'paused' : building ? 'building' : designing ? 'designing' : planning ? 'planning' : 'idle';
   return {
     id,
     label: m.label,
@@ -100,14 +113,15 @@ export function machineView(id: string, m: MachineConfig, tasks: readonly Task[]
     maxTaskSize: m.maxTaskSize,
     state,
     task: task && state !== 'paused' ? { id: task.id, title: task.title, since: task.claimedAt, file: task.file } : undefined,
+    planningSince: state === 'planning' ? last!.at : undefined,
     built: tasks.filter((t) => t.status === 'done' && parseResult(t.body).machine === id).length,
     designed: tasks.filter((t) => parseDesigner(t.body) === id).length,
-    lastActive,
+    lastActive: last?.at,
   };
 }
 
-/** Busy machines first (building, then designing), then idle, then paused; config order within. */
+/** Busy machines first (building, designing, planning), then idle, then paused; config order within. */
 export function sortMachines(views: readonly MachineView[]): MachineView[] {
-  const rank: Record<MachineState, number> = { building: 0, designing: 1, idle: 2, paused: 3 };
+  const rank: Record<MachineState, number> = { building: 0, designing: 1, planning: 2, idle: 3, paused: 4 };
   return views.map((v, i) => ({ v, i })).sort((a, b) => rank[a.v.state] - rank[b.v.state] || a.i - b.i).map((x) => x.v);
 }

@@ -8,6 +8,7 @@ import { LOCAL_CONFIG_FILE, loadFleet, loadLocalConfig } from './config.ts';
 import { run } from './exec.ts';
 import { detectContextSize, isHealthy } from './llama.ts';
 import { ARCHIVE_DIR, GAME_REL, PROJECT, REPO } from './paths.ts';
+import { PO_STARTED } from './po.ts';
 import { loadState } from './state.ts';
 import { designedFiles, listTasks, unblockedTaskIds } from './tasks.ts';
 
@@ -21,7 +22,9 @@ console.log(`\nMACHINES (project ${PROJECT})`);
 for (const [id, m] of Object.entries(fleet.machines)) {
   const building = open.filter((t) => t.status === 'in-progress' && t.assignee === id).map((t) => `building ${t.id}`);
   const designing = open.filter((t) => t.status === 'designing' && t.extra.designer === id).map((t) => `designing ${t.id}`);
-  const doing = [...building, ...designing].join(', ') || 'idle';
+  // A PO cycle holds no claim: its start marker, as the machine's last commit, says it is planning.
+  const [at = '', subject = ''] = (await run('git', ['log', '-1', '--format=%ar%x1f%s', `--author=^agent-${id} <`], { cwd: REPO })).stdout.trim().split('\x1f');
+  const doing = [...building, ...designing].join(', ') || (PO_STARTED.test(subject) ? `planning (started ${at})` : 'idle');
   console.log(`  ${id.padEnd(14)} ${(m.paused ? 'PAUSED' : m.model).padEnd(24)} up to ${m.maxTaskSize}  ${doing}`);
 }
 

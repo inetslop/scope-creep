@@ -194,6 +194,12 @@ export class Git {
     return this.network(['push', '--quiet', 'origin', 'HEAD:main']);
   }
 
+  /** An empty commit: a marker in the history (e.g. "po: cycle 40 started") that changes no file. */
+  async commitEmpty(message: string): Promise<void> {
+    const who = this.author;
+    await this.ok(['-c', `user.name=${who}`, '-c', `user.email=${who}@scope-creep.local`, 'commit', '-q', '--no-verify', '--allow-empty', '-m', message]);
+  }
+
   async resetHard(ref: string): Promise<void> {
     await this.ok(['reset', '--hard', '--quiet', ref]);
   }
