@@ -12,7 +12,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Rare augments that change a rule (e.g. towers next to each other share their slows)
 - Splitter enemy: breaks into two smaller ones when it dies
 - Shield enemy: a ring that absorbs the first hits for its neighbours
-- Sprinter enemy: speeds up each time it is hit — tasked as T0006 (in queue)
+- Sprinter enemy: speeds up each time it is hit — built as T0006 (desktop)
 - Flyer: ignores the path and crosses the board in a straight line (only some towers can hit it)
 - Boss every 10 waves with a health bar and its own mechanic
 - Wave preview strip in the build phase: the shapes and counts of the next wave — tasked as T0015 (in flight)
@@ -53,7 +53,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Tight-pack waves: some waves send enemies bunched close together (a "tight" tag in the wave preview, once T0015 is in) so multi-hit augments (Splash, Lance, Chain) shine
 - A second pick: every 5th draft offers a 4th card
 - Burn on death: when a burning enemy dies, its burn jumps to the nearest enemy within 2 cells (one jump, same rate) — a small rule after T0028
-- Combo milestone: at ×10 the kill combo counter turns yellow and the next kill's chip burst is bigger — a small juice step after T0031
+- Combo milestone: at ×10 the kill combo counter turns yellow and the next kill's chip burst is bigger — ready: T0031 is in (a yoga S)
 - Beam hum: a very quiet hum under an active beam, one per tower, fading in and out with the line — a small audio touch after T0029, only if it stays quiet with several beams at once
 - Tier chime: on the draft reveal flip (T0024), each offered card lands with a short chime — one low note Common, two a third higher Rare, three the highest Epic, all at the soft UI-blip volume — so the tier is heard as well as seen — built as T0032 (yoga)
 - Ricochet augment: first, a shot at the enemy furthest along that bounces off the first rock it hits once and strikes the nearest enemy it meets on the other side (same damage, same cadence as a Bolt shot); added, the shot bounces one more rock. Closest is Bolt (a straight shot at the furthest); new is that the board's rocks take part in the attack — the first augment that uses the board's shape in combat
@@ -63,3 +63,5 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Mute enemy: a slow walker that silences any tower within 2 cells while it is alive (that tower holds still, no attack; a jammed tower still counts for Rally's range); closest is Block (a plain walker); new is that it fights back — the first enemy that disables towers, and the one that makes cluster placement a real decision against Rally and Mint
 - Lead augment: first, a slow heavy shot at the enemy furthest along that lands where the target will be (lead by the target's current speed); added, the shot leads one beat further per copy. Closest is Reach (slow, heavy, long range); new is the first predictive attack — it only matters once a Sprinter or Dasher is on the board, so task it after one of them lands
 - Working aura: a support tower (Rally, Mint, an Anchor with no attack) shimmers a quiet 1 s ring at its base each time its aura ticks, so you can see a tower that never fires is actually working — a small readability touch after T0020/T0021/T0023 land
+- The run's seed on the rewards card: a short code (four letters) under the coins line, so a run can be shared and replayed on its exact board — the bridge between the daily seeded run and the ghost run; small, after the rewards card settles (T0033)
+- Resume a run: closing the browser mid-run keeps the run (board, towers, wave, gold) in the profile; the menu offers "Resume" beside Play, and "New run" abandons it for nothing — a mobile lifesaver for 10-25 minute runs; the save pattern is E1's

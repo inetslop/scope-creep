@@ -14,7 +14,7 @@ The PO keeps this file current: the epics (what is active, their breakdown and p
 
 The game grows through epics: bigger features that take several tasks. One or two are active at a time; each is built in slices that leave the game playable. The PO orders them, breaks them down and keeps their progress here.
 
-### E1 — Rewards that carry over (active — started 2026-10-28, 8 of 12 done, one slice unassigned)
+### E1 — Rewards that carry over (active — started 2026-10-28, 8 of 12 done, all slices written)
 **Goal:** a run is never wasted: every run earns something you keep.
 **When done:** the game remembers you between runs (a profile saved on the device). Every run ends on a rewards screen: waves held, enemies stopped, clean waves, and coins earned from them, kept in the profile. The menu shows what you have, where your recent runs went, and celebrates a best-wave run.
 **Breakdown:**
@@ -29,9 +29,9 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0018 (M, cycle 3) — the menu remembers your last four runs (a "Recent" line under the profile card) — in queue
 - T0019 (M, cycle 4) — fast-forward: a 2x speed button for the wave phase — in queue, waits on T0015 (wave preview, in flight)
 - T0030 (yoga, S, cycle 10) — the pause screen's run-so-far line: wave, lives, gold and the run's coins on one line above the key list — in queue, waits on T0019
-- (unwritten, S) — a "Clean N" line on the rewards screen (green when N > 0, like the game-over card's line after T0005) — the next slice to write; the pool is full this cycle too, so it goes up the first cycle with room. It is the designated next task for yoga
+- T0033 (yoga, S, cycle 14) — a "Clean N" line on the rewards card: green when N > 0, counting up with the other lines, mirroring the game-over card's line (T0005) — in queue, ready now
 
-Progress: the profile, the menu card, the live coin tally (and its pop), the best-run star, the rewards scene, the clean-wave chip (T0005) and the coin chime (T0009) are in — a run now ends on a claim card that counts up waves held, stopped and +N coins with a two-note chime, a perfectly held wave pops a green "Clean" chip at the exit and turns the game-over line green, and the tally pops as it grows. In the queue: the recent-runs line (T0018), fast-forward (T0019, one hop behind the wave preview T0015, in flight) and the pause screen's run-so-far line (T0030, yoga's next S, two hops behind fast-forward). One slice remains unwritten: the rewards card still never shows the clean waves (T0003's design has only waves/stopped/coins) — small, to be written the first cycle with pool room. E1 closes when those land.
+Progress: the profile, the menu card, the live coin tally (and its pop), the best-run star, the rewards scene, the clean-wave chip (T0005) and the coin chime (T0009) are in — a run now ends on a claim card that counts up waves held, stopped and +N coins with a two-note chime, a perfectly held wave pops a green "Clean" chip at the exit and turns the game-over line green, and the tally pops as it grows. In the queue: the recent-runs line (T0018), fast-forward (T0019, one hop behind the wave preview T0015, in flight), the pause screen's run-so-far line (T0030, two hops behind fast-forward) and the rewards card's clean line (T0033, written this cycle, ready for yoga). That was the last unwritten slice — the rewards card never showed the clean waves (T0003's design had only waves/stopped/coins); T0033 adds a green "Clean N" line counting up with the others. E1 closes when T0018, T0019, T0030 and T0033 land.
 
 ### E2 — Tech tree (not started; needs E1)
 **Goal:** a reason to play one more run: spend what runs earn on lasting upgrades.
@@ -71,7 +71,7 @@ Ideas that may become epics or tasks of one.
 - Selling a tower, or taking an augment back out (for part of the gold)
 - Targeting modes per tower (first, strongest, closest)
 - More augments with new attacks and changes (a shot that bounces off the board's rocks, a gust that pushes enemies back — T0027, a root that stops the road — T0023; the IDEAS backlog holds the list)
-- Enemies with new behaviors (e.g. one that speeds up when hit — T0006, one that dashes in bursts, one that shields neighbours, one that splits)
+- Enemies with new behaviors (e.g. one that speeds up when hit — built as T0006 (desktop); one that dashes in bursts, one that shields neighbours, one that splits)
 - Wave preview: what the next wave sends, shown during the build phase — T0015 (in flight)
 - Bosses every 10 waves, each with its own mechanic
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them
