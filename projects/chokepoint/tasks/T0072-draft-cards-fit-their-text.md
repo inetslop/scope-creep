@@ -1,12 +1,14 @@
 ---
 id: T0072
-title: "Draft cards fit their text"
+title: Draft cards fit their text
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T17:31:39Z
+claimed_at: 2026-10-28T17:32:00Z
+designer: yoga
 ---
 
 ## Goal
