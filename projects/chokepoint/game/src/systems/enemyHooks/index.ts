@@ -3,6 +3,7 @@ import type { MakeEnemyHook } from './hook';
 import { haulerLeak } from './haulerLeak';
 import { mintRing } from './mintRing';
 import { split } from './split';
+import { killCoin } from './killCoin';
 
 /**
  * Everything that reacts to kills, leaks or every frame of a wave, one per line (see hook.ts).
@@ -10,6 +11,7 @@ import { split } from './split';
  */
 export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   split,
+  killCoin,
   haulerLeak,
   burnLeap,
   mintRing,

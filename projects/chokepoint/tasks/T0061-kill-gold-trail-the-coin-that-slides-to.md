@@ -4,11 +4,12 @@ title: "Kill gold trail: the coin that slides to the tally"
 assignee: cachyos-x8664
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0039]
 attempts: 1
 created: 2026-10-28T13:29:40Z
 claimed_at: 2026-10-28T21:00:07Z
+finished_at: 2026-10-28T21:37:20Z
 epic: E1
 ---
 
@@ -125,3 +126,18 @@ this.scene.registry.set('statsGold', { x: this.box.x + this.gold.x, y: this.box.
 
 ### Tests
 none
+
+## Result (attempt 1, cachyos-x8664)
+
+Each kill that pays gold now launches one small coin (the same `ui:coin` icon as the HUD tally, ~10 px) from the kill spot — the gold pop's anchor — to the stats card's gold number over ~200 ms on a short ease-out arc that fades in its last ~30 ms, in addition to the unchanged gold pop. The slide is `src/systems/fx/goldCoin.ts` (destroyed on arrival + a 500 ms safety timeout, dies with the scene), started by the new enemy hook `src/systems/enemyHooks/killCoin.ts` (registered next to `split` in `src/systems/enemyHooks/index.ts`) which caps in-flight coins at 8 (a 9th kill in a 250 ms window shows only its pop) and reads the gold number's screen position shared as `'statsGold'` from one new line in `StatsCard.layout()`. Mint "+1" pops, gold totals, the tally pop, sounds and all other HUD are unchanged, and `npm run check` and `npm run smoke` (desktop + phone) both pass.
+
+- Self-review: APPROVE
+- Time: 37.2 min
+
+```
+.../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../game/src/systems/enemyHooks/killCoin.ts        | 27 ++++++++++++++++++++
+ .../chokepoint/game/src/systems/fx/goldCoin.ts     | 29 ++++++++++++++++++++++
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts   |  2 ++
+ 4 files changed, 60 insertions(+)
+```

@@ -33,6 +33,8 @@ export class StatsCard implements HudPart {
   layout(): void {
     // Card top stays at y = 12, so the card is 12..84 and nothing is pushed off screen.
     this.box.setPosition(EDGE + 98, 12 + 72 / 2);
+    // The gold number's screen position (CSS pixels), shared with the kill's coin (systems/enemyHooks/killCoin.ts).
+    this.scene.registry.set('statsGold', { x: this.box.x + this.gold.x, y: this.box.y + this.gold.y });
   }
 
   update(game: GameScene): void {
