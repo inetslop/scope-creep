@@ -3,11 +3,13 @@ id: T0059
 title: "Burn on death: the flame that jumps to the nearest"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0028, T0039]
 attempts: 0
 created: 2026-10-28T13:29:40Z
+claimed_at: 2026-10-28T14:10:24Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
