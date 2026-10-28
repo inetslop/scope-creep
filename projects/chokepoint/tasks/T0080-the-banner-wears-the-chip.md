@@ -3,11 +3,13 @@ id: T0080
 title: The banner wears the chip
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T23:26:44Z
+claimed_at: 2026-10-28T23:44:56Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
