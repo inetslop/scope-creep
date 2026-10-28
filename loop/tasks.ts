@@ -241,10 +241,15 @@ function globTest(glob: string): RegExp {
  * to the same code. Files matching `lockFree` (lists where tasks only add a line) don't count.
  */
 export function lockedBy(t: Task, all: readonly Task[], me: string, lockFree: readonly string[] = []): Task | undefined {
-  const free = lockFree.map(globTest);
-  const files = designedFiles(t).filter((f) => !free.some((re) => re.test(f)));
+  const files = sharedFiles(t, lockFree);
   if (files.length === 0) return undefined;
   return all.find((o) => o.id !== t.id && o.status === 'in-progress' && o.assignee !== me && designedFiles(o).some((f) => files.includes(f)));
+}
+
+/** The files a task's design names that lock (all but the ones matching `lockFree`). */
+export function sharedFiles(t: Task, lockFree: readonly string[] = []): string[] {
+  const free = lockFree.map(globTest);
+  return designedFiles(t).filter((f) => !free.some((re) => re.test(f)));
 }
 
 /**

@@ -10,7 +10,7 @@ import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { loadState, saveState } from './state.ts';
 import { commitAndPush } from './sync.ts';
-import { formatTaskId, listTasks, maxTaskNumber, parseTask, taskFileName, unblockedTaskIds, writeTask, type Task, type TaskListing, type TaskSize } from './tasks.ts';
+import { formatTaskId, listTasks, lockFreeFor, maxTaskNumber, parseTask, pickTaskFor, sharedFiles, taskFileName, unblockedTaskIds, writeTask, type Task, type TaskListing, type TaskSize } from './tasks.ts';
 
 const isArchived = (t: Task): boolean => path.dirname(t.file) === ARCHIVE_DIR;
 const isFinished = (t: Task): boolean => !isArchived(t) && (t.status === 'done' || t.status === 'failed');
@@ -62,6 +62,28 @@ export function poolNeeds(fleet: FleetConfig, listing: TaskListing): PoolNeeds {
   return { have: waiting.length, want, small };
 }
 
+/** With machines idle, the PO may plan past what the machines want, up to this many queued tasks per wanted one. */
+const IDLE_POOL_CAP = 3;
+
+/**
+ * Running dev machines that hold no claim and could take nothing in the pool right now, the file
+ * lock included (tasks.ts pickTaskFor): with a pool full of tasks that edit the same files, they
+ * sit idle even though the pool looks full.
+ */
+export function idleMachines(fleet: FleetConfig, listing: TaskListing, nowMs = Date.now()): string[] {
+  const claimed = new Set(listing.tasks.flatMap((t) => (t.status === 'in-progress' ? [t.assignee] : t.status === 'designing' ? [t.extra.designer ?? ''] : [])));
+  return devMachineIds(fleet).filter((id) => !claimed.has(id) && !pickTaskFor(id, fleet, listing.tasks, nowMs));
+}
+
+/** Why the PO should plan for idle machines, or null: some are idle and the pool is under its cap. */
+export function idleReason(fleet: FleetConfig, listing: TaskListing, nowMs = Date.now()): string | null {
+  const idle = idleMachines(fleet, listing, nowMs);
+  if (idle.length === 0) return null;
+  const queued = listing.tasks.filter((t) => !isArchived(t) && isQueued(t)).length;
+  if (queued >= poolNeeds(fleet, listing).want * IDLE_POOL_CAP) return null;
+  return `${idle.join(', ')} ${idle.length === 1 ? 'has' : 'have'} nothing to take right now`;
+}
+
 /**
  * Returns why the PO should plan now, or null if it shouldn't. Planning is driven by
  * backpressure: the PO tops the shared pool up to what the running machines want (their
@@ -79,6 +101,8 @@ export function poDue(fleet: FleetConfig, listing: TaskListing): string | null {
   const needs = poolNeeds(fleet, listing);
   if (needs.have < needs.want) return `the pool is low (${needs.have}/${needs.want})`;
   for (const s of needs.small) if (s.have < s.want) return `few size-${s.size} tasks for ${s.machines.join(', ')} (${s.have}/${s.want})`;
+  const idle = idleReason(fleet, listing);
+  if (idle) return idle;
   const finished = listing.tasks.filter(isFinished).length;
   if (finished > 0) return `${finished} finished task(s) to review`;
   if (listing.invalid.size > 0) return 'invalid task files';
@@ -92,6 +116,25 @@ function describeMachines(fleet: FleetConfig): string {
     .join('\n');
 }
 
+/**
+ * For the PO when machines are idle: who, and which files the open work crowds into, so the new
+ * tasks land somewhere else (a task can't start while another task edits one of its files).
+ */
+function idleLines(fleet: FleetConfig, listing: TaskListing, idle: readonly string[]): string[] {
+  if (idle.length === 0) return [];
+  const shared = (t: Task): string[] => sharedFiles(t, lockFreeFor(fleet));
+  const editing = listing.tasks.filter((t) => t.status === 'in-progress').flatMap((t) => shared(t).map((f) => `${f} (${t.id})`));
+  const counts = new Map<string, number>();
+  for (const t of listing.tasks.filter((x) => !isArchived(x) && isQueued(x))) for (const f of shared(t)) counts.set(f, (counts.get(f) ?? 0) + 1);
+  const crowded = [...counts].filter(([, n]) => n >= 3).sort((a, b) => b[1] - a[1]).map(([f, n]) => `${f} (${n} tasks)`);
+  const label = (id: string): string => `${id} (up to ${fleet.machines[id]!.maxTaskSize})`;
+  return [
+    `- ${idle.map(label).join(', ')} ${idle.length === 1 ? 'has' : 'have'} nothing to take right now: the tasks they could build all edit a file another task is editing. Write at least one task each, in their size, that lives in new files (a new HUD element, a reaction to kills or leaks, a new effect, a new enemy or augment) rather than changing the files below.`,
+    ...(editing.length ? [`- Being edited now: ${editing.join(', ')}.`] : []),
+    ...(crowded.length ? [`- Most open tasks also edit: ${crowded.join(', ')}.`] : []),
+  ];
+}
+
 /** The pool for the PO: what it needs, then every open task with who builds it and what blocks it. */
 function describePool(fleet: FleetConfig, listing: TaskListing): string {
   const needs = poolNeeds(fleet, listing);
@@ -102,7 +145,8 @@ function describePool(fleet: FleetConfig, listing: TaskListing): string {
       .filter((d) => byId.get(d)?.status !== 'done')
       .map((d) => `${d} (${byId.get(d)?.status ?? 'missing'})`)
       .join(', ');
-  const more = Math.max(0, needs.want - needs.have);
+  const idle = idleMachines(fleet, listing);
+  const more = Math.max(0, needs.want - needs.have, idle.length);
   const smallLines = needs.small
     .filter((s) => s.have < s.want)
     .map((s) => `- at least ${s.want - s.have} of them size ${s.size} or smaller (for ${s.machines.join(', ')}, which take nothing bigger)`);
@@ -111,6 +155,7 @@ function describePool(fleet: FleetConfig, listing: TaskListing): string {
     `The pool has ${needs.have} task(s) that can start now (no unfinished dependency); the running machines want ${needs.want}. Write **${more}** more.` +
       (chained ? ` ${chained} more wait on other tasks and don't count: a task waiting on another keeps no machine busy.` : ''),
     ...smallLines,
+    ...idleLines(fleet, listing, idle),
   ].join('\n');
   const open = listing.tasks
     .filter((t) => !isArchived(t) && (isQueued(t) || t.status === 'in-progress'))

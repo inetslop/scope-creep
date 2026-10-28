@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import type { FleetConfig } from '../config.ts';
 import { TASKS_DIR } from '../paths.ts';
-import { poolNeeds } from '../po.ts';
+import { idleMachines, idleReason, poolNeeds } from '../po.ts';
 import { parseTask, type Task, type TaskListing } from '../tasks.ts';
 
 const fleet = {
@@ -39,5 +39,24 @@ describe('poolNeeds', () => {
     assert.equal(poolNeeds(fleet, listing([pool('T0001'), pool('T0002', { dependsOn: ['T0001'] })])).have, 1);
     assert.equal(poolNeeds(fleet, listing([pool('T0001', { status: 'done' }), pool('T0002', { dependsOn: ['T0001'] })])).have, 1);
     assert.equal(poolNeeds(fleet, listing([pool('T0001', { status: 'in-progress', assignee: 'big' }), pool('T0002', { status: 'design', dependsOn: ['T0001'] })])).have, 0);
+  });
+});
+
+describe('idle machines', () => {
+  const designed = (file: string): string => `## Goal\nA thing.\n\n## Design (architect, big)\n\n- edit \`${file}\`\n`;
+  const building = pool('T0001', { status: 'in-progress', assignee: 'big', body: designed('src/a.ts') });
+
+  it('a running machine with no claim and nothing it can take is idle, file lock included', () => {
+    const locked = pool('T0002', { size: 'S', created: '2026-01-01T00:00:00Z', body: designed('src/a.ts') });
+    assert.deepEqual(idleMachines(fleet, listing([building, locked])), ['weak'], 'big holds a claim; off is paused');
+    assert.match(idleReason(fleet, listing([building, locked])) ?? '', /weak has nothing to take/);
+    const free = pool('T0003', { size: 'S', created: '2026-01-01T00:00:00Z', body: designed('src/b.ts') });
+    assert.deepEqual(idleMachines(fleet, listing([building, locked, free])), []);
+  });
+
+  it('plans for idle machines only while the pool is under three queued tasks per wanted one', () => {
+    const locked = Array.from({ length: 12 }, (_, i) => pool(`T01${String(i).padStart(2, '0')}`, { size: 'S', created: '2026-01-01T00:00:00Z', body: designed('src/a.ts') }));
+    assert.equal(idleReason(fleet, listing([building, ...locked.slice(0, 11)])) !== null, true);
+    assert.equal(idleReason(fleet, listing([building, ...locked])), null, 'want 4 x 3 = 12 queued: enough');
   });
 });
