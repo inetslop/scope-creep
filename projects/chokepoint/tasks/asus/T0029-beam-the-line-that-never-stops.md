@@ -4,12 +4,11 @@ title: "Beam: the line that never stops"
 assignee: asus
 size: L
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0004]
-attempts: 2
+attempts: 3
 created: 2026-10-28T06:24:55Z
-claimed_at: 2026-10-28T12:21:52Z
-finished_at: 2026-10-28T14:22:29Z
+claimed_at: 2026-10-28T14:22:32Z
 epic: E4
 ---
 
