@@ -1,12 +1,14 @@
 ---
 id: T0051
 title: Best combo on the claim card
+assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0039]
-attempts: 0
+attempts: 1
 created: 2026-10-28T12:34:55Z
+claimed_at: 2026-10-28T16:48:25Z
 epic: E1
 ---
 
