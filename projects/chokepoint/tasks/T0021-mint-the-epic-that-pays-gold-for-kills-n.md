@@ -1,12 +1,14 @@
 ---
 id: T0021
 title: "Mint: the Epic that pays gold for kills near it"
+assignee: desktop
 size: L
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0020, T0012, T0004, T010]
-attempts: 0
+attempts: 1
 created: 2026-10-28T04:43:01Z
+claimed_at: 2026-10-28T10:59:24Z
 epic: E4
 ---
 
