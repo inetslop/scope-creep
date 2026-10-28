@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { REROLL_COST, START } from '../../src/config';
+import { PALETTE } from '../../src/content/palette';
 import { RunState } from '../../src/core/run';
 
 describe('RunState', () => {
@@ -101,5 +102,53 @@ describe('RunState', () => {
     expect(run.cleanWaves).toBe(1); // a wave with a leak is not clean
     run.clearWave();
     expect(run.goldEarned).toBe(14 + RunState.waveBonus(1) + RunState.waveBonus(2));
+  });
+
+  it('pays the clean streak once, on the third clean wave in a row', () => {
+    const run = new RunState(1);
+    run.startWave();
+    run.clearWave();
+    run.startWave();
+    run.clearWave();
+    expect(run.lives).toBe(START.lives);
+    run.startWave();
+    run.clearWave();
+    expect(run.lives).toBe(START.lives + 1);
+    expect(run.streakPaid).toBe(true);
+    run.startWave();
+    run.clearWave();
+    run.startWave();
+    run.clearWave();
+    run.startWave();
+    run.clearWave();
+    expect(run.lives).toBe(START.lives + 1);
+  });
+
+  it('a leak resets the clean streak at once, and the next clean wave does not pay', () => {
+    const run = new RunState(1);
+    run.startWave();
+    run.clearWave();
+    run.startWave();
+    run.clearWave();
+    run.startWave();
+    run.leak(1);
+    expect(run.cleanStreak).toBe(0);
+    run.clearWave();
+    expect(run.lives).toBe(START.lives - 1);
+    expect(run.streakPaid).toBe(false);
+  });
+
+  it('tags the clean chip 1/3, 2/3, the one +1, and nothing after', () => {
+    const run = new RunState(1);
+    expect(run.streakTag()).toEqual({ text: '1/3', color: PALETTE.muted });
+    run.startWave();
+    run.clearWave();
+    expect(run.streakTag()).toEqual({ text: '2/3', color: PALETTE.muted });
+    run.startWave();
+    run.clearWave();
+    expect(run.streakTag()).toEqual({ text: '+1', color: PALETTE.green });
+    run.startWave();
+    run.clearWave();
+    expect(run.streakTag()).toBeUndefined();
   });
 });

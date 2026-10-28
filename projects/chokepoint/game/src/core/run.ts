@@ -1,4 +1,5 @@
 import { START, WAVE_BONUS } from '../config';
+import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
 import { Rng } from './rng';
 
@@ -29,6 +30,8 @@ export class RunState {
   goldEarned = 0; // gold earned this run: kill gold + wave bonuses
   cleanWaves = 0; // waves that ended without a leak
   rerollUsed = false; // the run's one draft reroll was spent
+  cleanStreak = 0; // clean waves in a row; a leak resets it to 0
+  streakPaid = false; // the run's one +1 life for a streak of 3 was paid
   private leaksThisWave = 0;
 
   constructor(seed: number) {
@@ -89,6 +92,7 @@ export class RunState {
     if (this.phase === 'over') return true;
     this.lives = Math.max(0, this.lives - livesCost);
     this.leaksThisWave += 1;
+    this.cleanStreak = 0;
     if (this.lives === 0) this.phase = 'over';
     return this.phase === 'over';
   }
@@ -109,10 +113,24 @@ export class RunState {
     const bonus = RunState.waveBonus(this.wave);
     this.gold += bonus;
     this.goldEarned += bonus;
-    if (this.leaksThisWave === 0) this.cleanWaves += 1;
+    if (this.leaksThisWave === 0) {
+      this.cleanWaves += 1;
+      this.cleanStreak += 1;
+      if (this.cleanStreak === 3 && !this.streakPaid) {
+        this.lives += 1;
+        this.streakPaid = true;
+      }
+    }
     this.leaksThisWave = 0;
     this.phase = 'draft';
     return bonus;
+  }
+
+  /** Tag under this wave's clean chip: "1/3", "2/3", the one "+1", or none. Call BEFORE clearWave(). */
+  streakTag(): { text: string; color: number } | undefined {
+    if (this.leaksThisWave > 0 || this.streakPaid) return undefined;
+    const next = this.cleanStreak + 1;
+    return next === 3 ? { text: '+1', color: PALETTE.green } : { text: `${next}/3`, color: PALETTE.muted };
   }
 
   /** The draft's pick goes into the hand. */

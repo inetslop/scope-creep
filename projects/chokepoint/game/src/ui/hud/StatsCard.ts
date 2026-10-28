@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import { START } from '../../config';
 import { PALETTE } from '../../content/palette';
 import { artScale, COIN_TEXTURE, LIFE_TEXTURE } from '../../art/textures';
 import { coinsForRun } from '../../core/profile';
@@ -17,6 +18,8 @@ export class StatsCard implements HudPart {
   private readonly coinTallyIcon: Phaser.GameObjects.Image;
   private lastN = 0;
   private popping = false;
+  private lastLives: number = START.lives;
+  private livesPop = false;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -39,6 +42,8 @@ export class StatsCard implements HudPart {
 
   update(game: GameScene): void {
     this.lives.setText(String(game.run.lives));
+    if (game.run.lives > this.lastLives) this.popLives();
+    this.lastLives = game.run.lives;
     this.gold.setText(String(game.run.gold));
     const n = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves });
     this.coins.setText(`+${n} coins`);
@@ -55,5 +60,13 @@ export class StatsCard implements HudPart {
     const base = this.coinTallyIcon.scale;
     this.scene.tweens.add({ targets: this.coins, scale: 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => this.coins.setScale(1) });
     this.scene.tweens.add({ targets: this.coinTallyIcon, scale: base * 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => { this.popping = false; this.coinTallyIcon.setScale(base); this.coinTallyIcon.clearTint(); } });
+  }
+
+  /** The streak's one payback: the lives number flashes green and scales 1.15 and back over ~150 ms. */
+  private popLives(): void {
+    if (this.livesPop) return;
+    this.livesPop = true;
+    this.lives.setTintFill(PALETTE.green);
+    this.scene.tweens.add({ targets: this.lives, scale: 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => { this.livesPop = false; this.lives.setScale(1); this.lives.clearTint(); } });
   }
 }

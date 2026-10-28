@@ -4,11 +4,12 @@ title: "Clean streak: three clean waves in a row give the run +1 life"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T11:47:03Z
 claimed_at: 2026-10-28T21:37:51Z
+finished_at: 2026-10-28T21:55:35Z
 epic: E1
 ---
 
@@ -88,3 +89,20 @@ cleanChip(x: number, y: number, tag: { text: string; color: number } | undefined
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0030: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Result (attempt 1, cachyos-x8664)
+
+Three clean waves in a a row now pay the run +1 life, exactly once: `RunState` tracks `cleanStreak`/`streakPaid` (reset in `leak()`, payback in `clearWave()`), and `streakTag()` — read by `RunFlow.clearWave()` before the run call — feeds a 12 px tag ("1/3"/"2/3" muted, the one "+1" green) that `FxSystem.cleanChip()` draws under the pill inside the chip's container so it pops, fades and is destroyed with it; `StatsCard` pops the lives number green 1.15→1.0 over ~150 ms (same tween shape as the coin pop) when it rises, and a new `run.streak` invariant caps lives at start+1. Three core tests cover the once-per-run payback, the leak reset and the tag sequence. Two tiny deviations from the design: `runChecks.ts` imports `CELL` (not `HUD`) from config, so START was added to that import; and `StatsCard.lastLives` starts at `START.lives` (not 0) — with 0, the pop would fire spuriously on the first frame of every run (20 > 0), so it now only fires when the payback actually raises lives. `npm run check` and `npm run smoke` (desktop 1280x720 + mobile 412x915) both pass.
+
+- Self-review: APPROVE
+- Time: 17.7 min
+
+```
+projects/chokepoint/game/src/core/run.ts         | 20 +++++++++-
+ projects/chokepoint/game/src/debug/runChecks.ts  |  3 +-
+ projects/chokepoint/game/src/systems/FxSystem.ts |  8 ++--
+ projects/chokepoint/game/src/systems/RunFlow.ts  |  3 +-
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts | 13 +++++++
+ projects/chokepoint/game/tests/core/run.test.ts  | 49 ++++++++++++++++++++++++
+ 6 files changed, 90 insertions(+), 6 deletions(-)
+```

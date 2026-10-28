@@ -126,6 +126,7 @@ export class RunFlow {
 
   private clearWave(): void {
     const cleanBefore = this.run.cleanWaves;
+    const tag = this.run.streakTag();
     const bonus = this.run.clearWave();
     const clean = this.run.cleanWaves > cleanBefore;
     hook.stats.wavesCleared += 1;
@@ -134,7 +135,7 @@ export class RunFlow {
     if (clean) {
       // A beat for the chip to pop before the draft veils the board.
       const exit = this.s.board.path.pointAt(this.s.board.path.length - CELL / 2);
-      this.s.fx.cleanChip(exit.x, exit.y);
+      this.s.fx.cleanChip(exit.x, exit.y, tag);
       this.scene.time.delayedCall(1000, () => this.openDraft());
     } else {
       this.openDraft();
