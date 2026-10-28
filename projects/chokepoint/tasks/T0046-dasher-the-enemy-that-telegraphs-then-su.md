@@ -1,12 +1,14 @@
 ---
 id: T0046
 title: "Dasher: the enemy that telegraphs, then surges"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T12:01:28Z
+claimed_at: 2026-10-28T13:11:05Z
 ---
 
 ## Goal
