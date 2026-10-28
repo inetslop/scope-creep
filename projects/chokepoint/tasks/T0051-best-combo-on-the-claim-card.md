@@ -3,11 +3,13 @@ id: T0051
 title: Best combo on the claim card
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0039, T0047]
 attempts: 0
 created: 2026-10-28T12:34:55Z
+claimed_at: 2026-10-28T13:04:07Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
