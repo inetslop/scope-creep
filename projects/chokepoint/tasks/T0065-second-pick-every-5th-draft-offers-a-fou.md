@@ -3,11 +3,13 @@ id: T0065
 title: "Second pick: every 5th draft offers a fourth card"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0064]
 attempts: 0
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T13:59:46Z
 epic: E4
+designer: desktop-4070
 ---
 
 ## Goal
