@@ -4,7 +4,7 @@ title: "Last stand banner: the card that teaches the rule"
 size: S
 priority: 3
 status: design
-depends_on: [T0054]
+depends_on: [T0054, T0067]
 attempts: 0
 created: 2026-10-28T13:29:40Z
 epic: E1
@@ -18,7 +18,7 @@ The moment a run drops to one life, a small white card slides in at the top — 
 - Two centered lines: "Last stand" in bold ink, muted "kills pay double" below it.
 - It shows on every re-entry into the state: a later leak back to 1 (after T0045's streak paid a life back) shows it again. It never shows when lives are 2 or more.
 - Top-center sits clear of the stats card; the card is transient — it never blocks the board or input, and it is not a control (no pause-screen row).
-- Closest existing: the green "Clean" chip's pop and fade (T0005) — a transient that announces a state where it happens. The wave-banner idea (IDEAS) will reuse this slide-and-fade pattern later.
+- Shared pattern: the wave banner (T0067) lands the top-center slide-and-fade card first ("Wave N" at each wave start); this banner reuses that card and motion with its own two lines — it adds no second card system. The green "Clean" chip's pop (T0005) stays the other transient family.
 - No sound, no new key, no change to T0054's red lives number or its wave-start pulse.
 
 ## Acceptance criteria
