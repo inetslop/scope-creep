@@ -4,11 +4,13 @@ title: "Mark: the rule-changing augment that only comes as Epic"
 assignee: asus
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: [T0002, T0011]
 attempts: 0
 created: 2026-10-28T02:08:37Z
+claimed_at: 2026-10-28T02:51:58Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
