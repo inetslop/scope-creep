@@ -56,4 +56,22 @@ describe('RunState', () => {
     expect(run.wave).toBe(2);
     expect(run.wavesCleared).toBe(1);
   });
+
+  it('keeps the run ledger: gold earned and clean waves', () => {
+    const run = new RunState(1);
+    run.startWave();
+    run.addKill(4);
+    run.addKill(6);
+    run.clearWave();
+    expect(run.goldEarned).toBe(10 + RunState.waveBonus(1));
+    expect(run.cleanWaves).toBe(1);
+
+    run.startBuild(5);
+    run.startWave();
+    run.addKill(4);
+    run.leak(1);
+    expect(run.cleanWaves).toBe(1); // a wave with a leak is not clean
+    run.clearWave();
+    expect(run.goldEarned).toBe(14 + RunState.waveBonus(1) + RunState.waveBonus(2));
+  });
 });

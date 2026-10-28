@@ -4,11 +4,12 @@ title: "A profile that remembers you: saved best wave, run stats, coins"
 assignee: asus
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T01:07:07Z
 claimed_at: 2026-10-28T01:12:41Z
+finished_at: 2026-10-28T01:43:00Z
 epic: E1
 ---
 
@@ -93,3 +94,22 @@ private leaksThisWave = 0;
 ### Tests
 - `tests/core/profile.test.ts`: `coinsForRun({ waves: 12, stopped: 148, clean: 5 }) === 31`; `{0,0,0} → 0`; floor edge (stopped 19 → +1, 20 → +2); empty load from `undefined` and from broken JSON; `recordRun` flow — first run sets best/coins/lastRun and `newBest` true, second lower run keeps best and `newBest` false, zero-wave run increments `runsPlayed` with 0 coins; coins accumulate across runs.
 - `tests/core/run.test.ts`: clean wave increments `cleanWaves` and `goldEarned` (kill gold + `RunState.waveBonus`); a wave with one `leak()` is not clean; wave 2 bonus still counted in `goldEarned`.
+
+## Result (attempt 1, asus)
+
+The device now remembers you: a new pure `core/profile.ts` (load/save of bestWave, runsPlayed, coins, lastRun in localStorage; `coinsForRun` = waves + floor(stopped/10) + clean; `recordRun`), a run ledger in `RunState` (goldEarned, cleanWaves, per-wave leak count), four new lines on the game-over card (Waves held / Stopped / Clean / +N coins in gold), and a menu line "Best: wave N · M runs". `recordRun` is called exactly once in `GameOverScene.create()`; the old score-based best is gone (old key orphaned, no migration). Unit tests cover the coin rule, load sanitization, and ledger; `npm run check` and `npm run smoke` both pass. Note: deletion of the superseded `bestScore.ts` and its test was blocked by the session's permission system, so those two files remain (unused, tests still passing) and should be removed by a human.
+
+- Self-review: REJECT
+- Time: 30.3 min
+- Self-review concerns: the superseded `src/core/bestScore.ts` and `tests/core/bestScore.test.ts` were left in place instead of deleted as the design requires (orphaned dead code duplicating the `KeyValueStore` interface); I could not remove them because file deletion requires an approval unavailable in this session.
+
+```
+projects/chokepoint/game/src/core/profile.ts       | 73 ++++++++++++++++++++++
+ projects/chokepoint/game/src/core/run.ts           |  9 +++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ .../chokepoint/game/src/scenes/GameOverScene.ts    | 36 +++++++----
+ projects/chokepoint/game/src/scenes/MenuScene.ts   |  7 ++-
+ .../chokepoint/game/tests/core/profile.test.ts     | 45 +++++++++++++
+ projects/chokepoint/game/tests/core/run.test.ts    | 18 ++++++
+ 7 files changed, 175 insertions(+), 14 deletions(-)
+```

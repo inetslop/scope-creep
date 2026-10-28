@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { cssColor, PALETTE } from '../content/palette';
-import { loadBest, saveIfBest } from '../core/bestScore';
+import { recordRun } from '../core/profile';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
@@ -21,9 +21,7 @@ export class GameOverScene extends Phaser.Scene {
     hook.overlay = '';
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
     const run = getRun(this);
-    const result = { wave: run.wave, score: run.score };
-    const isBest = saveIfBest(window.localStorage, result);
-    const best = loadBest(window.localStorage);
+    const result = recordRun(window.localStorage, { waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves });
     const again = (): void => {
       this.scene.start(SCENES.game);
     };
@@ -31,15 +29,31 @@ export class GameOverScene extends Phaser.Scene {
     const panelW = 360;
     const panelH = 380;
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
-    const title = this.add.text(0, -panelH / 2 + 56, 'Overrun', titleStyle(44, PALETTE.red)).setOrigin(0.5);
-    const waveText = this.add.text(0, -panelH / 2 + 118, `Held until wave ${run.wave}`, titleStyle(22)).setOrigin(0.5);
-    const score = this.add.text(0, -panelH / 2 + 152, `${run.score} points · ${run.kills} kills`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
+    const title = this.add.text(0, -144, 'Overrun', titleStyle(44, PALETTE.red)).setOrigin(0.5);
+    const waveText = this.add.text(0, -96, `Held until wave ${run.wave}`, titleStyle(22)).setOrigin(0.5);
+    const score = this.add.text(0, -66, `${run.score} points · ${run.kills} kills`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
+    const wavesText = this.add.text(0, -37, `Waves held ${run.wavesCleared}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
+    const stoppedText = this.add.text(0, -20, `Stopped ${run.kills}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
+    const cleanText = this.add.text(0, -3, `Clean ${run.cleanWaves}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
+    const coinsText = this.add.text(0, 14, `+${result.coins} coins`, textStyle(15, PALETTE.goldText, { fontStyle: 'bold' })).setOrigin(0.5);
     const bestText = this.add
-      .text(0, -panelH / 2 + 186, isBest ? 'New best!' : `Best: wave ${best.wave} · ${best.score} points`, textStyle(15, isBest ? PALETTE.greenDeep : PALETTE.faint, { fontStyle: 'bold' }))
+      .text(0, 41, result.newBest ? 'New best!' : `Best: wave ${result.profile.bestWave}`, textStyle(15, result.newBest ? PALETTE.greenDeep : PALETTE.faint, { fontStyle: 'bold' }))
       .setOrigin(0.5);
-    const againButton = makeButton(this, 0, panelH / 2 - 112, 'Play again', again, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
-    const menuButton = makeButton(this, 0, panelH / 2 - 46, 'Menu', () => this.scene.start(SCENES.menu), { width: 240, height: 52, radius: 26 });
-    const box = this.add.container(0, 0, [panel, title, waveText, score, bestText, againButton.container, menuButton.container]);
+    const againButton = makeButton(this, 0, 88, 'Play again', again, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
+    const menuButton = makeButton(this, 0, 152, 'Menu', () => this.scene.start(SCENES.menu), { width: 240, height: 52, radius: 26 });
+    const box = this.add.container(0, 0, [
+      panel,
+      title,
+      waveText,
+      score,
+      wavesText,
+      stoppedText,
+      cleanText,
+      coinsText,
+      bestText,
+      againButton.container,
+      menuButton.container,
+    ]);
 
     const layout = (width: number, height: number): void => {
       box.setPosition(width / 2, height / 2).setScale(Math.min(1, (width - 24) / panelW, (height - 24) / panelH));

@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { AUGMENTS } from '../content/augments';
 import { cssColor, PALETTE } from '../content/palette';
-import { loadBest } from '../core/bestScore';
+import { loadProfile } from '../core/profile';
 import { MENU_ROAD_SIZE } from '../art/menu';
 import { artScale, augmentTexture } from '../art/textures';
 import { flags } from '../debug/flags';
@@ -53,12 +53,13 @@ export class MenuScene extends Phaser.Scene {
     );
     this.demo = new MenuDemo(this);
 
-    const best = loadBest(window.localStorage);
+    const p = loadProfile(window.localStorage);
     this.title = this.add.text(0, 0, 'Chokepoint', titleStyle(60)).setOrigin(0.5);
     const how = this.add
       .text(0, 0, 'Build towers beside the road.\nCombine augments into new kinds of tower.\nHold as many waves as you can.', textStyle(18, PALETTE.muted, { align: 'center', lineSpacing: 6 }))
       .setOrigin(0.5);
-    const bestText = this.add.text(0, 0, best.wave > 0 ? `Best: wave ${best.wave} · ${best.score} points` : '', textStyle(16, PALETTE.muted, { fontStyle: 'bold' })).setOrigin(0.5);
+    const bestLine = [p.bestWave > 0 ? `Best: wave ${p.bestWave}` : '', p.runsPlayed > 0 ? `${p.runsPlayed} runs` : ''].filter(Boolean).join(' · ');
+    const bestText = this.add.text(0, 0, bestLine, textStyle(16, PALETTE.muted, { fontStyle: 'bold' })).setOrigin(0.5);
     const button = makeButton(this, 0, 0, 'Play', play, { width: 200, height: 60, fontSize: 24, radius: 30, fill: PALETTE.ink });
     const hint = this.add.text(0, 0, 'Enter or Space', textStyle(14, PALETTE.faint)).setOrigin(0.5);
 

@@ -24,6 +24,9 @@ export class RunState {
   /** Augment ids picked but not put into a tower yet. */
   hand: string[] = [...START.hand];
   kills = 0;
+  goldEarned = 0; // gold earned this run: kill gold + wave bonuses
+  cleanWaves = 0; // waves that ended without a leak
+  private leaksThisWave = 0;
 
   constructor(seed: number) {
     this.seed = seed;
@@ -61,6 +64,7 @@ export class RunState {
     const paid = Math.max(0, gold);
     this.gold += paid;
     this.kills += 1;
+    this.goldEarned += paid;
     return paid;
   }
 
@@ -68,6 +72,7 @@ export class RunState {
   leak(livesCost: number): boolean {
     if (this.phase === 'over') return true;
     this.lives = Math.max(0, this.lives - livesCost);
+    this.leaksThisWave += 1;
     if (this.lives === 0) this.phase = 'over';
     return this.phase === 'over';
   }
@@ -80,12 +85,16 @@ export class RunState {
   startWave(): void {
     this.wave += 1;
     this.phase = 'wave';
+    this.leaksThisWave = 0;
   }
 
   /** All of the wave's enemies are gone and the run is still alive: pay the bonus and go to the draft. */
   clearWave(): number {
     const bonus = RunState.waveBonus(this.wave);
     this.gold += bonus;
+    this.goldEarned += bonus;
+    if (this.leaksThisWave === 0) this.cleanWaves += 1;
+    this.leaksThisWave = 0;
     this.phase = 'draft';
     return bonus;
   }
