@@ -1,12 +1,14 @@
 ---
 id: T0070
 title: "The panel says who is working: a kills line per tower"
+assignee: desktop
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:54:28Z
+claimed_at: 2026-10-28T19:19:14Z
 epic: E1
 ---
 
