@@ -3,11 +3,13 @@ id: T0043
 title: "Beam hum: a quiet hum under each active beam"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: [T0029]
 attempts: 0
 created: 2026-10-28T11:24:34Z
+claimed_at: 2026-10-28T11:33:20Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
