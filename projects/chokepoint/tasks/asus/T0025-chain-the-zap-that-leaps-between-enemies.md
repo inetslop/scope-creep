@@ -4,11 +4,13 @@ title: "Chain: the zap that leaps between enemies"
 assignee: asus
 size: L
 priority: 3
-status: design
+status: designing
 depends_on: [T0020]
 attempts: 0
 created: 2026-10-28T05:31:15Z
+claimed_at: 2026-10-28T05:31:20Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
