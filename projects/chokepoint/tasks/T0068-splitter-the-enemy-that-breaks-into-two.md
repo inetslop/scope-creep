@@ -4,7 +4,7 @@ title: "Splitter: the enemy that breaks into two"
 size: M
 priority: 3
 status: todo
-depends_on: [T0057]
+depends_on: []
 attempts: 0
 created: 2026-10-28T13:54:28Z
 ---
@@ -19,7 +19,7 @@ Killing is not always winning: the Splitter dies into two smaller, faster enemie
 - **The Splitter's death is a normal kill:** it pays its gold, it triggers a Mint (T0021) if in range, it counts for "stopped", and it starts or continues the combo chain (T0031) — splinter kills within 1.5 s of the Splitter's death continue the same chain.
 - **Wave mix:** from wave 9, the mix rolls one Splitter per 7 enemies (floor of count ÷ 7; a wave with under 7 enemies sends none; waves 1–8 never do). Splinters are not in any mix — they exist only as splits. The wave preview (T0015) counts Splitters among the wave's shapes once it is in.
 - **Art:** chunky round token with a darker side face and soft shadow like the others; the crack is one thin road-white line across the face; splinters are the same token scaled down with no crack. No new colors beyond Dot's.
-- Chained behind T0057 (Hauler) on purpose: new enemies land one at a time so the enemy system, the wave mix and the art settle between additions.
+- New enemies land one at a time: Dasher (T0046) is in, so the Splitter is next. The Hauler (T0057) is parked behind the failed Mute (T0053) — when it is re-tasked it chains behind this one.
 
 ## Acceptance criteria
 - [ ] From wave 9 some waves include Splitters — round tokens 1.2× Dot's size, Dot's color, one thin white crack across the face; before wave 9, none.
