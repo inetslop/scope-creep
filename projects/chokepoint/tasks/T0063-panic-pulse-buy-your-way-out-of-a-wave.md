@@ -3,10 +3,12 @@ id: T0063
 title: "Panic pulse: buy your way out of a wave"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0039, T0059]
 attempts: 0
 created: 2026-10-28T13:29:40Z
+claimed_at: 2026-10-28T13:54:32Z
+designer: desktop
 ---
 
 ## Goal
