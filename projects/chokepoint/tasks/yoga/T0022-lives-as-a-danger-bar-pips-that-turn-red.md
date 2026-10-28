@@ -4,10 +4,12 @@ title: "Lives as a danger bar: pips that turn red and pulse on your last life"
 assignee: yoga
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T04:43:01Z
+claimed_at: 2026-10-28T05:03:09Z
+designer: desktop
 ---
 
 ## Goal
