@@ -23,6 +23,13 @@ export default defineConfig({
     target: 'es2022',
     chunkSizeWarningLimit: 2500,
     reportCompressedSize: false,
+    rolldownOptions: {
+      output: {
+        // Phaser in its own chunk: its hash only changes when Phaser does, so browsers and the
+        // Pages CDN keep it cached across our frequent deploys and only the small game chunk is new.
+        codeSplitting: { groups: [{ name: 'phaser', test: /node_modules[\\/]phaser[\\/]/ }] },
+      },
+    },
   },
   plugins: [
     {
