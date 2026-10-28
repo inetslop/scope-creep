@@ -1,12 +1,14 @@
 ---
 id: T0003
 title: "The rewards screen: the moment you claim what a run earned"
+assignee: desktop
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: [T0001]
-attempts: 0
+attempts: 1
 created: 2026-10-28T01:07:07Z
+claimed_at: 2026-10-28T07:17:01Z
 epic: E1
 ---
 
