@@ -1,12 +1,14 @@
 ---
 id: T0078
 title: "The ghost run: replay the board of your best run"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T22:13:10Z
+claimed_at: 2026-10-28T23:27:49Z
 epic: E1
 ---
 
