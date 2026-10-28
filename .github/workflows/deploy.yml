@@ -115,7 +115,7 @@ jobs:
       # each game in the runner's Chrome the way the smoke test does and saves <id>/preview.jpg.
       - name: Gameplay screenshots for the front page
         continue-on-error: true
-        timeout-minutes: 5
+        timeout-minutes: 8
         run: |
           npm ci --no-audit --no-fund
           node site/screenshots.ts _site

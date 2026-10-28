@@ -17,12 +17,26 @@ import { chromium, type Browser, type Page } from 'playwright';
 import { projectIds } from '../loop/paths.ts';
 import { loadSmokeGame } from '../loop/smoke/game.ts';
 
-/** Seconds of play before the shot: towers built, a wave on the way (longer, and the twin-stick run may be over). */
-const PLAY_SECONDS = 12;
-/** At most this many seconds more, waiting for a busy moment: no overlay, a few enemies on the board. */
-const SETTLE_SECONDS = 25;
+/**
+ * Play before the shot, in game frames (60 a second of game time): towers built, a wave on the
+ * way; longer, and the twin-stick run may be over. Frames, not seconds: on a runner without a GPU
+ * the game renders at a fraction of its speed, and 12 wall seconds were 3 seconds of play.
+ */
+const PLAY_FRAMES = 12 * 60;
+/** At most this many frames more, waiting for a busy moment: no overlay, a few enemies on the board. */
+const SETTLE_FRAMES = 25 * 60;
+/** However slow the machine, a game gets at most this many wall seconds before its shot. */
+const MAX_WALL_SECONDS = 150;
 /** Enemies on the board that make a busy moment (games whose hook has `stats.enemiesAlive`). */
 const BUSY_ENEMIES = 3;
+
+/**
+ * Per game, where the defaults don't fit. Scope Creep's smoke driver dodges badly and its run
+ * ends after about 13 seconds (then restarts), so it plays for less and waits for a real swarm.
+ */
+const PER_GAME: Record<string, { playFrames?: number; busyEnemies?: number }> = {
+  'scope-creep': { playFrames: 8 * 60, busyEnemies: 8 },
+};
 
 const TYPES: Record<string, string> = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.woff2': 'font/woff2' };
 
@@ -48,11 +62,13 @@ function launch(): Promise<Browser> {
   return executablePath ? chromium.launch({ headless: true, executablePath, args }) : chromium.launch({ headless: true, channel: 'chrome', args });
 }
 
-type Hook = { ready?: boolean; scene?: string; overlay?: string; stats?: Record<string, number> };
+type Hook = { ready?: boolean; scene?: string; overlay?: string; frame?: number; stats?: Record<string, number> };
 
 /** Plays one game and saves its screenshot. */
 async function shoot(browser: Browser, base: string, site: string, id: string): Promise<void> {
   const game = await loadSmokeGame(id);
+  const playFrames = PER_GAME[id]?.playFrames ?? PLAY_FRAMES;
+  const busyEnemies = PER_GAME[id]?.busyEnemies ?? BUSY_ENEMIES;
   const page: Page = await browser.newPage({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
   try {
     await page.goto(`${base}/${id}/?smoke&seed=1234`, { waitUntil: 'load', timeout: 30_000 });
@@ -60,24 +76,30 @@ async function shoot(browser: Browser, base: string, site: string, id: string): 
     await page.waitForFunction((scene) => (window as unknown as { __SC__?: Hook }).__SC__?.scene === scene, game.playScene, { timeout: 15_000 });
     const driver = game.desktop(page);
     const hook = (): Promise<Hook> => page.evaluate(() => ({ ...(window as unknown as { __SC__?: Hook }).__SC__ }));
-    const end = Date.now() + PLAY_SECONDS * 1000;
-    while (Date.now() < end) {
+    const wallEnd = Date.now() + MAX_WALL_SECONDS * 1000;
+    const start = (await hook()).frame ?? 0;
+    while (((await hook()).frame ?? 0) - start < playFrames && Date.now() < wallEnd) {
       await driver.step();
       await page.waitForTimeout(150);
     }
-    // A busy moment of play: no draft or pause card over the board, and a few enemies on it.
-    const settle = Date.now() + SETTLE_SECONDS * 1000;
+    // A busy moment of play: no draft or pause card over the board, and a few enemies on it. Once
+    // it looks busy, stop clicking for a moment with the pointer on bare ground (no hover
+    // highlight, no cell), so the last click's hint and highlight fade; then check again, since
+    // the towers may have cleared the board meanwhile.
+    const busy = (h: Hook): boolean => !h.overlay && (h.stats?.enemiesAlive ?? busyEnemies) >= busyEnemies;
+    const settleFrom = (await hook()).frame ?? 0;
     for (;;) {
       const h = await hook();
-      if ((!h.overlay && (h.stats?.enemiesAlive ?? BUSY_ENEMIES) >= BUSY_ENEMIES) || Date.now() > settle) break;
+      if ((h.frame ?? 0) - settleFrom > SETTLE_FRAMES || Date.now() > wallEnd) break;
+      if (busy(h)) {
+        await page.mouse.move(40, 360);
+        await page.waitForTimeout(600);
+        if (busy(await hook())) break;
+      }
       await driver.step();
       await page.waitForTimeout(150);
     }
     await driver.release();
-    // Stop clicking for a moment, with the pointer on bare ground (no hover highlight, no cell), so
-    // the last click's hint text and highlight have faded by the shot.
-    await page.mouse.move(40, 360);
-    await page.waitForTimeout(1200);
     await page.screenshot({ path: path.join(site, id, 'preview.jpg'), type: 'jpeg', quality: 80 });
     console.log(`screenshot: ${id}/preview.jpg`);
   } finally {
