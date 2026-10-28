@@ -3,11 +3,13 @@ id: T0053
 title: "Mute: the enemy that silences towers within 2 cells"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0029]
 attempts: 0
 created: 2026-10-28T12:34:55Z
+claimed_at: 2026-10-28T13:46:30Z
 design_attempts: 1
+designer: baby-mama
 ---
 
 ## Goal
