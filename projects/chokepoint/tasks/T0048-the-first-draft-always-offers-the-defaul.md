@@ -3,11 +3,13 @@ id: T0048
 title: The first draft always offers the default shot
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T12:01:28Z
+claimed_at: 2026-10-28T12:21:58Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
