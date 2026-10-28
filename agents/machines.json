@@ -70,7 +70,7 @@
       "architectMode": "idle",
       "maxDesignSize": "S",
       "tier": "medium",
-      "maxTaskSize": "M",
+      "maxTaskSize": "S",
       "targetQueue": 2,
       "notes": "Laptop that runs overnight only, and the slowest machine per token. Better quant than the other 3-bit machines, so fewer mistakes. Give it well-specified, self-contained features with a clear closest example; avoid cross-cutting changes that touch many files."
     },
