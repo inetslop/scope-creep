@@ -4,10 +4,12 @@ title: "Wave preview: the next wave shown during the build phase"
 assignee: narcissus
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T02:08:37Z
+claimed_at: 2026-10-28T03:10:56Z
+designer: desktop
 ---
 
 ## Goal
