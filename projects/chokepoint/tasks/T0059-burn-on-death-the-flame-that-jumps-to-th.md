@@ -4,11 +4,12 @@ title: "Burn on death: the flame that jumps to the nearest"
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: [T0028, T0039, T0027]
 attempts: 1
 created: 2026-10-28T13:29:40Z
 claimed_at: 2026-10-28T20:39:36Z
+finished_at: 2026-10-28T21:09:06Z
 epic: E4
 ---
 
@@ -97,3 +98,23 @@ export const burnLeap: MakeEnemyHook = ({ enemies, fx }) => {
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Ember's burn now spreads one step on death: a new enemy hook (`systems/enemyHooks/burnLeap.ts`, registered after `split` in `enemyHooks/index.ts`) leaps a dying burning enemy's burn to the nearest living enemy within 2 cells as a fresh 3 s burn at the same damage/s (re-ignition rules preserved), with a 150 ms orange spark line drawn by a new effect file (`systems/fx/spark.ts`); a leaped burn never leaps again (host keyed by `serial` in a `WeakMap`, safe against pool reuse). `npm run check` and `npm run smoke` (desktop + phone) both pass; no shared files, sounds, gold or stats changed.
+
+- Self-review: APPROVE
+- Time: 29.5 min
+
+```
+.../game/src/systems/enemyHooks/burnLeap.ts        | 31 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ projects/chokepoint/game/src/systems/fx/spark.ts   | 11 ++++++++
+ 3 files changed, 44 insertions(+)
+```
+
+## Merge (attempt 1, yoga)
+
+- Conflicts in: projects/chokepoint/game/src/systems/enemyHooks/index.ts
+- Auto-resolved 1 spot(s) where both sides only added lines (clean: projects/chokepoint/game/src/systems/enemyHooks/index.ts).
+- Resolved without the conflict agent.
