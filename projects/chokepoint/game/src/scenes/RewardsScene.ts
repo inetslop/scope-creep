@@ -73,7 +73,7 @@ export class RewardsScene extends Phaser.Scene {
     const mid = 1 + (run.cleanWaves > 0 ? 1 : 0) + (run.bestCombo >= 2 ? 1 : 0); // middle lines: Score always, Clean and Best combo when they were earned
     const dy = 18 * mid; // each middle line: top half up 18, bottom half down 18, panel grows 36
     const panelW = 360;
-    const panelH = 372 + 2 * dy;
+    const panelH = 372 + 2 * dy + 72; // the recipe is a bottom line (under the coins): the centered card grows 72 so the button's 36 drop stays inside
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
     const title = this.add.text(0, -98 - dy, 'Rewards', titleStyle(32)).setOrigin(0.5);
     this.wavesText = this.add.text(0, -44 - dy, 'Waves held 0', titleStyle(22)).setOrigin(0.5);
@@ -83,12 +83,13 @@ export class RewardsScene extends Phaser.Scene {
     this.scoreText = this.add.text(0, 28 - dy + (run.cleanWaves > 0 ? 36 : 0) + (run.bestCombo >= 2 ? 36 : 0), 'Score 0', titleStyle(22)).setOrigin(0.5);
     this.coinText = this.add.text(0, 44 + dy, '+0 coins', titleStyle(28, PALETTE.goldText)).setOrigin(0.5);
     this.coinIcon = artScale(this.add.image(0, 44 + dy, COIN_TEXTURE), 1.5);
-    const boardText = this.add.text(0, 80 + dy, `Board ${boardCode(run.seed)}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
-    const menuButton = makeButton(this, 0, 144 + dy, 'Menu', menu, { width: 240, height: 52, radius: 26 });
+    const recipeText = this.add.text(0, 80 + dy, `waves +${this.waves} · stopped +${Math.floor(this.stopped / 10)} · clean +${this.clean}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
+    const boardText = this.add.text(0, 116 + dy, `Board ${boardCode(run.seed)}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
+    const menuButton = makeButton(this, 0, 180 + dy, 'Menu', menu, { width: 240, height: 52, radius: 26 });
     const parts: Phaser.GameObjects.GameObject[] = [panel, title, this.wavesText, this.stoppedText];
     if (this.cleanText) parts.push(this.cleanText);
     if (this.comboText) parts.push(this.comboText);
-    parts.push(this.scoreText, this.coinText, this.coinIcon, boardText, menuButton.container);
+    parts.push(this.scoreText, this.coinText, this.coinIcon, recipeText, boardText, menuButton.container);
     const box = this.add.container(0, 0, parts).setDepth(2);
 
     const layout = (width: number, height: number): void => {

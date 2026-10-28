@@ -4,11 +4,12 @@ title: The claim card says why the coins are what they are
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T21:24:45Z
 claimed_at: 2026-10-28T21:51:40Z
+finished_at: 2026-10-28T22:26:32Z
 epic: E1
 ---
 
@@ -58,3 +59,16 @@ The line reads `this.waves`/`this.stopped`/`this.clean` — the exact values the
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The rewards claim card in `src/scenes/RewardsScene.ts` now explains its coin payout: a muted "waves +A · stopped +B · clean +C" line sits directly under the "+N coins" line, using the exact three values the payout was computed from (so the terms always sum to the shown N, for fresh and resumed runs alike). The card grew by one fixed line height and the Board line and Menu button shifted down to make room. All three terms are always shown (even at +0), final with no count-up. `npm run check` and `npm run smoke` pass on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 34.9 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/scenes/RewardsScene.ts | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+```
