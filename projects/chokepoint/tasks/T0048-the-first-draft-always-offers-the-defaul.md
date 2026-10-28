@@ -1,12 +1,14 @@
 ---
 id: T0048
 title: The first draft always offers the default shot
+assignee: baby-mama
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T12:01:28Z
+claimed_at: 2026-10-28T12:38:33Z
 epic: E4
 ---
 
