@@ -3,11 +3,13 @@ id: T0079
 title: The wave preview says what the wave pays
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T23:26:44Z
+claimed_at: 2026-10-28T23:27:41Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
