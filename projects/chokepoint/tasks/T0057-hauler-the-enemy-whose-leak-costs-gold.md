@@ -4,7 +4,7 @@ title: "Hauler: the enemy whose leak costs gold"
 size: M
 priority: 2
 status: todo
-depends_on: [T0046, T0053, T0071]
+depends_on: [T0046]
 attempts: 0
 created: 2026-10-28T13:04:03Z
 ---
@@ -165,3 +165,7 @@ export function leakGoldCount(wave: number): number {
   });
 ```
 `tests/content.test.ts` validates the new enemy automatically; smoke covers 412x915 + 1280x720.
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0053, T0071: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

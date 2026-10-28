@@ -4,7 +4,7 @@ title: "Trap: the bomb that springs on the road"
 size: M
 priority: 3
 status: todo
-depends_on: [T0039, T0054, T0055]
+depends_on: [T0039]
 attempts: 0
 created: 2026-10-28T13:29:40Z
 epic: E4
@@ -107,3 +107,7 @@ Trap content (`src/content/augments/trap.ts`): `id:'trap'`, `look:{shape:'circle
 
 ### Tests
 - `tests/core/trap.test.ts`: `spec('trap')` → `trapHome:true, trapLays:false, trapSpring:14, trapRadius:1.2, trapRelay:3, trapTicks:0`; rare/epic → `trapSpring` 18/24, `trapRadius` 1.3/1.4, `trapRelay` ~2.5/~2; `spec('bolt','trap')` → `trapHome:false, trapLays:true, trapTicks:1`; `describeSpec(spec('trap'))` matches `/Lays a trap/` and `describeSpec(spec('bolt','trap'))` matches `/kills leave traps/`.
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0054, T0055: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

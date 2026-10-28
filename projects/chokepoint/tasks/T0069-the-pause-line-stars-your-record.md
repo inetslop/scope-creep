@@ -4,7 +4,7 @@ title: The pause line stars your record
 size: S
 priority: 3
 status: todo
-depends_on: [T0030, T0035]
+depends_on: [T0030]
 attempts: 0
 created: 2026-10-28T13:54:28Z
 epic: E1
@@ -59,3 +59,7 @@ const stats = this.add.container(-x / 2, /* T0030's y */, kids);
 - `run.wave` reads "the wave being fought, or the last one fought (0 before the first)" (`core/run.ts:21`): it is 12 during wave 12 and in the build/draft after clearing 12, so the star appears at the record and stays; a resumed run (T0042) starts at its saved wave and shows it from its first pause — no T0042 wiring needed. Computed once in `create()` like T0030's values: the run is frozen while paused, the profile only changes at run-over (`recordRun`), and the scene is re-created on every open — no `update()`, no listeners, nothing to clean up.
 ### Tests
 none
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0035: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

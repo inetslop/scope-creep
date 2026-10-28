@@ -4,7 +4,7 @@ title: "Working aura: the quiet ring under support towers when their aura works"
 size: S
 priority: 3
 status: todo
-depends_on: [T0039, T0027, T0066]
+depends_on: [T0039, T0027]
 attempts: 0
 created: 2026-10-28T13:04:03Z
 epic: E4
@@ -96,3 +96,7 @@ describe('mintPayers', () => {
   });
 });
 ```
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0066: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

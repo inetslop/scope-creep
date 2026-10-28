@@ -4,7 +4,7 @@ title: "The pause screen: sound on or off, remembered"
 size: S
 priority: 2
 status: todo
-depends_on: [T0019, T0030]
+depends_on: []
 attempts: 0
 created: 2026-10-28T08:43:02Z
 epic: E1
@@ -117,3 +117,7 @@ it('the sound preference defaults to on and sticks through runs', () => {
 - Row interactivity comes from `makeButton` (pointerup + stopPropagation); never a raw pointerdown, or the shade/behind would misbehave; whole 280x48 row is the target (≥44 px).
 - Glyph is Graphics fills (like `PauseButton` bars), repainted per state — no texture, no tint, no stroke.
 - 328-tall panel still scales at min 1 at 412x915 and 1280x720; the row stays inside the card, no wrap (280 wide).
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0019, T0030: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

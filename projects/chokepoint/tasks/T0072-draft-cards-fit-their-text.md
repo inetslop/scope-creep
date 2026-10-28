@@ -4,7 +4,7 @@ title: Draft cards fit their text
 size: S
 priority: 1
 status: todo
-depends_on: [T0065]
+depends_on: []
 attempts: 0
 created: 2026-10-28T17:31:39Z
 ---
@@ -49,3 +49,7 @@ No exported API. Only `epicShimmer(scene, x, y, h: number)` gains `h`.
 - Short offers must stay pixel-identical to today: H clamps at `CARD_H`, and every offset above was derived so H=206 reproduces the current y values exactly.
 ### Tests
 - none
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0065: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

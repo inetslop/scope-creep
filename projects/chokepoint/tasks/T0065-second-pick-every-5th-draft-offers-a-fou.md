@@ -4,7 +4,7 @@ title: "Second pick: every 5th draft offers a fourth card"
 size: M
 priority: 2
 status: todo
-depends_on: [T0064]
+depends_on: []
 attempts: 0
 created: 2026-10-28T13:54:28Z
 epic: E4
@@ -66,3 +66,7 @@ DESIGN:
 - `tests/core/augments.test.ts`: import `draftCardCount`. New `describe('draftCardCount', ...)`: loop `d = 1..25`, expect `draftCardCount(d) === (d % 5 === 0 ? 4 : 3)`; plus a seeded check, `for seed 1..30`: `const offer = rollOffer(new Rng(seed), AUGMENTS, 4, 5); expect(offer).toHaveLength(4); expect(new Set(offer.map((c) => c.id)).size).toBe(4);`
 - `debug/runChecks.ts`: one new invariant, same one-line style as its neighbours (near the augments entry): name `'draft.offer'`; return a message when `g.run.phase === 'draft' && g.flow.offer.length !== draftCardCount(g.flow.draftWave)`, else null — e.g. `` `draft offers ${g.flow.offer.length} cards, expected ${draftCardCount(g.flow.draftWave)}` ``.
 - Verification: `npm run check` must pass; `npm run smoke` unchanged (auto-pick still fires on the four-card draft).
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0064: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

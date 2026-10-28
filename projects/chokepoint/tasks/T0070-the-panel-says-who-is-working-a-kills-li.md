@@ -4,7 +4,7 @@ title: "The panel says who is working: a kills line per tower"
 size: S
 priority: 3
 status: todo
-depends_on: [T0061]
+depends_on: []
 attempts: 0
 created: 2026-10-28T13:54:28Z
 epic: E1
@@ -78,3 +78,7 @@ kills = 0;
 
 ### Tests
 - none (no `src/core` rule changed; counter lives in a system, display in a HUD part)
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0061: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

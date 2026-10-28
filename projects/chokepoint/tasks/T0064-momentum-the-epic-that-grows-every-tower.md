@@ -4,7 +4,7 @@ title: "Momentum: the Epic that grows every tower on a clean wave"
 size: L
 priority: 3
 status: todo
-depends_on: [T0038, T0045]
+depends_on: []
 attempts: 0
 created: 2026-10-28T13:54:28Z
 epic: E4
@@ -114,3 +114,7 @@ if (grant > 0) {
 
 ### Tests
 `tests/core/momentum.test.ts`: `MOMENTUM_PER_COPY` is 0.05 and equals `added.momentum` of the def; `momentumGrant(0|1|2|40)` → `0|0.05|0.1|2` (no cap); `towerSpec`: `spec('momentum')` → `{ attacks: true, kind: 'pulse', damage: 0, momentumCount: 1 }`, `spec('bolt','momentum').momentumCount` 1 with bolt damage unchanged, `spec('momentum','momentum')` 2, `describeSpec(spec('momentum'))` is `'Does not attack.'`; `RunState`: starts 0 / mul 1, after `momentum += momentumGrant(1)` the mul is ≈1.05, and `leak()` doesn't change `momentum`; across many seeds `rollOffer` never yields Momentum except as Epic (model: the Mint test).
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0038, T0045: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

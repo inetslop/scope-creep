@@ -4,7 +4,7 @@ title: "Ricochet: the shot that bounces off the board's rocks"
 size: L
 priority: 3
 status: todo
-depends_on: [T0025, T0035]
+depends_on: []
 attempts: 0
 created: 2026-10-28T09:35:22Z
 epic: E4
@@ -110,3 +110,7 @@ if (slow) line += `, slowing them by ${slow}%`;
 ### Tests
 - `tests/core/rocks.test.ts` (new): `rockList` on a seeded map (5 rocks, geometry matches the paint); `firstRockHit` (impact sits on the circle, nearest of two wins, `skip` honored, miss → undefined, starts-inside → undefined); `reflectDir` (head-on reverses, unit length, angle preserved).
 - `tests/core/augments.test.ts`: `towerSpec` bounces = Ricochet copies (lone ricochet 1, bolt+ricochet 1, bolt+2×ricochet 2, bolt 0); `describeSpec` per tier ("7 damage, every 0.8 s" / "9 … 0.7 s" / "12 … 0.6 s"); bolt+ricochet appends "bounce off 1 rock"; `tierAddedLine` identical at all tiers. Fizzle/no-falloff/Bolt-added flight is Phaser entity behavior: covered by the invariant + smoke, not unit tests.
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0025, T0035: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

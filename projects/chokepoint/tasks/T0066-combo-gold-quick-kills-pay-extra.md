@@ -4,7 +4,7 @@ title: "Combo gold: quick kills pay extra"
 size: S
 priority: 3
 status: todo
-depends_on: [T0039, T0054]
+depends_on: [T0039]
 attempts: 0
 created: 2026-10-28T13:54:28Z
 epic: E1
@@ -127,3 +127,7 @@ describe('comboMilestoneGold', () => {
 
 ### Tests
 - `tests/core/comboGold.test.ts` (step 2) — new rule in src/core that a later change could silently break.
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0054: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

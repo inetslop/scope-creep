@@ -4,7 +4,7 @@ title: "Panic pulse: buy your way out of a wave"
 size: M
 priority: 2
 status: todo
-depends_on: [T0039, T0059, T0015, T0019, T0030, T0035]
+depends_on: [T0039, T0015]
 attempts: 0
 created: 2026-10-28T13:29:40Z
 ---
@@ -73,3 +73,7 @@ export class PanicButton implements HudPart { constructor(scene: Phaser.Scene, g
 
 ### Tests
 - `tests/core/run.test.ts` (import `PANIC_COST`): (1) start a wave, `panic(PANIC_COST)` true and gold deducted, second call false with gold unchanged, `panicUsed` true; `clearWave()` → `startBuild(5)` → `startWave()` → `panicUsed` false and `panic()` true again. (2) spend down to `PANIC_COST - 1`, `panic()` false, `panicUsed` stays false, gold unchanged.
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0059, T0019, T0030, T0035: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

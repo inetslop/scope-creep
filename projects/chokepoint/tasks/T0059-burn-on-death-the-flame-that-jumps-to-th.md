@@ -4,7 +4,7 @@ title: "Burn on death: the flame that jumps to the nearest"
 size: S
 priority: 3
 status: todo
-depends_on: [T0028, T0039, T0027, T0070]
+depends_on: [T0028, T0039, T0027]
 attempts: 0
 created: 2026-10-28T13:29:40Z
 epic: E4
@@ -107,3 +107,7 @@ brokenBurn(): string | undefined {
 
 ### Tests
 - `tests/core/burnJump.test.ts` per step 7 (pure core rule; later tuning of the range could silently break it).
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0070: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

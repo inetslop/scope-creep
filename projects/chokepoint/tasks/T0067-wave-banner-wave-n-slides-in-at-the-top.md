@@ -4,7 +4,7 @@ title: "Wave banner: 'Wave N' slides in at the top when a wave starts"
 size: S
 priority: 2
 status: todo
-depends_on: [T0015, T0019]
+depends_on: [T0015]
 attempts: 0
 created: 2026-10-28T13:54:28Z
 ---
@@ -142,3 +142,7 @@ export class WaveBanner implements HudPart {
 
 ### Tests
 none
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0019: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.

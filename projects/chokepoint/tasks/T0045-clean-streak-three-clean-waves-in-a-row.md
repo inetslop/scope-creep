@@ -4,7 +4,7 @@ title: "Clean streak: three clean waves in a row give the run +1 life"
 size: M
 priority: 2
 status: todo
-depends_on: [T0030]
+depends_on: []
 attempts: 0
 created: 2026-10-28T11:47:03Z
 epic: E1
@@ -82,3 +82,7 @@ cleanChip(x: number, y: number, tag: { text: string; color: number } | undefined
 
 ### Tests
 - `tests/core/run.test.ts`: the three `it`s in step 6 — the once-per-run payback and the leak reset are core rules a later change could silently break.
+
+## Note (by hand, 2026-10-28)
+
+No longer waits on T0030: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
