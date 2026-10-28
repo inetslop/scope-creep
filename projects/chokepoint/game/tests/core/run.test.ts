@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { REROLL_COST, START } from '../../src/config';
+import { PANIC_COST, REROLL_COST, START } from '../../src/config';
 import { PALETTE } from '../../src/content/palette';
 import { RunState } from '../../src/core/run';
 
@@ -84,6 +84,30 @@ describe('RunState', () => {
     expect(run.reroll(REROLL_COST)).toBe(false);
     expect(run.rerollUsed).toBe(false);
     expect(run.gold).toBe(REROLL_COST - 1);
+  });
+
+  it('panics once per wave, for the cost', () => {
+    const run = new RunState(1);
+    run.startWave();
+    expect(run.panic(PANIC_COST)).toBe(true);
+    expect(run.gold).toBe(START.gold - PANIC_COST);
+    expect(run.panic(PANIC_COST)).toBe(false);
+    expect(run.gold).toBe(START.gold - PANIC_COST);
+    expect(run.panicUsed).toBe(true);
+    run.clearWave();
+    run.startBuild(5);
+    run.startWave();
+    expect(run.panicUsed).toBe(false);
+    expect(run.panic(PANIC_COST)).toBe(true);
+  });
+
+  it('cannot panic without the gold, and keeps the panic', () => {
+    const run = new RunState(1);
+    run.spend(START.gold - (PANIC_COST - 1));
+    expect(run.gold).toBe(PANIC_COST - 1);
+    expect(run.panic(PANIC_COST)).toBe(false);
+    expect(run.panicUsed).toBe(false);
+    expect(run.gold).toBe(PANIC_COST - 1);
   });
 
   it('keeps the run ledger: gold earned and clean waves', () => {

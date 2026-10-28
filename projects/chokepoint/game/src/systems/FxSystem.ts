@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { DEPTH } from '../config';
+import { CELL, DEPTH } from '../config';
 import { cssColor, PALETTE } from '../content/palette';
 import { artScale, CHIP_TEXTURE } from '../art/textures';
 import { fillRing } from '../ui/ring';
@@ -93,6 +93,15 @@ export class FxSystem {
     fillRing(g, 0, 0, radius, 3, 0, Math.PI * 2, PALETTE.ink, 0.9);
     g.setScale(0.5);
     this.track(g, 200, { scale: 1.25, alpha: 0, ease: 'Quad.easeOut' });
+  }
+
+  /** A soft white ring at each vanished enemy's spot: the panic pulse's wipe. */
+  panicFlash(x: number, y: number): void {
+    if (this.live >= FxSystem.MAX) return;
+    const g = this.scene.add.graphics().setDepth(DEPTH.fx).setPosition(x, y);
+    fillRing(g, 0, 0, CELL * 0.4, 3, 0, Math.PI * 2, 0xffffff, 0.9);
+    g.setScale(0.4);
+    this.track(g, 150, { scale: 1, alpha: 0, ease: 'Quad.easeOut' });
   }
 
   /** Rounded chips that scatter where an enemy died, plus a white pop. `double` scatters 12 chips instead of 6 (the ×10 milestone kill). */

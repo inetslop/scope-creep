@@ -32,6 +32,9 @@ export const WAVE_BONUS = { base: 20, perWave: 2 } as const;
 /** The run's one draft reroll. */
 export const REROLL_COST = 15;
 
+/** The wave's one panic pulse: every enemy on the board vanishes. */
+export const PANIC_COST = 25;
+
 /** Screen pixels the HUD cards take at the top and bottom; the board fits between them. */
 export const HUD = { top: 72, bottom: 116, margin: 10 } as const;
 

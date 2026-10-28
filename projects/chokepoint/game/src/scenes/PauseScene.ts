@@ -48,6 +48,7 @@ export class PauseScene extends Phaser.Scene {
     const keys = this.add.text(0, -panelH / 2 + 150, 'Space — start the wave early\nF — fast-forward (2x) during waves\n1-9 — pick a card from the hand\n+ / - — zoom the board', textStyle(12, PALETTE.muted, { align: 'center', lineSpacing: 6 })).setOrigin(0.5);
     const resumeButton = makeButton(this, 0, -panelH / 2 + 234, 'Resume', resume, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
     const quitButton = makeButton(this, 0, -panelH / 2 + 302, 'Quit run', quit, { width: 240, height: 52, radius: 26 });
+    const actionLine = this.add.text(0, 122, 'Panic — clear the board, 25 gold, once per wave', textStyle(12, PALETTE.muted)).setOrigin(0.5);
     const sfx = getSfx(this);
     const glyph = this.add.graphics();
     const paintGlyph = (isOn: boolean): void => {
@@ -77,7 +78,7 @@ export class PauseScene extends Phaser.Scene {
     glyph.setPosition(-88, 0);
     soundRow.content.add([glyph, wordText, stateText]);
     refreshRow();
-    const box = this.add.container(0, 0, [panel, title, stats, heading, keys, resumeButton.container, quitButton.container, soundRow.container]);
+    const box = this.add.container(0, 0, [panel, title, stats, heading, keys, actionLine, resumeButton.container, quitButton.container, soundRow.container]);
 
     const layout = (width: number, height: number): void => {
       shade.setSize(width, height);

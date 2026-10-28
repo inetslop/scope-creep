@@ -30,6 +30,8 @@ export class RunState {
   goldEarned = 0; // gold earned this run: kill gold + wave bonuses
   cleanWaves = 0; // waves that ended without a leak
   rerollUsed = false; // the run's one draft reroll was spent
+  /** This wave's one panic pulse was spent (reset at the next wave's start). */
+  panicUsed = false;
   cleanStreak = 0; // clean waves in a row; a leak resets it to 0
   streakPaid = false; // the run's one +1 life for a streak of 3 was paid
   private leaksThisWave = 0;
@@ -73,6 +75,14 @@ export class RunState {
     return true;
   }
 
+  /** Pays for this wave's one panic pulse: takes the gold and marks it spent. */
+  panic(cost: number): boolean {
+    if (this.panicUsed) return false;
+    if (!this.spend(cost)) return false;
+    this.panicUsed = true;
+    return true;
+  }
+
   /** An enemy died: its gold. Returns the gold paid. */
   addKill(gold: number): number {
     const paid = Math.max(0, gold);
@@ -106,6 +116,7 @@ export class RunState {
     this.wave += 1;
     this.phase = 'wave';
     this.leaksThisWave = 0;
+    this.panicUsed = false;
   }
 
   /** All of the wave's enemies are gone and the run is still alive: pay the bonus and go to the draft. */

@@ -4,11 +4,12 @@ title: "Panic pulse: buy your way out of a wave"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0039, T0015]
 attempts: 1
 created: 2026-10-28T13:29:40Z
 claimed_at: 2026-10-28T21:56:06Z
+finished_at: 2026-10-28T23:17:01Z
 ---
 
 ## Goal
@@ -79,3 +80,23 @@ export class PanicButton implements HudPart { constructor(scene: Phaser.Scene, g
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0059, T0019, T0030, T0035: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the once-per-wave panic pulse: a "Panic · 25" coin button under the stats card shown only during waves, spending 25 gold to wipe every active enemy with a soft white ring flash and one low whoosh (`e.despawn()` only — no gold, combo, leak, or mint side effects), with ready/poor/used visual states cached to avoid per-frame re-renders and a per-wave reset in `RunState.startWave()`. Edits touch exactly the designed files: `PANIC_COST`, `RunState.panic`/`panicUsed`, `Sfx.panic()`, `FxSystem.panicFlash()`, the new `ui/hud/PanicButton.ts`, one registration line in `HudScene`, the pause-screen action line, and two unit tests. `npm run check` (typecheck, lint, 154 tests) and `npm run smoke` (desktop + mobile) both pass; the pause key list, stats card, gold rules, lives, and all other sounds are unchanged.
+
+- Self-review: NO VERDICT
+- Time: 80.9 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          |  5 ++
+ projects/chokepoint/game/src/config.ts             |  3 +
+ projects/chokepoint/game/src/core/run.ts           | 11 +++
+ projects/chokepoint/game/src/scenes/HudScene.ts    |  2 +
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  3 +-
+ projects/chokepoint/game/src/systems/FxSystem.ts   | 11 ++-
+ projects/chokepoint/game/src/ui/hud/PanicButton.ts | 82 ++++++++++++++++++++++
+ projects/chokepoint/game/tests/core/run.test.ts    | 26 ++++++-
+ 8 files changed, 140 insertions(+), 3 deletions(-)
+```
