@@ -217,20 +217,27 @@ export function slotCost(index: number): number | undefined {
  * rolled that tier, so it can never exist as any other tier. The opening draft (`opening`) only
  * offers augments that deal damage as a tower's first, or that may open (`opening`), since the
  * first one has to hold wave 1 alone. Its first card is a Common Bolt, the game's default shot,
- * so the opening pick is never a dead end.
+ * so the opening pick is never a dead end - except when the bolt is excluded (the opening reroll),
+ * when the first card is rolled like the rest. `exclude` is the ids of the offer just before this
+ * one: those augments are not offered again; if they leave fewer than 3 eligible the rule relaxes
+ * for this offer only, so the roll never hard-fails.
  */
-export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, wave: number, opening = false): AugmentCopy[] {
+export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, wave: number, opening = false, exclude?: readonly string[]): AugmentCopy[] {
   const open = opening ? pool.filter((a) => a.first.damage > 0 || a.opening) : pool;
+  // The augments of the offer just before this one are not offered again.
+  const excluded = new Set(exclude ?? []);
+  // If that leaves fewer than 3 eligible, the rule relaxes for this offer only, so the roll never hard-fails.
+  const banned = open.filter((a) => !excluded.has(a.id)).length < 3 ? new Set<string>() : excluded;
   const taken = new Set<string>();
   const offers: AugmentCopy[] = [];
-  if (opening) {
-    // The opening draft (and its one reroll) always offers the game's default shot: a Common Bolt.
+  if (opening && !banned.has(bolt.id)) {
+    // The opening draft (not its reroll, which excluded the bolt) offers the game's default shot: a Common Bolt.
     offers.push({ id: bolt.id, tier: 'common' });
     taken.add(bolt.id);
   }
   for (let i = offers.length; i < count; i++) {
     const tier = rollTier(rng, wave);
-    const candidates = open.filter((a) => !taken.has(a.id) && (a.tier === undefined || a.tier === tier));
+    const candidates = open.filter((a) => !taken.has(a.id) && !banned.has(a.id) && (a.tier === undefined || a.tier === tier));
     const picked = rng.pick(candidates);
     taken.add(picked.id);
     offers.push({ id: picked.id, tier });

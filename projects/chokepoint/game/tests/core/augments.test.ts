@@ -192,13 +192,40 @@ describe('rollOffer', () => {
     }
   });
 
-  it('the opening draft (and its reroll) always offers a Common Bolt', () => {
+  it('the opening draft always offers a Common Bolt', () => {
     for (let seed = 1; seed <= 200; seed++) {
       const offer = rollOffer(new Rng(seed), AUGMENTS, 3, 1, true);
       expect(offer.length).toBe(3);
       expect(new Set(offer.map((a) => a.id)).size).toBe(3);
       expect(offer.some((c) => c.id === 'bolt' && c.tier === 'common')).toBe(true);
     }
+  });
+
+  it('the next draft never offers an augment the last one did', () => {
+    for (let seed = 1; seed <= 100; seed++) {
+      const rng = new Rng(seed);
+      let last: string[] = [];
+      for (let i = 0; i < 12; i++) {
+        const offer = rollOffer(rng, AUGMENTS, 3, i + 1, i === 0, last);
+        for (const c of offer) expect(last.includes(c.id)).toBe(false);
+        last = offer.map((c) => c.id);
+      }
+    }
+  });
+
+  it('a reroll offers nothing from the offer it replaces (the opening reroll drops the bolt)', () => {
+    for (let seed = 1; seed <= 200; seed++) {
+      const first = rollOffer(new Rng(seed), AUGMENTS, 3, 1, true);
+      const rerolled = rollOffer(new Rng(seed), AUGMENTS, 3, 1, true, first.map((c) => c.id));
+      expect(rerolled.length).toBe(3);
+      expect(new Set(rerolled.map((c) => c.id)).size).toBe(3);
+      for (const c of rerolled) expect(first.some((f) => f.id === c.id)).toBe(false);
+    }
+  });
+
+  it('the rule relaxes, rather than hard-failing, when exclusions leave fewer than 3 eligible', () => {
+    const tiny = AUGMENTS.slice(0, 4); // bolt, lance, lead, splash
+    for (let seed = 1; seed <= 50; seed++) expect(rollOffer(new Rng(seed), tiny, 3, 5, false, ['bolt', 'lance'])).toHaveLength(3);
   });
 
   it('no Bolt promise after wave 1: some later draft rolls no Bolt at all', () => {

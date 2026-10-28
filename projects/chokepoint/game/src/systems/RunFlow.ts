@@ -36,6 +36,8 @@ export interface RunSystems {
 export class RunFlow {
   /** Offered augment copies while the draft is open (DraftScene reads them). */
   offer: AugmentCopy[] = [];
+  /** The ids of the last offer: the next draft (and its reroll) does not offer them again. */
+  private lastOffer: string[] = [];
   /** The wave the open draft rolls its odds for (the one after run.wave). */
   draftWave = 1;
   /** Length of the current build countdown (the HUD draws its ring from it). */
@@ -87,7 +89,8 @@ export class RunFlow {
   openDraft(): void {
     this.run.phase = 'draft';
     this.draftWave = this.run.wave + 1;
-    this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.draftWave, this.run.wave === 0);
+    this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.draftWave, this.run.wave === 0, this.lastOffer);
+    this.lastOffer = this.offer.map((c) => c.id);
     if (this.offer.length === 0) {
       this.finishDraft(undefined);
       return;
@@ -100,7 +103,8 @@ export class RunFlow {
   rerollOffer(): boolean {
     if (this.run.phase !== 'draft') return false;
     if (!this.run.reroll(REROLL_COST)) return false;
-    this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.draftWave, this.run.wave === 0);
+    this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.draftWave, this.run.wave === 0, this.lastOffer);
+    this.lastOffer = this.offer.map((c) => c.id);
     return true;
   }
 

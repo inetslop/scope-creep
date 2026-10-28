@@ -4,11 +4,12 @@ title: The draft never offers the same augment twice in a row
 assignee: inet-racing
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0048]
 attempts: 1
 created: 2026-10-28T12:34:55Z
 claimed_at: 2026-10-28T13:20:29Z
+finished_at: 2026-10-28T13:39:27Z
 epic: E4
 ---
 
@@ -105,3 +106,17 @@ Update the doc comment: after "so the opening pick is never a dead end" add " - 
 
 ### Tests
 - The three new tests in tests/core/augments.test.ts: the rule lives in src/core (rollOffer), and later pool/tier changes could silently break it.
+
+## Result (attempt 1, inet-racing)
+
+The draft now excludes the augments from the immediately previous offer: `rollOffer` in `src/core/augments.ts` gained an `exclude` param with a relax guard (so it never hard-fails) and a bolt-skip so the opening reroll doesn't re-offer the bolt, while `src/systems/RunFlow.ts` remembers the last offer's ids and passes them into both the draft and reroll rolls. Three new unit tests in `tests/core/augments.test.ts` cover no-repeat, reroll exclusion, and the relax guard, and the old bolt test was renamed since rerolls no longer force the bolt. Card rendering, tiers, chime and all other draft behavior are untouched; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 19.0 min
+
+```
+projects/chokepoint/game/src/core/augments.ts      | 17 +++++++++----
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  8 ++++--
+ .../chokepoint/game/tests/core/augments.test.ts    | 29 +++++++++++++++++++++-
+ 3 files changed, 46 insertions(+), 8 deletions(-)
+```
