@@ -3,11 +3,13 @@ id: T0084
 title: The panel says how hard a tower hits
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T23:26:44Z
+claimed_at: 2026-10-29T00:05:23Z
 epic: E4
+designer: cachyos-x8664
 ---
 
 ## Goal
