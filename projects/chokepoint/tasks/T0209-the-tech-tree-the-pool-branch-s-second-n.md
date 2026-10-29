@@ -3,11 +3,13 @@ id: T0209
 title: "The tech tree: the pool branch's second node — Momentum"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0103, T0153]
 attempts: 0
 created: 2026-10-29T13:49:24Z
+claimed_at: 2026-10-29T14:09:38Z
 epic: E2
+designer: cachyos-x8664
 ---
 
 ## Goal
