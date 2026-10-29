@@ -32,6 +32,7 @@
       "notes": "Heavily quantized and small context. Only small, precisely specified tasks: tuning numbers, one small juice or polish touch (a sound, a flash, a text), small player-facing improvements to things that already exist (clearer feedback, readability, UI), tiny single-function changes; a new content file only when it passes the content bar. Always name the exact file and the closest example."
     },
     "desktop-4070": {
+      "paused": true,
       "label": "Ryzen 7 5800X + RTX 4070 SUPER (12 GB)",
       "model": "Qwen 3.8 27B UD-IQ3_XXS",
       "roles": ["dev", "architect"],
@@ -74,6 +75,7 @@
       "notes": "Laptop that runs overnight only, and the slowest machine per token. 3-bit IQ quant (IQ3_XXS), so expect some mistakes. Give it well-specified, self-contained features with a clear closest example; avoid cross-cutting changes that touch many files."
     },
     "baby-mama": {
+      "paused": true,
       "label": "Ryzen 7 9800X3D + RTX 5070 Ti (16 GB)",
       "model": "Qwen 3.8 27B UD-Q2_K_XL",
       "roles": ["dev", "architect"],
