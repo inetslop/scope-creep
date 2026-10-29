@@ -3,6 +3,7 @@ import { CELL, DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
 import type { Burn, EnemyDef } from '../content/types';
 import type { RunState } from '../core/run';
+import type { BeamFx } from '../core/beamEffects';
 import { killGold } from '../core/lastStand';
 import { mintGoldBonus } from '../core/mint';
 import { burnTick } from '../core/burn';
@@ -121,6 +122,30 @@ export class EnemySystem {
   beamTick(target: Enemy, damage: number, source: Tower): void {
     if (damage <= 0 || !target.active) return;
     if (target.hit(damage, false)) this.kill(target, source);
+  }
+
+  /**
+   * One frame of a beam line's hold on `target` (systems/BeamSystem.ts): its contact effects
+   * (Frost's slow, Mark's mark, Ember's ablaze) every frame it holds, and its pulse effects
+   * (Anchor's root, Push's push) on `pulse` — once per second of contact (core/beamHold.ts).
+   * All through the enemy's own methods, so a Ward shrugs the control off like from anything else.
+   */
+  beamEffects(target: Enemy, fx: BeamFx, pulse: boolean, source: Tower): void {
+    if (!target.active) return;
+    if (fx.slow) target.slow(fx.slow.pct, fx.slow.sec);
+    if (fx.markPct > 0) target.mark(fx.markPct);
+    // The burn keeps ticking after the hold: refreshed every contact frame, only the first ablaze whooshes.
+    if (fx.burn) {
+      // The tower whose rate is live gets the killing tick: a fresh ablaze is the igniter's, a
+      // refresh only moves it over when that tower burns at least as hot (the rules of strike()).
+      const overtook = target.burn.left <= 0 || fx.burn.dps >= target.burn.dps;
+      const fresh = target.ignite(fx.burn.dps, fx.burn.sec);
+      if (overtook) target.burnSource = source;
+      if (fresh) this.sfx?.ignite();
+    }
+    if (!pulse) return;
+    if (fx.root) target.root(fx.root.sec);
+    if (fx.push > 0) target.pushBack(fx.push);
   }
 
   /**

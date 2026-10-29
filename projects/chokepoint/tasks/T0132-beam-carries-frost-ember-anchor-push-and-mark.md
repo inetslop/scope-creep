@@ -4,11 +4,12 @@ title: "Beam combos III: the beam carries Frost, Ember, Anchor, Push and Mark"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T10:40:00Z
 claimed_at: 2026-10-29T20:16:19Z
+finished_at: 2026-10-29T20:38:53Z
 epic: E4
 ---
 
@@ -108,3 +109,21 @@ No new content, types, art, audio, HUD or input; the panel already renders `desc
 ### Tests
 - `tests/core/beamHold.test.ts`: first step on a target is contact + pulse (hit at lock); holding at 0.4 s + 0.6 s steps pulses exactly on the 1.0 s step and only then; a new target pulses immediately on the switch step; an `undefined` step resets, and re-locking the same object pulses again; `nextHit` always in (0, BEAM_HIT_SEC].
 - `tests/core/beamEffects.test.ts` (use the `copy`/`spec` helpers' pattern from `tests/core/augments.test.ts`): `beamFx(spec('beam'))` and `beamFx(spec('bolt','beam'))` undefined; `beamFx(spec('beam','frost'))` = slow {0.4, 2} (rare 0.5), `ember` = burn {3, 3}, `mark` = markPct 0.25, `anchor` = root {0.5} (two anchors 0.75), `push` = 0.4 * CELL; `beamEffectLines` returns at most two, in tower order, deduped, with `PALETTE.ice`/`PALETTE.orange` colors; `describeSpec` beam lines: `/its beam slows by 40%/`, `/its beam marks for \+25%/`, `/its beam sets ablaze/`, `/its beam roots for 0\.5s every second/` (0.75s with a second Anchor), `/its beam pushes back 0\.4 cells/`; `describeSpec(spec('bolt','beam'))` must NOT contain "its beam".
+
+## Result (attempt 1, desktop)
+
+Beam-first towers now make the "hits do X" augments work: while any of its lines (main beam, Bolt rays, added beams) holds an enemy, a Frost beam keeps it slowed (40/50/60 %, refreshed 2 s), a Mark beam keeps it marked, an Ember beam keeps it ablaze, and Anchor's root (0.5 s + 0.25 s/extra) and Push's 0.4-cell push land once per second of contact, first at the lock — so a Frost or Anchor beam is a real control tower. The hold/pulse rule is pure and unit-tested in new `src/core/beamHold.ts`; the carried effects and the at-most-two colored lines riding the beam are in new `src/core/beamEffects.ts`; `BeamSystem` keeps per-line hold state (in lockstep with `held`, frozen under Mute, reset on death so pooled objects never resume stale contact), applies effects each frame through a new `EnemySystem.beamEffects` (so Ward ignores the control like anything else), draws the thin effect lines, and the `beams.valid` invariant now also checks hold state. The tower panel says each effect ("its beam slows by 40%", "its beam roots for 0.5s every second", …) via new `describeSpec` trailers. New tests in `tests/core/beamHold.test.ts` and `tests/core/beamEffects.test.ts`; `npm run check` (289 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 22.6 min
+
+```
+projects/chokepoint/game/src/core/augments.ts      |  9 ++-
+ projects/chokepoint/game/src/core/beamEffects.ts   | 59 ++++++++++++++++
+ projects/chokepoint/game/src/core/beamHold.ts      | 34 ++++++++++
+ projects/chokepoint/game/src/systems/BeamSystem.ts | 73 ++++++++++++++++++--
+ .../chokepoint/game/src/systems/EnemySystem.ts     | 25 +++++++
+ .../chokepoint/game/tests/core/beamEffects.test.ts | 62 +++++++++++++++++
+ .../chokepoint/game/tests/core/beamHold.test.ts    | 78 ++++++++++++++++++++++
+ 7 files changed, 333 insertions(+), 7 deletions(-)
+```

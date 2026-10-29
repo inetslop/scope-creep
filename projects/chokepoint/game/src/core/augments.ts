@@ -265,6 +265,13 @@ export function describeSpec(spec: TowerSpec): string {
       : `Beams ${beams} enemies: ${spec.beamDps} per second each`;
     if (spec.beamExtras.length === 1) line += `, and a second beam at ${spec.beamExtras[0]} per second on the nearest enemy`;
     else if (spec.beamExtras.length > 1) line += `, and ${spec.beamExtras.length} beams at ${spec.beamExtras[spec.beamExtras.length - 1]} per second on the nearest enemies`;
+    // The effects its lines do to the enemy they hold (core/beamEffects.ts, T0132): contact while
+    // held, the root and the push once per second of contact.
+    if (slow) line += `, its beam slows by ${slow}%`;
+    if (marked > 0) line += `, its beam marks for +${marked}% damage`;
+    if (spec.burn) line += `, its beam sets ablaze`;
+    if (spec.root) line += `, its beam roots for ${spec.root.sec}s every second`;
+    if (spec.pushPerHit > 0) line += `, its beam pushes back ${spec.pushPerHit.toFixed(1)} cells every second`;
   } else if (spec.kind === 'rally') {
     const r = getAugment('rally');
     const reach = spec.range % 1 === 0 ? spec.range : spec.range.toFixed(1);
@@ -287,7 +294,7 @@ export function describeSpec(spec: TowerSpec): string {
     if (marked > 0) line += ', and its hits mark';
   }
   // An Ember added to another first: its hits set ablaze too (an Ember first says it in its own line).
-  // A beam has no hits of its own, so the hit trailers never say it.
+  // A beam-first tower says its beam's effects in its own line.
   if (spec.kind !== 'burn' && spec.kind !== 'beam' && spec.burn) line += ', and its hits set ablaze';
   // The mints in the tower (core/mint.ts): its kills, and the kills within its radius, drop extra gold.
   if (spec.goldRadius > 0) line += `, kills within ${spec.goldRadius} cells drop +${spec.goldPerKill} gold`;

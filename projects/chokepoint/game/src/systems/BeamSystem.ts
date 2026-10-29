@@ -3,6 +3,9 @@ import { CELL, DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
 import { towerColor } from '../core/augments';
 import { beamLines, inBeamRange, rayTargets } from '../core/beam';
+import { beamEffectLines, beamFx } from '../core/beamEffects';
+import { EMPTY_BEAM_HOLD, BEAM_HIT_SEC, beamHoldStep } from '../core/beamHold';
+import type { BeamHold } from '../core/beamHold';
 import { hook } from '../debug/testHook';
 import type { Sfx } from '../audio/Sfx';
 import type { Enemy } from '../entities/Enemy';
@@ -28,6 +31,9 @@ export class BeamSystem {
   private readonly lines: Phaser.GameObjects.Graphics;
   /** Each beam tower's held targets from the last frame: [main line, one per Bolt ray, one per extra line]. */
   private readonly held = new Map<Tower, (Enemy | undefined)[]>();
+  /** Each beam tower's hold state per line (core/beamHold.ts): the same slots as `held`, kept only
+   * while its spec carries a beam effect (core/beamEffects.ts). */
+  private readonly holds = new Map<Tower, BeamHold[]>();
   /** The beam towers whose hum is on (or asked for): it follows the main line's on/off. */
   private readonly humming = new Set<Tower>();
 
@@ -36,6 +42,25 @@ export class BeamSystem {
     this.enemies = enemies;
     this.sfx = sfx;
     this.lines = scene.add.graphics().setDepth(DEPTH.bars);
+  }
+
+  /** This tower's hold state per line, grown or shrunk in lockstep with `held` when its line
+   * count changes (an augment just placed): the main and the old extras keep theirs, new slots
+   * start empty so the first lock pulses at once. */
+  private holdsFor(t: Tower, size: number): BeamHold[] {
+    let holds = this.holds.get(t);
+    if (!holds || holds.length !== size) {
+      // The rays sit between the main and the extras, like in the `held` resize: keep the main in
+      // slot 0 and the old extras at their new end; the ray slots start free.
+      const next: BeamHold[] = new Array<BeamHold>(size).fill(EMPTY_BEAM_HOLD);
+      const old = holds ?? [];
+      next[0] = old[0] ?? EMPTY_BEAM_HOLD;
+      const extras = t.spec.beamExtras.length;
+      for (let i = 0; i < Math.min(old.length - 1, extras); i++) next[size - extras + i] = old[1 + i]!;
+      holds = next;
+      this.holds.set(t, holds);
+    }
+    return holds;
   }
 
   update(dt: number): void {
@@ -63,12 +88,22 @@ export class BeamSystem {
         held = next;
         this.held.set(t, held);
       }
+      // The effects the tower's lines carry (core/beamEffects.ts): none on a plain beam or a
+      // Beam added to another kind, and then there is no hold state to keep either.
+      const fx = beamFx(t.spec);
+      const holds = fx ? this.holdsFor(t, size) : undefined;
       const { main, lines } = beamLines(held[0], held.slice(1 + t.spec.beamRays), this.enemies.all, t.x, t.y, range, t.spec.kind === 'beam');
       // Rapid's net factor times the Rally's speed: one factor for every line, the same as towerDps.
       const m = t.spec.beamRapidMul * t.rallyRateMul;
       const mainTarget = main === -1 ? undefined : this.enemies.all[main]!;
       // The rays are not sticky: re-derived every frame on the next enemies furthest along.
       const rays = mainTarget ? rayTargets(this.enemies.all, t.x, t.y, range, mainTarget, t.spec.beamRays) : [];
+      // What every line holds this frame, in the lines' slot order [main, rays, extras]: a ray
+      // with no enemy this frame holds undefined, so its hold resets with it.
+      const targets: (Enemy | undefined)[] = [mainTarget];
+      for (let i = 0; i < t.spec.beamRays; i++) targets.push(i < rays.length ? rays[i]! : undefined);
+      for (let i = 0; i < lines.length; i++) targets.push(lines[i]);
+      const steps = holds ? targets.map((e, i) => beamHoldStep(holds[i]!, e, dt)) : undefined;
       // The beam is sustained: each line's per-second rate over the frame, through the normal hit.
       if (mainTarget) {
         if (!held[0]) hook.stats.shotsFired += 1; // a new lock: the tower attacked (the line then sustains)
@@ -80,11 +115,21 @@ export class BeamSystem {
         const e = lines[i];
         if (e) this.enemies.beamTick(e, t.spec.beamExtras[i]! * m * dt, t);
       }
-      // A tick may have killed its target this frame: the line is gone the instant the target dies.
-      const now: (Enemy | undefined)[] = [mainTarget, ...rays, ...lines];
-      for (let i = 0; i < now.length; i++) {
-        const e = now[i];
-        if (e && !e.active) now[i] = undefined;
+      // The hold's effects, only on the targets still alive after the tick (it may have killed one).
+      if (fx && steps) {
+        for (let i = 0; i < targets.length; i++) {
+          const e = targets[i];
+          if (e && e.active) this.enemies.beamEffects(e, fx, steps[i]!.pulse, t);
+        }
+      }
+      // A tick may have killed its target this frame: the line is gone the instant the target dies,
+      // and a dead line's hold resets, so a recycled pool object never resumes a stale contact.
+      const now: (Enemy | undefined)[] = [];
+      for (let i = 0; i < targets.length; i++) {
+        const e = targets[i];
+        const alive = e && e.active;
+        now.push(alive ? e : undefined);
+        if (holds && steps) holds[i] = alive ? steps[i]!.hold : EMPTY_BEAM_HOLD;
       }
       this.held.set(t, now);
       // The hum follows the line's own visibility: on at the lock, off with no target; a retarget
@@ -94,6 +139,8 @@ export class BeamSystem {
       if (!on && wasHumming) { this.sfx?.beamHumStop(t); this.humming.delete(t); }
       if (main === -1) continue;
       const color = PALETTE[towerColor(t.augments) ?? 'faint'];
+      // The effects the beam carries ride it as thin lines beside it, one per effect (at most two).
+      const fxs = fx ? beamEffectLines(t.augments) : [];
       const muzzle = t.muzzle(0);
       for (const e of now) {
         if (!e) continue;
@@ -107,11 +154,17 @@ export class BeamSystem {
         const px = -dy / d;
         const py = dx / d;
         g.lineBetween(e.x - px * 4, e.y - py * 4, e.x + px * 4, e.y + py * 4);
+        for (let i = 0; i < fxs.length; i++) {
+          const off = 5 + i * 4;
+          g.lineStyle(2, fxs[i]!.color, 0.5);
+          g.lineBetween(muzzle.x + px * off, muzzle.y + py * off, e.x + px * off, e.y + py * off);
+        }
       }
     }
   }
 
-  /** Invariant: no held beam target is inactive or out of its tower's range. */
+  /** Invariant: no held beam target is inactive or out of its tower's range, and no hold state
+   * disagrees with its line (one hold per line, nextHit counting down in (0, BEAM_HIT_SEC]). */
   broken(): string | undefined {
     for (const [t, held] of this.held) {
       // A Mute holds it: the lines are off and the held targets are frozen; beamLines re-validates
@@ -120,6 +173,14 @@ export class BeamSystem {
       const range = t.spec.range * CELL;
       for (const e of held) {
         if (e && (!e.active || !inBeamRange(e, t.x, t.y, range))) return `a beam from (${t.cell.col}, ${t.cell.row}) holds an out-of-range target`;
+      }
+      const holds = this.holds.get(t);
+      if (!holds) continue;
+      if (holds.length !== held.length) return `a beam from (${t.cell.col}, ${t.cell.row}) keeps ${holds.length} holds for its ${held.length} lines`;
+      for (let i = 0; i < holds.length; i++) {
+        const h = holds[i]!;
+        if ((h.enemy !== undefined) !== (held[i] !== undefined)) return `a beam from (${t.cell.col}, ${t.cell.row}) has a hold that disagrees with its line`;
+        if (h.enemy && (!Number.isFinite(h.nextHit) || h.nextHit < 0 || h.nextHit > BEAM_HIT_SEC)) return `a beam from (${t.cell.col}, ${t.cell.row}) holds ${h.nextHit}s to its next hit`;
       }
     }
     return undefined;
