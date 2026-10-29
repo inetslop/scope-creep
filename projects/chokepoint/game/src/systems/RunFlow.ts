@@ -3,7 +3,7 @@ import { BUILD_SEC, CELL, REROLL_COST } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
-import { rollOffer } from '../core/augments';
+import { draftCardCount, rollOffer } from '../core/augments';
 import type { RunState } from '../core/run';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
@@ -95,11 +95,11 @@ export class RunFlow {
     return banked;
   }
 
-  /** Offers three augment copies (DraftScene); finishDraft starts the next build phase. */
+  /** Offers the draft's cards — three, four on every fifth draft (DraftScene); finishDraft starts the next build phase. */
   openDraft(): void {
     this.run.phase = 'draft';
     this.draftWave = this.run.wave + 1;
-    this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.draftWave, this.run.wave === 0, this.lastOffer);
+    this.offer = rollOffer(this.run.rng, AUGMENTS, draftCardCount(this.draftWave), this.draftWave, this.run.wave === 0, this.lastOffer);
     this.lastOffer = this.offer.map((c) => c.id);
     if (this.offer.length === 0) {
       this.finishDraft(undefined);
@@ -109,11 +109,11 @@ export class RunFlow {
     this.scene.scene.pause();
   }
 
-  /** The draft's one reroll: if the run has it, pay REROLL_COST and roll three new offers. */
+  /** The draft's one reroll: if the run has it, pay REROLL_COST and re-roll all of the draft's cards. */
   rerollOffer(): boolean {
     if (this.run.phase !== 'draft') return false;
     if (!this.run.reroll(REROLL_COST)) return false;
-    this.offer = rollOffer(this.run.rng, AUGMENTS, 3, this.draftWave, this.run.wave === 0, this.lastOffer);
+    this.offer = rollOffer(this.run.rng, AUGMENTS, draftCardCount(this.draftWave), this.draftWave, this.run.wave === 0, this.lastOffer);
     this.lastOffer = this.offer.map((c) => c.id);
     return true;
   }

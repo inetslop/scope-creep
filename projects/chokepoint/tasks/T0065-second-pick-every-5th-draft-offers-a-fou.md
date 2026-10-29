@@ -4,11 +4,12 @@ title: "Second pick: every 5th draft offers a fourth card"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 3
 created: 2026-10-28T13:54:28Z
 claimed_at: 2026-10-29T02:02:41Z
+finished_at: 2026-10-29T03:38:30Z
 epic: E4
 design_attempts: 1
 ---
@@ -80,3 +81,21 @@ The runner stopped mid-task (crash, restart or reboot). Requeued.
 ## Attempt 2 failed (desktop-4070)
 
 The agent made no changes to the game (timeout).
+
+## Result (attempt 3, asus)
+
+Every 5th draft now offers a fourth card: new `draftCardCount()` in `core/augments.ts` (4 on multiples of 5, else 3) drives `RunFlow.openDraft`/`rerollOffer` (same tier odds and no-repeat rules, opening floor untouched), and `DraftScene` lays four cards out as one 165-px row at 1280×720 or a 2×2 of 121-px cards at 412×915, with the fourth card flipping in ~200 ms after the third with its own tier chime and Epic shimmer sized to the narrower card. Added the `draft.offer` invariant (checked while the draft overlay is up, since a clean wave's chip legitimately holds the draft phase with an empty offer for a second), `draftCardCount` unit tests, and three-card drafts, the hand, tower panel and reroll button are byte-identical to before. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 95.8 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../chokepoint/game/src/content/augments/index.ts  |  2 +-
+ projects/chokepoint/game/src/core/augments.ts      |  5 ++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  4 ++
+ projects/chokepoint/game/src/scenes/DraftScene.ts  | 65 ++++++++++++++--------
+ projects/chokepoint/game/src/systems/RunFlow.ts    | 10 ++--
+ .../chokepoint/game/tests/core/augments.test.ts    | 16 +++++-
+ 6 files changed, 71 insertions(+), 31 deletions(-)
+```

@@ -1,7 +1,9 @@
 import { CELL, START } from '../config';
 import { AUGMENTS } from '../content/augments';
+import { draftCardCount } from '../core/augments';
 import { TIER_ORDER } from '../core/tiers';
 import type { GameScene } from '../scenes/GameScene';
+import { SCENES } from '../scenes/keys';
 import { hook } from './testHook';
 
 /**
@@ -45,6 +47,8 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   }],
   ['pushWindup.valid', (g) => g.windup.broken()],
   ['hand.selection', (g) => g.building.brokenSelection()],
+  // The clean wave's chip keeps phase 'draft' with an empty offer for a second, so check while the draft overlay is up (the offer is filled before it launches).
+  ['draft.offer', (g) => (hook.overlay !== SCENES.draft || g.flow.offer.length === draftCardCount(g.flow.draftWave) ? null : `draft offers ${g.flow.offer.length} cards, expected ${draftCardCount(g.flow.draftWave)}`)],
   ['augments.valid', (g) => {
     for (const c of [...g.run.hand, ...g.towers.towers.flatMap((t) => t.augments)])
       if (!AUGMENTS.some((a) => a.id === c.id) || !TIER_ORDER.includes(c.tier)) return `unknown augment copy ${c.id}:${c.tier}`;

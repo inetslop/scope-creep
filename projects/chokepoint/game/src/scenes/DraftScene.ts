@@ -16,10 +16,11 @@ const CARD_W = 220;
 const CARD_H = 206;
 
 /**
- * Before the first wave and after every cleared one: three augment cards (RunFlow.offer); the
- * one picked (click, tap or 1-3) goes into the hand. Each card has two lines: next to the tower
- * glyph what the augment does as a new tower, next to the plus what it adds to a tower. Overlay
- * over a paused GameScene. In ?smoke mode it picks the first card on its own.
+ * Before the first wave and after every cleared one: the draft's cards (three, four on every
+ * fifth; RunFlow.offer); the one picked (click, tap or 1-4) goes into the hand. Each card has two
+ * lines: next to the tower glyph what the augment does as a new tower, next to the plus what it
+ * adds to a tower. Overlay over a paused GameScene. In ?smoke mode it picks the first card on its
+ * own.
  */
 export class DraftScene extends Phaser.Scene {
   private picked = false;
@@ -33,7 +34,8 @@ export class DraftScene extends Phaser.Scene {
     hook.overlay = SCENES.draft;
     this.picked = false;
     const game = getGameScene(this);
-    const flipped: boolean[] = [false, false, false];
+    const four = game.flow.offer.length === 4;
+    const flipped: boolean[] = game.flow.offer.map(() => false);
     let cards: { button: ReturnType<typeof makeButton>; frame: Phaser.GameObjects.Graphics | undefined }[] = [];
     let flipTweens: Phaser.Tweens.Tween[] = [];
     let size = viewSize(this);
@@ -71,7 +73,18 @@ export class DraftScene extends Phaser.Scene {
       const c = col();
       return { top: Math.min(Math.max(70, (h - c) / 2), h - c - 8), header, gap };
     };
+    // A four-card draft's card width: portrait puts four in a 2×2 grid (~55% of the card width),
+    // landscape shares the three-card row's span across four.
+    const cardWidth = (w: number): number => !four ? CARD_W : w < 740 ? 121 : 165;
     const cardSlot = (i: number, w: number, h: number, n: number): { x: number; y: number } => {
+      if (four) {
+        const cw = cardWidth(w);
+        if (w >= 740) return { x: w / 2 + (i - 1.5) * (cw + 16), y: h / 2 + 10 };
+        // The 2×2 grid takes the row's area: two rows where the card column was.
+        const r = Math.floor(i / 2);
+        const top = Math.max(70, (h - 2 * (H + 16) - 90) / 2);
+        return { x: w / 2 + (i % 2 === 0 ? -1 : 1) * (cw + 24) / 2, y: top + 84 + H / 2 + r * (H + 16) };
+      }
       const p = portrait(h, n);
       return w < 740 ? { x: w / 2, y: p.top + p.header + H / 2 + i * (H + p.gap) } : { x: w / 2 + (i - 1) * (CARD_W + 24), y: h / 2 + 10 };
     };
@@ -85,23 +98,25 @@ export class DraftScene extends Phaser.Scene {
       flipTweens = [];
       for (const c of cards) { c.button.container.destroy(); c.frame?.destroy(); }
       flipped.fill(false);
-      const textX = -CARD_W / 2 + 42;
-      const wrap = { wordWrap: { width: CARD_W - 58 } };
+      const cw = cardWidth(size.width);
+      const k = cw / CARD_W; // the four-card draft's text and marks scale with the narrower card
+      const textX = -cw / 2 + 42 * k;
+      const wrap = { wordWrap: { width: Math.round(cw - 58 * k) } };
       // Pass 1: lay the two lines out at (0,0) to measure them, then let the card grow to fit.
       const lines = copies.map((copy) => {
         const b = getAugment(copy.id);
-        const towerLine = this.add.text(0, 0, tierTowerLine(b, copy.tier), textStyle(14, PALETTE.ink, wrap)).setOrigin(0, 0);
-        const addedLine = this.add.text(0, 0, tierAddedLine(b, copy.tier), textStyle(14, PALETTE.muted, wrap)).setOrigin(0, 0);
+        const towerLine = this.add.text(0, 0, tierTowerLine(b, copy.tier), textStyle(four ? 12 : 14, PALETTE.ink, wrap)).setOrigin(0, 0);
+        const addedLine = this.add.text(0, 0, tierAddedLine(b, copy.tier), textStyle(four ? 12 : 14, PALETTE.muted, wrap)).setOrigin(0, 0);
         return { copy, b, tier: copy.tier, towerLine, addedLine };
       });
       H = Math.max(CARD_H, ...lines.map((l) => l.towerLine.height + 10 + l.addedLine.height + 117));
       cards = lines.map(({ copy, b, towerLine, addedLine }, i) => {
         const t = -H / 2; // every y below is measured from the card's top edge
-        const button = makeButton(this, 0, 0, '', () => pick(i), { width: CARD_W, height: H, radius: 22, accent: PALETTE[b.look.color] });
-        const icon = artScale(this.add.image(0, t + 31, augmentTexture(b.id)), 1.3);
+        const button = makeButton(this, 0, 0, '', () => pick(i), { width: cw, height: H, radius: Math.round(22 * k), accent: PALETTE[b.look.color] });
+        const icon = artScale(this.add.image(0, t + 31, augmentTexture(b.id)), 1.3 * k);
         // Rare and Epic say their tier on the name line; Common keeps the plain name, like its plain frame.
         const nameText = copy.tier === 'common' ? b.name : `${b.name} · ${copy.tier.charAt(0).toUpperCase() + copy.tier.slice(1)}`;
-        const name = this.add.text(0, t + 66, nameText, titleStyle(20)).setOrigin(0.5);
+        const name = this.add.text(0, t + 66, nameText, titleStyle(four ? 16 : 20)).setOrigin(0.5);
         // The tier's gems: one light gray, two blue, three purple.
         const gemCount = tierIndex(copy.tier) + 1;
         const gemTint = copy.tier === 'rare' ? PALETTE.blue : copy.tier === 'epic' ? PALETTE.purple : PALETTE.faint;
@@ -110,17 +125,17 @@ export class DraftScene extends Phaser.Scene {
         towerLine.setPosition(textX, t + 101);
         addedLine.setPosition(textX, towerLine.y + towerLine.height + 10);
         const glyphs = this.add.graphics();
-        drawTowerGlyph(glyphs, -CARD_W / 2 + 26, towerLine.y + 9);
-        drawPlusGlyph(glyphs, -CARD_W / 2 + 26, addedLine.y + 9);
-        const key = this.add.text(-CARD_W / 2 + 14, t + 10, String(i + 1), textStyle(12, PALETTE.faint, { fontStyle: 'bold' }));
+        drawTowerGlyph(glyphs, -cw / 2 + 26, towerLine.y + 9);
+        drawPlusGlyph(glyphs, -cw / 2 + 26, addedLine.y + 9);
+        const key = this.add.text(-cw / 2 + 14, t + 10, String(i + 1), textStyle(12, PALETTE.faint, { fontStyle: 'bold' }));
         button.content.add([icon, name, ...gems, glyphs, towerLine, addedLine, key]);
         // The run already has this augment: a small dot in the top-right corner.
-        if (owns(copy.id)) glyphs.fillStyle(PALETTE.muted, 1).fillCircle(CARD_W / 2 - 14, t + 14, 4);
+        if (owns(copy.id)) glyphs.fillStyle(PALETTE.muted, 1).fillCircle(cw / 2 - 14, t + 14, 4);
         // The frame draws after the button so it shows on top of its white card.
         const frame = copy.tier === 'common' ? undefined : this.add.graphics();
         if (frame) {
           frame.lineStyle(2, copy.tier === 'rare' ? PALETTE.blue : PALETTE.purple, 1);
-          frame.strokeRoundedRect(-CARD_W / 2 - 1, t - 1, CARD_W + 2, H + 2, 23);
+          frame.strokeRoundedRect(-cw / 2 - 1, t - 1, cw + 2, H + 2, Math.round(23 * k));
         }
         // The card's back: one muted-gray gem in the center; hidden when face-up.
         const back = artScale(this.add.image(0, 0, GEM_TEXTURE)).setTint(PALETTE.faint);
@@ -132,7 +147,8 @@ export class DraftScene extends Phaser.Scene {
         const flip = this.tweens.add({
           targets: [button.container, ...(frame ? [frame] : [])],
           scaleX: 0.03,
-          delay: 100 + i * 60,
+          // The fourth card flips in last: ~200 ms after the third one lands.
+          delay: i === 3 ? 420 : 100 + i * 60,
           duration: leg,
           ease: 'Quad.easeIn',
           yoyo: true,
@@ -142,7 +158,7 @@ export class DraftScene extends Phaser.Scene {
             button.container.setScale(1);
             frame?.setScale(1);
             flipped[i] = true;
-            if (copy.tier === 'epic') { const p = cardSlot(i, size.width, size.height, cards.length); epicShimmer(this, p.x, p.y, H); }
+            if (copy.tier === 'epic') { const p = cardSlot(i, size.width, size.height, cards.length); epicShimmer(this, p.x, p.y, H, cw); }
           },
         });
         flipTweens.push(flip);
@@ -152,7 +168,7 @@ export class DraftScene extends Phaser.Scene {
     };
     buildRow(game.flow.offer);
 
-    // The run's one reroll under the cards: pay REROLL_COST and roll three new offers.
+    // The run's one reroll under the cards: pay REROLL_COST and re-roll all of the draft's cards.
     const reroll = (): void => {
       if (this.picked || !game.flow.rerollOffer()) return;
       refreshReroll();
@@ -186,7 +202,8 @@ export class DraftScene extends Phaser.Scene {
       size = { width, height };
       shade.setSize(width, height);
       shade.input?.hitArea.setTo(0, 0, width, height);
-      const p = portrait(height, cards.length);
+      // A four-card draft's portrait is a 2×2 grid, so the header places itself against two rows, not four.
+      const p = portrait(height, four && width < 740 ? 2 : cards.length);
       if (width < 740) {
         title.setPosition(width / 2, p.top).setScale(Math.min(1, (width - 32) / (title.width || 1)));
         subtitle.setPosition(width / 2, p.top + 34);
@@ -237,7 +254,7 @@ function drawPlusGlyph(g: Phaser.GameObjects.Graphics, x: number, y: number): vo
  * sweeps the card from its left edge to its right edge in 150 ms. Invisible on the white card,
  * so it reads as the purple frame flashing where the band crosses.
  */
-function epicShimmer(scene: Phaser.Scene, x: number, y: number, h: number): void {
+function epicShimmer(scene: Phaser.Scene, x: number, y: number, h: number, w: number): void {
   const band = scene.add.graphics();
   band.fillStyle(PALETTE.card, 0.05);
   band.fillRect(-36, -h / 2, 24, h);
@@ -247,6 +264,6 @@ function epicShimmer(scene: Phaser.Scene, x: number, y: number, h: number): void
   band.fillRect(0, -h / 2, 24, h);
   band.fillStyle(PALETTE.card, 0.45);
   band.fillRect(-12, -h / 2, 24, h);
-  band.setPosition(x - CARD_W / 2 + 36, y);
-  scene.tweens.add({ targets: band, x: x + CARD_W / 2 - 36, duration: 150, ease: 'Linear.easeNone', onComplete: () => band.destroy() });
+  band.setPosition(x - w / 2 + 36, y);
+  scene.tweens.add({ targets: band, x: x + w / 2 - 36, duration: 150, ease: 'Linear.easeNone', onComplete: () => band.destroy() });
 }

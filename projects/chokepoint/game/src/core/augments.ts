@@ -254,6 +254,11 @@ export function slotCost(index: number): number | undefined {
   return index < MAX_SLOTS ? SLOT_COSTS[index] : undefined;
 }
 
+/** How many cards the draft offers at draft number `draftNumber` (1-based): four every fifth draft, three otherwise. */
+export function draftCardCount(draftNumber: number): number {
+  return draftNumber > 0 && draftNumber % 5 === 0 ? 4 : 3;
+}
+
 /**
  * The draft: `count` different augments. Each card rolls its tier first, then picks its augment
  * from the pool for that tier: an augment with a `tier` (Mark) is only in the pool for cards that

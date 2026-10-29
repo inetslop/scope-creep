@@ -12,7 +12,7 @@ import { rapid } from './rapid';
 import { reach } from './reach';
 import { splash } from './splash';
 
-/** Every augment. The draft after each wave offers three different ones. */
+/** Every augment. The draft after each wave offers three different ones (four on every fifth). */
 export const AUGMENTS: readonly AugmentDef[] = [
   bolt,
   lance,

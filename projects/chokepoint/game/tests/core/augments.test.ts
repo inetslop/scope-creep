@@ -3,7 +3,7 @@ import { MAX_SLOTS } from '../../src/config';
 import { AUGMENTS, getAugment } from '../../src/content/augments';
 import { rapid } from '../../src/content/augments/rapid';
 import type { AugmentCopy, Tier } from '../../src/content/types';
-import { describeSpec, rollOffer, slotCost, towerColor, towerSpec } from '../../src/core/augments';
+import { describeSpec, draftCardCount, rollOffer, slotCost, towerColor, towerSpec } from '../../src/core/augments';
 import { Rng } from '../../src/core/rng';
 import { rollTier, tierAddedLine, tierFirst, tierTowerLine } from '../../src/core/tiers';
 
@@ -216,6 +216,20 @@ describe('slotCost', () => {
   it('gets much more expensive per slot, up to the max', () => {
     for (let i = 1; i < MAX_SLOTS; i++) expect(slotCost(i)!).toBeGreaterThan(slotCost(i - 1)! * 1.5);
     expect(slotCost(MAX_SLOTS)).toBeUndefined();
+  });
+});
+
+describe('draftCardCount', () => {
+  it('offers four cards on every fifth draft, three on the rest', () => {
+    for (let d = 1; d <= 25; d++) expect(draftCardCount(d)).toBe(d % 5 === 0 ? 4 : 3);
+  });
+
+  it('a four-card draft rolls four different augments', () => {
+    for (let seed = 1; seed <= 30; seed++) {
+      const offer = rollOffer(new Rng(seed), AUGMENTS, 4, 5);
+      expect(offer).toHaveLength(4);
+      expect(new Set(offer.map((c) => c.id)).size).toBe(4);
+    }
   });
 });
 
