@@ -1,12 +1,14 @@
 ---
 id: T0110
 title: "The tech tree: the draft branch"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0103]
-attempts: 0
+attempts: 1
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T12:32:14Z
 epic: E2
 ---
 
