@@ -1,12 +1,14 @@
 ---
 id: T0090
 title: "Build countdown tick: the last three seconds are audible"
+assignee: cachyos-x8664
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T00:51:07Z
+claimed_at: 2026-10-29T02:12:21Z
 epic: E1
 ---
 
