@@ -18,6 +18,7 @@ import { Git } from './git.ts';
 import { ensureLlama } from './llama.ts';
 import { error, info, warn } from './log.ts';
 import { configuredProject, PROJECT, REPO, STOP_FILE, rel } from './paths.ts';
+import { importInbox } from './inbox.ts';
 import { poDue, runPoCycle } from './po.ts';
 import { EXIT_NO_MODEL, EXIT_RESTART, needsRestart } from './restart.ts';
 import { syncMain, updateTaskAndPush } from './sync.ts';
@@ -97,6 +98,8 @@ async function main(): Promise<number> {
     let worked = false;
 
     if (machine.roles.includes('po')) {
+      // The PO machine hands out every id: inbox tasks first, then its own cycle takes the next ones.
+      if ((await importInbox(git)).length > 0) worked = true;
       const reason = poDue(fleet, listTasks(true));
       if (reason) {
         await runPoCycle(ctx, reason);

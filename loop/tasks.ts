@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { SIZE_ORDER, type FleetConfig } from './config.ts';
-import { ARCHIVE_DIR, PROJECT, SALVAGE_DIR, TASKS_DIR } from './paths.ts';
+import { ARCHIVE_DIR, INBOX_DIR, PROJECT, SALVAGE_DIR, TASKS_DIR } from './paths.ts';
 import { buildPace } from './speed.ts';
 
 /**
@@ -198,7 +198,7 @@ export function listTasks(includeArchive = false): TaskListing {
   const folders = fs.existsSync(TASKS_DIR)
     ? fs
         .readdirSync(TASKS_DIR, { withFileTypes: true })
-        .filter((d) => d.isDirectory() && path.join(TASKS_DIR, d.name) !== ARCHIVE_DIR && path.join(TASKS_DIR, d.name) !== SALVAGE_DIR)
+        .filter((d) => d.isDirectory() && ![ARCHIVE_DIR, SALVAGE_DIR, INBOX_DIR].includes(path.join(TASKS_DIR, d.name)))
         .map((d) => path.join(TASKS_DIR, d.name))
     : [];
   const dirs = [TASKS_DIR, ...folders.sort()];

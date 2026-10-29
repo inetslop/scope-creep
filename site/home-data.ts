@@ -24,7 +24,8 @@ export interface MachineConfig {
 export function projectTasks(projectDir: string): Task[] {
   const tasksDir = path.join(projectDir, 'tasks');
   if (!fs.existsSync(tasksDir)) return [];
-  const dirs = [tasksDir, ...fs.readdirSync(tasksDir, { withFileTypes: true }).filter((d) => d.isDirectory() && d.name !== 'salvage').map((d) => path.join(tasksDir, d.name))];
+  // Not salvage/ (diffs) or inbox/ (tasks not numbered yet, loop/inbox.ts).
+  const dirs = [tasksDir, ...fs.readdirSync(tasksDir, { withFileTypes: true }).filter((d) => d.isDirectory() && d.name !== 'salvage' && d.name !== 'inbox').map((d) => path.join(tasksDir, d.name))];
   const tasks: Task[] = [];
   for (const dir of dirs) {
     for (const name of fs.readdirSync(dir).filter((f) => f.endsWith('.md')).sort()) {
