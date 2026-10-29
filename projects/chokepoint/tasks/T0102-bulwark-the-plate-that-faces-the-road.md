@@ -1,12 +1,14 @@
 ---
 id: T0102
 title: "Bulwark: the plate that faces the road"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 1
+attempts: 2
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T12:24:22Z
 ---
 
 ## Goal
