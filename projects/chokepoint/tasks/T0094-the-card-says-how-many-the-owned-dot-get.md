@@ -4,11 +4,12 @@ title: "The card says how many: the owned dot gets a count"
 assignee: narcissus
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T01:36:24Z
 claimed_at: 2026-10-29T03:40:42Z
+finished_at: 2026-10-29T04:02:58Z
 epic: E4
 ---
 
@@ -70,3 +71,15 @@ const ownedCount = (id: string): number =>
 
 ### Tests
 none (UI only, no rule in src/core changes).
+
+## Result (attempt 1, narcissus)
+
+In `src/scenes/DraftScene.ts`, the draft card's owned dot now counts copies: the `owns` check became an `ownedCount` helper that sums the augment's copies in the hand and in every tower's slots, and when the count is two or more a small muted 12 px "×N" (right-anchored next to the dot in the card's top-right corner, part of the card's face so it flips in with it) is shown beside the dot. At exactly one copy the dot renders exactly as before; counts are read fresh on every draft, so rerolls and newly built towers change what later cards show.
+
+- Self-review: APPROVE
+- Time: 22.3 min
+
+```
+projects/chokepoint/game/src/scenes/DraftScene.ts | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+```

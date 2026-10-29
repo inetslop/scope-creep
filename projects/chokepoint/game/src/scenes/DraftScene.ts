@@ -92,7 +92,10 @@ export class DraftScene extends Phaser.Scene {
       const p = portrait(h, n);
       return w < 740 ? { x: w / 2, y: p.top + p.header + n * H + (n - 1) * p.gap + 16 + 26 } : { x: w / 2, y: h / 2 + 10 + H / 2 + 44 };
     };
-    const owns = (id: string): boolean => game.run.hand.some((c) => c.id === id) || game.towers.towers.some((t) => t.augments.some((a) => a.id === id));
+    // How many copies of the augment the run holds: in the hand and in every tower's slots.
+    const ownedCount = (id: string): number =>
+      game.run.hand.filter((c) => c.id === id).length +
+      game.towers.towers.reduce((n, t) => n + t.augments.filter((a) => a.id === id).length, 0);
     const buildRow = (copies: AugmentCopy[]): void => {
       for (const t of flipTweens) t.stop();
       flipTweens = [];
@@ -129,8 +132,16 @@ export class DraftScene extends Phaser.Scene {
         drawPlusGlyph(glyphs, -cw / 2 + 26, addedLine.y + 9);
         const key = this.add.text(-cw / 2 + 14, t + 10, String(i + 1), textStyle(12, PALETTE.faint, { fontStyle: 'bold' }));
         button.content.add([icon, name, ...gems, glyphs, towerLine, addedLine, key]);
+        const held = ownedCount(copy.id);
         // The run already has this augment: a small dot in the top-right corner.
-        if (owns(copy.id)) glyphs.fillStyle(PALETTE.muted, 1).fillCircle(cw / 2 - 14, t + 14, 4);
+        if (held > 0) glyphs.fillStyle(PALETTE.muted, 1).fillCircle(cw / 2 - 14, t + 14, 4);
+        // The held copies' count, beside the dot; shown only for two or more.
+        if (held >= 2) {
+          const heldCount = this.add.text(0, 0, `×${held}`, textStyle(12, PALETTE.muted));
+          heldCount.setOrigin(1, 0.5);
+          heldCount.setPosition(cw / 2 - 14 - 8, t + 14);
+          button.content.add(heldCount);
+        }
         // The frame draws after the button so it shows on top of its white card.
         const frame = copy.tier === 'common' ? undefined : this.add.graphics();
         if (frame) {
