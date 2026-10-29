@@ -4,11 +4,12 @@ title: "Bulwark: the plate that faces the road"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-10-29T07:23:51Z
 claimed_at: 2026-10-29T12:24:22Z
+finished_at: 2026-10-29T13:54:38Z
 ---
 
 ## Goal
@@ -69,3 +70,42 @@ npm run check (typecheck+lint+unit tests) and npm run smoke (desktop + phone); n
 ## Attempt 1 interrupted (desktop-4070)
 
 The machine was shut down by hand mid-task and paused. Requeued for any machine.
+
+## Result (attempt 2, asus)
+
+Added the Bulwark (T0102): a red 1.25×-Block walker from wave 12 (one on 12, 16, 20, …, reserved like the Hauler/Mute, re-added if the quiet halving drops it) whose front plate halves the damage of any directed shot flying into its face — shots from a downstream tower deal half, upstream/rear and perpendicular shots full, and pulse/trap/beam/burn damage is unaffected. The rule lives in pure `core/plate.ts` (`plateMul`), applied in `EnemySystem.strike` from a `flight` vector that only `ProjectileSystem` passes (refreshed per pierce leg in `Projectile`); the plate is a flat deep-red arc texture turned to face travel each frame. Waves 1–11 and all non-Bulwark waves are provably unchanged, and the name chip, wave preview and sounds pick the new enemy up automatically. Verified with new unit tests (plate math, wave counts), `npm run check` (232 tests) and `npm run smoke` (desktop + phone), all passing.
+
+- Self-review: APPROVE
+- Time: 90.3 min
+- Deleted tests/core/__tmpWavesSnapshot.test.ts, as the agent asked.
+- Did not delete snap_new.txt: only files in src/, tests/, docs/, public/ can be deleted.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/snap_new.txt                 |  0
+ projects/chokepoint/game/src/art/entities.ts          | 19 ++++++++++++++++---
+ projects/chokepoint/game/src/art/textures.ts          |  5 +++++
+ .../chokepoint/game/src/content/enemies/bulwark.ts    | 16 ++++++++++++++++
+ projects/chokepoint/game/src/content/enemies/index.ts |  2 ++
+ projects/chokepoint/game/src/content/types.ts         |  2 ++
+ projects/chokepoint/game/src/core/plate.ts            | 11 +++++++++++
+ projects/chokepoint/game/src/core/waves.ts            |  6 +++++-
+ projects/chokepoint/game/src/entities/Enemy.ts        | 16 +++++++++++++++-
+ projects/chokepoint/game/src/entities/Projectile.ts   |  7 +++++++
+ projects/chokepoint/game/src/systems/EnemySystem.ts   | 14 +++++++++-----
+ .../chokepoint/game/src/systems/ProjectileSystem.ts   |  5 +++--
+ projects/chokepoint/game/tests/core/plate.test.ts     | 18 ++++++++++++++++++
+ projects/chokepoint/game/tests/core/waves.test.ts     | 15 ++++++++++++---
+ 14 files changed, 121 insertions(+), 15 deletions(-)
+```
+
+## Merge (attempt 2, asus)
+
+- Conflicts in: projects/chokepoint/game/src/art/entities.ts, projects/chokepoint/game/src/content/enemies/bulwark.ts, projects/chokepoint/game/src/core/plate.ts, projects/chokepoint/game/src/entities/Enemy.ts, projects/chokepoint/game/src/entities/Projectile.ts, projects/chokepoint/game/src/systems/EnemySystem.ts, projects/chokepoint/game/src/systems/ProjectileSystem.ts, projects/chokepoint/game/tests/core/plate.test.ts, projects/chokepoint/game/tests/core/waves.test.ts
+- Auto-resolved 11 spot(s) where both sides only added lines (clean: projects/chokepoint/game/src/art/entities.ts, projects/chokepoint/game/src/content/enemies/bulwark.ts, projects/chokepoint/game/src/core/plate.ts, projects/chokepoint/game/src/entities/Projectile.ts, projects/chokepoint/game/src/systems/ProjectileSystem.ts, projects/chokepoint/game/tests/core/plate.test.ts).
+- The conflict agent resolved them.
+
+## Merge (attempt 2, asus)
+
+- Conflicts in: projects/chokepoint/game/src/systems/ProjectileSystem.ts
+- The conflict agent resolved them.

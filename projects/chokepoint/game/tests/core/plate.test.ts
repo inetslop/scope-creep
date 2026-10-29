@@ -27,3 +27,19 @@ describe('plate', () => {
     expect(plateMul(0.75, 0, 1, 0, -1)).toBe(0.75);
   });
 });
+
+describe('plateMul', () => {
+  it('halves a shot that flies into the face, from either side of the road', () => {
+    // The enemy walks right; a shot flying left at it strikes the plate (and vice versa).
+    expect(plateMul(0.5, -1, 0, 1, 0)).toBe(0.5);
+    expect(plateMul(0.5, 1, 0, -1, 0)).toBe(0.5);
+  });
+  it('lets a shot that strikes the rear go whole', () => {
+    // The enemy walks right; a chasing shot flying right hits the back.
+    expect(plateMul(0.5, 1, 0, 1, 0)).toBe(1);
+  });
+  it('lets a dead-side (perpendicular) shot go whole', () => {
+    // Exactly perpendicular counts as the rear.
+    expect(plateMul(0.5, 0, 1, 1, 0)).toBe(1);
+  });
+});

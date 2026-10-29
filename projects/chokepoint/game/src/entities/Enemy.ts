@@ -59,8 +59,7 @@ export class Enemy extends Phaser.GameObjects.Image {
   dashLeg: 'crawl' | 'pause' | 'dash' = 'crawl';
   dashLeft = 0; // seconds left of the current leg
   pauseAge = 0; // seconds into 'pause' (its telegraph is the first half)
-
-  /** The flat plate arc across its front (the Bulwark): a sibling on top, turned to face the travel. */
+  /** The front plate (the Bulwark): a flat image that turns to face its travel; undefined without one. */
   private plate?: Phaser.GameObjects.Image;
 
   constructor(scene: Phaser.Scene) {
@@ -237,7 +236,7 @@ export class Enemy extends Phaser.GameObjects.Image {
 
   despawn(): void {
     this.clearTint();
-    this.plate?.setVisible(false);
+    this.plate?.setVisible(false); // a recycled slot must not show a stale plate (e.g. on a dot)
     this.setActive(false).setVisible(false);
   }
 }

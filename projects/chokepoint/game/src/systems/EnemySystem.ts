@@ -126,7 +126,8 @@ export class EnemySystem {
   /**
    * One hit of a tower's attack on `target`: its damage and slow, and with splash the same on
    * up to `payload.splashCap` other enemies nearest to it within `payload.splash` board units
-   * (a burst ring shows where).
+   * (a burst ring shows where). `flight` is a shot's travel: a plated enemy halves what it takes
+   * from one flying into its face (core/plate.ts); pulse, burn and beam hits pass none and go whole.
    */
   hit(target: Enemy, payload: HitPayload, flight?: { x: number; y: number }): void {
     if (!target.active) return;

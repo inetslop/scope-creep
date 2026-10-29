@@ -15,7 +15,7 @@ export class Projectile extends Phaser.GameObjects.Image {
   speed = 0;
   /** Seconds in flight; a projectile that never lands is stuck (the run check reads it). */
   age = 0;
-  /** The way it is flying (unit vector, refreshed as it homes): the plate reads it. */
+  /** The way it flies (unit vector), refreshed on fire() and every advance: the plate reads it. */
   fx = 1;
   fy = 0;
   /** Thin tracer that points where it flies (a piercing shot, a Spray's pellet). */
@@ -55,6 +55,7 @@ export class Projectile extends Phaser.GameObjects.Image {
     this.setTint(payload.color);
     artScale(this, !this.tracer && payload.splash > 0 ? 1.4 : 1);
     this.setPosition(x, y);
+    // A pierce leg and a needle re-fire from their spot: each gets its own flight toward its target.
     const d = Math.hypot(target.x - x, target.y - y);
     if (d > 0) {
       this.fx = (target.x - x) / d;

@@ -17,11 +17,11 @@ export const towerTexture = (firstAugment: string | undefined): string => `tower
 export const augmentTexture = (id: string): string => `augment:${id}`;
 export const TOWER_BASE = 'tower:base';
 export const BOLT_TEXTURE = 'fx:bolt';
+/** The Bulwark's front plate: a flat arc, rotated to its travel by entities/Enemy.ts. */
+export const PLATE_TEXTURE = 'enemy:plate';
 /** A thin straight tracer for a piercing shot (Lance): it keeps going after a hit. */
 export const TRACER_TEXTURE = 'fx:tracer';
 export const CHIP_TEXTURE = 'fx:chip';
-/** A flat plate across a token's front third (the Bulwark): painted once, shown by Enemy. */
-export const PLATE_TEXTURE = 'enemy:plate';
 export const COIN_TEXTURE = 'ui:coin';
 export const LIFE_TEXTURE = 'ui:life';
 export const STAR_TEXTURE = 'ui:star';
@@ -47,6 +47,9 @@ export function paintTexture(scene: Phaser.Scene, key: string, w: number, h: num
   tex.refresh();
 }
 
+/** The thickness of a token's side face, for its radius. */
+export const tokenDepth = (r: number): number => Math.max(2, r * 0.18);
+
 /**
  * Room to leave around a token so its side face and soft shadow fade out inside the texture
  * (a texture edge that cuts a shadow shows up as a hard line on the board).
@@ -54,6 +57,3 @@ export function paintTexture(scene: Phaser.Scene, key: string, w: number, h: num
 export function tokenRoom(radius: number, depth: number, shadow = 1): number {
   return radius * 1.25 + depth + (SHADOW.offsetY + SHADOW.blur * 1.6) * shadow + 2;
 }
-
-/** The side-face depth of a token at radius `r`. */
-export const tokenDepth = (r: number): number => Math.max(2, r * 0.18);

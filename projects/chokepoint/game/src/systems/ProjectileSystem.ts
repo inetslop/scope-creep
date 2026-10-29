@@ -81,7 +81,7 @@ export class ProjectileSystem {
   private land(p: Projectile): void {
     const target = p.target!;
     const payload = p.payload!;
-    const flight = { x: p.fx, y: p.fy };
+    const flight = { x: p.fx, y: p.fy }; // the plate halves what a shot flying into the face deals
     const next = payload.pierce > 0 ? pickPierceTarget(target, this.enemies.all, PIERCE_REACH * CELL) : -1;
     if (next < 0) {
       this.enemies.hit(target, payload, flight);
