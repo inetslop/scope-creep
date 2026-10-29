@@ -68,6 +68,20 @@ describe('RunState', () => {
     expect(run.wavesCleared).toBe(1);
   });
 
+  it('scores the run: the cleared waves at a hundred, the stopped enemies at one', () => {
+    const run = new RunState(1);
+    expect(run.score).toBe(0);
+    run.startWave();
+    run.addKill(3);
+    run.clearWave();
+    expect(run.score).toBe(101);
+    run.startBuild(5);
+    run.startWave();
+    run.addKill(7);
+    run.leak(START.lives);
+    expect(run.score).toBe(102);
+  });
+
   it('rerolls the draft once per run, for the cost', () => {
     const run = new RunState(1);
     expect(run.reroll(REROLL_COST)).toBe(true);

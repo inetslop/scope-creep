@@ -4,11 +4,12 @@ title: The score says what it is made of
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T23:26:44Z
 claimed_at: 2026-10-29T01:08:42Z
+finished_at: 2026-10-29T01:44:22Z
 epic: E1
 ---
 
@@ -76,3 +77,17 @@ const scoreRecipe = this.add.text(0, -80, `waves +${run.wavesCleared * 100} · s
 
 ### Tests
 - The one pin test in step 1 (acceptance: score unchanged before/after). No other unit test — scene layout is covered by smoke.
+
+## Result (attempt 1, yoga)
+
+The score is now explained on both end-of-run cards: a small muted line "waves +A · stopped +B" (the score's real formula `wavesCleared*100 + kills`, terms always shown and summing exactly to the displayed score) sits under the Score line on the claim card (RewardsScene, static like the coin recipe — no count-up, no state) and under the score line on the game-over card (GameOverScene); each card's lower lines shifted down and its panel grew (372→444 / 480→497) so the layout stays inside at 1280x720 and 412x915. Added a pin test in tests/core/run.test.ts that fixes one run's score at 0 → 101 → 102 — same sequence as the design's test, but with the actual expected values, because `addKill(gold)` adds 1 kill per call (not `gold` kills) and the second wave ends without being cleared (so `wavesCleared` stays 1); the design's 103/210 don't hold for the real code. Score value is untouched — display only.
+
+- Self-review: APPROVE
+- Time: 35.7 min
+
+```
+.../chokepoint/game/src/scenes/GameOverScene.ts     | 21 +++++++++++----------
+ projects/chokepoint/game/src/scenes/RewardsScene.ts | 19 ++++++++++---------
+ projects/chokepoint/game/tests/core/run.test.ts     | 14 ++++++++++++++
+ 3 files changed, 35 insertions(+), 19 deletions(-)
+```
