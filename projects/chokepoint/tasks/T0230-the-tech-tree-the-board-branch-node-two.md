@@ -3,11 +3,13 @@ id: T0230
 title: "The tech tree: the board branch, node two — The long way"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0208]
 attempts: 0
 created: 2026-10-29T21:12:14Z
+claimed_at: 2026-10-29T21:12:18Z
 epic: E2
+designer: desktop
 ---
 
 ## Goal
