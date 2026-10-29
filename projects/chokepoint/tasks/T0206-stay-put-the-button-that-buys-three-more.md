@@ -3,10 +3,12 @@ id: T0206
 title: "Stay put: the button that buys three more build seconds"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T12:51:15Z
+claimed_at: 2026-10-29T13:00:10Z
+designer: narcissus
 ---
 
 ## Goal
