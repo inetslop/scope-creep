@@ -3,11 +3,13 @@ id: T0153
 title: "The tech tree: the pool branch and the Haste node"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0103]
 attempts: 0
 created: 2026-10-29T12:14:31Z
+claimed_at: 2026-10-29T12:28:09Z
 epic: E2
+designer: desktop
 ---
 
 ## Goal
