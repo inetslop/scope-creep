@@ -3,11 +3,13 @@ id: T0138
 title: "The slow shows on the enemy: a chip over the slowed"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T11:23:58Z
+claimed_at: 2026-10-29T11:30:56Z
 epic: E4
+designer: narcissus
 ---
 
 ## Goal
