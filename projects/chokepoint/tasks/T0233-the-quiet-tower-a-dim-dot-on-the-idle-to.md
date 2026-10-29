@@ -3,10 +3,12 @@ id: T0233
 title: "The quiet tower: a dim dot on the idle tower"
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T22:31:19Z
+claimed_at: 2026-10-29T22:32:10Z
+designer: yoga
 ---
 
 ## Goal
