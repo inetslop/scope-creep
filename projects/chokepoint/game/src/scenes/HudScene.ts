@@ -11,7 +11,6 @@ import { NextWavePreview } from '../ui/hud/NextWavePreview';
 import { PauseButton } from '../ui/hud/PauseButton';
 import { SpeedButton } from '../ui/hud/SpeedButton';
 import { StatsCard } from '../ui/hud/StatsCard';
-import { StayPutButton } from '../ui/hud/StayPutButton';
 import { TowerPanel } from '../ui/hud/TowerPanel';
 import { WaveBanner } from '../ui/hud/WaveBanner';
 import { WaveCard } from '../ui/hud/WaveCard';
@@ -45,7 +44,6 @@ export class HudScene extends Phaser.Scene {
       new NextWaveButton(this, game),
       new SpeedButton(this, game),
       preview,
-      new StayPutButton(this, game, preview),
       new HandBar(this),
       new TowerPanel(this),
       new LastStandBanner(this), // last on purpose: slides in over the other cards

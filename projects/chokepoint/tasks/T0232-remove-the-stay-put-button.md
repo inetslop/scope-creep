@@ -4,11 +4,12 @@ title: Remove the Stay put button
 assignee: yoga
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T22:04:07Z
 claimed_at: 2026-10-29T22:13:56Z
+finished_at: 2026-10-29T22:32:04Z
 ---
 
 ## Goal
@@ -73,3 +74,24 @@ None.
 - Don't touch `planning/IDEAS.md` — the "mark as removed" note is for the product owner, not this task.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Removed the "Stay put · 5" button at the player's request: its whole trade (5 gold for +3 s of building, once per build phase) is gone from RunFlow, config, the HUD parts list, and the pause screen's controls line. The wave preview card sits directly above the big start button again (T0223 placement, no empty row), which smoke verified at 412x915 and 1280x720. The two files listed in the DELETE lines are the button and its tests; nothing else changed (countdown, early-send gold/badge, and pop-in all as before).
+
+- Self-review: APPROVE
+- Time: 18.1 min
+- Deleted src/ui/hud/StayPutButton.ts, as the agent asked.
+- Deleted tests/systems/buyBuildTime.test.ts, as the agent asked.
+
+```
+projects/chokepoint/game/src/config.ts             |  3 -
+ projects/chokepoint/game/src/scenes/HudScene.ts    |  2 -
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  2 +-
+ projects/chokepoint/game/src/systems/RunFlow.ts    | 16 +---
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  | 13 +---
+ .../chokepoint/game/src/ui/hud/StayPutButton.ts    | 85 ----------------------
+ projects/chokepoint/game/src/ui/hud/hud.ts         |  3 -
+ .../game/tests/systems/buyBuildTime.test.ts        | 62 ----------------
+ 8 files changed, 5 insertions(+), 181 deletions(-)
+```
