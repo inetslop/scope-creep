@@ -3,10 +3,12 @@ id: T0107
 title: The first leak says what it costs
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T07:44:45Z
+designer: baby-mama
 ---
 
 ## Goal
