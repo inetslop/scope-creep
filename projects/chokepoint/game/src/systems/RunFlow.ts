@@ -82,13 +82,9 @@ export class RunFlow {
     this.s.enemies.drawBars();
   }
 
-  /** "Next wave" button / Space: skip the rest of the build countdown. */
-  startWaveNow(): void {
-    if (this.run.phase === 'build' && this.scene.scene.isActive()) this.run.buildLeftSec = 0;
-  }
-
-  /** The "Send" button under the wave preview: bank the countdown's gold, then start the wave the way the countdown end does. */
-  sendNow(): number {
+  /** "Next wave" button / Space: bank the build countdown — 2 gold per whole second left — then start the wave the way the countdown end does.
+   * Returns the gold banked (0 in the last partial second: it just starts the wave). */
+  startWaveNow(): number {
     if (this.run.phase !== 'build' || !this.scene.scene.isActive()) return 0;
     const banked = this.run.bankSend();
     this.s.waves.start();

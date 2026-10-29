@@ -61,7 +61,7 @@ export class PauseScene extends Phaser.Scene {
     const stats = this.add.container(-x / 2, -panelH / 2 + 78, kids);
     const worthText: Phaser.GameObjects.Text | undefined = game.run.wave > 0 ? this.add.text(0, -panelH / 2 + 96, `worth +${coins} coins`, lineStyle).setOrigin(0.5) : undefined;
     const heading = this.add.text(0, -panelH / 2 + 114, 'Controls', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
-    const keys = this.add.text(0, -panelH / 2 + 176, 'Space — start the wave early\nSend — start the wave now, +2 gold per second left\nF — fast-forward (2x) during waves\n1-9 — pick a card from the hand\n+ / - — zoom the board', textStyle(12, PALETTE.muted, { align: 'center', lineSpacing: 6 })).setOrigin(0.5);
+    const keys = this.add.text(0, -panelH / 2 + 176, 'Space or the big button — start the wave early, +2 gold per second left\nF — fast-forward (2x) during waves\n1-9 — pick a card from the hand\n+ / - — zoom the board', textStyle(12, PALETTE.muted, { align: 'center', lineSpacing: 6 })).setOrigin(0.5);
     const resumeButton = makeButton(this, 0, -panelH / 2 + 276, 'Resume', resume, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
     const quitButton = makeButton(this, 0, -panelH / 2 + 344, 'Quit run', quit, { width: 240, height: 52, radius: 26 });
     const sfx = getSfx(this);

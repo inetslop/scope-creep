@@ -4,11 +4,12 @@ title: "One start button: the big one banks the early-send gold, the Send button
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T17:00:35Z
 claimed_at: 2026-10-29T18:21:18Z
+finished_at: 2026-10-29T19:20:57Z
 ---
 
 ## Goal
@@ -177,3 +178,23 @@ describe('RunFlow.startWaveNow, the one start-wave path', () => {
 
 ### Tests
 - `tests/systems/runFlow.test.ts` as above (the folded start method: banks then starts; 0 in the last partial second; no-op when inactive/not build). Existing `tests/core/run.test.ts` bank tests must pass unchanged.
+
+## Result (attempt 1, asus)
+
+The build phase now has one way to start the wave: the big round button and Space/Enter bank 2 gold per whole second left (RunState.bankSend) and start it, with a white "+N" coin pill on the button's rim that falls by 2 each second and a gold pop on press (RunFlow.startWaveNow folded sendNow, NextWaveButton.ts). The Send button and its SEND_BTN constant are gone (HudScene, hud.ts, file deleted), and the wave preview card dropped its "+N gold" line, is now sized from its content with the quiet/tight teach line inside it, and sits directly above the button where Send used to be (NextWavePreview.ts). The pause screen's controls list now has one start-wave line (PauseScene.ts). A new tests/systems/runFlow.test.ts covers the folded method (the design's test needed a vi.mock for debug/flags, which reads window at load, and the not-build case sets phase to 'wave' since a fresh run defaults to build — both noted above); check and smoke pass at both sizes.
+
+- Self-review: APPROVE
+- Time: 59.7 min
+- Deleted src/ui/hud/SendButton.ts, as the agent asked.
+
+```
+projects/chokepoint/game/src/scenes/HudScene.ts    |  2 -
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  2 +-
+ projects/chokepoint/game/src/systems/RunFlow.ts    | 10 +--
+ .../chokepoint/game/src/ui/hud/NextWaveButton.ts   | 50 ++++++++++++--
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  | 52 +++++++--------
+ projects/chokepoint/game/src/ui/hud/SendButton.ts  | 77 ----------------------
+ projects/chokepoint/game/src/ui/hud/hud.ts         |  3 -
+ .../chokepoint/game/tests/systems/runFlow.test.ts  | 49 ++++++++++++++
+ 8 files changed, 124 insertions(+), 121 deletions(-)
+```

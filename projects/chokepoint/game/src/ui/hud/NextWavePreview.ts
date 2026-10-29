@@ -3,15 +3,16 @@ import { CELL, HUD } from '../../config';
 import { getEnemy } from '../../content/enemies';
 import { PALETTE } from '../../content/palette';
 import { isQuietWave, isTightWave, waveCounts, type WavePlan } from '../../core/waves';
-import { RunState } from '../../core/run';
+import type { RunState } from '../../core/run';
 import { artScale, enemyTexture } from '../../art/textures';
 import type { GameScene } from '../../scenes/GameScene';
 import { makeCard } from '../card';
 import { textStyle } from '../text';
-import { EDGE, SEND_BTN, isNarrow, NEXT_SIZE, type HudPart } from './hud';
+import { EDGE, isNarrow, NEXT_SIZE, type HudPart } from './hud';
 
-const H = 44;
-const LINE = 16;
+const LINE_H = 20;
+const ROW_GAP = 6;
+const TEACH_H = 18;
 const PAD = 16;
 const GROUP_GAP = 8;
 
@@ -23,7 +24,7 @@ const TEACH: { tag: string; first: number; text: string }[] = [
 ];
 
 /**
- * Above the countdown while the build phase runs: what the next wave sends, straight from its
+ * Directly above the next-wave button while the build phase runs: what the next wave sends, straight from its
  * plan (game.waves.nextPlan), so a new enemy shows up here with no change to this file. Each type
  * is its on-board token (~16 px) and its count. Pops in at the build phase's start, gone by the
  * wave's.
@@ -32,17 +33,12 @@ export class NextWavePreview implements HudPart {
   private readonly scene: Phaser.Scene;
   private box: Phaser.GameObjects.Container | undefined;
   private cardW = 0;
+  private cardH = 0;
   private size = { width: 0, height: 0 };
   private planNumber = -1;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
-  }
-
-  /** The card's screen rect while it is visible (the Send button's row sits under it). */
-  get rect(): { x: number; y: number; width: number; height: number } | undefined {
-    const box = this.box;
-    return box?.visible ? { x: box.x, y: box.y, width: this.cardW, height: H } : undefined;
   }
 
   layout(width: number, height: number): void {
@@ -84,7 +80,7 @@ export class NextWavePreview implements HudPart {
     return Math.min(1, (this.size.width - EDGE * 2) / Math.max(1, this.cardW));
   }
 
-  /** Above the countdown: above the words on narrow screens, above the button's ring on wide. */
+  /** Directly above the big button: above its words on narrow screens, above its ring on wide. */
   private place(): void {
     const box = this.box;
     if (!box) return;
@@ -92,7 +88,7 @@ export class NextWavePreview implements HudPart {
     const bottom = height - HUD.bottom / 2;
     const x = Math.min(width - EDGE - NEXT_SIZE / 2 - 4, width - EDGE - this.cardW / 2);
     const above = isNarrow(width) ? bottom - NEXT_SIZE / 2 - 22 - 30 : bottom - (NEXT_SIZE / 2 + 7) - 10;
-    box.setScale(this.fitScale()).setPosition(x, above - H / 2 - SEND_BTN.height - SEND_BTN.gap);
+    box.setScale(this.fitScale()).setPosition(x, above - this.cardH / 2);
   }
 
   /** The one-time line that teaches this wave's tag on first preview, or none (taught once per run, derived from the run's held-wave count). */
@@ -106,7 +102,7 @@ export class NextWavePreview implements HudPart {
   private build(plan: WavePlan, teach: string | undefined): Phaser.GameObjects.Container {
     const scene = this.scene;
     const counts = waveCounts(plan); // a quiet wave's plan is already halved, so the counts come out small
-    const pieces: (Phaser.GameObjects.Image | Phaser.GameObjects.Text | Phaser.GameObjects.Container)[] = [];
+    const countsPieces: (Phaser.GameObjects.Image | Phaser.GameObjects.Text | Phaser.GameObjects.Container)[] = [];
     let cursor = 0;
     if (isQuietWave(plan.number) || isTightWave(plan.number)) {
       // A small muted-blue "quiet" tag at the card's left edge: relief, so blue (never the red leak warning).
@@ -116,35 +112,37 @@ export class NextWavePreview implements HudPart {
       const chip = scene.add.graphics();
       chip.fillStyle(isQuiet ? PALETTE.blueDeep : PALETTE.muted, 1);
       chip.fillRoundedRect(-chipW / 2, -9, chipW, 18, 9);
-      pieces.push(scene.add.container(chipW / 2, 0, [chip, label])); // its left edge sits on the card's content edge
+      countsPieces.push(scene.add.container(chipW / 2, 0, [chip, label])); // its left edge sits on the card's content edge
       cursor += chipW + GROUP_GAP;
     }
     counts.forEach((c, i) => {
       if (i > 0) {
         const dot = scene.add.text(0, 0, '·', textStyle(14, PALETTE.faint, { fontStyle: 'bold' })).setOrigin(0.5);
         dot.setPosition(cursor + GROUP_GAP + dot.width / 2, 0);
-        pieces.push(dot);
+        countsPieces.push(dot);
         cursor += GROUP_GAP * 2 + dot.width;
       }
       const icon = artScale(scene.add.image(0, 0, enemyTexture(c.id)), 8 / (getEnemy(c.id).look.size * CELL));
       icon.setPosition(cursor + 8, 0);
-      pieces.push(icon);
+      countsPieces.push(icon);
       cursor += 16;
       const count = scene.add.text(0, 0, `×${c.count}`, textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
       count.setPosition(cursor + 5, 0);
-      pieces.push(count);
+      countsPieces.push(count);
       cursor += 5 + count.width;
     });
-    this.cardW = Math.ceil(cursor) + PAD * 2;
-    const payLine = scene.add.text(0, -H / 2, `+${RunState.waveBonus(plan.number)} gold`, textStyle(14, PALETTE.muted)).setOrigin(0.5, 0.5);
+    const countsW = Math.ceil(cursor);
+    let teachText: Phaser.GameObjects.Text | undefined;
+    if (teach) teachText = scene.add.text(0, 0, teach, textStyle(14, PALETTE.muted)).setOrigin(0.5);
+    this.cardW = Math.max(countsW, teachText ? Math.ceil(teachText.width) : 0) + PAD * 2;
+    this.cardH = LINE_H + (teach ? ROW_GAP + TEACH_H : 0) + PAD * 2;
+    const contentH = this.cardH - PAD * 2;
     const left = -this.cardW / 2 + PAD;
-    for (const p of pieces) { p.x += left; p.y += LINE / 2; }
-    if (teach) {
-      // The tag's one-time teach, under the counts: the payline's mirror, so the card's bottom edge and the counts row don't move.
-      pieces.push(scene.add.text(0, (H + LINE) / 2 - 8, teach, textStyle(14, PALETTE.muted)).setOrigin(0.5, 0.5));
-    }
-    pieces.push(payLine);
-    pieces.unshift(makeCard(scene, 0, 0, this.cardW, H + LINE, (H + LINE) / 2)); // card under the row
+    for (const p of countsPieces) { p.x += left; p.y += -contentH / 2 + LINE_H / 2; }
+    if (teachText) teachText.setPosition(0, -contentH / 2 + LINE_H + ROW_GAP + TEACH_H / 2);
+    const pieces: Phaser.GameObjects.GameObject[] = [...countsPieces];
+    if (teachText) pieces.push(teachText);
+    pieces.unshift(makeCard(scene, 0, 0, this.cardW, this.cardH, this.cardH / 2)); // pill, like before
     return scene.add.container(0, 0, pieces);
   }
 }
