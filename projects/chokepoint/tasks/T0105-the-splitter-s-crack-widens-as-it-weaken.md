@@ -4,11 +4,12 @@ title: "The splitter's crack widens as it weakens"
 assignee: inet-racing
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T07:23:51Z
 claimed_at: 2026-10-29T08:01:18Z
+finished_at: 2026-10-29T08:39:34Z
 epic: E4
 ---
 
@@ -116,3 +117,16 @@ function makeLine(fx: FxSystem, e: Enemy): Phaser.GameObjects.Graphics {
 
 ### Tests
 none (display-only hook; no core rule added or changed)
+
+## Result (attempt 1, inet-racing)
+
+Added `src/systems/enemyHooks/crackTick.ts`, a display-only enemy hook on the markTick pattern: while a Splitter (the only enemy with `splitsInto`) is at half hp or less, one Graphics redraws the token's own crack at twice its painted width in the token's deep color, positioned at the face center, and is destroyed on kill/leak/hp-recovery. Registered it in `src/systems/enemyHooks/index.ts` (one import + one list line, both right after `markTick`). Above 50% hp no object is created, so the token is unchanged, and the split-on-death rule, splinters, and all other enemies are untouched. Deviation from the design: dropped the two `setLineCap`/`setLineJoin` calls, which don't exist in Phaser 3.90's Graphics typings (TS2339); the line uses default caps instead. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 38.3 min
+
+```
+.../game/src/systems/enemyHooks/crackTick.ts       | 61 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ 2 files changed, 63 insertions(+)
+```
