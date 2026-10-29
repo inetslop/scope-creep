@@ -3,11 +3,13 @@ id: T0113
 title: "The burn shows on the enemy: a chip over the burning"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T09:55:07Z
+claimed_at: 2026-10-29T10:15:44Z
 epic: E4
+designer: baby-mama
 ---
 
 ## Goal
