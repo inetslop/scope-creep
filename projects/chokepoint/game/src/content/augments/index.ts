@@ -12,12 +12,14 @@ import { rally } from './rally';
 import { rapid } from './rapid';
 import { reach } from './reach';
 import { splash } from './splash';
+import { spray } from './spray';
 
 /** Every augment. The draft after each wave offers three different ones (four on every fifth). */
 export const AUGMENTS: readonly AugmentDef[] = [
   bolt,
   lance,
   splash,
+  spray,
   frost,
   push,
   anchor,

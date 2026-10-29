@@ -5,6 +5,7 @@ import { beam } from '../../src/content/augments/beam';
 import { rapid } from '../../src/content/augments/rapid';
 import type { AugmentCopy, Tier } from '../../src/content/types';
 import { describeSpec, draftCardCount, rollOffer, slotCost, towerColor, towerSpec } from '../../src/core/augments';
+import { towerDps } from '../../src/core/towerDps';
 import { Rng } from '../../src/core/rng';
 import { rollTier, tierAddedLine, tierFirst, tierTowerLine } from '../../src/core/tiers';
 
@@ -49,7 +50,8 @@ describe('towerSpec', () => {
   });
 
   it('every damaging first augment can hold wave 1: similar damage per second', () => {
-    const dps = AUGMENTS.filter((a) => a.first.damage > 0).map((a) => a.first.damage * a.first.rate);
+    // A Spray's needles count against the wave's line: each one deals a third of the shot, all of them fly at once.
+    const dps = AUGMENTS.filter((a) => a.first.damage > 0).map((a) => a.first.damage * a.first.rate * (1 + (a.first.spray ?? 0) / 3));
     expect(Math.min(...dps)).toBeGreaterThan(12);
     expect(Math.max(...dps) / Math.min(...dps)).toBeLessThan(2);
   });
@@ -92,6 +94,42 @@ describe('pierce (Lance)', () => {
 
   it('a pulse given pierce fires that many bolts, which keep going', () => {
     expect(spec('frost', 'lance')).toMatchObject({ bolts: 1, pierce: 1 });
+  });
+});
+
+describe('spray (Spray)', () => {
+  it('a lone Spray shoots the enemy furthest along, and its shot splits into three needles', () => {
+    expect(spec('spray')).toMatchObject({ kind: 'spray', damage: 12, range: 4, spray: 3, sprayCount: 1 });
+    expect(spec('spray').rate).toBeCloseTo(1 / 1.1);
+  });
+
+  it('each added Spray adds one needle per split, in any slot', () => {
+    expect(spec('spray', 'spray')).toMatchObject({ spray: 4, sprayCount: 2 });
+    expect(spec('spray', 'spray', 'spray')).toMatchObject({ spray: 5, sprayCount: 3 });
+    expect(spec('spray', 'bolt', 'spray')).toMatchObject({ spray: 4, sprayCount: 2 });
+  });
+
+  it('a Spray added to a non-spray tower has no split to grow: nothing changes', () => {
+    expect(spec('bolt', 'spray')).toMatchObject({ kind: 'shot', spray: 0 });
+  });
+
+  it('rare and epic sprays deal 14 and 16 and fire faster', () => {
+    expect(towerSpec([copy('spray', 'rare')]).damage).toBeCloseTo(14);
+    expect(towerSpec([copy('spray', 'rare')]).rate).toBeCloseTo(1 / 0.95);
+    expect(towerSpec([copy('spray', 'epic')]).damage).toBeCloseTo(16);
+    expect(towerSpec([copy('spray', 'epic')]).rate).toBeCloseTo(1 / 0.8);
+  });
+
+  it('the per-target estimate is the shot term: the needles are the spread, not the estimate', () => {
+    expect(towerDps(spec('spray'))).toBeCloseTo(12 / 1.1);
+    expect(towerDps(towerSpec([copy('spray', 'rare')]))).toBeCloseTo(14 / 0.95);
+    expect(towerDps(towerSpec([copy('spray', 'epic')]))).toBeCloseTo(20);
+  });
+
+  it('the tower line says how many needles its shot splits into, and only for a spray', () => {
+    expect(describeSpec(spec('spray'))).toMatch(/splits into 3 needles/);
+    expect(describeSpec(spec('spray', 'spray'))).toMatch(/splits into 4 needles/);
+    expect(describeSpec(spec('bolt', 'spray'))).not.toMatch(/needles/);
   });
 });
 

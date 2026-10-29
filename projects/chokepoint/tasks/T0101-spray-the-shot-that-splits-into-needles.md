@@ -4,11 +4,12 @@ title: "Spray: the shot that splits into needles"
 assignee: desktop
 size: L
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T02:55:25Z
 claimed_at: 2026-10-29T08:21:17Z
+finished_at: 2026-10-29T08:33:10Z
 epic: E4
 ---
 
@@ -117,3 +118,29 @@ private spread(target: Enemy, payload: HitPayload, speed: number): void {
 
 ### Tests
 In `tests/core/augments.test.ts` (add a `towerDps` import): `describe('spray')` — (1) `spec('spray')` is `{ kind: 'spray', damage: 12, range: 4, spray: 3, sprayCount: 1 }` and rate `toBeCloseTo(1 / 1.1)`; (2) `spec('spray','spray')` → `{ spray: 4, sprayCount: 2 }`, three copies → 5, and `spec('spray','bolt','spray')` → `{ spray: 4, sprayCount: 2 }`; (3) `spec('bolt','spray')` → `{ kind: 'shot', spray: 0 }`; (4) rare `damage toBeCloseTo(14)`, `rate toBeCloseTo(1/0.95)`, epic 16 and `1/0.8`; (5) `towerDps` → `toBeCloseTo(12/1.1)`, `14/0.95`, `20` per tier (the needles are not in the term); (6) `describeSpec(spec('spray'))` matches `/splits into 3 needles/`, with an extra copy `/splits into 4 needles/`, and `describeSpec(spec('bolt','spray'))` does not match `/needles/`.
+
+## Result (attempt 1, desktop)
+
+Added Spray (T0101), the pool's first aimed spread: a new `spray` augment (`content/augments/spray.ts`, green chevron, 12/14/16 damage every 1.1/0.95/0.8 s, range 4) whose shot, on first hit, splits into 3 + (extra Sprays) homing needles at a third of the damage, each hunting a different nearest enemy (`systems/ProjectileSystem.ts` `spread()`, new `HitPayload.needles`, tracer needles in a lighter tint via new `lightOf()`). The tower gets a flat wide head with one tick per copy (`towerLook.ts`, `art/barrels.ts`), the panel's `≈ N/s` line shows the shot term (`core/towerDps.ts`), and needle kills credit the tower through the unchanged payload spread. Registered the attack kind in `AttackKind`/`ATTACKS`, spec fields in `core/augments.ts`, plus the `describe('spray')` unit tests; one deviation from the design: `ProjectileSystem.fire` also needed the forwarded `asTracer` param to compile (the design only named `Projectile.fire`).
+
+- Self-review: APPROVE
+- Time: 11.9 min
+
+```
+projects/chokepoint/game/src/art/barrels.ts        | 13 ++++++-
+ .../chokepoint/game/src/content/augments/index.ts  |  2 ++
+ .../chokepoint/game/src/content/augments/spray.ts  | 19 ++++++++++
+ projects/chokepoint/game/src/content/palette.ts    |  6 ++++
+ projects/chokepoint/game/src/content/types.ts      |  6 ++++
+ projects/chokepoint/game/src/core/augments.ts      | 17 +++++++++
+ projects/chokepoint/game/src/core/towerDps.ts      |  3 +-
+ .../chokepoint/game/src/entities/Projectile.ts     | 12 ++++---
+ projects/chokepoint/game/src/entities/towerLook.ts |  3 ++
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  2 ++
+ .../game/src/systems/ProjectileSystem.ts           | 18 +++++++---
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  1 +
+ .../chokepoint/game/src/systems/attacks/index.ts   |  2 ++
+ .../chokepoint/game/src/systems/attacks/spray.ts   | 14 ++++++++
+ .../chokepoint/game/tests/core/augments.test.ts    | 40 +++++++++++++++++++++-
+ 15 files changed, 146 insertions(+), 12 deletions(-)
+```

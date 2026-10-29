@@ -10,7 +10,8 @@ import type { TowerSpec } from './augments';
 export function towerDps(spec: TowerSpec): number {
   if (!spec.attacks) return 0;
   let dps = 0;
-  if (spec.kind === 'shot' || spec.kind === 'pulse') dps += spec.damage * spec.rate;
+  // A spray's shot term: the shot's damage times its rate against one enemy (the needles are the spread, not the per-target estimate).
+  if (spec.kind === 'shot' || spec.kind === 'pulse' || spec.kind === 'spray') dps += spec.damage * spec.rate;
   if (spec.burn) dps += spec.burn.dps;
   return dps;
 }

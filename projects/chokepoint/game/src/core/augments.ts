@@ -58,6 +58,10 @@ export interface TowerSpec {
   pushCount: number;
   /** Splash copies in the tower: their hits strike at most this many enemies (splashHits). */
   splashCount: number;
+  /** How many homing needles the shot splits into on its first hit (0: no split, Spray first). */
+  spray: number;
+  /** Sprays in the tower: one barrel tick each. */
+  sprayCount: number;
 }
 
 const EMPTY: TowerSpec = {
@@ -87,6 +91,8 @@ const EMPTY: TowerSpec = {
   pushPerHit: 0,
   pushCount: 0,
   splashCount: 0,
+  spray: 0,
+  sprayCount: 0,
 };
 
 /**
@@ -129,6 +135,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     pushPerHit: 0,
     pushCount: 0,
     splashCount: 0,
+    spray: f.spray ?? 0,
+    sprayCount: 0,
   };
   // Anchors in any slot: the first sets the root's duration, each extra one lengthens it.
   let rootSec = 0;
@@ -147,6 +155,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     spec.pierce += e.pierce ?? 0;
     if (spec.kind === 'shot') spec.shots += e.extraShots ?? 0;
     else if (spec.kind === 'pulse') spec.bolts += e.extraShots ?? 0;
+    // A Spray only grows a split of its own: added to a non-spray tower it has no split to grow.
+    if (spec.kind === 'spray') spec.spray += e.spray ?? 0;
     if (e.slow && (!spec.slow || e.slow.pct > spec.slow.pct)) spec.slow = { ...e.slow };
     if (e.root) addRoot(a.id, e.root.sec);
   }
@@ -186,6 +196,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
   }
   // Splashes in any slot, at any tier: how many enemies its hits may strike.
   for (const a of augments) if (a.id === 'splash') spec.splashCount += 1;
+  // Sprays in any slot, at any tier: one needle per split, one barrel tick each.
+  for (const a of augments) if (a.id === 'spray') spec.sprayCount += 1;
   // Mints in any slot: this tower's kills drop this much extra gold (core/mint.ts).
   for (const a of augments) spec.goldPerKill += tierAdded(getAugment(a.id), a.tier).goldPerKill ?? 0;
   // A pulse already hits an area: splash makes it reach further, and pierce turns into bolts
@@ -220,6 +232,11 @@ export function describeSpec(spec: TowerSpec): string {
     const target = spec.shots > 1 ? `${spec.shots} enemies at a time` : 'the enemy furthest along';
     const style = spec.range >= 4 ? 'Snipes' : spec.rate >= 3 ? 'Fires fast needles at' : 'Shoots';
     line = `${style} ${target}${spec.splash > 0 ? `, and the shots burst to ${splashHits(spec.splashCount) - 1} more` : ''}${spec.pierce > 0 ? `, and each hits ${spec.pierce + 1} in a line` : ''}${marked > 0 ? ', and its hits mark' : ''}`;
+    if (slow) line += `, slowing them by ${slow}%`;
+    line += root;
+  } else if (spec.kind === 'spray') {
+    line = `Shoots the enemy furthest along, and its shot splits into ${spec.spray} needles${spec.pierce > 0 ? `, and each hits ${spec.pierce + 1} in a line` : ''}`;
+    if (marked > 0) line += ', and its hits mark';
     if (slow) line += `, slowing them by ${slow}%`;
     line += root;
   } else if (spec.kind === 'mark') {

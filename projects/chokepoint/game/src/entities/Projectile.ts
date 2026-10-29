@@ -14,6 +14,8 @@ export class Projectile extends Phaser.GameObjects.Image {
   speed = 0;
   /** Seconds in flight; a projectile that never lands is stuck (the run check reads it). */
   age = 0;
+  /** Thin tracer that points where it flies (a piercing shot, a Spray's needle). */
+  private tracer = false;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0, BOLT_TEXTURE);
@@ -22,17 +24,17 @@ export class Projectile extends Phaser.GameObjects.Image {
     this.setActive(false).setVisible(false);
   }
 
-  fire(x: number, y: number, target: Enemy, payload: HitPayload, speed: number): void {
+  fire(x: number, y: number, target: Enemy, payload: HitPayload, speed: number, asTracer = false): void {
     this.target = target;
     this.targetSerial = target.serial;
     this.payload = payload;
     this.speed = speed;
     this.age = 0;
+    this.tracer = asTracer || payload.pierce > 0;
     this.setRotation(0);
-    const tracer = payload.pierce > 0;
-    this.setTexture(tracer ? TRACER_TEXTURE : BOLT_TEXTURE);
+    this.setTexture(this.tracer ? TRACER_TEXTURE : BOLT_TEXTURE);
     this.setTint(payload.color);
-    artScale(this, !tracer && payload.splash > 0 ? 1.4 : 1);
+    artScale(this, !this.tracer && payload.splash > 0 ? 1.4 : 1);
     this.setPosition(x, y);
     this.setActive(true).setVisible(true);
   }
@@ -50,7 +52,7 @@ export class Projectile extends Phaser.GameObjects.Image {
     const dx = t.x - this.x;
     const dy = t.y - this.y;
     // A tracer points where it flies (its texture is flat, so rotating it is allowed).
-    if ((this.payload?.pierce ?? 0) > 0) this.setRotation(Math.atan2(dx, -dy));
+    if (this.tracer) this.setRotation(Math.atan2(dx, -dy));
     const dist = Math.hypot(dx, dy);
     const step = this.speed * dt;
     if (dist <= step || dist < 6) {

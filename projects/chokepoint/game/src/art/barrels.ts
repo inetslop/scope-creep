@@ -22,6 +22,8 @@ export interface BarrelLook {
   beamHead?: boolean;
   /** Small flat ticks beside the head or the barrels, one per Beam added. */
   beamTicks?: number;
+  /** Short ticks in the tower's own color on the head face, one per Spray copy (the split grows). */
+  sprayTicks?: number;
 }
 
 /**
@@ -37,9 +39,11 @@ export function barrelTexture(scene: Phaser.Scene, color: Bright | undefined, lo
   const beamHead = look.beamHead ?? false;
   // A tower holds at most three added augments, so at most three ticks.
   const beamTicks = Math.max(0, Math.min(3, Math.round(look.beamTicks ?? 0)));
+  // At most four Sprays fit in a tower, so at most four ticks.
+  const sprayTicks = Math.max(0, Math.min(4, Math.round(look.sprayTicks ?? 0)));
   const key = beamHead
     ? `barrel:beam:${color ?? 'empty'}:${beamTicks}`
-    : `barrel:${color ?? 'empty'}:${length}:${width}:${look.bulb ? 'b' : 'p'}:${bands}:${emberTicks}:${emberMuzzle ? 'e' : 'n'}:${beamTicks}`;
+    : `barrel:${color ?? 'empty'}:${length}:${width}:${look.bulb ? 'b' : 'p'}:${bands}:${emberTicks}:${sprayTicks}:${emberMuzzle ? 'e' : 'n'}:${beamTicks}`;
   const r = TOWER_BODY * CELL;
   const len = r * 1.6 * length;
   const w = r * 0.6 * width;
@@ -70,6 +74,13 @@ export function barrelTexture(scene: Phaser.Scene, color: Bright | undefined, lo
       const at = c - len * (0.18 + 0.1 * i);
       roundRectPath(ctx, c - w * 0.6, at - w * 0.19, w * 1.2, w * 0.38, w * 0.19);
       ctx.fillStyle = rgba(color === 'orange' ? PALETTE.orangeDeep : PALETTE.orange, 1);
+      ctx.fill();
+    }
+    // Spray ticks: one short tick in the tower's own color per Spray copy (the split grows with copies).
+    for (let i = 0; i < sprayTicks; i++) {
+      const at = c - len * (0.82 - 0.08 * i);
+      roundRectPath(ctx, c - w * 0.6, at - w * 0.19, w * 1.2, w * 0.38, w * 0.19);
+      ctx.fillStyle = rgba(color ? PALETTE[color] : PALETTE.faint, 1);
       ctx.fill();
     }
     if (emberMuzzle) {

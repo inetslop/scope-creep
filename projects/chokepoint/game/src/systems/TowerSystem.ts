@@ -121,6 +121,7 @@ export class TowerSystem {
         slow: spec.slow,
         root: spec.root,
         pierce: spec.pierce,
+        needles: spec.spray,
         push: (spec.gust + spec.pushPerHit) * CELL,
         mark: spec.markPct > 0 ? { pct: spec.markPct, x: t.x, y: t.y } : undefined,
         burn: spec.burn,

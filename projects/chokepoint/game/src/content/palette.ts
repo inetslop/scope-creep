@@ -54,6 +54,12 @@ export function deepOf(color: Bright): number {
   return PALETTE[`${color}Deep`];
 }
 
+/** A lighter tint of a color, mixed 40% toward white (the Spray's needles, a lighter shade of the tower's own color). */
+export function lightOf(color: number): number {
+  const m = (c: number): number => Math.round(c + (255 - c) * 0.4);
+  return (m((color >> 16) & 255) << 16) | (m((color >> 8) & 255) << 8) | m(color & 255);
+}
+
 /** 0xRRGGBB -> "#rrggbb" for text styles. */
 export function cssColor(color: number): string {
   return `#${color.toString(16).padStart(6, '0')}`;

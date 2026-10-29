@@ -31,6 +31,8 @@ export interface HitPayload {
   root: { sec: number } | undefined;
   /** How many more enemies a shot strikes after the first hit; 0 = none. */
   pierce: number;
+  /** Homing needles the shot splits into on its first hit (Spray); 0 = none. */
+  needles: number;
   /** Board units the hit pushes its enemy back along the road (0: none). */
   push: number;
   /** The mark this hit applies to the enemies it hits; `x`, `y` are the tower's base (the flash spot). */
