@@ -29,7 +29,7 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0211 (L, priority 2, depends_on T0153) — branch five “The claim”: “Clean ×2” (30 coins) — each clean wave pays 2 coins instead of 1; the one pure coin formula (T0001) carries it to the live tally, the pause worth line and the claim card's recipe — **done** (2026-10-29, desktop)
 - T0212 (M, priority 2, depends_on T0153, T0209) — branch three, node three: “Mend” (30 coins), T0209's pattern for T0095's Epic; the draft gate is T0095's line — **done** (2026-10-29, inet-racing)
 - T0213 (S, priority 2, depends_on T0103) — the menu's Tech button wears a small yellow dot while any unowned node is in reach — **done** (2026-10-29, yoga)
-- T0214 (M, priority 2, depends_on T0103) — the branch discount: the 2nd node of a branch costs 5 less, the 3rd and later 10 less (floor 5); the card shows the struck-through old price — in design
+- T0214 (M, priority 2, depends_on T0103) — the branch discount: the 2nd node of a branch costs 5 less, the 3rd and later 10 less (floor 5); the card shows the struck-through old price — **done** (2026-10-29, cachyos-x8664)
 - T0215 (M, priority 2, depends_on T0103) — the run-start's fifth node, a second “Life +1” (40 coins), and a small done mark on a fully-owned branch — **done** (2026-10-29, asus)
 
 Status: the run-start branch (with the fifth node, T0215), the draft branch (T0110), the pool branch (T0153, T0209, T0212) and the claim branch (T0211) are done, as is the menu dot (T0213); the branch discount (T0214) is in progress (cachyos-x8664) and the board branch (T0208) is in the pool — E2's last tasks before the "long way" sketch.
@@ -89,11 +89,11 @@ Status: the run-start branch (with the fifth node, T0215), the draft branch (T01
 - T0105 (S) — the Splitter's crack widens at half hp (telegraph slice) — **done** (2026-10-29, inet-racing)
 - T0112 (S) — the beam hum (the T0043 re-file) — **done** (2026-10-29, asus)
 - T0113 (S) — the burn shows on the enemy (telegraph slice) — **done** (2026-10-29, baby-mama)
-- T0130 (M, priority 1) — Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam — in the pool
+- T0130 (M, priority 1) — Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam — **done** (2026-10-29, desktop)
 - T0131 (M, priority 2) — Beam combos II: Lance pierces, Splash scorches, Spray splits a beam kill — **failed** (2026-10-29, the architect's prompt overflowed cachyos's context before any design) — re-filed tighter: Lance + Splash as T0210; the needle clause (a beam kill splits into Spray needles) parked in IDEAS until T0210 lands
 - T0210 (M, priority 2) — Beam combos II (the re-file): Lance pierces the beam's main line, Splash scorches its target — in the pool
 - T0132 (M, priority 2) — Beam combos III: the beam carries Ember, Anchor, Push and Mark (Frost only if the 16-cap hasn't removed it) — in the pool
-- T0133 (M, priority 2) — A new look for the Beam tower: a tower with a circle on top — in progress (baby-mama)
+- T0133 (M, priority 2) — A new look for the Beam tower: a tower with a circle on top — in the pool
 - T0134 (L, priority 2) — Spray becomes a shotgun: a cone of pellets — **done** (2026-10-29, inet-racing)
 - T0135 (S) — Spray gets its own look, not Beam's — **done** (2026-10-29, yoga)
 - T0152 (L, priority 2) — Haste: the Epic that hastens everything it touches (2-cell aura: enemies walk +30% faster, towers attack +30% faster, +15% to both per extra copy, no cap; Epic-only; gated — absent from the draft roll until the tech tree's pool node, T0153, is bought) — in the pool, next registration behind the pool augments
