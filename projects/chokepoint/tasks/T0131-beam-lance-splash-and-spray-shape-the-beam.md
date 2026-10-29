@@ -3,14 +3,14 @@ id: T0131
 title: "Beam combos II: Lance pierces, Splash scorches, Spray splits a beam kill"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-29T10:40:00Z
 claimed_at: 2026-10-29T11:28:00Z
+finished_at: 2026-10-29T13:05:42Z
 epic: E4
-design_attempts: 1
-designer: cachyos-x8664
+design_attempts: 2
 ---
 
 ## Goal
@@ -29,3 +29,11 @@ Applies to a tower whose **first** augment is Beam. Values per second scale with
 - [ ] Beam first + Spray: a beam kill releases 1 needle per Spray toward the nearest other enemy within 2 cells; no needles without a kill.
 - [ ] Unit tests pin the pierce count, the scorch rate and cap, and the needle count.
 - [ ] The tower panel describes each effect.
+
+## Architect could not design it (cachyos-x8664)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+Prompt is too long
+```
