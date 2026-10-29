@@ -4,11 +4,12 @@ title: The pause line says what the run is worth
 assignee: narcissus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T00:22:08Z
 claimed_at: 2026-10-29T02:03:59Z
+finished_at: 2026-10-29T03:02:04Z
 epic: E1
 ---
 
@@ -61,3 +62,15 @@ const box = this.add.container(0, 0, boxKids);
 
 ### Tests
 none
+
+## Result (attempt 1, narcissus)
+
+The pause card now shows a muted "worth +N coins" line directly under its run-so-far line, where N is the run's own coin formula (`coinsForRun` — waves cleared + floor(stopped ÷ 10) + clean waves) already computed in `PauseScene.create()` for this same display and reused, never recomputed; the coins value was dropped from the run line so it isn't printed twice, and the worth line only appears once wave 1 has started (the "Ready" state shows just the run line). The card grows by one fixed 18 px line height with all items below the new line shifted down (panelH 458→476), preserving the layout at both 1280x720 and 412x915; nothing touches the ledger, payout, claim or game-over cards, and there is no new input or sound. Check and smoke (desktop + mobile) pass.
+
+- Self-review: APPROVE
+- Time: 58.1 min
+
+```
+projects/chokepoint/game/src/scenes/PauseScene.ts | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
+```
