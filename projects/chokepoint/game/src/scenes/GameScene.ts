@@ -5,7 +5,7 @@ import { cellsBesidePath, generateMap } from '../core/map';
 import { loadProfile } from '../core/profile';
 import { RunState } from '../core/run';
 import type { SavedRun } from '../core/saveRun';
-import { startBonuses } from '../core/tech';
+import { boardBends, startBonuses } from '../core/tech';
 import { draftTech } from '../core/techEffects';
 import { flags } from '../debug/flags';
 import { registerRunChecks, syncHookStats } from '../debug/runChecks';
@@ -89,9 +89,12 @@ export class GameScene extends Phaser.Scene {
       this.run.slotDiscount = draft.slotDiscount;
       this.run.fourthCard = draft.fourthCard;
     }
+    // The board's tech node winds new runs' roads one turn further; a resumed run keeps its
+    // saved board (its own bends), and a ghost run replays the best board as generated (0).
+    const bends = saved ? saved.bends : ghostSeed === undefined ? boardBends(loadProfile(window.localStorage).purchased) : 0;
     const view = viewSize(this);
     const portrait = saved ? saved.rows > saved.cols : view.height > view.width;
-    const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS);
+    const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, bends);
 
     this.board = new Board(this, map);
     this.fx = new FxSystem(this);

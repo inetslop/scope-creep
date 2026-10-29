@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
+import { BOARD_NODES } from '../../src/content/tech/board';
 import { CLAIM_NODES, cleanWavePay } from '../../src/content/tech/claim';
 import { POOL_NODES } from '../../src/content/tech/pool';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { branchPrice, buyClaimNode, buyNode, buyPoolNode, nodeInReach, ownedInBranch, startBonuses, TECH_NODES } from '../../src/core/tech';
+import { boardBends, branchPrice, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, nodeInReach, ownedInBranch, startBonuses, TECH_NODES } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -152,6 +153,37 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste', 'clean2']);
   });
 
+  it('the board row is one node: One more bend at 30, adding one bend to new runs', () => {
+    expect(BOARD_NODES.map((n) => [n.id, n.price, n.bends])).toEqual([['one-more-bend', 30, 1]]);
+  });
+
+  it('a board node buys only when it is known, unowned and affordable', () => {
+    expect(buyBoardNode(withCoins(60), 'nope')).toBe(false);
+    const broke = withCoins(29);
+    expect(buyBoardNode(broke, 'one-more-bend')).toBe(false); // unaffordable: 29 < 30
+    expect(loadProfile(broke).coins).toBe(29);
+    const owned = withCoins(60, ['one-more-bend']);
+    expect(buyBoardNode(owned, 'one-more-bend')).toBe(false); // already owned
+    expect(loadProfile(owned).coins).toBe(60);
+  });
+
+  it('a board purchase deducts exactly 30 and saves the id alongside the other branches', () => {
+    const store = withCoins(60, ['gold-1', 'haste']);
+    expect(buyBoardNode(store, 'one-more-bend')).toBe(true);
+    expect(loadProfile(store).coins).toBe(30);
+    expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste', 'one-more-bend']);
+  });
+
+  it('boardBends sums the owned board nodes once each; unknown and other-branch ids count for nothing', () => {
+    expect(boardBends(['one-more-bend', 'one-more-bend', 'haste'])).toBe(1);
+    expect(boardBends([])).toBe(0);
+    expect(boardBends(['nope', 'gold-1', 'clean2'])).toBe(0);
+  });
+
+  it('a board id counts for no run-start bonus', () => {
+    expect(startBonuses(['one-more-bend'])).toEqual({ gold: 0, life: 0 });
+  });
+
   it('the branch discount: full price with none owned, 5 less with one, 10 less with two or more, never below 5', () => {
     expect(branchPrice(30, 0)).toBe(30);
     expect(branchPrice(30, 1)).toBe(25);
@@ -180,6 +212,6 @@ describe('tech', () => {
     expect(nodeInReach([], 0)).toBe(false);
     expect(nodeInReach([], 5)).toBe(true); // gold-1, the run-start branch's cheapest node
     expect(nodeInReach([], 4)).toBe(false); // a balance that reaches no unowned node
-    expect(nodeInReach([...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES].map((n) => n.id), 99999)).toBe(false); // every node owned
+    expect(nodeInReach([...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES].map((n) => n.id), 99999)).toBe(false); // every node owned
   });
 });

@@ -1,4 +1,5 @@
 /** The tech tree: the coins runs earn buy lasting bonuses. Storage is passed in, so this stays pure and testable. */
+import { BOARD_NODES } from '../content/tech/board';
 import { CLAIM_NODES } from '../content/tech/claim';
 import { POOL_NODES } from '../content/tech/pool';
 import { DRAFT_NODES } from '../content/tech/draft';
@@ -41,6 +42,20 @@ export function startBonuses(owned: readonly string[]): { gold: number; life: nu
     life += node.life;
   }
   return { gold, life };
+}
+
+/** How many extra bends a new run's road gets for the owned board nodes; each node counts once, unknown ids count for nothing. */
+export function boardBends(owned: readonly string[]): number {
+  let bends = 0;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = BOARD_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    bends += node.bends;
+  }
+  return bends;
 }
 
 /** How many of a branch's nodes are already owned: the branch discount prices a node off this count. */
@@ -101,7 +116,7 @@ export function buyPoolNode(store: KeyValueStore | undefined, id: string): boole
  * branch node lists are the ones the tech screen's rows read (TechScene's `rows`).
  */
 export function nodeInReach(purchased: readonly string[], coins: number): boolean {
-  for (const node of [...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES]) {
+  for (const node of [...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES]) {
     if (!purchased.includes(node.id) && node.price <= coins) return true;
   }
   return false;
@@ -117,6 +132,27 @@ export function buyClaimNode(store: KeyValueStore | undefined, id: string): bool
   const node = CLAIM_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
   const price = branchPrice(node.price, ownedInBranch(CLAIM_NODES, profile.purchased));
+  if (profile.coins < price) return false;
+  profile.coins -= price;
+  profile.purchased.push(id);
+  try {
+    store?.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    /* private mode or full storage: the purchase just isn't kept */
+  }
+  return true;
+}
+
+/**
+ * Buys a board node from the saved profile's coins. Refuses an unknown or already owned id and a
+ * price the coins don't cover (they never go below zero); a board node has no prerequisites and
+ * no gate — its effect is in new runs the moment it is bought.
+ */
+export function buyBoardNode(store: KeyValueStore | undefined, id: string): boolean {
+  const profile = loadProfile(store);
+  const node = BOARD_NODES.find((n) => n.id === id);
+  if (!node || profile.purchased.includes(id)) return false;
+  const price = branchPrice(node.price, ownedInBranch(BOARD_NODES, profile.purchased));
   if (profile.coins < price) return false;
   profile.coins -= price;
   profile.purchased.push(id);

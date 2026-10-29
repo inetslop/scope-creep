@@ -2,11 +2,12 @@ import Phaser from 'phaser';
 import { artScale, COIN_TEXTURE } from '../art/textures';
 import { AUGMENTS } from '../content/augments';
 import { cssColor, PALETTE } from '../content/palette';
+import { BOARD_NODES } from '../content/tech/board';
 import { CLAIM_NODES } from '../content/tech/claim';
 import { POOL_NODES } from '../content/tech/pool';
 import { DRAFT_NODES } from '../content/tech/draft';
 import { loadProfile, type Profile } from '../core/profile';
-import { branchPrice, buyClaimNode, buyNode, buyPoolNode, ownedInBranch, TECH_NODES } from '../core/tech';
+import { branchPrice, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, ownedInBranch, TECH_NODES } from '../core/tech';
 import { hook } from '../debug/testHook';
 import { makeButton, type Button } from '../ui/button';
 import { makeCard } from '../ui/card';
@@ -15,11 +16,12 @@ import { textStyle, titleStyle } from '../ui/text';
 import { getSfx, onResize, SCENES } from './keys';
 
 /**
- * The tech tree: the coins runs earn become spendable here, on lasting changes. Four branches,
+ * The tech tree: the coins runs earn become spendable here, on lasting changes. Five branches,
  * one row each: "Run start" (new runs begin richer), "The draft" (a new run's second slot costs
  * less and its pre-wave-1 draft offers a fourth card), "The pool" (a new augment joins the
- * game's content) and "The claim" (a run pays more for the same holding). The menu sits dimmed
- * behind, and a purchase is saved straight into the profile (the coins are spent, not moved).
+ * game's content), "The claim" (a run pays more for the same holding) and "The board" (new
+ * runs' roads wind further). The menu sits dimmed behind, and a purchase is saved straight into
+ * the profile (the coins are spent, not moved).
  */
 interface RowNode {
   id: string;
@@ -28,7 +30,7 @@ interface RowNode {
   price: number;
   requires: string | null;
   unlocks: string | null;
-  branch: 'start' | 'draft' | 'pool' | 'claim';
+  branch: 'start' | 'draft' | 'pool' | 'claim' | 'board';
 }
 
 interface TechCard {
@@ -43,7 +45,7 @@ interface TechCard {
 }
 
 /** One muted label per card row, in row order. */
-const ROW_LABELS = ['Run start', 'The draft', 'The pool', 'The claim'];
+const ROW_LABELS = ['Run start', 'The draft', 'The pool', 'The claim', 'The board'];
 
 // Each card is a column laid out top-down: the name, then the description (top-aligned, so it
 // only grows down), then the price line pinned to the bottom, the same padding top and bottom.
@@ -80,6 +82,7 @@ export class TechScene extends Phaser.Scene {
     DRAFT_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: n.requires, unlocks: null, branch: 'draft' })),
     POOL_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: null, unlocks: n.unlocks, branch: 'pool' })),
     CLAIM_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: null, unlocks: null, branch: 'claim' })),
+    BOARD_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: null, unlocks: null, branch: 'board' })),
   ];
   private dragOffset = 0;
   private dragging = false;
@@ -342,7 +345,9 @@ export class TechScene extends Phaser.Scene {
         ? buyNode(window.localStorage, node.id)
         : node.branch === 'pool'
           ? buyPoolNode(window.localStorage, node.id)
-          : buyClaimNode(window.localStorage, node.id);
+          : node.branch === 'claim'
+            ? buyClaimNode(window.localStorage, node.id)
+            : buyBoardNode(window.localStorage, node.id);
     if (!bought) return;
     this.profile = loadProfile(window.localStorage);
     getSfx(this)?.techBuy();

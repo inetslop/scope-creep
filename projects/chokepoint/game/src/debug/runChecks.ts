@@ -17,6 +17,18 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['run.ledger', (g) => (Number.isInteger(g.run.goldEarned) && g.run.goldEarned >= 0 && g.run.cleanWaves >= 0 && g.run.cleanWaves <= g.run.wavesCleared ? null : 'ledger')],
   ['resume.taken', (g) => (g.registry.get('resumeRun') ? 'a saved run is waiting for the game that never took it' : null)],
   ['ghost.taken', (g) => (g.registry.get('ghostSeed') ? 'a ghost seed is waiting for the game that never took it' : null)],
+  ['board.path', (g) => {
+    const p = g.board.map.path;
+    const seen = new Set<string>();
+    for (let i = 0; i < p.length; i++) {
+      const c = p[i]!;
+      const key = `${c.col},${c.row}`;
+      if (seen.has(key)) return `the road crosses itself at (${c.col}, ${c.row})`;
+      seen.add(key);
+      if (i > 0 && Math.abs(c.col - p[i - 1]!.col) + Math.abs(c.row - p[i - 1]!.row) !== 1) return `the road jumps at (${c.col}, ${c.row})`;
+    }
+    return null;
+  }],
   ['speed.value', (g) => (g.speed.speed === 1 || g.speed.speed === 2 ? null : `speed is ${g.speed.speed}`)],
   ['waves.next', (g) => (g.run.phase !== 'build' || g.waves.nextPlan?.number === g.run.wave + 1 ? null : `build phase plans wave ${g.waves.nextPlan?.number ?? 'nothing'}, not ${g.run.wave + 1}`)],
   ['waves.held', (g) => (Number.isInteger(g.waves.heldLost) && g.waves.heldLost >= 0 && g.waves.heldLost <= START.lives + 1 + g.techLife ? null : `held lost ${g.waves.heldLost}`)],

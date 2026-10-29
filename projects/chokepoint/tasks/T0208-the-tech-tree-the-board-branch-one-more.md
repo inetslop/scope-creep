@@ -4,11 +4,12 @@ title: "The tech tree: the board branch — One more bend"
 assignee: inet-racing
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0103]
 attempts: 1
 created: 2026-10-29T13:49:24Z
 claimed_at: 2026-10-29T19:12:26Z
+finished_at: 2026-10-29T20:45:35Z
 epic: E2
 ---
 
@@ -98,3 +99,27 @@ Jog inside `generateMap`, right after `const path: Cell[] = [toCell(along, acros
 - `tests/core/map.test.ts`: local `countBends(path)` (direction changes at `path[i]`, i in 1..len-2); for seeds [1,2,3,4,5,42] and both [14,8]/[8,14]: `countBends(windy.path) === countBends(plain.path) + 1` and the windy board is valid (size, entrance/exit edge, side-adjacent steps, no revisits, `kinds` 'path'), plus `mapExtraBends(plain) === 0` / `mapExtraBends(windy) === 1`.
 - `tests/core/tech.test.ts`: mirror the pool tests — `BOARD_NODES` shape `[['one-more-bend', 30, 1]]`; `buyBoardNode` refuses unknown/29 coins/already-owned (coins never below zero), deducts 30 and appends the id; `boardBends(['one-more-bend','one-more-bend','haste']) === 1`, `boardBends([]) === 0`; `startBonuses(['one-more-bend'])` unchanged.
 - `tests/core/saveRun.test.ts`: add `bends: 0,` after `rows` in `sample`; `broken({ bends: 2 })`, `broken({ bends: -1 })`; a save written without the key loads with `bends: 0`.
+
+## Result (attempt 1, inet-racing)
+
+Added the "The board" branch to the tech tree: a new "One more bend" node (30 coins) in `src/content/tech/board.ts`, bought through `buyBoardNode`/`boardBends` in `src/core/tech.ts` and shown as a fifth row in `TechScene.ts`. New runs with the node owned generate their road with one extra bend (a deterministic entrance jog in `generateMap`, default 0 keeps unowned boards byte-identical); resumed runs carry the board's `bends` in their save (`core/saveRun.ts`, `systems/RunSave.ts`) and ghost runs pass 0. Added unit tests (one-more-bend on 6 seeds × both board orientations, buy/bonus/persistence, save round-trip) and a `board.path` smoke invariant; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 93.2 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/content/tech/board.ts | 14 ++++++
+ projects/chokepoint/game/src/core/map.ts           | 20 +++++++-
+ projects/chokepoint/game/src/core/saveRun.ts       |  4 ++
+ projects/chokepoint/game/src/core/tech.ts          | 38 ++++++++++++++-
+ projects/chokepoint/game/src/debug/runChecks.ts    | 12 +++++
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  7 ++-
+ projects/chokepoint/game/src/scenes/TechScene.ts   | 19 +++++---
+ projects/chokepoint/game/src/systems/RunSave.ts    |  2 +
+ projects/chokepoint/game/tests/core/map.test.ts    | 56 +++++++++++++++++++++-
+ .../chokepoint/game/tests/core/saveRun.test.ts     | 12 +++++
+ projects/chokepoint/game/tests/core/tech.test.ts   | 36 +++++++++++++-
+ .../game/tests/core/temp_bend_sweep.test.ts        | 55 +++++++++++++++++++++
+ 12 files changed, 260 insertions(+), 15 deletions(-)
+```

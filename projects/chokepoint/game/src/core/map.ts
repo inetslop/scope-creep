@@ -22,9 +22,10 @@ export interface GameMap {
 /**
  * A new random board. The path enters on one short edge and leaves on the opposite one, going
  * forward in runs of 2-3 cells and turning sideways in between, so it never touches itself.
- * Portrait boards (rows > cols) run top to bottom. `rocks` open cells become unbuildable.
+ * Portrait boards (rows > cols) run top to bottom. `rocks` open cells become unbuildable. With
+ * `extraBends` of 1 or more the road starts one bend windier (a sideways step at the entrance).
  */
-export function generateMap(rng: Rng, cols: number, rows: number, rocks: number): GameMap {
+export function generateMap(rng: Rng, cols: number, rows: number, rocks: number, extraBends = 0): GameMap {
   const vertical = rows > cols;
   // Work in "along x across" space, then map to cells.
   const length = vertical ? rows : cols;
@@ -34,6 +35,13 @@ export function generateMap(rng: Rng, cols: number, rows: number, rocks: number)
   let across = rng.int(1, width - 2);
   let along = 0;
   const path: Cell[] = [toCell(along, across)];
+  if (extraBends >= 1) {
+    // The entrance jog: one cell sideways on the entrance row before the first run, so the
+    // road's second cell is a turn (one more bend). No rng draw, so the rest keeps this
+    // seed's usual draws. Needs width >= 5 (the boards are 8).
+    across += 1;
+    path.push(toCell(along, across));
+  }
   while (along < length - 1) {
     const run = rng.int(2, 3);
     for (let i = 0; i < run && along < length - 1; i++) {
@@ -69,6 +77,14 @@ export function generateMap(rng: Rng, cols: number, rows: number, rocks: number)
   for (const c of rng.shuffle(candidates).slice(0, rocks)) kinds[c.row]![c.col] = 'rock';
 
   return { cols, rows, kinds, path, vertical };
+}
+
+/** 1 when the road's second cell is the entrance jog (not one step along the entrance axis), else 0. */
+export function mapExtraBends(map: GameMap): number {
+  const a = map.path[0]!;
+  const b = map.path[1]!;
+  const alongStep = map.vertical ? b.row === a.row + 1 : b.col === a.col + 1;
+  return alongStep ? 0 : 1;
 }
 
 export function kindAt(map: GameMap, col: number, row: number): CellKind | undefined {

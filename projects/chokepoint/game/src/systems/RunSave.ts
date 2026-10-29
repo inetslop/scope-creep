@@ -1,4 +1,5 @@
 import { BUILD_SEC } from '../config';
+import { mapExtraBends } from '../core/map';
 import type { RunPhase } from '../core/run';
 import { clearSavedRun, saveRun, type RunStore, type SavedRun } from '../core/saveRun';
 import { Tower } from '../entities/Tower';
@@ -33,6 +34,7 @@ export class RunSave {
       seed: run.seed,
       cols: this.game.board.map.cols,
       rows: this.game.board.map.rows,
+      bends: mapExtraBends(this.game.board.map),
       gold: run.gold,
       lives: run.lives,
       wave: run.wave,
