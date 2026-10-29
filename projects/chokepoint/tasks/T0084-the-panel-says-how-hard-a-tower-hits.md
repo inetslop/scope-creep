@@ -1,12 +1,14 @@
 ---
 id: T0084
 title: The panel says how hard a tower hits
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T23:26:44Z
+claimed_at: 2026-10-29T00:29:09Z
 epic: E4
 ---
 
