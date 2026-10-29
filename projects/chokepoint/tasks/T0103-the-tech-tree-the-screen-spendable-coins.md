@@ -1,12 +1,14 @@
 ---
 id: T0103
 title: "The tech tree: the screen, spendable coins, and the run-start branch"
+assignee: asus
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T08:02:14Z
 epic: E2
 ---
 
