@@ -3,13 +3,11 @@ id: T0212
 title: "The tech tree: the pool branch's third node — Mend"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: [T0153, T0209]
 attempts: 0
 created: 2026-10-29T15:15:13Z
-claimed_at: 2026-10-29T15:35:20Z
 epic: E2
-designer: cachyos-x8664
 ---
 
 ## Goal
@@ -28,3 +26,34 @@ The pool branch gets its third node: a node that unlocks the Mend augment (T0095
 - [ ] Buying it (with Mend in content) pays 30 coins with T0103's pop + chime, shows the owned (yellow border) state, and survives a reload; the Haste and Momentum nodes and their states are untouched.
 - [ ] Unit tests: `POOL_NODES` maps to `[['haste', 25, 'haste'], ['momentum', 30, 'momentum'], ['mend', 30, 'mend']]`; `buyPoolNode` on `mend` refuses unknown/already-owned/unaffordable (29 coins → false, coins unchanged), deducts 30 on success, and saves `mend` alongside `haste` and `momentum` in the purchased list.
 - [ ] The draft side of the gate is T0095's: with `mend` in the purchased list and Mend in the content, the next draft can offer Mend (Epic only); with the node not owned, no draft offers it — node owned iff Mend is rollable.
+
+## Design (architect, cachyos-x8664)
+
+### Files
+- edit `src/content/tech/pool.ts` — add the third `POOL_NODES` entry and update the "Two nodes for now" doc comment.
+- edit `tests/core/tech.test.ts` — update the three pool-row tests (row map, buy refusals, purchase).
+
+### Interfaces
+No new types or functions — `POOL_NODES` already is `readonly PoolNode[]` with `{ id, name, line, price, unlocks }`, `buyPoolNode(store, id)` is generic over `POOL_NODES`, and `TechScene` maps `POOL_NODES` and gates each node against the `AUGMENTS` index per-node (`unlocks` id in content?) — so nothing else changes. The new entry is exactly:
+
+```ts
+{ id: 'mend', name: 'Mend', line: 'unlocks the Mend augment in the draft', price: 30, unlocks: 'mend' },
+```
+
+### Steps
+1. In `src/content/tech/pool.ts`, after the `momentum` line of `POOL_NODES`, add the line above; change the comment `Two nodes for now: Haste and Momentum, each adding its augment to the draft.` to say three nodes (Haste, Momentum and Mend). Do not touch `src/core/tech.ts`, `src/scenes/TechScene.ts` or `src/ui/` — the row, card look, states, chime, pop and layout (narrow: `Math.ceil(3/2)` grid rows, odd last card centered at `x = 0`; wide: three cards at 172 spacing) all already ride on the mapping.
+2. In `tests/core/tech.test.ts` update the three pool tests, keeping their names honest:
+   - `the pool row is two nodes: Haste at 25 and Momentum at 30, each unlocking its augment` → rename to three nodes and expect `POOL_NODES.map((n) => [n.id, n.price, n.unlocks])` toEqual `[['haste', 25, 'haste'], ['momentum', 30, 'momentum'], ['mend', 30, 'mend']]`.
+   - `a pool node buys only when it is known, unowned and affordable` — add the mend cases beside the momentum ones: `const brokeM = withCoins(29); expect(buyPoolNode(brokeM, 'mend')).toBe(false); expect(loadProfile(brokeM).coins).toBe(29);` and `const ownedM = withCoins(60, ['mend']); expect(buyPoolNode(ownedM, 'mend')).toBe(false); expect(loadProfile(ownedM).coins).toBe(60);` (unknown id is already covered by `'nope'`).
+   - `a pool purchase deducts exactly the price and saves the id alongside the run-start ones` — append: `const store3 = withCoins(85, ['haste', 'momentum']); expect(buyPoolNode(store3, 'mend')).toBe(true); expect(loadProfile(store3).coins).toBe(55); expect(loadProfile(store3).purchased).toEqual(['haste', 'momentum', 'mend']);`
+3. Run `npm run check`.
+
+### Pitfalls
+- The id must be exactly `mend` (equals the augment id — T0095's draft gate reads this id from `profile.purchased`); renaming it breaks the gate.
+- Price 30 (not 25 — that is Haste's); `unlocks: 'mend'` (not a different string); `requires` stays out — pool nodes have no prerequisites.
+- Do not change `refresh()`/`buy()` in TechScene: while Mend is not in `AUGMENTS` the node is already dimmed ("not in the game yet", no price), disabled, and `buy()` early-returns before any chime or coin change; once T0095 lands, the node rides on the existing gate.
+- Layout is data-driven: do not hardcode row counts or card positions anywhere.
+- Haste (T0152) and Momentum (T0064) augments may not be in content either — their nodes ride the same per-node gate; this task adds no gate logic.
+
+### Tests
+Extend `tests/core/tech.test.ts` as in Step 2 (the acceptance-criteria unit tests live there). No new test file.
