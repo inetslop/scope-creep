@@ -1,5 +1,5 @@
 ---
-id: T0074
+id: T0150
 title: Chain leaps once, plus one per extra Chain
 size: S
 priority: 1
