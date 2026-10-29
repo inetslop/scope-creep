@@ -1,12 +1,14 @@
 ---
 id: T0232
 title: Remove the Stay put button
+assignee: yoga
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T22:04:07Z
+claimed_at: 2026-10-29T22:13:56Z
 ---
 
 ## Goal
