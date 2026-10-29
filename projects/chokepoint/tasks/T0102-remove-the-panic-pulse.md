@@ -1,12 +1,14 @@
 ---
 id: T0102
 title: Remove the panic pulse
+assignee: narcissus
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T07:01:07Z
+claimed_at: 2026-10-29T08:14:30Z
 ---
 
 ## Goal
