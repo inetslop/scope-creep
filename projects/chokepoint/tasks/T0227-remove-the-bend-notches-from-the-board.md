@@ -3,10 +3,12 @@ id: T0227
 title: Remove the bend notches from the board
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T17:59:52Z
+claimed_at: 2026-10-29T18:00:07Z
+designer: yoga
 ---
 
 ## Goal
