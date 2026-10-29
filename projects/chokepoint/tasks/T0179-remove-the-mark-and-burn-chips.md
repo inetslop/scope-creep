@@ -4,11 +4,12 @@ title: "Remove the status chips over enemies: mark, burn, slow, ramp"
 assignee: asus
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T12:21:52Z
 claimed_at: 2026-10-29T14:44:31Z
+finished_at: 2026-10-29T14:56:30Z
 ---
 
 ## Goal
@@ -65,3 +66,23 @@ None. No types or signatures change.
 
 ### Tests
 none
+
+## Result (attempt 1, asus)
+
+Removed the four duplicate status chips (mark, burn, slow, ramp) that floated over enemy tokens. Deleted the four hook files in `src/systems/enemyHooks/` and removed their imports and `ENEMY_HOOKS` list entries from `index.ts`; every other hook and all the original markers in `enemyMarks.ts` (chevron, circling dash, frost ring, speed ticks) stay exactly as they were. Verified with a full check and a desktop+mobile smoke run.
+
+- Self-review: APPROVE
+- Time: 12.0 min
+- Deleted src/systems/enemyHooks/markTick.ts, as the agent asked.
+- Deleted src/systems/enemyHooks/burnTick.ts, as the agent asked.
+- Deleted src/systems/enemyHooks/slowTick.ts, as the agent asked.
+- Deleted src/systems/enemyHooks/rampTick.ts, as the agent asked.
+
+```
+.../game/src/systems/enemyHooks/burnTick.ts        | 57 ---------------------
+ .../game/src/systems/enemyHooks/index.ts           |  8 ---
+ .../game/src/systems/enemyHooks/markTick.ts        | 57 ---------------------
+ .../game/src/systems/enemyHooks/rampTick.ts        | 58 ----------------------
+ .../game/src/systems/enemyHooks/slowTick.ts        | 57 ---------------------
+ 5 files changed, 237 deletions(-)
+```
