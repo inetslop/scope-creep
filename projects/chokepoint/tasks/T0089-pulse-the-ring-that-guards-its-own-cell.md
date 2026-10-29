@@ -3,11 +3,13 @@ id: T0089
 title: "Pulse: the ring that guards its own cell"
 size: L
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T00:51:07Z
+claimed_at: 2026-10-29T00:52:17Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
