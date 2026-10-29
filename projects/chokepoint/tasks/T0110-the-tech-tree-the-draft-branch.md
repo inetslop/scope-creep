@@ -3,11 +3,13 @@ id: T0110
 title: "The tech tree: the draft branch"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0103]
 attempts: 0
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T07:44:11Z
 epic: E2
+designer: cachyos-x8664
 ---
 
 ## Goal
