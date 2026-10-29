@@ -14,7 +14,7 @@ describe('planWave', () => {
         expect(def.fromWave).toBeLessThanOrEqual(wave);
         expect(s.delaySec).toBeGreaterThanOrEqual(0);
         // Splitters and Haulers are mixed in on top of the budget, like the rampers and dashing ones.
-        if (s.enemy !== 'splitter' && s.enemy !== 'hauler' && s.enemy !== 'mute' && s.enemy !== 'bulwark') spent += def.threat;
+        if (s.enemy !== 'splitter' && s.enemy !== 'hauler' && s.enemy !== 'mute' && s.enemy !== 'bulwark' && s.enemy !== 'ward') spent += def.threat;
       }
       expect(spent).toBeLessThanOrEqual(waveBudget(wave));
     }
@@ -108,6 +108,14 @@ describe('planWave', () => {
       const expected = wave >= 12 && (wave - 12) % 4 === 0 ? 1 : 0;
       expect(plan.spawns.filter((s) => s.enemy === 'bulwark').length).toBe(expected);
       if (expected === 1) expect(plan.spawns.some((s) => s.enemy !== 'bulwark')).toBe(true); // never a Bulwark-only wave
+    }
+  });
+
+  it('sends exactly one Ward on 15, 25, 30, ... — wave 20 is the boss slot, a quiet wave keeps it', () => {
+    for (let wave = 1; wave <= 40; wave++) {
+      const plan = planWave(wave, new Rng(wave), ENEMIES);
+      const expected = wave >= 15 && wave % 5 === 0 && wave !== 20 ? 1 : 0;
+      expect(plan.spawns.filter((s) => s.enemy === 'ward').length).toBe(expected);
     }
   });
 

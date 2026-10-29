@@ -9,6 +9,7 @@ import { mute } from './mute';
 import { splinter } from './splinter';
 import { splitter } from './splitter';
 import { sprinter } from './sprinter';
+import { ward } from './ward';
 
 /** Every enemy type. Waves draw from the ones whose fromWave has been reached. */
 export const ENEMIES: readonly EnemyDef[] = [
@@ -20,6 +21,7 @@ export const ENEMIES: readonly EnemyDef[] = [
   splitter,
   hauler,
   mute,
+  ward,
   bulwark,
   splinter,
 ];

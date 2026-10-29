@@ -47,6 +47,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
     if (!muted && g.towers.towers.some((t) => t.jammed)) return 'a tower is jammed with no Mute on the road';
     return null;
   }],
+  ['ward.control', (g) => (g.enemies.all.some((e) => e.active && e.def.id === 'ward' && (e.slowPct > 0 || e.rootLeft > 0 || e.pushLeft > 0)) ? 'a Ward is slowed, rooted or pushed' : null)],
   ['pushWindup.valid', (g) => g.windup.broken()],
   ['hand.selection', (g) => g.building.brokenSelection()],
   // The clean wave's chip keeps phase 'draft' with an empty offer for a second, so check while the draft overlay is up (the offer is filled before it launches).

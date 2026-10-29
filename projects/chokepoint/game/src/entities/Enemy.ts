@@ -210,6 +210,7 @@ export class Enemy extends Phaser.GameObjects.Image {
 
   /** Slows it by `pct` for `sec` seconds; a weaker slow doesn't replace a stronger one. */
   slow(pct: number, sec: number): void {
+    if (this.def.ignoresControl) return;
     if (pct < this.slowPct) return;
     this.slowPct = pct;
     this.slowLeft = Math.max(this.slowLeft, sec);
@@ -217,6 +218,7 @@ export class Enemy extends Phaser.GameObjects.Image {
 
   /** Roots it: fully stopped for `sec` seconds, unless it is rooted already or shrugs roots off (core/root.ts). */
   root(sec: number): void {
+    if (this.def.ignoresControl) return;
     applyRoot(this, sec);
   }
 
@@ -230,7 +232,7 @@ export class Enemy extends Phaser.GameObjects.Image {
 
   /** Queues a slide back along the road by `units` board units (Push); advance() consumes it. */
   pushBack(units: number): void {
-    if (!this.active || units <= 0) return;
+    if (!this.active || this.def.ignoresControl || units <= 0) return;
     this.pushLeft += units;
   }
 

@@ -27,6 +27,8 @@ export interface EnemyDef {
   speedRamp?: { perHit: number; max: number };
   /** The dash cycle (Dasher): crawl for `crawlSec`, stop for `pauseSec` (its white telegraph is the first half), then surge `dashCells` cells in `dashSec`. */
   dashCycle?: { crawlSec: number; pauseSec: number; dashCells: number; dashSec: number };
+  /** Ignores all control: Frost slow, Anchor root, Push gusts and pushes, both forms. */
+  ignoresControl?: boolean;
   /** When it dies, it splits into two of this enemy: one 0.25 cells ahead of the kill, one behind (core/split.ts). */
   splitsInto?: string;
   /** Multiplies damage from a directed shot that strikes its front (flying against its travel); the rear and flightless hits go whole (core/plate.ts). */

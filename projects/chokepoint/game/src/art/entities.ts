@@ -34,6 +34,15 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
         ctx.fillStyle = rgba(PALETTE.yellow, 1);
         ctx.fill();
       }
+      if (e.id === 'ward') {
+        // The Ward's armor: one thin ring around its edge, in the side-face red. Still: painted into the
+        // texture, never tweened or rotated (its side face and shadow must stay at the bottom).
+        ctx.strokeStyle = rgba(deepOf(e.look.color), 1);
+        ctx.lineWidth = Math.max(1, r * 0.16);
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2 - depth / 2, r * 0.88, 0, Math.PI * 2);
+        ctx.stroke();
+      }
     });
   }
   const plinth = CELL * 0.4;

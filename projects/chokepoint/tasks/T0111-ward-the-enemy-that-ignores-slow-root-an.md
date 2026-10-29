@@ -4,11 +4,12 @@ title: "Ward: the enemy that ignores slow, root and push"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T08:18:07Z
 claimed_at: 2026-10-29T14:45:17Z
+finished_at: 2026-10-29T15:16:37Z
 ---
 
 ## Goal
@@ -71,3 +72,22 @@ The enemy queue's next entry (the Bulwark, T0102, is up to land first): a plain 
 - `tests/content.test.ts` validates the new def (unique id, fromWave, threat > 0) automatically.
 - New `waves.test.ts` case per step 8; existing Hauler/Mute tests stay green (Ward never drawn from the budget, waves 1–14 plans unchanged).
 - `npm run check` (typecheck + lint + unit) and `npm run smoke` (desktop + phone) must pass; at smoke, watch wave 15 first spawn for the "Ward" name chip and the ringed token in preview and on the road.
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the Ward enemy — a plain Block-sized red walker that ignores all control (Frost slow, Anchor root, Push gusts and per-hit pushes, both forms) while still taking full damage from every source. New def in `src/content/enemies/ward.ts` (hp 180, speed 0.9, gold 10, 1 life, threat 1 placeholder, fromWave 15, `ignoresControl`), registered in `src/content/enemies/index.ts`; `ignoresControl` field on `EnemyDef` (`src/content/types.ts`) with guards in `src/entities/Enemy.ts` (`slow`/`root`/`pushBack`); reserved one-per-wave on 15/25/30… (wave 20 left for the E5 boss) in `src/core/waves.ts` with the walkers filter + quiet-keep; the still armor ring painted in `src/art/entities.ts`; `ward.control` invariant in `src/debug/runChecks.ts`; reservation test in `tests/core/waves.test.ts`. `npm run check` (241 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 31.3 min
+
+```
+projects/chokepoint/game/src/art/entities.ts          |  9 +++++++++
+ projects/chokepoint/game/src/content/enemies/index.ts |  2 ++
+ projects/chokepoint/game/src/content/enemies/ward.ts  | 16 ++++++++++++++++
+ projects/chokepoint/game/src/content/types.ts         |  2 ++
+ projects/chokepoint/game/src/core/waves.ts            |  6 +++++-
+ projects/chokepoint/game/src/debug/runChecks.ts       |  1 +
+ projects/chokepoint/game/src/entities/Enemy.ts        |  4 +++-
+ projects/chokepoint/game/tests/core/waves.test.ts     | 10 +++++++++-
+ 8 files changed, 47 insertions(+), 3 deletions(-)
+```
