@@ -3,13 +3,11 @@ id: T0113
 title: "The burn shows on the enemy: a chip over the burning"
 size: S
 priority: 3
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-29T09:55:07Z
-claimed_at: 2026-10-29T10:15:44Z
 epic: E4
-designer: baby-mama
 ---
 
 ## Goal
@@ -30,3 +28,22 @@ A burning enemy (Ember, T0028) shows its burn on itself: a small chip in Ember's
 - [ ] Re-ignition refreshes the burn without the chip blipping.
 - [ ] A marked-and-burning enemy wears both chips (mark's pink, burn's orange) without overlap.
 - [ ] Non-burning enemies are byte-identical to today; no sound, no new input.
+
+## Design (architect, baby-mama)
+
+### Files
+- create `src/systems/enemyHooks/burnTick.ts` - the burn chip: one orange chip above any burning enemy (model: `markTick.ts`, T0099)
+- edit `src/systems/enemyHooks/index.ts` - one import line, one list line
+### Interfaces
+`export const burnTick: MakeEnemyHook` - a display hook; no other types, no content, no core.
+### Steps
+1. Create `src/systems/enemyHooks/burnTick.ts`, copy of `markTick.ts` with these exact differences: chip fill colors `PALETTE.orangeDeep` then `PALETTE.orange` (mark uses `pinkDeep`/`pink`); comment reads "A burning enemy wears Ember's own orange chip, the mark tick's chip look, for as long as the burn is live (time out, refresh, or a leap); the mark's pink keeps its spot and this one shifts right beside it, never up." In `update()`, the skip test is `if (!e.active || e.burn.left <= 0)` (mark's `e.markPct <= 0`); the position line is `g.setPosition(e.x + (e.markPct > 0 ? W + 6 : 0), e.y - e.def.look.size * 64 - LIFT);` - centered above the token when it is the only chip, offset `W + 6` board units to the right when the mark tick's pink is there, same `y` as the mark's (the same one-line `setPosition` formula, never a higher second layer). `onKill({ enemy }) { drop(enemy); }` and `onLeak(enemy) { drop(enemy); }` exactly as markTick.
+2. Edit `src/systems/enemyHooks/index.ts`: add `import { burnTick } from './burnTick';` after the `burnLeap` import (line 1), and `burnTick,` after `burnLeap,` in `ENEMY_HOOKS` (line 27) - beside the other burn hook.
+### Pitfalls
+- Pooled `Enemy` reuse: the chips map is keyed by object; `drop` on `onKill`/`onLeak` plus the `!e.active` drop in `update` cover re-spawn, and `spawn()` resets `burn` to `left: 0` (Enemy.ts:88-90), so a respawned enemy can never wear a stale chip.
+- Jumped burns need no special case: the chip tracks `burn.left > 0`; `burnLeap.onKill` calls `best.ignite(...)` on the same kill, so the new host shows its chip on the very next `update`, and the dying enemy's chip is dropped by this hook's `onKill` that same frame.
+- Re-ignition keeps `burn.left > 0` (the chip map entry is never dropped while burning), so it never blips off and back.
+- Display only: no sound, no input, no core rule, no pause line; non-burning enemies get no Graphics at all.
+### Tests
+none
+DEPENS_ON: none
