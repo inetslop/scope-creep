@@ -3,10 +3,12 @@ id: T0151
 title: "The four-card draft: the card lines clear their icons"
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T10:13:21Z
+claimed_at: 2026-10-29T10:33:34Z
+designer: baby-mama
 ---
 
 ## Goal
