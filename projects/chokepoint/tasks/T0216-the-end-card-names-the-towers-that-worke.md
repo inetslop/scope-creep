@@ -3,10 +3,12 @@ id: T0216
 title: "The end card names the towers that worked: kills by tower"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T15:52:06Z
+claimed_at: 2026-10-29T16:16:38Z
+designer: inet-racing
 ---
 
 ## Goal
