@@ -1,12 +1,14 @@
 ---
 id: T0111
 title: "Ward: the enemy that ignores slow, root and push"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T08:18:07Z
+claimed_at: 2026-10-29T14:45:17Z
 ---
 
 ## Goal
