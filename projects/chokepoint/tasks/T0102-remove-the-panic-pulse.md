@@ -1,12 +1,14 @@
 ---
 id: T0102
-title: "Remove the panic pulse"
+title: Remove the panic pulse
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T07:01:07Z
+claimed_at: 2026-10-29T07:01:47Z
+designer: narcissus
 ---
 
 ## Goal
