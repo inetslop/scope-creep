@@ -3,10 +3,12 @@ id: T0111
 title: "Ward: the enemy that ignores slow, root and push"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T08:18:07Z
+claimed_at: 2026-10-29T08:38:16Z
+designer: baby-mama
 ---
 
 ## Goal
