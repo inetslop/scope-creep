@@ -1,12 +1,14 @@
 ---
 id: T0108
 title: "Tight waves: some waves come bunched"
+assignee: cachyos-x8664
 size: M
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T08:15:43Z
 ---
 
 ## Goal
