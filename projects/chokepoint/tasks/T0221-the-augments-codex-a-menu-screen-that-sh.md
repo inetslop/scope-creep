@@ -4,11 +4,12 @@ title: "The Augments codex: a menu screen that shows every augment in the pool"
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T16:54:18Z
 claimed_at: 2026-10-29T17:17:33Z
+finished_at: 2026-10-29T17:38:30Z
 epic: E4
 ---
 
@@ -58,3 +59,19 @@ No new types. Everything reuses existing code:
 
 ### Tests
 none
+
+## Result (attempt 1, desktop)
+
+Added the Augments codex: a new `src/scenes/CodexScene.ts` (menu-adjacent overlay in the TechScene pattern — dim shade, one white rounded card with the pool's augments in pool order, each entry showing the draft's own icon, bold name with a purple "Epic" word for Epic-only augments, and the two draft card rows in ink/muted) that grows with its rows and scales to fit the screen (3 columns at ≥740 px, 2 below), with a round ink back button top right that plays the menu blip and returns to the menu. The menu gained an "Augments" button stacked under Tech (Tech's look, ghost/hint rows shifted down to make room), and `CodexScene` is registered in `keys.ts` and `main.ts`. It reads `AUGMENTS` and owns no state; nothing in-run changed. `npm run check` passes (typecheck, lint, 257 tests) and `npm run smoke` passes on desktop and mobile; the back-arrow glyph was mirrored left because the design's coordinates pointed right.
+
+- Self-review: REJECT
+- Time: 21.0 min
+- Self-review concerns: The new menu row overflows 1280x720 when both Resume and Ghost are present — ghost button bottom lands at 734.5px (screen is 720) and ghostLine + the "Enter or Space" hint are fully off-screen (before the change this state fit with 14.5px headroom); the road is already at its 0.35 minimum scale so no `room` adjustment helps, and the fix requires reworking the menu's vertical layout, which is beyond a small targeted edit to this task.
+
+```
+projects/chokepoint/game/src/main.ts              |   3 +-
+ projects/chokepoint/game/src/scenes/CodexScene.ts | 128 ++++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/MenuScene.ts  |  14 ++-
+ projects/chokepoint/game/src/scenes/keys.ts       |   1 +
+ 4 files changed, 141 insertions(+), 5 deletions(-)
+```

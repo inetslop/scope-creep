@@ -9,6 +9,7 @@ export const SCENES = {
   boot: 'Boot',
   menu: 'Menu',
   tech: 'Tech',
+  codex: 'Codex',
   game: 'Game',
   hud: 'Hud',
   draft: 'Draft',

@@ -100,6 +100,10 @@ export class MenuScene extends Phaser.Scene {
     const dot = this.add.circle(98, -18, 3, PALETTE.yellow).setVisible(nodeInReach(p.purchased, p.coins)); // top-right corner, while a node is in reach
     tech.container.add(dot);
     const techLine = this.add.text(0, 0, 'spend your coins', textStyle(14, PALETTE.muted)).setOrigin(0.5);
+    const augments = makeButton(this, 0, 0, 'Augments', () => {
+      this.scene.launch(SCENES.codex);
+      this.scene.pause();
+    }, { width: 220, height: 60, fontSize: 24, radius: 30 });
     const hint = this.add.text(0, 0, 'Enter or Space', textStyle(14, PALETTE.faint)).setOrigin(0.5);
 
     // Entrances: the title drops in with a bounce, the rest fades up after it; Play breathes.
@@ -110,6 +114,7 @@ export class MenuScene extends Phaser.Scene {
     fadeIn.push(button.container);
     fadeIn.push(tech.container);
     fadeIn.push(techLine);
+    fadeIn.push(augments.container);
     if (ghost && ghostLine) {
       fadeIn.push(ghost.container);
       fadeIn.push(ghostLine);
@@ -128,7 +133,7 @@ export class MenuScene extends Phaser.Scene {
     const layout = (width: number, height: number): void => {
       const cx = width / 2;
       const extra = resume ? 78 : 0; // the Resume button above Play
-      const room = extra + 91 + (ghost ? 76 : 0); // the Tech button's line below Play, plus the Ghost button's line
+      const room = extra + 91 + 44 + (ghost ? 76 : 0); // the Tech and Augments lines below Play, plus the Ghost button's line
       const k = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width, Math.max(0.35, (height - 460 - room) / MENU_ROAD_SIZE.height));
       const block = MENU_ROAD_SIZE.height * k + 460 + room;
       const top = Math.max(16, (height - block) / 2);
@@ -148,11 +153,12 @@ export class MenuScene extends Phaser.Scene {
       button.container.setPosition(cx, y + 290 + extra);
       tech.container.setPosition(cx, y + 366 + extra);
       techLine.setPosition(cx, y + 410 + extra);
+      augments.container.setPosition(cx, y + 442 + extra);
       if (ghost && ghostLine) {
-        ghost.container.setPosition(cx, y + 442 + extra);
-        ghostLine.setPosition(cx, y + 486 + extra);
+        ghost.container.setPosition(cx, y + 518 + extra);
+        ghostLine.setPosition(cx, y + 562 + extra);
       }
-      hint.setPosition(cx, y + (ghost ? 510 : 434) + extra);
+      hint.setPosition(cx, y + (ghost ? 586 : 486) + extra);
     };
     layout(viewSize(this).width, viewSize(this).height);
     onResize(this, layout);
