@@ -3,11 +3,13 @@ id: T0082
 title: "The run's richest minute"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T23:26:44Z
+claimed_at: 2026-10-29T00:28:25Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
