@@ -4,11 +4,12 @@ title: "A new look for the Beam tower: a tower with a circle on top"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-10-29T10:40:00Z
 claimed_at: 2026-10-29T20:38:57Z
+finished_at: 2026-10-29T20:57:40Z
 epic: E4
 ---
 
@@ -115,3 +116,18 @@ In `muzzle()`, first line of the body: `if (this.disc) return { x: this.x, y: th
 ## Attempt 1 released (baby-mama)
 
 The machine was paused for over 60 minutes holding this task, which kept its files locked for the others. Requeued.
+
+## Result (attempt 2, desktop)
+
+The Beam tower now has a new look: a short thick post in Beam's colour rising from the plinth, topped by a large orb (~60% of the plinth's width) with a flat white centre disc, replacing the old flat slab head (its texture and `barrel:beam:` key are gone). The beam line now leaves the orb's centre, the centre disc pulses (1.0→1.15→1.0, 0.4 s sine) only while a beam is on (still when jammed or targetless), and each added Beam shows as a flat tick evenly spaced around the orb's outer edge. Changes: `src/art/barrels.ts` (new orb/disc painters + constants, beamHead removed), `src/entities/Tower.ts` (orb+disc in `buildGun`, `muzzle` at orb centre, `setBeamOn`, tween cleanup on rebuild/destroy), `src/entities/towerLook.ts` (beam branch drops beamHead), `src/systems/BeamSystem.ts` (drives `setBeamOn`, no more head rotation). One deviation from the design: `BEAM_DISC_TEXTURE` is not imported in Tower.ts since it would be unused there (lint error).
+
+- Self-review: APPROVE
+- Time: 18.7 min
+
+```
+projects/chokepoint/game/src/art/barrels.ts        | 54 +++++++++++++++++-----
+ projects/chokepoint/game/src/entities/Tower.ts     | 23 ++++++++-
+ projects/chokepoint/game/src/entities/towerLook.ts |  6 +--
+ projects/chokepoint/game/src/systems/BeamSystem.ts |  3 +-
+ 4 files changed, 70 insertions(+), 16 deletions(-)
+```

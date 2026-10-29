@@ -4,7 +4,7 @@ import { PALETTE } from '../content/palette';
 import { towerColor, towerSpec, type TowerSpec } from '../core/augments';
 import type { AugmentCopy } from '../content/types';
 import type { Cell } from '../core/map';
-import { barrelTexture } from '../art/barrels';
+import { BEAM_ORB_LIFT, barrelTexture, beamDiscTexture, orbTexture } from '../art/barrels';
 import { ART_SCALE, artScale, TOWER_BASE, TOWER_BODY, towerTexture } from '../art/textures';
 import { barrelCount, barrelLook, drawDecorations, pipColor } from './towerLook';
 
@@ -50,6 +50,9 @@ export class Tower extends Phaser.GameObjects.Image {
   /** Length of the barrels in board units, and their side offsets (for the muzzles). */
   private barrelLength = 0;
   private barrelOffsets: number[] = [];
+  /** The orb's white centre disc, on a beam tower: it pulses while the beam is on. */
+  private disc: Phaser.GameObjects.Image | undefined;
+  private beamOn = false;
 
   constructor(scene: Phaser.Scene, x: number, y: number, cell: Cell) {
     super(scene, x, y - BODY_LIFT, towerTexture(undefined));
@@ -112,9 +115,17 @@ export class Tower extends Phaser.GameObjects.Image {
   /** The barrels side by side, looking the way the spec says. */
   private buildGun(spec: TowerSpec, color: ReturnType<typeof towerColor>): void {
     this.gun.removeAll(true);
+    if (this.disc) { this.scene.tweens.killTweensOf(this.disc); this.disc = undefined; }
+    this.beamOn = false;
     this.barrelOffsets = [];
     const count = barrelCount(spec);
     if (count === 0) {
+      this.barrelLength = 0;
+      return;
+    }
+    if (spec.kind === 'beam') { // never fires: a post with an orb on top, the line leaves the orb's centre
+      this.gun.add(artScale(this.scene.add.image(0, 0, orbTexture(this.scene, color, spec.beamExtras.length))));
+      this.disc = artScale(this.scene.add.image(0, -BEAM_ORB_LIFT, beamDiscTexture(this.scene)));
       this.barrelLength = 0;
       return;
     }
@@ -156,6 +167,7 @@ export class Tower extends Phaser.GameObjects.Image {
 
   /** Where shot number `i` leaves: the tip of its barrel (they take turns past the last one). */
   muzzle(i = 0): { x: number; y: number } {
+    if (this.disc) return { x: this.x, y: this.y - BEAM_ORB_LIFT };
     const offset = this.barrelOffsets.length ? this.barrelOffsets[i % this.barrelOffsets.length]! : 0;
     const along = this.aim - Math.PI / 2;
     const side = this.aim;
@@ -163,6 +175,14 @@ export class Tower extends Phaser.GameObjects.Image {
       x: this.x + Math.cos(along) * this.barrelLength + Math.cos(side) * offset,
       y: this.y + Math.sin(along) * this.barrelLength + Math.sin(side) * offset,
     };
+  }
+
+  /** The orb's centre disc pulses while a beam is on, and stays still when it is off. */
+  setBeamOn(on: boolean): void {
+    if (!this.disc || this.beamOn === on) return;
+    this.beamOn = on;
+    if (on) this.scene.tweens.add({ targets: this.disc, scale: ART_SCALE * 1.15, duration: 400, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 });
+    else { this.scene.tweens.killTweensOf(this.disc); this.disc.setScale(ART_SCALE); }
   }
 
   /** A quick squash when it attacks (body and barrels, not the plinth); snappier when it attacks fast. */
@@ -204,6 +224,7 @@ export class Tower extends Phaser.GameObjects.Image {
 
   destroy(fromScene?: boolean): void {
     if (this.pipPop) { this.scene.tweens.killTweensOf(this.pipPop); this.pipPop.destroy(); this.pipPop = undefined; }
+    if (this.disc) { this.scene.tweens.killTweensOf(this.disc); this.disc = undefined; }
     this.base.destroy();
     this.gun.destroy();
     this.deco.destroy();

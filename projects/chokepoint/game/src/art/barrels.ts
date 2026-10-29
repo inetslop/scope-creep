@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
 import { CELL } from '../config';
 import { deepOf, PALETTE, rgba, type Bright } from '../content/palette';
-import { roundRectPath, shapePath } from './paint';
+import { paintToken, roundRectPath, setShadow, shapePath } from './paint';
 import { paintTexture, TOWER_BODY } from './textures';
 
 /** Barrel looks, as multiples of a plain Bolt barrel (entities/towerLook.ts works them out). */
@@ -18,9 +18,7 @@ export interface BarrelLook {
   emberTicks?: number;
   /** A small ember dot at the muzzle: the burn is the tower's own attack (Ember first). */
   emberMuzzle?: boolean;
-  /** A short, flat, wide head lying on the plinth: the beam never fires (Beam first). */
-  beamHead?: boolean;
-  /** Small flat ticks beside the head or the barrels, one per Beam added. */
+  /** Small flat ticks beside the barrels, one per Beam added. */
   beamTicks?: number;
   /** Short ticks in the tower's own color on the head face, one per Spray copy (the split grows). */
   sprayTicks?: number;
@@ -36,21 +34,18 @@ export function barrelTexture(scene: Phaser.Scene, color: Bright | undefined, lo
   const bands = Math.max(0, Math.min(3, Math.round(look.bands)));
   const emberTicks = Math.max(0, Math.round(look.emberTicks ?? 0));
   const emberMuzzle = look.emberMuzzle ?? false;
-  const beamHead = look.beamHead ?? false;
   // A tower holds at most three added augments, so at most three ticks.
   const beamTicks = Math.max(0, Math.min(3, Math.round(look.beamTicks ?? 0)));
   // At most four Sprays fit in a tower, so at most four ticks.
   const sprayTicks = Math.max(0, Math.min(4, Math.round(look.sprayTicks ?? 0)));
-  const key = beamHead
-    ? `barrel:beam:${color ?? 'empty'}:${beamTicks}`
-    : `barrel:${color ?? 'empty'}:${length}:${width}:${look.bulb ? 'b' : 'p'}:${bands}:${emberTicks}:${sprayTicks}:${emberMuzzle ? 'e' : 'n'}:${beamTicks}`;
+  const key = `barrel:${color ?? 'empty'}:${length}:${width}:${look.bulb ? 'b' : 'p'}:${bands}:${emberTicks}:${sprayTicks}:${emberMuzzle ? 'e' : 'n'}:${beamTicks}`;
   const r = TOWER_BODY * CELL;
   const len = r * 1.6 * length;
   const w = r * 0.6 * width;
   const bulb = look.bulb ? w * 0.95 : 0;
-  // The beam ticks sit beside the head or the barrel: the texture leaves them room, or they end in a hard edge.
+  // The beam ticks sit beside the barrel: the texture leaves them room, or they end in a hard edge.
   const side = beamTicks > 0 ? 6 + (beamTicks - 1) * 10 + 8 : 0;
-  const size = beamHead ? (w + 30) * 2 : Math.max((len + bulb + 4) * 2, (Math.max(w, len) + side + 4) * 2);
+  const size = Math.max((len + bulb + 4) * 2, (Math.max(w, len) + side + 4) * 2);
   paintTexture(scene, key, size, size, (ctx) => {
     const c = size / 2;
     const deep = rgba(color ? deepOf(color) : PALETTE.rockDeep, 1);
@@ -89,7 +84,7 @@ export function barrelTexture(scene: Phaser.Scene, color: Bright | undefined, lo
       ctx.fillStyle = rgba(PALETTE.orangeDeep, 1);
       ctx.fill();
     }
-    // Beam ticks: one small flat dash per Beam added, beside the head or the barrel, stacked 10 apart.
+    // Beam ticks: one small flat dash per Beam added, beside the barrel, stacked 10 apart.
     for (let i = 0; i < beamTicks; i++) {
       const at = c - len / 2 + (i - (beamTicks - 1) / 2) * 10;
       roundRectPath(ctx, c + w / 2 + 6, at - 2, 8, 4, 2);
@@ -98,4 +93,41 @@ export function barrelTexture(scene: Phaser.Scene, color: Bright | undefined, lo
     }
   });
   return key;
+}
+
+export const BEAM_ORB_R = 0.24 * CELL;   // orb radius: ~60% of the plinth's width (2*0.4*CELL)
+export const BEAM_ORB_LIFT = 28;         // orb centre above the gun's pivot, board units
+export const BEAM_DISC_TEXTURE = 'barrel:beamDisc';
+
+const BEAM_DISC_R = 0.4 * BEAM_ORB_R; // the white centre disc, ~40% of the orb's diameter
+const BEAM_POST_W = 8;
+export function orbTexture(scene: Phaser.Scene, color: Bright | undefined, ticks: number): string {
+  const n = Math.max(0, Math.min(3, Math.round(ticks)));
+  const key = `barrel:beamOrb:${color ?? 'empty'}:${n}`;
+  beamDiscTexture(scene);
+  const size = Math.ceil((BEAM_ORB_LIFT + BEAM_ORB_R + 12) * 2);
+  paintTexture(scene, key, size, size, (ctx) => {
+    const c = size / 2;
+    const deep = rgba(color ? deepOf(color) : PALETTE.rockDeep, 1);
+    const fill = rgba(color ? PALETTE[color] : PALETTE.faint, 1);
+    const top = c - BEAM_ORB_LIFT - 2, h = BEAM_ORB_LIFT + 6; // post: base hidden behind the body, top inside the orb
+    ctx.save(); setShadow(ctx);
+    roundRectPath(ctx, c - BEAM_POST_W / 2, top + 3, BEAM_POST_W, h, BEAM_POST_W / 2);
+    ctx.fillStyle = deep; ctx.fill(); ctx.restore();
+    roundRectPath(ctx, c - BEAM_POST_W / 2, top, BEAM_POST_W, h, BEAM_POST_W / 2);
+    ctx.fillStyle = fill; ctx.fill();
+    paintToken(ctx, 'circle', c, c - BEAM_ORB_LIFT, BEAM_ORB_R, color ? PALETTE[color] : PALETTE.faint, color ? deepOf(color) : PALETTE.rockDeep, { depth: 4 });
+    for (let i = 0; i < n; i++) { // one flat tick per Beam added, evenly around the orb's outer edge
+      const a = -Math.PI / 2 + (i / n) * Math.PI * 2;
+      ctx.save(); ctx.translate(c, c - BEAM_ORB_LIFT); ctx.rotate(a + Math.PI / 2);
+      roundRectPath(ctx, -2, -(BEAM_ORB_R + 10), 4, 8, 2);
+      ctx.fillStyle = deep; ctx.fill(); ctx.restore();
+    }
+  });
+  return key;
+}
+export function beamDiscTexture(scene: Phaser.Scene): string {
+  const s = Math.ceil((BEAM_DISC_R * 1.2 + 2) * 2);
+  paintTexture(scene, BEAM_DISC_TEXTURE, s, s, (ctx) => { shapePath(ctx, 'circle', s / 2, s / 2, BEAM_DISC_R); ctx.fillStyle = '#ffffff'; ctx.fill(); });
+  return BEAM_DISC_TEXTURE;
 }

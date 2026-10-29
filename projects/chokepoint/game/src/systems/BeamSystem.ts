@@ -71,6 +71,7 @@ export class BeamSystem {
       const wasHumming = this.humming.has(t);
       if (t.jammed) {
         if (wasHumming) { this.sfx?.beamHumStop(t); this.humming.delete(t); }
+        t.setBeamOn(false);
         continue; // a Mute holds it: no attack, no line
       }
       const range = t.spec.range * CELL;
@@ -108,7 +109,6 @@ export class BeamSystem {
       if (mainTarget) {
         if (!held[0]) hook.stats.shotsFired += 1; // a new lock: the tower attacked (the line then sustains)
         this.enemies.beamTick(mainTarget, t.spec.beamDps * m * dt, t);
-        if (t.spec.kind === 'beam') t.aimAt(mainTarget.x, mainTarget.y); // the head tracks its line (no kick: it never fires)
       }
       for (const e of rays) this.enemies.beamTick(e, t.spec.beamDps * m * dt, t);
       for (let i = 0; i < lines.length; i++) {
@@ -132,6 +132,7 @@ export class BeamSystem {
         if (holds && steps) holds[i] = alive ? steps[i]!.hold : EMPTY_BEAM_HOLD;
       }
       this.held.set(t, now);
+      t.setBeamOn(main !== -1); // the orb's disc pulses only while the beam is on
       // The hum follows the line's own visibility: on at the lock, off with no target; a retarget
       // is on→on, so the hum stays up (now[0], not main: a beamTick kill drops the line this frame).
       const on = now[0] !== undefined;
