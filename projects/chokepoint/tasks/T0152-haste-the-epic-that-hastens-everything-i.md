@@ -3,11 +3,13 @@ id: T0152
 title: "Haste: the Epic that hastens everything it touches"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T12:14:31Z
+claimed_at: 2026-10-29T12:14:34Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
