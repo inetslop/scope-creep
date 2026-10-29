@@ -28,6 +28,8 @@ The Epic pool gets the survival axis no other Epic touches: a tower that turns t
 - State: the count and a held pay are run state — they survive a resume (the T0042 pattern) and a new run starts the count fresh.
 - Closest existing augment: Mint (a passive Epic aura that touches the run's economy and never attacks); new is that it pays in **lives** — the first augment that restores lives — and its trigger is the run's total kills, not kills near a spot (Mint) or a wave's result (Momentum).
 
+- **16-cap (the augments module):** the pool caps at 16 augments — after registering, if the pool has more than 16, also remove the first of **Frost, then Rally, then Mint** that is still in the AUGMENTS index (a mechanical deletion, T0192's pattern; the full protocol is in T0064's task) and say which in the result.
+
 ## Acceptance criteria
 - [ ] Mend rolls only as an Epic card, and its draft and tower-panel cards read the two card lines above, both passing the caps in tests/content.test.ts.
 - [ ] A Mend-only tower never fires and deals no damage; its kills line (T0070) reads "kills 0"; it shows the low green disc with one tick per copy.

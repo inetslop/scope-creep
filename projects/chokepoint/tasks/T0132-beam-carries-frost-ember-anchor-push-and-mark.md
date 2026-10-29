@@ -26,6 +26,7 @@ Applies to a tower whose **first** augment is Beam, on every line it holds (the 
 - **Look:** a beam carrying an effect gets a thin second line beside it (2 px, 50% alpha) in the effect augment's own color, one per effect, at most two shown.
 - **Panel:** "its beam slows by 40%", "its beam sets ablaze", "its beam roots for 0.5 s every second", etc.
 - The Ward (T0111, if landed) ignores slow, root and push from beams like from anything else.
+- **16-cap:** if Frost has been removed by the 16-cap protocol (T0064's task — removal order Frost → Rally → Mint) before this builds, the beam carries Ember, Anchor, Push and Mark: drop the Frost clause (its contact slow, its acceptance line and its panel wording) and build against the AUGMENTS index as it is.
 
 ## Acceptance criteria
 - [ ] Beam first + Frost: a held enemy moves at 60% speed while held and for 2 s after; unit-tested.

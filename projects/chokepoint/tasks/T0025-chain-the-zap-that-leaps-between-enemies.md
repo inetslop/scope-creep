@@ -29,6 +29,8 @@ The draft can roll a new augment, Chain: a zap that strikes one enemy and leaps 
 - The leap rule is a pure core function with unit tests (first target = furthest along; each next = nearest unstruck enemy within leap reach; an enemy already struck this attack is skipped; early stop when nothing is in reach). Closest example: the pierce-target function and its tests in the core targeting file (Lance, T0004).
 - The per-leap number is the one the damage-per-second sanity test in the augment tests sees (15 × ~0.83 ≈ 12.5, the same band as the other first augments), so that test should pass unmodified — if it does not, tune the Common values inside the band, never the test's floor. A 3-leap zap being strong against packed waves is the point: that is its role, like Splash's burst.
 
+- **16-cap (the augments module):** the pool caps at 16 augments — after registering, if the pool has more than 16, also remove the first of **Frost, then Rally, then Mint** that is still in the AUGMENTS index (a mechanical deletion, T0192's pattern; the full protocol is in T0064's task) and say which in the result.
+
 ## Acceptance criteria
 - [ ] The draft can roll Chain as Common, Rare and Epic (frame and gem row per T0002); the card shows that tier's damage and cadence; the added line reads "Each attack leaps to 1 more enemy."
 - [ ] A lone Common Chain tower zaps the enemy furthest along, then leaps to the nearest other enemy, then the next: three white zigzag flashes, three hit flashes, 15 damage each.

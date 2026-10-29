@@ -26,7 +26,7 @@ E4's next pool augment — and the first tech-gated one: an Epic-only aura that 
   - Copies: two Hastes in one tower = one aura at +45% to both; three = +60%; additive, no cap.
 - Look: a flat wide red ring at the tower's base (no augment uses red; the draft-card icon is the same red ring, size 0.22); one tick per copy; the ring is 40% alpha while no enemy is inside, full alpha while at least one is, and flashes to full for a ~0.2 s beat each time an enemy enters (the working-aura beat, T0055).
 - The gate (the tech-tree unlock, E2's branch three): Haste is in the content but absent from every draft roll (pre-wave-1, later, reroll, the fourth card) unless the saved profile's purchased list holds the tech node id `haste` (T0153's node). The check runs at every draft roll, so a node bought between runs takes effect from the next draft on. Until T0153 lands the node cannot be bought and Haste never rolls.
-- 16-cap (the augments module): this is the pipeline's 19th augment (14 in + T0025, T0062, T0064, T0095, T0152). The ROADMAP flags the cap: the first task to land past 16 (Momentum, T0064) removes or merges one and says which — the PO's leaning is a Frost + Haste merge (the same enemy-speed stat, opposite signs). If that merge lands before this task builds, Haste is the merged form and this task is re-filed to match; the architect notes the state at design time.
+- 16-cap (the augments module): the pool caps at 16; the protocol is stated in T0064's task (canonical) — after registering, if the pool has more than 16 augments, also remove the first of **Frost, then Rally, then Mint** that is still in the AUGMENTS index (a mechanical deletion, T0192's pattern; a run save referencing the removed id loads as invalid) and say which in the result. Haste's design stands either way: it composes with Frost and Rally present or removed (the stacking lines in the design simply have no partner to stack with).
 
 ## Compared with what exists
 
@@ -126,7 +126,7 @@ for (let i = 0; i < augments.length; i++) {
 12. `tests/core/haste.test.ts`, then `npm run check` and `npm run smoke`.
 
 ### Pitfalls
-- 16-cap state at design time (2026-10-29): 14 augments in the pool; T0025/T0062/T0064/T0095 not landed; the PO-leaning Frost+Haste merge (T0064's cap move) has NOT landed — Frost is intact. Haste lands as the 15th; if that merge lands first, this task is re-filed.
+- 16-cap: the protocol is in the task's Details (T0064's task is the canonical statement): the removal order Frost → Rally → Mint is consumed by whichever registration lands past 16. Build against the AUGMENTS index as it is at build time — if Frost or Rally is already gone, Haste's design stands unchanged (its stacking lines simply have no partner).
 - Byte-identical: `x * (1 + 0)` and `x + 0` are exact in IEEE 754 — keep the additive form exactly; never rewrite it as a product (`1.1 × 1.3 = 1.43` would break the 40% acceptance number) or "simplify" away the `+ 0`.
 - Never mutate `Enemy.speed` for haste: the `enemies.speedCap` invariant and Sprinter's ramp read it; haste is only the multiplier in `advance()`.
 - `hastePct` must be reset in `spawn()` (pooled enemies) and the beat map lives in the HasteSystem closure (per-run).

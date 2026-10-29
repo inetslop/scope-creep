@@ -25,6 +25,8 @@ A new pool augment with a new kind of attack: a trap that waits on the road and 
 - Draft: Trap joins the pool at all three tiers, offered from the opening draft (like Lead, Ember, Push, Beam and Ricochet), rolling at the normal tier odds (T0002/T0011); the card's frame, gems and tier word are as usual.
 - Closest example to model: Anchor (T0023) — a pool augment with a cadence and an added form on the host's attack; here the cadence pulse is a triggered spring and the added form is a kill-lay.
 
+- **16-cap (the augments module):** the pool caps at 16 augments — after registering, if the pool has more than 16, also remove the first of **Frost, then Rally, then Mint** that is still in the AUGMENTS index (a mechanical deletion, T0192's pattern; the full protocol is in T0064's task) and say which in the result.
+
 ## Acceptance criteria
 - [ ] A new tower with Trap first is red, shows the trap-disc shape, and lays a red disc on the nearest road cell; the disc springs (white ring pulse + chips) when an enemy comes within 0.6 cells, dealing 14/18/24 damage to everything within 1.2/1.3/1.4 cells by tier, and re-lays on the 3.0/2.5/2.0 s cadence.
 - [ ] Any tower with an added Trap lays a disc at the kill spot when it makes kills (max 2 active per tower: home + newest kill-lay); a kill-laid disc fades after 6 s if untriggered and springs with the same values.
