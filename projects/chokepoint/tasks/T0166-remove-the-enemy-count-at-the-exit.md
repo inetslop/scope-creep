@@ -4,11 +4,12 @@ title: Remove the enemy count at the exit
 assignee: narcissus
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T12:15:39Z
 claimed_at: 2026-10-29T16:41:11Z
+finished_at: 2026-10-29T16:54:37Z
 ---
 
 ## Goal
@@ -56,3 +57,18 @@ None — pure removal, no signatures change.
 
 ### Tests
 none (UI removal).
+
+## Result (attempt 1, narcissus)
+
+Removed the duplicate enemy-count chip above the exit gate (added in T0106), which repeated the number already shown on the bottom-right wave card. Deleted `src/systems/ExitCount.ts` and its six wiring points in `GameScene` (import, field, construction, `update()` call, and `hide()`/`show()` around the pause screen) plus its `exitCount.valid` invariant in `debug/runChecks.ts`. The exit's red leak warning and the wave card are untouched. Typecheck, lint, all unit tests, and the desktop + mobile smoke run pass.
+
+- Self-review: APPROVE
+- Time: 13.4 min
+- Deleted src/systems/ExitCount.ts, as the agent asked.
+
+```
+projects/chokepoint/game/src/debug/runChecks.ts   |  1 -
+ projects/chokepoint/game/src/scenes/GameScene.ts  |  6 --
+ projects/chokepoint/game/src/systems/ExitCount.ts | 79 -----------------------
+ 3 files changed, 86 deletions(-)
+```
