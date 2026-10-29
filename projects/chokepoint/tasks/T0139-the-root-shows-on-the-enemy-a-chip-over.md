@@ -3,11 +3,13 @@ id: T0139
 title: "The root shows on the enemy: a chip over the rooted"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T11:23:58Z
+claimed_at: 2026-10-29T11:51:32Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
