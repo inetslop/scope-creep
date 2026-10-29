@@ -67,6 +67,19 @@ export const poStartedMessage = (cycle: number, reason: string): string => `po: 
 /** Matches that marker: a machine whose last commit it is, with no claim, is planning. */
 export const PO_STARTED = /^po: cycle \d+ started\b/;
 
+/**
+ * The most new tasks one PO cycle writes. With 8 to write at xhigh effort, the PO thought at length
+ * and then wrote every task in one response, past the 32k output cap: every cycle failed and wrote
+ * nothing (Oct 29, cycles 50 to 54). Capped, the pool fills over a few short cycles instead: while
+ * it is low, the next cycle starts minutes after the last.
+ */
+export const PO_MAX_NEW_TASKS = 3;
+
+/** How many tasks this cycle writes: what the pool lacks (at least one per idle machine), at most PO_MAX_NEW_TASKS. */
+export function tasksToWrite(needs: PoolNeeds, idleCount: number): number {
+  return Math.min(PO_MAX_NEW_TASKS, Math.max(0, needs.want - needs.have, idleCount));
+}
+
 /** With machines idle, the PO may plan past what the machines want, up to this many queued tasks per wanted one. */
 const IDLE_POOL_CAP = 3;
 
@@ -164,13 +177,15 @@ function describePool(fleet: FleetConfig, listing: TaskListing): string {
       .map((d) => `${d} (${byId.get(d)?.status ?? 'missing'})`)
       .join(', ');
   const idle = idleMachines(fleet, listing);
-  const more = Math.max(0, needs.want - needs.have, idle.length);
+  const more = tasksToWrite(needs, idle.length);
+  const gap = Math.max(0, needs.want - needs.have, idle.length);
   const smallLines = needs.small
     .filter((s) => s.have < s.want)
-    .map((s) => `- at least ${s.want - s.have} of them size ${s.size} or smaller (for ${s.machines.join(', ')}, which take nothing bigger)`);
+    .map((s) => `- at least ${Math.min(s.want - s.have, more)} of them size ${s.size} or smaller (for ${s.machines.join(', ')}, which take nothing bigger)`);
   const chained = listing.tasks.filter((t) => !isArchived(t) && isQueued(t) && waitsOn(t) !== '').length;
   const header = [
-    `The pool has ${needs.have} task(s) that can start now (no unfinished dependency); the running machines want ${needs.want}. Write **${more}** more.` +
+    `The pool has ${needs.have} task(s) that can start now (no unfinished dependency); the running machines want ${needs.want}. Write **${more}** more` +
+      (gap > more ? ` (at most ${PO_MAX_NEW_TASKS} per cycle; the next cycle, minutes after this one, writes the rest).` : '.') +
       (chained ? ` ${chained} more wait on other tasks and don't count: a task waiting on another keeps no machine busy.` : ''),
     ...smallLines,
     ...idleLines(fleet, listing, idle),

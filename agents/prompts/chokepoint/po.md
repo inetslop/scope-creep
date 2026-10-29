@@ -67,9 +67,9 @@ Learn from these. If a task failed or was rejected, read why and write a smaller
 # What to do now
 1. Read planning/VISION.md, ROADMAP.md, IDEAS.md and CHANGELOG.md.
 2. Update planning/ROADMAP.md (the epics: which are active, their breakdown and progress) and planning/IDEAS.md.
-3. Write as many new task files as the pool needs (see "The pool" above, including the small ones for the weak machines) into tasks/.
+3. Write as many new task files as "The pool" above asks for, never more (at most 3 a cycle: the next cycle writes the rest), including the small ones for the weak machines, into tasks/.
    Use these ids, in order: {{NEXT_IDS}}. File name: tasks/<id>-<short-slug>.md
-4. Write exactly as many tasks as the pool needs; it is kept short on purpose so plans stay fresh.
+4. Write exactly that many; the pool is kept short on purpose so plans stay fresh.
 5. You may edit or delete tasks whose status is design or todo. Never touch tasks that are designing, in-progress, done or failed; the runner owns them.
 
 # Task file format (exactly this shape)

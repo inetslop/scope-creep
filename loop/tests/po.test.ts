@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import type { FleetConfig } from '../config.ts';
 import { TASKS_DIR } from '../paths.ts';
-import { idleMachines, idleReason, planningReason, poolNeeds } from '../po.ts';
+import { idleMachines, idleReason, planningReason, PO_MAX_NEW_TASKS, poolNeeds, tasksToWrite } from '../po.ts';
 import { parseTask, type Task, type TaskListing } from '../tasks.ts';
 
 const fleet = {
@@ -73,5 +73,15 @@ describe('planningReason', () => {
   it('a low pool or a broken task file still is', () => {
     assert.match(planningReason(fleet, listing(full.slice(0, 3))) ?? '', /the pool is low/);
     assert.equal(planningReason(fleet, { tasks: full, invalid: new Map([['tasks/x.md', 'bad']]) }), 'invalid task files');
+  });
+});
+
+describe('tasksToWrite', () => {
+  it('writes what the pool lacks, at least one per idle machine, never more than 3 in a cycle', () => {
+    assert.equal(PO_MAX_NEW_TASKS, 3);
+    assert.equal(tasksToWrite({ have: 8, want: 16, small: [] }, 0), 3, 'a gap of 8 fills over cycles');
+    assert.equal(tasksToWrite({ have: 14, want: 16, small: [] }, 0), 2);
+    assert.equal(tasksToWrite({ have: 16, want: 16, small: [] }, 1), 1, 'an idle machine still gets one');
+    assert.equal(tasksToWrite({ have: 20, want: 16, small: [] }, 0), 0);
   });
 });
