@@ -3,11 +3,13 @@ id: T0090
 title: "Build countdown tick: the last three seconds are audible"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T00:51:07Z
+claimed_at: 2026-10-29T00:59:13Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
