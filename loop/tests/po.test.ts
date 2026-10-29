@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import type { FleetConfig } from '../config.ts';
 import { TASKS_DIR } from '../paths.ts';
-import { idleMachines, idleReason, planningReason, PO_MAX_NEW_TASKS, poolNeeds, tasksToWrite } from '../po.ts';
+import { idleMachines, idleReason, planningBudgetFeedback, planningReason, PO_MAX_NEW_TASKS, poolNeeds, tasksToWrite } from '../po.ts';
 import { parseTask, type Task, type TaskListing } from '../tasks.ts';
 
 const fleet = {
@@ -83,5 +83,16 @@ describe('tasksToWrite', () => {
     assert.equal(tasksToWrite({ have: 14, want: 16, small: [] }, 0), 2);
     assert.equal(tasksToWrite({ have: 16, want: 16, small: [] }, 1), 1, 'an idle machine still gets one');
     assert.equal(tasksToWrite({ have: 20, want: 16, small: [] }, 0), 0);
+  });
+});
+
+describe('planningBudgetFeedback', () => {
+  it('names each planning file over its budget, and nothing else', () => {
+    const lines = planningBudgetFeedback({ 'ROADMAP.md': 110_393, 'IDEAS.md': 12_000 });
+    assert.equal(lines.length, 1);
+    assert.match(lines[0]!, /^planning\/ROADMAP\.md is 110 KB, over its 24 KB budget/);
+  });
+  it('is quiet when every file fits or is missing', () => {
+    assert.deepEqual(planningBudgetFeedback({ 'ROADMAP.md': 20_000 }), []);
   });
 });

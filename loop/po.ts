@@ -6,6 +6,7 @@ import type { RunContext } from './dev.ts';
 import { info, step, warn } from './log.ts';
 import { buildInventory, CHANGELOG_HEADER, changelogLine } from './inventory.ts';
 import { ARCHIVE_DIR, GAME_DIR, GAME_REL, PLANNING_DIR, PLANNING_REL, PROJECT_DIR, REPO, SALVAGE_DIR, TASKS_DIR, TASKS_REL, rel } from './paths.ts';
+import { archivePlanning } from './planning.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { loadState, saveState } from './state.ts';
@@ -74,6 +75,27 @@ export const PO_STARTED = /^po: cycle \d+ started\b/;
  * it is low, the next cycle starts minutes after the last.
  */
 export const PO_MAX_NEW_TASKS = 3;
+
+/**
+ * Size budgets (bytes) for the planning files the PO writes. Chokepoint's ROADMAP.md became a diary,
+ * a "This cycle (N)" paragraph per epic every cycle, and grew to 110 KB: the PO re-read it every
+ * cycle and rewrote whole paragraphs of it, past the 32k output cap (Oct 29, cycles 50 to 57).
+ */
+export const PLANNING_BUDGETS: Readonly<Record<string, number>> = { 'ROADMAP.md': 24_000, 'IDEAS.md': 40_000, 'VISION.md': 6_000 };
+
+/** One line of PO feedback per planning file over its budget, given each file's size in bytes. */
+export function planningBudgetFeedback(sizes: Readonly<Record<string, number>>): string[] {
+  return Object.entries(PLANNING_BUDGETS)
+    .filter(([file, budget]) => (sizes[file] ?? 0) > budget)
+    .map(
+      ([file, budget]) =>
+        `planning/${file} is ${Math.round(sizes[file]! / 1000)} KB, over its ${budget / 1000} KB budget. Before planning, shrink it with several small Edits (one section per Edit, never one Write of the whole file): drop history and per-cycle notes, collapse finished work to one line.`,
+    );
+}
+
+function planningSizes(): Record<string, number> {
+  return Object.fromEntries(Object.keys(PLANNING_BUDGETS).map((f) => [f, fs.existsSync(path.join(PLANNING_DIR, f)) ? fs.statSync(path.join(PLANNING_DIR, f)).size : 0]));
+}
 
 /** How many tasks this cycle writes: what the pool lacks (at least one per idle machine), at most PO_MAX_NEW_TASKS. */
 export function tasksToWrite(needs: PoolNeeds, idleCount: number): number {
@@ -225,6 +247,10 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
   const finished = listing.tasks.filter(isFinished);
   const first = maxTaskNumber(listing.tasks) + 1;
   const ids = Array.from({ length: 12 }, (_, i) => formatTaskId(first + i));
+  // Its own step, before the PO reads anything: done epics and old cycle notes leave the roadmap.
+  const moved = archivePlanning();
+  if (moved) info(`PO cycle ${cycle}: archived ${Math.round(moved / 1000)} KB of roadmap history`);
+  const feedbackIn = [...state.poFeedback, ...planningBudgetFeedback(planningSizes())];
 
   const prompt = renderPrompt('po', {
     DATE: new Date().toISOString().slice(0, 10),
@@ -233,7 +259,7 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
     MACHINES: describeMachines(fleet),
     QUEUES: describePool(fleet, listing),
     FINISHED: describeFinished(finished),
-    FEEDBACK: state.poFeedback.length ? state.poFeedback.map((f) => `- ${f}`).join('\n') : '(none)',
+    FEEDBACK: feedbackIn.length ? feedbackIn.map((f) => `- ${f}`).join('\n') : '(none)',
     INVALID: listing.invalid.size ? [...listing.invalid].map(([f, e]) => `- ${rel(f)}: ${e}`).join('\n') : '(none)',
     GIT_LOG: (await git.logOneline(20, [GAME_REL])) || '(no game commits yet)',
     INVENTORY: buildInventory(GAME_DIR),
