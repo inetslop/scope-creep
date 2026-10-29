@@ -3,10 +3,12 @@ id: T0232
 title: Remove the Stay put button
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T22:04:07Z
+claimed_at: 2026-10-29T22:04:50Z
+designer: yoga
 ---
 
 ## Goal
