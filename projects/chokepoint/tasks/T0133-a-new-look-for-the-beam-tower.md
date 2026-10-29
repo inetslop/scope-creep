@@ -1,12 +1,14 @@
 ---
 id: T0133
 title: "A new look for the Beam tower: a tower with a circle on top"
+assignee: baby-mama
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T10:40:00Z
+claimed_at: 2026-10-29T12:34:13Z
 epic: E4
 ---
 
