@@ -23,6 +23,7 @@ It goes into the shared pool: any machine that takes size {{TASK_SIZE}} tasks ma
    - an augment whose added form only works on hits, with no line for the attack kinds that have none (`beam`, `rally`, 0-damage supports);
    - an augment that doesn't show on the tower;
    - a readout, label, chip or HUD element that shows information the screen already shows elsewhere (check ui/hud/ and the board systems first: e.g. a count of enemies left, which the next-wave button already shows);
+   - something that stays on screen (a mark or decoration on the board, a chip, label, line or HUD element) when the task doesn't say what it replaces, or why the screen has room for it; or teaching with new permanent marks on the board instead of what the game already shows (T0140's bend notches were removed for this);
    - themed art, names or text (fantasy, sci-fi, ink, paper...) instead of the game's bright minimal abstract style;
    - a new input or HUD element without its on-screen explanation: the key or button shown where it is used and on the pause screen, a touch control on mobile, a layout that works at 412x915 and 1280x720.
    When a task adds an input or HUD element, your design must include that explanation and layout, not leave it for later.

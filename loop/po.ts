@@ -82,7 +82,7 @@ export const PO_MAX_NEW_TASKS = 3;
  * a "This cycle (N)" paragraph per epic every cycle, and grew to 110 KB: the PO re-read it every
  * cycle and rewrote whole paragraphs of it, past the 32k output cap (Oct 29, cycles 50 to 57).
  */
-export const PLANNING_BUDGETS: Readonly<Record<string, number>> = { 'ROADMAP.md': 24_000, 'IDEAS.md': 40_000, 'VISION.md': 6_000 };
+export const PLANNING_BUDGETS: Readonly<Record<string, number>> = { 'ROADMAP.md': 24_000, 'IDEAS.md': 40_000 }; // VISION.md is the owner's: the PO can't shrink it
 
 /** One line of PO feedback per planning file over its budget, given each file's size in bytes. */
 export function planningBudgetFeedback(sizes: Readonly<Record<string, number>>): string[] {

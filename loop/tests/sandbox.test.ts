@@ -39,6 +39,7 @@ describe('isWritable', () => {
     assert.equal(isWritable('po', `${T}desktop/T0009-x.md`), true);
     assert.equal(isWritable('po', `${PLANNING_REL}ROADMAP.md`), true);
     assert.equal(isWritable('po', `${ARCHIVE_REL}T0001-x.md`), false);
+    assert.equal(isWritable('po', `${PLANNING_REL}VISION.md`), false, 'the vision is the owner\'s');
     assert.equal(isWritable('po', `${G}src/main.ts`), false);
     assert.equal(isWritable('po', 'agents/machines.json'), false);
   });

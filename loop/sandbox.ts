@@ -21,10 +21,10 @@ export const WRITABLE: Record<Profile, readonly string[]> = {
   architect: [],
 };
 
-/** Inside writable areas, but still human-owned. */
+/** Inside writable areas, but still human-owned. The vision (pitch and pillars) is the game owner's. */
 export const PROTECTED: Record<Profile, readonly string[]> = {
   dev: [`${GAME_REL}CLAUDE.md`],
-  po: [ARCHIVE_REL],
+  po: [ARCHIVE_REL, `${PLANNING_REL}VISION.md`],
   architect: [],
 };
 
@@ -144,7 +144,9 @@ export function claudeSettings(profile: Profile, env: Record<string, string>): o
       allow: [...READ_ONLY_TOOLS, rule('Edit', TASKS_DIR), rule('Edit', PLANNING_DIR)],
       deny: [...ALWAYS_DENY, 'Bash', rule('Read', GAME_DIR), ...loopReads, ...loopEdits, rule('Edit', GAME_DIR), rule('Edit', path.join(TASKS_DIR, 'archive')),
         // Runner-written: the module docs are regenerated every cycle, the archive is history it never needs.
-        rule('Edit', path.join(PLANNING_DIR, 'modules')), rule('Edit', path.join(PLANNING_DIR, 'archive')), rule('Read', path.join(PLANNING_DIR, 'archive'))],
+        rule('Edit', path.join(PLANNING_DIR, 'modules')), rule('Edit', path.join(PLANNING_DIR, 'archive')), rule('Read', path.join(PLANNING_DIR, 'archive')),
+        // The owner's: the PO plans from it and never changes it.
+        `Edit(${permissionPath(path.join(PLANNING_DIR, 'VISION.md'))})`],
     },
     env,
   };
