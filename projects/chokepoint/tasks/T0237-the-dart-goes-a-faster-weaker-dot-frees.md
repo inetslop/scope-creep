@@ -3,12 +3,10 @@ id: T0237
 title: "The Dart goes: a faster, weaker Dot frees the enemy cap"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-29T23:34:09Z
-claimed_at: 2026-10-29T23:34:12Z
-designer: desktop
 ---
 
 ## Goal
@@ -46,3 +44,41 @@ Why the Dart goes and no other walk enemy does (the full same-behavior set):
 - [ ] Content and wave-mix tests pass with 9 regular types; every test that named the Dart is updated or removed, and no test left does.
 - [ ] A saved run made with the old content (a wave plan that names a Dart) loads without error and plays the wave with the remaining types; ghost and resume runs keep their exact board.
 - [ ] Nothing new on screen at 412x915 and 1280x720 — a removal only.
+
+## Design (architect, desktop)
+
+### Files
+- delete `src/content/enemies/dart.ts` — the Dart's content file
+- edit `src/content/enemies/index.ts` — remove the import line `import { dart } from './dart';` (line 5) and the list entry `dart,` (line 17)
+- edit `src/content/enemies/sprinter.ts` — rewrite the comment on line 15, inlining the constants (see Steps)
+- edit `src/content/enemies/dasher.ts` — rewrite the comment on line 9, inlining the constant
+- edit `tests/core/waves.test.ts` — in the `quietHalve` fixture (lines 147-159), replace the four `'dart'` strings with `'dasher'` and the comment "the dropped dart's 1" with "the dropped dasher's 1"; expected numbers stay exactly as they are
+- edit `tests/core/tightWaves.test.ts` — in the `tightHalve` fixture (lines 10-20), replace the two `'dart'` strings with `'dasher'`; expected numbers stay exactly as they are
+
+### Interfaces
+None. This is a data removal: `ENEMIES` loses one entry, and everything downstream is data-driven.
+
+- `src/core/waves.ts` needs **no edit**: `planWave()` filters the `ENEMIES` list it is passed, so the Dart leaves the fill pool automatically. Its reserved slots (rampers, dashers, splitter, hauler, mute, bulwark, ward) are hardcoded to other ids and are untouched. Do not change any line in this file.
+- No save/load edit is needed: `SavedRun` (`src/core/saveRun.ts`) stores the wave **number**, never a wave plan. Resume (`RunSave.restore`) and ghost runs re-plan the wave from its number via `planWave(wave, rng, ENEMIES)`, which can only name enemies that exist, so no old save can reference the Dart. Do not touch `src/core/saveRun.ts` or `src/systems/RunSave.ts` (T0217 owns them).
+
+### Steps
+1. Delete `src/content/enemies/dart.ts`.
+2. In `src/content/enemies/index.ts`, delete the two dart lines (import + list entry). Leave the remaining entries' order untouched.
+3. In `src/content/enemies/sprinter.ts` line 15, replace the comment so no "Dart" name remains but the derivation is preserved with inlined constants:
+   `speedRamp: { perHit: 0.28, max: 5.32 }, // base 2.52 is 90% of 2.8; +10% of 2.8 per hit; capped at 190% of it (10 hits)`
+   The stored numbers `2.52`, `0.28`, `5.32` are already literals — do not change them.
+4. In `src/content/enemies/dasher.ts` line 9, replace the comment:
+   `speed: 1.4, // the crawl: half of 2.8; the surge lives in dashCycle`
+5. In `tests/core/waves.test.ts`, do the four `'dart'` → `'dasher'` substitutions in the `quietHalve` fixture and its comment. Do not change any delay numbers or any other test.
+6. In `tests/core/tightWaves.test.ts`, do the two `'dart'` → `'dasher'` substitutions in the `tightHalve` fixture. Do not change any delay numbers.
+7. Run `npm run check` — typecheck, lint and all tests must pass. Verify with `grep -ri dart src tests` that nothing remains.
+
+### Pitfalls
+- A leftover `import { dart }` breaks the build; delete both dart lines in `index.ts`, not just one.
+- Wave 1 must stay byte-identical: it is guaranteed only if you touch nothing in `waves.ts` and nothing else in `ENEMIES` (the Dart was `fromWave: 2`, so wave 1's pool was already Dot-only).
+- Do not add a test pinning the enemy count (e.g. `ENEMIES.length === 10` or "waves 2-3 are Dot only"): the Feeder task will add the 10th type and would break it. The existing data-driven loops already cover the budget, reserved slots, quiet/tight rules with the new list.
+- The test fixtures pass plain strings to `quietHalve`/`tightHalve`, which never look up `ENEMIES` — replacing the id is safe as long as the expected arrays and delay numbers are kept identical.
+- No pooling, cleanup, layout or mobile changes: nothing new appears on screen; the preview, name tag, menu demo, codex and texture painters all derive from `ENEMIES`.
+
+### Tests
+None (the removal changes content data, not a `src/core` rule; the two fixture edits above are updates to existing tests, and no test may name the Dart afterwards).
