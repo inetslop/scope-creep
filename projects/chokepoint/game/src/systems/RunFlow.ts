@@ -169,7 +169,7 @@ export class RunFlow {
 
   private endRun(): void {
     hook.stats.runsLost += 1;
-    this.scene.registry.set('towerKills', this.s.towers.towers.map((t) => ({ first: t.augments[0]?.id, kills: t.kills })));
+    this.scene.registry.set('towerKills', this.s.towers.towers.map((t) => ({ first: t.augments[0]?.id, tier: t.augments[0]?.tier, kills: t.kills })));
     this.scene.scene.stop(SCENES.hud);
     this.scene.scene.start(SCENES.gameOver);
   }

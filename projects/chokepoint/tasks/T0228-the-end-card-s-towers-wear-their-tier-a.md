@@ -4,11 +4,12 @@ title: "The end card's towers wear their tier: a pip on the by-tower chips"
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T18:07:31Z
 claimed_at: 2026-10-29T21:26:11Z
+finished_at: 2026-10-29T21:43:39Z
 epic: E4
 ---
 
@@ -74,3 +75,16 @@ this.scene.registry.set('towerKills', this.s.towers.towers.map((t) => ({ first: 
 
 ### Tests
 - none (UI-only change; run `npm run check` + `npm run smoke` as the gate).
+
+## Result (attempt 1, asus)
+
+The game-over screen's "By tower" chips now wear a small tier pip (r=4, T0010's shape and light-gray/blue/purple colors) beside their first-augment icon, so rarity shows on the end card like it does on the towers' slots and panels. `ByTowerEntry` gained an optional `tier` field and `RunFlow.endRun()` now includes the tower's first-augment tier in the `towerKills` registry entry it passes to the card. No layout constants, sort order, sounds, or input changed; the claim card and all other end-card content are untouched. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 17.5 min
+
+```
+projects/chokepoint/game/src/systems/RunFlow.ts |  2 +-
+ projects/chokepoint/game/src/ui/byTower.ts      | 10 ++++++++++
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+```
