@@ -3,11 +3,13 @@ id: T0236
 title: "The what-if says nothing: a dead added form dims its ghost marker"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T23:34:09Z
+claimed_at: 2026-10-29T23:54:20Z
 epic: E4
+designer: cachyos-x8664
 ---
 
 ## Goal
