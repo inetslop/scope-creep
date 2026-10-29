@@ -87,7 +87,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - description: "Fires a shot that splits into 3 homing needles on hit. Added: +1 needle per split per extra Spray."
 - asTower: "Fires a shot that splits into 3 homing needles on hit."
 - asAdded: +1 needle per split per extra Spray.
-- look: shape chevron, color green, size 0.24
+- look: shape diamond, color yellow, size 0.24
 - first: kind spray, damage 12, range 4, rate 0.909, spray 3
 - added: spray 1
 - tiers: rare {damageMul 1.167, cooldownMul 0.864, asAdded +1 needle per split per extra Spray.}, epic {damageMul 1.333, cooldownMul 0.727, asAdded +1 needle per split per extra Spray.}
