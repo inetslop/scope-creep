@@ -1,12 +1,14 @@
 ---
 id: T0221
 title: "The Augments codex: a menu screen that shows every augment in the pool"
+assignee: desktop
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T16:54:18Z
+claimed_at: 2026-10-29T17:17:33Z
 epic: E4
 ---
 
