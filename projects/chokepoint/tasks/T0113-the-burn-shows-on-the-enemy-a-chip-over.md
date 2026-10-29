@@ -1,12 +1,14 @@
 ---
 id: T0113
 title: "The burn shows on the enemy: a chip over the burning"
+assignee: baby-mama
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T09:55:07Z
+claimed_at: 2026-10-29T10:18:13Z
 epic: E4
 ---
 
