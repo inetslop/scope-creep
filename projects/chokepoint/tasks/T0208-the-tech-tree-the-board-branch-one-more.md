@@ -3,11 +3,13 @@ id: T0208
 title: "The tech tree: the board branch — One more bend"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: [T0103]
 attempts: 0
 created: 2026-10-29T13:49:24Z
+claimed_at: 2026-10-29T13:49:28Z
 epic: E2
+designer: desktop
 ---
 
 ## Goal
