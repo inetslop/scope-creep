@@ -3,11 +3,13 @@ id: T0112
 title: "Beam hum: a quiet tone under each active beam (the T0043 re-file)"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T09:55:07Z
+claimed_at: 2026-10-29T10:04:46Z
 epic: E4
+designer: narcissus
 ---
 
 ## Goal
