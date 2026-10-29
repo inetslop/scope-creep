@@ -3,10 +3,12 @@ id: T0137
 title: "Pause menu: the Sound toggle gets a real speaker icon"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T09:46:49Z
+claimed_at: 2026-10-29T10:07:21Z
+designer: cachyos-x8664
 ---
 
 ## Goal
