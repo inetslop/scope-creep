@@ -54,6 +54,10 @@ export interface TowerSpec {
   goldPerKill: number;
   /** Kills within this many cells of the tower (its range ring) pay: 0 unless the first augment's form has it. */
   goldRadius: number;
+  /** 0 without a Toll; the first copy's first form + each extra copy's added form (core/toll.ts). */
+  tollPerLeak: number;
+  /** Toll copies in the tower: one tick each. */
+  tollCount: number;
   /** The gust: cells back along the road every attack pushes everything in range (0: no gust, Push first). */
   gust: number;
   /** Cells back each hit pushes its enemy, per Push added after the first (0: none). */
@@ -93,6 +97,8 @@ const EMPTY: TowerSpec = {
   beamRapidMul: 1,
   goldPerKill: 0,
   goldRadius: 0,
+  tollPerLeak: 0,
+  tollCount: 0,
   gust: 0,
   pushPerHit: 0,
   pushCount: 0,
@@ -139,6 +145,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     beamRapidMul: 1,
     goldRadius: f.goldRadius ?? 0,
     goldPerKill: 0,
+    tollPerLeak: 0,
+    tollCount: 0,
     gust: f.push ?? 0,
     pushPerHit: 0,
     pushCount: 0,
@@ -213,6 +221,13 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
   for (const a of augments) if (a.id === 'spray') spec.sprayCount += 1;
   // Mints in any slot: this tower's kills drop this much extra gold (core/mint.ts).
   for (const a of augments) spec.goldPerKill += tierAdded(getAugment(a.id), a.tier).goldPerKill ?? 0;
+  // Tolls in any slot: every leak pays this much gold while the tower stands (core/toll.ts).
+  for (let i = 0; i < augments.length; i++) {
+    const a = getAugment(augments[i]!.id);
+    if (a.id !== 'toll') continue;
+    spec.tollCount += 1;
+    spec.tollPerLeak += i === 0 ? a.first.goldPerLeak ?? 0 : a.added.goldPerLeak ?? 0;
+  }
   // A pulse already hits an area: splash makes it reach further, and pierce turns into bolts
   // that fire with each pulse and keep going.
   if (spec.kind === 'pulse') {
@@ -302,6 +317,7 @@ export function describeSpec(spec: TowerSpec): string {
   // The mints in the tower (core/mint.ts): its kills, and the kills within its radius, drop extra gold.
   if (spec.goldRadius > 0) line += `, kills within ${spec.goldRadius} cells drop +${spec.goldPerKill} gold`;
   else if (spec.goldPerKill > 0) line += `, kills drop +${spec.goldPerKill} gold`;
+  if (spec.tollPerLeak > 0) line += `, every leak pays +${spec.tollPerLeak} gold`;
   if (spec.pushPerHit > 0 && spec.kind !== 'beam') line += `, and its hits push back ${spec.pushPerHit.toFixed(1)} cells`;
   return `${line}.`;
 }

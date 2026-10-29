@@ -140,6 +140,8 @@ export interface FirstForm {
   beam?: { dps: number };
   /** Kills within this many cells of the tower (its range ring) drop +1 gold per mint copy in it (Mint). */
   goldRadius?: number;
+  /** Every leak pays this much gold while the tower stands (Toll). */
+  goldPerLeak?: number;
 }
 
 /**
@@ -173,6 +175,8 @@ export interface AddedForm {
   rally?: { pct: number };
   /** This tower's own kills drop this much extra gold (Mint). */
   goldPerKill?: number;
+  /** Every leak pays this much more gold while the tower stands (Toll). */
+  goldPerLeak?: number;
 }
 
 /**

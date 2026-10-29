@@ -38,7 +38,7 @@ describe('the mark', () => {
     const m = getAugment('mark');
     expect(m.tier).toBe('epic');
     expect(m.opening).toBe(true);
-    const epicOnly = ['mark', 'rally', 'mint', 'anchor'];
+    const epicOnly = ['mark', 'rally', 'mint', 'anchor', 'toll'];
     for (const a of AUGMENTS) if (!epicOnly.includes(a.id)) expect(a.tier).toBeUndefined();
     for (const id of epicOnly) expect(getAugment(id).tier).toBe('epic');
   });

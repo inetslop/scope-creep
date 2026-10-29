@@ -4,11 +4,12 @@ title: "Toll: the Epic that pays gold when a leak gets through"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T22:31:19Z
 claimed_at: 2026-10-29T23:01:02Z
+finished_at: 2026-10-29T23:50:34Z
 epic: E4
 ---
 
@@ -111,3 +112,26 @@ export const tollLeak: MakeEnemyHook = ({ run, fx, towers }) => ({
 
 ### Tests
 - `tests/core/toll.test.ts` (new, above) — the +2/+1 per-copy rule and the board sum a later change could silently break; the `tests/content.test.ts` edit keeps the auto content validation green.
+
+## Result (attempt 1, inet-racing)
+
+Added the Toll augment — an Epic-only, no-opening economy card: while any Toll tower stands, every leak at the exit pays gold (each tower +2 for its first copy, +1 per extra copy) on top of its life cost, shown as a gold pop beside the leak's other pops. New files: the card def, the pure `tollPay` math, the leak hook, and unit tests; shared files got only their registry lines, the two `goldPerLeak` form fields, the spec combine/count, the muted-gray disc-and-tick decoration, and a `towers.toll` invariant. 16-cap: pool is 15, no removal. Check and smoke (desktop + phone) both pass.
+
+- Self-review: APPROVE
+- Time: 49.6 min
+
+```
+.../chokepoint/game/src/content/augments/index.ts  |  2 +
+ .../chokepoint/game/src/content/augments/toll.ts   | 23 +++++++++
+ projects/chokepoint/game/src/content/types.ts      |  4 ++
+ projects/chokepoint/game/src/core/augments.ts      | 16 ++++++
+ projects/chokepoint/game/src/core/toll.ts          | 16 ++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  4 ++
+ projects/chokepoint/game/src/entities/towerLook.ts | 17 ++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/tollLeak.ts        | 18 +++++++
+ projects/chokepoint/game/tests/content.test.ts     |  2 +-
+ projects/chokepoint/game/tests/core/mark.test.ts   |  2 +-
+ projects/chokepoint/game/tests/core/toll.test.ts   | 60 ++++++++++++++++++++++
+ 12 files changed, 164 insertions(+), 2 deletions(-)
+```

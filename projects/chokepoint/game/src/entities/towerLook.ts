@@ -96,6 +96,23 @@ const DECORATIONS: readonly Decoration[] = [
     g.fillStyle(PALETTE.yellowDeep, 1); g.fillCircle(16.5, 14, r);
     g.fillStyle(PALETTE.yellow, 1); g.fillCircle(16.5, 12, r);
   },
+  // Toll: a flat muted-gray disc at the base with one short ink tick per copy (Toll first);
+  // an added Toll shows one small muted-gray tick, the tick language of the other added forms.
+  (g, spec) => {
+    if (spec.tollCount === 0) return;
+    if (spec.firstId === 'toll') {
+      g.fillStyle(PALETTE.muted, 1); g.fillCircle(0, 4, BODY * 1.5);
+      for (let i = 0; i < spec.tollCount; i++) {
+        const a = -Math.PI / 2 + (i / spec.tollCount) * Math.PI * 2;
+        fillRing(g, 0, 4, BODY * 1.5, 3, a - 0.14, a + 0.14, PALETTE.ink);
+      }
+    } else {
+      for (let i = 0; i < spec.tollCount; i++) {
+        const a = Math.PI / 2 + (i / spec.tollCount) * Math.PI * 2;
+        fillRing(g, 0, 0, BODY * 1.8, 3, a - 0.12, a + 0.12, PALETTE.muted);
+      }
+    }
+  },
   // Mark: a thin ink ring at the base (below the pips), one small tick per Mark in the tower.
   (g, spec) => {
     if (spec.markCount === 0) return;

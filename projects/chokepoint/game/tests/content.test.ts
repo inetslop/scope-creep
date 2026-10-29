@@ -48,7 +48,7 @@ describe('content', () => {
       expect(BRIGHTS).toContain(a.look.color);
       expect(a.first.range).toBeGreaterThan(0);
       expect(a.first.rate).toBeGreaterThan(0);
-      expect(a.first.damage > 0 || a.first.slow || a.first.root || a.first.mark || a.first.kind === 'rally' || a.first.goldRadius || a.first.push || a.first.burn || a.first.beam).toBeTruthy();
+      expect(a.first.damage > 0 || a.first.slow || a.first.root || a.first.mark || a.first.kind === 'rally' || a.first.goldRadius || a.first.goldPerLeak || a.first.push || a.first.burn || a.first.beam).toBeTruthy();
       if (a.first.kind === 'shot') expect(a.first.projectileSpeed ?? 0).toBeGreaterThan(0);
       expect(Object.keys(a.added).length).toBeGreaterThan(0);
       // The card shows each line next to its glyph: short, and no "First:"-style labels.
