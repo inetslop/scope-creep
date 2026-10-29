@@ -1,12 +1,14 @@
 ---
 id: T0205
 title: The clean wave says what it means, where the player looks
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T12:25:57Z
+claimed_at: 2026-10-29T19:21:38Z
 ---
 
 ## Goal
