@@ -1,12 +1,14 @@
 ---
 id: T0133
 title: "A new look for the Beam tower: a tower with a circle on top"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 1
+attempts: 2
 created: 2026-10-29T10:40:00Z
+claimed_at: 2026-10-29T20:38:57Z
 epic: E4
 ---
 
