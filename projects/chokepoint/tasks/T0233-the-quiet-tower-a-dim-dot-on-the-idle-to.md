@@ -3,12 +3,10 @@ id: T0233
 title: "The quiet tower: a dim dot on the idle tower"
 size: S
 priority: 1
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-29T22:31:19Z
-claimed_at: 2026-10-29T22:32:10Z
-designer: yoga
 ---
 
 ## Goal
@@ -29,3 +27,43 @@ A tower that has work to do but nothing in range says so: a first-time player st
 - [ ] In the build phase and on an empty road, no tower shows the dot.
 - [ ] Passive-first towers (Mint, Rally and the other no-attack supports) never show the dot; a slow-cadence pulse tower (Anchor, 3 s) never flickers one.
 - [ ] The dot sits on the token, clear of the tier pips and the what-if ghost; no board cell gains any mark; no sound, input or HUD change; works at 412x915 and 1280x720.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/systems/towerIdle.ts` — the quiet-dot bookkeeping: `quietDot(t, road, attacked, dt)` + `IDLE_DOT_SEC = 4`
+- edit `src/entities/Tower.ts` — add the `idleDot` graphics (same spot/color as the existing `jamDot`), fields `idleSec`, `beamHolding`, `idleOn`, method `setIdleDot()`, destroy cleanup
+- edit `src/systems/TowerSystem.ts` — rewrite `update()` to capture `attacked` and call `quietDot`; one import line
+- edit `src/systems/BeamSystem.ts` — set `t.beamHolding` in two places
+- edit `src/debug/runChecks.ts` — one invariant line after the `towers.gold` entry
+
+### Interfaces
+```ts
+// towerIdle.ts
+export const IDLE_DOT_SEC = 4;
+export function quietDot(t: Tower, road: boolean, attacked: boolean, dt: number): void {
+  if (attacked) { t.idleSec = 0; t.setIdleDot(false); return; }
+  if (!road) { t.idleSec = 0; t.setIdleDot(false); return; }
+  t.idleSec += dt;
+  if (t.idleSec >= IDLE_DOT_SEC) t.setIdleDot(true);
+}
+// Tower: public `idleSec = 0;` (after `cooldown`), public `beamHolding = false;` and `idleOn = false;` (after `jammed`),
+// private `idleDot` graphics, public `setIdleDot(on: boolean): void`
+```
+
+### Steps
+1. Create `src/systems/towerIdle.ts` exactly as above (`import type { Tower } from '../entities/Tower';`).
+2. `Tower.ts`: declare `private readonly idleDot: Phaser.GameObjects.Graphics;` next to `jamDot`; after the jamDot block in the constructor add: `this.idleDot = scene.add.graphics().setDepth(DEPTH.towers + 3).setPosition(x, y);` / `this.idleDot.fillStyle(PALETTE.muted, 1);` / `this.idleDot.fillCircle(0, -32, 3);` / `this.idleDot.setVisible(false);` (identical float to the jam dot). Add `setIdleDot()` right after `setJammed()`: `if (this.idleOn === on) return; this.idleOn = on; this.scene.tweens.killTweensOf(this.idleDot);` then if `on`: `this.idleDot.setAlpha(0).setVisible(true); this.scene.tweens.add({ targets: this.idleDot, alpha: 1, duration: 200 });` else `this.scene.tweens.add({ targets: this.idleDot, alpha: 0, duration: 150, onComplete: () => this.idleDot.setVisible(false) });`. In `destroy()` add `this.scene.tweens.killTweensOf(this.idleDot); this.idleDot.destroy();` after the `jamDot` line.
+3. `TowerSystem.ts`: replace `update()` with: `const enemies = this.enemies.all; const road = this.enemies.aliveCount > 0;` then per tower: `const firstAttacks = t.spec.attacks && t.spec.kind !== 'rally';` `let attacked = false;` guard the existing cooldown/attack code in `if (t.spec.kind !== 'beam' && !t.jammed && t.spec.attacks) { if (!(<original pure-support condition byte-for-byte>) { t.cooldown -= dt; if (t.cooldown <= 0) { attacked = this.attack(t, enemies); if (attacked) t.cooldown += 1 / (t.spec.rate * t.rallyRateMul); else t.cooldown = 0; } } }` and end the loop with `if (firstAttacks) quietDot(t, road, attacked || t.beamHolding, dt);`. Keep `t.cooldown +=` (not `=`) and keep the original pure-support condition exactly, negated once. Import `quietDot` from `./towerIdle`.
+4. `BeamSystem.ts`: in the jammed branch add `t.beamHolding = false;` before the `continue`; after `this.held.set(t, now);` add `t.beamHolding = now.some((e) => e !== undefined);` (a held line counts as firing, so shot+beam towers stay dotted off while the beam holds).
+5. `runChecks.ts`: after the `towers.gold` entry add `['towers.quietDot', (g) => { for (const t of g.towers.towers) if (t.idleOn && (!t.spec.attacks || t.spec.kind === 'rally')) return `a ${t.spec.kind} tower shows its quiet dot`; return null; }],`.
+
+### Pitfalls
+- Do not touch `jamDot`, the pips, the what-if ghost or DECORATIONS; the dot rides the token at `(0,-32)`, board units, no HUD/layout change (412x915 and 1280x720 unaffected).
+- Only ONE writer per tower: TowerSystem runs `quietDot` for every eligible tower (beam-first included, via `t.beamHolding`, one frame stale — fine for a 150 ms fade); BeamSystem only sets the flag. Never run the dot logic for `kind === 'rally'`/empty — Mint/Rally and the future Haste/Momentum/Mend/Toll never dot, even a Mint+Bolt that does shoot.
+- Jammed towers: `attacked` stays false so the dot still counts up — it lands exactly on the Mute's identical dot, and a Mute-jammed beam must get `beamHolding = false` or a stale `true` suppresses the dot.
+- `RunFlow` only calls `TowerSystem` in the wave phase and `aliveCount === 0` ends every build phase, so the build phase can never show the dot; no sound, input, card or pause line may be added.
+- Kill the `idleDot` tween in `destroy()` or smoke fails on a tween to a destroyed graphics.
+
+### Tests
+none
