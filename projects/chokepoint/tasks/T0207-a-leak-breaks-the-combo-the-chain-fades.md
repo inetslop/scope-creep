@@ -1,12 +1,14 @@
 ---
 id: T0207
 title: "A leak breaks the combo: the chain fades the moment a life is lost"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T12:51:15Z
+claimed_at: 2026-10-29T13:17:46Z
 ---
 
 ## Goal
