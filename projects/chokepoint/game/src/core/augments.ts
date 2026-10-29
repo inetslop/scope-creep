@@ -265,6 +265,9 @@ export function describeSpec(spec: TowerSpec): string {
       : `Beams ${beams} enemies: ${spec.beamDps} per second each`;
     if (spec.beamExtras.length === 1) line += `, and a second beam at ${spec.beamExtras[0]} per second on the nearest enemy`;
     else if (spec.beamExtras.length > 1) line += `, and ${spec.beamExtras.length} beams at ${spec.beamExtras[spec.beamExtras.length - 1]} per second on the nearest enemies`;
+    // The shapes its main line has (core/beamShapes.ts, T0210): the pierce and the scorch.
+    if (spec.pierce > 0) line += `, the beam pierces ${spec.pierce} more`;
+    if (spec.splash > 0) line += `, and scorches ${splashHits(spec.splashCount) - 1} nearby at ${spec.beamDps / 2} per second`;
     // The effects its lines do to the enemy they hold (core/beamEffects.ts, T0132): contact while
     // held, the root and the push once per second of contact.
     if (slow) line += `, its beam slows by ${slow}%`;

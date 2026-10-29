@@ -6,6 +6,8 @@ import { beamLines, inBeamRange, rayTargets } from '../core/beam';
 import { beamEffectLines, beamFx } from '../core/beamEffects';
 import { EMPTY_BEAM_HOLD, BEAM_HIT_SEC, beamHoldStep } from '../core/beamHold';
 import type { BeamHold } from '../core/beamHold';
+import { beamPierceVictims, beamScorch } from '../core/beamShapes';
+import { pickNearest } from '../core/targeting';
 import { hook } from '../debug/testHook';
 import type { Sfx } from '../audio/Sfx';
 import type { Enemy } from '../entities/Enemy';
@@ -110,6 +112,22 @@ export class BeamSystem {
         if (!held[0]) hook.stats.shotsFired += 1; // a new lock: the tower attacked (the line then sustains)
         this.enemies.beamTick(mainTarget, t.spec.beamDps * m * dt, t);
       }
+      // The main line's shapes (core/beamShapes.ts): Lance pierces past the target in a straight
+      // corridor at the full rate, Splash scorches the nearest others around it at half. Both die
+      // with the main target: a tick that killed it leaves no line, so no shapes either.
+      let pierced: number[] = [];
+      let scorched: number[] = [];
+      const scorch = beamScorch(t.spec);
+      if (mainTarget && mainTarget.active) {
+        if (t.spec.kind === 'beam' && t.spec.pierce > 0) {
+          pierced = beamPierceVictims(this.enemies.all, t.x, t.y, range, mainTarget, t.spec.pierce);
+          for (const i of pierced) this.enemies.beamTick(this.enemies.all[i]!, t.spec.beamDps * m * dt, t); // full rate, the same feed
+        }
+        if (scorch) {
+          scorched = pickNearest(mainTarget, scorch.radius, this.enemies.all, scorch.cap);
+          for (const i of scorched) this.enemies.beamTick(this.enemies.all[i]!, scorch.rate * m * dt, t);
+        }
+      }
       for (const e of rays) this.enemies.beamTick(e, t.spec.beamDps * m * dt, t);
       for (let i = 0; i < lines.length; i++) {
         const e = lines[i];
@@ -143,23 +161,36 @@ export class BeamSystem {
       // The effects the beam carries ride it as thin lines beside it, one per effect (at most two).
       const fxs = fx ? beamEffectLines(t.augments) : [];
       const muzzle = t.muzzle(0);
-      for (const e of now) {
+      const mainE = now[0];
+      if (t.spec.kind === 'beam' && t.spec.pierce > 0 && mainE) {
+        // The main line is straight: it runs through the pierced enemies to the last one struck,
+        // or to the range edge along the aim when none is.
+        const end = pierceEnd(t.x, t.y, mainE, range, this.enemies.all, pierced);
+        g.lineStyle(4, color, 1);
+        g.lineBetween(muzzle.x, muzzle.y, end.x, end.y);
+        fxLines(g, muzzle, end, fxs);
+        hitTick(g, muzzle, mainE);
+        for (const i of pierced) {
+          const e = this.enemies.all[i]!;
+          if (e.active) hitTick(g, muzzle, e);
+        }
+      } else if (mainE) {
+        g.lineStyle(4, color, 1);
+        g.lineBetween(muzzle.x, muzzle.y, mainE.x, mainE.y);
+        fxLines(g, muzzle, mainE, fxs);
+        hitTick(g, muzzle, mainE);
+      }
+      for (let i = 1; i < now.length; i++) {
+        const e = now[i];
         if (!e) continue;
         g.lineStyle(4, color, 1);
         g.lineBetween(muzzle.x, muzzle.y, e.x, e.y);
-        // A small flat tick across the line at the hit end.
-        const dx = e.x - muzzle.x;
-        const dy = e.y - muzzle.y;
-        const d = Math.hypot(dx, dy);
-        if (d < 1) continue;
-        const px = -dy / d;
-        const py = dx / d;
-        g.lineBetween(e.x - px * 4, e.y - py * 4, e.x + px * 4, e.y + py * 4);
-        for (let i = 0; i < fxs.length; i++) {
-          const off = 5 + i * 4;
-          g.lineStyle(2, fxs[i]!.color, 0.5);
-          g.lineBetween(muzzle.x + px * off, muzzle.y + py * off, e.x + px * off, e.y + py * off);
-        }
+        fxLines(g, muzzle, e, fxs);
+        hitTick(g, muzzle, e);
+      }
+      if (scorch && mainE && scorched.length > 0) {
+        g.lineStyle(2, color, 0.3); // the scorch ring: faint, only while someone is scorched
+        g.strokeCircle(mainE.x, mainE.y, scorch.radius);
       }
     }
   }
@@ -186,4 +217,50 @@ export class BeamSystem {
     }
     return undefined;
   }
+}
+
+/** A small flat tick across the line at the hit end. */
+function hitTick(g: Phaser.GameObjects.Graphics, from: { x: number; y: number }, to: { x: number; y: number }): void {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const d = Math.hypot(dx, dy);
+  if (d < 1) return;
+  const px = -dy / d;
+  const py = dx / d;
+  g.lineBetween(to.x - px * 4, to.y - py * 4, to.x + px * 4, to.y + py * 4);
+}
+
+/** The thin effect lines that ride beside a beam line (core/beamEffects.ts), one per effect. */
+function fxLines(g: Phaser.GameObjects.Graphics, from: { x: number; y: number }, to: { x: number; y: number }, fxs: readonly { id: string; color: number }[]): void {
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const d = Math.hypot(dx, dy);
+  if (d < 1) return;
+  const px = -dy / d;
+  const py = dx / d;
+  for (let i = 0; i < fxs.length; i++) {
+    const off = 5 + i * 4;
+    g.lineStyle(2, fxs[i]!.color, 0.5);
+    g.lineBetween(from.x + px * off, from.y + py * off, to.x + px * off, to.y + py * off);
+  }
+}
+
+/** Where the pierced main line ends: the last enemy struck, or the range edge along the aim when none is. */
+function pierceEnd(
+  x: number,
+  y: number,
+  main: { x: number; y: number },
+  range: number,
+  enemies: readonly { x: number; y: number; active: boolean }[],
+  pierced: readonly number[],
+): { x: number; y: number } {
+  const dx = main.x - x;
+  const dy = main.y - y;
+  const d = Math.hypot(dx, dy) || 1;
+  let last: { x: number; y: number } | undefined;
+  for (const i of pierced) {
+    const e = enemies[i]!;
+    if (e.active) last = e;
+  }
+  return last ?? { x: x + (dx / d) * range, y: y + (dy / d) * range };
 }

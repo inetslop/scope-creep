@@ -4,11 +4,12 @@ title: "Beam combos II: Lance pierces the beam, Splash scorches its target"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T13:49:24Z
 claimed_at: 2026-10-29T20:58:32Z
+finished_at: 2026-10-29T23:00:19Z
 epic: E4
 ---
 
@@ -190,3 +191,19 @@ function pierceEnd(x: number, y: number, main: { x: number; y: number }, range: 
 - `beamPierceVictims`: 1/2/3 collinear enemies at (300,0)/(400,0)/(500,0) return that many indices in line order; excludes an enemy ahead of the main (t < d), |lateral| > 0.3*64, out of range, inactive, and the main itself; `[]` when `count <= 0` or d < 1.
 - `beamScorch`: undefined for a non-beam spec and for `splash <= 0`; rate 3/4/5 for beamDps 6/8/10; cap 2 (1 copy) / 5 (2); radius 64/96/128.
 - Tier pins via `towerSpec` with `const copy = (id, tier) => ({ id, tier })`: `[beam T, lance T]` → `pierce` 1/2/3; `[beam, splash T]` → `splash` 1/1.5/2; `[beam T]` → `beamDps` 6/8/10.
+
+## Result (attempt 1, inet-racing)
+
+Beam towers now combine with their shapes: a Lance-added beam pierces straight through its target to full range, hitting up to 1/2/3 more enemies in a corridor a touch wider than the road at the full beam rate, and a Splash-added beam scorches the 2 (or 5 with a second Splash) nearest others around its target at half rate inside the tier's radius, shown as a faint ring. Both feed through the normal kill path and scale with Rapid and Rally exactly like the beam's own line, and the tower's panel line gains one clause per shape. Beam towers without either shape are byte-identical to before: no ring, no pierce, line ends at the target. All pinned by 13 new unit tests plus the existing T0130/T0132 coverage; check and smoke pass on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 121.8 min
+
+```
+projects/chokepoint/game/src/core/augments.ts      |   3 +
+ projects/chokepoint/game/src/core/beamShapes.ts    |  46 +++++++++
+ projects/chokepoint/game/src/core/tiers.ts         |   3 +-
+ projects/chokepoint/game/src/systems/BeamSystem.ts | 105 ++++++++++++++++++---
+ .../chokepoint/game/tests/core/beamShapes.test.ts  | 100 ++++++++++++++++++++
+ 5 files changed, 242 insertions(+), 15 deletions(-)
+```
