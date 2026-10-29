@@ -4,11 +4,12 @@ title: The hand card wears its tier
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T02:55:25Z
 claimed_at: 2026-10-29T03:54:47Z
+finished_at: 2026-10-29T04:20:22Z
 epic: E4
 ---
 
@@ -92,3 +93,15 @@ The word is a second text: `· Rare`/`· Epic` (dot included), tier-colored via 
 
 ### Tests
 none (UI/juice; no `src/core` rule added or changed).
+
+## Result (attempt 1, yoga)
+
+Rare and Epic hand cards now wear their tier word the way the draft does: the name line reads "Name · Rare"/"Name · Epic" with the word in the tier's own frame color (blue/purple, straight from `tierFrameColor`), while Common cards keep the plain ink name and render byte-identically to before. Each Rare/Epic card grows to fit its line (T0072 measure pattern) so the word never clips at 412x915 or 1280x720; the frame and gem row (T0008) are unchanged and no draft cards were touched. One file changed (`src/ui/hud/HandBar.ts`); typecheck, lint, unit tests and both smoke runs pass.
+
+- Self-review: APPROVE
+- Time: 25.6 min
+
+```
+projects/chokepoint/game/src/ui/hud/HandBar.ts | 27 ++++++++++++++++++++++----
+ 1 file changed, 23 insertions(+), 4 deletions(-)
+```

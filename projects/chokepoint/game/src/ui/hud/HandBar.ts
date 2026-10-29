@@ -6,7 +6,7 @@ import { artScale, augmentTexture } from '../../art/textures';
 import type { GameScene } from '../../scenes/GameScene';
 import { makeButton } from '../button';
 import { makeCard } from '../card';
-import { drawTierFrame, gemRow } from '../tierLook';
+import { drawTierFrame, gemRow, tierFrameColor, tierName } from '../tierLook';
 import { textStyle } from '../text';
 import { CARD, EDGE, isNarrow, NEXT_SIZE, type HudPart } from './hud';
 
@@ -51,19 +51,38 @@ export class HandBar implements HudPart {
       );
     }
     const gap = 8;
-    const w = Math.max(56, Math.min(CARD, (space - gap * (ids.length - 1)) / Math.max(1, ids.length)));
+    const per = (space - gap * (ids.length - 1)) / Math.max(1, ids.length);
+    const base = Math.max(56, Math.min(CARD, per)); // today's width
+    // "Name" for Common, "Name · Rare"/"Name · Epic" otherwise; measure it so the card fits the line.
+    const measure = scene.add.text(0, 0, '', textStyle(13, PALETTE.ink, { fontStyle: 'bold' }));
+    const widths = ids.map((copy) => {
+      if (copy.tier === 'common') return base;
+      measure.setText(`${getAugment(copy.id).name} · ${tierName(copy.tier)}`);
+      return Math.max(base, measure.width + 12); // 6 px of room each side
+    });
+    measure.destroy();
+    let x = EDGE;
     ids.forEach((copy, i) => {
       const a = getAugment(copy.id);
-      const b = makeButton(scene, EDGE + w / 2 + i * (w + gap), bottom, '', () => game.building.pickCard(i), { width: w, height: CARD, radius: 20, accent: PALETTE[a.look.color] });
+      const w = widths[i];
+      const b = makeButton(scene, x + w / 2, bottom, '', () => game.building.pickCard(i), { width: w, height: CARD, radius: 20, accent: PALETTE[a.look.color] });
       const icon = artScale(scene.add.image(0, -13, augmentTexture(copy.id)), Math.min(1.1, w / 75));
       const name = scene.add.text(0, 12, a.name, textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
+      const word = copy.tier === 'common' ? undefined : scene.add.text(0, 12, `· ${tierName(copy.tier)}`, textStyle(13, tierFrameColor(copy.tier)!, { fontStyle: 'bold' })).setOrigin(0, 0.5);
+      if (word) {
+        name.setOrigin(0, 0.5);
+        const total = name.width + 4 + word.width; // "Name" + space + "· Rare", centered
+        name.x = -total / 2;
+        word.x = name.x + name.width + 4;
+      }
       const key = i < 9 ? [scene.add.text(-w / 2 + 9, -CARD / 2 + 7, String(i + 1), textStyle(11, PALETTE.faint, { fontStyle: 'bold' }))] : [];
-      b.content.add([icon, name, gemRow(scene, copy.tier, 0, 29), ...key]);
+      b.content.add([icon, name, ...(word ? [word] : []), gemRow(scene, copy.tier, 0, 29), ...key]);
       // The frame goes in the content, so it lifts with the card; last, so it draws on top.
       const frame = drawTierFrame(scene, copy.tier, w, CARD, 20);
       if (frame) b.content.add(frame);
       b.setSelected(game.building.selectedAugment === i);
       items.push(b.container);
+      x += w + gap;
     });
     this.box = scene.add.container(0, 0, items);
   }
