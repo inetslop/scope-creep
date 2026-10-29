@@ -69,7 +69,13 @@ export class TowerPanel implements HudPart {
     const w = Math.min(PANEL_W, width - EDGE * 2);
     const left = -w / 2 + 18;
     const n = tower.augments.length;
-    const H = (ROW_H + ROW_GAP) * n + 146 + 18 + DPS_LINE; // room for the kills line and the damage per second under it
+    const RW = w - 36;
+    // Pass 1: lay each row's added line out at (0,0) to measure it, then let the row grow to fit.
+    const rows = tower.augments.map((c) => {
+      const addedLine = scene.add.text(0, 0, tierAddedLine(getAugment(c.id), c.tier), textStyle(11, PALETTE.muted, { wordWrap: { width: RW - 52 } })).setOrigin(0, 0);
+      return { addedLine, rowH: Math.max(ROW_H, Math.round(addedLine.height) + 52) }; // 52 = 44 px from the row's top to the added line + 8 px under its last line
+    });
+    const H = (ROW_H + ROW_GAP) * n + 146 + 18 + DPS_LINE + rows.reduce((s, r) => s + r.rowH - ROW_H, 0); // room for the kills line and the damage per second under it
     const top = -H / 2;
     // The card swallows taps, so tapping the panel never builds on the board under it.
     const card = makeCard(scene, 0, 0, w, H, 22).setInteractive();
@@ -78,18 +84,21 @@ export class TowerPanel implements HudPart {
     const close = makeButton(scene, w / 2 - 26, top + 26, '×', () => game.building.closePanel(), { width: 44, height: 44, radius: 22, fontSize: 24 });
     const items: Phaser.GameObjects.GameObject[] = [card, desc, stats, close.container];
     // One row per augment, like the draft cards: the icon, "Name · Tier", the tier's gems and its added line.
-    const RW = w - 36;
+    let rowY = 72 + (rows[0]?.rowH ?? 0) / 2; // first row's top where today's 64px row starts; each next top is the last row's bottom plus ROW_GAP
     tower.augments.forEach((c, i) => {
       const a = getAugment(c.id);
-      const row = scene.add.container(0, top + 104 + i * (ROW_H + ROW_GAP));
+      const { addedLine, rowH } = rows[i];
+      const row = scene.add.container(0, top + rowY);
+      rowY += rowH / 2 + ROW_GAP + (rows[i + 1]?.rowH ?? 0) / 2;
+      addedLine.setPosition(-RW / 2 + 36, -rowH / 2 + 44);
       row.add([
-        makeCard(scene, 0, 0, RW, ROW_H, 12),
+        makeCard(scene, 0, 0, RW, rowH, 12),
         artScale(scene.add.image(-RW / 2 + 17, 0, augmentTexture(c.id)), 0.6),
-        scene.add.text(-RW / 2 + 36, -ROW_H / 2 + 7, `${a.name} · ${tierName(c.tier)}`, textStyle(12, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0),
-        gemRow(scene, c.tier, -RW / 2 + 41 + (tierGemCount(c.tier) - 1) * 6, 1),
-        scene.add.text(-RW / 2 + 36, 12, tierAddedLine(a, c.tier), textStyle(11, PALETTE.muted, { wordWrap: { width: RW - 52 } })).setOrigin(0, 0),
+        scene.add.text(-RW / 2 + 36, -rowH / 2 + 7, `${a.name} · ${tierName(c.tier)}`, textStyle(12, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0),
+        gemRow(scene, c.tier, -RW / 2 + 41 + (tierGemCount(c.tier) - 1) * 6, -rowH / 2 + 33),
+        addedLine,
       ]);
-      const frame = drawTierFrame(scene, c.tier, RW, ROW_H, 12);
+      const frame = drawTierFrame(scene, c.tier, RW, rowH, 12);
       if (frame) row.add(frame);
       items.push(row);
     });

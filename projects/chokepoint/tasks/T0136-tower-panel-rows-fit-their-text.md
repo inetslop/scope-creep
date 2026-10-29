@@ -4,11 +4,12 @@ title: "Tower panel: augment rows grow to fit their text"
 assignee: yoga
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T09:46:49Z
 claimed_at: 2026-10-29T10:42:01Z
+finished_at: 2026-10-29T11:50:52Z
 ---
 
 ## Goal
@@ -75,3 +76,16 @@ Everything from the `n === 0` branch down (kills, dps, `slots`, `box`) stays exa
 - No unit tests: this is a HUD-part layout change, no `core/` rule.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+In the tower panel (`ui/hud/TowerPanel.ts`), augment rows now size to their wrapped added line instead of a fixed 64px: the added lines are measured up front (DraftScene's pass-1 pattern), each row becomes `max(64, textHeight + 52)` — exactly 64px when the line fits on one line, and one text-height taller per extra wrapped line with 8px bottom padding — and the row's card, tier frame, icon, name, gems and added line all follow the real height. The panel height `H` grows by the rows' growth, so rows below a taller row move down and the kills line, damage-per-second line and slot row keep their spacing. Verified Beam/Anchor/Splash-style two-line rows now fit inside their cards on both 1280x720 and 412x915; `npm run check` and `npm run smoke` pass.
+
+- Self-review: APPROVE
+- Time: 68.9 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/ui/hud/TowerPanel.ts | 25 +++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
+```
