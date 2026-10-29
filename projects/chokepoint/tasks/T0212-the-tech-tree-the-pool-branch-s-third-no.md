@@ -3,11 +3,13 @@ id: T0212
 title: "The tech tree: the pool branch's third node — Mend"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0153, T0209]
 attempts: 0
 created: 2026-10-29T15:15:13Z
+claimed_at: 2026-10-29T15:35:20Z
 epic: E2
+designer: cachyos-x8664
 ---
 
 ## Goal
