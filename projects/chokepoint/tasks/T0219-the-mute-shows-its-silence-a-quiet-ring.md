@@ -4,11 +4,12 @@ title: "The Mute shows its silence: a quiet ring under the Mute"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T16:16:13Z
 claimed_at: 2026-10-29T17:32:01Z
+finished_at: 2026-10-29T17:47:13Z
 ---
 
 ## Goal
@@ -125,3 +126,15 @@ export const muteJam: MakeEnemyHook = ({ enemies, towers, scene }) => {
 
 ### Tests
 - none (display only; no `core/` rule changes)
+
+## Result (attempt 1, yoga)
+
+The Mute now shows its silence: while a live Mute holds at least one tower within its 2-cell reach, a thin purple ring in the Mute's own color grows from its token out to the full radius and fades over 1 s, pulsing once a second of real time (so 1x and 2x read the same), at ground level under the token in the working-aura's soft alpha. No ring appears when no tower is in range, and it clears the frame the Mute dies or leaks. The jam mechanic itself is byte-identical — the ring reuses the same radius check — and nothing else changed; check and smoke pass.
+
+- Self-review: APPROVE
+- Time: 15.2 min
+
+```
+.../game/src/systems/enemyHooks/muteJam.ts         | 72 +++++++++++++++++++---
+ 1 file changed, 64 insertions(+), 8 deletions(-)
+```
