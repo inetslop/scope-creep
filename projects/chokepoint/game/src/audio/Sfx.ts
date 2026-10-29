@@ -90,6 +90,12 @@ export class Sfx {
     notes.forEach((f, n) => window.setTimeout(() => this.tone(f, 0.08, 'sine', 0.1), n * 80));
   }
 
+  /** The last stand turns on: two soft low notes, E3 then G3, the tier-chime's quiet class. */
+  sting(): void {
+    this.tone(165, 0.08, 'sine', 0.1);
+    this.tone(196, 0.08, 'sine', 0.1, undefined, 0.08);
+  }
+
   leak(): void {
     this.tone(140, 0.3, 'sawtooth', 0.25, 70);
   }

@@ -4,11 +4,12 @@ title: The last stand gets a sting
 assignee: cachyos-x8664
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T01:18:08Z
 claimed_at: 2026-10-29T01:55:25Z
+finished_at: 2026-10-29T01:58:31Z
 epic: E1
 ---
 
@@ -69,3 +70,16 @@ Notes: E3 = 659/4 ≈ 165 Hz, G3 = 784/4 = 196 Hz (two octaves below the coin ch
 
 ### Tests
 - none (audio + one existing trigger line; no core rule changes)
+
+## Result (attempt 1, cachyos-x8664)
+
+Added a new `sting()` method to `src/audio/Sfx.ts` (two 80 ms sine notes, E3→G3, volume 0.1, tier-chime quiet class, sequenced with `tone()`'s delay param) and wired it into `LastStandBanner.update()` so the sting plays on the exact rising edge that slides the banner in — once per entry into 1 life, re-firing on re-entry and silent when lives recover or the run starts. Verified with `npm run check` and `npm run smoke`, both pass.
+
+- Self-review: APPROVE
+- Time: 3.1 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts              | 6 ++++++
+ projects/chokepoint/game/src/ui/hud/LastStandBanner.ts | 6 +++++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
+```

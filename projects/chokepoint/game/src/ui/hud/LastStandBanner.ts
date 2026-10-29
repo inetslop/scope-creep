@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { isLastStand } from '../../core/lastStand';
 import type { GameScene } from '../../scenes/GameScene';
+import { getSfx } from '../../scenes/keys';
 import type { HudPart } from './hud';
 import { TopBanner } from './topBanner';
 
@@ -23,7 +24,10 @@ export class LastStandBanner implements HudPart {
 
   update(game: GameScene): void {
     const one = isLastStand(game.run);
-    if (one && !this.wasOne) this.banner.show(['Last stand', 'kills pay double']);
+    if (one && !this.wasOne) {
+      this.banner.show(['Last stand', 'kills pay double']);
+      getSfx(game)?.sting();
+    }
     this.wasOne = one;
   }
 }
