@@ -1,12 +1,14 @@
 ---
 id: T0134
 title: "Spray becomes a shotgun: a cone of pellets"
+assignee: inet-racing
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T09:34:10Z
+claimed_at: 2026-10-29T10:01:38Z
 epic: E4
 ---
 
