@@ -43,6 +43,9 @@ export interface HitPayload {
   source: Tower;
 }
 
+/** The standard enemy token's radius in cells (Block's 0.26): the leak jolt's baseline size. */
+const JOLT_BASE_SIZE = 0.26;
+
 /** Owns the enemy pool: spawning, walking, hits, kills, leaks, and the health bars. */
 export class EnemySystem {
   private readonly scene: Phaser.Scene;
@@ -183,7 +186,9 @@ export class EnemySystem {
     this.fx.ring(e.x, e.y, 30, PALETTE.red);
     this.fx.popText(e.x, e.y - 20, `-${e.def.livesCost}`, PALETTE.red);
     this.sfx?.leak();
-    this.scene.cameras.main.shake(140, 0.005);
+    // The jolt scales with the leaker's token size: the bigger it slips through, the harder the board shudders.
+    const size = Math.max(1, e.def.look.size / JOLT_BASE_SIZE);
+    this.scene.cameras.main.shake(140, 0.005 * (1 + (size - 1) * 1.5));
     e.despawn();
   }
 

@@ -4,11 +4,12 @@ title: The leak jolt sizes with the leaker
 assignee: baby-mama
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T07:23:51Z
 claimed_at: 2026-10-29T08:16:41Z
+finished_at: 2026-10-29T08:20:31Z
 ---
 
 ## Goal
@@ -57,3 +58,15 @@ No new types, exports, or signatures. Pure juice inside the existing `private le
 
 ### Tests
 none (pure juice; no rule in `src/core` added or changed).
+
+## Result (attempt 1, baby-mama)
+
+The board's leak jolt now scales with the leaker's token size in `src/systems/EnemySystem.ts`: a new module constant `JOLT_BASE_SIZE = 0.26` (Block's radius) and the shake in `leak()` now computes the leaker's size factor (floored at 1) and shakes at `0.005 × (1 + (size − 1) × 1.5)`, so a size-1.0 enemy (e.g. Dot) jolts byte-identically to today while a Hauler hits at ~1.45× the amplitude with the same shape and timing. The leak warning, lives number and leak sound are untouched. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 3.8 min
+
+```
+projects/chokepoint/game/src/systems/EnemySystem.ts | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+```
