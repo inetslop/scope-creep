@@ -16,12 +16,13 @@ const withCoins = (coins: number, purchased: string[] = []): KeyValueStore => {
 };
 
 describe('tech', () => {
-  it('the run-start row is one chain of four: three gold nodes, then the life', () => {
+  it('the run-start row is one chain of five: three gold nodes, then two lives', () => {
     expect(TECH_NODES.map((n) => [n.id, n.price, n.requires, n.gold, n.life])).toEqual([
       ['gold-1', 5, null, 5, 0],
       ['gold-2', 10, 'gold-1', 5, 0],
       ['gold-3', 15, 'gold-2', 5, 0],
       ['life-1', 30, 'gold-3', 0, 1],
+      ['life-2', 40, 'life-1', 0, 1],
     ]);
   });
 
@@ -35,10 +36,16 @@ describe('tech', () => {
     expect(startBonuses(['nope', 'gold-3'])).toEqual({ gold: 5, life: 0 });
   });
 
+  it('the two life nodes stack: owning both adds two lives', () => {
+    expect(startBonuses(['life-1', 'life-2'])).toEqual({ gold: 0, life: 2 });
+    expect(startBonuses(['gold-1', 'gold-2', 'gold-3', 'life-1', 'life-2'])).toEqual({ gold: 15, life: 2 });
+  });
+
   it('a node buys only when it is known, unowned, unlocked and affordable', () => {
     expect(buyNode(withCoins(60), 'nope')).toBe(false);
     expect(buyNode(withCoins(60), 'gold-2')).toBe(false); // the previous node is not owned
     expect(buyNode(withCoins(60), 'life-1')).toBe(false); // the last gold node is not owned
+    expect(buyNode(withCoins(60), 'life-2')).toBe(false); // the previous life node is not owned
     const broke = withCoins(4);
     expect(buyNode(broke, 'gold-1')).toBe(false); // unaffordable: the coins never go below zero
     expect(loadProfile(broke).coins).toBe(4);
@@ -54,11 +61,11 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual(['gold-1']);
   });
 
-  it('the full chain of four, bought in order, leaves the remainder', () => {
-    const store = withCoins(70);
+  it('the full chain of five, bought in order, leaves the remainder', () => {
+    const store = withCoins(110);
     for (const node of TECH_NODES) expect(buyNode(store, node.id)).toBe(true);
     expect(loadProfile(store).coins).toBe(10);
-    expect(loadProfile(store).purchased).toEqual(['gold-1', 'gold-2', 'gold-3', 'life-1']);
+    expect(loadProfile(store).purchased).toEqual(['gold-1', 'gold-2', 'gold-3', 'life-1', 'life-2']);
   });
 
   it('the purchased list parses defensively', () => {

@@ -16,14 +16,15 @@ export interface TechNode {
 }
 
 /**
- * The "Run start" branch: one row of four, each node needing the one before it. The life node
- * sits last, so it is the most expensive thing the branch has to offer.
+ * The "Run start" branch: one row of five, each node needing the one before it. The two life
+ * nodes sit last and stack.
  */
 export const TECH_NODES: readonly TechNode[] = [
   { id: 'gold-1', name: 'Gold +5', line: 'new runs start with 5 more gold', price: 5, requires: null, gold: 5, life: 0 },
   { id: 'gold-2', name: 'Gold +5', line: 'new runs start with 5 more gold', price: 10, requires: 'gold-1', gold: 5, life: 0 },
   { id: 'gold-3', name: 'Gold +5', line: 'new runs start with 5 more gold', price: 15, requires: 'gold-2', gold: 5, life: 0 },
   { id: 'life-1', name: 'Life +1', line: 'new runs start with one more life', price: 30, requires: 'gold-3', gold: 0, life: 1 },
+  { id: 'life-2', name: 'Life +1', line: 'new runs start with one more life', price: 40, requires: 'life-1', gold: 0, life: 1 },
 ];
 
 /** What a new run starts with extra for the owned nodes; each node counts once, unknown ids count for nothing. */

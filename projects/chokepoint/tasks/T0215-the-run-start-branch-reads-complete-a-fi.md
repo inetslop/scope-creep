@@ -4,11 +4,12 @@ title: "The run-start branch reads complete: a fifth node and a done mark"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T15:52:06Z
 claimed_at: 2026-10-29T16:20:55Z
+finished_at: 2026-10-29T16:43:50Z
 epic: E2
 ---
 
@@ -94,3 +95,17 @@ Stacking, buying, and the menu dot all come free: `startBonuses` sums `node.life
 ### Tests
 - `tests/core/tech.test.ts` updates above (chain of five, life-2 lock, life stacking, full-chain purchase at 110 coins).
 - `npm run check` and `npm run smoke` must pass (smoke covers the Tech screen at 412x915 and 1280x720).
+
+## Result (attempt 1, asus)
+
+The Run-start branch of the tech tree gained a fifth node, a second "Life +1" at 40 coins (`src/core/tech.ts`), which stacks with the first so owning both starts runs with +2 lives — all handled by the existing generic `startBonuses`/`buyNode` logic, no code change. `TechScene` now draws a small yellow done-dot at the right edge of each branch's title line whenever every node in that branch is owned (including the single-node claim branch), and the wide panel width now follows the longest row. `tests/core/tech.test.ts` was updated for the chain of five, the life-2 lock, life stacking, and the full-chain purchase. One deviation from the design: the dot field is typed `Phaser.GameObjects.Arc[]` instead of `Circle[]`, because this Phaser version's typings don't export `Circle` (`this.add.circle` returns an `Arc`).
+
+- Self-review: APPROVE
+- Time: 22.9 min
+
+```
+projects/chokepoint/game/src/core/tech.ts        |  5 +++--
+ projects/chokepoint/game/src/scenes/TechScene.ts | 15 +++++++++++++--
+ projects/chokepoint/game/tests/core/tech.test.ts | 15 +++++++++++----
+ 3 files changed, 27 insertions(+), 8 deletions(-)
+```

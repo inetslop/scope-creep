@@ -53,6 +53,7 @@ export class TechScene extends Phaser.Scene {
   private balanceText!: Phaser.GameObjects.Text;
   private balanceIcon!: Phaser.GameObjects.Image;
   private cards: TechCard[] = [];
+  private rowDots: Phaser.GameObjects.Arc[] = [];
   private rows: RowNode[][] = [
     TECH_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: n.requires, unlocks: null, branch: 'start' })),
     DRAFT_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: n.requires, unlocks: null, branch: 'draft' })),
@@ -125,9 +126,12 @@ export class TechScene extends Phaser.Scene {
   private rebuild(): void {
     this.box?.destroy();
     this.cards = [];
+    this.rowDots = [];
     this.dragging = false;
     const wide = this.kind === 'wide';
-    this.panelW = wide ? 716 : 356;
+    // The widest row decides the panel's width: 172 between cards, 160 card, 20 at each side.
+    const maxRow = Math.max(...this.rows.map((r) => r.length));
+    this.panelW = wide ? Math.max(716, (maxRow - 1) * 172 + 200) : 356;
     // Offsets from the panel's top: each row's label, then its card rows (one on wide, two
     // columns on narrow), then 50 below the last row and 31 up to the next label. The menu sits
     // 52 below the last row's bottom; the panel ends 54 below the menu's center.
@@ -154,7 +158,11 @@ export class TechScene extends Phaser.Scene {
     };
     const parts: Phaser.GameObjects.GameObject[] = [panel, title, coin, number];
     this.rows.forEach((row, r) => {
-      parts.push(this.add.text(0, -this.panelH / 2 + geoms[r].label, ROW_LABELS[r], textStyle(14, PALETTE.muted)).setOrigin(0.5));
+      const label = this.add.text(0, -this.panelH / 2 + geoms[r].label, ROW_LABELS[r], textStyle(14, PALETTE.muted)).setOrigin(0.5);
+      // The done mark: the tree's accent dot at the right edge of the title line, only while every node is owned.
+      const dot = this.add.circle(label.width / 2 + 9, -this.panelH / 2 + geoms[r].label, 3, PALETTE.yellow).setVisible(false);
+      this.rowDots.push(dot);
+      parts.push(label, dot);
       row.forEach((node, i) => {
         const grid = wide ? 0 : Math.floor(i / 2);
         const lastOdd = row.length % 2 === 1 && i === row.length - 1; // an odd narrow row ends alone in the middle
@@ -234,6 +242,9 @@ export class TechScene extends Phaser.Scene {
       }
       c.button.setEnabled(afford && unlocked && inContent && !owned);
     }
+    this.rows.forEach((row, r) => {
+      this.rowDots[r].setVisible(row.every((n) => this.profile.purchased.includes(n.id)));
+    });
   }
 
   private buy(node: RowNode): void {
