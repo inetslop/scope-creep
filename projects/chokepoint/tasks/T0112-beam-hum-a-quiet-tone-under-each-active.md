@@ -1,12 +1,14 @@
 ---
 id: T0112
 title: "Beam hum: a quiet tone under each active beam (the T0043 re-file)"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T09:55:07Z
+claimed_at: 2026-10-29T11:42:24Z
 epic: E4
 ---
 
