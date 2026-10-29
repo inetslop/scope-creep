@@ -50,6 +50,20 @@ export function pickTargets(x: number, y: number, range: number, enemies: readon
     .slice(0, Math.max(0, count));
 }
 
+/** Up to `max` active enemies within `radius` (board units) of `near`, nearest first; skips `near` itself. */
+export function pickNearest(near: TargetCandidate, radius: number, enemies: readonly TargetCandidate[], max: number): number[] {
+  const d2 = (i: number): number => {
+    const e = enemies[i]!;
+    const dx = e.x - near.x;
+    const dy = e.y - near.y;
+    return dx * dx + dy * dy;
+  };
+  return inRange(near.x, near.y, radius, enemies)
+    .sort((a, b) => d2(a) - d2(b))
+    .filter((i) => enemies[i] !== near)
+    .slice(0, Math.max(0, max));
+}
+
 /**
  * Index of the closest ACTIVE enemy strictly behind `behind` on the path (smallest gap
  * `behind.distance - e.distance`), only gaps > 0 and <= maxBehind (board units); skips `behind`

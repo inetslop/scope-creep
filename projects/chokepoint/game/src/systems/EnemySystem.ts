@@ -7,6 +7,7 @@ import { killGold } from '../core/lastStand';
 import { mintGoldBonus } from '../core/mint';
 import { burnTick } from '../core/burn';
 import { ROOT_IMMUNE_SEC } from '../core/root';
+import { pickNearest } from '../core/targeting';
 import { quietGoldMul } from '../core/waves';
 import { hook } from '../debug/testHook';
 import { Enemy } from '../entities/Enemy';
@@ -23,6 +24,8 @@ export interface HitPayload {
   damage: number;
   /** Board units around the hit enemy that are hit too (0: none). */
   splash: number;
+  /** How many more enemies (beyond the struck one) the burst strikes: the nearest first. */
+  splashCap: number;
   slow: { pct: number; sec: number } | undefined;
   /** The root (full stop) this hit applies, in seconds; undefined when it has no Anchor. */
   root: { sec: number } | undefined;
@@ -111,19 +114,15 @@ export class EnemySystem {
 
   /**
    * One hit of a tower's attack on `target`: its damage and slow, and with splash the same on
-   * every other enemy within `payload.splash` board units of it (a burst ring shows where).
+   * up to `payload.splashCap` other enemies nearest to it within `payload.splash` board units
+   * (a burst ring shows where).
    */
   hit(target: Enemy, payload: HitPayload): void {
     if (!target.active) return;
     const victims = [target];
     if (payload.splash > 0) {
-      const r2 = payload.splash * payload.splash;
-      for (const e of this.pool) {
-        if (e === target || !e.active) continue;
-        const dx = e.x - target.x;
-        const dy = e.y - target.y;
-        if (dx * dx + dy * dy <= r2) victims.push(e);
-      }
+      // The burst strikes the enemies nearest to the struck one first, up to the tower's cap.
+      for (const i of pickNearest(target, payload.splash, this.pool, payload.splashCap)) victims.push(this.pool[i]!);
       this.fx.ring(target.x, target.y, payload.splash, payload.color);
     }
     for (const e of victims) this.strike(e, payload);

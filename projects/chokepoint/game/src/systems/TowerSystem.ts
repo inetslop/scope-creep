@@ -2,7 +2,7 @@ import type Phaser from 'phaser';
 import { CELL } from '../config';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
-import { slotCost, towerColor } from '../core/augments';
+import { slotCost, splashHits, towerColor } from '../core/augments';
 import type { Cell } from '../core/map';
 import type { RunState } from '../core/run';
 import { hook } from '../debug/testHook';
@@ -114,6 +114,7 @@ export class TowerSystem {
       payload: {
         damage: spec.damage,
         splash: spec.splash * CELL,
+        splashCap: Math.max(0, splashHits(spec.splashCount) - 1),
         slow: spec.slow,
         root: spec.root,
         pierce: spec.pierce,

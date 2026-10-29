@@ -4,11 +4,12 @@ title: "Splash hits a few, not all: 3 enemies per Splash"
 assignee: desktop-4070
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T21:08:30Z
 claimed_at: 2026-10-29T00:09:48Z
+finished_at: 2026-10-29T01:37:30Z
 design_attempts: 1
 ---
 
@@ -79,3 +80,22 @@ const hits = cap > 0 ? pickTargets(tower.x, tower.y, range, enemies, cap) : inRa
 
 ### Tests
 `npm run check` (unit: pickNearest order/skip/cap; counts 1/2/3 first+added; panel lines; Frost uncapped) and `npm run smoke`.
+
+## Result (attempt 1, desktop-4070)
+
+Autocompact is thrashing: the context refilled to the limit within 3 turns of the previous compact, 3 times in a row. A file being read or a tool output is likely too large for the context window. Try reading in smaller chunks, or use /clear to start fresh.
+
+- Self-review: APPROVE
+- Time: 87.7 min
+
+```
+.../chokepoint/game/src/content/augments/splash.ts | 13 +++++++-----
+ projects/chokepoint/game/src/core/augments.ts      | 16 +++++++++++++--
+ projects/chokepoint/game/src/core/targeting.ts     | 14 +++++++++++++
+ .../chokepoint/game/src/systems/EnemySystem.ts     | 15 +++++++-------
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  3 ++-
+ .../chokepoint/game/src/systems/attacks/pulse.ts   |  7 +++++--
+ .../chokepoint/game/tests/core/augments.test.ts    | 20 +++++++++++++++++++
+ .../chokepoint/game/tests/core/targeting.test.ts   | 23 +++++++++++++++++++++-
+ 8 files changed, 92 insertions(+), 19 deletions(-)
+```

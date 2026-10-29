@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { inRange, pickPierceTarget, pickTarget, pickTargets } from '../../src/core/targeting';
+import { inRange, pickNearest, pickPierceTarget, pickTarget, pickTargets } from '../../src/core/targeting';
 
 const enemies = [
   { x: 10, y: 0, distance: 5, active: true },
@@ -28,6 +28,27 @@ describe('pickTargets', () => {
   it('takes the ones furthest along first, up to the count', () => {
     expect(pickTargets(0, 0, 30, enemies, 2)).toEqual([1, 0]);
     expect(pickTargets(0, 0, 30, enemies, 5)).toEqual([1, 0]);
+  });
+});
+
+describe('pickNearest', () => {
+  const struck = { x: 100, y: 0, distance: 20, active: true };
+  const list = [
+    struck, // the enemy that was just hit
+    { x: 104, y: 0, distance: 21, active: true }, // 4 away
+    { x: 90, y: 0, distance: 15, active: true }, // 10 away
+    { x: 200, y: 0, distance: 60, active: true }, // 100 away
+    { x: 112, y: 0, distance: 24, active: false }, // dead, 12 away
+  ];
+
+  it('the nearest first within the radius, skipping the struck enemy and the dead', () => {
+    expect(pickNearest(struck, 30, list, 5)).toEqual([1, 2]);
+    expect(pickNearest(struck, 100, list, 5)).toEqual([1, 2, 3]);
+  });
+
+  it('caps at max, nearest first', () => {
+    expect(pickNearest(struck, 100, list, 2)).toEqual([1, 2]);
+    expect(pickNearest(struck, 100, list, 0)).toEqual([]);
   });
 });
 

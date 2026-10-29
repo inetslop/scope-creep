@@ -2,6 +2,7 @@ import { MAX_SLOTS, SLOT_COSTS } from '../config';
 import { ANCHOR_EXTRA_ROOT_SEC, anchor } from '../content/augments/anchor';
 import { getAugment } from '../content/augments';
 import { bolt } from '../content/augments/bolt';
+import { SPLASH_CAP } from '../content/augments/splash';
 import type { Bright } from '../content/palette';
 import type { AttackKind, AugmentCopy, AugmentDef, Burn } from '../content/types';
 import type { Rng } from './rng';
@@ -51,6 +52,8 @@ export interface TowerSpec {
   pushPerHit: number;
   /** Pushes in the tower: one outward tick each (the first is the gust, the rest add per-hit push). */
   pushCount: number;
+  /** Splash copies in the tower: their hits strike at most this many enemies (splashHits). */
+  splashCount: number;
 }
 
 const EMPTY: TowerSpec = {
@@ -77,6 +80,7 @@ const EMPTY: TowerSpec = {
   gust: 0,
   pushPerHit: 0,
   pushCount: 0,
+  splashCount: 0,
 };
 
 /**
@@ -116,6 +120,7 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     gust: f.push ?? 0,
     pushPerHit: 0,
     pushCount: 0,
+    splashCount: 0,
   };
   // Anchors in any slot: the first sets the root's duration, each extra one lengthens it.
   let rootSec = 0;
@@ -162,6 +167,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     spec.pushCount += 1;
     if (i > 0) spec.pushPerHit += a.added.push ?? 0;
   }
+  // Splashes in any slot, at any tier: how many enemies its hits may strike.
+  for (const a of augments) if (a.id === 'splash') spec.splashCount += 1;
   // Mints in any slot: this tower's kills drop this much extra gold (core/mint.ts).
   for (const a of augments) spec.goldPerKill += tierAdded(getAugment(a.id), a.tier).goldPerKill ?? 0;
   // A pulse already hits an area: splash makes it reach further, and pierce turns into bolts
@@ -172,6 +179,11 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     spec.splash = 0;
   }
   return spec;
+}
+
+/** How many enemies a Splash in the tower lets its hits strike: its copies times SPLASH_CAP. */
+export function splashHits(copies: number): number {
+  return copies * SPLASH_CAP;
 }
 
 /** One line for the tower panel: what the combination does. */
@@ -190,7 +202,7 @@ export function describeSpec(spec: TowerSpec): string {
   } else if (spec.kind === 'shot') {
     const target = spec.shots > 1 ? `${spec.shots} enemies at a time` : 'the enemy furthest along';
     const style = spec.range >= 4 ? 'Snipes' : spec.rate >= 3 ? 'Fires fast needles at' : 'Shoots';
-    line = `${style} ${target}${spec.splash > 0 ? ', and the shots burst' : ''}${spec.pierce > 0 ? `, and each hits ${spec.pierce + 1} in a line` : ''}${marked > 0 ? ', and its hits mark' : ''}`;
+    line = `${style} ${target}${spec.splash > 0 ? `, and the shots burst to ${splashHits(spec.splashCount) - 1} more` : ''}${spec.pierce > 0 ? `, and each hits ${spec.pierce + 1} in a line` : ''}${marked > 0 ? ', and its hits mark' : ''}`;
     if (slow) line += `, slowing them by ${slow}%`;
     line += root;
   } else if (spec.kind === 'mark') {
@@ -213,7 +225,7 @@ export function describeSpec(spec: TowerSpec): string {
       if (marked > 0) line += ', and its hits mark';
     } else line = spec.bolts > 0 ? `Shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}` : 'Does not attack';
   } else {
-    line = 'Blasts everything around it';
+    line = spec.firstId === 'splash' ? `Blasts the ${splashHits(spec.splashCount)} furthest around it` : 'Blasts everything around it';
     if (slow) line += `, slowing them by ${slow}%`;
     line += root;
     if (spec.bolts > 0) line += `, and shoots ${spec.bolts > 1 ? `${spec.bolts} enemies` : 'the enemy furthest along'}`;

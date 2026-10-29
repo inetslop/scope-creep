@@ -59,6 +59,26 @@ describe('towerSpec', () => {
   });
 });
 
+describe('splash cap', () => {
+  it('counts the Splash copies in any slot, at any tier', () => {
+    expect(spec('splash').splashCount).toBe(1);
+    expect(spec('bolt', 'splash', 'splash').splashCount).toBe(2);
+    expect(spec('splash', 'splash', 'splash').splashCount).toBe(3);
+  });
+
+  it('the tower line shows the cap: as a first, and added to a shot', () => {
+    expect(describeSpec(spec('splash'))).toMatch(/Blasts the 3 furthest around it/);
+    expect(describeSpec(spec('splash', 'splash'))).toMatch(/Blasts the 6 furthest/);
+    expect(describeSpec(spec('bolt', 'splash'))).toMatch(/burst to 2 more/);
+    expect(describeSpec(spec('bolt', 'splash', 'splash'))).toMatch(/burst to 5 more/);
+  });
+
+  it('Splash added to a Frost first only widens its reach, never caps it', () => {
+    expect(spec('frost', 'splash').splash).toBe(0);
+    expect(describeSpec(spec('frost', 'splash'))).toMatch(/Slows everything around it/);
+  });
+});
+
 describe('pierce (Lance)', () => {
   it('a lone Lance is a piercing shot', () => {
     expect(spec('lance')).toMatchObject({ kind: 'shot', pierce: 1 });
