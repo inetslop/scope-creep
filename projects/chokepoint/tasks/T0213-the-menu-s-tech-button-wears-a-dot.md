@@ -3,11 +3,13 @@ id: T0213
 title: "The menu's Tech button wears a dot"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0103]
 attempts: 0
 created: 2026-10-29T15:15:13Z
+claimed_at: 2026-10-29T15:15:32Z
 epic: E2
+designer: yoga
 ---
 
 ## Goal
