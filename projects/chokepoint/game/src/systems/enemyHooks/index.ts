@@ -5,6 +5,7 @@ import { haulerLeak } from './haulerLeak';
 import { mintRing } from './mintRing';
 import { muteJam } from './muteJam';
 import { nameTag } from './nameTag';
+import { markTick } from './markTick';
 import { split } from './split';
 import { killCoin } from './killCoin';
 
@@ -16,6 +17,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   comboGold,
   split,
   nameTag,
+  markTick,
   killCoin,
   haulerLeak,
   burnLeap,

@@ -4,11 +4,12 @@ title: The mark shows on the enemy
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T02:55:25Z
 claimed_at: 2026-10-29T04:13:35Z
+finished_at: 2026-10-29T04:50:13Z
 epic: E4
 ---
 
@@ -128,3 +129,16 @@ Do nothing else: no `fx/` file, no edit to `EnemySystem`, `FxSystem`, `enemyMark
 - `npm run check` (typecheck + lint + unit tests) — must pass.
 - `npm run smoke` — desktop 1280x720 and phone 412x915: a marked enemy wears exactly one small pink chip above it from first mark until death/leak; re-marks never make it vanish or duplicate; unmarked enemies show nothing new.
 - Manual acceptance if smoke lacks mark coverage: draft the Mark augment, build one tower with it, watch an enemy get marked mid-wave — the chip appears the same frame at the tower's hit, rides the enemy along the road, and is gone on its death chips; pause → resume shows no stale ticks; a fresh run shows none until the first mark.
+
+## Result (attempt 1, desktop-4070)
+
+A marked enemy now wears the Mark's own pink tick on the board: one new enemy hook (`src/systems/enemyHooks/markTick.ts`) gives every enemy whose `markPct` is above zero a small rounded chip in the Mark's pink (16x9, no text, the name-chip look with its darker side face) riding just above the token at effect depth. The tick appears on first mark and is destroyed the same frame the mark comes off — via the kill and leak hooks plus the per-frame check — so dead enemies, leaked enemies, pool reuse, and fresh or resumed runs all show nothing; unmarked enemies cost no new objects. It is registered with exactly one import line and one entry in `ENEMY_HOOKS` (`src/systems/enemyHooks/index.ts`), placed next to its kin `nameTag`; the Mark rule itself (+25% damage from everything, its target and cadence), the enemy token paint, and the shape library are untouched. Verified with `npm run check` (typecheck + lint + unit tests) and `npm run smoke`, passing on both desktop 1280x720 and phone 412x915; it is display-only, so mouse+keyboard and touch play exactly as before.
+
+- Self-review: APPROVE
+- Time: 36.6 min
+
+```
+.../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/markTick.ts        | 57 ++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
+```
