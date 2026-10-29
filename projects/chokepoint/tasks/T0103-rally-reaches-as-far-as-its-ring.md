@@ -1,12 +1,14 @@
 ---
 id: T0103
 title: "Rally reaches as far as its ring: Reach grows it"
+assignee: baby-mama
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T07:01:07Z
+claimed_at: 2026-10-29T08:02:49Z
 ---
 
 ## Goal
