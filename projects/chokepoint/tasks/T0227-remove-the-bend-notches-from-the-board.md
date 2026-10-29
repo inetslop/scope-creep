@@ -1,12 +1,14 @@
 ---
 id: T0227
 title: Remove the bend notches from the board
+assignee: yoga
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T17:59:52Z
+claimed_at: 2026-10-29T18:20:29Z
 ---
 
 ## Goal
