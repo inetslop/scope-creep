@@ -1,14 +1,14 @@
 ---
 id: T0065
 title: "Second pick: every 5th draft offers a fourth card"
-assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 2
 created: 2026-10-28T13:54:28Z
 claimed_at: 2026-10-28T22:09:43Z
+finished_at: 2026-10-29T00:09:45Z
 epic: E4
 design_attempts: 1
 ---
@@ -76,3 +76,7 @@ No longer waits on T0064: that only kept the tasks from editing the same files a
 ## Attempt 1 interrupted (desktop-4070)
 
 The runner stopped mid-task (crash, restart or reboot). Requeued.
+
+## Attempt 2 failed (desktop-4070)
+
+The agent made no changes to the game (timeout).
