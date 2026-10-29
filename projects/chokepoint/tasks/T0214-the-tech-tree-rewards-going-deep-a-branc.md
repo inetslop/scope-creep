@@ -3,11 +3,13 @@ id: T0214
 title: "The tech tree rewards going deep: a branch discount"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T15:52:06Z
+claimed_at: 2026-10-29T16:12:15Z
 epic: E2
+designer: cachyos-x8664
 ---
 
 ## Goal
