@@ -3,10 +3,12 @@ id: T0114
 title: "Targeting modes per tower: first, strongest, closest"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T09:55:07Z
+claimed_at: 2026-10-29T09:55:11Z
+designer: desktop
 ---
 
 ## Goal
