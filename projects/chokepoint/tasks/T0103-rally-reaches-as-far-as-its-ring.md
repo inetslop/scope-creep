@@ -4,11 +4,12 @@ title: "Rally reaches as far as its ring: Reach grows it"
 assignee: baby-mama
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T07:01:07Z
 claimed_at: 2026-10-29T08:02:49Z
+finished_at: 2026-10-29T08:16:37Z
 ---
 
 ## Goal
@@ -80,3 +81,18 @@ and a new `describe('the tower panel line', ...)` with `expect(describeSpec(spec
 
 ### Tests
 The `tests/core/rally.test.ts` changes in step 4: plain Rally exactly 2 (existing), reach 2.7 buffs at 2.5 not 3, two rallies each use their own reach, and the panel line with/without Reach.
+
+## Result (attempt 1, baby-mama)
+
+A Rally tower now speeds up every tower inside its own range ring, so Reach grows the rally's reach — plain Rally still reaches exactly 2 cells, Rally + one Common Reach reaches 2.7 (the existing `spec.range` multiplication, no new math). The change is in `src/core/rally.ts` (`rallyBuffed` takes each tower's reach and measures with the rally tower's own, never the buffed tower's), `src/systems/RallySystem.ts` (buff, neighbor check and teal ring all use `spec.range`; the now-unused `RALLY_RANGE` import is dropped), and the rally case of `describeSpec` in `src/core/augments.ts`, which prints the tower's own reach with one decimal when not whole, e.g. "Towers within 2.7 cells attack 10% faster." while the draft card line stays "Towers within 2 cells". `tests/core/rally.test.ts` adds coverage for the 2.7-reach rally (buffs at 2.5, not 3), two rallies using their own reaches, and the panel line; `npm run check` and `npm run smoke` both pass (desktop + mobile). One minimal deviation from the design: its "two rallies" test specified `attacks = [false, true, false]` while expecting `[false, true, true]`, which can never pass because a non-attacking tower is never in the buffed set, so that test's third tower is an attacking tower with Rally added (joins its own rally) — the design's expected result and pitfall coverage stand unchanged.
+
+- Self-review: APPROVE
+- Time: 13.8 min
+
+```
+projects/chokepoint/game/src/core/augments.ts      |  3 ++-
+ projects/chokepoint/game/src/core/rally.ts         |  9 +++----
+ .../chokepoint/game/src/systems/RallySystem.ts     | 11 +++++----
+ projects/chokepoint/game/tests/core/rally.test.ts  | 28 ++++++++++++++++++----
+ 4 files changed, 37 insertions(+), 14 deletions(-)
+```

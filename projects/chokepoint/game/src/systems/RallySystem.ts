@@ -1,14 +1,14 @@
 import type Phaser from 'phaser';
 import { CELL, DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
-import { RALLY_PCT, RALLY_RANGE, inRallyReach, rallyBuffed } from '../core/rally';
+import { RALLY_PCT, inRallyReach, rallyBuffed } from '../core/rally';
 import type { FxSystem } from './FxSystem';
 import type { TowerSystem } from './TowerSystem';
 
 /**
  * Rally, the augment that works on other towers (core/rally.ts): every tower in reach of a
  * Rally attacks a flat +10% faster, never stacking. It shows the effect on the board so a
- * first-time player can read it: a soft teal ring pulses out to the 2-cell range once a second
+ * first-time player can read it: a soft teal ring pulses out to its range once a second
  * from each rally tower that has a neighbor, and a small yellow chevron floats over every
  * buffed tower.
  */
@@ -30,7 +30,8 @@ export class RallySystem {
     const list = this.towers.towers;
     const hasRally = list.map((t) => t.augments.some((c) => c.id === 'rally'));
     const attacks = list.map((t) => t.spec.attacks && t.spec.kind !== 'rally');
-    const buffed = rallyBuffed(list.map((t) => t.cell), hasRally, attacks, RALLY_RANGE);
+    const ranges = list.map((t) => t.spec.range);
+    const buffed = rallyBuffed(list.map((t) => t.cell), hasRally, attacks, ranges);
     for (let i = 0; i < list.length; i++) list[i]!.rallyRateMul = buffed[i] ? 1 + RALLY_PCT : 1;
 
     // The chevron over each buffed tower, just above its body.
@@ -58,8 +59,8 @@ export class RallySystem {
       for (let i = 0; i < list.length; i++) {
         if (!hasRally[i]) continue;
         const t = list[i]!;
-        const hasNeighbor = list.some((o, j) => j !== i && inRallyReach(t.cell, o.cell, RALLY_RANGE));
-        if (hasNeighbor) this.fx.ring(t.x, t.y, RALLY_RANGE * CELL, PALETTE.teal);
+        const hasNeighbor = list.some((o, j) => j !== i && inRallyReach(t.cell, o.cell, t.spec.range));
+        if (hasNeighbor) this.fx.ring(t.x, t.y, t.spec.range * CELL, PALETTE.teal);
       }
     }
   }

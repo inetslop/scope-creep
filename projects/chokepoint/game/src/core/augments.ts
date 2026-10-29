@@ -234,7 +234,8 @@ export function describeSpec(spec: TowerSpec): string {
     else if (spec.beamExtras.length > 1) line += `, and ${spec.beamExtras.length} beams at ${spec.beamExtras[spec.beamExtras.length - 1]} per second on the nearest enemies`;
   } else if (spec.kind === 'rally') {
     const r = getAugment('rally');
-    line = `Towers within ${r.first.range} cells attack ${Math.round((r.added.rally?.pct ?? 0) * 100)}% faster`;
+    const reach = spec.range % 1 === 0 ? spec.range : spec.range.toFixed(1);
+    line = `Towers within ${reach} cells attack ${Math.round((r.added.rally?.pct ?? 0) * 100)}% faster`;
   } else if (spec.damage <= 0) {
     if (spec.root) {
       line = spec.slow ? `Slows everything around it by ${slow}%, and roots it for ${spec.root.sec}s` : `Roots everything around it for ${spec.root.sec}s`;
