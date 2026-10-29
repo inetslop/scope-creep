@@ -1,14 +1,14 @@
 ---
 id: T0065
 title: "Second pick: every 5th draft offers a fourth card"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 2
+attempts: 3
 created: 2026-10-28T13:54:28Z
-claimed_at: 2026-10-28T22:09:43Z
-finished_at: 2026-10-29T00:09:45Z
+claimed_at: 2026-10-29T02:02:41Z
 epic: E4
 design_attempts: 1
 ---
