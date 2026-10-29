@@ -3,11 +3,13 @@ id: T0234
 title: "Toll: the Epic that pays gold when a leak gets through"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T22:31:19Z
+claimed_at: 2026-10-29T22:31:23Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
