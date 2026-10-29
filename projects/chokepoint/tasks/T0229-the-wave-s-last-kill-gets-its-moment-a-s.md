@@ -4,11 +4,12 @@ title: "The wave's last kill gets its moment: a soft ring where it ends"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T20:16:15Z
 claimed_at: 2026-10-29T20:51:16Z
+finished_at: 2026-10-29T21:07:16Z
 ---
 
 ## Goal
@@ -89,3 +90,18 @@ export const waveClose: MakeEnemyHook = (ctx) => ({
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+The wave's final kill now blooms a soft white ring (road-white, low alpha) from the exact kill spot: it grows from the killed enemy's radius out to 1.5 cells over 300 ms while fading, then is destroyed — no sound, no text, no HUD change, nothing left on the board. The trigger is a new enemy hook (`waveClose`) that fires only on the kill taking the wave's alive count to zero, so mid-wave kills and lost waves show no ring, and it shares its beat with the untouched "Wave N cleared" text. Changes are two new files (`systems/fx/clearRing.ts`, `systems/enemyHooks/waveClose.ts`) plus one registry line each in `enemyHooks/index.ts` and `GameScene.ts`; check and smoke pass on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 16.0 min
+
+```
+projects/chokepoint/game/src/scenes/GameScene.ts           |  1 +
+ projects/chokepoint/game/src/systems/enemyHooks/index.ts   |  2 ++
+ .../chokepoint/game/src/systems/enemyHooks/waveClose.ts    | 14 ++++++++++++++
+ projects/chokepoint/game/src/systems/fx/clearRing.ts       | 14 ++++++++++++++
+ 4 files changed, 31 insertions(+)
+```

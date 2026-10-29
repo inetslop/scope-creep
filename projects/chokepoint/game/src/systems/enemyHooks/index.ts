@@ -9,6 +9,7 @@ import { nameTag } from './nameTag';
 import { crackTick } from './crackTick';
 import { split } from './split';
 import { killCoin } from './killCoin';
+import { waveClose } from './waveClose';
 
 /**
  * Everything that reacts to kills, leaks or every frame of a wave, one per line (see hook.ts).
@@ -21,6 +22,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   nameTag,
   crackTick,
   killCoin,
+  waveClose,
   haulerLeak,
   burnLeap,
   muteJam,
