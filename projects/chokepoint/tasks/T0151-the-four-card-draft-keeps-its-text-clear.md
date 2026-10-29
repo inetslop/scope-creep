@@ -4,11 +4,12 @@ title: "The four-card draft: the card lines clear their icons"
 assignee: baby-mama
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T10:13:21Z
 claimed_at: 2026-10-29T10:37:39Z
+finished_at: 2026-10-29T10:42:35Z
 ---
 
 ## Goal
@@ -55,3 +56,15 @@ No types or signatures change. Exact replacement of `src/scenes/DraftScene.ts:10
 
 ### Tests
 - none
+
+## Result (attempt 1, baby-mama)
+
+In the four-card draft (every 5th draft) the icons stayed full size while the text slid under them; the text now starts 6 px right of the icon's right edge (`-cw/2 + 40` instead of `42k`) and the wrap width narrows by the same amount to keep the right margin, so both card lines clear their tower/plus icons at desktop (165 px cards) and in the phone's 2×2 grid (121 px cards), with card height still grown by the three-line Beam/Spray text. The change is gated on the four-card path in `buildRow` (`src/scenes/DraftScene.ts`), so the three-card draft renders exactly as before.
+
+- Self-review: APPROVE
+- Time: 4.9 min
+
+```
+projects/chokepoint/game/src/scenes/DraftScene.ts | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+```

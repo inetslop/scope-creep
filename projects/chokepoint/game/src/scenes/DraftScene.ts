@@ -104,8 +104,11 @@ export class DraftScene extends Phaser.Scene {
       flipped.fill(false);
       const cw = cardWidth(size.width);
       const k = cw / CARD_W; // the four-card draft's text and marks scale with the narrower card
-      const textX = -cw / 2 + 42 * k;
-      const wrap = { wordWrap: { width: Math.round(cw - 58 * k) } };
+      // The four-card draft keeps its icons at full size, so the text starts 6 px right of the
+      // icon's right edge (centre -cw/2 + 26, half-width 8 → right edge -cw/2 + 34), and the wrap
+      // narrows by the same amount to keep the 16k right margin; the three-card keeps its marks scaled.
+      const textX = four ? -cw / 2 + 40 : -cw / 2 + 42 * k;
+      const wrap = { wordWrap: { width: Math.round(four ? cw - 40 - 16 * k : cw - 58 * k) } };
       // Pass 1: lay the two lines out at (0,0) to measure them, then let the card grow to fit.
       const lines = copies.map((copy) => {
         const b = getAugment(copy.id);
