@@ -3,13 +3,11 @@ id: T0234
 title: "Toll: the Epic that pays gold when a leak gets through"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-29T22:31:19Z
-claimed_at: 2026-10-29T22:31:23Z
 epic: E4
-designer: desktop
 ---
 
 ## Goal
@@ -44,3 +42,70 @@ A new Epic-only augment with a new economy: income from what the run loses. The 
 - [ ] A Hauler leak still costs 1 life and 5 gold: the red "−5" pop and the Toll gold pop both appear, side by side, not overlapping.
 - [ ] Toll gold is not doubled by last stand or a quiet wave, never joins a combo chain or its gold, never pays a Mint; the coin tally, claim recipe and pause worth line are unchanged.
 - [ ] A Toll-first tower is the flat muted-gray disc with one tick per copy; an added Toll shows one muted-gray tick on any tower; the Epic purple pip is as usual; works at 412x915 and 1280x720.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/augments/toll.ts` - the Toll AugmentDef (Epic-only, pulse first form, exact card lines)
+- create `src/core/toll.ts` - pure leak-pay math (`tollPay`), model on `core/mint.ts`
+- create `src/systems/enemyHooks/tollLeak.ts` - the onLeak hook: pay gold + delayed pop at the exit
+- create `tests/core/toll.test.ts` - unit tests for the +2/+1 rule and `tollPay`
+- edit `src/content/types.ts` - add `goldPerLeak?` to `FirstForm` and `AddedForm`
+- edit `src/content/augments/index.ts` - import + one list entry next to `mint`; check the 16-cap
+- edit `src/core/augments.ts` - two `TowerSpec` fields, EMPTY/init values, the combine loop, one `describeSpec` clause
+- edit `src/systems/enemyHooks/index.ts` - import + one list entry after `haulerLeak`
+- edit `src/entities/towerLook.ts` - one `DECORATIONS` entry after the Mint entry
+- edit `tests/content.test.ts` - add the new field to the first-form effect check (line 51)
+- edit `src/debug/runChecks.ts` - one invariant line next to `towers.gold`
+
+### Interfaces
+```ts
+// content/types.ts — FirstForm (after goldRadius) and AddedForm (after goldPerKill):
+/** Every leak pays this much gold while the tower stands (Toll). */
+goldPerLeak?: number;
+// core/toll.ts:
+export interface TollTower { spec: TowerSpec }
+export function tollPay(towers: readonly TollTower[]): number; // sum of spec.tollPerLeak
+// core/augments.ts TowerSpec (after goldRadius):
+tollPerLeak: number; // 0 without a Toll; the first copy's first form + each extra copy's added form
+tollCount: number;   // Toll copies in the tower: one tick each
+```
+`toll.ts` def (copy `mint.ts`): `id 'toll'`, `name 'Toll'`, `description 'Every leak pays +2 gold while a Toll tower stands. Added: +1 more per leak.'`, `asTower: 'While a Toll tower stands, every leak pays +2 gold.'`, `asAdded: 'Each extra Toll: +1 more gold per leak.'`, `look: { shape: 'circle', color: 'yellow', size: 0.2 }` (unique pair; never `square pink`), `first: { kind: 'pulse', damage: 0, range: 1, rate: 1, goldPerLeak: 2 }`, `added: { goldPerLeak: 1 }`, `tier: 'epic'`, no `opening`, `tiers: { rare: { asAdded: 'Each extra Toll: +1 more gold per leak.' }, epic: { asAdded: 'Each extra Toll: +1 more gold per leak.' } }` with the mint comment.
+
+### Steps
+1. `content/types.ts`: the two `goldPerLeak?` fields with the comments above.
+2. `content/augments/toll.ts`: the def above.
+3. `content/augments/index.ts`: `import { toll } from './toll';` after the `spray` import (alphabetical); `toll,` in `AUGMENTS` on the line after `mint,`. Then count entries: 15 ≤ 16, so **remove nothing** and say "16-cap: pool is 15, no removal". If you actually find 16+ entries, remove the first of `frost`, `rally`, `mint` still present (its import line and list line) and say which.
+4. `core/toll.ts`: `TollTower` + `tollPay` (sum `spec.tollPerLeak`).
+5. `core/augments.ts`: fields in `TowerSpec` and `0` in `EMPTY` and in the `towerSpec` init (after `goldRadius`); after the Mints line (line 215) add the loop: for each copy `if (a.id !== 'toll') continue; spec.tollCount += 1; spec.tollPerLeak += i === 0 ? a.first.goldPerLeak ?? 0 : a.added.goldPerLeak ?? 0;` (like the Marks loop, reading the raw def); in `describeSpec` after the gold lines add `if (spec.tollPerLeak > 0) line += `, every leak pays +${spec.tollPerLeak} gold`;`.
+6. `systems/enemyHooks/tollLeak.ts`:
+```ts
+export const tollLeak: MakeEnemyHook = ({ run, fx, towers }) => ({
+  onLeak(enemy) {
+    const pay = tollPay(towers());
+    if (pay <= 0) return; // no Toll tower stands: byte-identical to today
+    const x = enemy.x, y = enemy.y; // captured: it returns to the pool before the pop lands
+    run.gold += pay; // run gold, not coins: the tally and claim recipe never see it
+    fx.scene.time.delayedCall(100, () => fx.popText(x - 40, y - 20, `+${pay}`));
+  },
+});
+```
+7. `systems/enemyHooks/index.ts`: import next to `haulerLeak`; `tollLeak,` in `ENEMY_HOOKS` on the line after `haulerLeak,`.
+8. `entities/towerLook.ts`: new entry in `DECORATIONS` after the Mint entry: if `spec.tollCount === 0` return; if `spec.firstId === 'toll'` draw `g.fillStyle(PALETTE.muted, 1); g.fillCircle(0, 4, BODY * 1.5)` (4 = the body's lift above the plinth center, as in `Tower.ts`), then for each copy `fillRing(g, 0, 4, BODY * 1.5, 3, a - 0.14, a + 0.14, PALETTE.ink)` with `a = -Math.PI / 2 + (i / spec.tollCount) * Math.PI * 2`; else for each copy `fillRing(g, 0, 0, BODY * 1.8, 3, a - 0.12, a + 0.12, PALETTE.muted)` with `a = Math.PI / 2 + (i / spec.tollCount) * Math.PI * 2` (the Rapid-tick language, muted).
+9. `tests/content.test.ts` line 51: add `|| a.first.goldPerLeak` next to `a.first.goldRadius`.
+10. `tests/core/toll.test.ts`: via `towerSpec([{ id, tier: 'epic' }])` — one toll → `tollPerLeak 2`, two → `3`, three → `4`; `tollCount` matches; `['bolt','toll']` → `1`, `['bolt','toll','toll']` → `2`; `tollPay` sums two toll towers (2 + 3 = 5) and is 0 with none; a toll-first spec is `kind 'pulse'`, `damage 0`.
+11. `debug/runChecks.ts` after `towers.gold`: `['towers.toll', (g) => { for (const t of g.towers.towers) if (!Number.isInteger(t.spec.tollCount) || t.spec.tollCount < 0 || t.spec.tollCount > t.augments.length) return \`toll ${t.spec.tollCount} at (${t.cell.col}, ${t.cell.row})\`; return null; }],`
+12. `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- **Pooling**: capture `enemy.x/y` before the 100 ms `delayedCall` — the enemy is despawned in `leak()` and may be respawned elsewhere before the pop lands.
+- **Gold path**: `run.gold += pay` directly (Hauler's pattern). Never `run.addKill` — it increments `run.kills` and `goldEarned`, which would corrupt the end card's "Stopped N" and the coin tally; also keep it out of the kill flow so last stand, quiet wave, combos and Mint never touch it.
+- **Pop geometry**: life pop at `x`, Hauler "−5" at `x + 40`; put Toll at `x − 40` so the three sit side by side.
+- **content.test.ts**: forgetting the line-51 field fails the suite; `look` must keep the shape+color pair unique (circle+yellow is free; square+pink is locked to anchor/mark/mint).
+- **Line lengths**: `asTower` ≤ 70, tier `asAdded` ≤ 56 chars (both fit exactly as given).
+- No FxSystem methods (project rule): the pop is `fx.popText` + `fx.scene.time.delayedCall`, the `mintPop` idiom; the call is cancelled on scene shutdown automatically.
+- A bare Toll tower must not attack: `TowerSystem.update`'s pure-support check already skips it (damage 0, no effects) — do not touch TowerSystem. The Epic card frame, gem row, "· Epic" name line, tier chime, codex entry, what-if ghost (fallback marker), panel DPS (0, hidden) and "kills 0" all come from `tier: 'epic'`/`spec` generically — no changes there.
+- The disc is a flat `fillCircle` in `PALETTE.muted` (the "held · N"/owned-dot gray) with ink rim ticks; no texture, no shadow, no rotation.
+
+### Tests
+- `tests/core/toll.test.ts` (new, above) — the +2/+1 per-copy rule and the board sum a later change could silently break; the `tests/content.test.ts` edit keeps the auto content validation green.
