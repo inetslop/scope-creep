@@ -4,11 +4,12 @@ title: "The tech tree: card text that never overlaps, rows sized from their card
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T17:00:35Z
 claimed_at: 2026-10-29T18:07:36Z
+finished_at: 2026-10-29T18:27:27Z
 ---
 
 ## Goal
@@ -164,3 +165,16 @@ this.box = this.add.container(0, 0, parts).setDepth(2);
 
 ### Tests
 none
+
+## Result (attempt 1, desktop)
+
+Tech tree cards are now laid out as top-down columns (name, top-aligned description, price line pinned to the bottom) with equal padding, so text can never overlap — the Momentum card's three-line description no longer rises into its name. Rows take the height of their tallest card and the panel height is derived from the rows plus the Menu button, with equal top/bottom padding; the owned border and the strike-through price line follow each card's new height. Verified with typecheck/lint/tests, the browser smoke run, and a temporary in-smoke visit to the Tech scene at both 1280×720 and 412×915 with no runtime errors (temp code reverted; only src/scenes/TechScene.ts changed).
+
+- Self-review: APPROVE
+- Time: 19.9 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/scenes/TechScene.ts | 116 +++++++++++++++++------
+ 1 file changed, 87 insertions(+), 29 deletions(-)
+```

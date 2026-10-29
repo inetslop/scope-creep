@@ -39,10 +39,29 @@ interface TechCard {
   strike: Phaser.GameObjects.Graphics;
   coin: Phaser.GameObjects.Image;
   border: Phaser.GameObjects.Graphics;
+  h: number; // this card's (its row's) height
 }
 
 /** One muted label per card row, in row order. */
 const ROW_LABELS = ['Run start', 'The draft', 'The pool', 'The claim'];
+
+// Each card is a column laid out top-down: the name, then the description (top-aligned, so it
+// only grows down), then the price line pinned to the bottom, the same padding top and bottom.
+// The row takes its tallest card's height, and the panel takes the rows plus the menu.
+const CARD_W = 160;
+const WRAP_W = 132; // card width minus its side padding
+const PAD_TOP = 12; // card top and bottom padding
+const GAP_ND = 7; // name -> description
+const GAP_DP = 12; // description -> price line
+const PRICE_H = 18; // price line height
+const MARGIN = 40; // panel top padding (-> title center) AND bottom padding (menu bottom -> panel edge): equal
+const BALANCE_GAP = 44; // title center -> balance center
+const HEADER_TO_LABEL = 26; // balance center -> first row's label
+const LABEL_TO_CARDS = 18; // label center -> first card top
+const GRID_GAP = 12; // between grid rows inside one row (narrow)
+const ROW_GAP = 30; // last card bottom -> next row label
+const MENU_GAP = 30; // last row bottom -> menu top
+const MENU_H = 52;
 
 export class TechScene extends Phaser.Scene {
   private profile!: Profile;
@@ -134,23 +153,59 @@ export class TechScene extends Phaser.Scene {
     // The widest row decides the panel's width: 172 between cards, 160 card, 20 at each side.
     const maxRow = Math.max(...this.rows.map((r) => r.length));
     this.panelW = wide ? Math.max(716, (maxRow - 1) * 172 + 200) : 356;
-    // Offsets from the panel's top: each row's label, then its card rows (one on wide, two
-    // columns on narrow), then 50 below the last row and 31 up to the next label. The menu sits
-    // 52 below the last row's bottom; the panel ends 54 below the menu's center.
-    let labelY = wide ? 140 : 132;
-    const geoms = this.rows.map((row) => {
-      const gridRows = wide ? 1 : Math.ceil(row.length / 2);
-      const geom = { label: labelY, centers: Array.from({ length: gridRows }, (_, g) => labelY + 73 + g * 112) };
-      labelY = geom.centers[gridRows - 1] + 50 + 31;
-      return geom;
+
+    // Pass A: build each card's texts, size the name to fit, and let the row take its tallest card.
+    interface Measured {
+      node: RowNode;
+      name: Phaser.GameObjects.Text;
+      desc: Phaser.GameObjects.Text;
+      price: Phaser.GameObjects.Text;
+      h: number;
+    }
+    const measured: Measured[][] = this.rows.map((row) => {
+      const rowCards: Measured[] = row.map((node) => {
+        const name = this.add.text(0, 0, node.name, textStyle(16, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5, 0);
+        let size = 16;
+        while (name.width > WRAP_W && size > 13) {
+          size -= 1;
+          name.setFontSize(size);
+        }
+        const desc = this.add.text(0, 0, node.line, textStyle(13, PALETTE.muted, { align: 'center', wordWrap: { width: WRAP_W }, lineSpacing: 2 })).setOrigin(0.5, 0);
+        const price = this.add.text(0, 0, String(node.price), textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
+        return { node, name, desc, price, h: PAD_TOP + name.height + GAP_ND + desc.height + GAP_DP + PRICE_H + PAD_TOP };
+      });
+      const rowH = Math.max(...rowCards.map((c) => c.h)); // every card in the row shares its tallest height
+      rowCards.forEach((c) => { c.h = rowH; });
+      return rowCards;
     });
-    const lastCenters = geoms[geoms.length - 1].centers;
-    const menuY = lastCenters[lastCenters.length - 1] + 50 + 52;
-    this.panelH = menuY + 54;
+
+    // Pass B: top-down vertical positions. The header, then each row (label, then its grid rows),
+    // then the menu; top and bottom padding are both MARGIN.
+    let top = MARGIN + BALANCE_GAP + HEADER_TO_LABEL;
+    const labelYs: number[] = [];
+    const cardTops: number[][] = [];
+    measured.forEach((rowCards) => {
+      const labelC = top + 8;
+      labelYs.push(labelC);
+      const gridCount = wide ? 1 : Math.ceil(rowCards.length / 2);
+      let y = labelC + LABEL_TO_CARDS;
+      const tops: number[] = [];
+      for (let g = 0; g < gridCount; g++) {
+        tops.push(y);
+        y += rowCards[0].h + (g < gridCount - 1 ? GRID_GAP : 0);
+      }
+      cardTops.push(tops);
+      top = y + ROW_GAP; // y is the bottom of the row's last grid row
+    });
+    const menuTop = top - ROW_GAP + MENU_GAP;
+    const menuC = menuTop + MENU_H / 2;
+    this.panelH = menuTop + MENU_H + MARGIN;
+
+    // Pass C: build the panel, header, rows and menu at the computed positions.
     const panel = makeCard(this, 0, 0, this.panelW, this.panelH, 28);
-    const title = this.add.text(0, -this.panelH / 2 + 52, 'Tech', titleStyle(32)).setOrigin(0.5);
-    const number = this.add.text(0, -this.panelH / 2 + 96, String(this.profile.coins), textStyle(28, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
-    const coin = artScale(this.add.image(0, -this.panelH / 2 + 96, COIN_TEXTURE), 1.4);
+    const title = this.add.text(0, -this.panelH / 2 + MARGIN, 'Tech', titleStyle(32)).setOrigin(0.5);
+    const number = this.add.text(0, -this.panelH / 2 + MARGIN + BALANCE_GAP, String(this.profile.coins), textStyle(28, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
+    const coin = artScale(this.add.image(0, -this.panelH / 2 + MARGIN + BALANCE_GAP, COIN_TEXTURE), 1.4);
     this.balanceText = number;
     this.balanceIcon = coin;
     this.centerBalance();
@@ -160,31 +215,33 @@ export class TechScene extends Phaser.Scene {
     };
     const parts: Phaser.GameObjects.GameObject[] = [panel, title, coin, number];
     this.rows.forEach((row, r) => {
-      const label = this.add.text(0, -this.panelH / 2 + geoms[r].label, ROW_LABELS[r], textStyle(14, PALETTE.muted)).setOrigin(0.5);
+      const label = this.add.text(0, -this.panelH / 2 + labelYs[r], ROW_LABELS[r], textStyle(14, PALETTE.muted)).setOrigin(0.5);
       // The done mark: the tree's accent dot at the right edge of the title line, only while every node is owned.
-      const dot = this.add.circle(label.width / 2 + 9, -this.panelH / 2 + geoms[r].label, 3, PALETTE.yellow).setVisible(false);
+      const dot = this.add.circle(label.width / 2 + 9, -this.panelH / 2 + labelYs[r], 3, PALETTE.yellow).setVisible(false);
       this.rowDots.push(dot);
       parts.push(label, dot);
       row.forEach((node, i) => {
+        const m = measured[r][i];
         const grid = wide ? 0 : Math.floor(i / 2);
         const lastOdd = row.length % 2 === 1 && i === row.length - 1; // an odd narrow row ends alone in the middle
         const x = wide ? (i - (row.length - 1) / 2) * 172 : i % 2 === 0 ? (lastOdd ? 0 : -86) : 86;
-        const button = makeButton(this, 0, 0, '', () => this.buy(node), { width: 160, height: 100, radius: 16, fadeWhenDisabled: false });
-        const name = this.add.text(0, -32, node.name, textStyle(16, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
-        const effect = this.add.text(0, -4, node.line, textStyle(13, PALETTE.muted, { align: 'center', wordWrap: { width: 140 }, lineSpacing: 2 })).setOrigin(0.5);
-        const price = this.add.text(0, 34, '', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
-        const full = this.add.text(0, 34, '', textStyle(13, PALETTE.muted, { fontStyle: 'bold' })).setOrigin(0, 0.5);
+        const button = makeButton(this, 0, 0, '', () => this.buy(node), { width: CARD_W, height: m.h, radius: 16, fadeWhenDisabled: false });
+        const priceY = m.h / 2 - PAD_TOP - PRICE_H / 2; // the price line, pinned to the card's bottom
+        m.name.setPosition(0, -m.h / 2 + PAD_TOP);
+        m.desc.setPosition(0, -m.h / 2 + PAD_TOP + m.name.height + GAP_ND);
+        m.price.setPosition(0, priceY);
+        const full = this.add.text(0, priceY, '', textStyle(13, PALETTE.muted, { fontStyle: 'bold' })).setOrigin(0, 0.5);
         const strike = this.add.graphics();
-        const nodeCoin = artScale(this.add.image(0, 34, COIN_TEXTURE), 12 / 28);
-        button.content.add([name, effect, price, full, strike, nodeCoin]);
+        const nodeCoin = artScale(this.add.image(0, priceY, COIN_TEXTURE), 12 / 28);
+        button.content.add([m.name, m.desc, m.price, full, strike, nodeCoin]);
         const border = this.add.graphics();
         button.container.add(border); // a sibling of the content, so it never lifts with the card
-        button.container.setPosition(x, -this.panelH / 2 + geoms[r].centers[grid]);
-        this.cards.push({ node, button, price, full, strike, coin: nodeCoin, border });
+        button.container.setPosition(x, -this.panelH / 2 + cardTops[r][grid] + m.h / 2);
+        this.cards.push({ node, button, price: m.price, full, strike, coin: nodeCoin, border, h: m.h });
         parts.push(button.container);
       });
     });
-    parts.push(makeButton(this, 0, menuY - this.panelH / 2, 'Menu', exit, { width: 240, height: 52, radius: 26 }).container);
+    parts.push(makeButton(this, 0, -this.panelH / 2 + menuC, 'Menu', exit, { width: 240, height: MENU_H, radius: 26 }).container);
     // The panel itself is the scroll handle: when the rows don't fit the screen, a press on its
     // empty area drags the box vertically. A press on a card never starts one (the check below),
     // so scrolling and buying can't happen with the same finger.
@@ -224,7 +281,7 @@ export class TechScene extends Phaser.Scene {
       c.border.clear();
       if (owned) {
         c.border.lineStyle(2, PALETTE.yellow, 1);
-        c.border.strokeRoundedRect(-81, -51, 162, 102, 17);
+        c.border.strokeRoundedRect(-CARD_W / 2 + 1, -c.h / 2 + 1, CARD_W - 2, c.h - 2, 17);
         c.price.setText('owned').setColor(cssColor(PALETTE.muted));
         c.price.x = -c.price.width / 2; // the price text is left-origin (the coin row); center it on its own
         c.coin.setVisible(false);
@@ -263,7 +320,8 @@ export class TechScene extends Phaser.Scene {
         c.price.x = -w / 2 + 20 + c.full.width + 8;
         c.strike.clear();
         c.strike.lineStyle(1, PALETTE.muted, 1);
-        c.strike.lineBetween(c.full.x, 34, c.full.x + c.full.width, 34);
+        const strikeY = c.h / 2 - PAD_TOP - PRICE_H / 2; // the card's price line
+        c.strike.lineBetween(c.full.x, strikeY, c.full.x + c.full.width, strikeY);
         c.full.setVisible(true);
         c.strike.setVisible(true);
         c.coin.setVisible(true);
