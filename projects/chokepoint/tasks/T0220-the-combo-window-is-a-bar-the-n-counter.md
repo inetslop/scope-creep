@@ -1,12 +1,14 @@
 ---
 id: T0220
 title: "The combo window is a bar: the ×N counter's clock you can see"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T16:54:18Z
+claimed_at: 2026-10-29T18:56:27Z
 ---
 
 ## Goal
