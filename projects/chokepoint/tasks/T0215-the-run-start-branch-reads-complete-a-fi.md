@@ -3,11 +3,13 @@ id: T0215
 title: "The run-start branch reads complete: a fifth node and a done mark"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T15:52:06Z
+claimed_at: 2026-10-29T16:16:16Z
 epic: E2
+designer: desktop
 ---
 
 ## Goal
