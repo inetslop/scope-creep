@@ -3,14 +3,14 @@ id: T0081
 title: "The claim card's last page"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-28T23:26:44Z
 claimed_at: 2026-10-29T01:38:34Z
+finished_at: 2026-10-29T03:38:41Z
 epic: E1
-design_attempts: 1
-designer: baby-mama
+design_attempts: 2
 ---
 
 ## Goal
@@ -30,3 +30,11 @@ A run you can look back on, not just a number: the rewards claim grows a small s
 - [ ] A run resumed mid-way: the marks include the pre-resume waves and the record survived the save.
 - [ ] At 412x915 and 1280x720 the two cards and the Menu button fit on screen with no scroll; the first card's layout is unchanged.
 - [ ] A first-time player reads the marks without new teaching: green is the clean chip's green, red is the leak warning's red.
+
+## Architect could not design it (baby-mama)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+
+```
