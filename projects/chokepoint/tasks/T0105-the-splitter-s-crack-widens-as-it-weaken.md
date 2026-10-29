@@ -3,11 +3,13 @@ id: T0105
 title: "The splitter's crack widens as it weakens"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T07:44:26Z
 epic: E4
+designer: inet-racing
 ---
 
 ## Goal
