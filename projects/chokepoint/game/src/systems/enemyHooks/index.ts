@@ -9,6 +9,7 @@ import { nameTag } from './nameTag';
 import { markTick } from './markTick';
 import { crackTick } from './crackTick';
 import { rampTick } from './rampTick';
+import { slowTick } from './slowTick';
 import { split } from './split';
 import { killCoin } from './killCoin';
 
@@ -27,6 +28,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   haulerLeak,
   burnLeap,
   burnTick,
+  slowTick,
   muteJam,
   mintRing,
 ];

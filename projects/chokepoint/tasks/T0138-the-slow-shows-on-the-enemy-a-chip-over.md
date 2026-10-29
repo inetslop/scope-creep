@@ -4,11 +4,12 @@ title: "The slow shows on the enemy: a chip over the slowed"
 assignee: narcissus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T11:23:58Z
 claimed_at: 2026-10-29T11:45:19Z
+finished_at: 2026-10-29T12:03:44Z
 epic: E4
 ---
 
@@ -57,3 +58,16 @@ No new types. New export, mirroring `markTick`: `export const slowTick: MakeEnem
 
 ### Tests
 none
+
+## Result (attempt 1, narcissus)
+
+A slowed enemy now wears a small ice chip (Frost's colors, the mark tick's chip look) riding just above its token for as long as its slow is live — from a Frost tower's aura or any Frost-added hit — and it clears the instant the slow ends. If the enemy is also marked or burning, the ice chip shifts right beside the pink mark tick and burn chip so they never overlap. Implemented as new enemy hook `src/systems/enemyHooks/slowTick.ts` (display only, reads existing `slowPct`/`markPct`/`burn.left`, no new fields) registered with two lines in `src/systems/enemyHooks/index.ts`; no sounds, keys, buttons or pause-screen lines added. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 18.4 min
+
+```
+.../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/slowTick.ts        | 57 ++++++++++++++++++++++
+ 2 files changed, 59 insertions(+)
+```
