@@ -4,11 +4,12 @@ title: "The tech tree: the draft branch"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0103]
 attempts: 1
 created: 2026-10-29T07:23:51Z
 claimed_at: 2026-10-29T12:32:14Z
+finished_at: 2026-10-29T16:03:52Z
 epic: E2
 ---
 
@@ -73,3 +74,31 @@ Call sites (all already hold `this.run` / `game.run`): `TowerSystem.nextSlotCost
 
 ### Tests
 `tests/core/techEffects.test.ts` (or the repo's name): `slotPrice(0/2/3, anything) === slotCost(0/2/3)` and `slotPrice(1, d) === Math.max(5, 70 - d)` (d 0/5/10, big); `draftTech` over id subsets ({5,false},{10,false},{0,true},{10,true},{}); `draftCardsFor`: (1,true)=4, (1,false)=3, (5,false)=4, (5,true)=4, (6,true)=3; byte-identical: `slotPrice(i, 0) === slotCost(i)` for all i, `draftCardsFor(w, false) === draftCardCount(w)` for all w.
+
+## Result (attempt 1, desktop-4070)
+
+Prompt is too long · automatic compaction failed: summarization produced empty response
+
+- Self-review: APPROVE
+- Time: 211.7 min
+- Gate failed at "check"; fix round 1.
+
+```
+projects/chokepoint/game/src/content/tech/draft.ts | 25 +++++++
+ projects/chokepoint/game/src/core/run.ts           |  4 +
+ projects/chokepoint/game/src/core/tech.ts          |  3 +-
+ projects/chokepoint/game/src/core/techEffects.ts   | 41 ++++++++++
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  7 +-
+ projects/chokepoint/game/src/scenes/TechScene.ts   | 24 +++---
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  7 +-
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  5 +-
+ projects/chokepoint/game/src/ui/hud/TowerPanel.ts  |  5 +-
+ .../chokepoint/game/tests/core/techEffects.test.ts | 87 ++++++++++++++++++++++
+ 10 files changed, 189 insertions(+), 19 deletions(-)
+```
+
+## Merge (attempt 1, desktop-4070)
+
+- Conflicts in: projects/chokepoint/game/src/core/tech.ts, projects/chokepoint/game/src/scenes/TechScene.ts
+- Auto-resolved 2 spot(s) where both sides only added lines (clean: projects/chokepoint/game/src/core/tech.ts).
+- The conflict agent resolved them.

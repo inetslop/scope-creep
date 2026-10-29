@@ -5,6 +5,7 @@ import type { AugmentCopy } from '../content/types';
 import { slotCost, splashHits, towerColor } from '../core/augments';
 import type { Cell } from '../core/map';
 import type { RunState } from '../core/run';
+import { slotPrice } from '../core/techEffects';
 import { hook } from '../debug/testHook';
 import { Tower } from '../entities/Tower';
 import type { Sfx } from '../audio/Sfx';
@@ -50,7 +51,7 @@ export class TowerSystem {
 
   /** Gold for this tower's next slot, or undefined when it has them all. */
   nextSlotCost(tower: Tower): number | undefined {
-    return slotCost(tower.slots);
+    return slotPrice(tower.slots, this.run.slotDiscount);
   }
 
   /** Builds a tower on `cell` with `copy` in its first slot, paying for that slot. */
@@ -79,7 +80,7 @@ export class TowerSystem {
 
   /** Buys `tower`'s next slot. */
   unlockSlot(tower: Tower): true | Refusal {
-    const cost = slotCost(tower.slots);
+    const cost = slotPrice(tower.slots, this.run.slotDiscount);
     if (cost === undefined) return 'max';
     if (!this.run.spend(cost)) return 'gold';
     tower.unlockSlot();

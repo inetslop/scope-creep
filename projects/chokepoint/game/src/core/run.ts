@@ -18,6 +18,10 @@ export class RunState {
   readonly rng: Rng;
   gold: number = START.gold;
   lives: number = START.lives;
+  /** Gold off a tower's second slot from the owned "Slot II" tech nodes (0 in resumed runs). */
+  slotDiscount = 0;
+  /** The pre-wave-1 draft offers a fourth card (the "Fourth card" node, off in resumed runs). */
+  fourthCard = false;
   /** The wave being fought, or the last one fought (0 before the first). */
   wave = 0;
   phase: RunPhase = 'build';

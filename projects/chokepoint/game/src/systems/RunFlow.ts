@@ -3,8 +3,9 @@ import { BUILD_SEC, CELL, REROLL_COST } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
-import { draftCardCount, rollOffer } from '../core/augments';
+import { rollOffer } from '../core/augments';
 import type { RunState } from '../core/run';
+import { draftCardsFor } from '../core/techEffects';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { SCENES } from '../scenes/keys';
@@ -99,7 +100,7 @@ export class RunFlow {
   openDraft(): void {
     this.run.phase = 'draft';
     this.draftWave = this.run.wave + 1;
-    this.offer = rollOffer(this.run.rng, AUGMENTS, draftCardCount(this.draftWave), this.draftWave, this.run.wave === 0, this.lastOffer);
+    this.offer = rollOffer(this.run.rng, AUGMENTS, draftCardsFor(this.draftWave, this.run.fourthCard), this.draftWave, this.run.wave === 0, this.lastOffer);
     this.lastOffer = this.offer.map((c) => c.id);
     if (this.offer.length === 0) {
       this.finishDraft(undefined);
@@ -113,7 +114,7 @@ export class RunFlow {
   rerollOffer(): boolean {
     if (this.run.phase !== 'draft') return false;
     if (!this.run.reroll(REROLL_COST)) return false;
-    this.offer = rollOffer(this.run.rng, AUGMENTS, draftCardCount(this.draftWave), this.draftWave, this.run.wave === 0, this.lastOffer);
+    this.offer = rollOffer(this.run.rng, AUGMENTS, draftCardsFor(this.draftWave, this.run.fourthCard), this.draftWave, this.run.wave === 0, this.lastOffer);
     this.lastOffer = this.offer.map((c) => c.id);
     return true;
   }

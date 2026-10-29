@@ -2,7 +2,8 @@ import type Phaser from 'phaser';
 import { HUD, MAX_SLOTS } from '../../config';
 import { getAugment } from '../../content/augments';
 import { cssColor, PALETTE } from '../../content/palette';
-import { describeSpec, slotCost } from '../../core/augments';
+import { describeSpec } from '../../core/augments';
+import { slotPrice } from '../../core/techEffects';
 import { towerDps } from '../../core/towerDps';
 import { tierAddedLine } from '../../core/tiers';
 import { artScale, augmentTexture, COIN_TEXTURE } from '../../art/textures';
@@ -136,7 +137,7 @@ export class TowerPanel implements HudPart {
         g.fillRoundedRect(x - 1.5, y - 8, 3, 16, 1.5);
         items.push(g);
       } else if (i === tower.slots) {
-        const cost = slotCost(i)!;
+        const cost = slotPrice(i, game.run.slotDiscount)!;
         const button = makeButton(scene, x, y, '', () => game.building.unlockSlot(), { width: SLOT, height: SLOT, radius: 14 });
         const coin = artScale(scene.add.image(0, -8, COIN_TEXTURE), 0.8);
         const price = scene.add.text(0, 11, String(cost), textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);

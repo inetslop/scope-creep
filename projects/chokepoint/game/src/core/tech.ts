@@ -1,6 +1,7 @@
 /** The tech tree: the coins runs earn buy lasting bonuses. Storage is passed in, so this stays pure and testable. */
 import { CLAIM_NODES } from '../content/tech/claim';
 import { POOL_NODES } from '../content/tech/pool';
+import { DRAFT_NODES } from '../content/tech/draft';
 import { PROFILE_KEY, loadProfile, type KeyValueStore } from './profile';
 
 /** One buyable node: what it costs, what it needs before it unlocks, and what it adds to every new run. */
@@ -47,7 +48,7 @@ export function startBonuses(owned: readonly string[]): { gold: number; life: nu
  */
 export function buyNode(store: KeyValueStore | undefined, id: string): boolean {
   const profile = loadProfile(store);
-  const node = TECH_NODES.find((n) => n.id === id);
+  const node = TECH_NODES.find((n) => n.id === id) ?? DRAFT_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
   if (node.requires !== null && !profile.purchased.includes(node.requires)) return false;
   if (profile.coins < node.price) return false;

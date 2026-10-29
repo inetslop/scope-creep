@@ -6,6 +6,7 @@ import { loadProfile } from '../core/profile';
 import { RunState } from '../core/run';
 import type { SavedRun } from '../core/saveRun';
 import { startBonuses } from '../core/tech';
+import { draftTech } from '../core/techEffects';
 import { flags } from '../debug/flags';
 import { registerRunChecks, syncHookStats } from '../debug/runChecks';
 import { hook } from '../debug/testHook';
@@ -77,10 +78,14 @@ export class GameScene extends Phaser.Scene {
     this.registry.set('run', this.run);
     // New and ghost runs start with the owned tech tree's bonuses; a resumed run keeps its saved numbers.
     if (!saved) {
-      const tech = startBonuses(loadProfile(window.localStorage).purchased);
+      const profile = loadProfile(window.localStorage);
+      const tech = startBonuses(profile.purchased);
       this.run.gold += tech.gold;
       this.run.lives += tech.life;
       this.techLife = tech.life;
+      const draft = draftTech(profile.purchased);
+      this.run.slotDiscount = draft.slotDiscount;
+      this.run.fourthCard = draft.fourthCard;
     }
     const view = viewSize(this);
     const portrait = saved ? saved.rows > saved.cols : view.height > view.width;
