@@ -12,6 +12,8 @@ export interface WavePlan {
   spawns: WaveSpawn[];
   /** Enemy hp multiplier for this wave. */
   hpMul: number;
+  /** The wave's tags (the banner and the preview wear them): e.g. 'quiet'. */
+  tags: string[];
 }
 
 /**
@@ -145,7 +147,7 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
   }
   // A quiet wave halves the plan at the single exit, so both paths above get it.
   if (isQuietWave(wave)) finalSpawns = quietHalve(finalSpawns);
-  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave) };
+  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : [] };
 }
 
 /** What a wave sends: each enemy type it sends, and how many (no zeros), in first-arrival order. */

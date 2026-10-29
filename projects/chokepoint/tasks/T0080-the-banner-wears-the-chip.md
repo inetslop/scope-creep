@@ -4,11 +4,12 @@ title: The banner wears the chip
 assignee: narcissus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T23:26:44Z
 claimed_at: 2026-10-29T00:08:20Z
+finished_at: 2026-10-29T01:32:09Z
 epic: E1
 ---
 
@@ -95,3 +96,19 @@ and `this.card.setTexture(cardTexture(this.scene, w, this.h, 24));`. The chip is
 ### Tests
 - `tests/core/waves.test.ts`: the `tags` assertion above (a new field a later change could silently drop).
 - Smoke (`npm run smoke`) desktop 1280x720 + mobile 412x915 with a quiet wave (banner wears the chip) and a plain wave (banner unchanged).
+
+## Result (attempt 1, narcissus)
+
+The "Wave N" banner now wears the wave's own tags: `planWave` carries a `tags` field on every WavePlan (`'quiet'` on every 4th wave, none otherwise), `WaveSystem` exposes the in-flight wave as `currentPlan`, and the shared slide-and-fade `TopBanner` renders those tags to the right of the number using exactly T0071's muted-blue chip look, growing the card by only the chips' width. Untagged banners draw byte-identically to before — same 140 px card, same 200/700/300 ms motion — which the desktop and mobile smoke runs verified live on wave 1 (the harness's play window only reaches wave 1, so the quiet chip is verified by the new unit test in `tests/core/waves.test.ts` plus chip construction identical to the preview card). Later tagged waves (e.g. E5's boss wave) wear the same slot with no further changes. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 83.8 min
+
+```
+projects/chokepoint/game/src/core/waves.ts         |  4 +++-
+ projects/chokepoint/game/src/systems/WaveSystem.ts |  5 +++++
+ projects/chokepoint/game/src/ui/hud/WaveBanner.ts  |  2 +-
+ projects/chokepoint/game/src/ui/hud/topBanner.ts   | 26 ++++++++++++++++++++--
+ projects/chokepoint/game/tests/core/waves.test.ts  |  5 +++++
+ 5 files changed, 38 insertions(+), 4 deletions(-)
+```

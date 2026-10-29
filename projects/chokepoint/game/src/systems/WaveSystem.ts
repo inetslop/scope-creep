@@ -23,6 +23,11 @@ export class WaveSystem {
     return this.planned;
   }
 
+  /** The wave the board is sending now (the banner reads its tags; the preview reads nextPlan). */
+  get currentPlan(): WavePlan | undefined {
+    return this.plan;
+  }
+
   /** Plans the run's next wave; RunFlow calls it when the build phase starts. */
   planNext(): void {
     this.planned = planWave(this.run.wave + 1, this.run.rng, ENEMIES);

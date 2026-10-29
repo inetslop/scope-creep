@@ -6,6 +6,7 @@ import { textStyle } from '../text';
 import { isNarrow } from './hud';
 
 const W = 140;
+const CHIP_GAP = 6;
 
 /**
  * Top-center card that slides in from above, holds, and fades out (~1 s total) — the wave's
@@ -18,6 +19,7 @@ export class TopBanner {
   private readonly card: Phaser.GameObjects.Image;
   private readonly text: Phaser.GameObjects.Text;
   private readonly sub: Phaser.GameObjects.Text;
+  private chips: Phaser.GameObjects.Container[] = [];
   private playing = false;
   private top = 12;
   private h = 48;
@@ -37,14 +39,34 @@ export class TopBanner {
   }
 
   /** Slides in from above (~200 ms), holds (~500 ms), fades out (~300 ms). No-op while playing. */
-  show(lines: string[]): void {
+  show(lines: string[], tags: string[] = []): void {
     if (this.playing) return;
     this.playing = true;
+    for (const c of this.chips) c.destroy();
+    this.chips = [];
     const two = lines.length > 1;
     this.h = two ? 72 : 48; // 72 tall is for T0060's two lines
-    this.card.setTexture(cardTexture(this.scene, W, this.h, 24));
     this.text.setText(lines[0]).setY(two ? -12 : 0);
     this.sub.setText(two ? lines[1] : '').setVisible(two);
+    let cursor = this.text.width / 2 + CHIP_GAP; // right of the number, 6 px of air
+    for (const tag of tags) {
+      const label = this.scene.add.text(0, 0, tag, textStyle(11, PALETTE.card, { fontStyle: 'bold' })).setOrigin(0.5);
+      const w = Math.ceil(label.width) + 14;
+      const g = this.scene.add.graphics();
+      g.fillStyle(PALETTE.blueDeep, 1);
+      g.fillRoundedRect(-w / 2, -9, w, 18, 9);
+      const c = this.scene.add.container(w / 2, 0, [g, label]);
+      c.setPosition(cursor + w / 2, 0);
+      cursor += w + CHIP_GAP;
+      this.chips.push(c);
+      this.box.add(c);
+    }
+    const row = cursor - CHIP_GAP + this.text.width / 2;
+    const w = W + (row - this.text.width); // same width as today when there are no tags
+    const left = -row / 2 + this.text.width / 2;
+    this.text.x = left;
+    for (const c of this.chips) c.x += left;
+    this.card.setTexture(cardTexture(this.scene, w, this.h, 24));
     this.box.alpha = 1;
     this.box.setVisible(true);
     const y = this.top + this.h / 2;

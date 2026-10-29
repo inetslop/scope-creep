@@ -24,6 +24,11 @@ describe('planWave', () => {
     expect(planWave(1, new Rng(1), ENEMIES).spawns[0]!.delaySec).toBe(0);
   });
 
+  it('carries its tags: quiet waves are quiet, every other wave has none', () => {
+    expect(planWave(8, new Rng(8), ENEMIES).tags).toEqual(['quiet']);
+    expect(planWave(5, new Rng(5), ENEMIES).tags).toEqual([]);
+  });
+
   it('rampCount: none before wave 8, two from 8, +1 every four waves, capped at six', () => {
     expect([7, 8, 12, 16, 20, 24, 40].map((w) => rampCount(w))).toEqual([0, 2, 3, 4, 5, 6, 6]);
   });

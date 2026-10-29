@@ -19,7 +19,7 @@ export class WaveBanner implements HudPart {
   update(game: GameScene): void {
     if (game.run.wave > this.seenWave) {
       this.seenWave = game.run.wave;
-      this.banner.show([`Wave ${game.run.wave}`]);
+      this.banner.show([`Wave ${game.run.wave}`], game.waves.currentPlan?.tags ?? []);
     }
   }
 }
