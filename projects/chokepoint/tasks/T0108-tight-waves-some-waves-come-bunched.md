@@ -3,10 +3,12 @@ id: T0108
 title: "Tight waves: some waves come bunched"
 size: M
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T07:50:29Z
+designer: baby-mama
 ---
 
 ## Goal
