@@ -1,12 +1,14 @@
 ---
 id: T0088
 title: The build says its tier
+assignee: desktop-4070
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T00:22:08Z
+claimed_at: 2026-10-29T02:52:11Z
 epic: E4
 ---
 
