@@ -13,6 +13,25 @@ import { display, uiCamera, viewSize } from '../ui/display';
 import { titleStyle } from '../ui/text';
 import { getRun, onResize, SCENES } from './keys';
 
+/** The coin icon beside "+N coins": its shown size (the 28-unit texture at artScale 1.5) and the small fixed gap. */
+const COIN_SIZE = 14;
+const COIN_GAP = 10;
+
+/**
+ * One tidy column: each line's center y below the one before it (its height plus its gap),
+ * with the card's padding above the first line and below the last. `ys[i]` is the card-relative
+ * center of line i (card top at 0); `height` is the card's height.
+ */
+function stack(rows: ReadonlyArray<{ height: number; after: number }>, pad: number): { ys: number[]; height: number } {
+  let y = pad;
+  const ys: number[] = [];
+  rows.forEach((row, i) => {
+    ys.push(y + row.height / 2);
+    y += row.height + (i === rows.length - 1 ? 0 : row.after);
+  });
+  return { ys, height: y + pad };
+}
+
 /**
  * The claim moment: the run's board dimmed behind, one card counting up what the run earned.
  * The numbers are read from the saved run (the ledger), never recomputed; in ?smoke mode the
@@ -74,33 +93,86 @@ export class RewardsScene extends Phaser.Scene {
     const board = this.add.image(0, 0, Board.TEXTURE).setDepth(0);
     const shade = this.add.rectangle(0, 0, 10, 10, PALETTE.ground, 0.78).setOrigin(0).setDepth(1).setInteractive();
 
-    const mid = 1 + (run.cleanWaves > 0 ? 1 : 0) + (run.bestCombo >= 2 ? 1 : 0); // middle lines: Score always, Clean and Best combo when they were earned
-    const dy = 18 * mid; // each middle line: top half up 18, bottom half down 18, panel grows 36
     const panelW = 360;
-    const panelH = 444 + 2 * dy + 72 + (flawless ? 72 : 0); // bottom lines: the recipe, and the Flawless line when flawless; the centered card grows 72 per one so the button's 36 drop stays inside
-    const panel = makeCard(this, 0, 0, panelW, panelH, 28);
-    const title = this.add.text(0, -98 - dy, 'Rewards', titleStyle(32)).setOrigin(0.5);
-    this.wavesText = this.add.text(0, -44 - dy, 'Waves held 0', titleStyle(22)).setOrigin(0.5);
-    this.stoppedText = this.add.text(0, -8 - dy, 'Stopped 0', titleStyle(22)).setOrigin(0.5);
-    if (run.cleanWaves > 0) this.cleanText = this.add.text(0, 28 - dy, 'Clean 0', titleStyle(22, PALETTE.greenDeep)).setOrigin(0.5);
-    if (run.bestCombo >= 2) this.comboText = this.add.text(0, 28 - dy + (run.cleanWaves > 0 ? 36 : 0), 'Best combo ×0', titleStyle(22, run.bestCombo >= 10 ? PALETTE.yellow : PALETTE.muted)).setOrigin(0.5);
-    this.scoreText = this.add.text(0, 28 - dy + (run.cleanWaves > 0 ? 36 : 0) + (run.bestCombo >= 2 ? 36 : 0), 'Score 0', titleStyle(22)).setOrigin(0.5);
-    const scoreRecipe = this.add.text(0, 64 - dy + (run.cleanWaves > 0 ? 36 : 0) + (run.bestCombo >= 2 ? 36 : 0), `waves +${run.wavesCleared * 100} · stopped +${run.kills}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
-    this.coinText = this.add.text(0, 80 + dy, '+0 coins', titleStyle(28, PALETTE.goldText)).setOrigin(0.5);
-    this.coinIcon = artScale(this.add.image(0, 80 + dy, COIN_TEXTURE), 1.5);
-    const recipeText = this.add.text(0, 116 + dy, `waves +${this.waves} · stopped +${Math.floor(this.stopped / 10)} · clean +${this.clean * cleanPay}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
-    const boardText = this.add.text(0, 152 + dy, `Board ${boardCode(run.seed)}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
+    const pad = 28; // the card's padding, above the title and below the Menu button
+    const gapSmall = 12; // inside a group
+    const gapBig = 24; // between groups
+    const maxW = panelW - 2 * pad; // no line may run past the card inside its padding
+    const RECIPE_SIZE = 16;
+
+    /** A muted breakdown line: smaller than the line it explains, shrunk to fit the card (never below 13px). */
+    const recipe = (text: string): Phaser.GameObjects.Text => {
+      const t = this.add.text(0, 0, text, titleStyle(RECIPE_SIZE, PALETTE.muted)).setOrigin(0.5);
+      if (t.width > maxW) t.setFontSize(`${Math.max(13, Math.floor((RECIPE_SIZE * maxW) / t.width))}px`);
+      return t;
+    };
+
+    const title = this.add.text(0, 0, 'Rewards', titleStyle(32)).setOrigin(0.5);
+    this.wavesText = this.add.text(0, 0, 'Waves held 0', titleStyle(22)).setOrigin(0.5);
+    this.stoppedText = this.add.text(0, 0, 'Stopped 0', titleStyle(22)).setOrigin(0.5);
+    if (run.cleanWaves > 0) this.cleanText = this.add.text(0, 0, 'Clean 0', titleStyle(22, PALETTE.greenDeep)).setOrigin(0.5);
+    if (run.bestCombo >= 2) this.comboText = this.add.text(0, 0, 'Best combo ×0', titleStyle(22, run.bestCombo >= 10 ? PALETTE.yellow : PALETTE.muted)).setOrigin(0.5);
+    this.scoreText = this.add.text(0, 0, 'Score 0', titleStyle(22)).setOrigin(0.5);
+    const scoreRecipe = recipe(`waves +${run.wavesCleared * 100} · stopped +${run.kills}`);
+    this.coinText = this.add.text(0, 0, '+0 coins', titleStyle(28, PALETTE.goldText)).setOrigin(0.5);
+    this.coinIcon = artScale(this.add.image(0, 0, COIN_TEXTURE), 1.5);
+    const coinRecipe = recipe(`waves +${this.waves} · stopped +${Math.floor(this.stopped / 10)} · clean +${this.clean * cleanPay}`);
+    const boardText = this.add.text(0, 0, `Board ${boardCode(run.seed)}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
     let flawlessText: Phaser.GameObjects.Text | undefined;
     let flawlessStar: Phaser.GameObjects.Image | undefined;
     if (flawless) {
-      flawlessText = this.add.text(0, 188 + dy, 'Flawless', titleStyle(22, PALETTE.muted)).setOrigin(0.5);
-      flawlessStar = artScale(this.add.image(flawlessText.width / 2 + 13, 189 + dy, STAR_TEXTURE));
+      flawlessText = this.add.text(0, 0, 'Flawless', titleStyle(22, PALETTE.muted)).setOrigin(0.5);
+      flawlessStar = artScale(this.add.image(0, 0, STAR_TEXTURE), 1.5);
     }
-    const menuButton = makeButton(this, 0, 216 + dy + (flawless ? 36 : 0), 'Menu', menu, { width: 240, height: 52, radius: 26 });
+    const menuButton = makeButton(this, 0, 0, 'Menu', menu, { width: 240, height: 52, radius: 26 });
+
+    // The column's groups: the title; the run; the score and its recipe; the coins and their
+    // recipe; the board code (and Flawless); the Menu button.
+    const rows: Array<{ height: number; after: number }> = [
+      { height: title.height, after: gapBig },
+      { height: this.wavesText.height, after: gapSmall },
+      { height: this.stoppedText.height, after: this.cleanText || this.comboText ? gapSmall : gapBig },
+    ];
+    if (this.cleanText) rows.push({ height: this.cleanText.height, after: this.comboText ? gapSmall : gapBig });
+    if (this.comboText) rows.push({ height: this.comboText.height, after: gapBig });
+    rows.push(
+      { height: this.scoreText.height, after: gapSmall },
+      { height: scoreRecipe.height, after: gapBig },
+      { height: this.coinText.height, after: gapSmall },
+      { height: coinRecipe.height, after: gapBig },
+      { height: boardText.height, after: flawlessText ? gapSmall : gapBig },
+    );
+    if (flawlessText) rows.push({ height: flawlessText.height, after: gapBig });
+    rows.push({ height: menuButton.container.height, after: 0 });
+
+    const col = stack(rows, pad);
+    const top = -col.height / 2; // the column is centered on the box's origin, so the card's top sits here
+    const panel = makeCard(this, 0, 0, panelW, col.height, 28);
+    title.setY(top + col.ys[0]);
+    this.wavesText.setY(top + col.ys[1]);
+    this.stoppedText.setY(top + col.ys[2]);
+    let i = 3;
+    if (this.cleanText) this.cleanText.setY(top + col.ys[i++]);
+    if (this.comboText) this.comboText.setY(top + col.ys[i++]);
+    this.scoreText.setY(top + col.ys[i++]);
+    scoreRecipe.setY(top + col.ys[i++]);
+    this.coinText.setY(top + col.ys[i]);
+    this.coinIcon.setY(top + col.ys[i]);
+    i++;
+    coinRecipe.setY(top + col.ys[i++]);
+    boardText.setY(top + col.ys[i++]);
+    if (flawlessText && flawlessStar) {
+      flawlessText.setY(top + col.ys[i]);
+      flawlessStar.setY(top + col.ys[i] + 1).setX(flawlessText.width / 2 + 13); // the texture is painted 1px low
+      i++;
+    }
+    menuButton.container.setY(top + col.ys[i]);
+    this.centerCoins();
+
     const parts: Phaser.GameObjects.GameObject[] = [panel, title, this.wavesText, this.stoppedText];
     if (this.cleanText) parts.push(this.cleanText);
     if (this.comboText) parts.push(this.comboText);
-    parts.push(this.scoreText, scoreRecipe, this.coinText, this.coinIcon, recipeText, boardText);
+    parts.push(this.scoreText, scoreRecipe, this.coinText, this.coinIcon, coinRecipe, boardText);
     if (flawlessText && flawlessStar) parts.push(flawlessText, flawlessStar);
     parts.push(menuButton.container);
     const box = this.add.container(0, 0, parts).setDepth(2);
@@ -110,7 +182,7 @@ export class RewardsScene extends Phaser.Scene {
       shade.input?.hitArea.setTo(0, 0, width, height);
       const k = Math.min(((width - 16) * display.ratio) / boardSize.width, ((height - 16) * display.ratio) / boardSize.height);
       artScale(board, k * ART);
-      box.setPosition(width / 2, height / 2).setScale(Math.min(1, (width - 24) / panelW, (height - 24) / panelH));
+      box.setPosition(width / 2, height / 2).setScale(Math.min(1, (width - 24) / panelW, (height - 24) / col.height));
     };
     layout(viewSize(this).width, viewSize(this).height);
     onResize(this, layout);
@@ -127,6 +199,12 @@ export class RewardsScene extends Phaser.Scene {
     this.comboText?.setText(`Best combo ×${Math.round(this.combo * k)}`);
     this.scoreText.setText(`Score ${Math.round(this.score * k)}`);
     this.coinText.setText(`+${Math.round(this.coins * kc)} coins`);
-    this.coinIcon.setX(-this.coinText.width / 2 - 33); // the coin sits left of the number; the row stays centered
+    this.centerCoins();
+  }
+
+  /** The icon sits right beside "+N coins" and the pair is centered (the number grows while counting up). */
+  private centerCoins(): void {
+    this.coinText.setX((COIN_SIZE + COIN_GAP) / 2);
+    this.coinIcon.setX(-this.coinText.width / 2 - COIN_GAP / 2 - COIN_SIZE / 2);
   }
 }

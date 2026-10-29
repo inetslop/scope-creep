@@ -4,11 +4,12 @@ title: "The rewards card: one tidy column that fits its card"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T17:00:35Z
 claimed_at: 2026-10-29T17:35:43Z
+finished_at: 2026-10-29T18:15:48Z
 ---
 
 ## Goal
@@ -178,3 +179,16 @@ Private class method:
 
 ### Tests
 none (UI layout only; no core rule added)
+
+## Result (attempt 1, inet-racing)
+
+Rewrote the rewards card in `src/scenes/RewardsScene.ts` as one tidy column: the pure `stack()` helper now derives each line's y and the card's height in order from its six groups (title; run; score + breakdown; coins + breakdown; board code/Flawless; Menu), with equal 28px padding top and bottom, a 12px in-group / 24px between-groups gap, and the two muted breakdown lines shrunk to 16px (floor 13px) so they never cross the card edges. The coin icon now sits a fixed 10px gap beside "+N coins" via `centerCoins()`, re-centered each frame during the count-up. All line conditions, colors, strings, the count-up and screen-fit scaling are unchanged; check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 40.1 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../chokepoint/game/src/scenes/RewardsScene.ts     | 120 +++++++++++++++++----
+ 1 file changed, 99 insertions(+), 21 deletions(-)
+```
