@@ -1,14 +1,14 @@
 ---
 id: T0043
 title: "Beam hum: a quiet hum under each active beam"
-assignee: cachyos-x8664
 size: S
 priority: 3
-status: in-progress
+status: todo
 depends_on: [T0073]
 attempts: 2
 created: 2026-10-28T11:24:34Z
 claimed_at: 2026-10-29T02:08:04Z
+finished_at: 2026-10-29T02:10:14Z
 epic: E4
 ---
 
@@ -103,4 +103,20 @@ Making no changes, per the rule for a task that makes no sense against the curre
 SUMMARY: The design's target file `src/systems/BeamSystem.ts` does not exist in the current code — there is no beam system, no `beam` attack kind, and no beam augment anywhere in `src/`. The task's own note says it waits on T0073 to land the beam (and to re-check the design against whatever shape T0073 lands); until that lands, the hum would be dead code with no caller and the acceptance criteria are unverifiable. No changes made; ready to build as-written once T0073 is in.
 
 STATUS: BLOCKED: BeamSystem.ts (landed by T0073) does not exist in the current code, so there is no beam target-resolution to attach the hum to.
+```
+
+## Attempt 2 failed (cachyos-x8664)
+
+The agent reported it is blocked: T0073 (the T0029 re-task) has not landed — `src/systems/BeamSystem.ts` does not exist in the current code, so there is no beam target-resolution to attach the hum to.
+
+```
+The working tree is clean, and I checked the current state of the code against the design's targets:
+
+- **`src/audio/Sfx.ts`** — matches the design (the field in `muted = false;`, `tone()` at line 29, and `leakWarn()` as the quiet-family anchor all exist).
+- **`src/systems/BeamSystem.ts`** — does not exist. There is no `beam` attack type in `AttackKind` (only `shot`, `pulse`, `rally`, `mark`, `burn`), no beam augment in `content/augments/` (the list: anchor, bolt, ember, frost, lance, mark, mint, push, rally, rapid, reach, splash — `lance` is a piercing shot, not a beam), and a case-insensitive search for "beam" matches nothing in `src/` or `tests/`.
+
+So the situation is unchanged since attempt 1: **T0073 (the T0029 re-task) has not landed the beam system.** Per the PO note, this task waits on T0073 and must be re-checked against whatever it lands; until then, the `Sfx.beamHums` machinery would be dead code with no caller (no beam ever locks on), and every acceptance criterion — audible hum under an active beam, continuity through retargets, the 3-hum cap under lock/release — is unverifiable in a game with no beams at all. I verified the state with fresh checks rather than re-asserting attempt 1's report, and made no changes.
+
+SUMMARY: Verified the current code: T0073 has not landed — `src/systems/BeamSystem.ts` does not exist, `AttackKind` has no beam kind (only shot/pulse/rally/mark/burn), and "beam" matches nothing in `src/` or `tests/`. `Sfx.ts` itself matches the design's target exactly (field spot, `tone()` model, quiet-family placement after `leakWarn`), so steps 1 and 3 are ready to apply, but the hum's only call-sites (beam lock/unlock in the beam's target pass) have no caller, making the Sfx machinery dead code and every acceptance criterion unverifiable in a game with no beams. Consistent with the PO note that this task waits on T0073 to land the beam and that the design must be re-checked against whatever shape it lands, I made no changes.
+STATUS: BLOCKED: T0073 (the T0029 re-task) has not landed — `src/systems/BeamSystem.ts` does not exist in the current code, so there is no beam target-resolution to attach the hum to.
 ```
