@@ -1,12 +1,14 @@
 ---
 id: T0087
 title: The pause line says what the run is worth
+assignee: narcissus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T00:22:08Z
+claimed_at: 2026-10-29T02:03:59Z
 epic: E1
 ---
 
