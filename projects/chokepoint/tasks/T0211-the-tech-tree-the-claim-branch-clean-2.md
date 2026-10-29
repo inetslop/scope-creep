@@ -3,11 +3,13 @@ id: T0211
 title: "The tech tree: the claim branch — Clean ×2"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: [T0153]
 attempts: 0
 created: 2026-10-29T15:15:13Z
+claimed_at: 2026-10-29T15:15:17Z
 epic: E2
+designer: desktop
 ---
 
 ## Goal
