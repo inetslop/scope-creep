@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
 import { CELL } from '../config';
 import { PALETTE, rgba } from '../content/palette';
-import { kindAt, type GameMap } from '../core/map';
+import type { GameMap } from '../core/map';
 import type { PathLine } from '../core/path';
 import { paintToken, roundRectPath, setShadow, shapePath } from './paint';
 import { paintTexture } from './textures';
@@ -68,33 +68,6 @@ export function paintBoard(scene: Phaser.Scene, key: string, map: GameMap, path:
     ctx.strokeStyle = rgba(PALETTE.road, 1);
     ctx.stroke();
     ctx.restore();
-
-    // Bend notches: one flat muted tick on every build cell that touches a bend of the road.
-    const notched = new Set<string>();
-    ctx.fillStyle = rgba(PALETTE.muted, 1);
-    for (let i = 1; i < map.path.length - 1; i++) {
-      const a = map.path[i - 1]!, b = map.path[i]!, c = map.path[i + 1]!;
-      if (b.col - a.col === c.col - b.col && b.row - a.row === c.row - b.row) continue; // straight, no bend
-      for (let dr = -1; dr <= 1; dr++) {
-        for (let dc = -1; dc <= 1; dc++) {
-          const col = b.col + dc, row = b.row + dr;
-          if (kindAt(map, col, row) !== 'open') continue; // path, rock or off-board: no build cell
-          const key = `${col},${row}`;
-          if (notched.has(key)) continue;
-          notched.add(key);
-          const nx = Math.sign(dc), ny = Math.sign(dr);
-          const len = Math.hypot(nx, ny); // 1 or sqrt(2), never 0 (dc/dr both 0 is the path cell)
-          const px = (col + 0.5) * CELL + (nx / len) * CELL * 0.38;
-          const py = (row + 0.5) * CELL + (ny / len) * CELL * 0.38;
-          ctx.save();
-          ctx.translate(px, py);
-          ctx.rotate(Math.atan2(ny, nx));
-          roundRectPath(ctx, -CELL * 0.06, -CELL * 0.15, CELL * 0.12, CELL * 0.3, CELL * 0.06);
-          ctx.fill();
-          ctx.restore();
-        }
-      }
-    }
 
     // Gates: where enemies come in (grey, a white chevron) and the exit you defend (ink, a white ring).
     const gate = (p: { x: number; y: number }, exit: boolean): void => {

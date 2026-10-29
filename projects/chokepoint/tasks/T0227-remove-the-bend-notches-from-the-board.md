@@ -4,11 +4,12 @@ title: Remove the bend notches from the board
 assignee: yoga
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T17:59:52Z
 claimed_at: 2026-10-29T18:20:29Z
+finished_at: 2026-10-29T18:26:12Z
 ---
 
 ## Goal
@@ -41,3 +42,15 @@ None (removal only; `paintBoard`'s signature and the file's exports are unchange
 - Do not touch `planning/IDEAS.md` or `planning/ROADMAP.md` — the dev agent has no write access to `planning/`; those notes (notches removed at the player's request; T0140 marked removed) are for the product owner to make at review.
 ### Tests
 none (art task)
+
+## Result (attempt 1, yoga)
+
+Removed the bend notches from the board painter in `src/art/board.ts` at the player's request: deleted the whole "Bend notches" block that painted a muted dash tick on every build cell touching a road bend (clutter, and it wrongly marked the bend's outer cells too) and dropped the now-unused `kindAt` import. The island, grid dots, rocks, road and gates are unchanged, and where-to-build guidance comes from the hover preview's range ring as before. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 5.7 min
+
+```
+projects/chokepoint/game/src/art/board.ts | 29 +----------------------------
+ 1 file changed, 1 insertion(+), 28 deletions(-)
+```
