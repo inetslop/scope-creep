@@ -15,6 +15,12 @@ const LINE = 16;
 const PAD = 16;
 const GROUP_GAP = 8;
 
+/** The one-time teach line for each tag: the tag's word, then its promise in plain words. Taught once the run has held `first` or more
+ *  waves (the tag's first wave), so it is re-derived from the run and never stored. */
+const TEACH: { tag: string; first: number; text: string }[] = [
+  { tag: 'quiet', first: 4, text: 'quiet: fewer, double gold' },
+];
+
 /**
  * Above the countdown while the build phase runs: what the next wave sends, straight from its
  * plan (game.waves.nextPlan), so a new enemy shows up here with no change to this file. Each type
@@ -60,7 +66,7 @@ export class NextWavePreview implements HudPart {
         this.scene.tweens.killTweensOf(this.box);
         this.box.destroy();
       }
-      this.box = this.build(plan);
+      this.box = this.build(plan, this.teachLine(plan, game.run));
       this.place();
       this.box.setScale(0.4 * this.fitScale()); // pop in like a new tower does
       this.scene.tweens.add({ targets: this.box, scale: this.fitScale(), duration: 200, ease: 'Back.easeOut' });
@@ -88,7 +94,15 @@ export class NextWavePreview implements HudPart {
     box.setScale(this.fitScale()).setPosition(x, above - H / 2 - SEND_BTN.height - SEND_BTN.gap);
   }
 
-  private build(plan: WavePlan): Phaser.GameObjects.Container {
+  /** The one-time line that teaches this wave's tag on first preview, or none (taught once per run, derived from the run's held-wave count). */
+  private teachLine(plan: WavePlan, run: RunState): string | undefined {
+    for (const t of TEACH) {
+      if (plan.tags.includes(t.tag) && run.wavesCleared < t.first) return t.text;
+    }
+    return undefined;
+  }
+
+  private build(plan: WavePlan, teach: string | undefined): Phaser.GameObjects.Container {
     const scene = this.scene;
     const counts = waveCounts(plan); // a quiet wave's plan is already halved, so the counts come out small
     const pieces: (Phaser.GameObjects.Image | Phaser.GameObjects.Text | Phaser.GameObjects.Container)[] = [];
@@ -123,6 +137,10 @@ export class NextWavePreview implements HudPart {
     const payLine = scene.add.text(0, -H / 2, `+${RunState.waveBonus(plan.number)} gold`, textStyle(14, PALETTE.muted)).setOrigin(0.5, 0.5);
     const left = -this.cardW / 2 + PAD;
     for (const p of pieces) { p.x += left; p.y += LINE / 2; }
+    if (teach) {
+      // The tag's one-time teach, under the counts: the payline's mirror, so the card's bottom edge and the counts row don't move.
+      pieces.push(scene.add.text(0, (H + LINE) / 2 - 8, teach, textStyle(14, PALETTE.muted)).setOrigin(0.5, 0.5));
+    }
     pieces.push(payLine);
     pieces.unshift(makeCard(scene, 0, 0, this.cardW, H + LINE, (H + LINE) / 2)); // card under the row
     return scene.add.container(0, 0, pieces);

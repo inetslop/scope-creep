@@ -4,11 +4,12 @@ title: "The chip says what it means: the preview teaches its tag once"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T01:18:08Z
 claimed_at: 2026-10-29T02:07:05Z
+finished_at: 2026-10-29T02:36:12Z
 epic: E1
 ---
 
@@ -76,3 +77,15 @@ The line sits centered like the pay line (x=0, origin 0.5/0.5), 22 px below the 
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The build-phase wave preview card (src/ui/hud/NextWavePreview.ts) now teaches its tags once: a per-tag TEACH table (quiet: first=4, "quiet: fewer, double gold") and a `teachLine()` derivation from `run.wavesCleared` (< first → show) drive one new muted line centered under the counts row, styled and placed as the exact mirror of the T0079 pay line, so the card, chip, counts, pay line and Send ring keep their positions. Shown only during the build phase, it appears on wave 4's preview and never again in the run; resumed runs re-derive from the held-wave count with no new save field. `npm run check` and desktop+mobile `npm run smoke` both pass; no input or sound added.
+
+- Self-review: APPROVE
+- Time: 29.1 min
+
+```
+.../chokepoint/game/src/ui/hud/NextWavePreview.ts  | 22 ++++++++++++++++++++--
+ 1 file changed, 20 insertions(+), 2 deletions(-)
+```
