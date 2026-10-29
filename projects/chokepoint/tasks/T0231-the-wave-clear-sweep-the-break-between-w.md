@@ -3,12 +3,13 @@ id: T0231
 title: "The wave-clear sweep: the break between wave and draft, heard"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-29T21:12:14Z
 claimed_at: 2026-10-29T21:13:06Z
-designer: yoga
+finished_at: 2026-10-29T21:20:52Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -27,3 +28,7 @@ The phase change from wave to draft is seen (the beat, the flipping cards) but n
 - [ ] No sweep when the run ends instead of a draft, before wave 1, or on a resumed run's build phase.
 - [ ] With sound off (T0035) nothing plays; with sound on, no other sound changes (countdown tick, sting, tier chime, kill and leak sounds all untouched).
 - [ ] No new on-screen element, no new input; `src/audio/Sfx.ts` gains exactly one method and one call site (the design names both).
+
+## Rejected by architect (yoga)
+
+A wave-clear sound already exists — `Sfx.waveClear()` (Sfx.ts:157-159, a rising 440→880 triangle note at 0.35) is already called on every wave end that opens a draft (RunFlow.ts:142, before the clean beat's 1000 ms delay and before the draft's tier chime), so the break is already heard and the task's "new Sfx.waveClear()" plus "Sfx.ts gains exactly one method and one call site" cannot be built: the method name is taken and the call site already exists; re-file as a one-line body change of the existing method to the described E5→G5 two-note sweep (659/784, 0.08 s, 'sine', 0.1, second note via `tone`'s delay param, modelled on `techBuy()` at Sfx.ts:88-91) if that sound is wanted.
