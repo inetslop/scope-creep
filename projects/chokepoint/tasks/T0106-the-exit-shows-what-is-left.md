@@ -4,11 +4,12 @@ title: The exit shows what is left
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T07:23:51Z
 claimed_at: 2026-10-29T11:10:48Z
+finished_at: 2026-10-29T11:42:19Z
 ---
 
 ## Goal
@@ -142,3 +143,18 @@ export class ExitCount {
 
 ### Tests
 none
+
+## Result (attempt 1, asus)
+
+During a wave, a small white chip now sits just above the exit gate counting the enemies still alive or still to come (plan total − killed − leaked, the same number the next-wave button shows). It updates live, vanishes the moment the count hits 0 or between waves/in the draft, and hides under the pause overlay. It lives in a new `src/systems/ExitCount.ts` (name-tag chip look, ExitWarning position), with six wiring lines in `GameScene.ts` and one invariant in `runChecks.ts`. Verified with `npm run check` and `npm run smoke` (desktop + phone).
+
+- Self-review: APPROVE
+- Time: 31.5 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/debug/runChecks.ts   |  1 +
+ projects/chokepoint/game/src/scenes/GameScene.ts  |  6 ++
+ projects/chokepoint/game/src/systems/ExitCount.ts | 79 +++++++++++++++++++++++
+ 3 files changed, 86 insertions(+)
+```

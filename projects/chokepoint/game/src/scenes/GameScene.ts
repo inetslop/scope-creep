@@ -15,6 +15,7 @@ import { BeamSystem } from '../systems/BeamSystem';
 import { Board } from '../systems/Board';
 import { Building } from '../systems/Building';
 import { EnemySystem } from '../systems/EnemySystem';
+import { ExitCount } from '../systems/ExitCount';
 import { ExitWarning } from '../systems/ExitWarning';
 import { FxSystem } from '../systems/FxSystem';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
@@ -56,6 +57,7 @@ export class GameScene extends Phaser.Scene {
   projectiles!: ProjectileSystem;
   fx!: FxSystem;
   exitWarn!: ExitWarning;
+  exitCount!: ExitCount;
   windup!: PushWindup;
 
   constructor() {
@@ -104,6 +106,7 @@ export class GameScene extends Phaser.Scene {
       fx: this.fx,
       sfx,
     });
+    this.exitCount = new ExitCount(this, this.board, this.flow);
     this.speed = new WaveSpeed();
     this.rally = new RallySystem(this, this.towers, this.fx);
     this.beams = new BeamSystem(this, this.towers, this.enemies);
@@ -149,12 +152,14 @@ export class GameScene extends Phaser.Scene {
 
   openPause(): void {
     if (!this.scene.isActive() || this.run.phase === 'over') return;
+    this.exitCount.hide();
     this.scene.launch(SCENES.pause);
     this.scene.pause();
   }
 
   /** PauseScene closed. */
   closePause(): void {
+    this.exitCount.show();
     this.scene.resume();
   }
 
@@ -164,6 +169,7 @@ export class GameScene extends Phaser.Scene {
     this.flow.update(simDt);
     this.saver.update();
     this.exitWarn.update(simDt);
+    this.exitCount.update();
     this.rally.update(simDt);
     this.beams.update(simDt);
     this.windup.update(simDt);
