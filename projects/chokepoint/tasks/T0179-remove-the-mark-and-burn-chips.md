@@ -1,6 +1,6 @@
 ---
 id: T0179
-title: "Remove the mark and burn chips over enemies"
+title: "Remove the status chips over enemies: mark, burn, slow, ramp"
 size: S
 priority: 1
 status: design
@@ -10,18 +10,24 @@ created: 2026-10-29T12:21:52Z
 ---
 
 ## Goal
-A marked enemy and a burning enemy each show their state twice. The Mark already puts a small ink down-chevron above the health bar, and a burn already has a small orange dash circling the enemy (both in `systems/enemyMarks.ts`). Then T0099 and T0113 added a chip over the token on top of those. Remove the two chips; the original markers stay.
+Four enemy states show twice. Each already has its original marker (in `systems/enemyMarks.ts`), and the "X shows on the enemy" tasks added a chip over the token on top:
+
+| State | Original marker (stays) | Chip on top (goes) |
+|---|---|---|
+| Marked | a small ink down-chevron above the health bar | `markTick.ts` (T0099) |
+| Burning | a small orange dash circling the enemy | `burnTick.ts` (T0113) |
+| Slowed | a thin ice-blue frost ring | `slowTick.ts` (T0138) |
+| Ramping (Sprinter) | two short speed ticks trailing behind it | `rampTick.ts` (T0104) |
+
+Remove the four chips; the original markers stay exactly as they are.
 
 ## Details
-- Remove the two chip hooks and nothing else:
-  - `src/systems/enemyHooks/markTick.ts` (T0099) and `src/systems/enemyHooks/burnTick.ts` (T0113): delete both files;
-  - their import and list lines in `src/systems/enemyHooks/index.ts`.
-- Keep the Mark's ink down-chevron and the burn's orbiting orange dash exactly as they are.
-- `src/systems/enemyHooks/slowTick.ts` places its chip after the mark and burn chips (its x offset counts them). With those gone, it sits where the first chip sat, with no offset for a mark or a burn.
-- `src/systems/enemyHooks/rampTick.ts` only mentions the mark chip in a comment; update the comment.
+- Delete `src/systems/enemyHooks/markTick.ts`, `burnTick.ts`, `slowTick.ts` and `rampTick.ts`, and their import and list lines in `src/systems/enemyHooks/index.ts`.
+- Nothing else uses them. The core `burnTick()` damage function in `src/core/burn.ts` is something else and stays.
+- The other hooks (`nameTag`, `crackTick`, and the root chip T0139 is adding, which a later task removes) are untouched.
+- Every marker in `systems/enemyMarks.ts` stays exactly as it is.
 
 ## Acceptance criteria
-- [ ] A marked enemy shows only the ink down-chevron above its health bar: no chip over the token.
-- [ ] A burning enemy shows only the orange dash circling it: no chip over the token.
-- [ ] A slowed enemy's chip sits in the first chip's place, also when the enemy is marked or burning.
-- [ ] No `markTick` or the burn chip's `burnTick` hook is left in `src/` or `tests/` (the core `burnTick()` damage function in `src/core/burn.ts` stays).
+- [ ] A marked, burning, slowed or ramping enemy shows only its original marker (chevron, circling dash, frost ring, speed ticks): no chip over the token.
+- [ ] The four files are gone and no `markTick`, `slowTick`, `rampTick` or chip `burnTick` hook is left in `src/` or `tests/`.
+- [ ] Enemies, their markers and the rest of the enemy hooks work as before.
