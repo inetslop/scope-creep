@@ -4,11 +4,12 @@ title: The build says its tier
 assignee: desktop-4070
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T00:22:08Z
 claimed_at: 2026-10-29T02:52:11Z
+finished_at: 2026-10-29T02:57:39Z
 epic: E4
 ---
 
@@ -61,3 +62,15 @@ None. Reuses existing `Sfx.tierChime(tier: Tier)` and `AugmentCopy.tier`.
 
 ### Tests
 none (audio polish, no core rule).
+
+## Result (attempt 1, desktop-4070)
+
+Extended T0032's tier ear to the build: when an augment copy is committed to a tower — a new tower's first card or an added copy filling a slot — `TowerSystem.place()` now plays the existing `Sfx.tierChime` at its original volume (one note Common, two Rare, three Epic), in the same instant as the drop-in bounce / pip pop. It is one line (`this.sfx?.tierChime(copy.tier)`) after the commit stat in `place()`, so failed placements stay silent and nothing else changed; no new sound, visual, input or HUD. Typecheck, lint, unit tests and desktop+mobile smoke all pass.
+
+- Self-review: APPROVE
+- Time: 5.5 min
+
+```
+projects/chokepoint/game/src/systems/TowerSystem.ts | 1 +
+ 1 file changed, 1 insertion(+)
+```

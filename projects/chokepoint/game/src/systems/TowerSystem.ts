@@ -71,6 +71,7 @@ export class TowerSystem {
   place(tower: Tower, copy: AugmentCopy): true | Refusal {
     if (!tower.addAugment(copy)) return 'full';
     hook.stats.augmentsPlaced += 1;
+    this.sfx?.tierChime(copy.tier);
     const color = towerColor(tower.augments);
     this.fx.ring(tower.x, tower.y, CELL * 0.55, color ? PALETTE[color] : PALETTE.faint);
     return true;
