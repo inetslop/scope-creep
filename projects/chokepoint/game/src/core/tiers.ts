@@ -38,7 +38,7 @@ export function tierIndex(tier: Tier): number {
  */
 export function tierFirst(def: AugmentDef, tier: Tier): FirstForm {
   const f = def.first;
-  if (tier === 'common') return { ...f, slow: f.slow ? { ...f.slow } : undefined, root: f.root ? { ...f.root } : undefined, burn: f.burn ? { ...f.burn } : undefined };
+  if (tier === 'common') return { ...f, slow: f.slow ? { ...f.slow } : undefined, root: f.root ? { ...f.root } : undefined, burn: f.burn ? { ...f.burn } : undefined, beam: f.beam ? { ...f.beam } : undefined };
   const t = def.tiers[tier];
   return {
     ...f,
@@ -50,6 +50,7 @@ export function tierFirst(def: AugmentDef, tier: Tier): FirstForm {
     slow: f.slow ? { ...f.slow, pct: t.slowPct ?? f.slow.pct } : undefined,
     root: f.root ? { ...f.root, sec: t.rootSec ?? f.root.sec } : undefined,
     burn: f.burn ? { ...f.burn, dps: t.burnDps ?? f.burn.dps } : undefined,
+    beam: f.beam ? { ...f.beam, dps: t.beamDps ?? f.beam.dps } : undefined,
   };
 }
 
@@ -59,7 +60,7 @@ export function tierFirst(def: AugmentDef, tier: Tier): FirstForm {
  */
 export function tierAdded(def: AugmentDef, tier: Tier): AddedForm {
   const a = def.added;
-  if (tier === 'common') return { ...a, slow: a.slow ? { ...a.slow } : undefined, root: a.root ? { ...a.root } : undefined, burn: a.burn ? { ...a.burn } : undefined };
+  if (tier === 'common') return { ...a, slow: a.slow ? { ...a.slow } : undefined, root: a.root ? { ...a.root } : undefined, burn: a.burn ? { ...a.burn } : undefined, beam: a.beam ? { ...a.beam } : undefined };
   const t = def.tiers[tier];
   return {
     ...a,
@@ -69,6 +70,7 @@ export function tierAdded(def: AugmentDef, tier: Tier): AddedForm {
     slow: a.slow ? { ...a.slow, pct: t.slowPct ?? a.slow.pct } : undefined,
     root: a.root ? { ...a.root, sec: t.addedRootSec ?? t.rootSec ?? a.root.sec } : undefined,
     burn: a.burn ? { ...a.burn, dps: t.burnDps ?? a.burn.dps } : undefined,
+    beam: a.beam ? { ...a.beam, dps: t.addedBeamDps ?? a.beam.dps } : undefined,
   };
 }
 

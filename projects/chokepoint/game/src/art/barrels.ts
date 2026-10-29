@@ -18,6 +18,10 @@ export interface BarrelLook {
   emberTicks?: number;
   /** A small ember dot at the muzzle: the burn is the tower's own attack (Ember first). */
   emberMuzzle?: boolean;
+  /** A short, flat, wide head lying on the plinth: the beam never fires (Beam first). */
+  beamHead?: boolean;
+  /** Small flat ticks beside the head or the barrels, one per Beam added. */
+  beamTicks?: number;
 }
 
 /**
@@ -30,12 +34,19 @@ export function barrelTexture(scene: Phaser.Scene, color: Bright | undefined, lo
   const bands = Math.max(0, Math.min(3, Math.round(look.bands)));
   const emberTicks = Math.max(0, Math.round(look.emberTicks ?? 0));
   const emberMuzzle = look.emberMuzzle ?? false;
-  const key = `barrel:${color ?? 'empty'}:${length}:${width}:${look.bulb ? 'b' : 'p'}:${bands}:${emberTicks}:${emberMuzzle ? 'e' : 'n'}`;
+  const beamHead = look.beamHead ?? false;
+  // A tower holds at most three added augments, so at most three ticks.
+  const beamTicks = Math.max(0, Math.min(3, Math.round(look.beamTicks ?? 0)));
+  const key = beamHead
+    ? `barrel:beam:${color ?? 'empty'}:${beamTicks}`
+    : `barrel:${color ?? 'empty'}:${length}:${width}:${look.bulb ? 'b' : 'p'}:${bands}:${emberTicks}:${emberMuzzle ? 'e' : 'n'}:${beamTicks}`;
   const r = TOWER_BODY * CELL;
   const len = r * 1.6 * length;
   const w = r * 0.6 * width;
   const bulb = look.bulb ? w * 0.95 : 0;
-  const size = (len + bulb + 4) * 2;
+  // The beam ticks sit beside the head or the barrel: the texture leaves them room, or they end in a hard edge.
+  const side = beamTicks > 0 ? 6 + (beamTicks - 1) * 10 + 8 : 0;
+  const size = beamHead ? (w + 30) * 2 : Math.max((len + bulb + 4) * 2, (Math.max(w, len) + side + 4) * 2);
   paintTexture(scene, key, size, size, (ctx) => {
     const c = size / 2;
     const deep = rgba(color ? deepOf(color) : PALETTE.rockDeep, 1);
@@ -65,6 +76,13 @@ export function barrelTexture(scene: Phaser.Scene, color: Bright | undefined, lo
       // The ember at the muzzle: a small dark-orange dot at the tip.
       shapePath(ctx, 'circle', c, c - len, w * 0.3);
       ctx.fillStyle = rgba(PALETTE.orangeDeep, 1);
+      ctx.fill();
+    }
+    // Beam ticks: one small flat dash per Beam added, beside the head or the barrel, stacked 10 apart.
+    for (let i = 0; i < beamTicks; i++) {
+      const at = c - len / 2 + (i - (beamTicks - 1) / 2) * 10;
+      roundRectPath(ctx, c + w / 2 + 6, at - 2, 8, 4, 2);
+      ctx.fillStyle = deep;
       ctx.fill();
     }
   });

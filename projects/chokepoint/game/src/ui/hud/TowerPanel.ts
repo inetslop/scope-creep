@@ -152,6 +152,7 @@ export class TowerPanel implements HudPart {
 function statsLine(tower: Tower): string {
   const s = tower.spec;
   if (!s.attacks) return 'Put an augment in a slot to give it an attack.';
+  if (s.kind === 'beam') return `Range ${s.range.toFixed(1)} · ${s.beamDps.toFixed(0)}/s`; // no shots: no damage, no rate
   const damage = s.damage > 0 ? `Damage ${s.damage.toFixed(0)} · ` : '';
   return `${damage}Range ${s.range.toFixed(1)} · ${s.rate.toFixed(1)}/s${s.shots > 1 ? ` · ${s.shots} shots` : ''}`;
 }

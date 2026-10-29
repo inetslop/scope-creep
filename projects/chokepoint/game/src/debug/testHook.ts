@@ -19,7 +19,7 @@ export interface HookStats {
   towersBuilt: number;
   augmentsPlaced: number;
   slotsUnlocked: number;
-  /** Tower attacks: bolt volleys plus pulses. */
+  /** Tower attacks: bolt volleys, pulses, and a beam locking a target. */
   shotsFired: number;
   /** Augments picked in the draft. */
   augmentsTaken: number;

@@ -112,6 +112,13 @@ export class EnemySystem {
     if (e.hit(damage, false)) this.kill(e, e.burnSource);
   }
 
+  /** One frame of a beam line: its per-second rate over these seconds (systems/BeamSystem.ts).
+   * No white flash, like the burn tick; gold, the combo, the mints and `source.kills` all pay. */
+  beamTick(target: Enemy, damage: number, source: Tower): void {
+    if (damage <= 0 || !target.active) return;
+    if (target.hit(damage, false)) this.kill(target, source);
+  }
+
   /**
    * One hit of a tower's attack on `target`: its damage and slow, and with splash the same on
    * up to `payload.splashCap` other enemies nearest to it within `payload.splash` board units

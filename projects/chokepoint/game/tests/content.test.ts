@@ -48,7 +48,7 @@ describe('content', () => {
       expect(BRIGHTS).toContain(a.look.color);
       expect(a.first.range).toBeGreaterThan(0);
       expect(a.first.rate).toBeGreaterThan(0);
-      expect(a.first.damage > 0 || a.first.slow || a.first.root || a.first.mark || a.first.kind === 'rally' || a.first.goldRadius || a.first.push || a.first.burn).toBeTruthy();
+      expect(a.first.damage > 0 || a.first.slow || a.first.root || a.first.mark || a.first.kind === 'rally' || a.first.goldRadius || a.first.push || a.first.burn || a.first.beam).toBeTruthy();
       if (a.first.kind === 'shot') expect(a.first.projectileSpeed ?? 0).toBeGreaterThan(0);
       expect(Object.keys(a.added).length).toBeGreaterThan(0);
       // The card shows each line next to its glyph: short, and no "First:"-style labels.
@@ -76,6 +76,8 @@ describe('content', () => {
         }
         if (t.splash !== undefined) expect(t.splash).toBeGreaterThan(0);
         if (t.burnDps !== undefined) expect(t.burnDps).toBeGreaterThan(0);
+        if (t.beamDps !== undefined) expect(t.beamDps).toBeGreaterThan(0);
+        if (t.addedBeamDps !== undefined) expect(t.addedBeamDps).toBeGreaterThan(0);
         if (t.rootSec !== undefined) expect(t.rootSec).toBeGreaterThan(0);
         if (t.addedRootSec !== undefined) expect(t.addedRootSec).toBeGreaterThan(0);
         if (t.asTower !== undefined) {

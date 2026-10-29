@@ -92,6 +92,7 @@ export class TowerSystem {
   update(dt: number): void {
     const enemies = this.enemies.all;
     for (const t of this.towers) {
+      if (t.spec.kind === 'beam') continue; // its lines are held by BeamSystem, not on a cooldown
       if (t.jammed) continue;
       if (!t.spec.attacks) continue;
       // A pure support (no damage, slow, root, gust, burn, bolts or marks, like a bare Mint) never attacks:

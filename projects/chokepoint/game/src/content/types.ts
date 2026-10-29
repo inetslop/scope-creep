@@ -67,6 +67,10 @@ export interface TierValues {
   push?: number;
   /** Replaces this copy's burn rate in both forms (Ember). */
   burnDps?: number;
+  /** Replaces this copy's beam rate in its first form (Beam). */
+  beamDps?: number;
+  /** Replaces this copy's added beam rate (Beam). */
+  addedBeamDps?: number;
   addedRateMul?: number;
   addedRangeMul?: number;
   asAdded: string;
@@ -91,7 +95,9 @@ export type AttackKind =
   /** Marks the enemy furthest along: a marked enemy takes more damage from everything. */
   | 'mark'
   /** Sets ablaze the enemy furthest along: the burn keeps dealing its rate after the shot (Ember). */
-  | 'burn';
+  | 'burn'
+  /** A continuous line of damage on the enemy furthest along: never fires a shot (Beam). */
+  | 'beam';
 
 /** Damage over time: `dps` damage per second for `sec` seconds (Ember). */
 export interface Burn {
@@ -122,6 +128,8 @@ export interface FirstForm {
   mark?: number;
   /** For a 'burn' attack: the burn it sets ablaze, `dps` per second for `sec` seconds (Ember). */
   burn?: Burn;
+  /** For a 'beam' attack: the continuous line's damage per second (Beam). */
+  beam?: { dps: number };
   /** Kills within this many cells of the tower (its range ring) drop +1 gold per mint copy in it (Mint). */
   goldRadius?: number;
 }
@@ -144,6 +152,8 @@ export interface AddedForm {
   mark?: number;
   /** Hits set ablaze: the burn they apply, `dps` per second for `sec` seconds (Ember). */
   burn?: Burn;
+  /** Adds a second beam on the enemy nearest the main target, at this damage per second (Beam). */
+  beam?: { dps: number };
   /** Hits push enemies back this many cells along the road (Push). */
   push?: number;
   damageMul?: number;

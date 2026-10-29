@@ -4,11 +4,12 @@ title: "Beam: the line that never stops (the T0029 re-task)"
 assignee: asus
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T21:24:45Z
 claimed_at: 2026-10-29T03:39:56Z
+finished_at: 2026-10-29T08:01:35Z
 epic: E4
 ---
 
@@ -107,3 +108,35 @@ export class BeamSystem { constructor(scene: Phaser.Scene, towers: TowerSystem, 
 - `tests/core/beam.test.ts`: main locks the furthest; holds through an overtake; re-takes on death and on leaving range; second line takes the nearest-to-main; two lines take the two nearest in order; lines drop on main change (even with their own target alive) and retake around the new main; independent per-line retarget; a line never takes the main or a mate's target; nothing in range → `main -1`, no lines.
 - `tests/core/augments.test.ts`: `spec('beam')` is `{ kind: 'beam', range: 4.5, beamDps: 6, damage: 0 }`; rare/epic `beamDps` 8/10; `spec('bolt','beam').beamExtras` `[3]`, two stack `[3,3]`; `spec('beam','beam')` → `beamDps 6, beamExtras [3]`; tiered added Beam → `[4]`/`[5]`; `describeSpec` mentions the rate and "a second beam at 3 per second".
 - `tests/content.test.ts` and `tests/core/augments.test.ts` edits as listed; `npm run check` + `npm run smoke` (desktop 1280x720 and phone 412x915) must pass — the beam draws no HUD, so no layout work.
+
+## Result (attempt 1, asus)
+
+Added the Beam augment, the game's first sustained attack: a continuous line in range 4.5 dealing 6/8/10 per second (by tier) to the furthest enemy — sticky on a Beam-first tower, always following the furthest when added elsewhere — plus a second half-rate line (3/4/5 per second) on the enemy nearest the main target per Beam added (max 3). New files are `content/augments/beam.ts` (the augment, offered in the opening draft), `core/beam.ts` (pure line and retarget rules, 14 tests in `tests/core/beam.test.ts`), `systems/BeamSystem.ts` (holds the lines, ticks damage so kills pay gold/combo/Mint/kills through the normal kill path, draws the 4px line and hit tick in the tower's color), and `systems/attacks/beam.ts` (no-op keeping the attacks registry total), plus one-line registrations and beam branches in `TowerSpec`/`describeSpec`/`tiers`/`TowerSystem`/`towerLook`/`barrels` (short flat wide head with one tick per added Beam)/`GameScene`/`TowerPanel` and the `beams.valid` invariant in `runChecks`. Three deliberate deviations from the design note: Beam is green (the design's own definition; green, yellow and blue are all already used by landed augments), the added form's tier rate uses a new `addedBeamDps` field (the design's single-field line would have made the added line 8/10 instead of the specified 4/5 — same precedent as Anchor's `rootSec`/`addedRootSec`), and a fresh beam lock counts as a tower attack in the smoke stat (its doc comment updated). `npm run check` (208 tests) a…
+
+- Self-review: APPROVE
+- Time: 261.7 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/art/barrels.ts        |  22 +++-
+ .../chokepoint/game/src/content/augments/beam.ts   |  24 ++++
+ .../chokepoint/game/src/content/augments/index.ts  |   2 +
+ projects/chokepoint/game/src/content/types.ts      |  12 +-
+ projects/chokepoint/game/src/core/augments.ts      |  26 +++-
+ projects/chokepoint/game/src/core/beam.ts          |  71 ++++++++++
+ projects/chokepoint/game/src/core/tiers.ts         |   6 +-
+ projects/chokepoint/game/src/debug/runChecks.ts    |   1 +
+ projects/chokepoint/game/src/debug/testHook.ts     |   2 +-
+ projects/chokepoint/game/src/entities/towerLook.ts |   6 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |   4 +
+ projects/chokepoint/game/src/systems/BeamSystem.ts |  99 ++++++++++++++
+ .../chokepoint/game/src/systems/EnemySystem.ts     |   7 +
+ .../chokepoint/game/src/systems/TowerSystem.ts     |   1 +
+ .../chokepoint/game/src/systems/attacks/beam.ts    |   8 ++
+ .../chokepoint/game/src/systems/attacks/index.ts   |   2 +
+ projects/chokepoint/game/src/ui/hud/TowerPanel.ts  |   1 +
+ projects/chokepoint/game/tests/content.test.ts     |   4 +-
+ .../chokepoint/game/tests/core/augments.test.ts    |  47 +++++++
+ projects/chokepoint/game/tests/core/beam.test.ts   | 145 +++++++++++++++++++++
+ 20 files changed, 480 insertions(+), 10 deletions(-)
+```

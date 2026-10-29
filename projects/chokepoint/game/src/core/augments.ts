@@ -42,6 +42,10 @@ export interface TowerSpec {
   burn: Burn | undefined;
   /** Embers in the tower: a muzzle dot when one is the first, one barrel tick each added. */
   burnCount: number;
+  /** The beam's damage per second when Beam is the first (0: no beam of the tower's own). */
+  beamDps: number;
+  /** One half-rate per second entry per Beam added after the first, in the order put in. */
+  beamExtras: number[];
   /** Extra gold this tower's own kills drop: one per mint copy in the tower, any slot (core/mint.ts). */
   goldPerKill: number;
   /** Kills within this many cells of the tower (its range ring) pay: 0 unless the first augment's form has it. */
@@ -75,6 +79,8 @@ const EMPTY: TowerSpec = {
   markCount: 0,
   burn: undefined,
   burnCount: 0,
+  beamDps: 0,
+  beamExtras: [],
   goldPerKill: 0,
   goldRadius: 0,
   gust: 0,
@@ -115,6 +121,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     markCount: 0,
     burn: undefined,
     burnCount: 0,
+    beamDps: 0,
+    beamExtras: [],
     goldRadius: f.goldRadius ?? 0,
     goldPerKill: 0,
     gust: f.push ?? 0,
@@ -159,6 +167,15 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     if (!b) continue;
     spec.burnCount += 1;
     if (!spec.burn || b.dps > spec.burn.dps) spec.burn = { ...b };
+  }
+  // Beams in any slot: the first is the tower's own line, each added one a half-rate line on a
+  // nearer enemy. The rate is its own stat (like burnDps): never scaled by damage or rate.
+  for (let i = 0; i < augments.length; i++) {
+    const c = augments[i]!;
+    const dps = i === 0 ? f.beam?.dps ?? 0 : tierAdded(getAugment(c.id), c.tier).beam?.dps ?? 0;
+    if (dps <= 0) continue;
+    if (i === 0) spec.beamDps = dps;
+    else spec.beamExtras.push(dps);
   }
   // Pushes in any slot: the first is the tower's gust, each extra one adds per-hit push.
   for (let i = 0; i < augments.length; i++) {
@@ -211,6 +228,10 @@ export function describeSpec(spec: TowerSpec): string {
   } else if (spec.kind === 'burn') {
     line = spec.burn ? `Sets ablaze the furthest enemy: ${spec.burn.dps} per second for ${spec.burn.sec} s` : 'Does not attack';
     if (slow) line += `, slowing them by ${slow}%`;
+  } else if (spec.kind === 'beam') {
+    line = `Beams the furthest enemy: ${spec.beamDps} per second`;
+    if (spec.beamExtras.length === 1) line += `, and a second beam at ${spec.beamExtras[0]} per second on the nearest enemy`;
+    else if (spec.beamExtras.length > 1) line += `, and ${spec.beamExtras.length} beams at ${spec.beamExtras[spec.beamExtras.length - 1]} per second on the nearest enemies`;
   } else if (spec.kind === 'rally') {
     const r = getAugment('rally');
     line = `Towers within ${r.first.range} cells attack ${Math.round((r.added.rally?.pct ?? 0) * 100)}% faster`;
@@ -232,11 +253,12 @@ export function describeSpec(spec: TowerSpec): string {
     if (marked > 0) line += ', and its hits mark';
   }
   // An Ember added to another first: its hits set ablaze too (an Ember first says it in its own line).
-  if (spec.kind !== 'burn' && spec.burn) line += ', and its hits set ablaze';
+  // A beam has no hits of its own, so the hit trailers never say it.
+  if (spec.kind !== 'burn' && spec.kind !== 'beam' && spec.burn) line += ', and its hits set ablaze';
   // The mints in the tower (core/mint.ts): its kills, and the kills within its radius, drop extra gold.
   if (spec.goldRadius > 0) line += `, kills within ${spec.goldRadius} cells drop +${spec.goldPerKill} gold`;
   else if (spec.goldPerKill > 0) line += `, kills drop +${spec.goldPerKill} gold`;
-  if (spec.pushPerHit > 0) line += `, and its hits push back ${spec.pushPerHit.toFixed(1)} cells`;
+  if (spec.pushPerHit > 0 && spec.kind !== 'beam') line += `, and its hits push back ${spec.pushPerHit.toFixed(1)} cells`;
   return `${line}.`;
 }
 

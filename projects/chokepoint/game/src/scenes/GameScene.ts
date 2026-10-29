@@ -9,6 +9,7 @@ import { registerRunChecks, syncHookStats } from '../debug/runChecks';
 import { hook } from '../debug/testHook';
 import { BoardGestures } from '../input/BoardGestures';
 import { bindHotkeys } from '../input/hotkeys';
+import { BeamSystem } from '../systems/BeamSystem';
 import { Board } from '../systems/Board';
 import { Building } from '../systems/Building';
 import { EnemySystem } from '../systems/EnemySystem';
@@ -42,6 +43,7 @@ export class GameScene extends Phaser.Scene {
   saver!: RunSave;
   speed!: WaveSpeed;
   rally!: RallySystem;
+  beams!: BeamSystem;
   towers!: TowerSystem;
   enemies!: EnemySystem;
   waves!: WaveSystem;
@@ -90,6 +92,7 @@ export class GameScene extends Phaser.Scene {
     });
     this.speed = new WaveSpeed();
     this.rally = new RallySystem(this, this.towers, this.fx);
+    this.beams = new BeamSystem(this, this.towers, this.enemies);
     this.saver = new RunSave(this, window.localStorage);
     if (saved) this.saver.restore(saved);
     this.windup = new PushWindup(this, this.towers);
@@ -148,6 +151,7 @@ export class GameScene extends Phaser.Scene {
     this.saver.update();
     this.exitWarn.update(simDt);
     this.rally.update(simDt);
+    this.beams.update(simDt);
     this.windup.update(simDt);
     syncHookStats(this);
   }

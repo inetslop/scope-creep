@@ -1,5 +1,6 @@
 import type { AugmentDef } from '../types';
 import { anchor } from './anchor';
+import { beam } from './beam';
 import { bolt } from './bolt';
 import { ember } from './ember';
 import { frost } from './frost';
@@ -24,6 +25,7 @@ export const AUGMENTS: readonly AugmentDef[] = [
   rally,
   mark,
   ember,
+  beam,
   rapid,
   reach,
 ];
