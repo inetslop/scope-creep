@@ -3,6 +3,7 @@ import { CELL, HUD } from '../../config';
 import { getEnemy } from '../../content/enemies';
 import { PALETTE } from '../../content/palette';
 import { isQuietWave, waveCounts, type WavePlan } from '../../core/waves';
+import { RunState } from '../../core/run';
 import { artScale, enemyTexture } from '../../art/textures';
 import type { GameScene } from '../../scenes/GameScene';
 import { makeCard } from '../card';
@@ -10,6 +11,7 @@ import { textStyle } from '../text';
 import { EDGE, isNarrow, NEXT_SIZE, type HudPart } from './hud';
 
 const H = 44;
+const LINE = 16;
 const PAD = 16;
 const GROUP_GAP = 8;
 
@@ -77,7 +79,7 @@ export class NextWavePreview implements HudPart {
     const bottom = height - HUD.bottom / 2;
     const x = Math.min(width - EDGE - NEXT_SIZE / 2 - 4, width - EDGE - this.cardW / 2);
     const above = isNarrow(width) ? bottom - NEXT_SIZE / 2 - 22 - 30 : bottom - (NEXT_SIZE / 2 + 7) - 10;
-    box.setScale(this.fitScale()).setPosition(x, above - H / 2);
+    box.setScale(this.fitScale()).setPosition(x, above - (H + LINE) / 2);
   }
 
   private build(plan: WavePlan): Phaser.GameObjects.Container {
@@ -112,9 +114,11 @@ export class NextWavePreview implements HudPart {
       cursor += 5 + count.width;
     });
     this.cardW = Math.ceil(cursor) + PAD * 2;
+    const payLine = scene.add.text(0, -H / 2, `+${RunState.waveBonus(plan.number)} gold`, textStyle(14, PALETTE.muted)).setOrigin(0.5, 0.5);
     const left = -this.cardW / 2 + PAD;
-    for (const p of pieces) p.x += left;
-    pieces.unshift(makeCard(scene, 0, 0, this.cardW, H, H / 2)); // card under the row
+    for (const p of pieces) { p.x += left; p.y += LINE / 2; }
+    pieces.push(payLine);
+    pieces.unshift(makeCard(scene, 0, 0, this.cardW, H + LINE, (H + LINE) / 2)); // card under the row
     return scene.add.container(0, 0, pieces);
   }
 }

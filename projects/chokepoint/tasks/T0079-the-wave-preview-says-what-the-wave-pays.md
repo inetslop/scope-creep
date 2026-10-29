@@ -4,11 +4,12 @@ title: The wave preview says what the wave pays
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T23:26:44Z
 claimed_at: 2026-10-28T23:47:13Z
+finished_at: 2026-10-29T00:49:35Z
 epic: E1
 ---
 
@@ -54,3 +55,15 @@ none (no new types or functions)
 
 ### Tests
 none
+
+## Result (attempt 1, asus)
+
+The wave preview card now shows a muted "+N gold" line during the build phase, with N read from `RunState.waveBonus(plan.number)` — the exact bonus `clearWave()` pays, so quiet waves show their unchanged bonus. The single edit is in `src/ui/hud/NextWavePreview.ts`: the card grows by one 16 px line upward (bottom edge and the counts row/quiet chip keep their screen positions, keeping the gap above the send ring), and the line disappears with the card outside the build phase. Check and desktop+mobile smoke all pass. Note: the line sits in the new top line of the taller card (the counts keep their position below it), which is what the design's fixed bottom edge + unchanged counts geometry requires.
+
+- Self-review: APPROVE
+- Time: 62.4 min
+
+```
+projects/chokepoint/game/src/ui/hud/NextWavePreview.ts | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+```
