@@ -2,7 +2,7 @@
 id: T0222
 title: "The start screen: one column that fits, the profile card without repeats"
 size: M
-priority: 2
+priority: 1
 status: todo
 depends_on: []
 attempts: 0
@@ -14,7 +14,7 @@ Seen at about 515x660 after a single lost run: the profile card touches the titl
 
 ## Details
 - **Why it broke:** in `src/scenes/MenuScene.ts` every part has a hand-placed y offset from the title (+104, +213, +290, +366, +410, +442, +486, +510) and a separate `room` formula for the height. The Recent line is placed from the card's edge, so it overlaps whatever is below. `src/scenes/menu/ProfileCard.ts` places its lines the same way.
-- **Lay the screen out as one column, built from its parts in order:** the demo road, the title, the profile card, the how-to text, Resume (when there is a saved run), Play, Tech and its caption, Ghost and its caption (once there is a best run), the "Enter or Space" hint. Each part's y comes from the part above it (its height plus a gap). Use one gap between parts, and a smaller one between a button and its caption.
+- **Lay the screen out as one column, built from its parts in order:** the demo road, the title, the profile card, the how-to text, Resume (when there is a saved run), Play, Tech and its caption, Augments (T0221's codex button, always present) and its caption if it has one, Ghost and its caption (once there is a best run), the "Enter or Space" hint. Each part's y comes from the part above it (its height plus a gap). Use one gap between parts, and a smaller one between a button and its caption. T0221's Augments button is what pushed Ghost off-screen at 1280x720 with Resume present — it goes in this column like the others.
 - **When the column is taller than the screen:** the demo road shrinks first (as it does now); if it still doesn't fit, the column scales down as a whole. Nothing may overlap or leave the screen.
 - **The profile card as a centered column:** the coin icon beside the coin number (a small fixed gap) as a centered pair, then Best wave (with its star), then the runs line, then the Recent runs. Its height comes from its lines, with the same padding at the top and the bottom.
 - **Each fact once:**
@@ -24,7 +24,7 @@ Seen at about 515x660 after a single lost run: the profile card touches the titl
 - **Keep:** the entrances (the title drops in, the rest fades up), Play's breathing, the Tech button's yellow dot, the drifting shapes, Enter/Space to play, the `?smoke` auto-start.
 
 ## Acceptance criteria
-- [ ] At 412x915, 1280x720 and 515x660, nothing overlaps and nothing leaves the screen. Check a fresh profile (no runs), one run, four or more runs with a saved run (so Resume shows), and a best run (so Ghost shows).
+- [ ] At 412x915, 1280x720 and 515x660, nothing overlaps and nothing leaves the screen. Check a fresh profile (no runs), one run, four or more runs with a saved run (so Resume shows), and a best run (so Ghost shows) — in every case the Augments button sits in the column between Tech and Ghost.
 - [ ] The profile card's lines are centered, the coin sits beside its number, and the top and bottom padding match.
 - [ ] After one run, the card shows that run once. "avg" appears only from two runs.
 - [ ] Each caption sits under its own button, clear of the next button.
@@ -153,6 +153,7 @@ const layout = (width: number, height: number): void => {
 5. Run `npm run check` and `npm run smoke`.
 
 ### Pitfalls
+- The design's part list predates T0221: `MenuScene.ts` now also creates the Augments codex button (stacked under Tech, with a caption line if it has one). Place it in the column between Tech and Ghost exactly like the other parts (`put(BUTTON_H)` + its line) — leaving it at its hand-placed y is the 1280x720 overflow T0221's self-review flagged.
 - Never call `setScale()` on an object a tween also animates: the title's drop-in (scale 0.6→1) and Play's breathing (scale →1.05) tween the inner objects (`this.title`, `button.container`); the layout scale `s` goes on the wrappers `titleBox`/`playBox` only. All other parts (resume, tech, ghost, card, texts) have no scale tweens — set their scale directly.
 - The drop-in tween and breathing tween keep their existing targets/lines unchanged; do not retarget them at the wrappers.
 - `card.height` must be read from the returned `ProfileCard` (it is dynamic now, ≈98–154 px); do not hardcode 124 anywhere. `PROFILE_CARD_H` is deleted — only `MenuScene` imported it.

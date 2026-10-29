@@ -21,7 +21,7 @@ The game grows through epics: bigger features that take several tasks. One or tw
 **When done:** a tech tree screen reached from the menu, a few branches of nodes bought with the currency from E1, each node a lasting change shown on its card: more starting gold, a cheaper second slot, an extra augment pick before wave 1, new augments unlocked into the draft pool, more lives, a richer clean-wave payout. Bought nodes stay bought.
 **Breakdown:**
 - T0103 (L, priority 1) — the screen, branch one “Run start” (gold +5 ×3, life +1) and the node card's states — **done** (2026-10-29, asus)
-- T0110 (M, cycle 55, depends_on T0103) — branch two, "The draft": "Slot II −5" ×2 (10/20 coins; the second slot's price never below 5) and "Fourth card" (15 coins: the pre-wave-1 draft and its reroll offer four, T0048's Bolt floor kept, T0065's flip and fit) — in progress (desktop-4070)
+- T0110 (M, cycle 55, depends_on T0103) — branch two, "The draft": "Slot II −5" ×2 (10/20 coins; the second slot's price never below 5) and "Fourth card" (15 coins: the pre-wave-1 draft and its reroll offer four, T0048's Bolt floor kept, T0065's flip and fit) — **done** (2026-10-29, desktop-4070)
 - T0153 (M, priority 2, depends_on T0103) — branch three “The pool”: the “Haste” node (25 coins), gated on T0152 — **done** (2026-10-29, desktop)
 - T0209 (M, priority 2, depends_on T0103) — branch three, node two: “Momentum” (30 coins), the same gate pattern — **done** (2026-10-29, cachyos-x8664); the draft gate is T0064's line
 - T0208 (L, priority 2, depends_on T0103) — branch four “The board”: “One more bend” (30 coins) — a new run's road winds one turn further (the generator's bend target +1; the bend-adjacent worth-more cells come with it); ghost and resumed runs keep their exact board; the row is T0153's look — in the pool (it touches the run-start files T0110 edits, so it starts when T0110 lands)
@@ -30,9 +30,9 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0212 (M, priority 2, depends_on T0153, T0209) — branch three, node three: “Mend” (30 coins), T0209's pattern for T0095's Epic; the draft gate is T0095's line — **done** (2026-10-29, inet-racing)
 - T0213 (S, priority 2, depends_on T0103) — the menu's Tech button wears a small yellow dot while any unowned node is in reach — **done** (2026-10-29, yoga)
 - T0214 (M, priority 2, depends_on T0103) — the branch discount: the 2nd node of a branch costs 5 less, the 3rd and later 10 less (floor 5); the card shows the struck-through old price — in design
-- T0215 (M, priority 2, depends_on T0103) — the run-start's fifth node, a second “Life +1” (40 coins), and a small done mark on a fully-owned branch — in progress (asus)
+- T0215 (M, priority 2, depends_on T0103) — the run-start's fifth node, a second “Life +1” (40 coins), and a small done mark on a fully-owned branch — **done** (2026-10-29, asus)
 
-Status: the foundation (T0103), the run-start branch, the pool branch (T0153, T0209, T0212) and the claim branch (T0211) are done, as is the menu dot (T0213); the draft branch (T0110) and the run-start's fifth node (T0215) are in progress; the board branch (T0208) and the branch discount (T0214) are in the pool, landing one at a time on the shared tech files.
+Status: the run-start branch (with the fifth node, T0215), the draft branch (T0110), the pool branch (T0153, T0209, T0212) and the claim branch (T0211) are done, as is the menu dot (T0213); the branch discount (T0214) is in progress (cachyos-x8664) and the board branch (T0208) is in the pool — E2's last tasks before the "long way" sketch.
 
 ### E3 — Levels: a run is a journey (not started)
 **Goal:** a run has a shape: a few boards in a row, each harder, and a build that grows across them.
@@ -99,9 +99,9 @@ Status: the foundation (T0103), the run-start branch, the pool branch (T0153, T0
 - T0152 (L, priority 2) — Haste: the Epic that hastens everything it touches (2-cell aura: enemies walk +30% faster, towers attack +30% faster, +15% to both per extra copy, no cap; Epic-only; gated — absent from the draft roll until the tech tree's pool node, T0153, is bought) — in the pool, next registration behind the pool augments
 - T0138 (S) — the slow shows on the enemy (telegraph slice) — **done** (2026-10-29, narcissus)
 - T0139 (S) — the root shows on the enemy (telegraph slice) — **done** (2026-10-29, yoga)
-- T0221 (L, priority 2) — the Augments codex: a menu screen that shows every augment in the pool (icon, name, a purple “Epic” word for the Epic-only ones, the first and added rows) — the tail of the “rarity shows everywhere the augment shows” line; not on the closing list
+- T0221 (L, priority 2) — the Augments codex: a menu screen that shows every augment in the pool (icon, name, a purple “Epic” word for the Epic-only ones, the first and added rows) — **done** (2026-10-29, desktop; the menu row it added overflows 1280x720 with Resume + Ghost — T0222's column must take it in)
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0152 (one at a time, in claim order, under the 16-cap); the beam work is T0130, T0210 (the T0131 re-file) and T0132, with T0133 in progress; the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is a tail in the pool.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0152 (one at a time, in claim order, under the 16-cap); the beam work is T0130, T0210 (the T0131 re-file) and T0132, with T0133 in progress; the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done.
 
 **E4 closes when T0025, T0062, T0064, T0095, T0130, T0210 (+ its parked needle follow-up), T0132, T0133 and T0152 land** (T0139 done; T0131 failed → T0210; T0150 waits on T0025; T0089 is dropped).
 
@@ -142,6 +142,6 @@ Ideas that may become epics or tasks of one.
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger
-- Run summary: damage per tower, leaks per wave — **first slice tasked as T0216 (kills by tower on the end card)**
+- Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**
 - The board shows its corners: a notch on the bend cells — **built as T0140 (S, non-epic, 2026-10-29, narcissus)**
 - Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **tasked as T0217 (L, non-epic, in the pool)**
