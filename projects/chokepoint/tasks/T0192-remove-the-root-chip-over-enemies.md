@@ -1,12 +1,14 @@
 ---
 id: T0192
 title: Remove the root chip over enemies
+assignee: cachyos-x8664
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0139]
-attempts: 0
+attempts: 1
 created: 2026-10-29T12:23:58Z
+claimed_at: 2026-10-29T13:05:44Z
 ---
 
 ## Goal
