@@ -84,13 +84,13 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - tiers: rare {damageMul 1.3, cooldownMul 0.85, splash 1.5}, epic {damageMul 1.7, cooldownMul 0.7, splash 2}
 
 ### Spray (`spray`)
-- description: "Fires a shot that splits into 3 homing needles on hit. Added: +1 needle per split per extra Spray."
-- asTower: "Fires a shot that splits into 3 homing needles on hit."
-- asAdded: +1 needle per split per extra Spray.
+- description: "Blasts 5 pellets in a cone: deadly up close. Added: +2 pellets per blast."
+- asTower: "Blasts 5 pellets in a cone: deadly up close."
+- asAdded: +2 pellets per blast.
 - look: shape diamond, color yellow, size 0.24
-- first: kind spray, damage 12, range 4, rate 0.909, spray 3
-- added: spray 1
-- tiers: rare {damageMul 1.167, cooldownMul 0.864, asAdded +1 needle per split per extra Spray.}, epic {damageMul 1.333, cooldownMul 0.727, asAdded +1 needle per split per extra Spray.}
+- first: kind spray, damage 4, range 2.5, rate 0.833, spray 5
+- added: spray 2
+- tiers: rare {damageMul 1.25, cooldownMul 0.875, asAdded +2 pellets per blast.}, epic {damageMul 1.5, cooldownMul 0.75, asAdded +2 pellets per blast.}
 
 ### Frost (`frost`)
 - description: "Slows everything around it. Added: hits slow enemies by 40%."
