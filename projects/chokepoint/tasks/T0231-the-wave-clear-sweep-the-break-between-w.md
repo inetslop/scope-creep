@@ -3,10 +3,12 @@ id: T0231
 title: "The wave-clear sweep: the break between wave and draft, heard"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T21:12:14Z
+claimed_at: 2026-10-29T21:13:06Z
+designer: yoga
 ---
 
 ## Goal
