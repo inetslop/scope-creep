@@ -18,21 +18,21 @@ The game grows through epics: bigger features that take several tasks. One or tw
 
 ### E2 — Tech tree (active — started 2026-10-29; E1 closed, and this is the epic it was waiting for)
 **Goal:** a reason to play one more run: spend what runs earn on lasting upgrades.
-**When done:** a tech tree screen reached from the menu, a few branches of nodes bought with the currency from E1, each node a lasting change shown on its card: more starting gold, a cheaper second slot, an extra augment pick before wave 1, new augments unlocked into the draft pool, more lives, a richer clean-wave payout. Bought nodes stay bought.
+**When done:** a tech tree screen reached from the menu, a few branches of nodes bought with the currency from E1, each node a lasting change shown on its card: more starting gold, a cheaper second slot, an extra augment pick before wave 1, new augments unlocked into the draft pool, more lives, a richer clean-wave payout, and a new run's road that winds further or runs longer (the board branch). Bought nodes stay bought.
 **Breakdown:**
 - T0103 (L, priority 1) — the screen, branch one “Run start” (gold +5 ×3, life +1) and the node card's states — **done** (2026-10-29, asus)
 - T0110 (M, cycle 55, depends_on T0103) — branch two, "The draft": "Slot II −5" ×2 (10/20 coins; the second slot's price never below 5) and "Fourth card" (15 coins: the pre-wave-1 draft and its reroll offer four, T0048's Bolt floor kept, T0065's flip and fit) — **done** (2026-10-29, desktop-4070)
 - T0153 (M, priority 2, depends_on T0103) — branch three “The pool”: the “Haste” node (25 coins), gated on T0152 — **done** (2026-10-29, desktop)
 - T0209 (M, priority 2, depends_on T0103) — branch three, node two: “Momentum” (30 coins), the same gate pattern — **done** (2026-10-29, cachyos-x8664); the draft gate is T0064's line
-- T0208 (L, priority 2, depends_on T0103) — branch four “The board”: “One more bend” (30 coins) — a new run's road winds one turn further (the generator's bend target +1; the bend-adjacent worth-more cells come with it); ghost and resumed runs keep their exact board; the row is T0153's look — in the pool (it touches the run-start files T0110 edits, so it starts when T0110 lands)
-- (sketch — branch four, node two: “The long way”, a longer road (+25% path length), after T0208 so the generator's shape is settled)
+- T0208 (L, priority 2, depends_on T0103) — branch four “The board”: “One more bend” (30 coins) — a new run's road winds one turn further (the generator's bend target +1; the bend-adjacent worth-more cells come with it); ghost and resumed runs keep their exact board; the row is T0153's look — **done** (2026-10-29, inet-racing)
+- T0230 (M, priority 2, depends_on T0208) — branch four, node two: “The long way” (30 coins) — a new run's road is 25% longer (the generator's length target ×1.25, the bend target unchanged); ghost and resumed runs keep their exact board — in the pool; E2's last task
 - T0211 (L, priority 2, depends_on T0153) — branch five “The claim”: “Clean ×2” (30 coins) — each clean wave pays 2 coins instead of 1; the one pure coin formula (T0001) carries it to the live tally, the pause worth line and the claim card's recipe — **done** (2026-10-29, desktop)
 - T0212 (M, priority 2, depends_on T0153, T0209) — branch three, node three: “Mend” (30 coins), T0209's pattern for T0095's Epic; the draft gate is T0095's line — **done** (2026-10-29, inet-racing)
 - T0213 (S, priority 2, depends_on T0103) — the menu's Tech button wears a small yellow dot while any unowned node is in reach — **done** (2026-10-29, yoga)
 - T0214 (M, priority 2, depends_on T0103) — the branch discount: the 2nd node of a branch costs 5 less, the 3rd and later 10 less (floor 5); the card shows the struck-through old price — **done** (2026-10-29, cachyos-x8664)
 - T0215 (M, priority 2, depends_on T0103) — the run-start's fifth node, a second “Life +1” (40 coins), and a small done mark on a fully-owned branch — **done** (2026-10-29, asus)
 
-Status: the run-start branch (with the fifth node, T0215), the draft branch (T0110), the pool branch (T0153, T0209, T0212) and the claim branch (T0211) are done, as is the menu dot (T0213); the branch discount (T0214) is in progress (cachyos-x8664) and the board branch (T0208) is in the pool — E2's last tasks before the "long way" sketch.
+Status: the run-start branch (with the fifth node, T0215), the draft branch (T0110), the pool branch (T0153, T0209, T0212) and the claim branch (T0211) are done, as is the menu dot (T0213); the branch discount (T0214) and the board branch's “One more bend” (T0208) are done; the board branch's second node, “The long way” (T0230), is in the pool — E2 closes when it lands.
 
 ### E3 — Levels: a run is a journey (not started)
 **Goal:** a run has a shape: a few boards in a row, each harder, and a build that grows across them.
@@ -92,8 +92,8 @@ Status: the run-start branch (with the fifth node, T0215), the draft branch (T01
 - T0130 (M, priority 1) — Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam — **done** (2026-10-29, desktop)
 - T0131 (M, priority 2) — Beam combos II: Lance pierces, Splash scorches, Spray splits a beam kill — **failed** (2026-10-29, the architect's prompt overflowed cachyos's context before any design) — re-filed tighter: Lance + Splash as T0210; the needle clause (a beam kill splits into Spray needles) parked in IDEAS until T0210 lands
 - T0210 (M, priority 2) — Beam combos II (the re-file): Lance pierces the beam's main line, Splash scorches its target — in the pool
-- T0132 (M, priority 2) — Beam combos III: the beam carries Ember, Anchor, Push and Mark (Frost only if the 16-cap hasn't removed it) — in the pool
-- T0133 (M, priority 2) — A new look for the Beam tower: a tower with a circle on top — in the pool
+- T0132 (M, priority 2) — Beam combos III: the beam carries Ember, Anchor, Push and Mark (Frost only if the 16-cap hasn't removed it) — **done** (2026-10-29, desktop)
+- T0133 (M, priority 2) — A new look for the Beam tower: a tower with a circle on top — **done** (2026-10-29, desktop)
 - T0134 (L, priority 2) — Spray becomes a shotgun: a cone of pellets — **done** (2026-10-29, inet-racing)
 - T0135 (S) — Spray gets its own look, not Beam's — **done** (2026-10-29, yoga)
 - T0152 (L, priority 2) — Haste: the Epic that hastens everything it touches (2-cell aura: enemies walk +30% faster, towers attack +30% faster, +15% to both per extra copy, no cap; Epic-only; gated — absent from the draft roll until the tech tree's pool node, T0153, is bought) — in the pool, next registration behind the pool augments
@@ -102,11 +102,11 @@ Status: the run-start branch (with the fifth node, T0215), the draft branch (T01
 - T0221 (L, priority 2) — the Augments codex: a menu screen that shows every augment in the pool (icon, name, a purple “Epic” word for the Epic-only ones, the first and added rows) — **done** (2026-10-29, desktop; the menu row it added overflows 1280x720 with Resume + Ghost — T0222's column must take it in)
 - T0228 (S, priority 2) — the end card's towers wear their tier: T0010's pip on each by-tower chip — in the pool
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0152 (one at a time, in claim order, under the 16-cap); the beam work is T0130, T0210 (the T0131 re-file) and T0132, with T0133 in progress; the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is in the pool.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0152 (one at a time, in claim order, under the 16-cap); the beam work is T0130 and T0132 (done) with T0210 (the T0131 re-file) in the pool; the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is in the pool.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0130, T0210 (+ its parked needle follow-up), T0132, T0133, T0152 and T0228 land** (T0139 done; T0131 failed → T0210; T0150 waits on T0025; T0089 is dropped).
+**E4 closes when T0025, T0062, T0064, T0095, T0152, T0210 (+ its parked needle follow-up) and T0228 land** (T0130, T0132, T0133 done; T0131 failed → T0210; T0150 waits on T0025; T0089 is dropped).
 
-**16-cap (protocol):** the pipeline holds 19 augments (14 in + T0025, T0062, T0064, T0095, T0152); the cap is 16. Every queued registration, after registering, removes one more if the pool is over 16 — the first still in the index of **Frost, then Rally, then Mint** — and says which in its result (the canonical statement is in T0064's task). T0132 drops its Frost clause if Frost is gone at build time.
+**16-cap (protocol):** the pipeline holds 19 augments (14 in + T0025, T0062, T0064, T0095, T0152); the cap is 16. Every queued registration, after registering, removes one more if the pool is over 16 — the first still in the index of **Frost, then Rally, then Mint** — and says which in its result (the canonical statement is in T0064's task).
 
 ### E5 — Bosses: every 10th wave is something you remember (not started; starts when E4 closes)
 **Goal:** the run has a peak: the deep waves bring one big shape with its own mechanic, not just more of the same.
