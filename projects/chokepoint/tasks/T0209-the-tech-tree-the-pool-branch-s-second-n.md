@@ -1,12 +1,14 @@
 ---
 id: T0209
 title: "The tech tree: the pool branch's second node — Momentum"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0103, T0153]
-attempts: 0
+attempts: 1
 created: 2026-10-29T13:49:24Z
+claimed_at: 2026-10-29T14:14:45Z
 epic: E2
 ---
 
