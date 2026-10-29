@@ -1,12 +1,14 @@
 ---
 id: T0208
 title: "The tech tree: the board branch — One more bend"
+assignee: inet-racing
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0103]
-attempts: 0
+attempts: 1
 created: 2026-10-29T13:49:24Z
+claimed_at: 2026-10-29T19:12:26Z
 epic: E2
 ---
 
