@@ -3,11 +3,13 @@ id: T0103
 title: "The tech tree: the screen, spendable coins, and the run-start branch"
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T07:23:55Z
 epic: E2
+designer: desktop
 ---
 
 ## Goal
