@@ -26,6 +26,7 @@ It goes into the shared pool: any machine that takes size {{TASK_SIZE}} tasks ma
    - themed art, names or text (fantasy, sci-fi, ink, paper...) instead of the game's bright minimal abstract style;
    - a new input or HUD element without its on-screen explanation: the key or button shown where it is used and on the pause screen, a touch control on mobile, a layout that works at 412x915 and 1280x720.
    When a task adds an input or HUD element, your design must include that explanation and layout, not leave it for later.
+7. When a task adds or changes text on a card or screen, your design names the screen's fullest state and makes it fit. The fullest state is every line that can show at once, with the longest numbers and words, at 412x915 and 1280x720. Lay the whole card out from its lines: each line's y comes from the line above, the card's size from its content, and text that could get too wide wraps or shrinks. Never place one new line at a hand-picked y offset: that is how lines end up overlapping.
 
 # Your final message, exactly in this format
 
