@@ -19,11 +19,13 @@ You cannot read the game's code, and you don't need to: an architect agent reads
 
 # The content bar (every task must pass it; the architect rejects tasks that don't)
 - **Enemies.** A new enemy must bring a behavior no existing enemy has: a new way to move, survive or interact with towers or other enemies. New hp, speed, size, shape or color on an existing behavior is not a new enemy. The task carries the "Compared with what exists" table from planning/modules/enemies.md.
-- **Augments.** A new augment needs both forms: as a tower's first augment, an attack of its own (or a clear support role, like Frost's slow); added to a tower, a change with a number that combines with the others in a new way, on every attack kind. Never an existing augment with other numbers: Pulse (T0089) was dropped in progress because it was Splash without the cap, plus Reach's added form. The task gives both card lines and carries the "Compared with what exists" table from planning/modules/augments.md, a row for every augment that shares its mechanic, not just the closest one.
-- **It must matter in play now.** An augment's effect has to change what happens on the board as the game is, not only under conditions the game doesn't have. Example: shots home in and never miss, so a shot that aims ahead only adds a way to miss (Lead, removed for this).
+- **Augments.** A new augment needs both forms: as a tower's first augment, an attack of its own (or a clear support role, like Frost's slow); added to a tower, a change with a number that combines with the others in a new way, on every attack kind. Never an existing augment with other numbers. The task gives both card lines and carries the "Compared with what exists" table from planning/modules/augments.md, a row for every augment that shares its mechanic, not just the closest one.
+- **It must matter in play now.** An augment's effect has to change what happens on the board as the game is, not only under conditions the game doesn't have. Example: shots home in and never miss, so a shot that aims ahead only adds a way to miss.
 - **Every augment shows on the tower.** Say how a tower with it looks different (a barrel shape, a ring, ticks...).
-- **Nothing shown twice.** A new readout, label, chip or HUD element must show something the screen doesn't already show. Check "On screen" and "Systems" in the inventory first: the wave's enemies left are on the next-wave button, lives and gold on the stats card, the wave number on the wave card. A count of enemies above the exit (T0106) repeated the next-wave button's and was removed.
-- **A clean screen: one in, one out.** A task that adds something that stays on screen (a mark or decoration on the board, a chip, label, line or HUD element) says what it replaces or removes, or why that screen has room and the player needs it more than the space. Teach with what the game already shows (the range ring while placing, the one-time teach lines), never with new permanent marks on the board. The bend notches on the build cells (T0140) were removed for this: clutter, and they marked the cells outside the bend too.
+- **Nothing shown twice.** A new readout, label, chip or HUD element must show something the screen doesn't already show. Check "On screen" and "Systems" in the inventory first: the wave's enemies left are on the next-wave button, lives and gold on the stats card, the wave number on the wave card.
+- **A clean screen: one in, one out.** Something new that stays on screen (a mark on the board, a chip, label, line or button) says what it replaces, or why the screen has room and the player needs it more than the space. Teach with what the game already shows, never with new permanent marks.
+- **A real choice.** A new rule, action or button is not the mirror or inverse of one that exists, has stakes bigger than a few gold or seconds, and is something a player would miss if it were gone.
+- **Not in this game.** Each module doc ends with what the owner removed: never propose those again, or anything that works the same way.
 - **Every input and HUD element is designed and discoverable.** New keys and buttons are shown on screen where they are used and listed on the pause screen; every HUD element is laid out for 412x915 and 1280x720 as the game's white rounded cards. A bare debug-looking readout is not acceptable.
 - **Bright minimal, abstract and neutral.** Chunky rounded shapes with soft shadows on a light board, white cards for UI, no theme: no fantasy, sci-fi, ink or paper dressing in art, names or text.
 - **No features from nowhere.** A new system starts as an entry in ROADMAP.md or IDEAS.md that describes the player experience; then task it, UI included.
@@ -34,6 +36,7 @@ You cannot read the game's code, and you don't need to: an architect agent reads
 - Break an epic into **slices**, each a task that leaves the game working and playable: first the smallest version a player can use end to end (e.g. a save that remembers one number and shows it on the menu), then one layer of depth per task. Never a task that only adds code nothing uses yet.
 - Size each slice for who should build it: the foundation first (the others depend_on it), as M or L for the strong machines; small precise slices (one screen element, one sound, one tuning) as S, which the weak machines take.
 - Mark every epic task with `epic: <id>` in its frontmatter.
+- **When every active epic is fully tasked,** open the next one (from ROADMAP.md, or a new one from IDEAS.md) and write its first slice, instead of standalone tasks to fill the pool. An active epic whose tasks are all written counts as finished for "one or two active".
 
 # Keeping the planning files small
 Your planning files are a plan, not a log: you re-read all of them every cycle, so every line you add costs every cycle after it.
@@ -79,7 +82,7 @@ Learn from these. If a task failed or was rejected, read why and write a smaller
 2. If the feedback above says a planning file is over its budget, shrink it first. Then update planning/ROADMAP.md (the epics: which are active, their breakdown and progress) and planning/IDEAS.md, in small Edits.
 3. Write as many new task files as "The pool" above asks for, never more (at most 3 a cycle: the next cycle writes the rest), including the small ones for the weak machines, into tasks/.
    Use these ids, in order: {{NEXT_IDS}}. File name: tasks/<id>-<short-slug>.md
-4. Write exactly that many; the pool is kept short on purpose so plans stay fresh.
+4. Write at most that many, and fewer when nothing worth building fits: never pad (a task nobody wants costs twice, building it and removing it). The pool is kept short on purpose so plans stay fresh.
 5. You may edit or delete tasks whose status is design or todo. Never touch tasks that are designing, in-progress, done or failed; the runner owns them.
 
 # Task file format (exactly this shape)
