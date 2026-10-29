@@ -43,6 +43,16 @@ export class FxSystem {
     return this.comboN;
   }
 
+  /** The counter's text object, or null while no counter is up (for the drain bar's anchor, systems/ComboBar.ts). */
+  get counterText(): Phaser.GameObjects.Text | null {
+    return this.comboText;
+  }
+
+  /** When the last chain kill was, on the scene clock (the bar's fill drains from it over 1.5 s). */
+  get comboLastKill(): number {
+    return this.lastKill;
+  }
+
   /** Tweens `obj` to `props` over `durationMs`, then destroys it; it counts as a live effect until then. */
   track<T extends Phaser.GameObjects.GameObject>(obj: T, durationMs: number, props: Record<string, number | string>): void {
     this.live += 1;

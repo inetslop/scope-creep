@@ -15,6 +15,7 @@ import { bindHotkeys } from '../input/hotkeys';
 import { BeamSystem } from '../systems/BeamSystem';
 import { Board } from '../systems/Board';
 import { Building } from '../systems/Building';
+import { ComboBar } from '../systems/ComboBar';
 import { EnemySystem } from '../systems/EnemySystem';
 import { ExitWarning } from '../systems/ExitWarning';
 import { FxSystem } from '../systems/FxSystem';
@@ -60,6 +61,7 @@ export class GameScene extends Phaser.Scene {
   exitWarn!: ExitWarning;
   leakCost!: LeakCost;
   windup!: PushWindup;
+  comboBar!: ComboBar;
 
   constructor() {
     super(SCENES.game);
@@ -118,6 +120,7 @@ export class GameScene extends Phaser.Scene {
     this.saver = new RunSave(this, window.localStorage);
     if (saved) this.saver.restore(saved);
     this.windup = new PushWindup(this, this.towers);
+    this.comboBar = new ComboBar(this, this.fx);
 
     this.board.layout(view.width, view.height);
     onResize(this, (w, h) => this.board.layout(w, h));
@@ -177,6 +180,7 @@ export class GameScene extends Phaser.Scene {
     this.rally.update(simDt);
     this.beams.update(simDt);
     this.windup.update(simDt);
+    this.comboBar.update();
     syncHookStats(this);
   }
 }

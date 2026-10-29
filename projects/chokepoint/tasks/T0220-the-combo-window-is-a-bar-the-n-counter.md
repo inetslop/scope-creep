@@ -4,11 +4,12 @@ title: "The combo window is a bar: the ×N counter's clock you can see"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T16:54:18Z
 claimed_at: 2026-10-29T18:56:27Z
+finished_at: 2026-10-29T19:12:10Z
 ---
 
 ## Goal
@@ -97,3 +98,18 @@ export class ComboBar {
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Added a thin 26×4 drain bar under the ×N kill-combo counter, so the chain's 1.5 s window is readable at a glance. New file `src/systems/ComboBar.ts` (one persistent Graphics, the Push windup ring's pattern) draws the fill in the counter's own color (muted ink, milestone yellow from ×10) over a ~20%-alpha muted-ink track; it drains right-to-left over the window driven by `scene.time.now` — the same real-time clock the counter uses — so it empties at exactly the moment the chain breaks and agrees with the counter at 1x and 2x. `FxSystem` gains only two read-only getters (`counterText`, `comboLastKill`); `GameScene` instantiates and updates the bar, and `runChecks` gets its invariant line. Check and smoke pass on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 15.7 min
+
+```
+projects/chokepoint/game/src/debug/runChecks.ts  |  1 +
+ projects/chokepoint/game/src/scenes/GameScene.ts |  4 ++
+ projects/chokepoint/game/src/systems/ComboBar.ts | 52 ++++++++++++++++++++++++
+ projects/chokepoint/game/src/systems/FxSystem.ts | 10 +++++
+ 4 files changed, 67 insertions(+)
+```
