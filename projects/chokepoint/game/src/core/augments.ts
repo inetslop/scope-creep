@@ -58,7 +58,7 @@ export interface TowerSpec {
   pushCount: number;
   /** Splash copies in the tower: their hits strike at most this many enemies (splashHits). */
   splashCount: number;
-  /** How many homing needles the shot splits into on its first hit (0: no split, Spray first). */
+  /** How many pellets the blast fires in a cone (0: no blast, Spray first). */
   spray: number;
   /** Sprays in the tower: one barrel tick each. */
   sprayCount: number;
@@ -155,7 +155,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     spec.pierce += e.pierce ?? 0;
     if (spec.kind === 'shot') spec.shots += e.extraShots ?? 0;
     else if (spec.kind === 'pulse') spec.bolts += e.extraShots ?? 0;
-    // A Spray only grows a split of its own: added to a non-spray tower it has no split to grow.
+    else if (spec.kind === 'spray') spec.spray += e.extraShots ?? 0; // a Bolt's extra shot is one more pellet in the blast
+    // A Spray only grows a blast of its own: added to a non-spray tower it has no blast to grow.
     if (spec.kind === 'spray') spec.spray += e.spray ?? 0;
     if (e.slow && (!spec.slow || e.slow.pct > spec.slow.pct)) spec.slow = { ...e.slow };
     if (e.root) addRoot(a.id, e.root.sec);
@@ -196,7 +197,7 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
   }
   // Splashes in any slot, at any tier: how many enemies its hits may strike.
   for (const a of augments) if (a.id === 'splash') spec.splashCount += 1;
-  // Sprays in any slot, at any tier: one needle per split, one barrel tick each.
+  // Sprays in any slot, at any tier: one barrel tick each.
   for (const a of augments) if (a.id === 'spray') spec.sprayCount += 1;
   // Mints in any slot: this tower's kills drop this much extra gold (core/mint.ts).
   for (const a of augments) spec.goldPerKill += tierAdded(getAugment(a.id), a.tier).goldPerKill ?? 0;
@@ -235,7 +236,7 @@ export function describeSpec(spec: TowerSpec): string {
     if (slow) line += `, slowing them by ${slow}%`;
     line += root;
   } else if (spec.kind === 'spray') {
-    line = `Shoots the enemy furthest along, and its shot splits into ${spec.spray} needles${spec.pierce > 0 ? `, and each hits ${spec.pierce + 1} in a line` : ''}`;
+    line = `Blasts ${spec.spray} pellets at the enemy furthest along${spec.pierce > 0 ? `, each pellet hits ${spec.pierce + 1} in a line` : ''}`;
     if (marked > 0) line += ', and its hits mark';
     if (slow) line += `, slowing them by ${slow}%`;
     line += root;

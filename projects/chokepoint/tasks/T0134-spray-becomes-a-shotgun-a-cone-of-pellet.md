@@ -4,11 +4,12 @@ title: "Spray becomes a shotgun: a cone of pellets"
 assignee: inet-racing
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T09:34:10Z
 claimed_at: 2026-10-29T10:01:38Z
+finished_at: 2026-10-29T13:46:52Z
 epic: E4
 ---
 
@@ -52,3 +53,32 @@ Spray stops being a second Lance-like "one hit that reaches more enemies" and be
 - [ ] A pellet kill is the tower's kill: gold pop, Mint's +1, combo counter and kills line.
 - [ ] Unit tests in tests/core/augments.test.ts cover the spec for each combination above: the pellet count with Spray and Bolt, pierce, splash, the Rapid multipliers and the Reach range. The panel DPS line reads 16.7/23.8/33.3 by tier for a lone Spray.
 - [ ] The card lines are the exact strings above. A Spray added to a Bolt tower changes nothing. Desktop 1280x720 and mobile 412x915 smoke pass.
+
+## Result (attempt 1, inet-racing)
+
+Spray is now a close-range shotgun: its attack fires `spec.spray` straight non-homing pellets in a 50° cone at the enemy furthest along, each pellet striking the first enemy its path touches and vanishing at the tower's range, rendered as light-tinted tracers with one shoot sound per blast. The needle split is fully removed (HitPayload.needles, ProjectileSystem.spread, needle describeSpec text), and every augment now combines per pellet: Spray +2 and Bolt +1 pellets, Lance pierce along each pellet's own line, Splash bursts per pellet, Push at most once per blast via a per-blast guard in ProjectileSystem. Card strings, tier numbers (4/5/6 damage every 1.2/1.05/0.9 s, range 2.5), the panel DPS term (16.7/23.8/33.3), and the wave-1 balance test were updated to match, with the test suite extended to cover pellet counts, combinations, and the new describeSpec line. npm run check (typecheck + lint + 222 tests) and npm run smoke (desktop 1280x720 and mobile 412x915) both pass.
+
+- Self-review: APPROVE
+- Time: 225.2 min
+
+```
+.../chokepoint/game/src/content/augments/spray.ts  | 18 ++---
+ projects/chokepoint/game/src/content/palette.ts    |  2 +-
+ projects/chokepoint/game/src/content/types.ts      |  6 +-
+ projects/chokepoint/game/src/core/augments.ts      |  9 ++-
+ projects/chokepoint/game/src/core/towerDps.ts      |  9 ++-
+ .../chokepoint/game/src/entities/Projectile.ts     | 53 ++++++++++++-
+ projects/chokepoint/game/src/entities/towerLook.ts |  4 +-
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  2 -
+ .../game/src/systems/ProjectileSystem.ts           | 90 ++++++++++++++++++----
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  5 +-
+ .../chokepoint/game/src/systems/attacks/attack.ts  |  2 +
+ .../chokepoint/game/src/systems/attacks/spray.ts   |  6 +-
+ .../chokepoint/game/tests/core/augments.test.ts    | 56 ++++++++------
+ 13 files changed, 194 insertions(+), 68 deletions(-)
+```
+
+## Merge (attempt 1, inet-racing)
+
+- Conflicts in: projects/chokepoint/game/src/entities/Projectile.ts, projects/chokepoint/game/src/systems/ProjectileSystem.ts
+- The conflict agent resolved them.

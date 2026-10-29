@@ -14,6 +14,8 @@ export interface AttackContext {
   payload: HitPayload;
   /** Fires a bolt from shot `n`'s barrel tip at `target`. */
   fireBolt(n: number, target: Enemy, payload: HitPayload): void;
+  /** Blasts `count` pellets from the muzzle in a cone at `target`, flying straight until `maxDist` board units out. */
+  firePellets(target: Enemy, count: number, payload: HitPayload, maxDist: number): void;
   /** Hits one enemy right away (damage and slow, handling the kill). */
   strike(target: Enemy, payload: HitPayload): void;
   fx: FxSystem;

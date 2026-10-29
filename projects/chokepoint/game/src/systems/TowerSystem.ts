@@ -121,7 +121,6 @@ export class TowerSystem {
         slow: spec.slow,
         root: spec.root,
         pierce: spec.pierce,
-        needles: spec.spray,
         push: (spec.gust + spec.pushPerHit) * CELL,
         mark: spec.markPct > 0 ? { pct: spec.markPct, x: t.x, y: t.y } : undefined,
         burn: spec.burn,
@@ -131,6 +130,10 @@ export class TowerSystem {
       fireBolt: (n, target, payload) => {
         const m = t.muzzle(n);
         this.projectiles.fire(m.x, m.y, target, payload, spec.projectileSpeed * CELL);
+      },
+      firePellets: (target, count, payload, maxDist) => {
+        const m = t.muzzle(0);
+        this.projectiles.fireCone(m.x, m.y, target, count, payload, spec.projectileSpeed * CELL, maxDist);
       },
       strike: (target, payload) => this.enemies.strike(target, payload),
       fx: this.fx,

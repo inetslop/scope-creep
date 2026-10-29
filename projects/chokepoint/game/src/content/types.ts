@@ -90,7 +90,7 @@ export interface AugmentCopy {
 export type AttackKind =
   /** Projectiles that fly to one enemy each. */
   | 'shot'
-  /** A shot that, on its first hit, splits into homing needles hunting separate enemies (Spray). */
+  /** A close-range blast of straight pellets in a cone centred on the aim line (Spray). */
   | 'spray'
   /** Hits every enemy in range at once. */
   | 'pulse'
@@ -122,7 +122,7 @@ export interface FirstForm {
   projectileSpeed?: number;
   /** For a 'shot': how many more enemies the shot strikes after the first hit (0: none). */
   pierce?: number;
-  /** For a 'spray': how many homing needles the shot splits into on its first hit (0: none). */
+  /** For a 'spray': how many pellets its blast fires in a cone (0: none). */
   spray?: number;
   /** Hits slow enemies by `pct` (0-1) for `sec` seconds. */
   slow?: { pct: number; sec: number };
@@ -151,7 +151,7 @@ export interface AddedForm {
   splash?: number;
   /** Shot strikes this many more enemies behind the one it hit; a pulse fires that many bolts per pulse. */
   pierce?: number;
-  /** For a spray tower: this many more homing needles per split (Spray). */
+  /** For a spray tower: this many more pellets per blast (Spray). */
   spray?: number;
   slow?: { pct: number; sec: number };
   /** Hits root (fully stop) enemies for `sec` seconds (Anchor). */
