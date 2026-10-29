@@ -3,11 +3,13 @@ id: T0210
 title: "Beam combos II: Lance pierces the beam, Splash scorches its target"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T13:49:24Z
+claimed_at: 2026-10-29T14:10:19Z
 epic: E4
+designer: inet-racing
 ---
 
 ## Goal
