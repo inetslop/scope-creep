@@ -72,6 +72,7 @@ export class BeamSystem {
       if (t.spec.beamDps <= 0 && t.spec.beamExtras.length === 0) continue;
       const wasHumming = this.humming.has(t);
       if (t.jammed) {
+        t.setBeamOn(false); // a Mute holds it: no attack, no line, no pulse
         if (wasHumming) { this.sfx?.beamHumStop(t); this.humming.delete(t); }
         t.setBeamOn(false);
         t.beamHolding = false; // a Mute holds it: no attack, no line (a stale hold would keep the quiet dot off)
