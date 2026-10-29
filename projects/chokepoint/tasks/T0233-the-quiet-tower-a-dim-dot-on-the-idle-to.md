@@ -1,12 +1,14 @@
 ---
 id: T0233
 title: "The quiet tower: a dim dot on the idle tower"
+assignee: yoga
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T22:31:19Z
+claimed_at: 2026-10-29T23:20:34Z
 ---
 
 ## Goal
