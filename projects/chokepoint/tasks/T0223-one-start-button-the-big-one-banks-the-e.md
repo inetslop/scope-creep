@@ -3,10 +3,12 @@ id: T0223
 title: "One start button: the big one banks the early-send gold, the Send button and the wave-gold line go"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T17:00:35Z
+claimed_at: 2026-10-29T17:04:11Z
+designer: inet-racing
 ---
 
 ## Goal
