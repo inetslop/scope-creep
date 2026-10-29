@@ -3,10 +3,12 @@ id: T0207
 title: "A leak breaks the combo: the chain fades the moment a life is lost"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T12:51:15Z
+claimed_at: 2026-10-29T13:02:17Z
+designer: yoga
 ---
 
 ## Goal
