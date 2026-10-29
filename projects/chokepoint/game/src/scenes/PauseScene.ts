@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { artScale, STAR_TEXTURE } from '../art/textures';
 import { cssColor, PALETTE } from '../content/palette';
+import { cleanWavePay } from '../content/tech/claim';
 import { coinsForRun, loadProfile, saveSound } from '../core/profile';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
@@ -46,7 +47,7 @@ export class PauseScene extends Phaser.Scene {
     const profile = loadProfile(window.localStorage);
     const starred = profile.bestWave > 0 && game.run.wave >= profile.bestWave;
     const waveWord = game.run.wave > 0 ? `Wave ${game.run.wave}` : 'Ready';
-    const coins = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed });
+    const coins = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed }, cleanWavePay(profile.purchased));
     const lineStyle = textStyle(13, PALETTE.muted);
     const kids: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
     let x = 0;

@@ -1,4 +1,5 @@
 /** The tech tree: the coins runs earn buy lasting bonuses. Storage is passed in, so this stays pure and testable. */
+import { CLAIM_NODES } from '../content/tech/claim';
 import { POOL_NODES } from '../content/tech/pool';
 import { PROFILE_KEY, loadProfile, type KeyValueStore } from './profile';
 
@@ -67,6 +68,26 @@ export function buyNode(store: KeyValueStore | undefined, id: string): boolean {
 export function buyPoolNode(store: KeyValueStore | undefined, id: string): boolean {
   const profile = loadProfile(store);
   const node = POOL_NODES.find((n) => n.id === id);
+  if (!node || profile.purchased.includes(id)) return false;
+  if (profile.coins < node.price) return false;
+  profile.coins -= node.price;
+  profile.purchased.push(id);
+  try {
+    store?.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    /* private mode or full storage: the purchase just isn't kept */
+  }
+  return true;
+}
+
+/**
+ * Buys a claim node from the saved profile's coins. Refuses an unknown or already owned id and a
+ * price the coins don't cover (they never go below zero); a claim node has no prerequisites and
+ * no gate — its effect is in the run the moment it is bought.
+ */
+export function buyClaimNode(store: KeyValueStore | undefined, id: string): boolean {
+  const profile = loadProfile(store);
+  const node = CLAIM_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
   if (profile.coins < node.price) return false;
   profile.coins -= node.price;

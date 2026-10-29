@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { ART, artScale, COIN_TEXTURE, STAR_TEXTURE } from '../art/textures';
 import { cssColor, PALETTE } from '../content/palette';
+import { cleanWavePay } from '../content/tech/claim';
 import { boardCode } from '../core/boardCode';
 import { coinsForRun, loadProfile } from '../core/profile';
 import { flags } from '../debug/flags';
@@ -43,13 +44,15 @@ export class RewardsScene extends Phaser.Scene {
     hook.overlay = SCENES.rewards;
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
     const run = getRun(this);
-    const lastRun = loadProfile(window.localStorage).lastRun;
+    const profile = loadProfile(window.localStorage);
+    const lastRun = profile.lastRun;
+    const cleanPay = cleanWavePay(profile.purchased);
     this.waves = lastRun ? lastRun.wave : run.wavesCleared;
     this.stopped = run.kills; // the ledger stores no stopped count; the card printed run.kills
     this.clean = run.cleanWaves;
     this.combo = run.bestCombo;
     this.score = run.score; // the same number the end-of-run screen shows
-    this.coins = lastRun ? lastRun.coins : coinsForRun({ waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed });
+    this.coins = lastRun ? lastRun.coins : coinsForRun({ waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed }, cleanPay);
     this.elapsed = 0;
     this.cleanText = undefined;
     this.comboText = undefined;
@@ -85,7 +88,7 @@ export class RewardsScene extends Phaser.Scene {
     const scoreRecipe = this.add.text(0, 64 - dy + (run.cleanWaves > 0 ? 36 : 0) + (run.bestCombo >= 2 ? 36 : 0), `waves +${run.wavesCleared * 100} · stopped +${run.kills}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
     this.coinText = this.add.text(0, 80 + dy, '+0 coins', titleStyle(28, PALETTE.goldText)).setOrigin(0.5);
     this.coinIcon = artScale(this.add.image(0, 80 + dy, COIN_TEXTURE), 1.5);
-    const recipeText = this.add.text(0, 116 + dy, `waves +${this.waves} · stopped +${Math.floor(this.stopped / 10)} · clean +${this.clean}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
+    const recipeText = this.add.text(0, 116 + dy, `waves +${this.waves} · stopped +${Math.floor(this.stopped / 10)} · clean +${this.clean * cleanPay}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
     const boardText = this.add.text(0, 152 + dy, `Board ${boardCode(run.seed)}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
     let flawlessText: Phaser.GameObjects.Text | undefined;
     let flawlessStar: Phaser.GameObjects.Image | undefined;

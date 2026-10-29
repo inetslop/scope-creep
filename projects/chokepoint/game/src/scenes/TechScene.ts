@@ -2,9 +2,10 @@ import Phaser from 'phaser';
 import { artScale, COIN_TEXTURE } from '../art/textures';
 import { AUGMENTS } from '../content/augments';
 import { cssColor, PALETTE } from '../content/palette';
+import { CLAIM_NODES } from '../content/tech/claim';
 import { POOL_NODES } from '../content/tech/pool';
 import { loadProfile, type Profile } from '../core/profile';
-import { buyNode, buyPoolNode, TECH_NODES } from '../core/tech';
+import { buyClaimNode, buyNode, buyPoolNode, TECH_NODES } from '../core/tech';
 import { hook } from '../debug/testHook';
 import { makeButton, type Button } from '../ui/button';
 import { makeCard } from '../ui/card';
@@ -13,10 +14,10 @@ import { textStyle, titleStyle } from '../ui/text';
 import { getSfx, onResize, SCENES } from './keys';
 
 /**
- * The tech tree: the coins runs earn become spendable here, on lasting changes. Two branches so
- * far: "Run start" (new runs begin richer) and "The pool" (a new augment joins the game's
- * content). The menu sits dimmed behind, and a purchase is saved straight into the profile (the
- * coins are spent, not moved).
+ * The tech tree: the coins runs earn become spendable here, on lasting changes. Three branches
+ * so far: "Run start" (new runs begin richer), "The pool" (a new augment joins the game's
+ * content) and "The claim" (a run pays more for the same holding). The menu sits dimmed behind,
+ * and a purchase is saved straight into the profile (the coins are spent, not moved).
  */
 interface RowNode {
   id: string;
@@ -25,6 +26,7 @@ interface RowNode {
   price: number;
   requires: string | null;
   unlocks: string | null;
+  branch: 'start' | 'pool' | 'claim';
 }
 
 interface TechCard {
@@ -36,7 +38,7 @@ interface TechCard {
 }
 
 /** One muted label per card row, in row order. */
-const ROW_LABELS = ['Run start', 'The pool'];
+const ROW_LABELS = ['Run start', 'The pool', 'The claim'];
 
 export class TechScene extends Phaser.Scene {
   private profile!: Profile;
@@ -50,8 +52,9 @@ export class TechScene extends Phaser.Scene {
   private balanceIcon!: Phaser.GameObjects.Image;
   private cards: TechCard[] = [];
   private rows: RowNode[][] = [
-    TECH_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: n.requires, unlocks: null })),
-    POOL_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: null, unlocks: n.unlocks })),
+    TECH_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: n.requires, unlocks: null, branch: 'start' })),
+    POOL_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: null, unlocks: n.unlocks, branch: 'pool' })),
+    CLAIM_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: null, unlocks: null, branch: 'claim' })),
   ];
   private dragOffset = 0;
   private dragging = false;
@@ -234,7 +237,12 @@ export class TechScene extends Phaser.Scene {
   private buy(node: RowNode): void {
     // A pool node sits on sale only once the augment it unlocks is in the game's content.
     if (node.unlocks !== null && !AUGMENTS.some((a) => a.id === node.unlocks)) return;
-    const bought = node.unlocks === null ? buyNode(window.localStorage, node.id) : buyPoolNode(window.localStorage, node.id);
+    const bought =
+      node.branch === 'start'
+        ? buyNode(window.localStorage, node.id)
+        : node.branch === 'pool'
+          ? buyPoolNode(window.localStorage, node.id)
+          : buyClaimNode(window.localStorage, node.id);
     if (!bought) return;
     this.profile = loadProfile(window.localStorage);
     getSfx(this)?.techBuy();

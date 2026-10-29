@@ -1,4 +1,6 @@
 /** The device's profile: best wave, runs played, coins, and the four most recent runs. Storage is passed in, so this stays pure and testable. */
+import { cleanWavePay } from '../content/tech/claim';
+
 export interface Profile {
   bestWave: number;
   /** Seed of the board the best wave was fought on; null until a finished run sets one. */
@@ -74,15 +76,15 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
   }
 }
 
-/** What a run is worth in coins: the waves held, a coin per ten stopped, and one per clean wave. */
-export function coinsForRun(result: RunResult): number {
-  return result.waves + Math.floor(result.stopped / 10) + result.clean;
+/** What a run is worth in coins: the waves held, a coin per ten stopped, and one per clean wave (two with the claim node). */
+export function coinsForRun(result: RunResult, cleanPay = 1): number {
+  return result.waves + Math.floor(result.stopped / 10) + result.clean * cleanPay;
 }
 
 /** Folds a finished run into the saved profile and saves it. */
 export function recordRun(store: KeyValueStore | undefined, result: RunResult): RecordResult {
   const old = loadProfile(store);
-  const coins = coinsForRun(result);
+  const coins = coinsForRun(result, cleanWavePay(old.purchased));
   const newBest = result.waves > old.bestWave;
   const profile: Profile = {
     bestWave: Math.max(old.bestWave, result.waves),

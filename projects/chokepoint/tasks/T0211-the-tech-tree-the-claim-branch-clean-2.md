@@ -4,11 +4,12 @@ title: "The tech tree: the claim branch — Clean ×2"
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0153]
 attempts: 1
 created: 2026-10-29T15:15:13Z
 claimed_at: 2026-10-29T15:20:02Z
+finished_at: 2026-10-29T15:27:49Z
 epic: E2
 ---
 
@@ -81,3 +82,23 @@ export function buyClaimNode(store: KeyValueStore | undefined, id: string): bool
 ### Tests
 - `tests/core/profile.test.ts`: with pay 2, clean 0/1/4 → total 0/2/8 (and `waves 12, stopped 148, clean 5` → 36 vs today's 31, proving other terms unchanged); `recordRun` with `purchased: ['clean2']` stores `waves 1, stopped 10, clean 3` as 8 coins, and with no purchase as 5.
 - `tests/core/tech.test.ts` (import `CLAIM_NODES`, `cleanWavePay`, `buyClaimNode`): the claim row maps to the single node `['clean2', 'Clean ×2', 30, 2]`; `cleanWavePay([])` 1 / `(['clean2'])` 2 / unknown ids 1; `buyClaimNode` refuses unknown id, 29 coins, and already owned (coins unchanged in each), and a success deducts exactly 30 and appends `'clean2'` to the purchased list.
+
+## Result (attempt 1, desktop)
+
+Added the tech tree's "The claim" branch with its single node "Clean ×2" (30 coins, `src/content/tech/claim.ts` + `buyClaimNode` in `core/tech.ts`), wired as a third row in TechScene with a branch-based buy dispatch. The run's coin formula (`coinsForRun` in `core/profile.ts`) now takes a defaulted `cleanPay` multiplier for the clean term, read from the owned `clean2` node in `recordRun` and passed by the three coin readouts — the live stats-card tally (cached in the constructor), the pause card's worth line, and the claim card's count-up plus recipe line (e.g. "clean +6" for 3 clean waves). Runs without the node are byte-identical (default pay 1, no format changes). Unit tests cover the formula with/without the node, the purchase (refusals and the 30-coin deduction saving `clean2`), and the branch's content row; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 7.8 min
+
+```
+projects/chokepoint/game/src/content/tech/claim.ts | 20 +++++++++++++++
+ projects/chokepoint/game/src/core/profile.ts       | 10 +++++---
+ projects/chokepoint/game/src/core/tech.ts          | 21 +++++++++++++++
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  3 ++-
+ .../chokepoint/game/src/scenes/RewardsScene.ts     |  9 ++++---
+ projects/chokepoint/game/src/scenes/TechScene.ts   | 26 ++++++++++++-------
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts   |  9 +++++--
+ .../chokepoint/game/tests/core/profile.test.ts     | 15 +++++++++++
+ projects/chokepoint/game/tests/core/tech.test.ts   | 30 +++++++++++++++++++++-
+ 9 files changed, 123 insertions(+), 20 deletions(-)
+```

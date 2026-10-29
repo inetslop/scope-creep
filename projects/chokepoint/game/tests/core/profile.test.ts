@@ -14,6 +14,21 @@ describe('profile', () => {
     expect(coinsForRun({ waves: 0, stopped: 20, clean: 0, seed: 1 })).toBe(2);
   });
 
+  it('the claim node doubles the clean term: clean waves pay two coins each', () => {
+    expect(coinsForRun({ waves: 0, stopped: 0, clean: 0, seed: 1 }, 2)).toBe(0);
+    expect(coinsForRun({ waves: 0, stopped: 0, clean: 1, seed: 1 }, 2)).toBe(2);
+    expect(coinsForRun({ waves: 0, stopped: 0, clean: 4, seed: 1 }, 2)).toBe(8);
+    expect(coinsForRun({ waves: 12, stopped: 148, clean: 5, seed: 1 }, 2)).toBe(36); // the waves and stopped terms are untouched
+  });
+
+  it('a recorded run pays the doubled clean term only once the claim node is owned', () => {
+    const store = memory();
+    store.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2'] }));
+    const owned = recordRun(store, { waves: 1, stopped: 10, clean: 3, seed: 105 });
+    expect(owned.coins).toBe(8); // 1 wave + a coin per ten stopped + 3 clean waves paying two each
+    expect(recordRun(memory(), { waves: 1, stopped: 10, clean: 3, seed: 105 }).coins).toBe(5);
+  });
+
   it('loads an empty profile from missing or broken storage', () => {
     const empty = { bestWave: 0, bestSeed: null, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true };
     expect(loadProfile(undefined)).toEqual(empty);

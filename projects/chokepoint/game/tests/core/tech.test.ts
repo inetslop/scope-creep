@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
+import { CLAIM_NODES, cleanWavePay } from '../../src/content/tech/claim';
 import { POOL_NODES } from '../../src/content/tech/pool';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { buyNode, buyPoolNode, startBonuses, TECH_NODES } from '../../src/core/tech';
+import { buyClaimNode, buyNode, buyPoolNode, startBonuses, TECH_NODES } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -101,5 +102,32 @@ describe('tech', () => {
 
   it('a pool id counts for no run-start bonus', () => {
     expect(startBonuses(['haste'])).toEqual({ gold: 0, life: 0 });
+  });
+
+  it('the claim row is one node: Clean ×2 at 30, paying two coins per clean wave', () => {
+    expect(CLAIM_NODES.map((n) => [n.id, n.name, n.price, n.pay])).toEqual([['clean2', 'Clean ×2', 30, 2]]);
+  });
+
+  it('a clean wave pays one coin until the claim node is owned', () => {
+    expect(cleanWavePay([])).toBe(1);
+    expect(cleanWavePay(['gold-1', 'haste'])).toBe(1); // the other branches leave the pay alone
+    expect(cleanWavePay(['clean2'])).toBe(2);
+  });
+
+  it('a claim node buys only when it is known, unowned and affordable', () => {
+    expect(buyClaimNode(withCoins(60), 'nope')).toBe(false);
+    const broke = withCoins(29);
+    expect(buyClaimNode(broke, 'clean2')).toBe(false); // unaffordable: 29 < 30
+    expect(loadProfile(broke).coins).toBe(29);
+    const owned = withCoins(60, ['clean2']);
+    expect(buyClaimNode(owned, 'clean2')).toBe(false); // already owned
+    expect(loadProfile(owned).coins).toBe(60);
+  });
+
+  it('a claim purchase deducts exactly 30 and saves the id alongside the other branches', () => {
+    const store = withCoins(60, ['gold-1', 'haste']);
+    expect(buyClaimNode(store, 'clean2')).toBe(true);
+    expect(loadProfile(store).coins).toBe(30);
+    expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste', 'clean2']);
   });
 });
