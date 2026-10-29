@@ -1,14 +1,12 @@
 ---
 id: T0133
 title: "A new look for the Beam tower: a tower with a circle on top"
-assignee: baby-mama
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-29T10:40:00Z
-claimed_at: 2026-10-29T12:34:13Z
 epic: E4
 ---
 
@@ -111,3 +109,7 @@ In `muzzle()`, first line of the body: `if (this.disc) return { x: this.x, y: th
 
 ### Tests
 - none (art/look + juice; no rule in src/core changes)
+
+## Attempt 1 released (baby-mama)
+
+The machine was paused for over 60 minutes holding this task, which kept its files locked for the others. Requeued.
