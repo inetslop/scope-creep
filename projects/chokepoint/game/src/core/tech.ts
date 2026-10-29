@@ -1,4 +1,5 @@
 /** The tech tree: the coins runs earn buy lasting bonuses. Storage is passed in, so this stays pure and testable. */
+import { POOL_NODES } from '../content/tech/pool';
 import { PROFILE_KEY, loadProfile, type KeyValueStore } from './profile';
 
 /** One buyable node: what it costs, what it needs before it unlocks, and what it adds to every new run. */
@@ -48,6 +49,25 @@ export function buyNode(store: KeyValueStore | undefined, id: string): boolean {
   const node = TECH_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
   if (node.requires !== null && !profile.purchased.includes(node.requires)) return false;
+  if (profile.coins < node.price) return false;
+  profile.coins -= node.price;
+  profile.purchased.push(id);
+  try {
+    store?.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    /* private mode or full storage: the purchase just isn't kept */
+  }
+  return true;
+}
+
+/**
+ * Buys a pool node from the saved profile's coins. Refuses an unknown or already owned id and a
+ * price the coins don't cover (they never go below zero); a pool node has no prerequisites.
+ */
+export function buyPoolNode(store: KeyValueStore | undefined, id: string): boolean {
+  const profile = loadProfile(store);
+  const node = POOL_NODES.find((n) => n.id === id);
+  if (!node || profile.purchased.includes(id)) return false;
   if (profile.coins < node.price) return false;
   profile.coins -= node.price;
   profile.purchased.push(id);

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
+import { POOL_NODES } from '../../src/content/tech/pool';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { buyNode, startBonuses, TECH_NODES } from '../../src/core/tech';
+import { buyNode, buyPoolNode, startBonuses, TECH_NODES } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -65,5 +66,30 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual(['gold-1']);
     store.setItem('chokepoint:profile', JSON.stringify({ purchased: 'gold-1' }));
     expect(loadProfile(store).purchased).toEqual([]);
+  });
+
+  it('the pool row is one node: Haste at 25 coins, unlocking the haste augment', () => {
+    expect(POOL_NODES.map((n) => [n.id, n.price, n.unlocks])).toEqual([['haste', 25, 'haste']]);
+  });
+
+  it('a pool node buys only when it is known, unowned and affordable', () => {
+    expect(buyPoolNode(withCoins(60), 'nope')).toBe(false);
+    const broke = withCoins(24);
+    expect(buyPoolNode(broke, 'haste')).toBe(false); // unaffordable: the coins never go below zero
+    expect(loadProfile(broke).coins).toBe(24);
+    const store = withCoins(60, ['haste']);
+    expect(buyPoolNode(store, 'haste')).toBe(false); // already owned
+    expect(loadProfile(store).coins).toBe(60);
+  });
+
+  it('a pool purchase deducts exactly the price and saves the id alongside the run-start ones', () => {
+    const store = withCoins(60, ['gold-1']);
+    expect(buyPoolNode(store, 'haste')).toBe(true);
+    expect(loadProfile(store).coins).toBe(35);
+    expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste']);
+  });
+
+  it('a pool id counts for no run-start bonus', () => {
+    expect(startBonuses(['haste'])).toEqual({ gold: 0, life: 0 });
   });
 });

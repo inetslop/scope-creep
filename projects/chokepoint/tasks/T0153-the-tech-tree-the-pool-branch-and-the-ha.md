@@ -4,11 +4,12 @@ title: "The tech tree: the pool branch and the Haste node"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0103]
 attempts: 1
 created: 2026-10-29T12:14:31Z
 claimed_at: 2026-10-29T13:02:07Z
+finished_at: 2026-10-29T13:23:34Z
 epic: E2
 ---
 
@@ -74,3 +75,19 @@ A new branch = one more `rows` entry, placed where it belongs (T0110's "The draf
 
 ### Tests
 - In `tests/core/tech.test.ts`: `POOL_NODES` maps to `[['haste', 25, 'haste']]`; `buyPoolNode` refuses unknown/already-owned/unaffordable (24 coins → false, coins unchanged); a buy deducts 25 and saves `'haste'` alongside `'gold-1'`; `startBonuses(['haste'])` is `{ gold: 0, life: 0 }`. No `INVARIANTS` line: the tech screen is a menu overlay, and `runChecks` only runs in GameScene.
+
+## Result (attempt 1, desktop)
+
+Added the tech screen's third branch, "The pool" (`src/content/tech/pool.ts`: Haste node, 25 coins, unlocks the `haste` augment), a pure `buyPoolNode()` in `src/core/tech.ts`, and rebuilt `TechScene` around a `rows` list with a new "not in the game yet" state (dimmed, unbuyable until Haste lands in content) and vertical drag-scroll with a muted down-arrow cue when the stacked rows overflow the screen. The node sits locked/dimmed today (T0152 not landed); once Haste is in the content it becomes buyable, and the purchase permanently adds `haste` to the profile's purchased list — the id T0152's draft gate reads. Covered by new unit tests in `tests/core/tech.test.ts`; check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 21.5 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/content/tech/pool.ts |  14 ++
+ projects/chokepoint/game/src/core/tech.ts         |  20 +++
+ projects/chokepoint/game/src/scenes/TechScene.ts  | 171 +++++++++++++++++-----
+ projects/chokepoint/game/tests/core/tech.test.ts  |  28 +++-
+ 4 files changed, 198 insertions(+), 35 deletions(-)
+```

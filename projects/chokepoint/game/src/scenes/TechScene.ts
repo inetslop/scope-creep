@@ -1,27 +1,42 @@
 import Phaser from 'phaser';
 import { artScale, COIN_TEXTURE } from '../art/textures';
+import { AUGMENTS } from '../content/augments';
 import { cssColor, PALETTE } from '../content/palette';
+import { POOL_NODES } from '../content/tech/pool';
 import { loadProfile, type Profile } from '../core/profile';
-import { buyNode, TECH_NODES, type TechNode } from '../core/tech';
+import { buyNode, buyPoolNode, TECH_NODES } from '../core/tech';
 import { hook } from '../debug/testHook';
 import { makeButton, type Button } from '../ui/button';
 import { makeCard } from '../ui/card';
-import { uiCamera, viewSize } from '../ui/display';
+import { pointerCss, uiCamera, viewSize } from '../ui/display';
 import { textStyle, titleStyle } from '../ui/text';
 import { getSfx, onResize, SCENES } from './keys';
 
 /**
- * The tech tree: the coins runs earn become spendable here, on lasting run-start bonuses. For
- * now one branch ("Run start"); the menu sits dimmed behind, and a purchase is saved straight
- * into the profile (the coins are spent, not moved).
+ * The tech tree: the coins runs earn become spendable here, on lasting changes. Two branches so
+ * far: "Run start" (new runs begin richer) and "The pool" (a new augment joins the game's
+ * content). The menu sits dimmed behind, and a purchase is saved straight into the profile (the
+ * coins are spent, not moved).
  */
+interface RowNode {
+  id: string;
+  name: string;
+  line: string;
+  price: number;
+  requires: string | null;
+  unlocks: string | null;
+}
+
 interface TechCard {
-  node: TechNode;
+  node: RowNode;
   button: Button;
   price: Phaser.GameObjects.Text;
   coin: Phaser.GameObjects.Image;
   border: Phaser.GameObjects.Graphics;
 }
+
+/** One muted label per card row, in row order. */
+const ROW_LABELS = ['Run start', 'The pool'];
 
 export class TechScene extends Phaser.Scene {
   private profile!: Profile;
@@ -29,9 +44,20 @@ export class TechScene extends Phaser.Scene {
   private panelW = 0;
   private panelH = 0;
   private box?: Phaser.GameObjects.Container;
+  private shade!: Phaser.GameObjects.Rectangle;
+  private arrow!: Phaser.GameObjects.Graphics;
   private balanceText!: Phaser.GameObjects.Text;
   private balanceIcon!: Phaser.GameObjects.Image;
   private cards: TechCard[] = [];
+  private rows: RowNode[][] = [
+    TECH_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: n.requires, unlocks: null })),
+    POOL_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: null, unlocks: n.unlocks })),
+  ];
+  private dragOffset = 0;
+  private dragging = false;
+  private minBoxY = 0;
+  private maxBoxY = 0;
+  private scrollable = false;
 
   constructor() {
     super(SCENES.tech);
@@ -43,31 +69,72 @@ export class TechScene extends Phaser.Scene {
     this.profile = loadProfile(window.localStorage);
     // The menu stays behind: the shade dims it, so this scene paints no background of its own,
     // and a tap on the dimmed area does nothing.
-    const shade = this.add.rectangle(0, 0, 10, 10, PALETTE.ground, 0.78).setOrigin(0).setDepth(1).setInteractive();
+    this.shade = this.add.rectangle(0, 0, 10, 10, PALETTE.ground, 0.78).setOrigin(0).setDepth(1).setInteractive();
+    // The down arrow is a scene-level cue at the screen's bottom edge, not a child of the box:
+    // when the panel overflows the screen its own bottom is off-screen and would hide the cue.
+    this.arrow = this.add.graphics().setDepth(3);
+    this.arrow.fillStyle(PALETTE.muted, 1);
+    this.arrow.fillTriangle(-9, -5, 9, -5, 0, 5);
+    this.arrow.setVisible(false);
     const size = viewSize(this);
     this.kind = size.width >= 740 ? 'wide' : 'narrow';
     this.rebuild();
     const layout = (width: number, height: number): void => {
-      shade.setSize(width, height);
-      shade.input?.hitArea.setTo(0, 0, width, height);
+      this.shade.setSize(width, height);
+      this.shade.input?.hitArea.setTo(0, 0, width, height);
       const kind = width >= 740 ? 'wide' : 'narrow';
       if (kind !== this.kind) {
         this.kind = kind;
         this.rebuild();
       }
-      this.box?.setPosition(width / 2, height / 2).setScale(Math.min(1, (width - 24) / this.panelW, (height - 24) / this.panelH));
+      const box = this.box!;
+      const s = Math.min(1, (width - 24) / this.panelW); // the rows, not the width, decide overflow
+      box.setScale(s);
+      const half = (this.panelH * s) / 2;
+      this.minBoxY = 12 + half;
+      this.maxBoxY = height - 12 - half;
+      this.scrollable = this.minBoxY > this.maxBoxY; // the rows are taller than the screen
+      if (this.scrollable) {
+        box.x = width / 2;
+        box.y = Phaser.Math.Clamp(box.y, this.maxBoxY, this.minBoxY); // while overflowing, maxBoxY is the low end
+      } else {
+        box.setPosition(width / 2, height / 2);
+      }
+      this.arrow.setPosition(width / 2, height - 18);
+      this.arrow.setVisible(this.scrollable && box.y > this.maxBoxY + 0.5); // the panel's bottom hangs below the screen
     };
     layout(size.width, size.height);
     onResize(this, layout);
+    this.input.on('pointermove', this.onDrag);
+    this.input.on('pointerup', this.onDragEnd);
+    this.input.on('pointerupoutside', this.onDragEnd);
+    this.events.once('shutdown', () => {
+      this.input.off('pointermove', this.onDrag);
+      this.input.off('pointerup', this.onDragEnd);
+      this.input.off('pointerupoutside', this.onDragEnd);
+    });
   }
 
   /** The card's content, built for one width class; a resize that flips the class rebuilds it. */
   private rebuild(): void {
     this.box?.destroy();
     this.cards = [];
+    this.dragging = false;
     const wide = this.kind === 'wide';
     this.panelW = wide ? 716 : 356;
-    this.panelH = wide ? 372 : 470;
+    // Offsets from the panel's top: each row's label, then its card rows (one on wide, two
+    // columns on narrow), then 50 below the last row and 31 up to the next label. The menu sits
+    // 52 below the last row's bottom; the panel ends 54 below the menu's center.
+    let labelY = wide ? 140 : 132;
+    const geoms = this.rows.map((row) => {
+      const gridRows = wide ? 1 : Math.ceil(row.length / 2);
+      const geom = { label: labelY, centers: Array.from({ length: gridRows }, (_, g) => labelY + 73 + g * 112) };
+      labelY = geom.centers[gridRows - 1] + 50 + 31;
+      return geom;
+    });
+    const lastCenters = geoms[geoms.length - 1].centers;
+    const menuY = lastCenters[lastCenters.length - 1] + 50 + 52;
+    this.panelH = menuY + 54;
     const panel = makeCard(this, 0, 0, this.panelW, this.panelH, 28);
     const title = this.add.text(0, -this.panelH / 2 + 52, 'Tech', titleStyle(32)).setOrigin(0.5);
     const number = this.add.text(0, -this.panelH / 2 + 96, String(this.profile.coins), textStyle(28, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
@@ -75,29 +142,41 @@ export class TechScene extends Phaser.Scene {
     this.balanceText = number;
     this.balanceIcon = coin;
     this.centerBalance();
-    const label = this.add.text(0, -this.panelH / 2 + (wide ? 140 : 132), 'Run start', textStyle(14, PALETTE.muted)).setOrigin(0.5);
     const exit = (): void => {
       hook.overlay = '';
       this.scene.start(SCENES.menu);
     };
-    const menuButton = makeButton(this, 0, this.panelH / 2 - 54, 'Menu', exit, { width: 240, height: 52, radius: 26 });
-    const xs = wide ? [-258, -86, 86, 258] : [-86, -86, 86, 86];
-    const ys = wide ? [27, 27, 27, 27] : [-30, -30, 82, 82];
-    for (const [i, node] of TECH_NODES.entries()) {
-      const button = makeButton(this, 0, 0, '', () => this.buy(node), { width: 160, height: 100, radius: 16, fadeWhenDisabled: false });
-      const name = this.add.text(0, -32, node.name, textStyle(16, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
-      const effect = this.add.text(0, -4, node.line, textStyle(13, PALETTE.muted, { align: 'center', wordWrap: { width: 140 }, lineSpacing: 2 })).setOrigin(0.5);
-      const price = this.add.text(0, 34, '', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
-      const nodeCoin = artScale(this.add.image(0, 34, COIN_TEXTURE), 12 / 28);
-      button.content.add([name, effect, price, nodeCoin]);
-      const border = this.add.graphics();
-      button.container.add(border); // a sibling of the content, so it never lifts with the card
-      button.container.setPosition(xs[i], ys[i]);
-      this.cards.push({ node, button, price, coin: nodeCoin, border });
-    }
-    const parts: Phaser.GameObjects.GameObject[] = [panel, title, coin, number, label];
-    for (const c of this.cards) parts.push(c.button.container);
-    parts.push(menuButton.container);
+    const parts: Phaser.GameObjects.GameObject[] = [panel, title, coin, number];
+    this.rows.forEach((row, r) => {
+      parts.push(this.add.text(0, -this.panelH / 2 + geoms[r].label, ROW_LABELS[r], textStyle(14, PALETTE.muted)).setOrigin(0.5));
+      row.forEach((node, i) => {
+        const grid = wide ? 0 : Math.floor(i / 2);
+        const lastOdd = row.length % 2 === 1 && i === row.length - 1; // an odd narrow row ends alone in the middle
+        const x = wide ? (i - (row.length - 1) / 2) * 172 : i % 2 === 0 ? (lastOdd ? 0 : -86) : 86;
+        const button = makeButton(this, 0, 0, '', () => this.buy(node), { width: 160, height: 100, radius: 16, fadeWhenDisabled: false });
+        const name = this.add.text(0, -32, node.name, textStyle(16, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
+        const effect = this.add.text(0, -4, node.line, textStyle(13, PALETTE.muted, { align: 'center', wordWrap: { width: 140 }, lineSpacing: 2 })).setOrigin(0.5);
+        const price = this.add.text(0, 34, '', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
+        const nodeCoin = artScale(this.add.image(0, 34, COIN_TEXTURE), 12 / 28);
+        button.content.add([name, effect, price, nodeCoin]);
+        const border = this.add.graphics();
+        button.container.add(border); // a sibling of the content, so it never lifts with the card
+        button.container.setPosition(x, -this.panelH / 2 + geoms[r].centers[grid]);
+        this.cards.push({ node, button, price, coin: nodeCoin, border });
+        parts.push(button.container);
+      });
+    });
+    parts.push(makeButton(this, 0, menuY - this.panelH / 2, 'Menu', exit, { width: 240, height: 52, radius: 26 }).container);
+    // The panel itself is the scroll handle: when the rows don't fit the screen, a press on its
+    // empty area drags the box vertically. A press on a card never starts one (the check below),
+    // so scrolling and buying can't happen with the same finger.
+    panel.setInteractive();
+    panel.on('pointerdown', (p: Phaser.Input.Pointer): void => {
+      if (!this.scrollable) return;
+      if (this.input.hitTestPointer(p).some((o) => o !== panel && o !== this.shade)) return;
+      this.dragOffset = pointerCss(p).y - this.box!.y;
+      this.dragging = true;
+    });
     this.box = this.add.container(0, 0, parts).setDepth(2);
     this.refresh();
   }
@@ -110,11 +189,16 @@ export class TechScene extends Phaser.Scene {
     this.balanceText.x = -w / 2 + coinW + 16 + this.balanceText.width / 2;
   }
 
-  /** Every node card: owned (yellow border), locked (needs the previous), or for sale (red price when unaffordable). */
+  /**
+   * Every node card: owned (yellow border), locked (needs the previous one), "not in the game
+   * yet" (the augment it unlocks is not in the content yet), or for sale (red price when
+   * unaffordable).
+   */
   private refresh(): void {
     for (const c of this.cards) {
       const owned = this.profile.purchased.includes(c.node.id);
       const unlocked = c.node.requires === null || this.profile.purchased.includes(c.node.requires);
+      const inContent = c.node.unlocks === null || AUGMENTS.some((a) => a.id === c.node.unlocks);
       const afford = this.profile.coins >= c.node.price;
       c.border.clear();
       if (owned) {
@@ -129,6 +213,11 @@ export class TechScene extends Phaser.Scene {
         c.price.x = -c.price.width / 2;
         c.coin.setVisible(false);
         c.button.content.setAlpha(0.5);
+      } else if (!inContent) {
+        c.price.setText('not in the game yet').setColor(cssColor(PALETTE.muted));
+        c.price.x = -c.price.width / 2;
+        c.coin.setVisible(false);
+        c.button.content.setAlpha(0.5);
       } else {
         c.price.setText(String(c.node.price)).setColor(cssColor(afford ? PALETTE.ink : PALETTE.red));
         const w = 20 + c.price.width;
@@ -137,13 +226,16 @@ export class TechScene extends Phaser.Scene {
         c.coin.setVisible(true);
         c.button.content.setAlpha(afford ? 1 : 0.6);
       }
-      c.button.setEnabled(afford && unlocked && !owned);
+      c.button.setEnabled(afford && unlocked && inContent && !owned);
     }
   }
 
   /** One tap on an affordable node: the balance drops and pops, the chime plays, the card turns owned. */
-  private buy(node: TechNode): void {
-    if (!buyNode(window.localStorage, node.id)) return;
+  private buy(node: RowNode): void {
+    // A pool node sits on sale only once the augment it unlocks is in the game's content.
+    if (node.unlocks !== null && !AUGMENTS.some((a) => a.id === node.unlocks)) return;
+    const bought = node.unlocks === null ? buyNode(window.localStorage, node.id) : buyPoolNode(window.localStorage, node.id);
+    if (!bought) return;
     this.profile = loadProfile(window.localStorage);
     getSfx(this)?.techBuy();
     this.balanceText.setText(String(this.profile.coins));
@@ -153,4 +245,15 @@ export class TechScene extends Phaser.Scene {
     this.tweens.add({ targets: this.balanceIcon, scale: base * 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => this.balanceIcon.setScale(base) });
     this.refresh();
   }
+
+  /** While a press started on the panel's empty area, drag the box within the screen's range. */
+  private onDrag = (p: Phaser.Input.Pointer): void => {
+    if (!this.dragging || !this.box) return;
+    this.box.y = Phaser.Math.Clamp(pointerCss(p).y - this.dragOffset, this.maxBoxY, this.minBoxY);
+    this.arrow.setVisible(this.box.y > this.maxBoxY + 0.5);
+  };
+
+  private onDragEnd = (): void => {
+    this.dragging = false;
+  };
 }
