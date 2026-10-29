@@ -1,12 +1,14 @@
 ---
 id: T0098
 title: The Hauler wears its coin
+assignee: narcissus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T02:55:25Z
+claimed_at: 2026-10-29T03:21:36Z
 ---
 
 ## Goal
