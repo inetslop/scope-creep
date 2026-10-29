@@ -1,12 +1,14 @@
 ---
 id: T0206
 title: "Stay put: the button that buys three more build seconds"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T12:51:15Z
+claimed_at: 2026-10-29T19:40:11Z
 ---
 
 ## Goal
