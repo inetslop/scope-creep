@@ -3,10 +3,12 @@ id: T0136
 title: "Tower panel: augment rows grow to fit their text"
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T09:46:49Z
+claimed_at: 2026-10-29T09:58:57Z
+designer: yoga
 ---
 
 ## Goal
