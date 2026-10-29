@@ -3,10 +3,12 @@ id: T0222
 title: "The start screen: one column that fits, the profile card without repeats"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T17:00:35Z
+claimed_at: 2026-10-29T17:00:38Z
+designer: desktop
 ---
 
 ## Goal
