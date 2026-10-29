@@ -4,11 +4,12 @@ title: "The root shows on the enemy: a chip over the rooted"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0138]
 attempts: 1
 created: 2026-10-29T11:23:58Z
 claimed_at: 2026-10-29T12:10:24Z
+finished_at: 2026-10-29T13:01:28Z
 epic: E4
 ---
 
@@ -117,3 +118,16 @@ markTick's final x line: `g.setPosition(e.x - (n - 1) * 10, e.y - e.def.look.siz
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+A rooted enemy now wears the Anchor's pink 16x9 chip — the mark tick's look — riding just above its token for as long as the root is live (an Anchor pulse or a hit from any tower with Anchor added), and it clears the instant the root wears off (same-frame on kill/leak). It's a new display-only hook `rootTick` in `src/systems/enemyHooks/` (reads the enemy's existing `rootLeft`; no new field, no core/sound/key/button/pause change), registered with one import + one registry line in `enemyHooks/index.ts` next to `markTick`. The design's centered-row formula assumed T0099/T0138 left a centered "row count n"; the reflected code instead uses a right-extending row (mark at token centre, +22 per chip: mark, burn, slow) and has a pre-existing burn chip the design ignores, so the minimal correct change is to let root ride last in that existing row (right of mark/burn/slow) — leaving `markTick`/`slowTick`/`burnTick` untouched, so every chip combination stays side by side without overlap (e.g. rooted+marked shows both chips 22px apart). Root's duration, the enemy's stop, and the post-root 2s shrug are unchanged.
+
+- Self-review: APPROVE
+- Time: 51.1 min
+
+```
+.../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/rootTick.ts        | 58 ++++++++++++++++++++++
+ 2 files changed, 60 insertions(+)
+```
