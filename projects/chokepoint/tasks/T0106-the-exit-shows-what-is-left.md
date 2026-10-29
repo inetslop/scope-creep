@@ -1,12 +1,14 @@
 ---
 id: T0106
 title: The exit shows what is left
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T11:10:48Z
 ---
 
 ## Goal
