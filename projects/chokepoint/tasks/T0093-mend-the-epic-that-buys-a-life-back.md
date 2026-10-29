@@ -3,13 +3,14 @@ id: T0093
 title: "Mend: the Epic that buys a life back"
 size: L
 priority: 3
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-29T01:36:24Z
 claimed_at: 2026-10-29T01:36:28Z
+finished_at: 2026-10-29T01:44:41Z
 epic: E4
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -37,3 +38,7 @@ The Epic pool gets the survival axis no other Epic touches: a tower that turns t
 - [ ] A second Mend anywhere in the run changes the target to 10 (three → 8, four → 6, five or more → 4), and a copy added mid-count shortens the current count.
 - [ ] The count and a held pay survive a resume (T0042) and are fresh on a new run.
 - [ ] Sound off (T0035) keeps the pay visible and the chime silent; a leak that both starts the last stand and clears a held Mend plays the sting (T0091), not the chime.
+
+## Rejected by architect (desktop)
+
+The specified Added card line (91 chars) exceeds the 70-char card line / 56-char tier line caps enforced by tests/content.test.ts (which must pass) — shorten that line to ≤ 56 chars (e.g. "−2 kills per extra Mend: 12, 10, 8, 6, 4 — no shorter") and re-file; the mechanic, panel, art, sound and state design are otherwise sound and buildable as a size L.
