@@ -159,4 +159,14 @@ export class RunState {
     this.phase = 'build';
     this.buildLeftSec = seconds;
   }
+
+  /** "Send" the wave early: bank the build countdown, 2 gold per whole second left. Returns the gold banked. */
+  bankSend(): number {
+    if (this.phase !== 'build') return 0;
+    const secs = Math.floor(this.buildLeftSec);
+    const banked = (Number.isFinite(secs) && secs > 0 ? secs : 0) * 2;
+    this.gold += banked;
+    this.buildLeftSec = 0;
+    return banked;
+  }
 }

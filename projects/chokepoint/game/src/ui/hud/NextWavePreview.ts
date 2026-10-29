@@ -8,7 +8,7 @@ import { artScale, enemyTexture } from '../../art/textures';
 import type { GameScene } from '../../scenes/GameScene';
 import { makeCard } from '../card';
 import { textStyle } from '../text';
-import { EDGE, isNarrow, NEXT_SIZE, type HudPart } from './hud';
+import { EDGE, SEND_BTN, isNarrow, NEXT_SIZE, type HudPart } from './hud';
 
 const H = 44;
 const LINE = 16;
@@ -30,6 +30,12 @@ export class NextWavePreview implements HudPart {
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
+  }
+
+  /** The card's screen rect while it is visible (the Send button's row sits under it). */
+  get rect(): { x: number; y: number; width: number; height: number } | undefined {
+    const box = this.box;
+    return box?.visible ? { x: box.x, y: box.y, width: this.cardW, height: H } : undefined;
   }
 
   layout(width: number, height: number): void {
@@ -79,7 +85,7 @@ export class NextWavePreview implements HudPart {
     const bottom = height - HUD.bottom / 2;
     const x = Math.min(width - EDGE - NEXT_SIZE / 2 - 4, width - EDGE - this.cardW / 2);
     const above = isNarrow(width) ? bottom - NEXT_SIZE / 2 - 22 - 30 : bottom - (NEXT_SIZE / 2 + 7) - 10;
-    box.setScale(this.fitScale()).setPosition(x, above - (H + LINE) / 2);
+    box.setScale(this.fitScale()).setPosition(x, above - H / 2 - SEND_BTN.height - SEND_BTN.gap);
   }
 
   private build(plan: WavePlan): Phaser.GameObjects.Container {

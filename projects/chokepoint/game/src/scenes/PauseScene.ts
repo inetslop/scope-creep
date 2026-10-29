@@ -39,7 +39,7 @@ export class PauseScene extends Phaser.Scene {
 
     const shade = this.add.rectangle(0, 0, 10, 10, PALETTE.ground, 0.78).setOrigin(0).setInteractive();
     const panelW = 360;
-    const panelH = 434;
+    const panelH = 458;
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
     const title = this.add.text(0, -panelH / 2 + 54, 'Paused', titleStyle(34)).setOrigin(0.5);
     const profile = loadProfile(window.localStorage);
@@ -58,10 +58,10 @@ export class PauseScene extends Phaser.Scene {
     x += restText.width;
     const stats = this.add.container(-x / 2, -panelH / 2 + 78, kids);
     const heading = this.add.text(0, -panelH / 2 + 96, 'Controls', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
-    const keys = this.add.text(0, -panelH / 2 + 150, 'Space — start the wave early\nF — fast-forward (2x) during waves\n1-9 — pick a card from the hand\n+ / - — zoom the board', textStyle(12, PALETTE.muted, { align: 'center', lineSpacing: 6 })).setOrigin(0.5);
-    const resumeButton = makeButton(this, 0, -panelH / 2 + 234, 'Resume', resume, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
-    const quitButton = makeButton(this, 0, -panelH / 2 + 302, 'Quit run', quit, { width: 240, height: 52, radius: 26 });
-    const actionLine = this.add.text(0, 122, 'Panic — clear the board, 25 gold, once per wave', textStyle(12, PALETTE.muted)).setOrigin(0.5);
+    const keys = this.add.text(0, -panelH / 2 + 158, 'Space — start the wave early\nSend — start the wave now, +2 gold per second left\nF — fast-forward (2x) during waves\n1-9 — pick a card from the hand\n+ / - — zoom the board', textStyle(12, PALETTE.muted, { align: 'center', lineSpacing: 6 })).setOrigin(0.5);
+    const resumeButton = makeButton(this, 0, -panelH / 2 + 258, 'Resume', resume, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
+    const quitButton = makeButton(this, 0, -panelH / 2 + 326, 'Quit run', quit, { width: 240, height: 52, radius: 26 });
+    const actionLine = this.add.text(0, 134, 'Panic — clear the board, 25 gold, once per wave', textStyle(12, PALETTE.muted)).setOrigin(0.5);
     const sfx = getSfx(this);
     const glyph = this.add.graphics();
     const paintGlyph = (isOn: boolean): void => {
@@ -87,7 +87,7 @@ export class PauseScene extends Phaser.Scene {
       refreshRow();
       if (!sfx.muted) sfx.blip();
     };
-    const soundRow = makeButton(this, 0, -panelH / 2 + 374, '', toggleSound, { width: 280, height: 48, radius: 24 });
+    const soundRow = makeButton(this, 0, -panelH / 2 + 398, '', toggleSound, { width: 280, height: 48, radius: 24 });
     glyph.setPosition(-88, 0);
     soundRow.content.add([glyph, wordText, stateText]);
     refreshRow();

@@ -142,6 +142,24 @@ describe('RunState', () => {
     expect(run.goldEarned).toBe(14 + RunState.waveBonus(1) + RunState.waveBonus(2));
   });
 
+  it('banks the build countdown when the wave is sent early: 2 gold per whole second left', () => {
+    const run = new RunState(1);
+    run.startBuild(30);
+    expect(run.bankSend()).toBe(60); // 30 s left reads "+60"
+    expect(run.gold).toBe(START.gold + 60);
+    expect(run.buildLeftSec).toBe(0);
+  });
+
+  it('banks whole seconds only; the last partial second and a second send bank nothing', () => {
+    const run = new RunState(1);
+    run.startBuild(2.9);
+    expect(run.bankSend()).toBe(4);
+    expect(run.bankSend()).toBe(0);
+    run.startBuild(0.4);
+    expect(run.bankSend()).toBe(0);
+    expect(run.gold).toBe(START.gold + 4);
+  });
+
   it('pays the clean streak once, on the third clean wave in a row', () => {
     const run = new RunState(1);
     run.startWave();

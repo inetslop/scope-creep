@@ -4,11 +4,12 @@ title: "Send them early: start the wave now, paid in gold for the seconds left"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T22:13:10Z
 claimed_at: 2026-10-29T00:50:13Z
+finished_at: 2026-10-29T02:02:03Z
 epic: E1
 ---
 
@@ -208,3 +209,23 @@ it('banks whole seconds only; the last partial second and a second send bank not
 
 ### Tests
 - `tests/core\run.test.ts`: the two `bankSend` cases above (rate 2/whole second, floor, partial second, repeated send).
+
+## Result (attempt 1, asus)
+
+Added the "Send · +N" early-wave button under the wave preview card: `RunState.bankSend()` banks 2 gold per whole second of build countdown left, `RunFlow.sendNow()` pays it and starts the planned wave via the countdown-end path, and the new `SendButton` HUD part (one line in `HudScene`) shows the falling price with the reroll's can't-afford dim/red gate, a kill-gold-style pop on press, and hides with the preview card (which gained a `rect` getter and shifted up by the button's row). The pause screen lists the control, a `send.countdown` invariant guards the build phase, and two unit tests cover the banking math. One deviation from the design: the pause panel's "Panic" caption (y=122) was not mentioned in the design and would have overlapped the shifted Quit button, so I moved it to y=134 to keep its original 3 px spacing.
+
+- Self-review: APPROVE
+- Time: 71.8 min
+
+```
+projects/chokepoint/game/src/core/run.ts           | 10 +++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/scenes/HudScene.ts    |  5 +-
+ projects/chokepoint/game/src/scenes/PauseScene.ts  | 12 ++--
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  9 +++
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  | 10 ++-
+ projects/chokepoint/game/src/ui/hud/SendButton.ts  | 77 ++++++++++++++++++++++
+ projects/chokepoint/game/src/ui/hud/hud.ts         |  3 +
+ projects/chokepoint/game/tests/core/run.test.ts    | 18 +++++
+ 9 files changed, 136 insertions(+), 9 deletions(-)
+```

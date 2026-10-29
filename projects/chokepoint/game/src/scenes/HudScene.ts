@@ -10,6 +10,7 @@ import { NextWaveButton } from '../ui/hud/NextWaveButton';
 import { NextWavePreview } from '../ui/hud/NextWavePreview';
 import { PanicButton } from '../ui/hud/PanicButton';
 import { PauseButton } from '../ui/hud/PauseButton';
+import { SendButton } from '../ui/hud/SendButton';
 import { SpeedButton } from '../ui/hud/SpeedButton';
 import { StatsCard } from '../ui/hud/StatsCard';
 import { TowerPanel } from '../ui/hud/TowerPanel';
@@ -35,6 +36,7 @@ export class HudScene extends Phaser.Scene {
   create(): void {
     uiCamera(this);
     const game = getGameScene(this);
+    const preview = new NextWavePreview(this);
     this.parts = [
       new StatsCard(this),
       new PanicButton(this, game),
@@ -44,7 +46,8 @@ export class HudScene extends Phaser.Scene {
       new ZoomButtons(this, game),
       new NextWaveButton(this, game),
       new SpeedButton(this, game),
-      new NextWavePreview(this),
+      preview,
+      new SendButton(this, game, preview),
       new HandBar(this),
       new TowerPanel(this),
       new LastStandBanner(this), // last on purpose: slides in over the other cards

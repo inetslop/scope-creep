@@ -86,6 +86,15 @@ export class RunFlow {
     if (this.run.phase === 'build' && this.scene.scene.isActive()) this.run.buildLeftSec = 0;
   }
 
+  /** The "Send" button under the wave preview: bank the countdown's gold, then start the wave the way the countdown end does. */
+  sendNow(): number {
+    if (this.run.phase !== 'build' || !this.scene.scene.isActive()) return 0;
+    const banked = this.run.bankSend();
+    this.s.waves.start();
+    this.s.sfx?.waveStart();
+    return banked;
+  }
+
   /** Offers three augment copies (DraftScene); finishDraft starts the next build phase. */
   openDraft(): void {
     this.run.phase = 'draft';

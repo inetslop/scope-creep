@@ -17,6 +17,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['ghost.taken', (g) => (g.registry.get('ghostSeed') ? 'a ghost seed is waiting for the game that never took it' : null)],
   ['speed.value', (g) => (g.speed.speed === 1 || g.speed.speed === 2 ? null : `speed is ${g.speed.speed}`)],
   ['waves.next', (g) => (g.run.phase !== 'build' || g.waves.nextPlan?.number === g.run.wave + 1 ? null : `build phase plans wave ${g.waves.nextPlan?.number ?? 'nothing'}, not ${g.run.wave + 1}`)],
+  ['send.countdown', (g) => (g.run.phase !== 'build' || (Number.isFinite(g.run.buildLeftSec) && g.run.buildLeftSec > 0) ? null : `build countdown is ${g.run.buildLeftSec}`)],
   ['enemies.valid', (g) => g.enemies.brokenEnemy()],
   ['enemies.count', (g) => (g.enemies.aliveCount > 400 ? `${g.enemies.aliveCount} enemies alive` : null)],
   ['enemies.root', (g) => g.enemies.brokenRoot()],
