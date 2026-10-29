@@ -1,12 +1,14 @@
 ---
 id: T0091
 title: The last stand gets a sting
+assignee: cachyos-x8664
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T01:18:08Z
+claimed_at: 2026-10-29T01:55:25Z
 epic: E1
 ---
 
