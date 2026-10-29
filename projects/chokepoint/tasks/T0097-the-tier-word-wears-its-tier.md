@@ -1,12 +1,14 @@
 ---
 id: T0097
 title: The tier word wears its tier
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T02:55:25Z
+claimed_at: 2026-10-29T08:02:54Z
 epic: E4
 ---
 
