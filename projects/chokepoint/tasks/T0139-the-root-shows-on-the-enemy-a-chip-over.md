@@ -1,12 +1,14 @@
 ---
 id: T0139
 title: "The root shows on the enemy: a chip over the rooted"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0138]
-attempts: 0
+attempts: 1
 created: 2026-10-29T11:23:58Z
+claimed_at: 2026-10-29T12:10:24Z
 epic: E4
 ---
 
