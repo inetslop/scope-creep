@@ -4,11 +4,12 @@ title: "The tech tree: the pool branch's second node — Momentum"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0103, T0153]
 attempts: 1
 created: 2026-10-29T13:49:24Z
 claimed_at: 2026-10-29T14:14:45Z
+finished_at: 2026-10-29T14:21:00Z
 epic: E2
 ---
 
@@ -78,3 +79,16 @@ No new types. The `PoolNode` interface already has all needed fields (`id`, `nam
 
 ### Tests
 - Update `tests/core/tech.test.ts` as described in Steps 2–4. No new test file needed.
+
+## Result (attempt 1, cachyos-x8664)
+
+The pool branch of the tech tree gains its second node — the Momentum entry in `POOL_NODES` (`src/content/tech/pool.ts`), 30 coins, `unlocks: 'momentum'` matching T0064's augment id so the node rides the existing gate logic in `TechScene` (dimmed "not in the game yet" until T0064 lands, then buyable/owned with the yellow border and saved to the profile's purchased list). Updated `tests/core/tech.test.ts` to expect the two-node pool row, the momentum refusal cases (unknown/owned/unaffordable at 29) and a momentum purchase that deducts 30 and saves `momentum` alongside `haste`. No changes to `TechScene.ts`, `core/tech.ts` or the draft — the draft gate is T0064's line.
+
+- Self-review: APPROVE
+- Time: 6.3 min
+
+```
+projects/chokepoint/game/src/content/tech/pool.ts |  3 ++-
+ projects/chokepoint/game/tests/core/tech.test.ts  | 14 ++++++++++++--
+ 2 files changed, 14 insertions(+), 3 deletions(-)
+```

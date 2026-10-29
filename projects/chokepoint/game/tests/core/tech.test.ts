@@ -68,8 +68,8 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual([]);
   });
 
-  it('the pool row is one node: Haste at 25 coins, unlocking the haste augment', () => {
-    expect(POOL_NODES.map((n) => [n.id, n.price, n.unlocks])).toEqual([['haste', 25, 'haste']]);
+  it('the pool row is two nodes: Haste at 25 and Momentum at 30, each unlocking its augment', () => {
+    expect(POOL_NODES.map((n) => [n.id, n.price, n.unlocks])).toEqual([['haste', 25, 'haste'], ['momentum', 30, 'momentum']]);
   });
 
   it('a pool node buys only when it is known, unowned and affordable', () => {
@@ -80,6 +80,12 @@ describe('tech', () => {
     const store = withCoins(60, ['haste']);
     expect(buyPoolNode(store, 'haste')).toBe(false); // already owned
     expect(loadProfile(store).coins).toBe(60);
+    const brokeM = withCoins(29);
+    expect(buyPoolNode(brokeM, 'momentum')).toBe(false); // unaffordable: 29 < 30
+    expect(loadProfile(brokeM).coins).toBe(29);
+    const ownedM = withCoins(60, ['momentum']);
+    expect(buyPoolNode(ownedM, 'momentum')).toBe(false); // already owned
+    expect(loadProfile(ownedM).coins).toBe(60);
   });
 
   it('a pool purchase deducts exactly the price and saves the id alongside the run-start ones', () => {
@@ -87,6 +93,10 @@ describe('tech', () => {
     expect(buyPoolNode(store, 'haste')).toBe(true);
     expect(loadProfile(store).coins).toBe(35);
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste']);
+    const store2 = withCoins(55, ['haste']);
+    expect(buyPoolNode(store2, 'momentum')).toBe(true);
+    expect(loadProfile(store2).coins).toBe(25);
+    expect(loadProfile(store2).purchased).toEqual(['haste', 'momentum']);
   });
 
   it('a pool id counts for no run-start bonus', () => {
