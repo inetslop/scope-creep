@@ -3,12 +3,10 @@ id: T0192
 title: Remove the root chip over enemies
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: [T0139]
 attempts: 0
 created: 2026-10-29T12:23:58Z
-claimed_at: 2026-10-29T12:52:22Z
-designer: desktop
 ---
 
 ## Goal
@@ -22,3 +20,31 @@ T0139 is adding a chip over a rooted enemy, but rooting already shows: a flat li
 ## Acceptance criteria
 - [ ] A rooted enemy shows only the light-blue ground ring: no chip over the token.
 - [ ] Nothing of T0139's chip is left in `src/` or `tests/`.
+
+## Design (architect, desktop)
+
+### Files
+- delete `src/systems/enemyHooks/rootTick.ts` — T0139's root-chip hook
+- edit `src/systems/enemyHooks/index.ts` — remove the rootTick import line and its `rootTick,` line in `ENEMY_HOOKS`
+- edit `src/systems/enemyHooks/markTick.ts` — revert T0139's chip-only change (root offset term and comment words)
+- edit `src/systems/enemyHooks/slowTick.ts` — same
+
+### Interfaces
+None (deletion only).
+
+### Steps
+1. T0139 has landed, so `src/systems/enemyHooks/rootTick.ts` exists. Delete the file.
+2. `grep -n rootTick src/systems/enemyHooks/index.ts`; delete exactly those two lines (the import, and the array entry). Keep the list one item per line, do not reorder anything else.
+3. `grep -n -i root src/systems/enemyHooks/markTick.ts src/systems/enemyHooks/slowTick.ts`. Remove every root reference: in the `setPosition` line delete the root offset term (a term like `+ (e.rootLeft > 0 ? 1 : 0)` inside the `(W + 6) * (...)` sum) and the root words in the header comment. End state: markTick's line reads `g.setPosition(e.x, e.y - e.def.look.size * 64 - LIFT);` and slowTick's reads `g.setPosition(e.x + (W + 6) * ((e.markPct > 0 ? 1 : 0) + (e.burn.left > 0 ? 1 : 0)), e.y - e.def.look.size * 64 - LIFT);` with their pre-T0139 comments. If T0179 already landed and these files have no chip code at all, skip this step — just confirm no "root" remains in them.
+4. Confirm `src/systems/enemyMarks.ts` is untouched: the ring `if (e.rootLeft > 0) fillRing(g, e.x, e.y + 2, e.def.look.size * 64 + 12, 3.5, 0, Math.PI * 2, PALETTE.ice, 0.95);` (lines 12–15) stays exactly as is.
+5. Verify: `grep -rni roottick src tests` → no hits; `grep -rn rootLeft src/systems/enemyHooks/` → no hits.
+6. `npm run check` and `npm run smoke` must pass.
+
+### Pitfalls
+- The Anchor root mechanic is not the chip and stays: `core/root.ts`, `EnemySystem.ts` (root payload, `brokenRoot`), `FxSystem.rootWave`, `attacks/pulse.ts` — touch none of it.
+- Do not delete the burn/slow/ramp chips; that is T0179. Only root-chip remnants come out.
+- The hook's state (its `chips` Map) is local to the factory, so file + two index lines is the complete cleanup; there are no listeners or module-level state to remove.
+- If T0179 landed first, `index.ts` and the tick files differ from the quotes above (chips gone); the goal is "no root-chip remnant", not restoring the quoted lines.
+
+### Tests
+none
