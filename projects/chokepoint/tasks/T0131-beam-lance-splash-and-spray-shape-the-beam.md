@@ -3,11 +3,13 @@ id: T0131
 title: "Beam combos II: Lance pierces, Splash scorches, Spray splits a beam kill"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T10:40:00Z
+claimed_at: 2026-10-29T11:00:28Z
 epic: E4
+designer: cachyos-x8664
 ---
 
 ## Goal
