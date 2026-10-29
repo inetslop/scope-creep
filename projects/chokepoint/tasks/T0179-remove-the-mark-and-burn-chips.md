@@ -1,12 +1,14 @@
 ---
 id: T0179
 title: "Remove the status chips over enemies: mark, burn, slow, ramp"
+assignee: asus
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T12:21:52Z
+claimed_at: 2026-10-29T14:44:31Z
 ---
 
 ## Goal
