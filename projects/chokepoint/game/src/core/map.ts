@@ -24,8 +24,10 @@ export interface GameMap {
  * forward in runs of 2-3 cells and turning sideways in between, so it never touches itself.
  * Portrait boards (rows > cols) run top to bottom. `rocks` open cells become unbuildable. With
  * `extraBends` of 1 or more the road starts one bend windier (a sideways step at the entrance).
+ * With `lengthMul` above 1 the runs are 1–2 cells, so the road turns more often and comes out
+ * about 25% longer (the realized length follows the grid).
  */
-export function generateMap(rng: Rng, cols: number, rows: number, rocks: number, extraBends = 0): GameMap {
+export function generateMap(rng: Rng, cols: number, rows: number, rocks: number, extraBends = 0, lengthMul = 1): GameMap {
   const vertical = rows > cols;
   // Work in "along x across" space, then map to cells.
   const length = vertical ? rows : cols;
@@ -43,7 +45,8 @@ export function generateMap(rng: Rng, cols: number, rows: number, rocks: number,
     path.push(toCell(along, across));
   }
   while (along < length - 1) {
-    const run = rng.int(2, 3);
+    // The long road (lengthMul > 1) takes runs of 1-2 cells, so it turns more often and is ~25% longer.
+    const run = lengthMul > 1 ? rng.int(1, 2) : rng.int(2, 3);
     for (let i = 0; i < run && along < length - 1; i++) {
       along++;
       path.push(toCell(along, across));

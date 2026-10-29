@@ -58,6 +58,20 @@ export function boardBends(owned: readonly string[]): number {
   return bends;
 }
 
+/** The road length multiplier for a new run's board: the biggest owned node's, 1 when none has one; each node counts once. */
+export function boardLengthMul(owned: readonly string[]): number {
+  let mul = 1;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = BOARD_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    if (node.lengthMul > mul) mul = node.lengthMul;
+  }
+  return mul;
+}
+
 /** How many of a branch's nodes are already owned: the branch discount prices a node off this count. */
 export function ownedInBranch(nodes: readonly { id: string }[], purchased: readonly string[]): number {
   return nodes.reduce((n, node) => n + (purchased.includes(node.id) ? 1 : 0), 0);

@@ -32,6 +32,8 @@ export interface SavedRun {
   rows: number;
   /** The board's entrance jog: 1 when the road was generated with one extra bend, 0 in older saves. */
   bends: number;
+  /** The board's road length at generation: 1.25 when "The long way" was owned, 1 in older saves. */
+  lengthMul: number;
   gold: number;
   lives: number;
   /** The wave being fought, or the last one fought (0 before the first). */
@@ -80,6 +82,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
   if (!inInt(p.seed, 0, 2 ** 53)) return undefined;
   if (!inInt(p.cols, 1, 32) || !inInt(p.rows, 1, 32)) return undefined;
   if (p.bends !== undefined && p.bends !== 0 && p.bends !== 1) return undefined;
+  if (p.lengthMul !== undefined && p.lengthMul !== 1 && p.lengthMul !== 1.25) return undefined;
   if (!inRange(p.gold, 0, 1e6)) return undefined;
   if (!inInt(p.lives, 0, 1e6) || !inInt(p.kills, 0, 1e6) || !inInt(p.cleanWaves, 0, 1e6)) return undefined;
   if (typeof p.rerollUsed !== 'boolean') return undefined;
@@ -99,6 +102,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
     cols: p.cols,
     rows: p.rows,
     bends: p.bends === 1 ? 1 : 0,
+    lengthMul: p.lengthMul === 1.25 ? 1.25 : 1,
     gold: p.gold,
     lives: p.lives,
     wave: p.wave,

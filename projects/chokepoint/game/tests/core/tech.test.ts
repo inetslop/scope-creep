@@ -3,7 +3,7 @@ import { BOARD_NODES } from '../../src/content/tech/board';
 import { CLAIM_NODES, cleanWavePay } from '../../src/content/tech/claim';
 import { POOL_NODES } from '../../src/content/tech/pool';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { boardBends, branchPrice, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, nodeInReach, ownedInBranch, startBonuses, TECH_NODES } from '../../src/core/tech';
+import { boardBends, boardLengthMul, branchPrice, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, nodeInReach, ownedInBranch, startBonuses, TECH_NODES } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -153,8 +153,11 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste', 'clean2']);
   });
 
-  it('the board row is one node: One more bend at 30, adding one bend to new runs', () => {
-    expect(BOARD_NODES.map((n) => [n.id, n.price, n.bends])).toEqual([['one-more-bend', 30, 1]]);
+  it('the board row is two nodes: One more bend at 30 and The long way at 30, each for new runs', () => {
+    expect(BOARD_NODES.map((n) => [n.id, n.price, n.bends, n.lengthMul])).toEqual([
+      ['one-more-bend', 30, 1, 1],
+      ['long-way', 30, 0, 1.25],
+    ]);
   });
 
   it('a board node buys only when it is known, unowned and affordable', () => {
@@ -174,10 +177,27 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste', 'one-more-bend']);
   });
 
+  it('the second board node buys at the branch discount: 25 coins with one owned, 24 refuses', () => {
+    const store = withCoins(25, ['one-more-bend']);
+    expect(buyBoardNode(store, 'long-way')).toBe(true);
+    expect(loadProfile(store).coins).toBe(0);
+    expect(loadProfile(store).purchased).toEqual(['one-more-bend', 'long-way']);
+    const broke = withCoins(24, ['one-more-bend']);
+    expect(buyBoardNode(broke, 'long-way')).toBe(false); // unaffordable: 24 < 25
+    expect(loadProfile(broke).coins).toBe(24);
+  });
+
   it('boardBends sums the owned board nodes once each; unknown and other-branch ids count for nothing', () => {
     expect(boardBends(['one-more-bend', 'one-more-bend', 'haste'])).toBe(1);
     expect(boardBends([])).toBe(0);
     expect(boardBends(['nope', 'gold-1', 'clean2'])).toBe(0);
+  });
+
+  it("boardLengthMul takes the biggest owned node's road length; duplicates and unknown ids count for nothing", () => {
+    expect(boardLengthMul([])).toBe(1);
+    expect(boardLengthMul(['one-more-bend'])).toBe(1);
+    expect(boardLengthMul(['long-way'])).toBe(1.25);
+    expect(boardLengthMul(['one-more-bend', 'long-way', 'long-way', 'haste', 'nope'])).toBe(1.25);
   });
 
   it('a board id counts for no run-start bonus', () => {

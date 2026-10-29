@@ -4,11 +4,12 @@ title: "The tech tree: the board branch, node two — The long way"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0208]
 attempts: 1
 created: 2026-10-29T21:12:14Z
 claimed_at: 2026-10-29T21:43:44Z
+finished_at: 2026-10-29T23:05:00Z
 epic: E2
 ---
 
@@ -80,3 +81,24 @@ export function generateMap(rng: Rng, cols: number, rows: number, rocks: number,
 - `tests/core/saveRun.test.ts`: `sample()` gains `lengthMul: 1`; `broken({ lengthMul: 0 })`, `2`, `1.5`; a save with the key deleted loads as 1; `sample({ lengthMul: 1.25, bends: 1 })` round-trips.
 - `tests/core/tech.test.ts`: replace the "board row is one node" test with the two-node table `[['one-more-bend',30,1,1],['long-way',30,0,1.25]]`; `boardLengthMul([])` = 1, `(['one-more-bend'])` = 1, `(['long-way'])` = 1.25, duplicates and unknown ids ignored; buying `long-way` with 25 coins while `one-more-bend` is owned succeeds (coins 0, both ids saved), 24 coins is refused.
 - No invariant: no new system is added; the existing `board.path` check covers road validity.
+
+## Result (attempt 1, asus)
+
+Added "The long way" as the second node of the tech tree's board branch: new `lengthMul` field on `BoardNode` (`src/content/tech/board.ts`), `boardLengthMul()` in `src/core/tech.ts`, a `lengthMul` parameter in `generateMap` (`src/core/map.ts`) that makes new runs' roads take runs of 1–2 cells (~25% longer, mean ratio 1.31 over the test seeds), and a `lengthMul` save field flowing through `src/core/saveRun.ts`, `src/systems/RunSave.ts` and `src/scenes/GameScene.ts` so resumed runs keep their exact board and ghost runs stay plain. The tech screen needed no changes — its row, states, discounted price and done mark are generic over `BOARD_NODES`. Tests cover the two-node row, discounted buying, strict length increase with valid boards, byte-identical unowned boards (12 pinned + 2000 compared against the old generator), and save round-trips; check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 81.3 min
+- Deleted tests/core/plainBoardsTemp.test.ts, as the agent asked.
+
+```
+projects/chokepoint/game/src/content/tech/board.ts |   9 +-
+ projects/chokepoint/game/src/core/map.ts           |   7 +-
+ projects/chokepoint/game/src/core/saveRun.ts       |   4 +
+ projects/chokepoint/game/src/core/tech.ts          |  14 +++
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  13 +-
+ projects/chokepoint/game/src/systems/RunSave.ts    |   1 +
+ projects/chokepoint/game/tests/core/map.test.ts    | 131 ++++++++++++++++++++-
+ .../chokepoint/game/tests/core/saveRun.test.ts     |  18 +++
+ projects/chokepoint/game/tests/core/tech.test.ts   |  26 +++-
+ 9 files changed, 210 insertions(+), 13 deletions(-)
+```

@@ -12,6 +12,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   cols: 14,
   rows: 8,
   bends: 0,
+  lengthMul: 1,
   gold: 260,
   lives: 17,
   wave: 3,
@@ -81,6 +82,23 @@ describe('saveRun', () => {
     delete without.bends; // older saves predate the field
     store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
     expect(loadSavedRun(store)).toEqual(sample());
+  });
+
+  it('rejects a broken road length, but a save written without the key loads as 1', () => {
+    broken({ lengthMul: 0 });
+    broken({ lengthMul: 2 });
+    broken({ lengthMul: 1.5 });
+    const store = memory();
+    const without = { ...sample() } as Record<string, unknown>;
+    delete without.lengthMul; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
+    expect(loadSavedRun(store)).toEqual(sample());
+  });
+
+  it('round-trips a longer-road save', () => {
+    const store = memory();
+    saveRun(store, sample({ lengthMul: 1.25, bends: 1 }));
+    expect(loadSavedRun(store)).toEqual(sample({ lengthMul: 1.25, bends: 1 }));
   });
 
   it('rejects a broken hand or towers', () => {
