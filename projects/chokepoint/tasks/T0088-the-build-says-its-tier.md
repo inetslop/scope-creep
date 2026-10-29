@@ -3,11 +3,13 @@ id: T0088
 title: The build says its tier
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T00:22:08Z
+claimed_at: 2026-10-29T00:51:11Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
