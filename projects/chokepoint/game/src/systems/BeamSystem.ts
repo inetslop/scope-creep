@@ -4,6 +4,7 @@ import { PALETTE } from '../content/palette';
 import { towerColor } from '../core/augments';
 import { beamLines, inBeamRange } from '../core/beam';
 import { hook } from '../debug/testHook';
+import type { Sfx } from '../audio/Sfx';
 import type { Enemy } from '../entities/Enemy';
 import type { Tower } from '../entities/Tower';
 import type { EnemySystem } from './EnemySystem';
@@ -20,14 +21,18 @@ import type { TowerSystem } from './TowerSystem';
 export class BeamSystem {
   private readonly towers: TowerSystem;
   private readonly enemies: EnemySystem;
+  private readonly sfx: Sfx | undefined;
   /** One Graphics for every line, cleared and redrawn each frame (the scene destroys it). */
   private readonly lines: Phaser.GameObjects.Graphics;
   /** Each beam tower's held targets from the last frame: [main line, one per extra line]. */
   private readonly held = new Map<Tower, (Enemy | undefined)[]>();
+  /** The beam towers whose hum is on (or asked for): it follows the main line's on/off. */
+  private readonly humming = new Set<Tower>();
 
-  constructor(scene: Phaser.Scene, towers: TowerSystem, enemies: EnemySystem) {
+  constructor(scene: Phaser.Scene, towers: TowerSystem, enemies: EnemySystem, sfx: Sfx | undefined) {
     this.towers = towers;
     this.enemies = enemies;
+    this.sfx = sfx;
     this.lines = scene.add.graphics().setDepth(DEPTH.bars);
   }
 
@@ -36,7 +41,11 @@ export class BeamSystem {
     g.clear();
     for (const t of this.towers.towers) {
       if (t.spec.beamDps <= 0 && t.spec.beamExtras.length === 0) continue;
-      if (t.jammed) continue; // a Mute holds it: no attack, no line
+      const wasHumming = this.humming.has(t);
+      if (t.jammed) {
+        if (wasHumming) { this.sfx?.beamHumStop(t); this.humming.delete(t); }
+        continue; // a Mute holds it: no attack, no line
+      }
       const range = t.spec.range * CELL;
       // held grows/shrinks with the number of extra lines (an augment just placed).
       let held = this.held.get(t);
@@ -64,6 +73,11 @@ export class BeamSystem {
         if (e && !e.active) now[i] = undefined;
       }
       this.held.set(t, now);
+      // The hum follows the line's own visibility: on at the lock, off with no target; a retarget
+      // is on→on, so the hum stays up (now[0], not main: a beamTick kill drops the line this frame).
+      const on = now[0] !== undefined;
+      if (on && !wasHumming) { this.sfx?.beamHumStart(t); this.humming.add(t); }
+      if (!on && wasHumming) { this.sfx?.beamHumStop(t); this.humming.delete(t); }
       if (main === -1) continue;
       const color = PALETTE[towerColor(t.augments) ?? 'faint'];
       const m = t.muzzle(0);

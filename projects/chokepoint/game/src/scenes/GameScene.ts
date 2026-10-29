@@ -109,7 +109,7 @@ export class GameScene extends Phaser.Scene {
     this.exitCount = new ExitCount(this, this.board, this.flow);
     this.speed = new WaveSpeed();
     this.rally = new RallySystem(this, this.towers, this.fx);
-    this.beams = new BeamSystem(this, this.towers, this.enemies);
+    this.beams = new BeamSystem(this, this.towers, this.enemies, sfx);
     this.saver = new RunSave(this, window.localStorage);
     if (saved) this.saver.restore(saved);
     this.windup = new PushWindup(this, this.towers);
@@ -133,6 +133,7 @@ export class GameScene extends Phaser.Scene {
         .filter((p) => p.x > 0 && p.x < viewSize(this).width && p.y > HUD.top && p.y < viewSize(this).height - HUD.bottom),
     );
     this.events.once('shutdown', () => {
+      sfx?.stopBeamHums(); // held hums must not outlive the run (the Sfx singleton does)
       hook.clearInvariants();
       hook.setBuildSpots(() => []);
     });

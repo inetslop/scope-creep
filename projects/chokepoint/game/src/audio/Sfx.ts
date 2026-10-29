@@ -7,7 +7,12 @@ import type { Tier } from '../content/types';
 export class Sfx {
   private ctx: AudioContext | undefined;
   private master: GainNode | undefined;
-  muted = false;
+  private mutedFlag = false;
+  /** Muting also stops every held beam hum (they resume only on the next lock). */
+  get muted(): boolean { return this.mutedFlag; }
+  set muted(on: boolean) { if (on === this.mutedFlag) return; this.mutedFlag = on; if (on) this.stopBeamHums(); }
+  /** The quiet held hums under active beams: at most 3, keyed by the humming tower. */
+  private readonly beamHums = new Map<unknown, { osc: OscillatorNode; gain: GainNode }>();
 
   /** Call from a user gesture (the first click/tap) so the browser lets audio start. */
   unlock(): void {
@@ -108,6 +113,41 @@ export class Sfx {
 
   leakWarn(): void {
     this.tone(200, 0.08, 'sine', 0.1, 150);
+  }
+
+  /** A held 110 Hz sine under an active beam (pre-master 0.05, the tier-chime sines held): fade-in over 200 ms. */
+  beamHumStart(key: unknown): void {
+    const ctx = this.ctx;
+    if (!ctx || !this.master || this.muted || ctx.state !== 'running') return;
+    if (this.beamHums.has(key) || this.beamHums.size >= 3) return;
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 110;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.linearRampToValueAtTime(0.05, t + 0.2);
+    osc.connect(gain).connect(this.master);
+    osc.start(t);
+    this.beamHums.set(key, { osc, gain });
+  }
+
+  /** Fades a held beam hum out over 200 ms; an exact no-op for a key that is not held. */
+  beamHumStop(key: unknown): void {
+    const hum = this.beamHums.get(key);
+    const ctx = this.ctx;
+    if (!hum || !ctx) return;
+    this.beamHums.delete(key);
+    const t = ctx.currentTime;
+    hum.gain.gain.cancelScheduledValues(t);
+    hum.gain.gain.setValueAtTime(hum.gain.gain.value, t);
+    hum.gain.gain.linearRampToValueAtTime(0.0001, t + 0.2);
+    hum.osc.stop(t + 0.22);
+  }
+
+  /** Every held beam hum fades out: the scene goes away, but the Sfx singleton outlives the run. */
+  stopBeamHums(): void {
+    for (const k of [...this.beamHums.keys()]) this.beamHumStop(k);
   }
 
   waveStart(): void {

@@ -4,11 +4,12 @@ title: "Beam hum: a quiet tone under each active beam (the T0043 re-file)"
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T09:55:07Z
 claimed_at: 2026-10-29T11:42:24Z
+finished_at: 2026-10-29T12:23:40Z
 epic: E4
 ---
 
@@ -75,3 +76,17 @@ A retarget is on→on: no calls, the hum stays continuous.
 
 ### Tests
 None — audio only; `npm run check` and `npm run smoke` as usual.
+
+## Result (attempt 1, asus)
+
+Each active beam tower now gets a quiet sustained hum — a held 110 Hz sine at volume 0.05 (pre-master, the T0043 convention) with 200 ms fade in/out — added as a 3-slot pool (`beamHums` map + `beamHumStart`/`beamHumStop`/`stopBeamHums`) in `src/audio/Sfx.ts` beside the quiet-family sounds. `src/systems/BeamSystem.ts` (the landed beam system, same name the T0043 archive assumed) drives it per-tower from the main line's visibility: start on lock, stop when the beam has no target, no call on retarget, and a Mute-jammed tower releases its hum. `src/scenes/GameScene.ts` passes `sfx` into the system and stops all hums on scene shutdown so the Sfx singleton never carries oscillators into the next run; `muted` became a getter/setter so muting also silences held hums (T0035). No other sound, visual, or file was touched; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 41.3 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          | 42 +++++++++++++++++++++-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  3 +-
+ projects/chokepoint/game/src/systems/BeamSystem.ts | 18 ++++++++--
+ 3 files changed, 59 insertions(+), 4 deletions(-)
+```
