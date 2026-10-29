@@ -3,6 +3,7 @@ import { HUD, MAX_SLOTS } from '../../config';
 import { getAugment } from '../../content/augments';
 import { cssColor, PALETTE } from '../../content/palette';
 import { describeSpec, slotCost } from '../../core/augments';
+import { towerDps } from '../../core/towerDps';
 import { tierAddedLine } from '../../core/tiers';
 import { artScale, augmentTexture, COIN_TEXTURE } from '../../art/textures';
 import type { Tower } from '../../entities/Tower';
@@ -17,6 +18,7 @@ const PANEL_W = 340;
 const ROW_H = 64;
 const ROW_GAP = 6;
 const SLOT = 50;
+const DPS_LINE = 14; // one muted line of 11px
 
 /**
  * Above the hand, while a tower is selected: what its augments make it, one card per augment
@@ -67,7 +69,7 @@ export class TowerPanel implements HudPart {
     const w = Math.min(PANEL_W, width - EDGE * 2);
     const left = -w / 2 + 18;
     const n = tower.augments.length;
-    const H = (ROW_H + ROW_GAP) * n + 146 + 18; // room for the kills line
+    const H = (ROW_H + ROW_GAP) * n + 146 + 18 + DPS_LINE; // room for the kills line and the damage per second under it
     const top = -H / 2;
     // The card swallows taps, so tapping the panel never builds on the board under it.
     const card = makeCard(scene, 0, 0, w, H, 22).setInteractive();
@@ -96,8 +98,11 @@ export class TowerPanel implements HudPart {
       items.push(scene.add.text(left, top + 80, 'Put an augment in a slot', textStyle(13, PALETTE.muted)).setOrigin(0, 0));
     }
     // This run's kills by this tower, in the gap between the augment rows and the slot row.
-    this.killsText = scene.add.text(left, H / 2 - 79, `kills ${tower.kills}`, textStyle(11, PALETTE.muted)).setOrigin(0, 0);
+    this.killsText = scene.add.text(left, H / 2 - 79 - DPS_LINE, `kills ${tower.kills}`, textStyle(11, PALETTE.muted)).setOrigin(0, 0);
     items.push(this.killsText);
+    const dps = towerDps(tower.spec);
+    const perSec = Math.floor(dps);
+    if (perSec >= 1) items.push(scene.add.text(left, H / 2 - 79, `≈ ${perSec}/s`, textStyle(11, PALETTE.muted)).setOrigin(0, 0));
     items.push(...this.slots(game, tower, left, w, H));
     const x = isNarrow(width) ? width / 2 : EDGE + w / 2;
     this.box = scene.add.container(x, height - HUD.bottom - 10 - H / 2, items);
@@ -143,7 +148,7 @@ export class TowerPanel implements HudPart {
   }
 }
 
-/** Damage, range and speed, and the number of shots when more than one. */
+/** Damage, range, speed, and the number of shots when more than one. */
 function statsLine(tower: Tower): string {
   const s = tower.spec;
   if (!s.attacks) return 'Put an augment in a slot to give it an attack.';

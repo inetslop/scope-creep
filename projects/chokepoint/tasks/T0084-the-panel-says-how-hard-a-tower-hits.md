@@ -4,11 +4,12 @@ title: The panel says how hard a tower hits
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T23:26:44Z
 claimed_at: 2026-10-29T00:29:09Z
+finished_at: 2026-10-29T01:54:53Z
 epic: E4
 ---
 
@@ -81,3 +82,28 @@ New unit tests in `tests/core/towerDps.test.ts` (build specs via `towerSpec([...
 - Lone towers: bolt 19.2, lance 13.32, splash 15, rapid 20, reach 18.9, ember 3; frost / push / anchor / mint / rally / mark all 0.
 - Bolt+Rapid+Frost: 21.6.
 - Support-only tower: 0.
+
+## Result (attempt 1, cachyos-x8664)
+
+Done. The tower DPS feature is implemented and both gates pass.
+
+What's in place:
+
+- **`src/core/towerDps.ts`** (pure, no Phaser) — `towerDps(spec)` = `(damage > 0 ? damage × rate : 0) + (burn ? burn.dps : 0)`. Single‑target, not multiplied by `shots`; support towers (Frost/Mark/Push/Mint) and an empty tower return 0.
+- **`tests/core/towerDps.test.ts`** — 5 cases covering empty tower, each first‑form value (bolt 19.2, rapid 20, reach 18.9, splash 15, lance 13.32), added augments (bolt+rapid 21.6, frost is damage‑neutral, second bolt doesn't change per‑target DPS), the burn ticking on top of its setter (ember 3, bolt+ember 22.2), and support towers adding nothing.
+- **`src/ui/hud/TowerPanel.ts`** — imported `towerDps` and appended it to `statsLine`, so the panel's bold stats line now reads e.g. `Damage 12 · Range 2.6 · 1.6/s · DPS 19.2`. A `dps > 0` guard keeps "DPS" off pure support towers (e.g. Frost‑first), and I updated the function's doc comment. Note: the file lives in `src/ui/hud/`, not `hub/` — the plan's path was off by a typo.
+
+Results:
+- `npm run check` — typecheck, lint, and 173 unit tests pass.
+- `npm run smoke` — build + play in a real browser, desktop and mobile, **PASS** (towers built, augments placed, enemies killed, no leaks, no lost runs).
+
+- Self-review: APPROVE
+- Time: 85.7 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/towerDps.ts      | 16 ++++++++
+ projects/chokepoint/game/src/ui/hud/TowerPanel.ts  | 11 ++++--
+ .../chokepoint/game/tests/core/towerDps.test.ts    | 43 ++++++++++++++++++++++
+ 3 files changed, 67 insertions(+), 3 deletions(-)
+```
