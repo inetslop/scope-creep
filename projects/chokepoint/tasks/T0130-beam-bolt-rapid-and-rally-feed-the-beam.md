@@ -3,13 +3,12 @@ id: T0130
 title: "Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam"
 size: M
 priority: 1
-status: designing
+status: design
 depends_on: []
 attempts: 0
 created: 2026-10-29T10:40:00Z
-claimed_at: 2026-10-29T11:00:19Z
 epic: E4
-designer: baby-mama
+design_attempts: 1
 ---
 
 ## Goal
