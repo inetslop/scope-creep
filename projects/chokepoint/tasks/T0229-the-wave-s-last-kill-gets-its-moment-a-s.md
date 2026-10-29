@@ -3,10 +3,12 @@ id: T0229
 title: "The wave's last kill gets its moment: a soft ring where it ends"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T20:16:15Z
+claimed_at: 2026-10-29T20:16:35Z
+designer: yoga
 ---
 
 ## Goal
