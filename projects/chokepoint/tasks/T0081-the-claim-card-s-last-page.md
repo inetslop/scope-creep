@@ -3,13 +3,12 @@ id: T0081
 title: "The claim card's last page"
 size: M
 priority: 2
-status: designing
+status: design
 depends_on: []
 attempts: 0
 created: 2026-10-28T23:26:44Z
-claimed_at: 2026-10-28T23:47:20Z
 epic: E1
-designer: baby-mama
+design_attempts: 1
 ---
 
 ## Goal
