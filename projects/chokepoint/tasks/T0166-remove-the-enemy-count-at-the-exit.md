@@ -1,12 +1,14 @@
 ---
 id: T0166
 title: Remove the enemy count at the exit
+assignee: narcissus
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T12:15:39Z
+claimed_at: 2026-10-29T16:41:11Z
 ---
 
 ## Goal
