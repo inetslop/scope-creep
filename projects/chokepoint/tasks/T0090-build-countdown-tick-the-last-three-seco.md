@@ -3,13 +3,11 @@ id: T0090
 title: "Build countdown tick: the last three seconds are audible"
 size: S
 priority: 3
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-29T00:51:07Z
-claimed_at: 2026-10-29T00:59:13Z
 epic: E1
-designer: yoga
 ---
 
 ## Goal
@@ -27,3 +25,32 @@ The last three seconds of every build break are audible — one soft blip per se
 - [ ] Pausing during the last three seconds stops the blips with the countdown; resuming continues the count and the blips exactly where it left off.
 - [ ] Starting the wave early (the Send button, once in) plays no extra blip, and the wave banner is unchanged.
 - [ ] No new key, button, HUD element or pause-screen line.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/ui/hud/NextWaveButton.ts` - the build countdown's last three whole seconds (3, 2, 1) each play `sfx.blip()` on the number change; no other file changes.
+### Interfaces
+No new or changed types or signatures — one private field and one call inside the existing `update()`.
+### Steps
+1. In `NextWaveButton.ts`, add `import { getSfx } from '../../scenes/keys';` directly after the `GameScene` type import (line 4), exactly as `PanicButton.ts` line 6 does.
+2. In the class, after `private waveSize = 1;`, add:
+   ```ts
+   /** The last number shown: a change to 3, 2 or 1 is the build break's soft blip. */
+   private lastShown = -1;
+   ```
+3. In `update()`, in the `if (run.phase === 'build')` branch, insert directly after `const secs = Math.max(0, Math.ceil(run.buildLeftSec));`:
+   ```ts
+   if (this.lastShown !== secs) {
+     this.lastShown = secs;
+     if (secs >= 1 && secs <= 3) getSfx(game)?.blip();
+   }
+   ```
+   `Sfx.blip()` is the tier chime's lowest note (523 Hz, 80 ms, volume 0.1) and returns silently when `muted` (T0035) or audio is locked — nothing else to gate.
+### Pitfalls
+- The `secs >= 1` guard, not just `secs <= 3`, is what kills the 0-blip: on the frame the countdown expires the phase is already `wave` so the branch is skipped, but the guard also protects against any update ordering where the number reads 0 while phase is still `build`.
+- Blips are driven by the shown number's change, never by `dt` or a timer: pausing (GameScene paused, `buildLeftSec` frozen) stops them and resuming continues exactly; fast-forward is wave-phase only and can't double-fire; a build start at 8/10 s sets `lastShown` silently (out of range).
+- Do not touch the teal ring, the `title`/`hint` text or `waveStart()`: the wave banner and its chime already play at wave start.
+- Send/Space (`startWaveNow`) just zeroes `buildLeftSec` and flips the phase — the same path covers it; no code needed for T0077's button.
+### Tests
+none
