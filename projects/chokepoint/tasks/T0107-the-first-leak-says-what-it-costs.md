@@ -4,11 +4,12 @@ title: The first leak says what it costs
 assignee: narcissus
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T07:23:51Z
 claimed_at: 2026-10-29T16:55:09Z
+finished_at: 2026-10-29T18:55:40Z
 ---
 
 ## Goal
@@ -104,3 +105,18 @@ export class LeakCost {
 
 ### Tests
 none
+
+## Result (attempt 1, narcissus)
+
+(no summary)
+
+- Self-review: NO VERDICT
+- Time: 120.5 min
+
+```
+projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  4 +++
+ projects/chokepoint/game/src/systems/LeakCost.ts   | 36 ++++++++++++++++++++++
+ .../chokepoint/game/src/systems/fx/leakCost.ts     | 26 ++++++++++++++++
+ 4 files changed, 67 insertions(+)
+```

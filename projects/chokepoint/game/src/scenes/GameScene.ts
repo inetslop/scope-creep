@@ -18,6 +18,7 @@ import { Building } from '../systems/Building';
 import { EnemySystem } from '../systems/EnemySystem';
 import { ExitWarning } from '../systems/ExitWarning';
 import { FxSystem } from '../systems/FxSystem';
+import { LeakCost } from '../systems/LeakCost';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { PushWindup } from '../systems/PushWindup';
 import { RallySystem } from '../systems/RallySystem';
@@ -57,6 +58,7 @@ export class GameScene extends Phaser.Scene {
   projectiles!: ProjectileSystem;
   fx!: FxSystem;
   exitWarn!: ExitWarning;
+  leakCost!: LeakCost;
   windup!: PushWindup;
 
   constructor() {
@@ -93,6 +95,7 @@ export class GameScene extends Phaser.Scene {
     this.fx = new FxSystem(this);
     this.enemies = new EnemySystem(this, this.board, this.run, this.fx, sfx);
     this.exitWarn = new ExitWarning(this, this.board, this.enemies, sfx);
+    this.leakCost = new LeakCost(this.run, this.fx, this.board);
     this.waves = new WaveSystem(this.run, this.enemies);
     this.projectiles = new ProjectileSystem(this, this.enemies);
     this.towers = new TowerSystem(this, this.board, this.run, this.enemies, this.projectiles, this.fx, sfx);
@@ -170,6 +173,7 @@ export class GameScene extends Phaser.Scene {
     this.flow.update(simDt);
     this.saver.update();
     this.exitWarn.update(simDt);
+    this.leakCost.update(simDt);
     this.rally.update(simDt);
     this.beams.update(simDt);
     this.windup.update(simDt);
