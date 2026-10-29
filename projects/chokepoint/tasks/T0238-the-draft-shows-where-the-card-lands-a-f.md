@@ -3,13 +3,14 @@ id: T0238
 title: "The draft shows where the card lands: a fit row on every offered card"
 size: L
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-29T23:34:09Z
 claimed_at: 2026-10-29T23:34:23Z
+finished_at: 2026-10-29T23:54:17Z
 epic: E4
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
@@ -32,3 +33,7 @@ E4's goal is that the draft is the run's core decision — but today the pick is
 - [ ] A pick is still one tap: the reveal flip, the tier chime, the reveal shimmer, the reroll and the four-card draft (T0065) behave exactly as today; no new key or button, so the pause screen's controls list is unchanged.
 - [ ] 412x915 and 1280x720: the four-card draft shows every row with the longest token row, all text inside its card at the card's current scale.
 - [ ] The build phase (the ghost) and every scene but the draft are byte-identical to today.
+
+## Rejected by architect (cachyos-x8664)
+
+The fit row's dimmed/live verdict is delegated to T0236's judge ("the same rule T0236 states"), which has no code yet, and this task's only restatement of it — "a structural compare of the tower's spec before and after the card is added, live only when the spec actually changes" — contradicts its own acceptance example: adding a Frost/Anchor/Ember/Push/Mark card to a pure Mint or pure Rally tower sets a spec field (slow/root/burn/pushPerHit/markPct) that is empty in a pure tower, so a structural compare is LIVE, not the required DIMMED.
