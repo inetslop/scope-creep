@@ -6,6 +6,7 @@ import type { RunContext } from './dev.ts';
 import { info, step, warn } from './log.ts';
 import { buildInventory, CHANGELOG_HEADER, changelogLine } from './inventory.ts';
 import { ARCHIVE_DIR, GAME_DIR, GAME_REL, PLANNING_DIR, PLANNING_REL, PROJECT_DIR, REPO, SALVAGE_DIR, TASKS_DIR, TASKS_REL, rel } from './paths.ts';
+import { describeModules, writeModuleDocs } from './modules.ts';
 import { archivePlanning } from './planning.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
@@ -250,6 +251,8 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
   // Its own step, before the PO reads anything: done epics and old cycle notes leave the roadmap.
   const moved = archivePlanning();
   if (moved) info(`PO cycle ${cycle}: archived ${Math.round(moved / 1000)} KB of roadmap history`);
+  // The module docs (planning/modules/) show the PO what exists, with the game's real data.
+  const modules = writeModuleDocs();
   const feedbackIn = [...state.poFeedback, ...planningBudgetFeedback(planningSizes())];
 
   const prompt = renderPrompt('po', {
@@ -263,6 +266,7 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
     INVALID: listing.invalid.size ? [...listing.invalid].map(([f, e]) => `- ${rel(f)}: ${e}`).join('\n') : '(none)',
     GIT_LOG: (await git.logOneline(20, [GAME_REL])) || '(no game commits yet)',
     INVENTORY: buildInventory(GAME_DIR),
+    MODULES: describeModules(modules),
     NEXT_IDS: ids.join(', '),
     MACHINE_IDS: devMachineIds(fleet).join(', '),
   });

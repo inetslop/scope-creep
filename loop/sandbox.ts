@@ -142,7 +142,9 @@ export function claudeSettings(profile: Profile, env: Record<string, string>): o
       // The PO plans from planning/ and tasks/ only. It never reads the game's code (that is the
       // architect's job); it gets a generated inventory and planning/CHANGELOG.md instead.
       allow: [...READ_ONLY_TOOLS, rule('Edit', TASKS_DIR), rule('Edit', PLANNING_DIR)],
-      deny: [...ALWAYS_DENY, 'Bash', rule('Read', GAME_DIR), ...loopReads, ...loopEdits, rule('Edit', GAME_DIR), rule('Edit', path.join(TASKS_DIR, 'archive'))],
+      deny: [...ALWAYS_DENY, 'Bash', rule('Read', GAME_DIR), ...loopReads, ...loopEdits, rule('Edit', GAME_DIR), rule('Edit', path.join(TASKS_DIR, 'archive')),
+        // Runner-written: the module docs are regenerated every cycle, the archive is history it never needs.
+        rule('Edit', path.join(PLANNING_DIR, 'modules')), rule('Edit', path.join(PLANNING_DIR, 'archive')), rule('Read', path.join(PLANNING_DIR, 'archive'))],
     },
     env,
   };
