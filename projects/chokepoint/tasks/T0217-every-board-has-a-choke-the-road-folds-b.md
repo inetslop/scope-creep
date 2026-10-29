@@ -3,10 +3,12 @@ id: T0217
 title: "Every board has a choke: the road folds back on itself"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T16:16:13Z
+claimed_at: 2026-10-29T16:20:01Z
+designer: desktop
 ---
 
 ## Goal
