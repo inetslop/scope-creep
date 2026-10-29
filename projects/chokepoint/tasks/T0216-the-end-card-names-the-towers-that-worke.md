@@ -4,11 +4,12 @@ title: "The end card names the towers that worked: kills by tower"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T15:52:06Z
 claimed_at: 2026-10-29T16:44:31Z
+finished_at: 2026-10-29T17:18:21Z
 ---
 
 ## Goal
@@ -116,3 +117,18 @@ and change `layout()` (line 65) to scale against `totalH` instead of `panelH`: `
 
 ### Tests
 - none (pure UI readout; no core rules added or changed)
+
+## Result (attempt 1, asus)
+
+The end-of-run screen now shows a "By tower" card beneath the score card: one chip per tower built, each with its first-augment icon and the tower's kill count ("×N"), sorted highest kills first (zero-kill towers show ×0). `RunFlow.endRun()` snapshots each tower's first-augment id and existing per-tower kill count into the scene registry before GameScene stops, and `GameOverScene` reads it to place the new card (wraps to a second line past four towers and fits at 412x915 and 1280x720). New file `src/ui/byTower.ts` holds the card builder; the score card's contents are unchanged and the readout is silent and non-interactive.
+
+- Self-review: APPROVE
+- Time: 33.8 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../chokepoint/game/src/scenes/GameOverScene.ts    | 12 ++++++-
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  1 +
+ projects/chokepoint/game/src/ui/byTower.ts         | 40 ++++++++++++++++++++++
+ 3 files changed, 52 insertions(+), 1 deletion(-)
+```

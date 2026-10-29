@@ -5,6 +5,7 @@ import { recordRun } from '../core/profile';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
+import { makeByTowerCard, type ByTowerEntry } from '../ui/byTower';
 import { makeCard } from '../ui/card';
 import { uiCamera, viewSize } from '../ui/display';
 import { textStyle, titleStyle } from '../ui/text';
@@ -59,10 +60,19 @@ export class GameOverScene extends Phaser.Scene {
     const parts: Phaser.GameObjects.GameObject[] = [panel, title, waveText, score];
     if (flawlessStar) parts.push(flawlessStar);
     parts.push(scoreRecipe, wavesText, stoppedText, cleanText, coinsText, bestText, claimButton.container, againButton.container, menuButton.container);
+    const entries = this.registry.get('towerKills') as ByTowerEntry[] | undefined;
+    let byTowerH = 0;
+    if (entries && entries.length > 0) {
+      const built = makeByTowerCard(this, entries);
+      built.card.setPosition(0, panelH / 2 + 16 + built.height / 2);
+      byTowerH = built.height;
+      parts.push(built.card);
+    }
     const box = this.add.container(0, 0, parts);
+    const bottom = panelH / 2 + (byTowerH ? 16 + byTowerH : 0); // how far the content extends below the panel's center
 
     const layout = (width: number, height: number): void => {
-      box.setPosition(width / 2, height / 2).setScale(Math.min(1, (width - 24) / panelW, (height - 24) / panelH));
+      box.setPosition(width / 2, height / 2).setScale(Math.min(1, (width - 24) / panelW, (height / 2 - 12) / (panelH / 2), (height / 2 - 12) / bottom));
     };
     layout(viewSize(this).width, viewSize(this).height);
     onResize(this, layout);
