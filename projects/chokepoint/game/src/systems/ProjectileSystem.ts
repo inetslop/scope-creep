@@ -52,17 +52,18 @@ export class ProjectileSystem {
   private land(p: Projectile): void {
     const target = p.target!;
     const payload = p.payload!;
+    const flight = { x: p.fx, y: p.fy };
     // Split before the hit: the needles are already flying if the struck enemy dies to the strike.
     if (payload.needles > 0) this.spread(target, payload, p.speed);
     const next = payload.pierce > 0 ? pickPierceTarget(target, this.enemies.all, PIERCE_REACH * CELL) : -1;
     if (next < 0) {
-      this.enemies.hit(target, payload);
+      this.enemies.hit(target, payload, flight);
       p.despawn();
       return;
     }
     const x = target.x;
     const y = target.y;
-    this.enemies.strike(target, payload); // no burst yet: the shot keeps going
+    this.enemies.strike(target, payload, flight); // no burst yet: the shot keeps going
     p.fire(x, y, this.enemies.all[next]!, { ...payload, pierce: payload.pierce - 1, needles: 0 }, p.speed);
   }
 

@@ -20,6 +20,8 @@ export const BOLT_TEXTURE = 'fx:bolt';
 /** A thin straight tracer for a piercing shot (Lance): it keeps going after a hit. */
 export const TRACER_TEXTURE = 'fx:tracer';
 export const CHIP_TEXTURE = 'fx:chip';
+/** A flat plate across a token's front third (the Bulwark): painted once, shown by Enemy. */
+export const PLATE_TEXTURE = 'enemy:plate';
 export const COIN_TEXTURE = 'ui:coin';
 export const LIFE_TEXTURE = 'ui:life';
 export const STAR_TEXTURE = 'ui:star';
@@ -52,3 +54,6 @@ export function paintTexture(scene: Phaser.Scene, key: string, w: number, h: num
 export function tokenRoom(radius: number, depth: number, shadow = 1): number {
   return radius * 1.25 + depth + (SHADOW.offsetY + SHADOW.blur * 1.6) * shadow + 2;
 }
+
+/** The side-face depth of a token at radius `r`. */
+export const tokenDepth = (r: number): number => Math.max(2, r * 0.18);

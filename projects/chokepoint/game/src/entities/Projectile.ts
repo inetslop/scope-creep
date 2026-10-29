@@ -14,6 +14,9 @@ export class Projectile extends Phaser.GameObjects.Image {
   speed = 0;
   /** Seconds in flight; a projectile that never lands is stuck (the run check reads it). */
   age = 0;
+  /** The way it is flying (unit vector, refreshed as it homes): the plate reads it. */
+  fx = 1;
+  fy = 0;
   /** Thin tracer that points where it flies (a piercing shot, a Spray's needle). */
   private tracer = false;
 
@@ -36,6 +39,11 @@ export class Projectile extends Phaser.GameObjects.Image {
     this.setTint(payload.color);
     artScale(this, !this.tracer && payload.splash > 0 ? 1.4 : 1);
     this.setPosition(x, y);
+    const d = Math.hypot(target.x - x, target.y - y);
+    if (d > 0) {
+      this.fx = (target.x - x) / d;
+      this.fy = (target.y - y) / d;
+    }
     this.setActive(true).setVisible(true);
   }
 
@@ -54,6 +62,10 @@ export class Projectile extends Phaser.GameObjects.Image {
     // A tracer points where it flies (its texture is flat, so rotating it is allowed).
     if (this.tracer) this.setRotation(Math.atan2(dx, -dy));
     const dist = Math.hypot(dx, dy);
+    if (dist > 0) {
+      this.fx = dx / dist;
+      this.fy = dy / dist;
+    }
     const step = this.speed * dt;
     if (dist <= step || dist < 6) {
       this.setPosition(t.x, t.y);

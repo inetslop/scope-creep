@@ -29,6 +29,8 @@ export interface EnemyDef {
   dashCycle?: { crawlSec: number; pauseSec: number; dashCells: number; dashSec: number };
   /** When it dies, it splits into two of this enemy: one 0.25 cells ahead of the kill, one behind (core/split.ts). */
   splitsInto?: string;
+  /** Multiplies damage from a directed shot that strikes its front (flying against its travel); the rear and flightless hits go whole (core/plate.ts). */
+  plate?: number;
   /** Gold for killing it. */
   gold: number;
   /** Lives lost when it reaches the exit. */

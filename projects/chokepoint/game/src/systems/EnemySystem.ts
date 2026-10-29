@@ -6,6 +6,7 @@ import type { RunState } from '../core/run';
 import { killGold } from '../core/lastStand';
 import { mintGoldBonus } from '../core/mint';
 import { burnTick } from '../core/burn';
+import { plateMul } from '../core/plate';
 import { ROOT_IMMUNE_SEC } from '../core/root';
 import { pickNearest } from '../core/targeting';
 import { quietGoldMul } from '../core/waves';
@@ -129,7 +130,7 @@ export class EnemySystem {
    * up to `payload.splashCap` other enemies nearest to it within `payload.splash` board units
    * (a burst ring shows where).
    */
-  hit(target: Enemy, payload: HitPayload): void {
+  hit(target: Enemy, payload: HitPayload, flight?: { x: number; y: number }): void {
     if (!target.active) return;
     const victims = [target];
     if (payload.splash > 0) {
@@ -137,11 +138,11 @@ export class EnemySystem {
       for (const i of pickNearest(target, payload.splash, this.pool, payload.splashCap)) victims.push(this.pool[i]!);
       this.fx.ring(target.x, target.y, payload.splash, payload.color);
     }
-    for (const e of victims) this.strike(e, payload);
+    for (const e of victims) this.strike(e, payload, flight);
   }
 
   /** Damage and slow on one enemy, handling the kill. Returns true when it died. */
-  strike(e: Enemy, payload: HitPayload): boolean {
+  strike(e: Enemy, payload: HitPayload, flight?: { x: number; y: number }): boolean {
     if (!e.active) return false;
     if (payload.slow) e.slow(payload.slow.pct, payload.slow.sec);
     if (payload.push > 0) e.pushBack(payload.push);
@@ -156,7 +157,9 @@ export class EnemySystem {
       if (overtook) e.burnSource = payload.source;
       if (fresh) this.sfx?.ignite();
     }
-    if (payload.damage <= 0 || !e.hit(payload.damage)) return false;
+    // A plate halves a shot that flies into the face; the rear and flightless hits go whole (core/plate.ts).
+    const damage = payload.damage * (flight && e.def.plate !== undefined ? plateMul(e.def.plate, flight.x, flight.y, e.dirX, e.dirY) : 1);
+    if (payload.damage <= 0 || !e.hit(damage)) return false;
     this.kill(e, payload.source);
     return true;
   }

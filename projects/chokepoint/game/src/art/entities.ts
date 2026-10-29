@@ -1,17 +1,17 @@
 import type Phaser from 'phaser';
 import { CELL } from '../config';
 import { AUGMENTS } from '../content/augments';
-import { ENEMIES } from '../content/enemies';
+import { ENEMIES, getEnemy } from '../content/enemies';
 import { deepOf, PALETTE, rgba, type Bright } from '../content/palette';
 import type { Shape } from '../content/types';
 import { paintToken, roundRectPath, setShadow, shapePath } from './paint';
-import { BOLT_TEXTURE, CHIP_TEXTURE, enemyTexture, paintTexture, TOWER_BASE, TOWER_BODY, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
+import { BOLT_TEXTURE, CHIP_TEXTURE, enemyTexture, paintTexture, PLATE_TEXTURE, TOWER_BASE, TOWER_BODY, tokenDepth, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
 
 /** Enemies, tower plinths and bodies, bolts and chips: everything that stands or flies on the board. */
 export function paintEntityTextures(scene: Phaser.Scene): void {
   for (const e of ENEMIES) {
     const r = e.look.size * CELL;
-    const depth = Math.max(2, r * 0.18);
+    const depth = tokenDepth(r);
     const size = tokenRoom(r, depth) * 2;
     paintTexture(scene, enemyTexture(e.id), size, size, (ctx) => {
       paintToken(ctx, e.look.shape, size / 2, size / 2 - depth / 2, r, PALETTE[e.look.color], deepOf(e.look.color), { depth });
@@ -61,6 +61,19 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
     roundRectPath(ctx, 2, 2, 10, 10, 3);
     ctx.fillStyle = '#ffffff';
     ctx.fill();
+  });
+  // The Bulwark's plate: a flat arc across the front third of its face, in the side-face red. Flat
+  // (no shading), so it may rotate: Enemy turns it to face the travel every frame.
+  const bR = getEnemy('bulwark').look.size * CELL;
+  const bDepth = tokenDepth(bR);
+  const plateSize = tokenRoom(bR, bDepth) * 2;
+  paintTexture(scene, PLATE_TEXTURE, plateSize, plateSize, (ctx) => {
+    ctx.strokeStyle = rgba(deepOf('red'), 1);
+    ctx.lineWidth = bR * 0.34;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.arc(plateSize / 2, plateSize / 2 - bDepth / 2, bR * 0.72, -Math.PI / 2 - Math.PI / 3, -Math.PI / 2 + Math.PI / 3);
+    ctx.stroke();
   });
 }
 

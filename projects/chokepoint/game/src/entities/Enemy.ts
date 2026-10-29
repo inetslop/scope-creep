@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { CELL, DEPTH } from '../config';
 import type { EnemyDef } from '../content/types';
 import type { PathLine } from '../core/path';
-import { ART_SCALE, enemyTexture } from '../art/textures';
+import { ART_SCALE, PLATE_TEXTURE, enemyTexture } from '../art/textures';
 import { ignite } from '../core/burn';
 import { applyRoot, tickRoot } from '../core/root';
 import type { LiveBurn } from '../core/burn';
@@ -60,6 +60,9 @@ export class Enemy extends Phaser.GameObjects.Image {
   dashLeft = 0; // seconds left of the current leg
   pauseAge = 0; // seconds into 'pause' (its telegraph is the first half)
 
+  /** The flat plate arc across its front (the Bulwark): a sibling on top, turned to face the travel. */
+  private plate?: Phaser.GameObjects.Image;
+
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0, '__DEFAULT');
     this.setDepth(DEPTH.enemies);
@@ -97,6 +100,12 @@ export class Enemy extends Phaser.GameObjects.Image {
     const p = path.pointAt(distance);
     this.setPosition(p.x, p.y);
     this.setActive(true).setVisible(true);
+    // Its plate (the Bulwark) rides on top: flat, so it may turn with the travel.
+    if (this.def.plate !== undefined && this.plate === undefined) {
+      this.plate = this.scene.add.image(0, 0, PLATE_TEXTURE);
+      this.plate.setDepth(DEPTH.enemies);
+    }
+    this.plate?.setVisible(false); // hidden until advance() places it (no flash at the origin)
   }
 
   /** Walks for `dt` seconds. Returns true when it reached the end of the path (a leak). */
@@ -167,6 +176,9 @@ export class Enemy extends Phaser.GameObjects.Image {
       this.dirY = (a.y - p.y) / dl;
     }
     this.setPosition(p.x, p.y - Math.abs(Math.sin(this.distance / 9)) * 2);
+    if (this.plate !== undefined && this.def.plate !== undefined) {
+      this.plate.setPosition(this.x, this.y).setScale(ART_SCALE * pop).setRotation(Math.atan2(this.dirX, -this.dirY)).setVisible(true);
+    }
     const tele = cycle !== undefined && this.dashLeg === 'pause' && this.pauseAge < cycle.pauseSec / 2;
     if (this.flash > 0) this.flash -= dt;
     const white = tele || this.flash > 0;
@@ -225,6 +237,7 @@ export class Enemy extends Phaser.GameObjects.Image {
 
   despawn(): void {
     this.clearTint();
+    this.plate?.setVisible(false);
     this.setActive(false).setVisible(false);
   }
 }
