@@ -4,11 +4,12 @@ title: "The start screen: one column that fits, the profile card without repeats
 assignee: cachyos-x8664
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 3
 created: 2026-10-29T17:00:35Z
 claimed_at: 2026-10-29T21:29:20Z
+finished_at: 2026-10-29T23:09:35Z
 ---
 
 ## Goal
@@ -178,4 +179,18 @@ The agent made no changes to the game (success).
 
 ```
 Prompt is too long
+```
+
+## Result (attempt 3, cachyos-x8664)
+
+Rebuilt the start screen as one even column — the profile card is now a centered column whose height comes from its lines (coin beside its number, Best wave starred when it is also the last run, runs line, Recent runs as the last line, "avg" only from two runs on), and MenuScene lays out demo road → title → card → how-to → Resume → Play → Tech → caption → Augments → Ghost → caption → hint part-by-part from the part above, with titleBox/playBox wrappers so the tweens and layout scale never conflict. When the column is taller than the screen the road shrinks first, and if it still doesn't fit the whole column scales down (s) so nothing overlaps or leaves the screen at 412x915, 515x660, and 1280x720 across all profile states (fresh, one run, 4+ runs with Resume, best run with Ghost). Kept the title drop-in, fade-up, Play's breathing, the Tech yellow dot, drifting shapes, Enter/Space to play, ?smoke auto-start, and addUpdateNotice. npm run check and npm run smoke both pass.
+
+- Self-review: NO VERDICT
+- Time: 100.3 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/scenes/MenuScene.ts   | 117 +++++++++++++++------
+ .../chokepoint/game/src/scenes/menu/ProfileCard.ts |  94 +++++++++++++----
+ 2 files changed, 157 insertions(+), 54 deletions(-)
 ```

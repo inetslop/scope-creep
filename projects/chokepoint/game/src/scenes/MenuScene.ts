@@ -14,8 +14,12 @@ import { uiCamera, viewSize } from '../ui/display';
 import { textStyle, titleStyle } from '../ui/text';
 import { onKey, onResize, SCENES } from './keys';
 import { MenuDemo } from './menu/MenuDemo';
-import { buildProfileCard, PROFILE_CARD_H, PROFILE_CARD_W } from './menu/ProfileCard';
-import { buildRecentLine } from './menu/RecentLine';
+import { buildProfileCard, PROFILE_CARD_W } from './menu/ProfileCard';
+
+const MARGIN = 16;
+const GAP = 28;
+const CAPTION_GAP = 8;
+const BUTTON_H = 60;
 
 /** A faint augment shape drifting across the background. */
 interface Drifter {
@@ -31,6 +35,7 @@ interface Drifter {
 export class MenuScene extends Phaser.Scene {
   private demo!: MenuDemo;
   private title!: Phaser.GameObjects.Text;
+  private titleBox!: Phaser.GameObjects.Container;
   private titleY = 0;
   private drifters: Drifter[] = [];
   private clock = 0;
@@ -61,12 +66,14 @@ export class MenuScene extends Phaser.Scene {
     const p = loadProfile(window.localStorage);
     this.demo = new MenuDemo(this, p.bestWave);
     this.title = this.add.text(0, 0, 'Chokepoint', titleStyle(60)).setOrigin(0.5);
+    // A wrapper so the layout scale and the drop-in tween never fight over the same object.
+    this.titleBox = this.add.container(0, 0, [this.title]);
     const how = this.add
       .text(0, 0, 'Build towers beside the road.\nCombine augments into new kinds of tower.\nHold as many waves as you can.', textStyle(18, PALETTE.muted, { align: 'center', lineSpacing: 6 }))
       .setOrigin(0.5);
-    const profileCard = buildProfileCard(this, p);
-    const recent = buildRecentLine(this, p);
+    const card = buildProfileCard(this, p);
     const button = makeButton(this, 0, 0, 'Play', play, { width: 200, height: 60, fontSize: 24, radius: 30, fill: PALETTE.ink });
+    const playBox = this.add.container(0, 0, [button.container]);
     const savedRun = loadSavedRun(window.localStorage);
     let resume: Button | undefined;
     if (savedRun) {
@@ -109,9 +116,9 @@ export class MenuScene extends Phaser.Scene {
     // Entrances: the title drops in with a bounce, the rest fades up after it; Play breathes.
     this.title.setAlpha(0).setScale(0.6);
     this.tweens.add({ targets: this.title, alpha: 1, scale: 1, duration: 650, ease: 'Back.easeOut' });
-    const fadeIn: (Phaser.GameObjects.Container | Phaser.GameObjects.Text)[] = [profileCard, how];
+    const fadeIn: (Phaser.GameObjects.Container | Phaser.GameObjects.Text)[] = [card.container, how];
     if (resume) fadeIn.push(resume.container);
-    fadeIn.push(button.container);
+    fadeIn.push(playBox);
     fadeIn.push(tech.container);
     fadeIn.push(techLine);
     fadeIn.push(augments.container);
@@ -124,41 +131,83 @@ export class MenuScene extends Phaser.Scene {
       obj.setAlpha(0);
       this.tweens.add({ targets: obj, alpha: 1, duration: 400, delay: 350 + i * 120 });
     }
-    if (recent) {
-      recent.container.setAlpha(0);
-      this.tweens.add({ targets: recent.container, alpha: 1, duration: 400, delay: 460 });
-    }
     this.tweens.add({ targets: button.container, scale: 1.05, duration: 900, yoyo: true, repeat: -1, ease: 'Sine.easeInOut', delay: 900 });
 
+    const title = this.title;
     const layout = (width: number, height: number): void => {
       const cx = width / 2;
-      const extra = resume ? 78 : 0; // the Resume button above Play
-      const room = extra + 91 + 44 + (ghost ? 76 : 0); // the Tech and Augments lines below Play, plus the Ghost button's line
-      const k = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width, Math.max(0.35, (height - 460 - room) / MENU_ROAD_SIZE.height));
-      const block = MENU_ROAD_SIZE.height * k + 460 + room;
-      const top = Math.max(16, (height - block) / 2);
-      this.demo.layout(cx, top, k);
-      const y = top + MENU_ROAD_SIZE.height * k + 40;
+      const avail = height - MARGIN * 2;
+      const cardScale = Math.min(1, (width - 32) / PROFILE_CARD_W);
       const textScale = Math.min(1, (width - 32) / 420);
-      this.titleY = y;
-      this.title.setPosition(cx, y);
-      profileCard.setPosition(cx, y + 104).setScale(Math.min(1, (width - 32) / PROFILE_CARD_W));
-      how.setPosition(cx, y + 213).setScale(textScale);
-      if (recent) {
-        const s = Math.min(1, (width - 32) / recent.width);
-        recent.container.setScale(s);
-        recent.container.setPosition(cx - (recent.width * s) / 2, y + 104 + (PROFILE_CARD_H / 2) * Math.min(1, (width - 32) / PROFILE_CARD_W) + 7);
+      const cardH = card.height * cardScale;
+      const howH = how.height * textScale;
+      // The column below the road, at full size: each part's height plus the gap that follows it.
+      // The gap between the road and the column counts for the fit, too.
+      let below = GAP + title.height + GAP + cardH + GAP + howH + GAP;
+      if (resume) below += BUTTON_H + GAP;
+      below += BUTTON_H + GAP + BUTTON_H + CAPTION_GAP + techLine.height + BUTTON_H;
+      if (ghost && ghostLine) below += GAP + BUTTON_H + CAPTION_GAP + ghostLine.height + GAP;
+      below += hint.height;
+      const kMax = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width);
+      const kMin = 0.35;
+      const room = avail - below;
+      let k: number;
+      let s = 1;
+      if (room >= MENU_ROAD_SIZE.height * kMax) k = kMax;
+      else if (room >= MENU_ROAD_SIZE.height * kMin) k = room / MENU_ROAD_SIZE.height;
+      else {
+        // The road is at its smallest and the column still does not fit: scale the whole column.
+        k = kMin;
+        s = Math.min(1, avail / (below + MENU_ROAD_SIZE.height * kMin));
       }
-      if (resume) resume.container.setPosition(cx, y + 294);
-      button.container.setPosition(cx, y + 290 + extra);
-      tech.container.setPosition(cx, y + 366 + extra);
-      techLine.setPosition(cx, y + 410 + extra);
-      augments.container.setPosition(cx, y + 442 + extra);
+      const block = below + MENU_ROAD_SIZE.height * k;
+      const top = MARGIN + Math.max(0, (avail - block) / 2);
+      this.demo.layout(cx, top, k * s);
+      let y = top + MENU_ROAD_SIZE.height * k * s + GAP * s;
+      const put = (h: number): number => {
+        const c = y + (h * s) / 2;
+        y += h * s;
+        return c;
+      };
+      const gap = (g: number): void => {
+        y += g * s;
+      };
+      this.titleBox.setScale(s);
+      this.titleY = put(title.height);
+      this.titleBox.setPosition(cx, this.titleY);
+      gap(GAP);
+      card.container.setScale(cardScale * s);
+      card.container.setPosition(cx, put(cardH));
+      gap(GAP);
+      how.setScale(textScale * s);
+      how.setPosition(cx, put(howH));
+      gap(GAP);
+      if (resume) {
+        resume.container.setScale(s);
+        resume.container.setPosition(cx, put(BUTTON_H));
+        gap(GAP);
+      }
+      playBox.setScale(s);
+      playBox.setPosition(cx, put(BUTTON_H));
+      gap(GAP);
+      tech.container.setScale(s);
+      tech.container.setPosition(cx, put(BUTTON_H));
+      gap(CAPTION_GAP);
+      techLine.setScale(s);
+      techLine.setPosition(cx, put(techLine.height));
+      augments.container.setScale(s);
+      augments.container.setPosition(cx, put(BUTTON_H));
       if (ghost && ghostLine) {
-        ghost.container.setPosition(cx, y + 518 + extra);
-        ghostLine.setPosition(cx, y + 562 + extra);
+        gap(GAP);
+        ghost.container.setScale(s);
+        ghost.container.setPosition(cx, put(BUTTON_H));
+        gap(CAPTION_GAP);
+        ghostLine.setScale(s);
+        ghostLine.setPosition(cx, put(ghostLine.height));
       }
-      hint.setPosition(cx, y + (ghost ? 586 : 486) + extra);
+      gap(GAP);
+      hint.setScale(s);
+      hint.setPosition(cx, put(hint.height));
     };
     layout(viewSize(this).width, viewSize(this).height);
     onResize(this, layout);
@@ -174,7 +223,7 @@ export class MenuScene extends Phaser.Scene {
     this.clock += dt;
     this.demo.update(dt);
     // The title bobs gently once it has landed.
-    if (this.title.scale >= 0.999) this.title.setY(this.titleY + Math.sin(this.clock * 1.6) * 3);
+    if (this.title.scale >= 0.999) this.titleBox.setY(this.titleY + Math.sin(this.clock * 1.6) * 3);
     const { width, height } = viewSize(this);
     for (const d of this.drifters) {
       d.img.x += d.vx * dt;
