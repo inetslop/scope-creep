@@ -1,12 +1,14 @@
 ---
 id: T0166
-title: "Remove the enemy count at the exit"
+title: Remove the enemy count at the exit
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T12:15:39Z
+claimed_at: 2026-10-29T12:38:07Z
+designer: desktop
 ---
 
 ## Goal
