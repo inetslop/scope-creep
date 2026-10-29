@@ -1,12 +1,14 @@
 ---
 id: T0130
 title: "Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam"
+assignee: desktop
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T10:40:00Z
+claimed_at: 2026-10-29T19:25:48Z
 epic: E4
 design_attempts: 1
 ---
