@@ -100,13 +100,15 @@ Status: the run-start branch (with the fifth node, T0215), the draft branch (T01
 - T0138 (S) — the slow shows on the enemy (telegraph slice) — **done** (2026-10-29, narcissus)
 - T0139 (S) — the root shows on the enemy (telegraph slice) — **done** (2026-10-29, yoga)
 - T0221 (L, priority 2) — the Augments codex: a menu screen that shows every augment in the pool (icon, name, a purple “Epic” word for the Epic-only ones, the first and added rows) — **done** (2026-10-29, desktop; the menu row it added overflows 1280x720 with Resume + Ghost — T0222's column must take it in)
-- T0228 (S, priority 2) — the end card's towers wear their tier: T0010's pip on each by-tower chip — in the pool
+- T0228 (S, priority 2) — the end card's towers wear their tier: T0010's pip on each by-tower chip — **done** (2026-10-29, asus)
+- T0234 (M, priority 2) — Toll: the Epic that pays gold when a leak gets through (the first augment whose income comes from losing) — in the pool
+- T0235 (L, priority 2) — Feast: the Epic that feeds on the kill chain (its added form lengthens the chain's window) — in the pool
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0152 (one at a time, in claim order, under the 16-cap); the beam work is T0130 and T0132 (done) with T0210 (the T0131 re-file) in the pool; the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is in the pool.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095, T0152, T0234 and T0235 (one at a time, in claim order, under the 16-cap); the beam work is T0130 and T0132 (done) with T0210 (the T0131 re-file) in flight; the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is done.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0152, T0210 (+ its parked needle follow-up) and T0228 land** (T0130, T0132, T0133 done; T0131 failed → T0210; T0150 waits on T0025; T0089 is dropped).
+**E4 closes when T0025, T0062, T0064, T0095, T0152, T0210 (+ its parked needle follow-up), T0234 and T0235 land** (T0130, T0132, T0133, T0228 done; T0131 failed → T0210; T0150 waits on T0025; T0089 is dropped).
 
-**16-cap (protocol):** the pipeline holds 19 augments (14 in + T0025, T0062, T0064, T0095, T0152); the cap is 16. Every queued registration, after registering, removes one more if the pool is over 16 — the first still in the index of **Frost, then Rally, then Mint** — and says which in its result (the canonical statement is in T0064's task).
+**16-cap (protocol):** the pipeline holds 21 augments (14 in + T0025, T0062, T0064, T0095, T0152, T0234, T0235); the cap is 16. Every queued registration, after registering, removes one more if the pool is over 16 — the first still in the index of **Frost, then Rally, then Mint** — and says which in its result (the canonical statement is in T0064's task).
 
 ### E5 — Bosses: every 10th wave is something you remember (not started; starts when E4 closes)
 **Goal:** the run has a peak: the deep waves bring one big shape with its own mechanic, not just more of the same.
@@ -146,3 +148,4 @@ Ideas that may become epics or tasks of one.
 - Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**
 - The board shows its corners: a notch on the bend cells — **built as T0140 (S, non-epic, 2026-10-29, narcissus)**
 - Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **tasked as T0217 (L, non-epic, in the pool)**
+- The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **tasked as T0233 (S, non-epic, in the pool)**
