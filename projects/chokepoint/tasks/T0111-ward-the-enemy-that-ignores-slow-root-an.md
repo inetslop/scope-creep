@@ -3,12 +3,10 @@ id: T0111
 title: "Ward: the enemy that ignores slow, root and push"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-29T08:18:07Z
-claimed_at: 2026-10-29T08:38:16Z
-designer: baby-mama
 ---
 
 ## Goal
@@ -31,3 +29,43 @@ The enemy queue's next entry (the Bulwark, T0102, is up to land first): a plain 
 - [ ] The token is a red circle at Block's size with one thin dark ring around its edge (the armor), the darker side face and soft shadow; the ring is still (not pulsing).
 - [ ] A Ward leak costs 1 life like any enemy's; its kill pays the normal gold with the normal pop, and the kills line counts it.
 - [ ] The first spawn shows the "Ward" name chip (T0085); the wave preview shows its token and count.
+
+## Design (architect, baby-mama)
+
+### Files
+- `src/content/enemies/ward.ts` (new): `ward: EnemyDef` — `id: 'ward'`, name 'Ward', behavior 'walk', `hp: 180` (1.5× Block's 120), `speed: 0.9`, `gold: 10`, `livesCost: 1`, `threat: 1` (placeholder, like Hauler/Mute), `fromWave: 15`, `ignoresControl: true`, look `{ shape: 'circle', color: 'red', size: 0.26 }` (Block's size; the ring is the new silhouette).
+- `src/content/types.ts`: one optional field on `EnemyDef`, next to `dashCycle`.
+- `src/content/enemies/index.ts`: import line + list entry after `mute`.
+- `src/entities/Enemy.ts`: immunity guards in `slow()`, `root()`, `pushBack()`.
+- `src/core/waves.ts`: walkers filter + reservation + quiet-keep, Mute-style.
+- `src/art/entities.ts`: ring special case in `paintEntityTextures`, modeled on the hauler block.
+- `src/debug/runChecks.ts`: one invariant line.
+- `tests/core/waves.test.ts`: reservation test.
+
+### Interfaces
+- `EnemyDef.ignoresControl?: boolean` — "ignores all control: Frost slow, Anchor root, Push gusts and per-hit pushes, first and added forms"; read only by `Enemy.ts`.
+- `planWave(wave, rng, ENEMIES)`: exactly one `'ward'` in `finalSpawns` iff `wave >= 15 && wave % 5 === 0 && wave !== 20` (wave 20 is the E5 boss slot); Ward excluded from the walkers budget pick; a quiet wave always keeps its Ward (Mute pattern).
+- `Enemy.slow(pct, sec)`, `root(sec)`, `pushBack(units)`: return early when `this.def.ignoresControl` — the only entry points for control (all effects flow through `EnemySystem.ts:146-148`), so no `advance()` changes: the fields stay 0 and it walks at base speed, taking full damage from every source.
+
+### Steps
+1. `ward.ts`: copy `block.ts`'s shape, the values above, a plain one-line `description` (e.g. "Unstoppable: slow, roots and gusts do not touch it; every hit still lands.").
+2. `types.ts`: `/** Ignores all control: Frost slow, Anchor root, Push gusts and pushes, both forms. */ ignoresControl?: boolean;`.
+3. `index.ts`: `import { ward } from './ward';` (after `./sprinter`) and `ward,` after `mute,` in `ENEMIES`.
+4. `Enemy.ts`: `slow()`: first line `if (this.def.ignoresControl) return;`; `root()`: same guard before `applyRoot`; `pushBack()`: extend the existing guard to `if (!this.active || this.def.ignoresControl || units <= 0) return;`.
+5. `waves.ts`: (a) walkers filter (line 98) add `&& e.id !== 'ward'`; (b) after the Mute line (134): `// The Ward: one on 15, 25, 30, ... — wave 20 is the boss's slot (E5).` then `if (wave >= 15 && wave % 5 === 0 && wave !== 20) reserved.push('ward');`; (c) after the Mute keep line (153), the same pattern: `if (wave >= 15 && wave % 5 === 0 && wave !== 20 && !finalSpawns.some((s) => s.enemy === 'ward')) finalSpawns = [{ enemy: 'ward', delaySec: 0 }, ...finalSpawns];`.
+6. `art/entities.ts`: in the enemy `paintTexture` callback, after the hauler block: `if (e.id === 'ward')` — still thin ring, `ctx.strokeStyle = rgba(deepOf(e.look.color), 1)`, `ctx.lineWidth = Math.max(1, r * 0.16)`, `ctx.arc(cx, cy, r * 0.88, 0, Math.PI * 2)` at the face center (`size / 2`, `size / 2 - depth / 2`), stroke. No tween, no rotation (painted into the texture; `deepOf`/`rgba` already imported).
+7. `runChecks.ts`: `['ward.control', (g) => g.enemies.all.some((e) => e.active && e.def.id === 'ward' && (e.slowPct > 0 || e.rootLeft > 0 || e.pushLeft > 0)) ? 'a Ward is slowed, rooted or pushed' : null],` next to `mute.jam`.
+8. `waves.test.ts`: `it('sends exactly one Ward on 15, 25, 30, ... — wave 20 is the boss slot, a quiet wave keeps it')`: loop wave 1..40, `expected = wave >= 15 && wave % 5 === 0 && wave !== 20 ? 1 : 0`, expect the `'ward'` count in `planWave(wave, new Rng(wave), ENEMIES)` to be `expected` (covers waves 1–14 unchanged and the wave-40 quiet keep).
+
+### Pitfalls
+- `threat: 1` alone does NOT keep it out of the budget: the walkers filter must carry `e.id !== 'ward'` or the cheapest enemy wins the picks from wave 15 (same as Hauler/Mute).
+- Push the Ward AFTER the splitter count (it sits after the Mute line): before it, the Ward would count toward the one-per-seven splitter ratio.
+- Wave 20 is quiet AND a Ward slot; both the push and the keep line must guard `wave !== 20`, so the slot stays empty for E5.
+- Wave 40 is quiet and on schedule: without the Mute-style keep line the quiet halving drops the Ward and the 15/20/25/30/… schedule silently breaks from wave 40.
+- No edits needed for the name chip, wave preview, menu icon or sounds: `nameTag.ts` keys off `def.name`, and `NextWavePreview`/`MenuDemo` draw `enemyTexture(id)` — Ward's ringed texture is picked up automatically (the Hauler's way).
+- The ring is still (never tweened or rotated): the shading in the texture must stay at the bottom.
+
+### Tests
+- `tests/content.test.ts` validates the new def (unique id, fromWave, threat > 0) automatically.
+- New `waves.test.ts` case per step 8; existing Hauler/Mute tests stay green (Ward never drawn from the budget, waves 1–14 plans unchanged).
+- `npm run check` (typecheck + lint + unit) and `npm run smoke` (desktop + phone) must pass; at smoke, watch wave 15 first spawn for the "Ward" name chip and the ringed token in preview and on the road.
