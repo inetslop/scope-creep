@@ -1,12 +1,14 @@
 ---
 id: T0228
 title: "The end card's towers wear their tier: a pip on the by-tower chips"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T18:07:31Z
+claimed_at: 2026-10-29T21:26:11Z
 epic: E4
 ---
 
