@@ -1,12 +1,14 @@
 ---
 id: T0073
 title: "Beam: the line that never stops (the T0029 re-task)"
+assignee: asus
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T21:24:45Z
+claimed_at: 2026-10-29T03:39:56Z
 epic: E4
 ---
 
