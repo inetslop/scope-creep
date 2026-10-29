@@ -3,10 +3,12 @@ id: T0109
 title: The leak jolt sizes with the leaker
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T07:51:27Z
+designer: desktop
 ---
 
 ## Goal
