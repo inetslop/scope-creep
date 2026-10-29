@@ -4,11 +4,12 @@ title: "Pause menu: the Sound toggle gets a real speaker icon"
 assignee: cachyos-x8664
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T09:46:49Z
 claimed_at: 2026-10-29T10:28:15Z
+finished_at: 2026-10-29T10:40:44Z
 ---
 
 ## Goal
@@ -79,3 +80,15 @@ const paintGlyph = (isOn: boolean): void => {
 
 ### Tests
 none
+
+## Result (attempt 1, cachyos-x8664)
+
+Replaced the play-button-shaped glyph in the pause menu's Sound row with a real speaker: a 6×8 rounded box, a right-opening cone, and (on) two thin filled-ring sound-wave arcs via `fillRing` from `ui/ring`, all in ink; (off) it's muted with a small 2-px "x" of two bars. The glyph keeps its `(-88, 0)` position in `soundRow.content`, so it still lifts with the button and keeps a ≥18 px gap to the "Sound" word; `glyph.clear()` first keeps the on/off swap clean. One deviation from the design snippet: Phaser 3.90's `Graphics` has no `line()`/`lineCap()` (verified in the installed type defs and dist), so the off-state "x" uses `lineStyle` + `moveTo`/`lineTo`/`strokePath` at the same coordinates — a 2-px stroke, visually identical at this size. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 12.5 min
+
+```
+projects/chokepoint/game/src/scenes/PauseScene.ts | 32 ++++++++++++++++++++---
+ 1 file changed, 29 insertions(+), 3 deletions(-)
+```

@@ -6,6 +6,7 @@ import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
 import { makeCard } from '../ui/card';
+import { fillRing } from '../ui/ring';
 import { textStyle, titleStyle } from '../ui/text';
 import { uiCamera, viewSize } from '../ui/display';
 import { getGameScene, getSfx, onKey, onResize, SCENES } from './keys';
@@ -66,9 +67,34 @@ export class PauseScene extends Phaser.Scene {
     const glyph = this.add.graphics();
     const paintGlyph = (isOn: boolean): void => {
       glyph.clear();
-      glyph.fillStyle(isOn ? PALETTE.ink : PALETTE.muted, 1);
-      glyph.fillRoundedRect(-12, -10, 14, 20, 5);
-      glyph.fillTriangle(2, -8, 2, 8, 12, 0);
+      const c = isOn ? PALETTE.ink : PALETTE.muted;
+      glyph.fillStyle(c, 1);
+      // box: 6 wide, 8 tall, on the left, vertically centered
+      glyph.fillRoundedRect(-12, -4, 6, 8, 2);
+      // cone: trapezoid joined to the box's right, 8 tall at the box flaring to 18, opening right
+      glyph.beginPath();
+      glyph.moveTo(-6, -4);
+      glyph.lineTo(-6, 4);
+      glyph.lineTo(1, 9);
+      glyph.lineTo(1, -9);
+      glyph.closePath();
+      glyph.fillPath();
+      if (isOn) {
+        // two sound-wave arcs to the right of the cone, centered on its middle (-2.5, 0)
+        fillRing(glyph, -2.5, 0, 5, 2, Math.PI / 4, 3 * Math.PI / 4, c);
+        fillRing(glyph, -2.5, 0, 9, 2, Math.PI / 4, 3 * Math.PI / 4, c);
+      } else {
+        // off: a small x of two 2px bars (8 long) to the right of the cone
+        glyph.lineStyle(2, c, 1);
+        glyph.beginPath();
+        glyph.moveTo(2.2, -2.8);
+        glyph.lineTo(7.8, 2.8);
+        glyph.strokePath();
+        glyph.beginPath();
+        glyph.moveTo(2.2, 2.8);
+        glyph.lineTo(7.8, -2.8);
+        glyph.strokePath();
+      }
     };
     const wordText = this.add.text(-62, 0, 'Sound', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
     const stateText = this.add.text(92, 0, '', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(1, 0.5);
