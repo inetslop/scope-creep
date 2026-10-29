@@ -1,12 +1,14 @@
 ---
 id: T0140
 title: "The board shows its corners: a notch on the bend cells"
+assignee: narcissus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T11:23:58Z
+claimed_at: 2026-10-29T12:32:17Z
 ---
 
 ## Goal
