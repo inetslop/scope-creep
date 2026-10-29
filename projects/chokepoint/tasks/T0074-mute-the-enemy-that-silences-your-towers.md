@@ -1,12 +1,14 @@
 ---
 id: T0074
 title: "Mute: the enemy that silences your towers"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T21:24:45Z
+claimed_at: 2026-10-29T01:38:04Z
 design_attempts: 1
 ---
 
