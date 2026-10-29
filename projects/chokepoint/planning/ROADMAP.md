@@ -103,10 +103,12 @@ Status: the run-start branch (with the fifth node, T0215), the draft branch (T01
 - T0228 (S, priority 2) — the end card's towers wear their tier: T0010's pip on each by-tower chip — **done** (2026-10-29, asus)
 - T0234 (M, priority 2) — Toll: the Epic that pays gold when a leak gets through (the first augment whose income comes from losing) — in the pool
 - T0235 (L, priority 2) — Feast: the Epic that feeds on the kill chain (its added form lengthens the chain's window) — in the pool
+- T0236 (S, priority 2) — the what-if says "nothing": a held card whose added form does nothing to a tower shows the ghost's marker dimmed (the tower's own spec is the judge) — in the pool
+- T0238 (L, priority 2) — the draft shows where the card lands: each offered card wears a row of the what-if markers, one per tower with a free slot, dimmed where the card does nothing — in the pool
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095, T0152, T0234 and T0235 (one at a time, in claim order, under the 16-cap); the beam work is T0130 and T0132 (done) with T0210 (the T0131 re-file) in flight; the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is done.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095, T0152, T0234 and T0235 (one at a time, in claim order, under the 16-cap); the beam work is T0130 and T0132 (done) with T0210 (the T0131 re-file) in flight; the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is done; the what-if dim (T0236) and the draft fit row (T0238) are in the pool.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0152, T0210 (+ its parked needle follow-up), T0234 and T0235 land** (T0130, T0132, T0133, T0228 done; T0131 failed → T0210; T0150 waits on T0025; T0089 is dropped).
+**E4 closes when T0025, T0062, T0064, T0095, T0152, T0210 (+ its parked needle follow-up), T0234, T0235, T0236 and T0238 land** (T0130, T0132, T0133, T0228 done; T0131 failed → T0210; T0150 waits on T0025; T0089 is dropped).
 
 **16-cap (protocol):** the pipeline holds 21 augments (14 in + T0025, T0062, T0064, T0095, T0152, T0234, T0235); the cap is 16. Every queued registration, after registering, removes one more if the pool is over 16 — the first still in the index of **Frost, then Rally, then Mint** — and says which in its result (the canonical statement is in T0064's task).
 
@@ -127,10 +129,10 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Splitter (T0068, M) — **done** (2026-10-28, desktop-4070): breaks into two fast splinters at its spot.
 - Hauler (T0057, M) — **done** (2026-10-28, cachyos-x8664): a big slow hexagon — worth 10 gold, a leak costs a life plus 5 gold.
 - Mute (T0074, M) — **done** (2026-10-29, desktop-4070): silences every tower within 2 cells. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
-- Feeder (IDEAS) — parked (from wave 13); see the queue order below.
+- Feeder (IDEAS) — next in line (from wave 13): the cap opens when T0237's Dart removal lands; see the queue order below.
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
-Queue order: the Bulwark (T0102) and the Ward (T0111) are done, so the front is clear — but the regular-enemy cap is at 10 (the bar in modules/enemies.md), so the next enemy (the Feeder, IDEAS) needs one existing enemy removed or merged in the same or a prior task before it lands; the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
+Queue order: the Bulwark (T0102) and the Ward (T0111) are done. The regular-enemy cap is at 10 (the bar in modules/enemies.md), so the Feeder (from wave 13) needs a removal first — **tasked as T0237 (M, non-epic, in the pool)**: the Dart goes (a faster, weaker Dot — the one regular enemy the bar says is not a new enemy); once it lands the Feeder is the next enemy to task, the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
 
 ## Later
 

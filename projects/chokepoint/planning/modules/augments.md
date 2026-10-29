@@ -25,6 +25,12 @@ Next to the usual sections, it has:
 
 A missing row, or a row whose difference is only numbers, gets the task rejected by the architect.
 
+## Not in this game
+The owner removed these. Don't propose them again, or anything that works the same way.
+- Lead: shots that aim ahead of the enemy. Shots home in and never miss, so it only added a way to miss.
+- Pulse (T0089): Splash without its cap, plus Reach's added form.
+- Ricochet (T0038): shots bouncing off the board's rocks. Hard to read, and Chain already leaps between enemies.
+
 ## What exists now
 
 14 in the game, from game/src/content/augments/ (the real values).
