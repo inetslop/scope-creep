@@ -26,11 +26,13 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0209 (M, priority 2, depends_on T0103) — branch three, node two: “Momentum” (30 coins), the same gate pattern — **done** (2026-10-29, cachyos-x8664); the draft gate is T0064's line
 - T0208 (L, priority 2, depends_on T0103) — branch four “The board”: “One more bend” (30 coins) — a new run's road winds one turn further (the generator's bend target +1; the bend-adjacent worth-more cells come with it); ghost and resumed runs keep their exact board; the row is T0153's look — in the pool (it touches the run-start files T0110 edits, so it starts when T0110 lands)
 - (sketch — branch four, node two: “The long way”, a longer road (+25% path length), after T0208 so the generator's shape is settled)
-- T0211 (L, priority 2, depends_on T0153) — branch five “The claim”: “Clean ×2” (30 coins) — each clean wave pays 2 coins instead of 1; the one pure coin formula (T0001) carries it to the live tally, the pause worth line and the claim card's recipe — in the pool
+- T0211 (L, priority 2, depends_on T0153) — branch five “The claim”: “Clean ×2” (30 coins) — each clean wave pays 2 coins instead of 1; the one pure coin formula (T0001) carries it to the live tally, the pause worth line and the claim card's recipe — **done** (2026-10-29, desktop)
 - T0212 (M, priority 2, depends_on T0153, T0209) — branch three, node three: “Mend” (30 coins), T0209's pattern for T0095's Epic; the draft gate is T0095's line — in the pool
 - T0213 (S, priority 2, depends_on T0103) — the menu's Tech button wears a small yellow dot while any unowned node is in reach — in the pool
+- T0214 (M, priority 2, depends_on T0103) — the branch discount: the 2nd node of a branch costs 5 less, the 3rd and later 10 less (floor 5); the card shows the struck-through old price — in the pool
+- T0215 (M, priority 2, depends_on T0103) — the run-start's fifth node, a second “Life +1” (40 coins), and a small done mark on a fully-owned branch — in the pool
 
-Status: the foundation (T0103), the run-start branch and the pool branch (T0153, T0209) are done; the draft branch (T0110) is in progress; the board branch (T0208), the claim branch (T0211), the Mend node (T0212) and the menu dot (T0213) are in the pool.
+Status: the foundation (T0103), the run-start branch, the pool branch (T0153, T0209) and the claim branch (T0211) are done; the draft branch (T0110) is in progress; the board branch (T0208), the Mend node (T0212), the menu dot (T0213), the branch discount (T0214) and the run-start's fifth node (T0215) are in the pool, landing one at a time on the shared tech files.
 
 ### E3 — Levels: a run is a journey (not started)
 **Goal:** a run has a shape: a few boards in a row, each harder, and a build that grows across them.
@@ -124,7 +126,7 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Feeder (IDEAS) — parked (from wave 13); see the queue order below.
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
-Queue order: the Bulwark (T0102) is in progress — the next new enemy to land; the Ward (T0111) is in the pool behind it; behind them Feeder → Wall, parked in IDEAS. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
+Queue order: the Bulwark (T0102) and the Ward (T0111) are done, so the front is clear — but the regular-enemy cap is at 10 (the bar in modules/enemies.md), so the next enemy (the Feeder, IDEAS) needs one existing enemy removed or merged in the same or a prior task before it lands; the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
 
 ## Later
 
@@ -139,5 +141,5 @@ Ideas that may become epics or tasks of one.
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger
-- Run summary: damage per tower, leaks per wave
+- Run summary: damage per tower, leaks per wave — **first slice tasked as T0216 (kills by tower on the end card)**
 - The board shows its corners: a notch on the bend cells — **built as T0140 (S, non-epic, 2026-10-29, narcissus)**
