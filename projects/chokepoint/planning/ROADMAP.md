@@ -25,7 +25,7 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0153 (M, priority 2, depends_on T0103) — branch three “The pool”: one “Haste” node (25 coins), locked with a muted “not in the game yet” while the Haste augment (T0152) is out of the game, then buyable; buying it adds Haste to the draft pool (the gate is T0152's, so either task can land first) — in the pool
 - (sketch — branch four, "The board": lasting board changes bought with coins — a longer road, one more bend — a node card in branch one's (T0103) look, a board-growth parameter a new run reads; sketch only, tasks after branch three (the pool, the Haste node) so the tree grows one branch at a time)
 
-Status: the foundation (T0103) is done; the draft branch (T0110) and the pool's node (T0153) are in the pool; branch four (the board) stays a sketch until the pool is in.
+Status: the foundation (T0103) is done; the draft branch (T0110) is in progress, the pool's node (T0153) in the pool; branch four (the board) stays a sketch until the pool is in.
 
 ### E3 — Levels: a run is a journey (not started)
 **Goal:** a run has a shape: a few boards in a row, each harder, and a build that grows across them.
@@ -80,21 +80,21 @@ Status: the foundation (T0103) is done; the draft branch (T0110) and the pool's 
 - T0101 (L) — Spray (the pool's aimed spread: a mid-tempo shot that on its first hit splits into 3 + (extra Sprays) lighter needles homing to different nearest enemies; closest is Splash — new is that the spread is aimed) — **done** (2026-10-29, desktop)
 - T0104 (S) — the sprinter shows its ramp: while a Sprinter is above its base speed a small orange tick rides above it, clearing when it dies; display only, a new enemy-hook file — the second telegraph slice — **done** (2026-10-29, baby-mama)
 - T0105 (S) — the splitter's crack widens as it weakens: while a Splitter is at 50% hp or less its own crack is painted 2× as thick, above 50% byte-identical to today; the split itself is untouched (T0068) — the third telegraph slice — **done** (2026-10-29, inet-racing)
-- T0112 (S, priority 2) — the beam hum (the T0043 re-file): a very quiet 110 Hz sine under each active beam, one per beam tower, at most 3 at once, silent with sound off; T0043’s complete design stands in its archive — **in progress (asus)**
+- T0112 (S, priority 2) — the beam hum (the T0043 re-file): a very quiet 110 Hz sine under each active beam, one per beam tower, at most 3 at once, silent with sound off — **done** (2026-10-29, asus)
 - T0113 (S, priority 3) — the burn shows on the enemy: while an enemy is burning (Ember, T0028) a small orange chip rides above it, cleared the instant the burn ends; a jumped burn (T0059) shows on the enemy it jumps to — the fourth telegraph slice, the first for a damage-over-time state — **done** (2026-10-29, baby-mama)
-- T0130 (M, priority 1) — Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam — designing
+- T0130 (M, priority 1) — Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam — in the pool
 - T0131 (M, priority 2) — Beam combos II: Lance pierces, Splash scorches, Spray splits a beam kill — designing
 - T0132 (M, priority 2) — Beam combos III: the beam carries Frost, Ember, Anchor, Push and Mark — in the pool
 - T0133 (M, priority 2) — A new look for the Beam tower: a tower with a circle on top — in the pool
 - T0134 (L, priority 2) — Spray becomes a shotgun: a cone of pellets — **in progress (inet-racing)**
 - T0135 (S) — Spray gets its own look, not Beam's — **done** (2026-10-29, yoga)
 - T0152 (L, priority 2) — Haste: the Epic that hastens everything it touches (2-cell aura: enemies walk +30% faster, towers attack +30% faster, +15% to both per extra copy, no cap; Epic-only; gated — absent from the draft roll until the tech tree's pool node, T0153, is bought) — in the pool, next registration behind the pool augments
-- T0138 (S, priority 2) — the slow shows on the enemy: a chip over the slowed, cleared when the slow ends — the fifth telegraph slice; a new enemy-hook file on the markTick pattern (T0099) — in the pool
-- T0139 (S, priority 2) — the root shows on the enemy: a chip over the rooted, cleared when the root wears off — the sixth telegraph slice; a new enemy-hook file on the markTick pattern (T0099) — in the pool
+- T0138 (S, priority 2) — the slow shows on the enemy: a chip over the slowed, cleared when the slow ends — the fifth telegraph slice; a new enemy-hook file on the markTick pattern (T0099) — **done** (2026-10-29, narcissus)
+- T0139 (S, priority 2) — the root shows on the enemy: a chip over the rooted, cleared when the root wears off — the sixth telegraph slice; a new enemy-hook file on the markTick pattern (T0099) — in progress (yoga)
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0152 (they land one at a time, in claim order); the beam work is T0130–T0133, T0134 and T0112; the telegraph slices are T0138 and T0139; T0150 rides behind T0025.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0152 (they land one at a time, in claim order); the beam work is T0130–T0133 and T0134 (T0112 done); the telegraph slices: T0138 done, T0139 in progress; T0150 rides behind T0025.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0112, T0130, T0131, T0132, T0133, T0138, T0139 and T0152 land** (T0150 waits on T0025; T0089 is dropped).
+**E4 closes when T0025, T0062, T0064, T0095, T0130, T0131, T0132, T0133, T0139 and T0152 land** (T0150 waits on T0025; T0089 is dropped).
 
 **16-cap watch:** the pipeline holds 19 augments (14 in + T0025, T0062, T0064, T0095, T0152); the first to land past 16 (Momentum, T0064) must remove or merge one and say which — the PO's leaning is a Frost + Haste merge (the same enemy-speed stat, opposite signs), spec'd before T0064's claim.
 
@@ -118,7 +118,7 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Feeder (IDEAS) — parked (from wave 13); see the queue order below.
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
-Queue order: the Bulwark (T0102) is in progress on desktop-4070 — the next new enemy to land; the Ward (T0111) is in the pool behind it; behind them Feeder → Wall, parked in IDEAS. The queue lands one enemy at a time. (The finished “Remove the panic pulse” task file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
+Queue order: the Bulwark (T0102) is in progress — the next new enemy to land; the Ward (T0111) is in the pool behind it; behind them Feeder → Wall, parked in IDEAS. The queue lands one enemy at a time. (The finished “Remove the panic pulse” task file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
 
 ## Later
 
