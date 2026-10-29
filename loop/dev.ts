@@ -72,6 +72,7 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
   try {
     await ensureGameDeps();
 
+    const deleted = new Set<string>();
     let session = await runAgent(ctx.local, {
       label: `${task.id}-dev`,
       prompt: renderPrompt('dev', {
@@ -90,6 +91,7 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
       timeoutMin: limits.timeoutMin,
     });
     await enforce(ctx, notes);
+    applyDeletions(session.result, deleted, notes);
 
     const blocked = /STATUS:\s*BLOCKED:?\s*(.*)/i.exec(session.result);
     if (blocked) return await fail(ctx, task, `The agent reported it is blocked: ${blocked[1] || '(no reason given)'}`, session.result, notes);
@@ -102,6 +104,7 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
       notes.push(`Gate failed at "${gate.stage}"; fix round ${round}.`);
       session = await fixRound(ctx, task, session, gate.stage, gate.output, round);
       await enforce(ctx, notes);
+      applyDeletions(session.result, deleted, notes);
       gate = await runGate(ctx.fleet.loop.smokeSeconds);
     }
     if (!gate.ok) {
@@ -158,6 +161,44 @@ async function enforce(ctx: RunContext, notes: string[]): Promise<void> {
   if (reverted.length > 0) {
     warn(`reverted ${reverted.length} change(s) outside ${GAME_REL}: ${reverted.join(', ')}`);
     notes.push(`Reverted changes outside the game: ${reverted.join(', ')}`);
+  }
+}
+
+/** Folders of the game an agent may have the runner delete files from. */
+const DELETABLE = ['src/', 'tests/', 'docs/', 'public/'];
+
+/**
+ * The files a dev agent asks the runner to delete: one `DELETE: <path in the game folder>` line per
+ * file in its final message. Agents can't delete files themselves (rm is always denied), so a
+ * removal task used to leave an emptied stub file behind.
+ */
+export function deletionRequests(result: string): string[] {
+  return [...new Set([...result.matchAll(/^\s*DELETE:\s*`?([^`\s]+)`?\s*$/gim)].map((m) => m[1]!.replace(/^\.\//, '')))];
+}
+
+/** Why a requested deletion is refused, or null if it's fine: only a file inside the game's code folders. */
+export function deletionProblem(gameDir: string, rel: string): string | null {
+  const inside = path.relative(gameDir, path.resolve(gameDir, rel));
+  if (inside.startsWith('..') || path.isAbsolute(inside)) return 'outside the game folder';
+  if (!DELETABLE.some((d) => inside.split(path.sep).join('/').startsWith(d))) return `only files in ${DELETABLE.join(', ')} can be deleted`;
+  const abs = path.join(gameDir, inside);
+  if (!fs.existsSync(abs)) return 'no such file';
+  if (!fs.lstatSync(abs).isFile()) return 'not a file';
+  return null;
+}
+
+/** Deletes the files the agent asked for (deletionRequests), each at most once, and notes what it did. */
+function applyDeletions(result: string, deleted: Set<string>, notes: string[]): void {
+  for (const rel of deletionRequests(result)) {
+    if (deleted.has(rel)) continue;
+    const problem = deletionProblem(GAME_DIR, rel);
+    if (problem) {
+      notes.push(`Did not delete ${rel}: ${problem}.`);
+      continue;
+    }
+    fs.rmSync(path.join(GAME_DIR, rel));
+    deleted.add(rel);
+    notes.push(`Deleted ${rel}, as the agent asked.`);
   }
 }
 
@@ -403,6 +444,6 @@ async function fail(ctx: RunContext, task: Task, reason: string, output: string,
 /** Pulls the SUMMARY: section out of the agent's final message (falls back to the whole message). */
 export function extractSummary(result: string): string {
   const match = /SUMMARY:\s*([\s\S]*?)(?:\n\s*STATUS:|$)/i.exec(result);
-  const text = (match?.[1] ?? result).trim();
+  const text = (match?.[1] ?? result).replace(/^\s*DELETE:.*$/gim, '').trim();
   return text.length > 1500 ? text.slice(0, 1500) + '…' : text || '(no summary)';
 }

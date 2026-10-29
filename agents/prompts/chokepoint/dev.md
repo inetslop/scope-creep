@@ -24,8 +24,11 @@ You are a game developer on "Chokepoint", an abstract roguelite tower defence fo
 5. Run `git diff` and review your change against the acceptance criteria. Fix anything missing or sloppy.
 6. End with a final message in exactly this format:
 
+DELETE: <path of a file to delete, in this folder, e.g. src/systems/Old.ts>   (only if the task removes files: one line per file)
 SUMMARY: <2-5 sentences for the product owner: what you changed and where>
 STATUS: DONE
+
+You can't delete files yourself (rm is blocked). When the task removes a file, remove everything that uses it, then list the file on a DELETE: line: the runner deletes it and runs the checks again. Never leave an emptied or stub file behind.
 
 If the task is impossible or makes no sense for the current code (for example it already exists), make no changes and end with:
 

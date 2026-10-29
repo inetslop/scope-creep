@@ -1,6 +1,9 @@
+import path from 'node:path';
+import os from 'node:os';
+import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
-import { formatUpstreamLog, previousWorkSection, salvageText } from '../dev.ts';
+import { deletionProblem, deletionRequests, extractSummary, formatUpstreamLog, previousWorkSection, salvageText } from '../dev.ts';
 
 describe('salvaged work', () => {
   it('keeps upstream commit messages but drops trailers and blank runs', () => {
@@ -20,5 +23,28 @@ describe('salvaged work', () => {
     const section = previousWorkSection('# header\n\ndiff --git a/x b/x\n+```ts\n');
     assert.match(section, /^# Earlier work to re-apply\n/);
     assert.match(section, /\n````diff\n# header\n\ndiff --git a\/x b\/x\n\+```ts\n````$/);
+  });
+});
+
+describe('runner-side deletion', () => {
+  it('reads one DELETE line per file from the final message, once each, and keeps them out of the summary', () => {
+    const result = 'Removed the chip.\nDELETE: src/systems/ExitCount.ts\nDELETE: `./src/ui/Old.ts`\nDELETE: src/systems/ExitCount.ts\nSUMMARY: Removed the exit count.\nSTATUS: DONE';
+    assert.deepEqual(deletionRequests(result), ['src/systems/ExitCount.ts', 'src/ui/Old.ts']);
+    assert.equal(extractSummary(result), 'Removed the exit count.');
+    assert.deepEqual(deletionRequests('SUMMARY: nothing removed\nSTATUS: DONE'), []);
+  });
+
+  it('only deletes files inside the game code folders', () => {
+    const game = fs.mkdtempSync(path.join(os.tmpdir(), 'game-'));
+    fs.mkdirSync(path.join(game, 'src', 'systems'), { recursive: true });
+    fs.writeFileSync(path.join(game, 'src', 'systems', 'Old.ts'), 'x');
+    fs.writeFileSync(path.join(game, 'package.json'), '{}');
+    assert.equal(deletionProblem(game, 'src/systems/Old.ts'), null);
+    assert.equal(deletionProblem(game, 'src/systems/Missing.ts'), 'no such file');
+    assert.equal(deletionProblem(game, 'src/systems'), 'not a file');
+    assert.match(deletionProblem(game, 'package.json') ?? '', /only files in src\//);
+    assert.equal(deletionProblem(game, '../outside.ts'), 'outside the game folder');
+    assert.equal(deletionProblem(game, 'src/../../outside.ts'), 'outside the game folder');
+    fs.rmSync(game, { recursive: true, force: true });
   });
 });
