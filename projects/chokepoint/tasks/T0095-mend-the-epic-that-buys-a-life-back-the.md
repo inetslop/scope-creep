@@ -3,11 +3,13 @@ id: T0095
 title: "Mend: the Epic that buys a life back (the T0093 re-file)"
 size: L
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T02:00:38Z
+claimed_at: 2026-10-29T02:00:42Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
