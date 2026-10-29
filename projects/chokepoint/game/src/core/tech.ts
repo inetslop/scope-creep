@@ -81,6 +81,17 @@ export function buyPoolNode(store: KeyValueStore | undefined, id: string): boole
 }
 
 /**
+ * The menu's Tech button wears a dot while the coins reach at least one unowned node. The
+ * branch node lists are the ones the tech screen's rows read (TechScene's `rows`).
+ */
+export function nodeInReach(purchased: readonly string[], coins: number): boolean {
+  for (const node of [...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES]) {
+    if (!purchased.includes(node.id) && node.price <= coins) return true;
+  }
+  return false;
+}
+
+/**
  * Buys a claim node from the saved profile's coins. Refuses an unknown or already owned id and a
  * price the coins don't cover (they never go below zero); a claim node has no prerequisites and
  * no gate — its effect is in the run the moment it is bought.

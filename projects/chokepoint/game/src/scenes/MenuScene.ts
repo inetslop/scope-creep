@@ -3,6 +3,7 @@ import { AUGMENTS } from '../content/augments';
 import { cssColor, PALETTE } from '../content/palette';
 import { loadProfile } from '../core/profile';
 import { clearSavedRun, loadSavedRun } from '../core/saveRun';
+import { nodeInReach } from '../core/tech';
 import { MENU_ROAD_SIZE } from '../art/menu';
 import { artScale, augmentTexture } from '../art/textures';
 import { flags } from '../debug/flags';
@@ -96,6 +97,8 @@ export class MenuScene extends Phaser.Scene {
       this.scene.launch(SCENES.tech);
       this.scene.pause();
     }, { width: 220, height: 60, fontSize: 24, radius: 30 });
+    const dot = this.add.circle(98, -18, 3, PALETTE.yellow).setVisible(nodeInReach(p.purchased, p.coins)); // top-right corner, while a node is in reach
+    tech.container.add(dot);
     const techLine = this.add.text(0, 0, 'spend your coins', textStyle(14, PALETTE.muted)).setOrigin(0.5);
     const hint = this.add.text(0, 0, 'Enter or Space', textStyle(14, PALETTE.faint)).setOrigin(0.5);
 

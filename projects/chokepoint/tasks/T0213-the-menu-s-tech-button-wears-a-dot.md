@@ -4,11 +4,12 @@ title: "The menu's Tech button wears a dot"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0103]
 attempts: 1
 created: 2026-10-29T15:15:13Z
 claimed_at: 2026-10-29T15:28:09Z
+finished_at: 2026-10-29T16:04:11Z
 epic: E2
 ---
 
@@ -81,3 +82,17 @@ it('the Tech button's dot: in reach while some unowned node's price is within th
 
 ### Tests
 - `tests/core/tech.test.ts`: the four `nodeInReach` cases above (0 coins → false; 5 coins nothing owned → true; 4 coins → false; all ids owned at any balance → false).
+
+## Result (attempt 1, yoga)
+
+The menu's Tech button now wears a small 6 px yellow dot in its top-right corner while the profile's coins can buy at least one unowned node across all branches. Added `nodeInReach(purchased, coins)` after `buyPoolNode` in `src/core/tech.ts` and the two-line dot in `MenuScene.create()` (a non-interactive child of the button's container, re-derived from the freshly loaded profile on every menu launch — never cached), plus unit tests in `tests/core/tech.test.ts`. Four minimal deviations from the design, all forced by the actual code: (1) the design's own build-time check applies — the claim branch exists (TechScene's rows read `CLAIM_NODES`), so the helper spreads all three node lists; (2) consequently the "every node owned" test owns ids from all three lists (the claim node `clean2` is otherwise left unowned and would make the case true); (3) the installed Phaser types type `add.circle`'s fill as `number`, so the dot passes `PALETTE.yellow` instead of `cssColor(...)`; (4) the design's test title contains apostrophes that can't live in a single-quoted string, so it is double-quoted.
+
+- Self-review: APPROVE
+- Time: 36.1 min
+
+```
+projects/chokepoint/game/src/core/tech.ts        | 11 +++++++++++
+ projects/chokepoint/game/src/scenes/MenuScene.ts |  3 +++
+ projects/chokepoint/game/tests/core/tech.test.ts |  9 ++++++++-
+ 3 files changed, 22 insertions(+), 1 deletion(-)
+```

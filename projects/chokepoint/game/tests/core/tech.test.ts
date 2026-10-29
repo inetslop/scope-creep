@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CLAIM_NODES, cleanWavePay } from '../../src/content/tech/claim';
 import { POOL_NODES } from '../../src/content/tech/pool';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { buyClaimNode, buyNode, buyPoolNode, startBonuses, TECH_NODES } from '../../src/core/tech';
+import { buyClaimNode, buyNode, buyPoolNode, nodeInReach, startBonuses, TECH_NODES } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -129,5 +129,12 @@ describe('tech', () => {
     expect(buyClaimNode(store, 'clean2')).toBe(true);
     expect(loadProfile(store).coins).toBe(30);
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste', 'clean2']);
+  });
+
+  it("the Tech button's dot: in reach while some unowned node's price is within the coins", () => {
+    expect(nodeInReach([], 0)).toBe(false);
+    expect(nodeInReach([], 5)).toBe(true); // gold-1, the run-start branch's cheapest node
+    expect(nodeInReach([], 4)).toBe(false); // a balance that reaches no unowned node
+    expect(nodeInReach([...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES].map((n) => n.id), 99999)).toBe(false); // every node owned
   });
 });
