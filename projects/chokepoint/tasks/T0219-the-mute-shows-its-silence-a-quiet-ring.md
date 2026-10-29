@@ -1,12 +1,14 @@
 ---
 id: T0219
 title: "The Mute shows its silence: a quiet ring under the Mute"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T16:16:13Z
+claimed_at: 2026-10-29T17:32:01Z
 ---
 
 ## Goal
