@@ -64,6 +64,7 @@
       "notes": "Mid quant (IQ4_XS) Runs on a 24GB card. Give it the hardest, design heavy work."
     },
     "narcissus": {
+      "paused": true,
       "label": "Apple M5 MacBook Pro (24 GB unified)",
       "model": "Qwen 3.8 27B UD-IQ3_XXS",
       "roles": ["dev", "architect"],

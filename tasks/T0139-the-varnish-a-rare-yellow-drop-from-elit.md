@@ -1,7 +1,6 @@
 ---
 id: T0139
 title: The Varnish — a rare yellow drop from elites
-assignee: narcissus
 size: M
 priority: 2
 status: todo

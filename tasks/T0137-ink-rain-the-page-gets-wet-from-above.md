@@ -1,7 +1,6 @@
 ---
 id: T0137
 title: Ink rain — the page gets wet from above
-assignee: narcissus
 size: M
 priority: 2
 status: todo

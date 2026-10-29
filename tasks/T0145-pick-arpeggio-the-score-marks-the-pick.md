@@ -1,7 +1,6 @@
 ---
 id: T0145
 title: Pick arpeggio — the score marks the pick
-assignee: narcissus
 size: M
 priority: 2
 status: todo

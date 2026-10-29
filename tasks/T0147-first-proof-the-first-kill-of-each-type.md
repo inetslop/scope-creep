@@ -1,7 +1,6 @@
 ---
 id: T0147
 title: First Proof — the first kill of each type pays
-assignee: narcissus
 size: M
 priority: 2
 status: todo

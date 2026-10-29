@@ -1,7 +1,6 @@
 ---
 id: T0140
 title: Settings — the pause screen gets a SETTINGS card
-assignee: narcissus
 size: M
 priority: 2
 status: todo
