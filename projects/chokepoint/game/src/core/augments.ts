@@ -46,6 +46,10 @@ export interface TowerSpec {
   beamDps: number;
   /** One half-rate per second entry per Beam added after the first, in the order put in. */
   beamExtras: number[];
+  /** Bolts added to a beam tower: one more ray each, at the beam's own rate (the main is ray 0). */
+  beamRays: number;
+  /** The beam's rate factor from Rapids added: the net `rateMul * damageMul` per Rapid (its own stat, never through `damage`). */
+  beamRapidMul: number;
   /** Extra gold this tower's own kills drop: one per mint copy in the tower, any slot (core/mint.ts). */
   goldPerKill: number;
   /** Kills within this many cells of the tower (its range ring) pay: 0 unless the first augment's form has it. */
@@ -85,6 +89,8 @@ const EMPTY: TowerSpec = {
   burnCount: 0,
   beamDps: 0,
   beamExtras: [],
+  beamRays: 0,
+  beamRapidMul: 1,
   goldPerKill: 0,
   goldRadius: 0,
   gust: 0,
@@ -129,6 +135,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     burnCount: 0,
     beamDps: 0,
     beamExtras: [],
+    beamRays: 0,
+    beamRapidMul: 1,
     goldRadius: f.goldRadius ?? 0,
     goldPerKill: 0,
     gust: f.push ?? 0,
@@ -155,7 +163,11 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     spec.pierce += e.pierce ?? 0;
     if (spec.kind === 'shot') spec.shots += e.extraShots ?? 0;
     else if (spec.kind === 'pulse') spec.bolts += e.extraShots ?? 0;
+    else if (spec.kind === 'beam') spec.beamRays += e.extraShots ?? 0; // a Bolt's extra shot is one more ray on the beam
     else if (spec.kind === 'spray') spec.spray += e.extraShots ?? 0; // a Bolt's extra shot is one more pellet in the blast
+    // A Rapid on a beam tower: the beam's rate is its own stat (spec.damage is 0), so its net
+    // factor per Rapid (rate × damage) is kept in its own accumulator, like the burn's rate.
+    if (spec.kind === 'beam' && e.rateMul) spec.beamRapidMul *= e.rateMul * (e.damageMul ?? 1);
     // A Spray only grows a blast of its own: added to a non-spray tower it has no blast to grow.
     if (spec.kind === 'spray') spec.spray += e.spray ?? 0;
     if (e.slow && (!spec.slow || e.slow.pct > spec.slow.pct)) spec.slow = { ...e.slow };
@@ -247,7 +259,10 @@ export function describeSpec(spec: TowerSpec): string {
     line = spec.burn ? `Sets ablaze the furthest enemy: ${spec.burn.dps} per second for ${spec.burn.sec} s` : 'Does not attack';
     if (slow) line += `, slowing them by ${slow}%`;
   } else if (spec.kind === 'beam') {
-    line = `Beams the furthest enemy: ${spec.beamDps} per second`;
+    const beams = spec.beamRays + 1;
+    line = beams === 1
+      ? `Beams the furthest enemy: ${spec.beamDps} per second`
+      : `Beams ${beams} enemies: ${spec.beamDps} per second each`;
     if (spec.beamExtras.length === 1) line += `, and a second beam at ${spec.beamExtras[0]} per second on the nearest enemy`;
     else if (spec.beamExtras.length > 1) line += `, and ${spec.beamExtras.length} beams at ${spec.beamExtras[spec.beamExtras.length - 1]} per second on the nearest enemies`;
   } else if (spec.kind === 'rally') {

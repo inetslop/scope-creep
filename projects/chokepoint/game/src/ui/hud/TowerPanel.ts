@@ -110,7 +110,7 @@ export class TowerPanel implements HudPart {
     // This run's kills by this tower, in the gap between the augment rows and the slot row.
     this.killsText = scene.add.text(left, H / 2 - 79 - DPS_LINE, `kills ${tower.kills}`, textStyle(11, PALETTE.muted)).setOrigin(0, 0);
     items.push(this.killsText);
-    const dps = towerDps(tower.spec);
+    const dps = towerDps(tower.spec, tower.rallyRateMul);
     const perSec = Math.floor(dps);
     if (perSec >= 1) items.push(scene.add.text(left, H / 2 - 79, `≈ ${perSec}/s`, textStyle(11, PALETTE.muted)).setOrigin(0, 0));
     items.push(...this.slots(game, tower, left, w, H));

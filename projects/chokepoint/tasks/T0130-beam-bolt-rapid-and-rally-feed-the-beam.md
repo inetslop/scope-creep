@@ -4,11 +4,12 @@ title: "Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam"
 assignee: desktop
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T10:40:00Z
 claimed_at: 2026-10-29T19:25:48Z
+finished_at: 2026-10-29T19:42:29Z
 epic: E4
 design_attempts: 1
 ---
@@ -94,3 +95,22 @@ Beam gains two addable upgrades — Bolt adds a beam ray, Rapid speeds the beam 
 - `tests/core/augments.test.ts` — `beamRays` 0/1, `beamRapidMul` 1 and 1.125 (`toBeCloseTo`); Bolt on a non-beam tower → `beamRays` 0; one new `+Bolt` `describeSpec` string; all lone-beam string pins stay green.
 - `tests/core/beam.test.ts` — existing `beamLines`/`inBeamRange` assertions unchanged, only call shapes adapted to `(heldMain, heldExtras, ...)`; new `rayTargets` tests: farthest-first order, excludes main, stateless (no memory between calls), skips inactive enemies, short list when fewer are in range.
 - `npm run check` (typecheck + lint + unit) and `npm run smoke` (desktop + phone browser) must pass; `tests/content.test.ts` validates content automatically (no content change).
+
+## Result (attempt 1, desktop)
+
+Bolt added to a Beam-first tower now adds a full-rate beam ray per copy (stateless farthest-first picker `rayTargets` in core/beam.ts, rays sit between main and extras in BeamSystem's held layout), and Rapid added scales the whole beam (main, rays, and Beam-added lines) by its net rate×damage factor (new `beamRapidMul` accumulator) — with Rally's +10% speed now applied to beams too, the same single factor in the per-frame ticks and in `towerDps` (which gained a `rallyRateMul` param and a beam branch, fixing the panel's 0/s display). The tower panel's description says how many enemies it beams and its damage-per-second line counts every ray and multiplier. Unit tests pin all values (6/12/8/16/18/19.8/9/10.125, beamRays, beamRapidMul 1.125, the new describeSpec string); check and smoke pass.
+
+- Self-review: APPROVE
+- Time: 16.7 min
+
+```
+projects/chokepoint/game/src/core/augments.ts      | 17 ++++-
+ projects/chokepoint/game/src/core/beam.ts          | 40 +++++++---
+ projects/chokepoint/game/src/core/towerDps.ts      | 11 ++-
+ projects/chokepoint/game/src/systems/BeamSystem.ts | 52 ++++++++-----
+ projects/chokepoint/game/src/ui/hud/TowerPanel.ts  |  2 +-
+ .../chokepoint/game/tests/core/augments.test.ts    | 13 ++++
+ projects/chokepoint/game/tests/core/beam.test.ts   | 86 ++++++++++++++++------
+ .../chokepoint/game/tests/core/towerDps.test.ts    | 24 ++++++
+ 8 files changed, 191 insertions(+), 54 deletions(-)
+```

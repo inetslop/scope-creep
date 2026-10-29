@@ -240,6 +240,19 @@ describe('beam (Beam)', () => {
     expect(describeSpec(spec('beam', 'beam', 'beam'))).toContain('2 beams at 3 per second on the nearest enemies');
     expect(describeSpec(spec('bolt', 'beam'))).not.toContain('beam at');
   });
+
+  it('a Bolt added to a beam adds a full-rate ray; a Rapid scales the beam by its net factor', () => {
+    expect(spec('beam').beamRays).toBe(0);
+    expect(spec('beam', 'bolt').beamRays).toBe(1);
+    expect(spec('beam', 'bolt', 'bolt').beamRays).toBe(2);
+    expect(spec('bolt', 'bolt').beamRays).toBe(0); // a Bolt on a non-beam tower is shots, not rays
+    expect(spec('beam').beamRapidMul).toBe(1);
+    expect(spec('beam', 'rapid').beamRapidMul).toBeCloseTo(1.125); // 1.5 x 0.75, its own accumulator
+  });
+
+  it('the tower line says how many enemies it beams when a ray is added', () => {
+    expect(describeSpec(spec('beam', 'bolt'))).toBe('Beams 2 enemies: 6 per second each.');
+  });
 });
 
 describe('tiers', () => {

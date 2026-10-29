@@ -40,4 +40,28 @@ describe('towerDps', () => {
     expect(towerDps(spec('rally'))).toBe(0);
     expect(towerDps(spec('frost', 'anchor', 'rally'))).toBe(0); // only support augments: nothing to deal damage
   });
+
+  it('a lone beam deals its per-second rate (the panel used to show 0 for it)', () => {
+    expect(towerDps(spec('beam'))).toBe(6);
+    expect(towerDps(towerSpec([copy('beam', 'rare')]))).toBe(8);
+  });
+
+  it('each Bolt adds a ray at the beam\'s own rate', () => {
+    expect(towerDps(spec('beam', 'bolt'))).toBe(12);
+    expect(towerDps(towerSpec([copy('beam', 'rare'), copy('bolt')]))).toBe(16);
+  });
+
+  it('a Rapid added scales every ray by its net factor, 1.5 x 0.75', () => {
+    expect(towerDps(towerSpec([copy('beam', 'rare'), copy('bolt'), copy('rapid')]))).toBeCloseTo(18);
+  });
+
+  it('the Rally\'s speed scales the beam like every other attack', () => {
+    expect(towerDps(spec('beam'), 1.1)).toBeCloseTo(6.6);
+    expect(towerDps(towerSpec([copy('beam', 'rare'), copy('bolt'), copy('rapid')]), 1.1)).toBeCloseTo(19.8);
+  });
+
+  it('a Beam added is a line at its own rate, scaled by the same factor', () => {
+    expect(towerDps(spec('beam', 'beam'))).toBe(9);
+    expect(towerDps(spec('beam', 'beam', 'rapid'))).toBeCloseTo(10.125);
+  });
 });
