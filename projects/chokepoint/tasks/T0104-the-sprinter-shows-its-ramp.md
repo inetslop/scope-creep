@@ -4,11 +4,12 @@ title: The sprinter shows its ramp
 assignee: baby-mama
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T07:23:51Z
 claimed_at: 2026-10-29T07:54:45Z
+finished_at: 2026-10-29T07:59:43Z
 epic: E4
 ---
 
@@ -113,3 +114,16 @@ export const rampTick: MakeEnemyHook = ({ fx, enemies }) => {
 
 ### Tests
 none
+
+## Result (attempt 1, baby-mama)
+
+A Sprinter that has taken at least one damaging hit now wears a small 16x9 rounded chip in its own orange (the mark tick's chip language) just above its token for the rest of its life: a new enemy-hook `src/systems/enemyHooks/rampTick.ts`, modelled line-for-line on `markTick.ts`, registered in `src/systems/enemyHooks/index.ts` beside `markTick`. "Ramped" is derived each frame from `speed > def.speed * CELL` (no `Enemy` field added), the tick appears on the first damaging hit with the hit flash, clears on kill/leak, stacks above the pink mark chip when the Sprinter is also marked, and never-hit Sprinters show nothing. The ramp's numbers, cap, hit flash and sounds are untouched.
+
+- Self-review: APPROVE
+- Time: 5.0 min
+
+```
+.../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/rampTick.ts        | 58 ++++++++++++++++++++++
+ 2 files changed, 60 insertions(+)
+```
