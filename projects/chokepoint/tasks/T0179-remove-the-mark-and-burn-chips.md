@@ -3,10 +3,12 @@ id: T0179
 title: "Remove the status chips over enemies: mark, burn, slow, ramp"
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T12:21:52Z
+claimed_at: 2026-10-29T12:51:18Z
+designer: desktop
 ---
 
 ## Goal
