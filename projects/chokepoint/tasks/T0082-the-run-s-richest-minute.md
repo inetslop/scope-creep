@@ -4,11 +4,12 @@ title: "The run's richest minute"
 assignee: narcissus
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T23:26:44Z
 claimed_at: 2026-10-29T01:32:41Z
+finished_at: 2026-10-29T02:03:27Z
 epic: E1
 ---
 
@@ -81,3 +82,15 @@ private goldTagRow(rich: boolean): void {
 - Do not widen the card or move `WaveCard`: the 412-px top row has no slack (StatsCard ends at 212, WaveCard starts at 218).
 ### Tests
 - none (display-only; no core rule changes). Smoke at 1280x720 and 412x915 with the tag shown (1 life, wave 4/8/…) and hidden (2+ lives or non-quiet wave).
+
+## Result (attempt 1, narcissus)
+
+While a quiet wave (every 4th) runs in the last stand (exactly 1 life), the stats card's gold number now wears a small bold muted-yellow "×4" tag to its right, naming the ×4 kill-gold product (quiet ×2, last stand ×2) where the money lands; if a long gold number would push the tag past the card's right edge, the coin icon, number and tag shift left as one unit. The tag appears/disappears purely from run state each frame (wave phase + quiet wave + 1 life), so it is gone the instant the wave ends or lives recover, and no gold values, pops or coin trail changed. One file changed: `src/ui/hud/StatsCard.ts` — new `goldTag` text plus promoted `coinIcon` field and a private `goldTagRow(rich)` method, exactly per the design; check (typecheck + lint + 171 unit tests) and smoke on desktop and mobile all pass.
+
+- Self-review: APPROVE
+- Time: 30.8 min
+
+```
+projects/chokepoint/game/src/ui/hud/StatsCard.ts | 29 ++++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
+```
