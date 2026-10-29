@@ -1,12 +1,14 @@
 ---
 id: T0094
 title: "The card says how many: the owned dot gets a count"
+assignee: narcissus
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T01:36:24Z
+claimed_at: 2026-10-29T03:40:42Z
 epic: E4
 ---
 
