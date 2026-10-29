@@ -1,12 +1,14 @@
 ---
 id: T0077
 title: "Send them early: start the wave now, paid in gold for the seconds left"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T22:13:10Z
+claimed_at: 2026-10-29T00:50:13Z
 epic: E1
 ---
 
