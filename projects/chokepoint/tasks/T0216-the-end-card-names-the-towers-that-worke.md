@@ -1,12 +1,14 @@
 ---
 id: T0216
 title: "The end card names the towers that worked: kills by tower"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T15:52:06Z
+claimed_at: 2026-10-29T16:44:31Z
 ---
 
 ## Goal
