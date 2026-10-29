@@ -4,11 +4,12 @@ title: "The burn shows on the enemy: a chip over the burning"
 assignee: baby-mama
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T09:55:07Z
 claimed_at: 2026-10-29T10:18:13Z
+finished_at: 2026-10-29T10:29:27Z
 epic: E4
 ---
 
@@ -49,3 +50,16 @@ A burning enemy (Ember, T0028) shows its burn on itself: a small chip in Ember's
 ### Tests
 none
 DEPENS_ON: none
+
+## Result (attempt 1, baby-mama)
+
+A burning enemy now wears Ember's own orange chip (the mark tick's chip look) above its token for as long as the burn is live. Added `src/systems/enemyHooks/burnTick.ts` — a copy of `markTick.ts` with the chip recolored to `PALETTE.orangeDeep`/`PALETTE.orange`, the skip test on `burn.left <= 0`, and a one-line `setPosition` that shifts the chip `W + 6` board units right beside the mark's pink (never up) when the enemy is also marked — and registered it in `src/systems/enemyHooks/index.ts` with one import and one list line beside `burnLeap`. Jumped burns, re-ignition and pooled reuse need no special handling: the chip tracks `burn.left > 0` and drops on kill/leak the frame it ends. Non-burning enemies are untouched, and there is no sound or new input.
+
+- Self-review: APPROVE
+- Time: 11.3 min
+
+```
+.../game/src/systems/enemyHooks/burnTick.ts        | 57 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ 2 files changed, 59 insertions(+)
+```
