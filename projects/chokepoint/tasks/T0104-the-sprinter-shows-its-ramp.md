@@ -3,11 +3,13 @@ id: T0104
 title: The sprinter shows its ramp
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T07:24:33Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
