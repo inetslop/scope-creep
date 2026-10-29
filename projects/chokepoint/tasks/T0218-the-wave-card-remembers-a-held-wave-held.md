@@ -3,10 +3,12 @@ id: T0218
 title: "The wave card remembers a held wave: held · N"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T16:16:13Z
+claimed_at: 2026-10-29T16:31:24Z
+designer: inet-racing
 ---
 
 ## Goal
