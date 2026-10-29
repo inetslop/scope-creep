@@ -3,10 +3,12 @@ id: T0102
 title: "Bulwark: the plate that faces the road"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T07:23:57Z
+designer: desktop-4070
 ---
 
 ## Goal
