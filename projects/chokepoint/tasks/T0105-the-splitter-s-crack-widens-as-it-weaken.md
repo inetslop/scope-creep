@@ -1,12 +1,14 @@
 ---
 id: T0105
 title: "The splitter's crack widens as it weakens"
+assignee: inet-racing
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T08:01:18Z
 epic: E4
 ---
 
