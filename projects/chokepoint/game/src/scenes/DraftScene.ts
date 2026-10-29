@@ -9,6 +9,7 @@ import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
 import { textStyle, titleStyle } from '../ui/text';
+import { tierGemColor, tierName } from '../ui/tierLook';
 import { uiCamera, viewSize } from '../ui/display';
 import { getGameScene, getSfx, onKey, onResize, SCENES } from './keys';
 
@@ -117,9 +118,18 @@ export class DraftScene extends Phaser.Scene {
         const t = -H / 2; // every y below is measured from the card's top edge
         const button = makeButton(this, 0, 0, '', () => pick(i), { width: cw, height: H, radius: Math.round(22 * k), accent: PALETTE[b.look.color] });
         const icon = artScale(this.add.image(0, t + 31, augmentTexture(b.id)), 1.3 * k);
-        // Rare and Epic say their tier on the name line; Common keeps the plain name, like its plain frame.
-        const nameText = copy.tier === 'common' ? b.name : `${b.name} · ${copy.tier.charAt(0).toUpperCase() + copy.tier.slice(1)}`;
-        const name = this.add.text(0, t + 66, nameText, titleStyle(four ? 16 : 20)).setOrigin(0.5);
+        // Rare and Epic say their tier on the name line in the tier's color; Common keeps the plain name, like its plain frame.
+        const name = this.add.text(0, 0, b.name, titleStyle(four ? 16 : 20)).setOrigin(0.5);
+        const tierWord = copy.tier === 'common'
+          ? undefined
+          : this.add.text(0, 0, ` · ${tierName(copy.tier)}`, titleStyle(four ? 16 : 20, tierGemColor(copy.tier))).setOrigin(0.5);
+        if (tierWord) {
+          // The pair spans exactly today's one centered text: name the left part, word the right part.
+          name.setPosition(-tierWord.width / 2, t + 66);
+          tierWord.setPosition(name.width / 2, t + 66);
+        } else {
+          name.setPosition(0, t + 66);
+        }
         // The tier's gems: one light gray, two blue, three purple.
         const gemCount = tierIndex(copy.tier) + 1;
         const gemTint = copy.tier === 'rare' ? PALETTE.blue : copy.tier === 'epic' ? PALETTE.purple : PALETTE.faint;
@@ -131,7 +141,7 @@ export class DraftScene extends Phaser.Scene {
         drawTowerGlyph(glyphs, -cw / 2 + 26, towerLine.y + 9);
         drawPlusGlyph(glyphs, -cw / 2 + 26, addedLine.y + 9);
         const key = this.add.text(-cw / 2 + 14, t + 10, String(i + 1), textStyle(12, PALETTE.faint, { fontStyle: 'bold' }));
-        button.content.add([icon, name, ...gems, glyphs, towerLine, addedLine, key]);
+        button.content.add([icon, name, ...(tierWord ? [tierWord] : []), ...gems, glyphs, towerLine, addedLine, key]);
         const held = ownedCount(copy.id);
         // The run already has this augment: a small dot in the top-right corner.
         if (held > 0) glyphs.fillStyle(PALETTE.muted, 1).fillCircle(cw / 2 - 14, t + 14, 4);

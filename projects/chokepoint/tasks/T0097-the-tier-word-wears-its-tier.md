@@ -4,11 +4,12 @@ title: The tier word wears its tier
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T02:55:25Z
 claimed_at: 2026-10-29T08:02:54Z
+finished_at: 2026-10-29T08:17:34Z
 epic: E4
 ---
 
@@ -69,3 +70,15 @@ Geometry check (why the formula is right): today's single text of width W = name
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Draft cards now wear their tier on the name line: Rare and Epic split the name text into the plain name (ink) plus a " · Rare" / " · Epic" word in the tier's own frame/gem color (blue/purple from `tierGemColor`), positioned so the pair spans exactly the old single centered text. Common cards render byte-identically (no second text, same one at (0, t+66)), the card height/fit code is untouched, and the word goes into `button.content` so it dies with the card on reroll. One deviation from the design: the design's snippet hardcoded `titleStyle(20)`, but the real name line is `titleStyle(four ? 16 : 20)` (four-card drafts scale down), so I kept that expression on both texts to preserve T0026's exact size, weight and position and T0072's fit. `npm run check` passes and `npm run smoke` passes on desktop 1280x720 and mobile 412x915.
+
+- Self-review: APPROVE
+- Time: 14.7 min
+
+```
+projects/chokepoint/game/src/scenes/DraftScene.ts | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+```
