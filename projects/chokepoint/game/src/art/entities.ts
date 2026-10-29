@@ -28,6 +28,12 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
         ctx.lineTo(cx + r * 0.55, cy - r * 0.02);
         ctx.stroke();
       }
+      if (e.id === 'hauler') {
+        // The Hauler wears its coin: the HUD's own coin shape, flat on the face, a third of the width.
+        shapePath(ctx, 'circle', size / 2, size / 2 - depth / 2, r / 3);
+        ctx.fillStyle = rgba(PALETTE.yellow, 1);
+        ctx.fill();
+      }
     });
   }
   const plinth = CELL * 0.4;

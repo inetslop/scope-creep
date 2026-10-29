@@ -4,11 +4,12 @@ title: The Hauler wears its coin
 assignee: narcissus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T02:55:25Z
 claimed_at: 2026-10-29T03:21:36Z
+finished_at: 2026-10-29T03:38:37Z
 ---
 
 ## Goal
@@ -56,3 +57,15 @@ Why this meets the spec: enemy textures are per-id canvases (`enemyTexture(e.id)
 
 ### Tests
 none (art task; numbers untouched).
+
+## Result (attempt 1, narcissus)
+
+The Hauler's token now wears its coin — a small flat gold circle (the HUD coin's shape and `PALETTE.yellow`) painted centred on the hexagon's face at a third of the token's width, directly in the Hauler's own texture in `src/art/entities.ts`, so it appears at spawn, moves with the token, and sits under the hit flash and death burst. No side face or shadow, no other enemy changes (textures are per-id), and the Hauler's numbers, wave schedule and everything else are untouched. Typecheck, lint, unit tests and desktop/mobile smoke all pass.
+
+- Self-review: APPROVE
+- Time: 17.0 min
+
+```
+projects/chokepoint/game/src/art/entities.ts | 6 ++++++
+ 1 file changed, 6 insertions(+)
+```
