@@ -1,12 +1,14 @@
 ---
 id: T0109
 title: The leak jolt sizes with the leaker
+assignee: baby-mama
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T08:16:41Z
 ---
 
 ## Goal
