@@ -1,12 +1,14 @@
 ---
 id: T0132
 title: "Beam combos III: the beam carries Frost, Ember, Anchor, Push and Mark"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T10:40:00Z
+claimed_at: 2026-10-29T20:16:19Z
 epic: E4
 ---
 
