@@ -3,11 +3,13 @@ id: T0238
 title: "The draft shows where the card lands: a fit row on every offered card"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T23:34:09Z
+claimed_at: 2026-10-29T23:34:23Z
 epic: E4
+designer: cachyos-x8664
 ---
 
 ## Goal
