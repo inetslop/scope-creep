@@ -1,12 +1,14 @@
 ---
 id: T0151
 title: "The four-card draft: the card lines clear their icons"
+assignee: baby-mama
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T10:13:21Z
+claimed_at: 2026-10-29T10:37:39Z
 ---
 
 ## Goal
