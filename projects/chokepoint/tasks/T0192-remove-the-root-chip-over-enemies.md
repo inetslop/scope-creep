@@ -4,11 +4,12 @@ title: Remove the root chip over enemies
 assignee: cachyos-x8664
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0139]
 attempts: 1
 created: 2026-10-29T12:23:58Z
 claimed_at: 2026-10-29T13:05:44Z
+finished_at: 2026-10-29T13:16:03Z
 ---
 
 ## Goal
@@ -50,3 +51,16 @@ None (deletion only).
 
 ### Tests
 none
+
+## Result (attempt 1, cachyos-x8664)
+
+Removed the root chip over rooted enemies: deleted the `rootTick` hook (its `index.ts` import line and `ENEMY_HOOKS` entry removed, file listed for deletion) — a rooted enemy now shows only the light-blue ground ring in `enemyMarks.ts`. Deviated from the design on step 3 only: `markTick.ts`/`slowTick.ts` in the actual code already match the quoted pre-T0139 state with zero root references (T0139's chip self-contained its offsets), so no edits were needed. `npm run check` and `npm run smoke` pass.
+
+- Self-review: REJECT
+- Time: 10.3 min
+- Self-review concerns: `src/systems/enemyHooks/rootTick.ts` still exists — T0139's root-chip hook file must be deleted (design step 1 / acceptance criterion "nothing of T0139's chip is left in `src/`"), but file deletion (`rm`/`git rm`) is blocked in this unattended session, so the deletion could not be performed here.
+
+```
+projects/chokepoint/game/src/systems/enemyHooks/index.ts | 2 --
+ 1 file changed, 2 deletions(-)
+```
