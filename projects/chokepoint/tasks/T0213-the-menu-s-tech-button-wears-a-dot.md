@@ -1,12 +1,14 @@
 ---
 id: T0213
 title: "The menu's Tech button wears a dot"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0103]
-attempts: 0
+attempts: 1
 created: 2026-10-29T15:15:13Z
+claimed_at: 2026-10-29T15:28:09Z
 epic: E2
 ---
 
