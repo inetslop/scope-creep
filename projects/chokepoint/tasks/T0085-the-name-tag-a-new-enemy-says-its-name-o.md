@@ -4,11 +4,12 @@ title: "The name tag: a new enemy says its name once"
 assignee: desktop
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T23:26:44Z
 claimed_at: 2026-10-29T01:18:13Z
+finished_at: 2026-10-29T01:25:16Z
 ---
 
 ## Goal
@@ -110,3 +111,18 @@ export const nameTag: MakeEnemyHook = ({ enemies, fx }) => {
 
 ### Tests
 - `tests/systems/nameTag.test.ts` as specified in Step 4 (the acceptance criteria require per-type coverage with a fresh seen set).
+
+## Result (attempt 1, desktop)
+
+A new enemy type now announces itself: the first spawn of a type in a run pops a small white name chip (bold 12 px muted ink on a rounded card chip) above its spawn spot for about 1 s, then the type is marked seen for the rest of the run. Implemented as one fx effect (`src/systems/fx/nameLabel.ts`), one enemy hook (`src/systems/enemyHooks/nameTag.ts`, serial-keyed WeakMap so pooled enemies work), one registry line in `enemyHooks/index.ts`, and unit tests in `tests/systems/nameTag.test.ts` covering every enemy type plus the resumed-run reset. Two tiny deviations in the test stub only: added `scale: { zoom: 1 }` to the fake fx scene (nameLabel reads `scene.scale.zoom`) and fixed the `graphics` stub so `fillRoundedRect` lives on the graphics object, as in the real call chain.
+
+- Self-review: APPROVE
+- Time: 7.1 min
+
+```
+.../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/nameTag.ts         | 21 +++++++
+ .../chokepoint/game/src/systems/fx/nameLabel.ts    | 32 ++++++++++
+ .../chokepoint/game/tests/systems/nameTag.test.ts  | 69 ++++++++++++++++++++++
+ 4 files changed, 124 insertions(+)
+```
