@@ -27,12 +27,12 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0208 (L, priority 2, depends_on T0103) — branch four “The board”: “One more bend” (30 coins) — a new run's road winds one turn further (the generator's bend target +1; the bend-adjacent worth-more cells come with it); ghost and resumed runs keep their exact board; the row is T0153's look — in the pool (it touches the run-start files T0110 edits, so it starts when T0110 lands)
 - (sketch — branch four, node two: “The long way”, a longer road (+25% path length), after T0208 so the generator's shape is settled)
 - T0211 (L, priority 2, depends_on T0153) — branch five “The claim”: “Clean ×2” (30 coins) — each clean wave pays 2 coins instead of 1; the one pure coin formula (T0001) carries it to the live tally, the pause worth line and the claim card's recipe — **done** (2026-10-29, desktop)
-- T0212 (M, priority 2, depends_on T0153, T0209) — branch three, node three: “Mend” (30 coins), T0209's pattern for T0095's Epic; the draft gate is T0095's line — in the pool
-- T0213 (S, priority 2, depends_on T0103) — the menu's Tech button wears a small yellow dot while any unowned node is in reach — in progress (yoga)
-- T0214 (M, priority 2, depends_on T0103) — the branch discount: the 2nd node of a branch costs 5 less, the 3rd and later 10 less (floor 5); the card shows the struck-through old price — in the pool
-- T0215 (M, priority 2, depends_on T0103) — the run-start's fifth node, a second “Life +1” (40 coins), and a small done mark on a fully-owned branch — in the pool
+- T0212 (M, priority 2, depends_on T0153, T0209) — branch three, node three: “Mend” (30 coins), T0209's pattern for T0095's Epic; the draft gate is T0095's line — **done** (2026-10-29, inet-racing)
+- T0213 (S, priority 2, depends_on T0103) — the menu's Tech button wears a small yellow dot while any unowned node is in reach — **done** (2026-10-29, yoga)
+- T0214 (M, priority 2, depends_on T0103) — the branch discount: the 2nd node of a branch costs 5 less, the 3rd and later 10 less (floor 5); the card shows the struck-through old price — in design
+- T0215 (M, priority 2, depends_on T0103) — the run-start's fifth node, a second “Life +1” (40 coins), and a small done mark on a fully-owned branch — in progress (asus)
 
-Status: the foundation (T0103), the run-start branch, the pool branch (T0153, T0209) and the claim branch (T0211) are done; the draft branch (T0110) is in progress; the board branch (T0208), the Mend node (T0212), the branch discount (T0214) and the run-start's fifth node (T0215) are in the pool, landing one at a time on the shared tech files; the menu dot (T0213) is in progress (yoga).
+Status: the foundation (T0103), the run-start branch, the pool branch (T0153, T0209, T0212) and the claim branch (T0211) are done, as is the menu dot (T0213); the draft branch (T0110) and the run-start's fifth node (T0215) are in progress; the board branch (T0208) and the branch discount (T0214) are in the pool, landing one at a time on the shared tech files.
 
 ### E3 — Levels: a run is a journey (not started)
 **Goal:** a run has a shape: a few boards in a row, each harder, and a build that grows across them.
@@ -99,8 +99,9 @@ Status: the foundation (T0103), the run-start branch, the pool branch (T0153, T0
 - T0152 (L, priority 2) — Haste: the Epic that hastens everything it touches (2-cell aura: enemies walk +30% faster, towers attack +30% faster, +15% to both per extra copy, no cap; Epic-only; gated — absent from the draft roll until the tech tree's pool node, T0153, is bought) — in the pool, next registration behind the pool augments
 - T0138 (S) — the slow shows on the enemy (telegraph slice) — **done** (2026-10-29, narcissus)
 - T0139 (S) — the root shows on the enemy (telegraph slice) — **done** (2026-10-29, yoga)
+- T0221 (L, priority 2) — the Augments codex: a menu screen that shows every augment in the pool (icon, name, a purple “Epic” word for the Epic-only ones, the first and added rows) — the tail of the “rarity shows everywhere the augment shows” line; not on the closing list
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0152 (one at a time, in claim order, under the 16-cap); the beam work is T0130, T0210 (the T0131 re-file) and T0132, with T0133 in progress; the telegraph slices are done; T0150 rides behind T0025.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0152 (one at a time, in claim order, under the 16-cap); the beam work is T0130, T0210 (the T0131 re-file) and T0132, with T0133 in progress; the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is a tail in the pool.
 
 **E4 closes when T0025, T0062, T0064, T0095, T0130, T0210 (+ its parked needle follow-up), T0132, T0133 and T0152 land** (T0139 done; T0131 failed → T0210; T0150 waits on T0025; T0089 is dropped).
 
