@@ -4,11 +4,12 @@ title: "The board shows its corners: a notch on the bend cells"
 assignee: narcissus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T11:23:58Z
 claimed_at: 2026-10-29T12:32:17Z
+finished_at: 2026-10-29T13:00:05Z
 ---
 
 ## Goal
@@ -75,3 +76,15 @@ No new or changed signatures. Everything stays inside the existing `paintTexture
 
 ### Tests
 - none (pure board paint, no rule change).
+
+## Result (attempt 1, narcissus)
+
+Build cells touching a bend of the road now carry one small flat muted-ink notch on their face, so first-time players can see which cells are worth more before placing. Implemented entirely in `src/art/board.ts`: `paintBoard` now computes each bend of the path (any consecutive triple of path cells whose direction changes) and paints one rounded tick per open neighbour cell, offset toward the bend and oriented perpendicular to it; a `Set` keeps exactly one tick on cells touched by two bends. The notch is static board paint — no animation, no rule change, no effect on cell value, gold, or buildability, and no new sounds/keys/buttons/pause lines. All checks pass: `npm run check` (typecheck, lint, 232 unit tests) and `npm run smoke` (real-browser desktop and phone play).
+
+- Self-review: APPROVE
+- Time: 27.8 min
+
+```
+projects/chokepoint/game/src/art/board.ts | 29 ++++++++++++++++++++++++++++-
+ 1 file changed, 28 insertions(+), 1 deletion(-)
+```
