@@ -1,12 +1,14 @@
 ---
 id: T0192
-title: "Remove the root chip over enemies"
+title: Remove the root chip over enemies
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0139]
 attempts: 0
 created: 2026-10-29T12:23:58Z
+claimed_at: 2026-10-29T12:52:22Z
+designer: desktop
 ---
 
 ## Goal
