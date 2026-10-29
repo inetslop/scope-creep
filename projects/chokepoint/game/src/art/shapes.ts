@@ -12,7 +12,7 @@ export function shapePoints(shape: Shape, radius: number): { x: number; y: numbe
       { x: -radius * 0.45, y: radius * 0.8 },
       { x: -radius * 0.85, y: radius * 0.8 },
     ];
-  const sides: Record<Shape, number> = { circle: 0, triangle: 3, square: 4, diamond: 4, pentagon: 5, hexagon: 6, pillar: 0, chevron: 6 };
+  const sides: Record<Shape, number> = { circle: 0, triangle: 3, square: 4, diamond: 4, pentagon: 5, hexagon: 6, ring: 0, pillar: 0, chevron: 6 };
   const n = sides[shape];
   if (n === 0) return [];
   // Squares sit flat; diamonds are squares on a corner; odd shapes point up.

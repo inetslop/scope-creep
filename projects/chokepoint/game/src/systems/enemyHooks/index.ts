@@ -3,6 +3,7 @@ import type { MakeEnemyHook } from './hook';
 import { comboGold } from './comboGold';
 import { haulerLeak } from './haulerLeak';
 import { mintRing } from './mintRing';
+import { muteJam } from './muteJam';
 import { nameTag } from './nameTag';
 import { split } from './split';
 import { killCoin } from './killCoin';
@@ -18,5 +19,6 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   killCoin,
   haulerLeak,
   burnLeap,
+  muteJam,
   mintRing,
 ];

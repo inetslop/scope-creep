@@ -14,7 +14,7 @@ describe('planWave', () => {
         expect(def.fromWave).toBeLessThanOrEqual(wave);
         expect(s.delaySec).toBeGreaterThanOrEqual(0);
         // Splitters and Haulers are mixed in on top of the budget, like the rampers and dashing ones.
-        if (s.enemy !== 'splitter' && s.enemy !== 'hauler') spent += def.threat;
+        if (s.enemy !== 'splitter' && s.enemy !== 'hauler' && s.enemy !== 'mute') spent += def.threat;
       }
       expect(spent).toBeLessThanOrEqual(waveBudget(wave));
     }
@@ -93,6 +93,15 @@ describe('planWave', () => {
     }
   });
 
+  it('sends exactly one Mute on 11, 14, 17, ... — a quiet wave keeps it', () => {
+    for (let wave = 1; wave <= 30; wave++) {
+      const plan = planWave(wave, new Rng(wave), ENEMIES);
+      const expected = wave >= 11 && (wave - 11) % 3 === 0 ? 1 : 0;
+      expect(plan.spawns.filter((s) => s.enemy === 'mute').length).toBe(expected);
+      if (expected === 1) expect(plan.spawns.some((s) => s.enemy !== 'mute')).toBe(true); // never a Mute-only wave
+    }
+  });
+
   it('never sends a wave made only of dashing enemies', () => {
     for (let wave = 5; wave <= 30; wave++) {
       expect(planWave(wave, new Rng(wave), ENEMIES).spawns.some((s) => s.enemy !== 'dasher')).toBe(true);
@@ -137,7 +146,7 @@ describe('quiet waves (every 4th)', () => {
       const a = planWave(wave, new Rng(wave), ENEMIES);
       expect(a.spawns).toEqual(planWave(wave, new Rng(wave), ENEMIES).spawns); // no rng in the halving
       expect(a.spawns.length).toBeGreaterThanOrEqual(3);
-      expect(a.spawns.length).toBeLessThanOrEqual(Math.ceil(waveBudget(wave) / 2)); // full plan ≤ budget, so quiet ≤ half
+      expect(a.spawns.filter((s) => s.enemy !== 'mute').length).toBeLessThanOrEqual(Math.ceil(waveBudget(wave) / 2)); // the Mute rides on top of the halved plan
     }
   });
   it('non-quiet waves are not halved', () => {

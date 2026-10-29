@@ -95,7 +95,7 @@ export function quietHalve(spawns: WaveSpawn[]): WaveSpawn[] {
 export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): WavePlan {
   const unlocked = enemies.filter((e) => !e.spawnOnly && e.fromWave <= wave && e.threat > 0);
   const rampers = unlocked.filter((e) => e.speedRamp !== undefined);
-  const walkers = unlocked.filter((e) => e.speedRamp === undefined && e.dashCycle === undefined && e.splitsInto === undefined && e.id !== 'hauler');
+  const walkers = unlocked.filter((e) => e.speedRamp === undefined && e.dashCycle === undefined && e.splitsInto === undefined && e.id !== 'hauler' && e.id !== 'mute');
   let budget = waveBudget(wave);
   // Reserve the rampers first; no rng here, so the seeded picks of the walkers don't shift.
   const rampSpawns: string[] = [];
@@ -130,6 +130,8 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
   }
   // The Hauler: one on 9, 13, 17, ... (it never comes from the budget; its threat is a placeholder).
   if (wave >= 9 && (wave - 9) % 4 === 0) reserved.push('hauler');
+  // The Mute: one on 11, 14, 17, ... (it never comes from the budget; its threat is a placeholder).
+  if (wave >= 11 && (wave - 11) % 3 === 0) reserved.push('mute');
   let finalSpawns: WaveSpawn[];
   if (reserved.length === 0) {
     finalSpawns = spawns;
@@ -147,6 +149,8 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
   }
   // A quiet wave halves the plan at the single exit, so both paths above get it.
   if (isQuietWave(wave)) finalSpawns = quietHalve(finalSpawns);
+  // A Mute wave always sends its Mute, even when the halving would drop it: it walks in first.
+  if (wave >= 11 && (wave - 11) % 3 === 0 && !finalSpawns.some((s) => s.enemy === 'mute')) finalSpawns = [{ enemy: 'mute', delaySec: 0 }, ...finalSpawns];
   return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : [] };
 }
 

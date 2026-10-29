@@ -4,11 +4,12 @@ title: "Mute: the enemy that silences your towers"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-28T21:24:45Z
 claimed_at: 2026-10-29T01:38:04Z
+finished_at: 2026-10-29T02:51:37Z
 design_attempts: 1
 ---
 
@@ -162,4 +163,27 @@ In `tests/core/waves.test.ts`: (1) line 17 of the budget test becomes `if (s.ene
       if (expected === 1) expect(plan.spawns.some((s) => s.enemy !== 'mute')).toBe(true); // never a Mute-only wave
     }
   });
+```
+
+## Result (attempt 1, desktop-4070)
+
+T0074 lands as designed — a new `Mute` enemy (`content/enemies/mute.ts`, chunky hollow-ring token in purple at Block's size/speed/HP with 1 life and normal gold, threat placeholder 1) drawn from waves 11, 14, 17, … exactly like the Hauler, re-added after quiet-halving so it walks in first on quiet waves (tests/core/waves.test.ts asserts exactly one per such wave through wave 30). The new `muteJam` enemy hook sets `jammed` on towers within two cells of a live Mute each frame; `TowerSystem` skips jammed towers so no shot/gust/root/burn tick leaves them and the Push windup freezes and resumes with the cooldown, while Rally and Mint passives keep working since they run outside that loop; the jam reads as dim-to-50% plus one muted-gray dot above the barrels (pips untouched), and a `mute.jam` invariant guards "jammed with no Mute on the road". No deviations from the architect design.
+
+- Self-review: APPROVE
+- Time: 73.6 min
+
+```
+projects/chokepoint/game/src/art/paint.ts             |  8 ++++++++
+ projects/chokepoint/game/src/art/shapes.ts            |  2 +-
+ projects/chokepoint/game/src/content/enemies/index.ts |  2 ++
+ projects/chokepoint/game/src/content/enemies/mute.ts  | 15 +++++++++++++++
+ projects/chokepoint/game/src/content/types.ts         |  2 +-
+ projects/chokepoint/game/src/core/waves.ts            |  6 +++++-
+ projects/chokepoint/game/src/debug/runChecks.ts       |  5 +++++
+ projects/chokepoint/game/src/entities/Tower.ts        | 18 ++++++++++++++++++
+ projects/chokepoint/game/src/systems/TowerSystem.ts   |  1 +
+ .../chokepoint/game/src/systems/enemyHooks/index.ts   |  2 ++
+ .../chokepoint/game/src/systems/enemyHooks/muteJam.ts | 19 +++++++++++++++++++
+ projects/chokepoint/game/tests/core/waves.test.ts     | 13 +++++++++++--
+ 12 files changed, 88 insertions(+), 5 deletions(-)
 ```

@@ -51,6 +51,14 @@ export function shapePath(ctx: CanvasRenderingContext2D, shape: Shape, x: number
     roundRectPath(ctx, x - w, y - h, w * 2, h * 2, w);
     return;
   }
+  // A ring: a circle with a flat hole through the middle (the Mute). The inner circle is traced
+  // the other way, so the usual fill keeps the hole open.
+  if (shape === 'ring') {
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.arc(x, y, radius * 0.45, 0, Math.PI * 2, true);
+    return;
+  }
   const pts = shapePoints(shape, radius).map((p) => ({ x: p.x + x, y: p.y + y }));
   roundedPolygon(ctx, pts, radius * 0.28);
 }

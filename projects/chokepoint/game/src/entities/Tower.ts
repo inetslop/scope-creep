@@ -29,6 +29,7 @@ export class Tower extends Phaser.GameObjects.Image {
   readonly gun: Phaser.GameObjects.Container;
   private readonly deco: Phaser.GameObjects.Graphics;
   private readonly pips: Phaser.GameObjects.Graphics;
+  private readonly jamDot: Phaser.GameObjects.Graphics;
   private poppingSlot = -1; // slot mid pop-in; drawPips skips it until its tween lands
   private pipPop: Phaser.GameObjects.Graphics | undefined;
   /** Augment copies (id + tier) in its slots, in the order they were put in. */
@@ -40,6 +41,8 @@ export class Tower extends Phaser.GameObjects.Image {
   cooldown = 0;
   /** Attack speed from Rally (set by systems/RallySystem.ts; 1 when not buffed). */
   rallyRateMul = 1;
+  /** Held by a Mute: no attacks; systems/enemyHooks/muteJam.ts. */
+  jammed = false;
   /** Enemies this tower killed with its own damage this run (the panel's "kills N" line). */
   kills = 0;
   /** Where the barrels point, in radians (0 = up, clockwise). */
@@ -55,6 +58,10 @@ export class Tower extends Phaser.GameObjects.Image {
     this.deco = scene.add.graphics().setDepth(DEPTH.towers + 1).setPosition(x, y - BODY_LIFT);
     this.gun = scene.add.container(x, y - BODY_LIFT).setDepth(DEPTH.towers + 1);
     this.pips = scene.add.graphics().setDepth(DEPTH.towers + 3).setPosition(x, y);
+    this.jamDot = scene.add.graphics().setDepth(DEPTH.towers + 3).setPosition(x, y);
+    this.jamDot.fillStyle(PALETTE.muted, 1);
+    this.jamDot.fillCircle(0, -32, 3); // above the body, same float as the rally chevron
+    this.jamDot.setVisible(false);
     this.setDepth(DEPTH.towers + 2);
     artScale(this);
     scene.add.existing(this);
@@ -180,12 +187,23 @@ export class Tower extends Phaser.GameObjects.Image {
     } });
   }
 
+  /** A Mute holds this tower still: dimmed, one gray dot over the barrels. The pips are untouched. */
+  setJammed(on: boolean): void {
+    if (this.jammed === on) return;
+    this.jammed = on;
+    this.setAlpha(on ? 0.5 : 1);
+    this.gun.setAlpha(on ? 0.5 : 1);
+    this.base.setAlpha(on ? 0.5 : 1);
+    this.jamDot.setVisible(on);
+  }
+
   destroy(fromScene?: boolean): void {
     if (this.pipPop) { this.scene.tweens.killTweensOf(this.pipPop); this.pipPop.destroy(); this.pipPop = undefined; }
     this.base.destroy();
     this.gun.destroy();
     this.deco.destroy();
     this.pips.destroy();
+    this.jamDot.destroy();
     super.destroy(fromScene);
   }
 }

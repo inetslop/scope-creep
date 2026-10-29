@@ -91,6 +91,7 @@ export class TowerSystem {
   update(dt: number): void {
     const enemies = this.enemies.all;
     for (const t of this.towers) {
+      if (t.jammed) continue;
       if (!t.spec.attacks) continue;
       // A pure support (no damage, slow, root, gust, burn, bolts or marks, like a bare Mint) never attacks:
       // pulse.ts would only fire its wave fx, kick and sound around a tower that does nothing.
