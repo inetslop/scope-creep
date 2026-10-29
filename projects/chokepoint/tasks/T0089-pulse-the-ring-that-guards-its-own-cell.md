@@ -1,12 +1,14 @@
 ---
 id: T0089
 title: "Pulse: the ring that guards its own cell"
+assignee: inet-racing
 size: L
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0084]
-attempts: 0
+attempts: 1
 created: 2026-10-29T00:51:07Z
+claimed_at: 2026-10-29T08:46:22Z
 epic: E4
 ---
 
