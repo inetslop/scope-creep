@@ -1,12 +1,14 @@
 ---
 id: T0222
 title: "The start screen: one column that fits, the profile card without repeats"
+assignee: cachyos-x8664
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T17:00:35Z
+claimed_at: 2026-10-29T18:00:50Z
 ---
 
 ## Goal
