@@ -1,12 +1,14 @@
 ---
 id: T0083
 title: The score says what it is made of
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T23:26:44Z
+claimed_at: 2026-10-29T01:08:42Z
 epic: E1
 ---
 
