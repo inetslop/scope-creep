@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { BUILD_SEC, CELL, REROLL_COST } from '../config';
+import { BUILD_SEC, REROLL_COST } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
@@ -134,17 +134,19 @@ export class RunFlow {
 
   private clearWave(): void {
     const cleanBefore = this.run.cleanWaves;
-    const tag = this.run.streakTag();
+    const streakPaidBefore = this.run.streakPaid;
     const bonus = this.run.clearWave();
     this.s.waves.waveEnded();
     const clean = this.run.cleanWaves > cleanBefore;
     hook.stats.wavesCleared += 1;
     this.s.sfx?.waveClear();
-    this.s.fx.popText(this.s.board.width / 2, this.s.board.height / 2, `Wave ${this.run.wave} cleared  +${bonus}`, PALETTE.greenDeep);
+    const cx = this.s.board.width / 2;
+    const cy = this.s.board.height / 2;
+    this.s.fx.popText(cx, cy, `Wave ${this.run.wave} cleared  +${bonus}`, PALETTE.greenDeep);
     if (clean) {
-      // A beat for the chip to pop before the draft veils the board.
-      const exit = this.s.board.path.pointAt(this.s.board.path.length - CELL / 2);
-      this.s.fx.cleanChip(exit.x, exit.y, tag);
+      const second = this.run.cleanStreakLine(!streakPaidBefore && this.run.streakPaid);
+      // Under the wave-cleared text, for the beat before the draft veils the board.
+      this.s.fx.cleanLines(cx, cy + 40, second);
       this.scene.time.delayedCall(1000, () => this.openDraft());
     } else {
       this.openDraft();

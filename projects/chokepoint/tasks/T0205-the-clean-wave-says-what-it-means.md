@@ -4,11 +4,12 @@ title: The clean wave says what it means, where the player looks
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T12:25:57Z
 claimed_at: 2026-10-29T19:21:38Z
+finished_at: 2026-10-29T19:40:06Z
 ---
 
 ## Goal
@@ -128,3 +129,18 @@ When a wave ends with no leak, a small green "Clean" pill pops next to the exit 
 
 ### Tests
 - `tests/core/run.test.ts` (replaces the `streakTag` test): asserts the second line is `1 of 3...`, `2 of 3...`, `3 in a row: +1 life` on the paying wave, and `undefined` after the streak has paid (including after a leak reset). This locks the streak-wording rule so a later change to the pay condition can't silently break the display.
+
+## Result (attempt 1, asus)
+
+A clean wave now announces itself where the player is looking: instead of a small "Clean" pill + bare "1/3" tag popping at the exit gate, a two-line green text ("Clean: nothing got through · +1 coin", plus "N of 3 in a row for +1 life" while the streak builds, or "3 in a row: +1 life" on the paying wave) pops directly under the "Wave N cleared +gold" text at the board centre, with the same pop/hold/fade timing and the existing 1-second beat before the draft. Changes: `RunState.streakTag()` replaced by `cleanStreakLine(paidNow)` in `core/run.ts` (PALETTE import dropped), `FxSystem.cleanChip()` replaced by `cleanLines()` in `systems/FxSystem.ts`, `RunFlow.clearWave()` now calls the line at centre (CELL import dropped), and the `streakTag` unit test replaced with a `cleanStreakLine` test that locks the streak wording. `npm run check` and `npm run smoke` (desktop + phone) both pass.
+
+- Self-review: APPROVE
+- Time: 18.5 min
+
+```
+projects/chokepoint/game/src/core/run.ts         | 12 ++++++------
+ projects/chokepoint/game/src/systems/FxSystem.ts | 25 +++++++++++++-----------
+ projects/chokepoint/game/src/systems/RunFlow.ts  | 14 +++++++------
+ projects/chokepoint/game/tests/core/run.test.ts  | 24 ++++++++++++-----------
+ 4 files changed, 41 insertions(+), 34 deletions(-)
+```

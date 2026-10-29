@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { REROLL_COST, START } from '../../src/config';
-import { PALETTE } from '../../src/content/palette';
 import { RunState } from '../../src/core/run';
 
 describe('RunState', () => {
@@ -170,17 +169,20 @@ describe('RunState', () => {
     expect(run.streakPaid).toBe(false);
   });
 
-  it('tags the clean chip 1/3, 2/3, the one +1, and nothing after', () => {
+  it('says the clean streak in words: building, the paying wave, then only the coin', () => {
     const run = new RunState(1);
-    expect(run.streakTag()).toEqual({ text: '1/3', color: PALETTE.muted });
+    const clean = (): string | undefined => {
+      run.startWave();
+      const paidBefore = run.streakPaid;
+      run.clearWave();
+      return run.cleanStreakLine(!paidBefore && run.streakPaid);
+    };
+    expect(clean()).toBe('1 of 3 in a row for +1 life');
+    expect(clean()).toBe('2 of 3 in a row for +1 life');
+    expect(clean()).toBe('3 in a row: +1 life');
     run.startWave();
-    run.clearWave();
-    expect(run.streakTag()).toEqual({ text: '2/3', color: PALETTE.muted });
-    run.startWave();
-    run.clearWave();
-    expect(run.streakTag()).toEqual({ text: '+1', color: PALETTE.green });
-    run.startWave();
-    run.clearWave();
-    expect(run.streakTag()).toBeUndefined();
+    run.leak(1); // the streak resets, but the run's one pay is already spent
+    expect(clean()).toBeUndefined();
+    expect(clean()).toBeUndefined();
   });
 });

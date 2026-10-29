@@ -202,18 +202,21 @@ export class FxSystem {
     });
   }
 
-  /** A green "Clean" chip: the wave ended with no leak. Pops in at the exit, holds, fades out.
-   * An optional tag sits under the pill and pops, fades and is destroyed with the chip. */
-  cleanChip(x: number, y: number, tag: { text: string; color: number } | undefined = undefined): void {
+  /** A clean wave's result in words, under the wave-cleared text at the board's centre: the line
+   * "Clean: nothing got through · +1 coin", and, while the streak builds or pays, a second line.
+   * Pops in, holds for the beat before the draft veils the board, fades out. */
+  cleanLines(x: number, y: number, second: string | undefined): void {
     if (this.live >= FxSystem.MAX) return;
-    const g = this.scene.add.graphics();
-    g.fillStyle(PALETTE.greenDeep, 1);
-    g.fillRoundedRect(-33, -12, 66, 30, 15); // side face
-    g.fillStyle(PALETTE.green, 1);
-    g.fillRoundedRect(-33, -15, 66, 30, 15); // pill body
-    const label = this.scene.add.text(0, -1, 'Clean', textStyle(16, PALETTE.card, { fontStyle: 'bold' })).setOrigin(0.5);
-    const tagText = tag ? this.scene.add.text(0, 28, tag.text, textStyle(12, tag.color, { fontStyle: 'bold', stroke: cssColor(PALETTE.card), strokeThickness: 4 })).setOrigin(0.5) : null;
-    const chip = this.scene.add.container(x, y, tagText ? [g, label, tagText] : [g, label]).setDepth(DEPTH.fx).setScale(0);
+    const first = this.scene.add
+      .text(0, 0, 'Clean: nothing got through · +1 coin', textStyle(20, PALETTE.green, { fontStyle: 'bold', stroke: cssColor(PALETTE.card), strokeThickness: 5 }))
+      .setOrigin(0.5).setDepth(DEPTH.fx);
+    const kids: Phaser.GameObjects.GameObject[] = [first];
+    if (second) {
+      kids.push(this.scene.add
+        .text(0, 28, second, textStyle(16, PALETTE.green, { fontStyle: 'bold', stroke: cssColor(PALETTE.card), strokeThickness: 5 }))
+        .setOrigin(0.5).setDepth(DEPTH.fx));
+    }
+    const chip = this.scene.add.container(x, y, kids).setDepth(DEPTH.fx).setScale(0);
     this.live += 1;
     this.scene.tweens.add({ targets: chip, scale: 1, duration: 200, ease: 'Back.easeOut' });
     this.scene.tweens.add({ targets: chip, alpha: 0, delay: 1200, duration: 400, ease: 'Quad.easeIn', onComplete: () => { this.live -= 1; chip.destroy(); } });

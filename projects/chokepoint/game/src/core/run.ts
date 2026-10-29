@@ -1,5 +1,4 @@
 import { START, WAVE_BONUS } from '../config';
-import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
 import { Rng } from './rng';
 
@@ -130,11 +129,12 @@ export class RunState {
     return bonus;
   }
 
-  /** Tag under this wave's clean chip: "1/3", "2/3", the one "+1", or none. Call BEFORE clearWave(). */
-  streakTag(): { text: string; color: number } | undefined {
-    if (this.leaksThisWave > 0 || this.streakPaid) return undefined;
-    const next = this.cleanStreak + 1;
-    return next === 3 ? { text: '+1', color: PALETTE.green } : { text: `${next}/3`, color: PALETTE.muted };
+  /** The clean wave's second line under the wave-cleared text: how the streak builds toward a
+   * life, or the life it just pays. `paidNow` is true when this wave was the run's one +1-life pay. */
+  cleanStreakLine(paidNow: boolean): string | undefined {
+    if (paidNow) return '3 in a row: +1 life';
+    if (this.streakPaid) return undefined; // the streak already paid this run: only the coin
+    return `${this.cleanStreak} of 3 in a row for +1 life`;
   }
 
   /** The draft's pick goes into the hand. */
