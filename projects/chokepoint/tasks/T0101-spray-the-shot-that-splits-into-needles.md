@@ -3,11 +3,13 @@ id: T0101
 title: "Spray: the shot that splits into needles"
 size: L
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T02:55:25Z
+claimed_at: 2026-10-29T02:55:29Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
