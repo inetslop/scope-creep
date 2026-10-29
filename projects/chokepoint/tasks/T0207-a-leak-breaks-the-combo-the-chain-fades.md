@@ -4,11 +4,12 @@ title: "A leak breaks the combo: the chain fades the moment a life is lost"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T12:51:15Z
 claimed_at: 2026-10-29T13:17:46Z
+finished_at: 2026-10-29T13:45:01Z
 ---
 
 ## Goal
@@ -90,3 +91,17 @@ export const comboBreak: MakeEnemyHook = ({ fx }) => ({
 
 ### Tests
 - none (no src/core rule changes; the counter state is a Phaser FxSystem, not unit-tested).
+
+## Result (attempt 1, yoga)
+
+A leak now breaks the run's kill-combo chain: a new leak hook (`src/systems/enemyHooks/comboBreak.ts`) calls a new `FxSystem.breakCombo()` on every leak, which resets the chain count to zero and fades the visible ×N counter out in place over 200 ms (no pop, no scale). The next kill shows no counter and the second kill of the new chain starts at ×2, so a sloppy run loses its combo reach and its ×5/×10 milestone gold. The hook is registered one line after `comboGold,` in `ENEMY_HOOKS`; the counter state lives in FxSystem as designed, and the fade is a scene tween that runs on the same clock as the counter's own pop and idle fade, so at 2x the break runs at 2x.
+
+- Self-review: APPROVE
+- Time: 27.3 min
+
+```
+projects/chokepoint/game/src/systems/FxSystem.ts   | 26 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/comboBreak.ts      |  6 +++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ 3 files changed, 34 insertions(+)
+```

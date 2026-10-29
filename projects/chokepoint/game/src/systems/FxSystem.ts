@@ -145,6 +145,32 @@ export class FxSystem {
     return this.comboN === 10;
   }
 
+  /** A leak: the run's kill-combo chain breaks - the count goes back to zero and the ×N counter,
+   * if up, fades out in place over 200 ms (no pop, no scale); with no counter up, nothing visible. */
+  breakCombo(): void {
+    this.comboN = 0;
+    this.comboTimer?.remove();
+    this.comboTimer = null;
+    this.comboPop?.remove();
+    this.comboPop = null;
+    if (!this.comboText) return;
+    const t = this.comboText;
+    this.comboFade?.remove();
+    this.comboFade = this.scene.tweens.add({
+      targets: t,
+      alpha: 0,
+      duration: 200,
+      ease: 'Quad.easeOut',
+      onComplete: () => {
+        t.destroy();
+        if (this.comboText === t) {
+          this.comboText = null;
+          this.comboFade = null;
+        }
+      },
+    });
+  }
+
   /** The chain ended: fade the counter out over 400 ms, then destroy it. */
   private comboFadeStart(): void {
     this.comboTimer = null;
