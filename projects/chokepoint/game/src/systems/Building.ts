@@ -8,6 +8,7 @@ import type { Tower } from '../entities/Tower';
 import type { Sfx } from '../audio/Sfx';
 import type { Board } from './Board';
 import type { FxSystem } from './FxSystem';
+import { TowerGhost } from './towerGhost';
 import type { TowerSystem } from './TowerSystem';
 
 /**
@@ -23,6 +24,10 @@ export class Building {
   selectedTower: Tower | undefined;
   /** Bumped whenever the hand, a tower's slots or a selection changes, so the HUD redraws them. */
   uiVersion = 0;
+  /** The tower the pointer is over (desktop hover; a tap is also a pointer position). */
+  private pointerTower: Tower | undefined;
+  /** A desktop hover has happened; touch never does, so every free tower shows the ghost. */
+  private hoverSeen = false;
 
   constructor(
     private readonly run: RunState,
@@ -30,6 +35,7 @@ export class Building {
     private readonly towers: TowerSystem,
     private readonly fx: FxSystem,
     private readonly sfx: Sfx | undefined,
+    private readonly ghost: TowerGhost,
   ) {
     this.selectedAugment = run.hand.length > 0 ? 0 : undefined;
   }
@@ -49,6 +55,7 @@ export class Building {
     if (this.run.phase === 'over' || this.run.phase === 'draft') return;
     const cell = this.board.cellAt(x, y);
     if (!cell) return;
+    this.pointerTower = this.board.towerAt(cell); // a tap is also a pointer position
     this.board.showHover(undefined, false, 0);
     const held = this.heldCopy;
     const tower = this.board.towerAt(cell);
@@ -81,14 +88,23 @@ export class Building {
   hover(x: number | undefined, y: number): void {
     const cell = x === undefined ? undefined : this.board.cellAt(x, y);
     const held = this.heldCopy;
+    const tower = cell ? this.board.towerAt(cell) : undefined;
+    this.pointerTower = tower;
+    this.hoverSeen = true;
+    this.refreshGhosts(); // one call covers every return below
     if (!cell || !held) {
-      this.board.showHover(cell && !this.board.towerAt(cell) && this.board.canBuild(cell) ? cell : undefined, false, 0);
+      this.board.showHover(cell && !tower && this.board.canBuild(cell) ? cell : undefined, false, 0);
       return;
     }
-    const tower = this.board.towerAt(cell);
     const augments = [...(tower?.augments ?? []), held];
     const ok = tower ? tower.freeSlots > 0 : this.board.canBuild(cell) && this.run.canAfford(slotCost(0)!);
     this.board.showHover(cell, ok, ok ? towerSpec(augments).range * CELL : 0);
+  }
+
+  /** A drag began: the pointer is on nothing, so the ghost goes with it. */
+  dragStarted(): void {
+    this.pointerTower = undefined;
+    this.refreshGhosts();
   }
 
   /**
@@ -99,6 +115,7 @@ export class Building {
     if (index < 0 || index >= this.run.hand.length || this.run.phase === 'over') return;
     const tower = this.selectedTower;
     this.selectedAugment = index;
+    this.refreshGhosts();
     if (tower && tower.freeSlots > 0) this.placeHeld(tower);
     this.uiVersion += 1;
   }
@@ -125,12 +142,14 @@ export class Building {
     if (result === 'gold') this.hint(tower.cell, `Need ${this.towers.nextSlotCost(tower)} gold`, PALETTE.red);
     if (result === true && this.heldCopy) this.placeHeld(tower);
     this.selectTower(tower);
+    this.refreshGhosts();
   }
 
   /** The draft put a new card in the hand: select it if nothing is selected. */
   cardAdded(): void {
     if (this.selectedAugment === undefined && this.run.hand.length > 0) this.selectedAugment = this.run.hand.length - 1;
     this.uiVersion += 1;
+    this.refreshGhosts();
   }
 
   /**
@@ -168,6 +187,21 @@ export class Building {
     const n = this.run.hand.length;
     this.selectedAugment = n === 0 ? undefined : Math.min(this.selectedAugment ?? 0, n - 1);
     this.uiVersion += 1;
+    this.refreshGhosts(); // every commit funnels here, so this also clears the ghosts
+  }
+
+  /**
+   * Which towers show the what-if ghost for the held card: on desktop the one under the pointer,
+   * on touch (no hover) every tower with a free slot. Full towers never show one.
+   */
+  private refreshGhosts(): void {
+    const held = this.heldCopy;
+    if (!held || this.run.phase === 'over') { this.ghost.clearAll(); return; }
+    const targets = this.hoverSeen
+      ? (this.pointerTower && this.pointerTower.freeSlots > 0 ? [this.pointerTower] : [])
+      : this.towers.towers.filter((t) => t.freeSlots > 0);
+    for (const t of this.ghost.towers) if (!targets.includes(t)) this.ghost.clear(t);
+    for (const t of targets) this.ghost.show(t, held);
   }
 
   private hint(cell: Cell, text: string, color: number = PALETTE.muted): void {

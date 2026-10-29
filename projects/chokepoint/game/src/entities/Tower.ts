@@ -78,6 +78,11 @@ export class Tower extends Phaser.GameObjects.Image {
     return this.slots - this.augments.length;
   }
 
+  /** The board point of slot `index`'s pip on the plinth. */
+  slotPoint(index: number): { x: number; y: number } {
+    return { x: this.pips.x + this.pipX(index), y: this.pips.y + 22 };
+  }
+
   /** Puts an augment copy into a free slot. Returns false when every slot is full. */
   addAugment(copy: AugmentCopy): boolean {
     if (this.freeSlots <= 0) return false;

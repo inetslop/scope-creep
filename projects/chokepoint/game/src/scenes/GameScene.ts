@@ -22,6 +22,7 @@ import { PushWindup } from '../systems/PushWindup';
 import { RallySystem } from '../systems/RallySystem';
 import { RunFlow } from '../systems/RunFlow';
 import { RunSave } from '../systems/RunSave';
+import { TowerGhost } from '../systems/towerGhost';
 import { TowerSystem } from '../systems/TowerSystem';
 import { WaveSpeed } from '../systems/WaveSpeed';
 import { WaveSystem } from '../systems/WaveSystem';
@@ -43,6 +44,7 @@ export class GameScene extends Phaser.Scene {
   techLife = 0;
   board!: Board;
   building!: Building;
+  ghost!: TowerGhost;
   flow!: RunFlow;
   saver!: RunSave;
   speed!: WaveSpeed;
@@ -90,7 +92,8 @@ export class GameScene extends Phaser.Scene {
     this.projectiles = new ProjectileSystem(this, this.enemies);
     this.towers = new TowerSystem(this, this.board, this.run, this.enemies, this.projectiles, this.fx, sfx);
     this.enemies.towers = () => this.towers.towers; // a kill pays the mints around it (core/mint.ts)
-    this.building = new Building(this.run, this.board, this.towers, this.fx, sfx);
+    this.ghost = new TowerGhost(this);
+    this.building = new Building(this.run, this.board, this.towers, this.fx, sfx, this.ghost);
     this.flow = new RunFlow(this, this.run, {
       board: this.board,
       building: this.building,
@@ -115,7 +118,7 @@ export class GameScene extends Phaser.Scene {
         if (this.inPlayArea(p)) this.building.tap(p.worldX, p.worldY);
       },
       hover: (p) => this.building.hover(this.inPlayArea(p) ? p.worldX : undefined, p.worldY),
-      dragStart: () => this.board.showHover(undefined, false, 0),
+      dragStart: () => { this.board.showHover(undefined, false, 0); this.building.dragStarted(); },
     });
     bindHotkeys(this);
     registerRunChecks(this);

@@ -4,11 +4,12 @@ title: "The what-if: the tower previews the held augment before the gold is spen
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T02:00:38Z
 claimed_at: 2026-10-29T10:15:35Z
+finished_at: 2026-10-29T11:10:10Z
 epic: E4
 ---
 
@@ -144,3 +145,18 @@ dragStarted(): void;            // a drag: the pointer is on nothing, so clear t
 ### Tests
 
 None (display-only). `npm run check` (typecheck + lint + unit tests) and `npm run smoke` (build + play in a real browser at 412×915 phone portrait and 1280×720) must pass; the ghost is verified in-browser: on desktop it appears on the tower under the pointer (and only that tower) with a hand card selected, and clears on hover-leave / commit / card re-tap; on touch, every tower with a free slot shows one; a full tower (no free slot) shows none; committing clears all.
+
+## Result (attempt 1, asus)
+
+Added the "what-if" tower preview: a new `src/systems/towerGhost.ts` (`TowerGhost`) draws, at half alpha on a tower's next free slot, the tier pip plus a compact marker of what the held card would add (capsule/rod/bulb/ring/tick/arrow/coin per the augment's added form, in its own color); `Tower.slotPoint()` supplies the exact pip position and `Building` reconciles the ghosts on hover, tap, pick, card-added, slot-unlock, commit and drag-start (desktop: only the tower under the pointer; touch: every tower with a free slot). `GameScene` constructs the ghost, hands it to `Building` and clears it on drag start — nothing else changes, the range-ring preview and commit path are untouched, and `npm run check` and `npm run smoke` (412×915 + 1280×720) both pass.
+
+- Self-review: APPROVE
+- Time: 54.6 min
+
+```
+projects/chokepoint/game/src/entities/Tower.ts     |  5 ++
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  7 +-
+ projects/chokepoint/game/src/systems/Building.ts   | 38 +++++++++-
+ projects/chokepoint/game/src/systems/towerGhost.ts | 86 ++++++++++++++++++++++
+ 4 files changed, 132 insertions(+), 4 deletions(-)
+```
