@@ -4,11 +4,12 @@ title: Remove the panic pulse
 assignee: narcissus
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T07:01:07Z
 claimed_at: 2026-10-29T08:14:30Z
+finished_at: 2026-10-29T10:04:13Z
 ---
 
 ## Goal
@@ -58,3 +59,22 @@ No new symbols. Removed: `PanicButton` HUD part, `RunState.panic()` + `panicUsed
 
 ### Tests
 No new tests — the two panic tests are removed with the rule. Done when: `grep -ri panic src tests` prints nothing, `npm run check` passes, and the pause card at 412x915 and 1280x720 shows quit button → 12 px → sound row, no hole where the line was (panel still scales 1 at both sizes).
+
+## Result (attempt 1, narcissus)
+
+(no summary)
+
+- Self-review: NO VERDICT
+- Time: 109.7 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          |  5 --
+ projects/chokepoint/game/src/config.ts             |  3 -
+ projects/chokepoint/game/src/core/run.ts           | 11 ---
+ projects/chokepoint/game/src/scenes/HudScene.ts    |  2 -
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  7 +-
+ projects/chokepoint/game/src/systems/FxSystem.ts   | 11 +--
+ projects/chokepoint/game/src/ui/hud/PanicButton.ts | 84 ++--------------------
+ projects/chokepoint/game/tests/core/run.test.ts    | 26 +------
+ 8 files changed, 9 insertions(+), 140 deletions(-)
+```

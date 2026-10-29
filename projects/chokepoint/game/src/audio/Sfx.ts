@@ -112,11 +112,6 @@ export class Sfx {
     this.tone(440, 0.12, 'triangle', 0.35, 880);
   }
 
-  /** The wave's panic pulse: one soft low whoosh, at the hit-blip volume. */
-  panic(): void {
-    this.tone(300, 0.3, 'sine', 0.18, 90);
-  }
-
   deny(): void {
     this.tone(200, 0.1, 'square', 0.15, 150);
   }

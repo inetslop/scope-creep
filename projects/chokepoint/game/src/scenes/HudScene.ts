@@ -8,7 +8,6 @@ import type { HudPart } from '../ui/hud/hud';
 import { LastStandBanner } from '../ui/hud/LastStandBanner';
 import { NextWaveButton } from '../ui/hud/NextWaveButton';
 import { NextWavePreview } from '../ui/hud/NextWavePreview';
-import { PanicButton } from '../ui/hud/PanicButton';
 import { PauseButton } from '../ui/hud/PauseButton';
 import { SendButton } from '../ui/hud/SendButton';
 import { SpeedButton } from '../ui/hud/SpeedButton';
@@ -39,7 +38,6 @@ export class HudScene extends Phaser.Scene {
     const preview = new NextWavePreview(this);
     this.parts = [
       new StatsCard(this),
-      new PanicButton(this, game),
       new WaveCard(this),
       new WaveBanner(this),
       new PauseButton(this, game),
