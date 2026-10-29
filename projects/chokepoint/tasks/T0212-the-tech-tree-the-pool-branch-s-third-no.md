@@ -1,12 +1,14 @@
 ---
 id: T0212
 title: "The tech tree: the pool branch's third node — Mend"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0153, T0209]
-attempts: 0
+attempts: 1
 created: 2026-10-29T15:15:13Z
+claimed_at: 2026-10-29T16:04:24Z
 epic: E2
 ---
 
