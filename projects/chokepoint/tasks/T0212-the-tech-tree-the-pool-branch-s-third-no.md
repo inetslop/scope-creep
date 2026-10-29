@@ -4,11 +4,12 @@ title: "The tech tree: the pool branch's third node — Mend"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0153, T0209]
 attempts: 1
 created: 2026-10-29T15:15:13Z
 claimed_at: 2026-10-29T16:04:24Z
+finished_at: 2026-10-29T16:16:30Z
 epic: E2
 ---
 
@@ -59,3 +60,16 @@ No new types or functions — `POOL_NODES` already is `readonly PoolNode[]` with
 
 ### Tests
 Extend `tests/core/tech.test.ts` as in Step 2 (the acceptance-criteria unit tests live there). No new test file.
+
+## Result (attempt 1, inet-racing)
+
+The pool branch's tech row now has a third node — Mend (30 coins, `unlocks: 'mend'`, id equal to the augment id so T0095's draft gate reads it from the purchased list). It's a single data entry in POOL_NODES; the card, its locked "not in the game yet" state while Mend isn't in content, the buy/pop/chime, and both layouts all ride on the existing per-node mapping. Unit tests in tests/core/tech.test.ts updated to cover the three-node row, mend's buy refusals, and its purchase persistence.
+
+- Self-review: APPROVE
+- Time: 12.1 min
+
+```
+projects/chokepoint/game/src/content/tech/pool.ts |  3 ++-
+ projects/chokepoint/game/tests/core/tech.test.ts  | 18 ++++++++++++++++--
+ 2 files changed, 18 insertions(+), 3 deletions(-)
+```

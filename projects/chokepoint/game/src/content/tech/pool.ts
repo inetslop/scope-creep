@@ -8,8 +8,9 @@ export interface PoolNode {
   unlocks: string;
 }
 
-/** Two nodes for now: Haste and Momentum, each adding its augment to the draft. */
+/** Three nodes for now: Haste, Momentum and Mend, each adding its augment to the draft. */
 export const POOL_NODES: readonly PoolNode[] = [
   { id: 'haste', name: 'Haste', line: 'unlocks the Haste augment in the draft', price: 25, unlocks: 'haste' },
   { id: 'momentum', name: 'Momentum', line: 'unlocks the Momentum augment in the draft', price: 30, unlocks: 'momentum' },
+  { id: 'mend', name: 'Mend', line: 'unlocks the Mend augment in the draft', price: 30, unlocks: 'mend' },
 ];
