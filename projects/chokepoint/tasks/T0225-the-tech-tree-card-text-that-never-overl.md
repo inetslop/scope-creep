@@ -1,7 +1,12 @@
 ---
+id: T0225
 title: "The tech tree: card text that never overlaps, rows sized from their cards"
 size: M
 priority: 2
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-29T17:00:35Z
 ---
 
 ## Goal
