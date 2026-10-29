@@ -3,13 +3,11 @@ id: T0235
 title: "Feast: the Epic that feeds on the kill chain"
 size: L
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-29T22:31:19Z
-claimed_at: 2026-10-29T22:44:51Z
 epic: E4
-designer: desktop
 ---
 
 ## Goal
@@ -46,3 +44,76 @@ A new Epic-only augment with a new source of power: the kill chain itself. Quick
 - [ ] Two Feast copies on the board: the chain window is 1.9 s (the ×N counter lives 1.9 s after each kill and the drain bar, T0220, drains over 1.9 s); three copies: 2.3 s; one copy: 1.5 s, as today.
 - [ ] Combo gold (T0066) and the milestone yellow (T0034) still key on the chain level and are unchanged; a leak still breaks the chain (T0207) and the 2× fast-forward (T0019) still scales the window with the sim.
 - [ ] A Feast-first tower is the yellow open ring (a plate, not a disc) with one tick per copy, lit while the chain is alive and dim while it is broken; the Epic purple pip is as usual; works at 412x915 and 1280x720.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/augments/feast.ts` — the augment def (Epic-only, 0-damage pulse first form) + exported `FEAST_WINDOW_EXTRA_SEC = 0.4`
+- create `src/core/feast.ts` — pure rules: window ms per copy count, chain liveness, damage multiplier
+- create `src/systems/FeastGlow.ts` — per-frame system: lit/dim state of the Feast plates (model on `ComboBar`)
+- create `tests/core/feast.test.ts` — unit tests for the core rules
+- edit `src/content/augments/index.ts` — import `feast` (between `ember` and `frost`); add `feast,` after `mark,` in `AUGMENTS` (with the other Epic-only supports); then the 16-cap check (see Steps)
+- edit `src/content/types.ts` — `FirstForm.runPower?: boolean` (after `goldRadius`); `AddedForm.chainWindowSec?: number` (after `goldPerKill`)
+- edit `src/core/augments.ts` — `TowerSpec.feastCount: number` (+ `feastCount: 0` in `EMPTY`); in `towerSpec()` next to the Mints loop: `for (const a of augments) if (a.id === 'feast') spec.feastCount += 1;`
+- edit `src/systems/FxSystem.ts` — public `comboWindowMs = FEAST_CHAIN_BASE_MS` (imported from `core/feast`); in `killCount()` replace both `1500` literals with `this.comboWindowMs`
+- edit `src/systems/ComboBar.ts` — line 35: `/ 1500` → `/ this.fx.comboWindowMs`
+- edit `src/systems/EnemySystem.ts` — the damage multiplier + window setting (exact points below)
+- edit `src/entities/Tower.ts` — `feastPlate` graphics (created/redrawn in `refresh()`, destroyed in `destroy()`), `setFeastPlateLit()`
+- edit `src/entities/towerLook.ts` — exported `drawFeastPlate(g, spec)`
+- edit `src/scenes/GameScene.ts` — `feastGlow!: FeastGlow` field + import; `this.feastGlow = new FeastGlow(this, this.fx, () => this.towers.towers);` after the ComboBar line; `this.feastGlow.update();` after `this.comboBar.update();`
+- edit `src/debug/runChecks.ts` — `['feast.window', (g) => (Number.isFinite(g.fx.comboWindowMs) && g.fx.comboWindowMs >= FEAST_CHAIN_BASE_MS ? null : `the chain window is ${g.fx.comboWindowMs} ms`)],` after `comboBar.valid`
+- edit `tests/content.test.ts` — line 51: add `|| a.first.runPower` before `).toBeTruthy()`
+
+### Interfaces
+```ts
+// src/core/feast.ts
+export const FEAST_CHAIN_BASE_MS = 1500;
+export function feastChainWindowMs(copies: number): number;            // 1500 + 400 * max(0, copies-1)
+export function chainAlive(chain: number, now: number, lastKill: number, windowMs: number): boolean; // chain >= 1 && now - lastKill < windowMs
+export function feastDamageMul(feastCopies: number, chain: number, now: number, lastKill: number, windowMs: number): number; // 1 + 0.04*chain while copies>0 and chainAlive, else 1
+
+// src/content/augments/feast.ts
+export const FEAST_WINDOW_EXTRA_SEC = 0.4;
+// def: id 'feast'; name 'Feast'; asTower 'Kills chain: every tower +4% damage per chain level.';
+// asAdded 'Each extra Feast: the combo window +0.4 s.' (same string in tiers.rare/epic.asAdded);
+// look { shape: 'ring', color: 'yellow', size: 0.22 }; first { kind: 'pulse', damage: 0, range: 1, rate: 1, runPower: true };
+// added { chainWindowSec: FEAST_WINDOW_EXTRA_SEC }; tier: 'epic'.
+
+// src/entities/towerLook.ts
+export function drawFeastPlate(g: Phaser.GameObjects.Graphics, spec: TowerSpec): void;
+// g.clear(); r = BODY * 1.95 (the base, below the pips, like the Mark ring);
+// fillRing(g, 0, 0, r, 2, 0, Math.PI * 2, PALETTE.yellow, 1); // the open ring (a stroke, no fill)
+// then spec.feastCount ticks: a = (i * Math.PI * 2) / spec.feastCount (0 = up);
+// fillRing(g, 0, 0, r, 4, a - 0.12, a + 0.12, PALETTE.yellow, 1); // same color, thicker, like Anchor's ticks
+
+// src/entities/Tower.ts
+setFeastPlateLit(lit: boolean): void; // guard: no-op if !feastPlate or unchanged; setAlpha(lit ? 1 : 0.5)
+// refresh(): if (spec.firstId === 'feast') { create if (!this.feastPlate): scene.add.graphics().setDepth(DEPTH.towers + 1).setPosition(this.x, this.y); drawFeastPlate(this.feastPlate, spec); }
+//            else destroy it and reset plateLit. destroy(): this.feastPlate?.destroy();
+
+// src/systems/FeastGlow.ts
+export class FeastGlow { constructor(scene: Phaser.Scene, fx: FxSystem, towers: () => readonly Tower[]); update(): void; }
+// update: alive = chainAlive(this.fx.chain, this.scene.time.now, this.fx.comboLastKill, this.fx.comboWindowMs);
+// for (const t of this.towers()) if (t.spec.firstId === 'feast') t.setFeastPlateLit(alive);
+```
+`EnemySystem` gains two private helpers — `feastCopies()` (sum of `t.spec.feastCount` over `this.towers()`) and `feastMul()` (`feastDamageMul(this.feastCopies(), this.fx.chain, this.scene.time.now, this.fx.comboLastKill, this.fx.comboWindowMs)`) — and `feastChainWindowMs` is applied in `kill()`: set `this.fx.comboWindowMs = feastChainWindowMs(this.feastCopies());` **before** `this.fx.killCount(e.x, e.y);`. The multiplier is applied at exactly the three damage points: `strike()` — `payload.damage * this.feastMul() * (…plateMul… )`; `tickBurn()` — `burnTick(e.burn, dt) * this.feastMul()`; `beamTick()` — `target.hit(damage * this.feastMul(), false)`.
+
+### Steps
+1. `content/augments/feast.ts`, `content/types.ts` (the two fields), `content/augments/index.ts` registration.
+2. **16-cap**: after registering, count `AUGMENTS`. Today that is 15 — if ≤ 16 stop. If the index grew past 16 meanwhile (other tasks landed), remove the first of **frost → rally → mint** still in the index: delete its array line and its import line only (nothing else imports them directly), and say which one you removed in the result.
+3. `core/feast.ts`, then `core/augments.ts` (spec field + count loop).
+4. `FxSystem` window field, `ComboBar` drain, the five `EnemySystem` edits.
+5. `towerLook.ts` `drawFeastPlate`, `Tower.ts` plate lifecycle + `setFeastPlateLit`, `FeastGlow.ts`, the four `GameScene` lines, the invariant.
+6. `tests/core/feast.test.ts`, the `content.test.ts` line, `npm run check`, `npm run smoke`.
+No other files change: draft (Epic roll via `tier: 'epic'`, no opening via `damage: 0`), tier chime, codex, DPS line (0 like Mint), end-card chip (kills 0) and the what-if ghost (falls back to its plain token for the unknown added field, like Rally) all read the data generically.
+
+### Pitfalls
+- **Never treat `fx.chain > 0` as "alive".** `FxSystem` resets `comboN` lazily (next kill) and arms no timer for a level-1 chain, so after a break the count can sit stale. `chainAlive()` checks the window too — that is what makes damage snap to ×1 at expiry and keeps a lone-kill chain (+4% for 1.5 s, then off) correct. Do not "fix" `FxSystem`'s reset logic; nothing else observes the stale value.
+- **Window consistency**: `comboWindowMs` is set at each kill, *before* `killCount` (the expiry check and the timer both read it), and `ComboBar` drains over it — bar, counter and break stay in lockstep on the scene clock, so 2× fast-forward scales it for free. All timing is scene-clock comparison, no `dt` accumulation.
+- **`FeastGlow` must run in every phase** (hence `GameScene.update`, not an enemy hook — hooks only update during a wave): the chain can expire while the draft is open. Do not cache the lit state in the system; a newly built Feast tower would otherwise stay at its default alpha. `setFeastPlateLit` keeps its own per-tower guard.
+- **Byte-identical without Feast**: `feastCopies() === 0` returns exactly 1 and the window stays 1500 — a feast-less run must change nothing.
+- **Plate lifecycle**: redraw on every `refresh()` (tick count changes when a copy is added), destroy in `Tower.destroy()`, and only Feast-**first** towers get a plate (`spec.firstId === 'feast'`) — a Feast added elsewhere shows nothing (the buff is board-wide, like a Rally added elsewhere shows no beacon). No new painter: icon and body are painted from `look` automatically (`ring` is already supported — the Mute's shape); the plate is `fillRing`, never a thick stroke, and lives in `towerLook.ts` rather than `DECORATIONS` because only the plate's alpha is dynamic.
+- **`content.test.ts:51`** rejects a first form that does nothing to enemies; `runPower` is the marker (it also preps Momentum T0064). Extend that one line only.
+
+### Tests
+`tests/core/feast.test.ts`: window (0→1500, 1→1500, 2→1900, 3→2300); `chainAlive` (alive at ×1 and ×3 within the window, broken at/after expiry even with a stale count, broken at 0); `feastDamageMul` (×2→1.08, ×10→1.40, ×1→1.04, expired→1, 0 copies→1, chain 0→1); `towerSpec` feastCount (feast-first=1, two copies=2, feast added to a bolt=1). `tests/content.test.ts` covers the new def automatically.
