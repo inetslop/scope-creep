@@ -1,12 +1,14 @@
 ---
 id: T0135
 title: "Spray gets its own look, not Beam's"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T09:34:10Z
+claimed_at: 2026-10-29T09:44:06Z
 epic: E4
 ---
 
