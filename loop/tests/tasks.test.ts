@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import type { FleetConfig } from '../config.ts';
 import { PROJECT, TASKS_DIR } from '../paths.ts';
-import { designedFiles, doneIds, duplicateIds, isPoolTask, lockedBy, parseTask, pickTaskFor, serializeTask, slugify, TaskFormatError, tasksById, unblockedTaskIds, type Task } from '../tasks.ts';
+import { designedFiles, doneIds, duplicateIds, isPoolTask, lockedBy, parseTask, pausedClaims, pickTaskFor, serializeTask, slugify, TaskFormatError, tasksById, unblockedTaskIds, type Task } from '../tasks.ts';
 
 const file = path.join('tasks', 'yoga', 'T0007-thing.md');
 
@@ -284,5 +284,25 @@ describe('shared ids', () => {
   });
   it('lists the ids used twice', () => {
     assert.deepEqual([...duplicateIds(all).keys()], ['T0103']);
+  });
+});
+
+describe('pausedClaims', () => {
+  const now = Date.parse('2026-10-29T18:00:00Z');
+  const withPause = (pausedAt?: string): FleetConfig =>
+    ({ ...fleet, machines: { ...fleet.machines, off: { ...fleet.machines.off, ...(pausedAt ? { pausedAt } : {}) } } }) as FleetConfig;
+  const building = (assignee: string): Task => pool(`T00${assignee.length}0`, { status: 'in-progress', assignee });
+
+  it('releases what a machine paused for an hour still builds, not before, and never an active machine\'s', () => {
+    const all = [building('off'), building('mid'), pool('T0099', { status: 'todo' })];
+    assert.deepEqual(pausedClaims(all, withPause('2026-10-29T16:59:00Z'), now).map((t) => t.assignee), ['off']);
+    assert.deepEqual(pausedClaims(all, withPause('2026-10-29T17:30:00Z'), now), [], 'paused half an hour: it may still be finishing');
+  });
+
+  it('without pausedAt, counts from the last change to machines.json, and keeps the claim when that is unknown too', () => {
+    const all = [building('off')];
+    assert.equal(pausedClaims(all, withPause(), now, '2026-10-29T16:00:00Z').length, 1);
+    assert.equal(pausedClaims(all, withPause(), now, '2026-10-29T17:45:00Z').length, 0);
+    assert.equal(pausedClaims(all, withPause(), now).length, 0);
   });
 });

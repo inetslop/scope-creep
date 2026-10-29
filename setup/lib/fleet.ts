@@ -150,7 +150,9 @@ export function formatFleetJson(value: unknown): string {
     if (flat(v)) return JSON.stringify(v);
     const inner = `${indent}  `;
     if (Array.isArray(v)) {
-      if (v.every(flat)) return `[${v.map((x) => JSON.stringify(x)).join(', ')}]`;
+      const line = `[${v.map((x) => JSON.stringify(x)).join(', ')}]`;
+      // Short lists of plain values stay on one line (roles); a long one gets one item per line (loop.lockFree).
+      if (v.every(flat) && line.length <= 100) return line;
       return `[\n${v.map((x) => inner + fmt(x, inner)).join(',\n')}\n${indent}]`;
     }
     const entries = Object.entries(v as Record<string, unknown>);
@@ -167,10 +169,13 @@ export function addMachine(fleet: FleetFile, id: string, entry: Omit<MachineConf
   return { ...fleet, machines: { ...fleet.machines, [id]: { paused: true, ...entry } } };
 }
 
-export function setPaused(fleet: FleetFile, id: string, paused: boolean): FleetFile {
+export function setPaused(fleet: FleetFile, id: string, paused: boolean, nowIso = new Date().toISOString().slice(0, 19) + 'Z'): FleetFile {
   const current = fleet.machines[id];
   if (!current) throw new Error(`machine "${id}" is not in agents/machines.json`);
   const rest: MachineConfig = { ...current };
   delete rest.paused;
-  return { ...fleet, machines: { ...fleet.machines, [id]: paused ? { paused: true, ...rest } : rest } };
+  delete rest.pausedAt;
+  // Pausing a paused machine keeps when it was first paused: the hour before its claims go back runs from then.
+  const since = current.paused && current.pausedAt ? current.pausedAt : nowIso;
+  return { ...fleet, machines: { ...fleet.machines, [id]: paused ? { paused: true, pausedAt: since, ...rest } : rest } };
 }

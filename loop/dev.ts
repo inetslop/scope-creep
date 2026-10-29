@@ -10,7 +10,7 @@ import { autoResolvable, autoResolveAdditions } from './merge.ts';
 import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { updateTaskAndPush } from './sync.ts';
-import { appendSection, isPoolTask, listTasks, lockedBy, lockFreeFor, readTask, writeTask, type Task } from './tasks.ts';
+import { appendSection, isPoolTask, listTasks, lockedBy, lockFreeFor, parseTask, readTask, writeTask, type Task } from './tasks.ts';
 
 export interface RunContext {
   local: LocalConfig;
@@ -142,6 +142,7 @@ export async function runDevTask(ctx: RunContext, picked: Task): Promise<void> {
     const workFiles = (await ctx.git.ok(['diff', '--name-only', base, 'HEAD', '--', GAME_REL])).split(/\r?\n/).filter(Boolean);
 
     const outcome = await integrate(ctx, task, notes, machine);
+    if (outcome === 'released') return await savePastClaim(ctx, task, machine, base, work, workFiles);
     if (outcome !== 'pushed') {
       const upstream = await upstreamLog(ctx.git, base, workFiles);
       const header = `${task.id} attempt ${task.attempts} (${machine}) passed the checks on ${base.slice(0, 7)} but could not be merged into main (${outcome}).`;
@@ -252,11 +253,12 @@ async function selfReview(ctx: RunContext, task: Task, base: string, notes: stri
 }
 
 /** Rebases onto the latest main (agent resolves game conflicts), re-runs the gate if needed, pushes. */
-async function integrate(ctx: RunContext, task: Task, notes: string[], machine: string): Promise<'pushed' | 'conflict' | 'broken-after-rebase' | 'push-failed'> {
+async function integrate(ctx: RunContext, task: Task, notes: string[], machine: string): Promise<'pushed' | 'released' | 'conflict' | 'broken-after-rebase' | 'push-failed'> {
   const git = ctx.git;
   let recorded = notes.length; // the notes before this point are in the task's Result section already
   for (let attempt = 1; attempt <= 3; attempt++) {
     await git.fetch();
+    if (!(await stillMine(git, task, machine))) return 'released';
     if ((await git.behindCount()) > 0) {
       const upstreamGame = (await git.ok(['diff', '--name-only', 'HEAD...origin/main', '--', GAME_REL])).trim() !== '';
       const mine = await git.head();
@@ -288,6 +290,36 @@ async function integrate(ctx: RunContext, task: Task, notes: string[], machine: 
     warn(`${task.id}: push rejected (attempt ${attempt}); retrying`);
   }
   return 'push-failed';
+}
+
+/** Whether main still has `task` in progress by `machine` (the PO machine requeues the tasks of a machine paused too long). */
+async function stillMine(git: Git, task: Task, machine: string): Promise<boolean> {
+  const shown = await git.raw(['show', `origin/main:${rel(task.file)}`]);
+  if (shown.code !== 0) return true; // gone from main: left to the usual merge, as before
+  const upstream = parseTask(shown.stdout, task.file);
+  return upstream.status === 'in-progress' && upstream.assignee === machine;
+}
+
+/**
+ * The task was put back in the pool while this machine built it (paused for over an hour): its
+ * work passed the checks but is not pushed over the new claim. It is saved to tasks/salvage/ for
+ * whoever builds the task (an attempt re-applies a saved diff), and noted on the task.
+ */
+async function savePastClaim(ctx: RunContext, task: Task, machine: string, base: string, work: string, workFiles: string[]): Promise<void> {
+  warn(`${task.id}: was put back in the pool while this machine built it; saving the work to ${salvageRel(task.id)} instead of pushing`);
+  const upstream = await upstreamLog(ctx.git, base, workFiles);
+  const header = `${task.id} attempt ${task.attempts} (${machine}) passed the checks on ${base.slice(0, 7)} after the task had gone back to the pool (the machine was paused).`;
+  await ctx.git.abortRebase();
+  await updateTaskAndPush(
+    ctx.git,
+    rel(task.file),
+    (t) => {
+      appendSection(t, `Late work (attempt ${task.attempts}, ${machine})`, `This machine finished the task after it went back to the pool. Its work passed the checks and is saved in ${salvageRel(task.id)} for the next attempt to re-apply.`);
+      return true;
+    },
+    `${task.id}: late work from ${machine} saved`,
+    { [salvageRel(task.id)]: salvageText(header, upstream, work) },
+  );
 }
 
 /**

@@ -11,7 +11,7 @@
  */
 import fs from 'node:fs';
 import { releaseOwnDesignClaims, runArchitectPass } from './architect.ts';
-import { loadFleet, loadLocalConfig } from './config.ts';
+import { FLEET_FILE, loadFleet, loadLocalConfig, type FleetConfig } from './config.ts';
 import { runDevTask, type RunContext } from './dev.ts';
 import { sleep } from './exec.ts';
 import { Git } from './git.ts';
@@ -22,7 +22,7 @@ import { importInbox } from './inbox.ts';
 import { poDue, runPoCycle } from './po.ts';
 import { EXIT_NO_MODEL, EXIT_RESTART, needsRestart } from './restart.ts';
 import { syncMain, updateTaskAndPush } from './sync.ts';
-import { appendSection, isPoolTask, listTasks, pickTaskFor } from './tasks.ts';
+import { appendSection, isPoolTask, listTasks, PAUSED_CLAIM_MINUTES, pausedClaims, pickTaskFor } from './tasks.ts';
 
 /** After a crash: put our own in-progress tasks back in the queue and clean the checkout. */
 async function recover(git: Git, machineId: string): Promise<void> {
@@ -49,6 +49,35 @@ async function recover(git: Git, machineId: string): Promise<void> {
       `${t.id}: requeued after interruption`,
     );
   }
+}
+
+/**
+ * On the PO machine: tasks a paused machine has held in progress for an hour go back to the pool
+ * (tasks.ts pausedClaims), so its files unlock for the others. If it comes back and finishes one
+ * anyway, its runner sees the claim is gone and saves the work instead of pushing it (dev.ts).
+ */
+async function releasePausedClaims(git: Git, fleet: FleetConfig): Promise<boolean> {
+  const changedAt = (await git.ok(['log', '-1', '--format=%cI', '--', rel(FLEET_FILE)])).trim() || undefined;
+  let released = false;
+  for (const t of pausedClaims(listTasks().tasks, fleet, Date.now(), changedAt)) {
+    const holder = t.assignee;
+    warn(`${t.id}: ${holder} has been paused for over ${PAUSED_CLAIM_MINUTES} minutes holding it; putting it back in the pool`);
+    const ok = await updateTaskAndPush(
+      git,
+      rel(t.file),
+      (task) => {
+        if (task.status !== 'in-progress' || task.assignee !== holder) return false;
+        task.status = 'todo';
+        if (isPoolTask(task)) task.assignee = '';
+        task.claimedAt = undefined;
+        appendSection(task, `Attempt ${task.attempts} released (${holder})`, `The machine was paused for over ${PAUSED_CLAIM_MINUTES} minutes holding this task, which kept its files locked for the others. Requeued.`);
+        return true;
+      },
+      `${t.id}: back in the pool (${holder} paused over an hour)`,
+    );
+    released ||= ok;
+  }
+  return released;
 }
 
 async function main(): Promise<number> {
@@ -100,6 +129,7 @@ async function main(): Promise<number> {
     if (machine.roles.includes('po')) {
       // The PO machine hands out every id: inbox tasks first, then its own cycle takes the next ones.
       if ((await importInbox(git)).length > 0) worked = true;
+      if (await releasePausedClaims(git, fleet)) worked = true;
       const reason = poDue(fleet, listTasks(true));
       if (reason) {
         await runPoCycle(ctx, reason);

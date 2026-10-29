@@ -67,10 +67,13 @@ export interface MachineConfig {
   sampling?: Sampling;
   /**
    * Takes the machine out of the loop, e.g. while it's down: its runner keeps syncing but starts
-   * no model server and does no work, and nobody plans, designs or assigns anything for it. Move
-   * its open tasks to another machine's folder when pausing it. Default false.
+   * no model server and does no work, and nobody plans, designs or assigns anything for it. A
+   * task it was building when paused stays its own for an hour (it may still be finishing it),
+   * then the PO machine puts it back in the pool (tasks.ts pausedClaims). Default false.
    */
   paused?: boolean;
+  /** When it was paused (ISO), set by `setup/machine.ts pause`. Missing: the last change to machines.json counts. */
+  pausedAt?: string;
 }
 
 export interface SizeLimits {
@@ -163,7 +166,7 @@ export interface LocalConfig {
 }
 
 export const LOCAL_CONFIG_FILE = path.join(AGENT_DIR, 'local.json');
-const FLEET_FILE = path.join(AGENTS_DIR, 'machines.json');
+export const FLEET_FILE = path.join(AGENTS_DIR, 'machines.json');
 
 export function loadLocalConfig(): LocalConfig {
   if (!fs.existsSync(LOCAL_CONFIG_FILE)) {

@@ -309,6 +309,25 @@ export function pickTaskFor(me: string, fleet: FleetConfig, all: readonly Task[]
     )[0];
 }
 
+/** How long a paused machine keeps the task it was building before it goes back to the pool. */
+export const PAUSED_CLAIM_MINUTES = 60;
+
+/**
+ * Tasks a paused machine has held in progress for PAUSED_CLAIM_MINUTES since it was paused
+ * (`pausedAt`, else `fleetChangedAt`: the last change to machines.json, never earlier than the
+ * pause). A pause only stops new claims, so a machine switched off mid-task would hold its task,
+ * and the lock on every file its design names, until it ran again (T0133 held nine tasks for
+ * five hours). Within the hour it may still be finishing; after it, the PO machine requeues these.
+ */
+export function pausedClaims(all: readonly Task[], fleet: FleetConfig, nowMs: number, fleetChangedAt?: string): Task[] {
+  return all.filter((t) => {
+    const m = t.status === 'in-progress' ? fleet.machines[t.assignee] : undefined;
+    if (!m?.paused) return false;
+    const since = Date.parse(m.pausedAt ?? fleetChangedAt ?? '');
+    return Number.isFinite(since) && nowMs - since >= PAUSED_CLAIM_MINUTES * 60_000;
+  });
+}
+
 /**
  * Files (relative to game/) named in a task's "## Design": what building it will touch. Only
  * paths with a file extension: a folder the design mentions (`src/core`) is not a file it edits.

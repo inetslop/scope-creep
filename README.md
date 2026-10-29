@@ -88,7 +88,7 @@ Machines aren't hard-coded: choose **a new machine** in either setup. It detects
 | `npm run status` | what each machine is doing, the shared pool (✎ waiting for design, ✍ being designed, · ready, ▶ in progress, with the files each ▶ task touches), recent commits, model server health |
 | `npm run doctor` | health check (`-- --gate` also runs the merge gate) |
 | `New-Item .agent\STOP` | stop after the current task |
-| `"paused": true` in `agents/machines.json` | take a machine out of the loop while it's down: its runner idles (no model server, no work), the PO stops planning for it, and the other machines take the pool's tasks. A task it had `in-progress` stays claimed until its runner restarts (and requeues it): set it back to `todo` by hand if the machine won't come back soon |
+| `"paused": true` in `agents/machines.json` | take a machine out of the loop while it's down: its runner idles (no model server, no work), the PO stops planning for it, and the other machines take the pool's tasks. A task it had `in-progress` stays its own for an hour after the pause (`pausedAt`, set by `node setup/machine.ts pause <id>`), so it can finish it; then the PO machine puts it back in the pool and its files unlock. If the machine finishes it later anyway, it saves the work to `tasks/salvage/` for the next attempt instead of pushing |
 | `"project": "<id>"` in `loop` of `agents/machines.json` | switch the whole fleet to another game (see *Projects*) |
 | `cd game; npm run dev` | play the latest local code (`cd projects/<id>/game` for another project) |
 
@@ -100,7 +100,7 @@ The fleet builds one game at a time: `loop.project` in `agents/machines.json` (d
 
 **A new project** needs `projects/<id>/game/` (a game with `npm run check`, `npm run build` and the `window.__SC__` hook the smoke test reads: `ready`, `scene`, `frame`, `errors`, `invariants()`, `stats`), `projects/<id>/planning/` (`VISION.md`, `ROADMAP.md`, `IDEAS.md`, `CHANGELOG.md`), `loop/smoke/games/<id>.ts` and `agents/prompts/<id>/`. The deploy publishes Scope Creep at the site root and every other project at `/<id>/`, each with its own build log.
 
-**Editing the game by hand** while the loop runs: a big change to files that a ▶ task in `npm run status` touches will conflict with it. Pause that machine first (it finishes and pushes its current task, then idles), make your change, then unpause it.
+**Editing the game by hand** while the loop runs: a big change to files that a ▶ task in `npm run status` touches will conflict with it. Pause that machine first (it finishes and pushes its current task, then idles; after an hour the task goes back to the pool), make your change, then unpause it.
 
 Logs: `.agent\logs\` (runner, supervisor, llama-server). Full agent transcripts: `.agent\runs\*.jsonl`. Smoke screenshots: `.agent\smoke\`.
 

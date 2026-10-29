@@ -25,6 +25,10 @@ describe('machine registration', () => {
     assert.deepEqual(Object.keys(added.machines), ['yoga', 'matt-desktop']);
     assert.deepEqual(added.machines['matt-desktop'], { paused: true, ...entry });
     assert.deepEqual(setPaused(added, 'matt-desktop', false).machines['matt-desktop'], entry);
+    const paused = setPaused(fleet, 'yoga', true, '2026-10-29T16:14:00Z');
+    assert.deepEqual(paused.machines.yoga, { paused: true, pausedAt: '2026-10-29T16:14:00Z', ...fleet.machines.yoga }, 'a pause says when');
+    assert.equal(setPaused(paused, 'yoga', true, '2026-10-29T18:00:00Z').machines.yoga!.pausedAt, '2026-10-29T16:14:00Z', 'pausing again keeps the first time');
+    assert.deepEqual(setPaused(paused, 'yoga', false).machines.yoga, fleet.machines.yoga, 'unpausing drops it');
     assert.equal(fleet.machines['matt-desktop'], undefined, 'input not mutated');
     assert.throws(() => addMachine(added, 'matt-desktop', entry));
     assert.ok(formatFleetJson(added).includes('"matt-desktop": {\n      "paused": true,\n      "label": "L",'));
