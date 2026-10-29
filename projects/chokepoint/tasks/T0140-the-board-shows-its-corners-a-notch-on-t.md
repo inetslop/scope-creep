@@ -3,10 +3,12 @@ id: T0140
 title: "The board shows its corners: a notch on the bend cells"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T11:23:58Z
+claimed_at: 2026-10-29T12:04:16Z
+designer: narcissus
 ---
 
 ## Goal
