@@ -129,3 +129,7 @@ projects/chokepoint/game/src/core/comboGold.ts     |  6 +++++
  .../chokepoint/game/tests/core/comboGold.test.ts   | 13 ++++++++++
  5 files changed, 64 insertions(+)
 ```
+
+## Review (by hand, 2026-10-29)
+
+VERDICT: APPROVE: the chain is counted before the hooks run, so the 5th/10th kill pays +2/+4; paid on top of last stand's doubled gold, undoubled; goldEarned feeds only the ledger check, so coins/score/claim card are unchanged; no coin on the trail (it follows `paid`). The inlined text style is needed (ui/text → ui/display → debug/flags reads window in Node tests), as in fx/nameLabel.ts.
