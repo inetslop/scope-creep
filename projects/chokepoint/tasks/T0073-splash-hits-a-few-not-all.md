@@ -1,12 +1,14 @@
 ---
 id: T0073
 title: "Splash hits a few, not all: 3 enemies per Splash"
+assignee: desktop-4070
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T21:08:30Z
+claimed_at: 2026-10-29T00:09:48Z
 design_attempts: 1
 ---
 
