@@ -1,12 +1,14 @@
 ---
 id: T0214
 title: "The tech tree rewards going deep: a branch discount"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T15:52:06Z
+claimed_at: 2026-10-29T17:26:21Z
 epic: E2
 ---
 
