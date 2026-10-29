@@ -1,12 +1,14 @@
 ---
 id: T0092
 title: "The chip says what it means: the preview teaches its tag once"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T01:18:08Z
+claimed_at: 2026-10-29T02:07:05Z
 epic: E1
 ---
 
