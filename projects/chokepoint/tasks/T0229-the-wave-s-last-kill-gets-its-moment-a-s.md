@@ -1,12 +1,14 @@
 ---
 id: T0229
 title: "The wave's last kill gets its moment: a soft ring where it ends"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T20:16:15Z
+claimed_at: 2026-10-29T20:51:16Z
 ---
 
 ## Goal
