@@ -140,6 +140,7 @@ export class RunFlow {
     const cleanBefore = this.run.cleanWaves;
     const tag = this.run.streakTag();
     const bonus = this.run.clearWave();
+    this.s.waves.waveEnded();
     const clean = this.run.cleanWaves > cleanBefore;
     hook.stats.wavesCleared += 1;
     this.s.sfx?.waveClear();

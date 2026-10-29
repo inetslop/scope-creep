@@ -12,6 +12,9 @@ export class WaveSystem {
   private next = 0;
   private timer = 0;
   private planned: WavePlan | undefined;
+  /** What the wave that just ended cost in lives (0 until a wave ends, 0 for a clean wave). The wave card wears it. */
+  heldLost = 0;
+  private livesAtStart = 0;
 
   constructor(run: RunState, enemies: EnemySystem) {
     this.run = run;
@@ -36,11 +39,18 @@ export class WaveSystem {
   /** Starts the run's next wave, planned at the build phase's start. */
   start(): void {
     this.run.startWave();
+    this.livesAtStart = this.run.lives;
+    this.heldLost = 0;
     this.plan = this.planned ?? planWave(this.run.wave, this.run.rng, ENEMIES);
     this.planned = undefined;
     this.next = 0;
     this.timer = 0;
     hook.stats.wavesStarted += 1;
+  }
+
+  /** The wave's last enemy is gone: record the lives its leaks took. RunFlow calls it as the wave ends. */
+  waveEnded(): void {
+    this.heldLost = Math.max(0, this.livesAtStart - this.run.lives);
   }
 
   /** Every enemy of the current wave has been sent. */

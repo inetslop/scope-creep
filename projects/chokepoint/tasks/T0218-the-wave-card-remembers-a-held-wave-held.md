@@ -4,11 +4,12 @@ title: "The wave card remembers a held wave: held · N"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T16:16:13Z
 claimed_at: 2026-10-29T17:18:59Z
+finished_at: 2026-10-29T18:20:39Z
 ---
 
 ## Goal
@@ -157,3 +158,18 @@ export class WaveCard implements HudPart {
 
 ### Tests
 - none (UI + systems only; no `src/core` rule changes). Verify with `npm run check` and `npm run smoke`.
+
+## Result (attempt 1, asus)
+
+The wave card (top right) now wears what each wave cost: `WaveSystem` records the lives a wave lost in a new `heldLost` field (set in `waveEnded()`, called from `RunFlow.clearWave()` once lives are final, reset when the next wave starts), and `WaveCard` shows a muted "held · N" chip with a ~150 ms scale-in from wave end until the next wave, with a one-time "held: lives lost this wave" teach line on the run's first held wave (derived from the run's cleared/clean counters, so resumes never re-teach). The card's top stays at y=12 and it grows down to fit the chip and teach line, clear of the pause and zoom buttons at both test sizes; clean waves wear nothing, and the exit's green clean chip is untouched. One minimal deviation from the design: the chip container is destroyed with `destroy(true)` so its graphics and label children don't leak on every wave transition. Also added a `waves.held` invariant in `debug/runChecks.ts`. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 61.7 min
+
+```
+projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  1 +
+ projects/chokepoint/game/src/systems/WaveSystem.ts | 10 ++++
+ projects/chokepoint/game/src/ui/hud/WaveCard.ts    | 66 ++++++++++++++++++++--
+ 4 files changed, 73 insertions(+), 5 deletions(-)
+```
