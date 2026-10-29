@@ -16,7 +16,7 @@ The game grows through epics: bigger features that take several tasks. One or tw
 
 ### E1 — Rewards that carry over (done; history in planning/archive/ROADMAP.md)
 
-### E2 — Tech tree (active — started 2026-10-29; E1 closed, and this is the epic it was waiting for)
+### E2 — Tech tree (done 2026-10-29; history in planning/archive/ROADMAP.md)
 **Goal:** a reason to play one more run: spend what runs earn on lasting upgrades.
 **When done:** a tech tree screen reached from the menu, a few branches of nodes bought with the currency from E1, each node a lasting change shown on its card: more starting gold, a cheaper second slot, an extra augment pick before wave 1, new augments unlocked into the draft pool, more lives, a richer clean-wave payout, and a new run's road that winds further or runs longer (the board branch). Bought nodes stay bought.
 **Breakdown:**
@@ -25,14 +25,14 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0153 (M, priority 2, depends_on T0103) — branch three “The pool”: the “Haste” node (25 coins), gated on T0152 — **done** (2026-10-29, desktop)
 - T0209 (M, priority 2, depends_on T0103) — branch three, node two: “Momentum” (30 coins), the same gate pattern — **done** (2026-10-29, cachyos-x8664); the draft gate is T0064's line
 - T0208 (L, priority 2, depends_on T0103) — branch four “The board”: “One more bend” (30 coins) — a new run's road winds one turn further (the generator's bend target +1; the bend-adjacent worth-more cells come with it); ghost and resumed runs keep their exact board; the row is T0153's look — **done** (2026-10-29, inet-racing)
-- T0230 (M, priority 2, depends_on T0208) — branch four, node two: “The long way” (30 coins) — a new run's road is 25% longer (the generator's length target ×1.25, the bend target unchanged); ghost and resumed runs keep their exact board — in the pool; E2's last task
+- T0230 (M, priority 2, depends_on T0208) — branch four, node two: “The long way” (30 coins) — a new run's road is 25% longer (the generator's length target ×1.25, the bend target unchanged); ghost and resumed runs keep their exact board — **done** (2026-10-29, asus)
 - T0211 (L, priority 2, depends_on T0153) — branch five “The claim”: “Clean ×2” (30 coins) — each clean wave pays 2 coins instead of 1; the one pure coin formula (T0001) carries it to the live tally, the pause worth line and the claim card's recipe — **done** (2026-10-29, desktop)
 - T0212 (M, priority 2, depends_on T0153, T0209) — branch three, node three: “Mend” (30 coins), T0209's pattern for T0095's Epic; the draft gate is T0095's line — **done** (2026-10-29, inet-racing)
 - T0213 (S, priority 2, depends_on T0103) — the menu's Tech button wears a small yellow dot while any unowned node is in reach — **done** (2026-10-29, yoga)
 - T0214 (M, priority 2, depends_on T0103) — the branch discount: the 2nd node of a branch costs 5 less, the 3rd and later 10 less (floor 5); the card shows the struck-through old price — **done** (2026-10-29, cachyos-x8664)
 - T0215 (M, priority 2, depends_on T0103) — the run-start's fifth node, a second “Life +1” (40 coins), and a small done mark on a fully-owned branch — **done** (2026-10-29, asus)
 
-Status: the run-start branch (with the fifth node, T0215), the draft branch (T0110), the pool branch (T0153, T0209, T0212) and the claim branch (T0211) are done, as is the menu dot (T0213); the branch discount (T0214) and the board branch's “One more bend” (T0208) are done; the board branch's second node, “The long way” (T0230), is in the pool — E2 closes when it lands.
+Status: **done (2026-10-29)** — all five branches landed (run start, draft, pool, claim, board), with the branch discount (T0214) and the menu dot (T0213).
 
 ### E3 — Levels: a run is a journey (not started)
 **Goal:** a run has a shape: a few boards in a row, each harder, and a build that grows across them.
@@ -91,7 +91,7 @@ Status: the run-start branch (with the fifth node, T0215), the draft branch (T01
 - T0113 (S) — the burn shows on the enemy (telegraph slice) — **done** (2026-10-29, baby-mama)
 - T0130 (M, priority 1) — Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam — **done** (2026-10-29, desktop)
 - T0131 (M, priority 2) — Beam combos II: Lance pierces, Splash scorches, Spray splits a beam kill — **failed** (2026-10-29, the architect's prompt overflowed cachyos's context before any design) — re-filed tighter: Lance + Splash as T0210; the needle clause (a beam kill splits into Spray needles) parked in IDEAS until T0210 lands
-- T0210 (M, priority 2) — Beam combos II (the re-file): Lance pierces the beam's main line, Splash scorches its target — in the pool
+- T0210 (M, priority 2) — Beam combos II (the re-file): Lance pierces the beam's main line, Splash scorches its target — **done** (2026-10-29, inet-racing)
 - T0132 (M, priority 2) — Beam combos III: the beam carries Ember, Anchor, Push and Mark (Frost only if the 16-cap hasn't removed it) — **done** (2026-10-29, desktop)
 - T0133 (M, priority 2) — A new look for the Beam tower: a tower with a circle on top — **done** (2026-10-29, desktop)
 - T0134 (L, priority 2) — Spray becomes a shotgun: a cone of pellets — **done** (2026-10-29, inet-racing)
@@ -106,7 +106,7 @@ Status: the run-start branch (with the fifth node, T0215), the draft branch (T01
 - T0236 (S, priority 2) — the what-if says "nothing": a held card whose added form does nothing to a tower shows the ghost's marker dimmed (the tower's own spec is the judge) — in the pool
 - T0238 (L, priority 2) — the draft shows where the card lands: each offered card wears a row of the what-if markers, one per tower with a free slot, dimmed where the card does nothing — in the pool
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095, T0152, T0234 and T0235 (one at a time, in claim order, under the 16-cap); the beam work is T0130 and T0132 (done) with T0210 (the T0131 re-file) in flight; the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is done; the what-if dim (T0236) and the draft fit row (T0238) are in the pool.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095, T0152, T0234 and T0235 (one at a time, in claim order, under the 16-cap); the beam work is done (T0130, T0132, T0210; the needle follow-up is IDEAS-ready to task); the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is done; the what-if dim (T0236) and the draft fit row (T0238) are in the pool.
 
 **E4 closes when T0025, T0062, T0064, T0095, T0152, T0210 (+ its parked needle follow-up), T0234, T0235, T0236 and T0238 land** (T0130, T0132, T0133, T0228 done; T0131 failed → T0210; T0150 waits on T0025; T0089 is dropped).
 
@@ -120,6 +120,13 @@ Progress: the pool's registrations are T0025, T0062, T0064, T0095, T0152, T0234 
 - (S) the preview says "boss": the wave preview card shows the boss token with a small muted tag for wave 10
 - (M) the boss moment: the death burst, its gold, the name card
 - (L) the second boss (wave 20): a different mechanic from the pair in the design (escort shield / half-hp split)
+
+### E6 — Iron run: one life, double coins (active — opened 2026-10-29, when E2 closed)
+**Goal:** a second small mode off the menu: the same game with the risk made explicit — one life, and a payout that says so.
+**When done:** the menu offers “Iron” beside Play: the run starts with 1 life, pays double coins, and the last stand (T0054) is off for it (its doubling is baked into the coin rate). The claim card says “Iron” beside the waves line, and the profile card remembers the iron best wave with its own muted star. A normal Play is byte-identical.
+**Breakdown (sketch):**
+- (M, priority 2) — the Iron button and the mode's rules: 1 life, 2× coins, last stand off; the claim card's “Iron” line
+- (S, priority 2, behind the first) — the profile card's iron best wave with its own muted star
 
 ### Enemy queue (non-epic)
 
@@ -146,7 +153,7 @@ Ideas that may become epics or tasks of one.
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
-- Music that follows the wave and the danger
+- Music that follows the wave and the danger — **tasked as T0239 (L, non-epic)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
 - Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**
 - The board shows its corners: a notch on the bend cells — **built as T0140 (S, non-epic, 2026-10-29, narcissus)**
 - Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **tasked as T0217 (L, non-epic, in the pool)**
