@@ -9,7 +9,7 @@ export const spray: AugmentDef = {
   description: 'Fires a shot that splits into 3 homing needles on hit. Added: +1 needle per split per extra Spray.',
   asTower: 'Fires a shot that splits into 3 homing needles on hit.',
   asAdded: '+1 needle per split per extra Spray.',
-  look: { shape: 'chevron', color: 'green', size: 0.24 },
+  look: { shape: 'diamond', color: 'yellow', size: 0.24 },
   first: { kind: 'spray', damage: 12, range: 4, rate: 1 / 1.1, spray: SPRAY_NEEDLES },
   added: { spray: 1 },
   tiers: {

@@ -88,4 +88,20 @@ describe('content', () => {
       }
     }
   });
+
+  it('no two augments share a shape + color pair, except the pink-square support family', () => {
+    const byPair = new Map<string, string[]>();
+    for (const a of AUGMENTS) {
+      const pair = `${a.look.shape} ${a.look.color}`;
+      const ids = byPair.get(pair);
+      if (ids) ids.push(a.id);
+      else byPair.set(pair, [a.id]);
+    }
+    for (const [pair, ids] of byPair) {
+      if (ids.length === 1) continue;
+      // Anchor, Mark and Mint are the support family: they share pink squares on purpose.
+      expect(pair).toBe('square pink');
+      expect([...ids].sort()).toEqual(['anchor', 'mark', 'mint']);
+    }
+  });
 });

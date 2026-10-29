@@ -4,11 +4,12 @@ title: "Spray gets its own look, not Beam's"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T09:34:10Z
 claimed_at: 2026-10-29T09:44:06Z
+finished_at: 2026-10-29T09:58:48Z
 epic: E4
 ---
 
@@ -27,3 +28,20 @@ Spray (`content/augments/spray.ts`) and Beam (`content/augments/beam.ts`) both u
 - [ ] Spray's shots or pellets and its barrel use the new yellow tint. No leftover green.
 - [ ] The new content test fails if two augments share a shape+colour pair, except the allow-listed pink-square supports.
 - [ ] `npm run check` passes. Desktop 1280x720 and mobile 412x915 smoke pass.
+
+## Result (attempt 1, yoga)
+
+- **Look change**: `spray.ts` look is now `{ shape: 'diamond', color: 'yellow', size: 0.24 }`; `beam.ts` untouched (still green chevron). The draft card glyph, hand icon, tower body, barrel tint and projectile/needle tint all read `look` automatically (`towerColor()` → `look.color`, `lightOf()` for the needles; `diamond` is a supported shape in `art/shapes.ts`/`icons.ts`, `yellow` is in `PALETTE`).
+- **No leftover green**: grep of `green` across `src` shows only the palette definition, the Beam/Reach look lines, and unrelated green UI (clean-wave chip, lives flash, clean/reward text) — nothing in the Spray/needle/pellet path.
+- **Guard test**: I temporarily restored the old chevron+green look to confirm the new test fails on a duplicate (`expected 'chevron green' to be 'square pink'`), then re-applied the fix. It now passes, allowing only the Anchor/Mark/Mint pink squares.
+
+SUMMARY: Gave Spray its own look so it no longer collides with Beam: `look` in `src/content/augments/spray.ts` is now a yellow diamond (size 0.24), while Beam keeps its green chevron. Because the draft card, hand icon, tower body, barrel tint and projectile/needle tint all derive from `look`, everything recolours to yellow automatically with no hard-coded green left behind (verified by grep). Added a guard test to `tests/content.test.ts` that fails if two augments share a shape+color pair, with the Anchor/Mark/Mint pink squares allow-listed as the support family; I confirmed it fails on the old duplicate. …
+
+- Self-review: APPROVE
+- Time: 14.7 min
+
+```
+projects/chokepoint/game/src/content/augments/spray.ts |  2 +-
+ projects/chokepoint/game/tests/content.test.ts         | 16 ++++++++++++++++
+ 2 files changed, 17 insertions(+), 1 deletion(-)
+```
