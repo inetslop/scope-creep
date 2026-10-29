@@ -3,10 +3,12 @@ id: T0085
 title: "The name tag: a new enemy says its name once"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-28T23:26:44Z
+claimed_at: 2026-10-29T00:22:12Z
+designer: desktop
 ---
 
 ## Goal
