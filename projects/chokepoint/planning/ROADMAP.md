@@ -100,10 +100,11 @@ Status: the run-start branch (with the fifth node, T0215), the draft branch (T01
 - T0138 (S) — the slow shows on the enemy (telegraph slice) — **done** (2026-10-29, narcissus)
 - T0139 (S) — the root shows on the enemy (telegraph slice) — **done** (2026-10-29, yoga)
 - T0221 (L, priority 2) — the Augments codex: a menu screen that shows every augment in the pool (icon, name, a purple “Epic” word for the Epic-only ones, the first and added rows) — **done** (2026-10-29, desktop; the menu row it added overflows 1280x720 with Resume + Ghost — T0222's column must take it in)
+- T0228 (S, priority 2) — the end card's towers wear their tier: T0010's pip on each by-tower chip — in the pool
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0152 (one at a time, in claim order, under the 16-cap); the beam work is T0130, T0210 (the T0131 re-file) and T0132, with T0133 in progress; the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0152 (one at a time, in claim order, under the 16-cap); the beam work is T0130, T0210 (the T0131 re-file) and T0132, with T0133 in progress; the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is in the pool.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0130, T0210 (+ its parked needle follow-up), T0132, T0133 and T0152 land** (T0139 done; T0131 failed → T0210; T0150 waits on T0025; T0089 is dropped).
+**E4 closes when T0025, T0062, T0064, T0095, T0130, T0210 (+ its parked needle follow-up), T0132, T0133, T0152 and T0228 land** (T0139 done; T0131 failed → T0210; T0150 waits on T0025; T0089 is dropped).
 
 **16-cap (protocol):** the pipeline holds 19 augments (14 in + T0025, T0062, T0064, T0095, T0152); the cap is 16. Every queued registration, after registering, removes one more if the pool is over 16 — the first still in the index of **Frost, then Rally, then Mint** — and says which in its result (the canonical statement is in T0064's task). T0132 drops its Frost clause if Frost is gone at build time.
 
