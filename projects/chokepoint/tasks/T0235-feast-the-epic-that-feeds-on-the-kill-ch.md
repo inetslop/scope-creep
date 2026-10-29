@@ -3,11 +3,13 @@ id: T0235
 title: "Feast: the Epic that feeds on the kill chain"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T22:31:19Z
+claimed_at: 2026-10-29T22:44:51Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
