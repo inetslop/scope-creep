@@ -3,14 +3,14 @@ id: T0086
 title: The first run is taught
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-29T00:22:08Z
 claimed_at: 2026-10-29T02:24:22Z
+finished_at: 2026-10-29T04:24:26Z
 epic: E1
-design_attempts: 1
-designer: inet-racing
+design_attempts: 2
 ---
 
 ## Goal
@@ -33,3 +33,11 @@ A first-time player's first run is taught by three short cards on the board — 
 - [ ] Wave 1 shows "Hold the road" under the wave banner; it is gone when wave 1 is cleared.
 - [ ] A second run, a ghost run and the menu demo show no hint cards; a resumed first run shows only the hints whose action is not yet done.
 - [ ] The cards never intercept input; no sound, no new key; desktop 1280x720 and mobile 412x915 smoke pass.
+
+## Architect could not design it (inet-racing)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+
+```
