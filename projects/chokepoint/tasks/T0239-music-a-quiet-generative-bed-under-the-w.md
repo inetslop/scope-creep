@@ -3,10 +3,12 @@ id: T0239
 title: "Music: a quiet generative bed under the wave phase"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T23:53:23Z
+claimed_at: 2026-10-29T23:53:26Z
+designer: desktop
 ---
 
 ## Goal
