@@ -12,7 +12,7 @@
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
-import { GAME_REL, ORIGINAL_PROJECT, PROJECT } from '../loop/paths.ts';
+import { GAME_REL, ORIGINAL_PROJECT, PROJECT, TASKS_REL } from '../loop/paths.ts';
 import { listTasks } from '../loop/tasks.ts';
 import {
   collectFeatures,
@@ -22,9 +22,14 @@ import {
   itemIds,
   machineStats,
   parseGitLog,
+  planShares,
+  poCycles,
+  taskCycles,
+  totalAgentMinutes,
   type Feature,
   type HandChange,
   type MachineStats,
+  type PoCycle,
 } from './log-data.ts';
 
 const REPO = path.resolve(import.meta.dirname, '..');
@@ -78,12 +83,11 @@ function when(iso: string | undefined): string {
   return `<time datetime="${esc(d.toISOString())}">${esc(text)}</time>`;
 }
 
-function renderTotals(features: Feature[], hand: HandChange[]): string {
-  const build = features.reduce((s, f) => s + (f.buildMin ?? 0), 0);
+function renderTotals(features: Feature[], hand: HandChange[], cycles: readonly PoCycle[]): string {
   const firstTry = features.length ? Math.round((100 * features.filter((f) => f.attempts === 1).length) / features.length) : 0;
   const tiles: [string, string][] = [
     [String(features.length), 'features built by agents'],
-    [formatMinutes(build), 'total agent build time'],
+    [formatMinutes(totalAgentMinutes(features, cycles)), 'total agent time: building, designing, planning'],
     [`${firstTry}%`, 'shipped on the first attempt'],
     [String(hand.length), 'changes made by hand'],
   ];
@@ -93,8 +97,8 @@ function renderTotals(features: Feature[], hand: HandChange[]): string {
 function renderMachine(s: MachineStats, info: MachineInfo | undefined, color: string): string {
   const facts = [
     `<div><dt>features</dt><dd>${s.features}</dd></div>`,
-    `<div><dt>build time</dt><dd>${s.features ? esc(formatMinutes(s.totalBuildMin)) : '—'}</dd></div>`,
-    `<div><dt>median</dt><dd>${esc(formatMinutes(s.medianBuildMin))}</dd></div>`,
+    `<div><dt>agent time</dt><dd>${s.agentMin > 0 ? esc(formatMinutes(s.agentMin)) : '—'}</dd></div>`,
+    `<div><dt>median build</dt><dd>${esc(formatMinutes(s.medianBuildMin))}</dd></div>`,
     `<div><dt>first try</dt><dd>${s.features ? `${Math.round(s.firstTry * 100)}%` : '—'}</dd></div>`,
   ].join('');
   return `<article class="machine card" style="--c:${color}">
@@ -109,11 +113,14 @@ const NEW_FLAIR = '<span class="new">new</span>';
 
 function renderFeature(f: Feature, colorOf: (m: string) => string, repo: string | undefined): string {
   const who = [`built by <b>${esc(f.builtBy)}</b>`, f.designedBy ? `designed by <b>${esc(f.designedBy)}</b>` : '', when(f.finishedAt)].filter(Boolean).join(' · ');
+  const parts = ([['build', f.buildMin], ['design', f.designMin], ['planning', f.planMin]] as const)
+    .filter(([, min]) => min !== undefined)
+    .map(([name, min]) => `<span>${esc(`${name} ${formatMinutes(min)}`)}</span>`);
   const times = [
-    `<div><dt>build</dt><dd>${esc(formatMinutes(f.buildMin))}</dd></div>`,
-    `<div><dt>design</dt><dd>${esc(formatMinutes(f.designMin))}</dd></div>`,
+    `<div><dt>agent time</dt><dd>${esc(formatMinutes(f.agentMin))}</dd></div>`,
     `<div><dt>idea → live</dt><dd>${esc(formatMinutes(f.leadMin))}</dd></div>`,
     f.attempts > 1 ? `<div class="retry"><dt>attempts</dt><dd>${f.attempts}</dd></div>` : '',
+    parts.length ? `<div class="split"><dd>${parts.join(' · ')}</dd></div>` : '',
   ].join('');
   const code = repo && f.commit ? `<a class="code" href="${esc(`${repo}/commit/${f.commit}`)}">code ↗</a>` : '';
   return `<li class="feature card" data-id="${esc(f.id)}" style="--c:${colorOf(f.builtBy)}">
@@ -185,6 +192,7 @@ ol, ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
 .feature, .hand { position: relative; display: grid; grid-template-columns: 1fr auto auto; gap: 16px; align-items: center; padding: 14px 16px 14px 32px; }
 .hand { grid-template-columns: 1fr auto; }
 .chip { position: absolute; left: 0; top: 0; bottom: 0; width: 14px; background: var(--c, ${C.ink}); border-right: 2px solid ${C.ink}; }
+.main { min-width: 0; overflow-wrap: anywhere; } /* a long word or path wraps instead of widening the card past a phone's screen */
 .main h3 { margin: 0; font-size: 18px; line-height: 1.3; }
 .id { font-size: 13px; color: ${C.inkSoft}; margin-right: 4px; }
 .size { display: inline-block; font-size: 11px; line-height: 18px; min-width: 20px; text-align: center; border: 2px solid ${C.ink}; margin-left: 6px; vertical-align: 2px; }
@@ -192,9 +200,12 @@ ol, ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
 .who b { color: ${C.ink}; }
 .summary { margin: 6px 0 0; font-size: 14px; color: ${C.inkSoft}; max-width: 62ch; }
 code { font: 0.92em ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: ${C.paper}; padding: 0 3px; overflow-wrap: anywhere; }
-.times { display: grid; grid-template-columns: repeat(3, minmax(84px, auto)); gap: 4px 18px; }
+.times { display: grid; width: 280px; grid-template-columns: 1fr 1fr; gap: 4px 18px; }
 .times .retry dd { color: ${C.red}; }
-.times:has(.retry) { grid-template-columns: repeat(4, minmax(72px, auto)); }
+.times:has(.retry) { grid-template-columns: 1fr 1fr 1fr; }
+.times .split { grid-column: 1 / -1; }
+.times .split dd { font-size: 13px; font-weight: 400; color: ${C.inkSoft}; }
+.times .split span { white-space: nowrap; }
 .code { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; font-size: 14px; font-weight: 700; text-decoration: none; border: 2px solid ${C.ink}; white-space: nowrap; }
 .empty { color: ${C.inkSoft}; }
 footer { margin-top: 48px; font-size: 13px; color: ${C.inkSoft}; max-width: 720px; }
@@ -208,8 +219,7 @@ footer p { margin: 0 0 8px; }
   .feature, .hand { grid-template-columns: 1fr; gap: 10px; padding: 12px 12px 12px 24px; }
   .chip { width: 10px; }
   .feature .code, .hand .code { justify-self: start; }
-  .times { grid-template-columns: repeat(3, auto); justify-content: start; }
-  .times:has(.retry) { grid-template-columns: repeat(2, auto); }
+  .times, .times:has(.retry) { width: auto; grid-template-columns: repeat(3, auto); justify-content: start; }
 }
 `;
 
@@ -255,6 +265,7 @@ function renderPage(data: {
   features: Feature[];
   hand: HandChange[];
   stats: MachineStats[];
+  cycles: PoCycle[];
   machines: Record<string, MachineInfo>;
   repo?: string;
   sha: string;
@@ -281,7 +292,7 @@ function renderPage(data: {
   <h1>Build log</h1>
   <p class="lede">Every feature in <b>${esc(data.title)}</b>, which machine built it and how long it took. The game is planned, designed and written by local LLM agents; this page is generated on every deploy from the loop's own records, outside anything the agents can edit.</p>
 </header>
-<section class="totals" aria-label="Totals">${renderTotals(data.features, data.hand)}</section>
+<section class="totals" aria-label="Totals">${renderTotals(data.features, data.hand, data.cycles)}</section>
 
 <h2>Machines</h2>
 <section class="machines">${stats.map((s) => renderMachine(s, data.machines[s.id], colorOf(s.id))).join('\n')}</section>
@@ -293,7 +304,7 @@ ${data.features.length ? `<ol>${data.features.map((f) => renderFeature(f, colorO
 ${data.hand.length ? `<ul>${data.hand.map((h, i) => renderHand(h, handIds[i]!, data.repo)).join('\n')}</ul>` : '<p class="empty">No hand-made changes.</p>'}
 
 <footer>
-  <p><b>build</b> is the attempt that shipped, timed by the runner from claiming the task to merging it: writing the code, the checks and browser smoke test, fix rounds and the self-review. <b>design</b> is the architect's design pass. <b>idea → live</b> runs from the PO writing the task to the merge, including time spent waiting in a queue.</p>
+  <p><b>agent time</b> is the time agents spent on a feature: <b>build</b>, the attempt that shipped, timed by the runner from claiming the task to merging it (writing the code, the checks and browser smoke test, fix rounds and the self-review); <b>design</b>, the architect's design pass; and <b>planning</b>, its share of the product owner's planning cycle that wrote it (the cycle's length split over the tasks it wrote; measured from cycle 40 on). A machine's agent time adds its builds, its designs and its planning cycles; the total also counts planning cycles that wrote no task. <b>idea → live</b> runs from the PO writing the task to the merge, including time spent waiting in a queue.</p>
   <p>Generated ${when(data.generatedAt)} from ${sha}.</p>
 </footer>
 </div>
@@ -361,13 +372,16 @@ function main(): void {
   const index = fs.readFileSync(indexFile, 'utf8');
   const title = /<title>([^<]+)<\/title>/.exec(index)?.[1]?.trim() || PROJECT;
 
-  const features = collectFeatures(tasks, commits, gameCommits);
+  const cycles = poCycles(commits);
+  const written = taskCycles(git(['log', '--diff-filter=A', '--no-renames', '--format=%x1e%s', '--name-only', '--', TASKS_REL]));
+  const features = collectFeatures(tasks, commits, gameCommits, planShares(cycles, written));
   const hand = collectHandChanges(gameCommits);
   const html = renderPage({
     title,
     features,
     hand,
-    stats: machineStats(features, Object.keys(machines)),
+    stats: machineStats(features, Object.keys(machines), cycles),
+    cycles,
     machines,
     repo: repoUrl(),
     sha: git(['rev-parse', 'HEAD']).trim(),

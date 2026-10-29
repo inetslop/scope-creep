@@ -17,6 +17,10 @@ export interface Feature {
   buildMin?: number;
   /** Minutes from design claim to design ready. */
   designMin?: number;
+  /** Its share of the PO cycle that wrote it: the cycle's length over the tasks it wrote. */
+  planMin?: number;
+  /** Agent time spent on it: build, design and planning together. */
+  agentMin?: number;
   /** Minutes from the PO writing the task to it being merged. */
   leadMin?: number;
   attempts: number;
@@ -99,11 +103,81 @@ export function designMinutes(id: string, commits: readonly Commit[]): number | 
   return minutesBetween(claim?.date, ready.date);
 }
 
+/** One PO planning cycle with a measured length. */
+export interface PoCycle {
+  cycle: number;
+  machine: string;
+  minutes: number;
+}
+
+/**
+ * PO cycles from their commits: "po: cycle N started (…)" to "po: cycle N: …". Cycles from before
+ * the start marker existed (cycle 40) have no start and are left out; so is a cycle that never
+ * finished. A retried cycle counts from its last start.
+ */
+export function poCycles(commits: readonly Commit[]): PoCycle[] {
+  const started = new Map<number, string>();
+  const out: PoCycle[] = [];
+  for (const c of [...commits].sort((a, b) => Date.parse(a.date) - Date.parse(b.date))) {
+    const start = /^po: cycle (\d+) started\b/.exec(c.subject);
+    if (start) {
+      started.set(Number(start[1]), c.date);
+      continue;
+    }
+    const end = /^po: cycle (\d+): /.exec(c.subject);
+    if (!end) continue;
+    const n = Number(end[1]);
+    const minutes = minutesBetween(started.get(n), c.date);
+    started.delete(n);
+    if (minutes !== undefined) out.push({ cycle: n, machine: c.author.replace(/^agent-/, ''), minutes });
+  }
+  return out;
+}
+
+/**
+ * The PO cycle that wrote each task, from `git log --diff-filter=A --no-renames --format=%x1e%s
+ * --name-only -- <tasks>` (newest first): the oldest commit that added the task's file. Tasks
+ * that came from the inbox or by hand have none.
+ */
+export function taskCycles(addLog: string): Map<string, number> {
+  const firstAdd = new Map<string, string>();
+  for (const rec of addLog.split('\x1e')) {
+    const [subject = '', ...files] = rec.trim().split('\n');
+    for (const f of files) {
+      const id = /(?:^|\/)(T\d{3,})-[^/]*\.md$/.exec(f.trim())?.[1];
+      if (id) firstAdd.set(id, subject); // newest first: the last one set is the oldest
+    }
+  }
+  const out = new Map<string, number>();
+  for (const [id, subject] of firstAdd) {
+    const n = /^po: cycle (\d+): /.exec(subject)?.[1];
+    if (n) out.set(id, Number(n));
+  }
+  return out;
+}
+
+/** Each task's share of the measured cycle that wrote it (the cycle's minutes over the tasks it wrote). */
+export function planShares(cycles: readonly PoCycle[], written: ReadonlyMap<string, number>): Map<string, number> {
+  const count = new Map<number, number>();
+  for (const n of written.values()) count.set(n, (count.get(n) ?? 0) + 1);
+  const length = new Map(cycles.map((c) => [c.cycle, c.minutes]));
+  const out = new Map<string, number>();
+  for (const [id, n] of written) {
+    const min = length.get(n);
+    if (min !== undefined) out.set(id, min / count.get(n)!);
+  }
+  return out;
+}
+
+const sumDefined = (...parts: (number | undefined)[]): number | undefined =>
+  parts.some((p) => p !== undefined) ? parts.reduce<number>((s, p) => s + (p ?? 0), 0) : undefined;
+
 /**
  * Done tasks as features, newest first. `commits` is the full history (task status commits);
- * `gameCommits` only the commits that touched game/ (to link each task to its code).
+ * `gameCommits` only the commits that touched game/ (to link each task to its code); `plan` each
+ * task's share of the PO cycle that wrote it (planShares).
  */
-export function collectFeatures(tasks: readonly Task[], commits: readonly Commit[], gameCommits: readonly Commit[]): Feature[] {
+export function collectFeatures(tasks: readonly Task[], commits: readonly Commit[], gameCommits: readonly Commit[], plan: ReadonlyMap<string, number> = new Map()): Feature[] {
   const codeFor = new Map<string, string>();
   for (const c of gameCommits) {
     const id = /^(T\d{3,}): /.exec(c.subject)?.[1];
@@ -114,6 +188,8 @@ export function collectFeatures(tasks: readonly Task[], commits: readonly Commit
     .filter((t) => t.status === 'done' && !seen.has(t.id) && seen.add(t.id))
     .map((t) => {
       const result = parseResult(t.body);
+      const designMin = designMinutes(t.id, commits);
+      const planMin = plan.get(t.id);
       return {
         id: t.id,
         title: t.title,
@@ -121,7 +197,9 @@ export function collectFeatures(tasks: readonly Task[], commits: readonly Commit
         builtBy: result.machine ?? t.assignee,
         designedBy: parseDesigner(t.body),
         buildMin: result.buildMin,
-        designMin: designMinutes(t.id, commits),
+        designMin,
+        planMin,
+        agentMin: sumDefined(result.buildMin, designMin, planMin),
         leadMin: minutesBetween(t.created, t.finishedAt),
         attempts: Math.max(1, t.attempts),
         createdAt: t.created,
@@ -156,25 +234,36 @@ export interface MachineStats {
   id: string;
   features: number;
   totalBuildMin: number;
+  /** Everything it did: its builds, its designs of built features, and its PO cycles. */
+  agentMin: number;
   medianBuildMin?: number;
   /** Share of features shipped on the first attempt (0..1). */
   firstTry: number;
 }
 
-export function machineStats(features: readonly Feature[], machineIds: readonly string[]): MachineStats[] {
+export function machineStats(features: readonly Feature[], machineIds: readonly string[], cycles: readonly PoCycle[] = []): MachineStats[] {
   const ids = [...new Set([...machineIds, ...features.map((f) => f.builtBy)])];
   return ids.map((id) => {
     const mine = features.filter((f) => f.builtBy === id);
     const times = mine.map((f) => f.buildMin).filter((m): m is number => m !== undefined).sort((a, b) => a - b);
     const mid = Math.floor(times.length / 2);
+    const totalBuildMin = times.reduce((s, m) => s + m, 0);
+    const designed = features.filter((f) => f.designedBy === id).reduce((s, f) => s + (f.designMin ?? 0), 0);
+    const planned = cycles.filter((c) => c.machine === id).reduce((s, c) => s + c.minutes, 0);
     return {
       id,
       features: mine.length,
-      totalBuildMin: times.reduce((s, m) => s + m, 0),
+      totalBuildMin,
+      agentMin: totalBuildMin + designed + planned,
       medianBuildMin: times.length === 0 ? undefined : times.length % 2 ? times[mid] : (times[mid - 1]! + times[mid]!) / 2,
       firstTry: mine.length ? mine.filter((f) => f.attempts === 1).length / mine.length : 0,
     };
   });
+}
+
+/** All agent time in the log: every feature's build and design, and every measured PO cycle (also those that wrote no task). */
+export function totalAgentMinutes(features: readonly Feature[], cycles: readonly PoCycle[]): number {
+  return features.reduce((s, f) => s + (f.buildMin ?? 0) + (f.designMin ?? 0), 0) + cycles.reduce((s, c) => s + c.minutes, 0);
 }
 
 /** "7 min", "1 h 05 min", "2 d 3 h". */
