@@ -1,12 +1,14 @@
 ---
 id: T0205
-title: "The clean wave says what it means, where the player looks"
+title: The clean wave says what it means, where the player looks
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T12:25:57Z
+claimed_at: 2026-10-29T12:55:53Z
+designer: desktop
 ---
 
 ## Goal
