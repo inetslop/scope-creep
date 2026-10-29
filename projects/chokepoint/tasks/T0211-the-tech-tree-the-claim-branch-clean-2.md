@@ -1,12 +1,14 @@
 ---
 id: T0211
 title: "The tech tree: the claim branch — Clean ×2"
+assignee: desktop
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0153]
-attempts: 0
+attempts: 1
 created: 2026-10-29T15:15:13Z
+claimed_at: 2026-10-29T15:20:02Z
 epic: E2
 ---
 
