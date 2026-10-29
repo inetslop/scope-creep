@@ -1,14 +1,12 @@
 ---
 id: T0102
 title: "Bulwark: the plate that faces the road"
-assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-29T07:23:51Z
-claimed_at: 2026-10-29T09:13:54Z
 ---
 
 ## Goal
@@ -65,3 +63,7 @@ The enemy queue's head (the Mute, T0074, has landed): a fat slow walker whose fr
 
 ### Tests
 npm run check (typecheck+lint+unit tests) and npm run smoke (desktop + phone); new plate/waves tests above; content test passes by construction (hp 120, speed 0.72, gold 10, livesCost 1, fromWave 12, red, size 0.325).
+
+## Attempt 1 interrupted (desktop-4070)
+
+The machine was shut down by hand mid-task and paused. Requeued for any machine.
