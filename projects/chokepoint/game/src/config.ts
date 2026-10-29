@@ -32,6 +32,9 @@ export const WAVE_BONUS = { base: 20, perWave: 2 } as const;
 /** The run's one draft reroll. */
 export const REROLL_COST = 15;
 
+/** The build phase's "Stay put" button: the gold to pay for more build seconds, and how many. */
+export const STAY_PUT = { cost: 5, sec: 3 } as const;
+
 /** Screen pixels the HUD cards take at the top and bottom; the board fits between them. */
 export const HUD = { top: 72, bottom: 116, margin: 10 } as const;
 

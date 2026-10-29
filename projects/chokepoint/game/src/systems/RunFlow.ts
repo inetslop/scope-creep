@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { BUILD_SEC, REROLL_COST } from '../config';
+import { BUILD_SEC, REROLL_COST, STAY_PUT } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
@@ -44,6 +44,8 @@ export class RunFlow {
   draftWave = 1;
   /** Length of the current build countdown (the HUD draws its ring from it). */
   buildTotalSec = 0;
+  /** The current build phase's one "Stay put" buy is spent (a new build phase resets it). */
+  private stayPutUsed = false;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -92,6 +94,17 @@ export class RunFlow {
     return banked;
   }
 
+  /** The "Stay put" button under the wave preview: pay STAY_PUT.cost gold for STAY_PUT.sec more build seconds, once per build phase. */
+  buyBuildTime(): boolean {
+    if (this.run.phase !== 'build' || !this.scene.scene.isActive()) return false;
+    if (this.stayPutUsed) return false;
+    if (!this.run.spend(STAY_PUT.cost)) return false;
+    this.stayPutUsed = true;
+    this.run.buildLeftSec += STAY_PUT.sec;
+    this.buildTotalSec += STAY_PUT.sec;
+    return true;
+  }
+
   /** Offers the draft's cards — three, four on every fifth draft (DraftScene); finishDraft starts the next build phase. */
   openDraft(): void {
     this.run.phase = 'draft';
@@ -126,6 +139,7 @@ export class RunFlow {
     this.offer = [];
     const seconds = this.run.wave === 0 ? BUILD_SEC.first : BUILD_SEC.between;
     this.buildTotalSec = seconds;
+    this.stayPutUsed = false; // the new build phase gets its one buy
     this.run.startBuild(seconds);
     this.s.waves.planNext();
     this.scene.scene.resume();

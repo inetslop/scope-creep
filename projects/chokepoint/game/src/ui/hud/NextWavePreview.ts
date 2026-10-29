@@ -8,7 +8,7 @@ import { artScale, enemyTexture } from '../../art/textures';
 import type { GameScene } from '../../scenes/GameScene';
 import { makeCard } from '../card';
 import { textStyle } from '../text';
-import { EDGE, isNarrow, NEXT_SIZE, type HudPart } from './hud';
+import { EDGE, SEND_BTN, isNarrow, NEXT_SIZE, type HudPart } from './hud';
 
 const LINE_H = 20;
 const ROW_GAP = 6;
@@ -39,6 +39,12 @@ export class NextWavePreview implements HudPart {
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
+  }
+
+  /** The card's screen rect while it is visible (the Stay put row sits under it). */
+  get rect(): { x: number; y: number; width: number; height: number } | undefined {
+    const box = this.box;
+    return box?.visible ? { x: box.x, y: box.y, width: this.cardW, height: this.cardH } : undefined;
   }
 
   layout(width: number, height: number): void {
@@ -80,7 +86,8 @@ export class NextWavePreview implements HudPart {
     return Math.min(1, (this.size.width - EDGE * 2) / Math.max(1, this.cardW));
   }
 
-  /** Directly above the big button: above its words on narrow screens, above its ring on wide. */
+  /** Above the big button: one row up for the Stay put button under the card, above the button's words on
+   * narrow screens, above its ring on wide. */
   private place(): void {
     const box = this.box;
     if (!box) return;
@@ -88,7 +95,7 @@ export class NextWavePreview implements HudPart {
     const bottom = height - HUD.bottom / 2;
     const x = Math.min(width - EDGE - NEXT_SIZE / 2 - 4, width - EDGE - this.cardW / 2);
     const above = isNarrow(width) ? bottom - NEXT_SIZE / 2 - 22 - 30 : bottom - (NEXT_SIZE / 2 + 7) - 10;
-    box.setScale(this.fitScale()).setPosition(x, above - this.cardH / 2);
+    box.setScale(this.fitScale()).setPosition(x, above - SEND_BTN.height - SEND_BTN.gap - this.cardH / 2);
   }
 
   /** The one-time line that teaches this wave's tag on first preview, or none (taught once per run, derived from the run's held-wave count). */

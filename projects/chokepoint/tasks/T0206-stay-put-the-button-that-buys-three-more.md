@@ -4,11 +4,12 @@ title: "Stay put: the button that buys three more build seconds"
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T12:51:15Z
 claimed_at: 2026-10-29T19:40:11Z
+finished_at: 2026-10-29T21:25:29Z
 ---
 
 ## Goal
@@ -159,3 +160,23 @@ buyBuildTime(): boolean {
 
 ### Tests
 None required — no pure core logic or content changed. Verify in a real browser at 412x915 and 1280x720: row under Send, both layouts clear of the ring; gold < 5 → red "5"; pay → red "-5", "+N" jumps +6, ring intact; second tap dimmed "used"; fresh after the next draft.
+
+## Result (attempt 1, asus)
+
+Added the "Stay put · 5" button: a white card row under the wave preview card that spends 5 gold for +3 s of build time once per build phase (STAY_PUT in config.ts, RunFlow.buyBuildTime(), new ui/hud/StayPutButton.ts registered in HudScene), with red price under 5 gold, a red "−5" pop, the reroll's "used" look after its one buy, and a pause-screen controls line. The preview card shifts up one row so the button fits with the old 10 px clearance above the next-wave ring at both 412x915 and 1280x720; the ring, the "+N" badge and the tick blips all follow the new countdown automatically. Note: the design assumed T0077's standalone Send card row, which T0223 removed — so SEND_BTN and the preview's rect getter were re-added and the row takes the old Send row's exact spot between the preview card and the big round button; unit tests for buyBuildTime follow the T0223 test pattern. Verified with npm run check (266 tests) and npm run smoke (desktop + mobile pass).
+
+- Self-review: APPROVE
+- Time: 105.3 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/config.ts             |  3 +
+ projects/chokepoint/game/src/scenes/HudScene.ts    |  2 +
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  2 +-
+ projects/chokepoint/game/src/systems/RunFlow.ts    | 16 +++-
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  | 13 +++-
+ .../chokepoint/game/src/ui/hud/StayPutButton.ts    | 85 ++++++++++++++++++++++
+ projects/chokepoint/game/src/ui/hud/hud.ts         |  3 +
+ .../game/tests/systems/buyBuildTime.test.ts        | 62 ++++++++++++++++
+ 8 files changed, 181 insertions(+), 5 deletions(-)
+```
