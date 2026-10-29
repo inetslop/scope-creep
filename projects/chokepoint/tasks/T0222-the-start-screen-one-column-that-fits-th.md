@@ -1,14 +1,14 @@
 ---
 id: T0222
 title: "The start screen: one column that fits, the profile card without repeats"
-assignee: cachyos-x8664
 size: M
 priority: 1
-status: in-progress
+status: todo
 depends_on: []
 attempts: 2
 created: 2026-10-29T17:00:35Z
 claimed_at: 2026-10-29T20:00:56Z
+finished_at: 2026-10-29T21:29:17Z
 ---
 
 ## Goal
@@ -171,3 +171,11 @@ const layout = (width: number, height: number): void => {
 ## Attempt 1 failed (cachyos-x8664)
 
 The agent made no changes to the game (timeout).
+
+## Attempt 2 failed (cachyos-x8664)
+
+The agent made no changes to the game (success).
+
+```
+Prompt is too long
+```
