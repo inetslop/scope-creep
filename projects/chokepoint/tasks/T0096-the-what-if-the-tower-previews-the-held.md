@@ -1,12 +1,14 @@
 ---
 id: T0096
 title: "The what-if: the tower previews the held augment before the gold is spent"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T02:00:38Z
+claimed_at: 2026-10-29T10:15:35Z
 epic: E4
 ---
 
