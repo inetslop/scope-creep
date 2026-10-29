@@ -1,12 +1,14 @@
 ---
 id: T0230
 title: "The tech tree: the board branch, node two — The long way"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0208]
-attempts: 0
+attempts: 1
 created: 2026-10-29T21:12:14Z
+claimed_at: 2026-10-29T21:43:44Z
 epic: E2
 ---
 
