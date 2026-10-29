@@ -12,7 +12,7 @@ import { renderPrompt } from './prompts.ts';
 import { enforceWritable } from './sandbox.ts';
 import { loadState, saveState } from './state.ts';
 import { commitAndPush, pushMarker } from './sync.ts';
-import { formatTaskId, listTasks, lockFreeFor, maxTaskNumber, parseTask, pickTaskFor, sharedFiles, taskFileName, unblockedTaskIds, writeTask, type Task, type TaskListing, type TaskSize } from './tasks.ts';
+import { doneIds, formatTaskId, listTasks, lockFreeFor, maxTaskNumber, parseTask, pickTaskFor, sharedFiles, taskFileName, tasksById, unblockedTaskIds, writeTask, type Task, type TaskListing, type TaskSize } from './tasks.ts';
 
 const isArchived = (t: Task): boolean => path.dirname(t.file) === ARCHIVE_DIR;
 const isFinished = (t: Task): boolean => !isArchived(t) && (t.status === 'done' || t.status === 'failed');
@@ -39,7 +39,7 @@ export interface PoolNeeds {
  * keeps no machine busy, and a pool of chains leaves the whole fleet idle.
  */
 export function poolNeeds(fleet: FleetConfig, listing: TaskListing): PoolNeeds {
-  const done = new Set(listing.tasks.filter((t) => t.status === 'done').map((t) => t.id));
+  const done = doneIds(listing.tasks);
   const devIds = devMachineIds(fleet);
   const maxOf = (id: string): number => SIZE_ORDER[fleet.machines[id]!.maxTaskSize];
   const biggest = Math.max(0, ...devIds.map(maxOf));
@@ -193,7 +193,7 @@ function idleLines(fleet: FleetConfig, listing: TaskListing, idle: readonly stri
 function describePool(fleet: FleetConfig, listing: TaskListing): string {
   const needs = poolNeeds(fleet, listing);
   const unblocked = unblockedTaskIds(listing.tasks);
-  const byId = new Map(listing.tasks.map((t) => [t.id, t]));
+  const byId = tasksById(listing.tasks);
   const waitsOn = (t: Task): string =>
     t.dependsOn
       .filter((d) => byId.get(d)?.status !== 'done')
@@ -315,6 +315,51 @@ export async function runPoCycle(ctx: RunContext, reason: string): Promise<void>
   info(`PO cycle ${cycle}: ${created} new task(s), ${archived} archived${pushed ? '' : ' (push failed)'}`);
 }
 
+/** What happened to one new task's id: kept, or renumbered because the PO reused an id or one appeared on main meanwhile. */
+export interface IdAssignment {
+  from: string;
+  to: string;
+  reason?: 'reused' | 'upstream';
+}
+
+/**
+ * Gives the PO's new tasks unused ids. `taken`: ids that existed when the cycle started; `upstream`:
+ * the ids on origin/main just before the push. A human can write tasks while a cycle runs (half an
+ * hour), and the PO's ids were picked at its start: T0073, T0074, T0102 and T0103 each ended up on
+ * two different tasks that way.
+ */
+export function assignNewIds(ids: readonly string[], firstId: number, taken: ReadonlySet<string>, upstream: ReadonlySet<string>): IdAssignment[] {
+  const used = new Set([...taken, ...upstream]);
+  const out: IdAssignment[] = ids.map((id) => {
+    if (Number(id.slice(1)) >= firstId && !used.has(id)) {
+      used.add(id);
+      return { from: id, to: id };
+    }
+    // Only main's newcomers are not the PO's mistake; an id it reused or wrote twice is.
+    return { from: id, to: '', reason: upstream.has(id) && !taken.has(id) && Number(id.slice(1)) >= firstId ? 'upstream' : 'reused' };
+  });
+  let next = firstId;
+  for (const a of out) {
+    if (a.to) continue;
+    while (used.has(formatTaskId(next))) next++;
+    a.to = formatTaskId(next);
+    used.add(a.to);
+  }
+  return out;
+}
+
+/** The task ids on origin/main, fetched now; empty (with a warning) when the fetch fails. */
+async function upstreamTaskIds(git: RunContext['git']): Promise<Set<string>> {
+  try {
+    await git.fetch();
+  } catch (err) {
+    warn(`could not fetch to check task ids against main: ${(err as Error).message.split('\n')[0]}`);
+    return new Set();
+  }
+  const r = await git.raw(['grep', '-h', '-E', '^id: ', 'origin/main', '--', TASKS_REL]);
+  return new Set([...r.stdout.matchAll(/^id:\s*(T\d+)/gm)].map((m) => m[1]!));
+}
+
 /**
  * Makes everything the PO wrote under tasks/ well-formed:
  * - edits to tasks that are not `design`/`todo` are reverted (runner owns those)
@@ -376,21 +421,21 @@ async function validateTaskChanges(ctx: RunContext, before: TaskListing, firstId
     pending.push({ task, abs, isNew: !existedBefore, path: change.path });
   }
 
-  // Pass 2: new tasks keep a fresh, unused id; only collisions/reused ids get renumbered.
+  // Pass 2: new tasks keep a fresh, unused id; reused ids and ids taken on main meanwhile get renumbered.
   const fresh = pending.filter((p) => p.isNew);
-  const renumber: typeof fresh = [];
-  for (const p of fresh) {
-    if (Number(p.task.id.slice(1)) >= firstId && !takenIds.has(p.task.id)) takenIds.add(p.task.id);
-    else renumber.push(p);
-  }
-  let nextNum = firstId;
-  for (const p of renumber) {
-    while (takenIds.has(formatTaskId(nextNum))) nextNum++;
-    const id = formatTaskId(nextNum);
-    feedback.push(`${p.path}: id ${p.task.id} was already used; renumbered to ${id}. Use the ids you are given.`);
-    p.task.id = id;
-    takenIds.add(id);
-  }
+  const assigned = assignNewIds(fresh.map((p) => p.task.id), firstId, takenIds, await upstreamTaskIds(git));
+  const moved = new Map<string, string>();
+  fresh.forEach((p, i) => {
+    const a = assigned[i]!;
+    if (a.reason === 'reused') feedback.push(`${p.path}: id ${a.from} was already used; renumbered to ${a.to}. Use the ids you are given.`);
+    if (a.reason === 'upstream') {
+      info(`${p.path}: ${a.from} was taken on main during this cycle; renumbered to ${a.to}`);
+      moved.set(a.from, a.to);
+    }
+    p.task.id = a.to;
+  });
+  // The PO's own tasks that depend on a renumbered one follow it.
+  for (const p of pending) p.task.dependsOn = p.task.dependsOn.map((d) => moved.get(d) ?? d);
 
   for (const { task, abs, isNew } of pending) {
     if (isNew) {

@@ -10,12 +10,12 @@ import { detectContextSize, isHealthy } from './llama.ts';
 import { ARCHIVE_DIR, GAME_REL, PROJECT, REPO } from './paths.ts';
 import { PO_STARTED } from './po.ts';
 import { loadState } from './state.ts';
-import { designedFiles, listTasks, unblockedTaskIds } from './tasks.ts';
+import { designedFiles, doneIds, duplicateIds, listTasks, unblockedTaskIds } from './tasks.ts';
 
 const fleet = loadFleet();
 const { tasks, invalid } = listTasks(true);
 const unblocked = unblockedTaskIds(tasks);
-const done = new Set(tasks.filter((t) => t.status === 'done').map((t) => t.id));
+const done = doneIds(tasks);
 const open = tasks.filter((t) => path.dirname(t.file) !== ARCHIVE_DIR && t.status !== 'done' && t.status !== 'failed');
 
 console.log(`\nMACHINES (project ${PROJECT})`);
@@ -45,6 +45,11 @@ console.log('  legend: ✎ waiting for design  ✍ being designed  · ready  ▶
 
 const archived = tasks.filter((t) => path.dirname(t.file) === ARCHIVE_DIR);
 console.log(`\nARCHIVE  ${archived.filter((t) => t.status === 'done').length} done, ${archived.filter((t) => t.status === 'failed').length} failed`);
+const dupes = duplicateIds(tasks);
+if (dupes.size) {
+  console.log(`\nDUPLICATE IDS  (one id, several tasks: renumber the design/todo ones; leave in-progress ones until they finish)`);
+  for (const [id, ts] of dupes) console.log(`  ${id}: ${ts.map((t) => `${path.relative(REPO, t.file)} [${t.status}]`).join(', ')}`);
+}
 if (invalid.size) {
   console.log('\nINVALID TASK FILES');
   for (const [f, e] of invalid) console.log(`  ${path.relative(REPO, f)}: ${e}`);

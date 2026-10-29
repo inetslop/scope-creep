@@ -269,8 +269,8 @@ export function pickTaskFor(me: string, fleet: FleetConfig, all: readonly Task[]
   const mine = fleet.machines[me];
   if (!mine) return undefined;
   const myMax = SIZE_ORDER[mine.maxTaskSize];
-  const byId = new Map(all.map((t) => [t.id, t]));
-  const done = new Set(all.filter((t) => t.status === 'done').map((t) => t.id));
+  const byId = tasksById(all);
+  const done = doneIds(all);
   const devs = Object.entries(fleet.machines).filter(([id, m]) => id !== me && !m.paused && m.roles.includes('dev'));
   const smaller = devs.filter(([, m]) => SIZE_ORDER[m.maxTaskSize] < myMax).map(([, m]) => SIZE_ORDER[m.maxTaskSize]);
   const leaveUpTo = Math.max(0, ...smaller);
@@ -322,13 +322,38 @@ export function designedFiles(t: Task): string[] {
 const OPEN_STATUSES = new Set<TaskStatus>(['design', 'designing', 'todo', 'in-progress']);
 
 /**
+ * Ids whose every task is done. Two task files can share an id (a task written by hand while a PO
+ * cycle ran: T0103 was both an archived Rally task and the tech tree in progress), and a dependency
+ * on that id is done only when all of them are.
+ */
+export function doneIds(all: readonly Task[]): Set<string> {
+  const notDone = new Set(all.filter((t) => t.status !== 'done').map((t) => t.id));
+  return new Set(all.filter((t) => t.status === 'done' && !notDone.has(t.id)).map((t) => t.id));
+}
+
+/** One task per id; with a shared id, one that isn't done (what a dependency on it still waits on). */
+export function tasksById(all: readonly Task[]): Map<string, Task> {
+  const byId = new Map<string, Task>();
+  for (const t of all) if (!byId.has(t.id) || byId.get(t.id)!.status === 'done') byId.set(t.id, t);
+  return byId;
+}
+
+/** Ids used by more than one task file, with those tasks. */
+export function duplicateIds(all: readonly Task[]): Map<string, Task[]> {
+  const byId = new Map<string, Task[]>();
+  for (const t of all) byId.set(t.id, [...(byId.get(t.id) ?? []), t]);
+  return new Map([...byId].filter(([, ts]) => ts.length > 1));
+}
+
+/**
  * Ids of the open tasks (design to in-progress) that will get built: every dependency is done, or
  * is another such task in the same folder (in the pool, anyone builds the chain in order; in an
  * older machine folder, that machine). A task waiting on a failed or unknown task, or on another
  * machine's folder, is blocked.
  */
 export function unblockedTaskIds(all: readonly Task[]): Set<string> {
-  const byId = new Map(all.map((t) => [t.id, t]));
+  const byId = tasksById(all);
+  const done = doneIds(all);
   const folderOf = (t: Task): string => path.basename(path.dirname(t.file));
   const memo = new Map<string, boolean>();
   const reachable = (t: Task): boolean => {
@@ -337,7 +362,7 @@ export function unblockedTaskIds(all: readonly Task[]): Set<string> {
     memo.set(t.id, false); // a dependency cycle never unblocks
     const ok = t.dependsOn.every((d) => {
       const dep = byId.get(d);
-      if (dep?.status === 'done') return true;
+      if (done.has(d)) return true;
       return !!dep && OPEN_STATUSES.has(dep.status) && folderOf(dep) === folderOf(t) && reachable(dep);
     });
     memo.set(t.id, ok);

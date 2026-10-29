@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import type { FleetConfig } from '../config.ts';
 import { PROJECT, TASKS_DIR } from '../paths.ts';
-import { designedFiles, isPoolTask, lockedBy, parseTask, pickTaskFor, serializeTask, slugify, TaskFormatError, unblockedTaskIds, type Task } from '../tasks.ts';
+import { designedFiles, doneIds, duplicateIds, isPoolTask, lockedBy, parseTask, pickTaskFor, serializeTask, slugify, TaskFormatError, tasksById, unblockedTaskIds, type Task } from '../tasks.ts';
 
 const file = path.join('tasks', 'yoga', 'T0007-thing.md');
 
@@ -268,5 +268,21 @@ describe('slugify', () => {
   it('makes short file-safe slugs', () => {
     assert.equal(slugify('Add the Rust Hound enemy!'), 'add-the-rust-hound-enemy');
     assert.equal(slugify('***'), 'task');
+  });
+});
+
+describe('shared ids', () => {
+  const t = (id: string, status: Task['status'], title = id): Task => ({ ...parseTask(`---\nid: ${id}\ntitle: ${title}\n---\n`, `/x/${id}-${title}.md`), status });
+  // T0103 was both the archived Rally task (done) and the tech tree (in progress); T0110 waits on the tech tree.
+  const all = [t('T0103', 'done', 'rally'), t('T0103', 'in-progress', 'tech'), t('T0099', 'done')];
+  it('an id is done only when every task with it is done', () => {
+    assert.deepEqual([...doneIds(all)], ['T0099']);
+    assert.ok(doneIds([...all.slice(0, 1), { ...all[1]!, status: 'done' }]).has('T0103'));
+  });
+  it('a lookup by a shared id finds the task that is not done', () => {
+    assert.equal(tasksById(all).get('T0103')!.status, 'in-progress');
+  });
+  it('lists the ids used twice', () => {
+    assert.deepEqual([...duplicateIds(all).keys()], ['T0103']);
   });
 });

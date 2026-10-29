@@ -3,7 +3,7 @@ import path from 'node:path';
 import { describe, it } from 'node:test';
 import type { FleetConfig } from '../config.ts';
 import { TASKS_DIR } from '../paths.ts';
-import { idleMachines, idleReason, planningBudgetFeedback, planningReason, PO_MAX_NEW_TASKS, poolNeeds, tasksToWrite } from '../po.ts';
+import { assignNewIds, idleMachines, idleReason, planningBudgetFeedback, planningReason, PO_MAX_NEW_TASKS, poolNeeds, tasksToWrite } from '../po.ts';
 import { parseTask, type Task, type TaskListing } from '../tasks.ts';
 
 const fleet = {
@@ -94,5 +94,28 @@ describe('planningBudgetFeedback', () => {
   });
   it('is quiet when every file fits or is missing', () => {
     assert.deepEqual(planningBudgetFeedback({ 'ROADMAP.md': 20_000 }), []);
+  });
+});
+
+describe('assignNewIds', () => {
+  const taken = new Set(['T0100', 'T0101']);
+  it('keeps fresh ids the PO was given', () => {
+    assert.deepEqual(assignNewIds(['T0102', 'T0103'], 102, taken, new Set()), [
+      { from: 'T0102', to: 'T0102' },
+      { from: 'T0103', to: 'T0103' },
+    ]);
+  });
+  it('renumbers an id a human pushed to main during the cycle, past every id on main', () => {
+    assert.deepEqual(assignNewIds(['T0102', 'T0103'], 102, taken, new Set([...taken, 'T0103', 'T0104'])), [
+      { from: 'T0102', to: 'T0102' },
+      { from: 'T0103', to: 'T0105', reason: 'upstream' },
+    ]);
+  });
+  it('blames the PO for an id it reused or wrote twice', () => {
+    assert.deepEqual(assignNewIds(['T0100', 'T0102', 'T0102'], 102, taken, new Set()), [
+      { from: 'T0100', to: 'T0103', reason: 'reused' },
+      { from: 'T0102', to: 'T0102' },
+      { from: 'T0102', to: 'T0104', reason: 'reused' },
+    ]);
   });
 });
