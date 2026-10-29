@@ -2,7 +2,7 @@ import type Phaser from 'phaser';
 import { CELL, HUD } from '../../config';
 import { getEnemy } from '../../content/enemies';
 import { PALETTE } from '../../content/palette';
-import { isQuietWave, waveCounts, type WavePlan } from '../../core/waves';
+import { isQuietWave, isTightWave, waveCounts, type WavePlan } from '../../core/waves';
 import { RunState } from '../../core/run';
 import { artScale, enemyTexture } from '../../art/textures';
 import type { GameScene } from '../../scenes/GameScene';
@@ -19,6 +19,7 @@ const GROUP_GAP = 8;
  *  waves (the tag's first wave), so it is re-derived from the run and never stored. */
 const TEACH: { tag: string; first: number; text: string }[] = [
   { tag: 'quiet', first: 4, text: 'quiet: fewer, double gold' },
+  { tag: 'tight', first: 6, text: 'tight: they come bunched' },
 ];
 
 /**
@@ -107,12 +108,13 @@ export class NextWavePreview implements HudPart {
     const counts = waveCounts(plan); // a quiet wave's plan is already halved, so the counts come out small
     const pieces: (Phaser.GameObjects.Image | Phaser.GameObjects.Text | Phaser.GameObjects.Container)[] = [];
     let cursor = 0;
-    if (isQuietWave(plan.number)) {
+    if (isQuietWave(plan.number) || isTightWave(plan.number)) {
       // A small muted-blue "quiet" tag at the card's left edge: relief, so blue (never the red leak warning).
-      const label = scene.add.text(0, 0, 'quiet', textStyle(11, PALETTE.card, { fontStyle: 'bold' })).setOrigin(0.5);
+      const isQuiet = isQuietWave(plan.number);
+      const label = scene.add.text(0, 0, isQuiet ? 'quiet' : 'tight', textStyle(11, PALETTE.card, { fontStyle: 'bold' })).setOrigin(0.5);
       const chipW = Math.ceil(label.width) + 14;
       const chip = scene.add.graphics();
-      chip.fillStyle(PALETTE.blueDeep, 1);
+      chip.fillStyle(isQuiet ? PALETTE.blueDeep : PALETTE.muted, 1);
       chip.fillRoundedRect(-chipW / 2, -9, chipW, 18, 9);
       pieces.push(scene.add.container(chipW / 2, 0, [chip, label])); // its left edge sits on the card's content edge
       cursor += chipW + GROUP_GAP;

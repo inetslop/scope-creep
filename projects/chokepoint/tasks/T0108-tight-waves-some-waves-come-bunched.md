@@ -4,11 +4,12 @@ title: "Tight waves: some waves come bunched"
 assignee: cachyos-x8664
 size: M
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T07:23:51Z
 claimed_at: 2026-10-29T08:15:43Z
+finished_at: 2026-10-29T08:45:02Z
 ---
 
 ## Goal
@@ -112,3 +113,18 @@ Run `npm run check`.
 
 ### Tests
 - `tests/core/tightWaves.test.ts` as above (schedule, halving, plan tags/invariants); `tests/content.test.ts` already covers the plans it sees — no other test file is touched.
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the tight (bunched) wave: `isTightWave()`/`tightHalve()` in `src/core/waves.ts` (every 8th wave from 6, gaps halved at the single exit, `['tight']` tag in the plan), a muted-gray "tight" chip + one-time teach line in `NextWavePreview.ts`, per-tag chip color in `topBanner.ts`, and `tests/core/tightWaves.test.ts`. Kill gold and clear bonus are unchanged (functions of the wave number only). `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 29.3 min
+
+```
+projects/chokepoint/game/src/core/waves.ts         | 17 +++++++++++-
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  | 10 ++++---
+ projects/chokepoint/game/src/ui/hud/topBanner.ts   |  2 +-
+ .../chokepoint/game/tests/core/tightWaves.test.ts  | 31 ++++++++++++++++++++++
+ 4 files changed, 54 insertions(+), 6 deletions(-)
+```

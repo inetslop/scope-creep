@@ -63,6 +63,11 @@ export function isQuietWave(wave: number): boolean {
   return wave > 0 && wave % 4 === 0;
 }
 
+/** Every 8th wave from wave 6 is a tight bunched wave (6, 14, 22, 30, ...; never a quiet wave: none is a multiple of 4). */
+export function isTightWave(wave: number): boolean {
+  return wave >= 6 && (wave - 6) % 8 === 0;
+}
+
 /** A quiet wave's enemy count: half the usual, rounded up, minimum 3. */
 export function quietCount(total: number): number {
   return Math.max(3, Math.ceil(total / 2));
@@ -85,6 +90,14 @@ export function quietHalve(spawns: WaveSpawn[]): WaveSpawn[] {
   for (let i = 0; i < spawns.length; i += 2)
     kept.push({ enemy: spawns[i]!.enemy, delaySec: i === 0 ? 0 : spawns[i]!.delaySec + spawns[i - 1]!.delaySec });
   return kept;
+}
+
+/**
+ * A tight wave bunched: the same enemies in the same order, but every gap between consecutive
+ * enemies is halved (the wave's total spawn time halves; the first spawn comes at once).
+ */
+export function tightHalve(spawns: WaveSpawn[]): WaveSpawn[] {
+  return spawns.map((s, i) => ({ enemy: s.enemy, delaySec: i === 0 ? 0 : s.delaySec / 2 }));
 }
 
 /**
@@ -149,9 +162,11 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
   }
   // A quiet wave halves the plan at the single exit, so both paths above get it.
   if (isQuietWave(wave)) finalSpawns = quietHalve(finalSpawns);
+  // A tight wave bunches the plan at the single exit, so both paths above get it (it is never a quiet wave).
+  if (isTightWave(wave)) finalSpawns = tightHalve(finalSpawns);
   // A Mute wave always sends its Mute, even when the halving would drop it: it walks in first.
   if (wave >= 11 && (wave - 11) % 3 === 0 && !finalSpawns.some((s) => s.enemy === 'mute')) finalSpawns = [{ enemy: 'mute', delaySec: 0 }, ...finalSpawns];
-  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : [] };
+  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : [] };
 }
 
 /** What a wave sends: each enemy type it sends, and how many (no zeros), in first-arrival order. */
