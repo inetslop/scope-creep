@@ -3,11 +3,13 @@ id: T0096
 title: "The what-if: the tower previews the held augment before the gold is spent"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T02:00:38Z
+claimed_at: 2026-10-29T02:21:14Z
 epic: E4
+designer: cachyos-x8664
 ---
 
 ## Goal
