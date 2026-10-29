@@ -22,6 +22,7 @@ It goes into the shared pool: any machine that takes size {{TASK_SIZE}} tasks ma
    - a new augment or enemy without a "## Compared with what exists" table that covers every existing one sharing its mechanic. Check the table against the content files yourself, against every file, not only the ones it names: for an augment, every augment with the same `first.kind`, and every augment whose `added` form sets the same fields (`rangeMul` is Reach's, `extraShots` is Bolt's); for an enemy, every enemy with the same `behavior`. Reject when a row is missing or a difference is only numbers (range, rate, damage, a cap, hp, speed);
    - an augment whose added form only works on hits, with no line for the attack kinds that have none (`beam`, `rally`, 0-damage supports);
    - an augment that doesn't show on the tower;
+   - a readout, label, chip or HUD element that shows information the screen already shows elsewhere (check ui/hud/ and the board systems first: e.g. a count of enemies left, which the next-wave button already shows);
    - themed art, names or text (fantasy, sci-fi, ink, paper...) instead of the game's bright minimal abstract style;
    - a new input or HUD element without its on-screen explanation: the key or button shown where it is used and on the pause screen, a touch control on mobile, a layout that works at 412x915 and 1280x720.
    When a task adds an input or HUD element, your design must include that explanation and layout, not leave it for later.

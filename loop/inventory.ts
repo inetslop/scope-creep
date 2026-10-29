@@ -50,6 +50,35 @@ function contentList(dir: string, withDescriptions: boolean): string[] {
   return items;
 }
 
+/**
+ * A source file's doc comment (the one above its exported class or, without one, its first), as
+ * whole sentences up to `max` characters: what the file is or shows. Empty when it has none.
+ */
+export function fileDoc(source: string, max = 260): string {
+  const blocks = [...source.matchAll(/\/\*\*([\s\S]*?)\*\//g)];
+  const aboveClass = blocks.find((b) => /^\s*export\s+(?:default\s+)?class\b/.test(source.slice((b.index ?? 0) + b[0].length)));
+  const block = (aboveClass ?? blocks[0])?.[1] ?? '';
+  const text = block.split('\n').map((l) => l.replace(/^\s*\*\s?/, '').trim()).join(' ').replace(/\s+/g, ' ').trim();
+  // A sentence ends at . ! or ? followed by a space: a dot inside a code name (waves.nextPlan) doesn't end one.
+  const sentences = text ? text.split(/(?<=[.!?])\s+/) : [];
+  let out = '';
+  for (const sentence of sentences) {
+    if (out && out.length + 1 + sentence.length > max) break;
+    out = out ? `${out} ${sentence}` : sentence;
+  }
+  return out.length > max ? `${out.slice(0, max - 1).replace(/\s+\S*$/, '')}…` : out;
+}
+
+/** One line per source file in `dir`: its name and what its doc comment says it is or shows. */
+function describedFiles(dir: string, skip: readonly string[] = [], max = 260): string[] {
+  return tsFiles(dir)
+    .filter((f) => !skip.includes(f))
+    .map((f) => {
+      const doc = fileDoc(fs.readFileSync(path.join(dir, f), 'utf8'), max);
+      return `  - ${f.replace(/\.ts$/, '')}${doc ? `: ${doc}` : ''}`;
+    });
+}
+
 /** Markdown inventory of the game in `gameDir`, for the PO prompt. */
 export function buildInventory(gameDir: string): string {
   const src = path.join(gameDir, 'src');
@@ -67,8 +96,11 @@ export function buildInventory(gameDir: string): string {
   const strip = (f: string, suffix: string): string => f.replace(/\.ts$/, '').replace(new RegExp(`${suffix}$`), '');
   const scenes = tsFiles(path.join(src, 'scenes')).filter((f) => f.endsWith('Scene.ts'));
   if (scenes.length) lines.push(`- **Scenes**: ${scenes.map((f) => strip(f, 'Scene')).join(', ')}`);
-  const systems = tsFiles(path.join(src, 'systems'));
-  if (systems.length) lines.push(`- **Systems**: ${systems.map((f) => strip(f, 'System')).join(', ')}`);
+  // What the player already sees, element by element, so a new readout never repeats one.
+  const hud = describedFiles(path.join(src, 'ui', 'hud'), ['hud.ts']);
+  if (hud.length) lines.push(`- **On screen** (the HUD, each element and what it shows; a new one must show something none of these does):`, ...hud);
+  const systems = describedFiles(path.join(src, 'systems'), [], 200);
+  if (systems.length) lines.push(`- **Systems** (each and what it does; the board readouts live here too):`, ...systems);
   const known = new Set(['content', 'scenes', 'systems']);
   const other = fs.existsSync(src)
     ? fs

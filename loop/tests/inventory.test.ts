@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
-import { buildInventory, changelogLine, namesIn } from '../inventory.ts';
+import { buildInventory, changelogLine, fileDoc, namesIn } from '../inventory.ts';
 import { parseTask } from '../tasks.ts';
 
 describe('namesIn', () => {
@@ -34,7 +34,8 @@ describe('buildInventory', () => {
     assert.match(inv, /\*\*Enemies\*\* \(4\): Sentry \(shoot\), Splinter \(chase, only spawned by another\), Splitter \(chase, splits into splinter\), Wedge \(chase\)/);
     assert.match(inv, /\*\*Upgrades\*\* \(1\): Rhythm \(\+20% fire rate\)/);
     assert.match(inv, /\*\*Scenes\*\*: Game$/m);
-    assert.match(inv, /\*\*Systems\*\*: Fx/);
+    assert.match(inv, /\*\*Systems\*\* \(/);
+    assert.match(inv, /^  - FxSystem/m);
     assert.match(inv, /audio\/ \(Sfx\)/);
     fs.rmSync(game, { recursive: true, force: true });
   });
@@ -47,5 +48,16 @@ describe('changelogLine', () => {
       path.join('tasks', 'desktop', 'T0003-x.md'),
     );
     assert.equal(changelogLine(t), '- T0003 Procedural sound effects (desktop, 2026-10-27): Added src/audio/Sfx.ts with six synthesized sounds.');
+  });
+});
+
+describe('fileDoc', () => {
+  it("quotes the exported class's doc comment as whole sentences, up to the limit", () => {
+    const source = `import x from 'y';\n/** A helper type. */\ntype T = 1;\n/**\n * Bottom right: the round button. During a wave it shows how many enemies are left.\n * More detail here.\n */\nexport class NextWaveButton {}\n`;
+    assert.equal(fileDoc(source), 'Bottom right: the round button. During a wave it shows how many enemies are left. More detail here.');
+    assert.equal(fileDoc(source, 40), 'Bottom right: the round button.');
+    assert.equal(fileDoc('/** Only this. */\nexport function f() {}\n'), 'Only this.');
+    assert.equal(fileDoc('export const x = 1;\n'), '');
+    assert.equal(fileDoc('/** Reads `waves.nextPlan` (the plan). Then more. */\nexport class P {}\n', 40), 'Reads `waves.nextPlan` (the plan).');
   });
 });
