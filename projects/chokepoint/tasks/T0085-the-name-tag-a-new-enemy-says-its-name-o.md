@@ -1,12 +1,14 @@
 ---
 id: T0085
 title: "The name tag: a new enemy says its name once"
+assignee: desktop
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-28T23:26:44Z
+claimed_at: 2026-10-29T01:18:13Z
 ---
 
 ## Goal
