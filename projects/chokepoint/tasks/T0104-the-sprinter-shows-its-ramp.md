@@ -1,12 +1,14 @@
 ---
 id: T0104
 title: The sprinter shows its ramp
+assignee: baby-mama
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T07:23:51Z
+claimed_at: 2026-10-29T07:54:45Z
 epic: E4
 ---
 
