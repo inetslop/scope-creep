@@ -1,12 +1,14 @@
 ---
 id: T0215
 title: "The run-start branch reads complete: a fifth node and a done mark"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T15:52:06Z
+claimed_at: 2026-10-29T16:20:55Z
 epic: E2
 ---
 
