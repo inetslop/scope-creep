@@ -3,10 +3,12 @@ id: T0237
 title: "The Dart goes: a faster, weaker Dot frees the enemy cap"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T23:34:09Z
+claimed_at: 2026-10-29T23:34:12Z
+designer: desktop
 ---
 
 ## Goal
