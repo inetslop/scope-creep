@@ -28,11 +28,11 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - (sketch — branch four, node two: “The long way”, a longer road (+25% path length), after T0208 so the generator's shape is settled)
 - T0211 (L, priority 2, depends_on T0153) — branch five “The claim”: “Clean ×2” (30 coins) — each clean wave pays 2 coins instead of 1; the one pure coin formula (T0001) carries it to the live tally, the pause worth line and the claim card's recipe — **done** (2026-10-29, desktop)
 - T0212 (M, priority 2, depends_on T0153, T0209) — branch three, node three: “Mend” (30 coins), T0209's pattern for T0095's Epic; the draft gate is T0095's line — in the pool
-- T0213 (S, priority 2, depends_on T0103) — the menu's Tech button wears a small yellow dot while any unowned node is in reach — in the pool
+- T0213 (S, priority 2, depends_on T0103) — the menu's Tech button wears a small yellow dot while any unowned node is in reach — in progress (yoga)
 - T0214 (M, priority 2, depends_on T0103) — the branch discount: the 2nd node of a branch costs 5 less, the 3rd and later 10 less (floor 5); the card shows the struck-through old price — in the pool
 - T0215 (M, priority 2, depends_on T0103) — the run-start's fifth node, a second “Life +1” (40 coins), and a small done mark on a fully-owned branch — in the pool
 
-Status: the foundation (T0103), the run-start branch, the pool branch (T0153, T0209) and the claim branch (T0211) are done; the draft branch (T0110) is in progress; the board branch (T0208), the Mend node (T0212), the menu dot (T0213), the branch discount (T0214) and the run-start's fifth node (T0215) are in the pool, landing one at a time on the shared tech files.
+Status: the foundation (T0103), the run-start branch, the pool branch (T0153, T0209) and the claim branch (T0211) are done; the draft branch (T0110) is in progress; the board branch (T0208), the Mend node (T0212), the branch discount (T0214) and the run-start's fifth node (T0215) are in the pool, landing one at a time on the shared tech files; the menu dot (T0213) is in progress (yoga).
 
 ### E3 — Levels: a run is a journey (not started)
 **Goal:** a run has a shape: a few boards in a row, each harder, and a build that grows across them.
@@ -143,3 +143,4 @@ Ideas that may become epics or tasks of one.
 - Music that follows the wave and the danger
 - Run summary: damage per tower, leaks per wave — **first slice tasked as T0216 (kills by tower on the end card)**
 - The board shows its corners: a notch on the bend cells — **built as T0140 (S, non-epic, 2026-10-29, narcissus)**
+- Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **tasked as T0217 (L, non-epic, in the pool)**
