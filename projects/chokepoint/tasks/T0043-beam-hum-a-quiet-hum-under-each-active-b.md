@@ -1,12 +1,14 @@
 ---
 id: T0043
 title: "Beam hum: a quiet hum under each active beam"
+assignee: cachyos-x8664
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0073]
-attempts: 0
+attempts: 1
 created: 2026-10-28T11:24:34Z
+claimed_at: 2026-10-29T02:06:18Z
 epic: E4
 ---
 
