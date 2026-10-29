@@ -3,11 +3,13 @@ id: T0094
 title: "The card says how many: the owned dot gets a count"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T01:36:24Z
+claimed_at: 2026-10-29T01:58:34Z
 epic: E4
+designer: cachyos-x8664
 ---
 
 ## Goal
