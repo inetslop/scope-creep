@@ -3,10 +3,12 @@ id: T0224
 title: "The rewards card: one tidy column that fits its card"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T17:00:35Z
+claimed_at: 2026-10-29T17:07:27Z
+designer: desktop
 ---
 
 ## Goal
