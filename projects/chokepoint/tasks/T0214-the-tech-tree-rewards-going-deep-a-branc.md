@@ -4,11 +4,12 @@ title: "The tech tree rewards going deep: a branch discount"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T15:52:06Z
 claimed_at: 2026-10-29T17:26:21Z
+finished_at: 2026-10-29T18:00:17Z
 epic: E2
 ---
 
@@ -121,3 +122,18 @@ And fix the two existing expectations the discount breaks: in `the full chain of
 
 ### DEPENDS_ON
 The branch discount is generic — it prices whatever branches exist, so it needs none of the draft/board nodes other tasks add.
+
+## Result (attempt 1, cachyos-x8664)
+
+The tech tree now rewards going deep — every node's price is derived purely from how many of its own branch are owned (full price, 5 less with one, 10 less with two or more, floored at 5). `ownedInBranch`/`branchPrice` were added to `core/tech.ts` and wired into `buyNode`, `buyPoolNode` and `buyClaimNode`, so buying pays the discounted price while the owned mark is unchanged. `TechScene` shows the struck muted full price beside the normal discounted price (red when unaffordable), with the first node keeping its single normal price and no strike line. Deviations: `buyNode` counts each node's own branch list (start vs draft) so the per-branch rule holds and the charge matches the card; and the design's numbers were off — the full-chain remainder is 45 (not 35) and the mend/draft purchase lines also needed fixing.
+
+- Self-review: APPROVE
+- Time: 33.9 min
+
+```
+projects/chokepoint/game/src/core/tech.ts          | 29 ++++++++++++----
+ projects/chokepoint/game/src/scenes/TechScene.ts   | 39 +++++++++++++++++++---
+ projects/chokepoint/game/tests/core/tech.test.ts   | 32 +++++++++++++++---
+ .../chokepoint/game/tests/core/techEffects.test.ts |  4 +--
+ 4 files changed, 86 insertions(+), 18 deletions(-)
+```

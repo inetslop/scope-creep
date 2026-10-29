@@ -43,17 +43,30 @@ export function startBonuses(owned: readonly string[]): { gold: number; life: nu
   return { gold, life };
 }
 
+/** How many of a branch's nodes are already owned: the branch discount prices a node off this count. */
+export function ownedInBranch(nodes: readonly { id: string }[], purchased: readonly string[]): number {
+  return nodes.reduce((n, node) => n + (purchased.includes(node.id) ? 1 : 0), 0);
+}
+
+/** The price a branch node costs now: full price, 5 less with one owned, 10 less with two or more, never below 5. */
+export function branchPrice(price: number, ownedCount: number): number {
+  const discount = ownedCount >= 2 ? 10 : ownedCount === 1 ? 5 : 0;
+  return Math.max(price - discount, 5);
+}
+
 /**
  * Buys a node from the saved profile's coins. Refuses an unknown or already owned id, a node
  * whose previous one is not owned, and a price the coins don't cover (they never go below zero).
  */
 export function buyNode(store: KeyValueStore | undefined, id: string): boolean {
   const profile = loadProfile(store);
-  const node = TECH_NODES.find((n) => n.id === id) ?? DRAFT_NODES.find((n) => n.id === id);
+  const branch = TECH_NODES.some((n) => n.id === id) ? TECH_NODES : DRAFT_NODES;
+  const node = branch.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
   if (node.requires !== null && !profile.purchased.includes(node.requires)) return false;
-  if (profile.coins < node.price) return false;
-  profile.coins -= node.price;
+  const price = branchPrice(node.price, ownedInBranch(branch, profile.purchased));
+  if (profile.coins < price) return false;
+  profile.coins -= price;
   profile.purchased.push(id);
   try {
     store?.setItem(PROFILE_KEY, JSON.stringify(profile));
@@ -71,8 +84,9 @@ export function buyPoolNode(store: KeyValueStore | undefined, id: string): boole
   const profile = loadProfile(store);
   const node = POOL_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
-  if (profile.coins < node.price) return false;
-  profile.coins -= node.price;
+  const price = branchPrice(node.price, ownedInBranch(POOL_NODES, profile.purchased));
+  if (profile.coins < price) return false;
+  profile.coins -= price;
   profile.purchased.push(id);
   try {
     store?.setItem(PROFILE_KEY, JSON.stringify(profile));
@@ -102,8 +116,9 @@ export function buyClaimNode(store: KeyValueStore | undefined, id: string): bool
   const profile = loadProfile(store);
   const node = CLAIM_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
-  if (profile.coins < node.price) return false;
-  profile.coins -= node.price;
+  const price = branchPrice(node.price, ownedInBranch(CLAIM_NODES, profile.purchased));
+  if (profile.coins < price) return false;
+  profile.coins -= price;
   profile.purchased.push(id);
   try {
     store?.setItem(PROFILE_KEY, JSON.stringify(profile));

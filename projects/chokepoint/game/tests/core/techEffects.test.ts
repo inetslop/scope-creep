@@ -72,9 +72,9 @@ describe('techEffects', () => {
     expect(buyNode(store, 'slot2-1')).toBe(true);
     expect(loadProfile(store).coins).toBe(35);
     expect(buyNode(store, 'slot2-2')).toBe(true); // unlocked by the first slot node now
-    expect(loadProfile(store).coins).toBe(15);
+    expect(loadProfile(store).coins).toBe(20); // slot2-2 at 15, one draft node owned
     expect(buyNode(store, 'fourth-card')).toBe(true);
-    expect(loadProfile(store).coins).toBe(0);
+    expect(loadProfile(store).coins).toBe(15); // fourth-card at 5, two draft nodes owned
     expect(loadProfile(store).purchased).toEqual(['slot2-1', 'slot2-2', 'fourth-card']);
   });
 
