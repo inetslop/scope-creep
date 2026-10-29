@@ -15,6 +15,7 @@ A run that holds the line grows: each clean wave makes every tower stronger. The
 
 ## Details
 - **Rolls only as an Epic card**, the same Epic-only roll as Mark, Rally and Mint (T0012, T0020, T0021). The draft's odds line and tier chime cover it with no change.
+- **The gate (the tech-tree unlock, E2's pool branch):** T0209's node (“Momentum”, 30 coins, `unlocks: 'momentum'`) is already in the game and sits dimmed “not in the game yet” until this augment lands. The def carries `tech: 'momentum'` (T0152's pattern: the tech node id that must be in the profile's purchased list before the augment rolls) and Momentum is absent from every draft roll (pre-wave-1, later, reroll, the fourth card) unless the purchased list holds `momentum` — the draft-side check is this task's line, exactly as Haste's gate is T0152's. (Added cycle 64: T0209 is in the game, so the gate is what makes the node do anything.)
 - **Card lines** (both forms, with their numbers):
   - First (a tower with no attack of its own, a support like Rally and Mint): "Each clean wave: every tower deals +5% more damage (for the run)."
   - Added: "Each clean wave: +5% more damage per Momentum."
@@ -29,6 +30,7 @@ A run that holds the line grows: each clean wave makes every tower stronger. The
 
 ## Acceptance criteria
 - [ ] The draft offers Momentum only as an Epic card (Epic frame, gem row, "· Epic" name line, tier chime); the odds line is unchanged.
+- [ ] The gate (T0209's node, already in the game): with `momentum` not in the profile's purchased list, no draft — pre-wave-1, later, a reroll, a fourth card — ever offers Momentum; with it owned, Momentum rolls Epic-only like the other Epics.
 - [ ] A first-time player reading the card lines learns both rules: a clean wave makes every tower deal +5% more, and each extra Momentum adds +5% per clean wave.
 - [ ] After the first clean wave with one Momentum on the board, every tower deals 1.05× its previous damage (same tower, same target, same tier), the panel shows "Bonus +5%", and a muted-yellow "+5%" pop plays from the Momentum tower.
 - [ ] With two Momentum copies the next clean wave adds +10% (total +15%), and the pop reads "+10%".

@@ -18,6 +18,7 @@ The Epic pool gets the survival axis no other Epic touches: a tower that turns t
 - Epic-only roll, like Mark, Rally, Mint and Anchor (the same Epic flag). Both card lines (within the caps in tests/content.test.ts — card line ≤ 70, tier line ≤ 56):
   - First (as a new tower): "Every 12 kills this run, the run gets +1 life." A support with no attack of its own: it never fires, aims at nothing and deals no damage.
   - Added: "−2 kills per extra Mend: 12, 10, 8, 6, 4 — no shorter" (53 chars, within the tier line cap; the copies-count-together mechanic lives in the run, not the line).
+- **The gate (the tech-tree unlock, E2's pool branch):** the node “Mend” (T0212, 30 coins, `unlocks: 'mend'`) is filed this cycle for the pool branch; the def carries `tech: 'mend'` (T0152's pattern) and Mend is absent from every draft roll (pre-wave-1, later, reroll, the fourth card) unless the profile's purchased list holds `mend` — the draft-side check is this task's line, exactly as Haste's gate is T0152's and Momentum's is T0064's. Either task can land first: the node first, it sits dimmed “not in the game yet”; Mend first, it never rolls until the node is bought. (Added cycle 64, with T0212.)
 - Copies count run-wide: the run's N Mend copies, in any towers, set the count to max(12 − 2×(N−1), 4). The target is read live from the run's copies, so a copy added mid-count shortens the current count; the kill progress since the last pay is kept.
 - The count: kills by any source this run — exactly the kill the kills line (T0070) counts, by whatever source it happens (a shot, an Ember's killing tick). A leak is not a kill; the panic pulse's clear (T0063) is not a kill. The count restarts at the current target after each pay and after each hold.
 - The pay: the run's lives go up by 1 — a small green "+1" on the lives number (the clean streak's green pop, T0045). If the pay brings the run from 1 to 2 lives, the last stand's red number clears the same moment (T0054's own rule).
@@ -32,6 +33,7 @@ The Epic pool gets the survival axis no other Epic touches: a tower that turns t
 
 ## Acceptance criteria
 - [ ] Mend rolls only as an Epic card, and its draft and tower-panel cards read the two card lines above, both passing the caps in tests/content.test.ts.
+- [ ] The gate (T0212's node): with `mend` not in the profile's purchased list, no draft — pre-wave-1, later, a reroll, a fourth card — ever offers Mend; with it owned, Mend rolls Epic-only like the other Epics.
 - [ ] A Mend-only tower never fires and deals no damage; its kills line (T0070) reads "kills 0"; it shows the low green disc with one tick per copy.
 - [ ] With one Mend on the board, the 12th kill this run (any source, including an Ember killing tick) pays the run +1 life: a green "+1" on the lives number, the "life in N" line restarting at 12, and the chime playing.
 - [ ] At the run's starting lives, reaching the count does not raise the lives: the panel line reads "life held", and the next leak pays the +1 back on the lives number (green pop, chime) — the lives never read above the starting number.
