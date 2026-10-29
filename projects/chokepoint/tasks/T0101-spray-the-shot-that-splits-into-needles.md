@@ -1,12 +1,14 @@
 ---
 id: T0101
 title: "Spray: the shot that splits into needles"
+assignee: desktop
 size: L
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T02:55:25Z
+claimed_at: 2026-10-29T08:21:17Z
 epic: E4
 ---
 
