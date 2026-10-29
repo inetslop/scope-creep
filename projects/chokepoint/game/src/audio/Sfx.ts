@@ -79,6 +79,12 @@ export class Sfx {
     this.tone(784, 0.08, 'sine', 0.18, undefined, 0.08);
   }
 
+  /** A tech node is bought: the coin chime's two notes at the tier chime's quiet volume. */
+  techBuy(): void {
+    this.tone(659, 0.08, 'sine', 0.1);
+    this.tone(784, 0.08, 'sine', 0.1, undefined, 0.08);
+  }
+
   /** One soft UI blip, the tier-chime note class. */
   blip(): void {
     this.tone(523, 0.08, 'sine', 0.1);

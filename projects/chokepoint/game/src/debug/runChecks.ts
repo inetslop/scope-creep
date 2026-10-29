@@ -13,7 +13,7 @@ import { hook } from './testHook';
 const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined][] = [
   ['run.gold', (g) => (Number.isFinite(g.run.gold) && g.run.gold >= 0 ? null : `gold is ${g.run.gold}`)],
   ['run.lives', (g) => (Number.isInteger(g.run.lives) && g.run.lives >= 0 ? null : `lives is ${g.run.lives}`)],
-  ['run.streak', (g) => (g.run.lives <= START.lives + 1 ? null : `lives ${g.run.lives} above start plus the streak's one`)],
+  ['run.streak', (g) => (g.run.lives <= START.lives + 1 + g.techLife ? null : `lives ${g.run.lives} above start plus the streak's one`)],
   ['run.ledger', (g) => (Number.isInteger(g.run.goldEarned) && g.run.goldEarned >= 0 && g.run.cleanWaves >= 0 && g.run.cleanWaves <= g.run.wavesCleared ? null : 'ledger')],
   ['resume.taken', (g) => (g.registry.get('resumeRun') ? 'a saved run is waiting for the game that never took it' : null)],
   ['ghost.taken', (g) => (g.registry.get('ghostSeed') ? 'a ghost seed is waiting for the game that never took it' : null)],

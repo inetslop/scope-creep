@@ -8,6 +8,7 @@ import type { GameScene } from './GameScene';
 export const SCENES = {
   boot: 'Boot',
   menu: 'Menu',
+  tech: 'Tech',
   game: 'Game',
   hud: 'Hud',
   draft: 'Draft',

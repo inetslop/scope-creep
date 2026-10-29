@@ -92,6 +92,11 @@ export class MenuScene extends Phaser.Scene {
       }, { width: 220, height: 60, fontSize: 24, radius: 30 }); // Resume's shape, white card: no fill
       ghostLine = this.add.text(0, 0, 'the board of your best run', textStyle(14, PALETTE.muted)).setOrigin(0.5);
     }
+    const tech = makeButton(this, 0, 0, 'Tech', () => {
+      this.scene.launch(SCENES.tech);
+      this.scene.pause();
+    }, { width: 220, height: 60, fontSize: 24, radius: 30 });
+    const techLine = this.add.text(0, 0, 'spend your coins', textStyle(14, PALETTE.muted)).setOrigin(0.5);
     const hint = this.add.text(0, 0, 'Enter or Space', textStyle(14, PALETTE.faint)).setOrigin(0.5);
 
     // Entrances: the title drops in with a bounce, the rest fades up after it; Play breathes.
@@ -100,6 +105,8 @@ export class MenuScene extends Phaser.Scene {
     const fadeIn: (Phaser.GameObjects.Container | Phaser.GameObjects.Text)[] = [profileCard, how];
     if (resume) fadeIn.push(resume.container);
     fadeIn.push(button.container);
+    fadeIn.push(tech.container);
+    fadeIn.push(techLine);
     if (ghost && ghostLine) {
       fadeIn.push(ghost.container);
       fadeIn.push(ghostLine);
@@ -118,8 +125,8 @@ export class MenuScene extends Phaser.Scene {
     const layout = (width: number, height: number): void => {
       const cx = width / 2;
       const extra = resume ? 78 : 0; // the Resume button above Play
-      const room = extra + (ghost ? 91 : 0); // plus the Ghost button's line below Play
-      const k = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width, Math.max(0.6, (height - 460 - room) / MENU_ROAD_SIZE.height));
+      const room = extra + 91 + (ghost ? 76 : 0); // the Tech button's line below Play, plus the Ghost button's line
+      const k = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width, Math.max(0.35, (height - 460 - room) / MENU_ROAD_SIZE.height));
       const block = MENU_ROAD_SIZE.height * k + 460 + room;
       const top = Math.max(16, (height - block) / 2);
       this.demo.layout(cx, top, k);
@@ -136,11 +143,13 @@ export class MenuScene extends Phaser.Scene {
       }
       if (resume) resume.container.setPosition(cx, y + 294);
       button.container.setPosition(cx, y + 290 + extra);
+      tech.container.setPosition(cx, y + 366 + extra);
+      techLine.setPosition(cx, y + 410 + extra);
       if (ghost && ghostLine) {
-        ghost.container.setPosition(cx, y + 366 + extra);
-        ghostLine.setPosition(cx, y + 410 + extra);
+        ghost.container.setPosition(cx, y + 442 + extra);
+        ghostLine.setPosition(cx, y + 486 + extra);
       }
-      hint.setPosition(cx, y + (ghost ? 434 : 343) + extra);
+      hint.setPosition(cx, y + (ghost ? 510 : 434) + extra);
     };
     layout(viewSize(this).width, viewSize(this).height);
     onResize(this, layout);

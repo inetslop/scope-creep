@@ -5,6 +5,8 @@ export interface Profile {
   bestSeed: number | null;
   runsPlayed: number;
   coins: number;
+  /** Tech tree node ids bought with the coins; spent coins are gone. */
+  purchased: string[];
   lastRun: { wave: number; coins: number } | null;
   recent: { wave: number; coins: number }[];
   sound: boolean;
@@ -54,17 +56,21 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
       typeof parsed.bestSeed === 'number' && Number.isInteger(parsed.bestSeed) && parsed.bestSeed >= 0 && parsed.bestSeed <= 2 ** 31
         ? parsed.bestSeed
         : null;
+    const purchased = Array.isArray(parsed.purchased)
+      ? [...new Set(parsed.purchased.filter((id): id is string => typeof id === 'string' && id.length > 0))]
+      : [];
     return {
       bestWave: Number(parsed.bestWave) || 0,
       bestSeed,
       runsPlayed: Number(parsed.runsPlayed) || 0,
       coins: Number(parsed.coins) || 0,
+      purchased,
       lastRun,
       recent,
       sound: typeof parsed.sound === 'boolean' ? parsed.sound : true,
     };
   } catch {
-    return { bestWave: 0, bestSeed: null, runsPlayed: 0, coins: 0, lastRun: null, recent: [], sound: true };
+    return { bestWave: 0, bestSeed: null, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true };
   }
 }
 
@@ -84,6 +90,7 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
     bestSeed: newBest && result.seed !== old.bestSeed ? result.seed : old.bestSeed,
     runsPlayed: old.runsPlayed + 1,
     coins: old.coins + coins,
+    purchased: old.purchased,
     lastRun: { wave: result.waves, coins },
     recent: [{ wave: result.waves, coins }, ...old.recent].slice(0, 4),
     sound: old.sound,

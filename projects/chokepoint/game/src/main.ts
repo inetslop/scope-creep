@@ -11,6 +11,7 @@ import { HudScene } from './scenes/HudScene';
 import { MenuScene } from './scenes/MenuScene';
 import { PauseScene } from './scenes/PauseScene';
 import { RewardsScene } from './scenes/RewardsScene';
+import { TechScene } from './scenes/TechScene';
 
 installTestHook();
 startUpdateCheck();
@@ -43,7 +44,7 @@ const game = new Phaser.Game({
   disableContextMenu: true,
   banner: false,
   // Order is draw order: later scenes draw on top (the HUD over the board, overlays over the HUD).
-  scene: [BootScene, MenuScene, GameScene, HudScene, DraftScene, PauseScene, GameOverScene, RewardsScene],
+  scene: [BootScene, MenuScene, GameScene, HudScene, DraftScene, PauseScene, GameOverScene, RewardsScene, TechScene],
 });
 
 /** Follows the page size and the pixel density (browser zoom, moving to another screen). */

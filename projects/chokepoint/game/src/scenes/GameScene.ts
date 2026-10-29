@@ -2,8 +2,10 @@ import Phaser from 'phaser';
 import { GRID, HUD, ROCKS } from '../config';
 import { cssColor, PALETTE } from '../content/palette';
 import { cellsBesidePath, generateMap } from '../core/map';
+import { loadProfile } from '../core/profile';
 import { RunState } from '../core/run';
 import type { SavedRun } from '../core/saveRun';
+import { startBonuses } from '../core/tech';
 import { flags } from '../debug/flags';
 import { registerRunChecks, syncHookStats } from '../debug/runChecks';
 import { hook } from '../debug/testHook';
@@ -37,6 +39,8 @@ import { getSfx, onResize, SCENES } from './keys';
  */
 export class GameScene extends Phaser.Scene {
   run!: RunState;
+  /** The extra starting lives from owned life nodes (the run's invariants allow for them). */
+  techLife = 0;
   board!: Board;
   building!: Building;
   flow!: RunFlow;
@@ -67,6 +71,13 @@ export class GameScene extends Phaser.Scene {
     const ghostSeed = this.registry.pop('ghostSeed') as number | undefined;
     this.run = new RunState(saved ? saved.seed : (flags.seed ?? ghostSeed ?? Math.floor(Math.random() * 2 ** 31)));
     this.registry.set('run', this.run);
+    // New and ghost runs start with the owned tech tree's bonuses; a resumed run keeps its saved numbers.
+    if (!saved) {
+      const tech = startBonuses(loadProfile(window.localStorage).purchased);
+      this.run.gold += tech.gold;
+      this.run.lives += tech.life;
+      this.techLife = tech.life;
+    }
     const view = viewSize(this);
     const portrait = saved ? saved.rows > saved.cols : view.height > view.width;
     const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS);

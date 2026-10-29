@@ -4,11 +4,12 @@ title: "The tech tree: the screen, spendable coins, and the run-start branch"
 assignee: asus
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T07:23:51Z
 claimed_at: 2026-10-29T08:02:14Z
+finished_at: 2026-10-29T10:14:54Z
 epic: E2
 ---
 
@@ -91,3 +92,26 @@ export function buyNode(store: KeyValueStore | undefined, id: string): boolean /
 ### Tests
 - `tests/core/tech.test.ts` (in-memory `KeyValueStore` like `profile.test.ts`): `startBonuses([])` = `{gold:0,life:0}`; all four = `{gold:15,life:1}`; repeats/unknown ids counted once; `buyNode` refuses unknown id, already-owned, locked (incl. life-1 before gold-3) and unaffordable (coins never below 0), otherwise deducts exactly the price and saves the id; a full chain of four from 60 coins leaves 10; defensive parse (`['gold-1','gold-1',7,null,'']` → `['gold-1']`, non-array → `[]`).
 - `tests/core/profile.test.ts`: update existing expectations only.
+
+## Result (attempt 1, asus)
+
+The tech tree foundation is in: a "Tech" button under Play on the menu opens a white card over the dimmed menu where profile coins are spent on the four-node "Run start" branch (gold +5 ×3, life +1), with owned/locked/affordable states, one-tap buying (balance pop + quiet two-note chime, never below 0), and purchases saved to the profile (`purchased` field, defensively parsed). New/ghost runs start with the owned bonuses via the pure `core/tech.ts` module (byte-identical starts with nothing owned; resumed runs untouched), the menu layout was reflowed so Play/Tech/Ghost/Resume all fit at 1280x720, and the screen is a 1×4 row wide / 2×2 grid narrow. `npm run check` (215 tests) and `npm run smoke` (desktop + phone) both pass; four tiny geometry/wording deviations from the architect's numbers are noted above.
+
+- Self-review: APPROVE
+- Time: 132.7 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          |   6 +
+ projects/chokepoint/game/src/core/profile.ts       |   9 +-
+ projects/chokepoint/game/src/core/tech.ts          |  60 ++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |   2 +-
+ projects/chokepoint/game/src/main.ts               |   3 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  11 ++
+ projects/chokepoint/game/src/scenes/MenuScene.ts   |  19 ++-
+ projects/chokepoint/game/src/scenes/TechScene.ts   | 156 +++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/keys.ts        |   1 +
+ .../chokepoint/game/tests/core/profile.test.ts     |  10 +-
+ projects/chokepoint/game/tests/core/tech.test.ts   |  69 +++++++++
+ 11 files changed, 333 insertions(+), 13 deletions(-)
+```
