@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import { HUD } from '../../config';
 import { PALETTE } from '../../content/palette';
 import type { GameScene } from '../../scenes/GameScene';
+import { getSfx } from '../../scenes/keys';
 import { makeButton, type Button } from '../button';
 import { fillRing } from '../ring';
 import { textStyle } from '../text';
@@ -22,6 +23,8 @@ export class NextWaveButton implements HudPart {
   private narrow = false;
   /** The most enemies seen left this wave: the full ring. */
   private waveSize = 1;
+  /** The last number shown: a change to 3, 2 or 1 is the build break's soft blip. */
+  private lastShown = -1;
 
   constructor(scene: Phaser.Scene, game: GameScene) {
     this.ring = scene.add.graphics();
@@ -59,6 +62,10 @@ export class NextWaveButton implements HudPart {
     fillRing(ring, 0, 0, r, 5, 0, tau, PALETTE.ink, 0.1);
     if (run.phase === 'build') {
       const secs = Math.max(0, Math.ceil(run.buildLeftSec));
+      if (this.lastShown !== secs) {
+        this.lastShown = secs;
+        if (secs >= 1 && secs <= 3) getSfx(game)?.blip();
+      }
       fillRing(ring, 0, 0, r, 5, 0, (Math.max(0, run.buildLeftSec) / (game.flow.buildTotalSec || 1)) * tau, PALETTE.teal);
       this.title.setText(this.narrow ? `Wave ${run.wave + 1} · ${secs}s` : `Wave ${run.wave + 1}`);
       this.hint.setText(`in ${secs}s · Space`);

@@ -4,11 +4,12 @@ title: "Build countdown tick: the last three seconds are audible"
 assignee: cachyos-x8664
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T00:51:07Z
 claimed_at: 2026-10-29T02:12:21Z
+finished_at: 2026-10-29T02:20:11Z
 epic: E1
 ---
 
@@ -56,3 +57,15 @@ No new or changed types or signatures — one private field and one call inside 
 - Send/Space (`startWaveNow`) just zeroes `buildLeftSec` and flips the phase — the same path covers it; no code needed for T0077's button.
 ### Tests
 none
+
+## Result (attempt 1, cachyos-x8664)
+
+The build countdown's last three whole seconds now play one soft blip each — one private `lastShown` field plus a four-line change detection inside `NextWaveButton.update()` in `src/ui/hud/NextWaveButton.ts`, calling the existing `Sfx.blip()` (the tier chime's 523 Hz/80 ms/0.1 note) via `getSfx(game)` from `scenes/keys`. The blip is driven by the shown number's change, so it stops and resumes with the frozen `buildLeftSec` on pause, stays silent past 3 and at 0/Send, and silences under T0035 mute. `npm run check` and `npm run smoke` (desktop + phone) pass.
+
+- Self-review: APPROVE
+- Time: 7.8 min
+
+```
+projects/chokepoint/game/src/ui/hud/NextWaveButton.ts | 7 +++++++
+ 1 file changed, 7 insertions(+)
+```
