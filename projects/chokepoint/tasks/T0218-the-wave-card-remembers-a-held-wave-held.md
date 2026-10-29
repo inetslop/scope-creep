@@ -1,12 +1,14 @@
 ---
 id: T0218
 title: "The wave card remembers a held wave: held · N"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T16:16:13Z
+claimed_at: 2026-10-29T17:18:59Z
 ---
 
 ## Goal
