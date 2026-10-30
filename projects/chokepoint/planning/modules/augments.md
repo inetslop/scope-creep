@@ -74,8 +74,8 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - tiers: rare {damageMul 1.3, cooldownMul 0.85, asAdded One more shot each attack.}, epic {damageMul 1.7, cooldownMul 0.7, asAdded One more shot each attack.}
 
 ### Lance (`lance`)
-- description: "A long thin shot that keeps going. Added: +1 pierce."
-- asTower: "A long thin shot: 12 damage every 0.9s, hits one beyond."
+- description: "A long thin shot that flies straight. Added: +1 pierce."
+- asTower: "Straight through the line: 12 damage every 0.9s, hits one beyond."
 - asAdded: +1 pierce.
 - look: shape square, color teal, size 0.22
 - first: kind shot, damage 12, range 2.6, rate 1.11, projectileSpeed 10, pierce 1
