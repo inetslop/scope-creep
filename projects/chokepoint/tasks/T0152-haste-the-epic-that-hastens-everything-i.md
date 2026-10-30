@@ -1,12 +1,14 @@
 ---
 id: T0152
 title: "Haste: the Epic that hastens everything it touches"
+assignee: desktop
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T12:14:31Z
+claimed_at: 2026-10-30T10:14:04Z
 epic: E4
 ---
 
