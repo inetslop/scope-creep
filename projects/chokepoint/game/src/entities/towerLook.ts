@@ -151,6 +151,22 @@ function drawArrowhead(g: Phaser.GameObjects.Graphics, R: number, a: number, col
   );
 }
 
+/**
+ * Haste: the flat wide red ring at the tower's base, one tick per copy in it. It lives on its own
+ * Graphics (the tower's `hasteRing`) so systems/HasteSystem.ts can dim it per tower — the shared
+ * decorations graphics cannot take a per-object alpha.
+ */
+export function drawHasteRing(g: Phaser.GameObjects.Graphics, spec: TowerSpec): void {
+  g.clear();
+  if (spec.hasteCount === 0) return;
+  const r = BODY * 1.7;
+  fillRing(g, 0, 0, r, 6, 0, Math.PI * 2, PALETTE.red);
+  for (let i = 0; i < spec.hasteCount; i++) {
+    const a = (i / spec.hasteCount) * Math.PI * 2;
+    fillRing(g, 0, 0, r, 9, a - 0.14, a + 0.14, PALETTE.red);
+  }
+}
+
 export function drawDecorations(g: Phaser.GameObjects.Graphics, spec: TowerSpec): void {
   g.clear();
   const barrels = barrelCount(spec);

@@ -76,6 +76,11 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
     if (!muted && g.towers.towers.some((t) => t.jammed)) return 'a tower is jammed with no Mute on the road';
     return null;
   }],
+  ['haste.aura', (g) => {
+    const has = g.towers.towers.some((t) => t.spec.hasteCount > 0);
+    if (!has && (g.towers.towers.some((t) => t.hasteRatePct > 0) || g.enemies.all.some((e) => e.active && e.hastePct > 0))) return 'haste working with no Haste tower';
+    return null;
+  }],
   ['ward.control', (g) => (g.enemies.all.some((e) => e.active && e.def.id === 'ward' && (e.slowPct > 0 || e.rootLeft > 0 || e.pushLeft > 0)) ? 'a Ward is slowed, rooted or pushed' : null)],
   ['pushWindup.valid', (g) => g.windup.broken()],
   ['comboBar.valid', (g) => g.comboBar.broken()],

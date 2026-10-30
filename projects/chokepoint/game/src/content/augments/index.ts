@@ -4,6 +4,7 @@ import { beam } from './beam';
 import { bolt } from './bolt';
 import { ember } from './ember';
 import { frost } from './frost';
+import { haste } from './haste';
 import { lance } from './lance';
 import { mark } from './mark';
 import { mint } from './mint';
@@ -27,6 +28,7 @@ export const AUGMENTS: readonly AugmentDef[] = [
   mint,
   toll,
   rally,
+  haste,
   mark,
   ember,
   beam,

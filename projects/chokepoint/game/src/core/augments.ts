@@ -1,7 +1,9 @@
 import { MAX_SLOTS, SLOT_COSTS } from '../config';
+import { AUGMENTS } from '../content/augments';
 import { ANCHOR_EXTRA_ROOT_SEC, anchor } from '../content/augments/anchor';
 import { getAugment } from '../content/augments';
 import { bolt } from '../content/augments/bolt';
+import { haste } from '../content/augments/haste';
 import { SPLASH_CAP } from '../content/augments/splash';
 import type { Bright } from '../content/palette';
 import type { AttackKind, AugmentCopy, AugmentDef, Burn } from '../content/types';
@@ -70,6 +72,10 @@ export interface TowerSpec {
   spray: number;
   /** Sprays in the tower: one barrel tick each. */
   sprayCount: number;
+  /** The haste aura's percent on both sides while inside (0: no Haste in the tower). */
+  hastePct: number;
+  /** Hastes in the tower: one aura, one base-ring tick each. */
+  hasteCount: number;
 }
 
 const EMPTY: TowerSpec = {
@@ -105,6 +111,8 @@ const EMPTY: TowerSpec = {
   splashCount: 0,
   spray: 0,
   sprayCount: 0,
+  hastePct: 0,
+  hasteCount: 0,
 };
 
 /**
@@ -153,6 +161,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     splashCount: 0,
     spray: f.spray ?? 0,
     sprayCount: 0,
+    hastePct: 0,
+    hasteCount: 0,
   };
   // Anchors in any slot: the first sets the root's duration, each extra one lengthens it.
   let rootSec = 0;
@@ -214,6 +224,17 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     if (a.id !== 'push') continue;
     spec.pushCount += 1;
     if (i > 0) spec.pushPerHit += tierAdded(a, augments[i]!.tier).push ?? 0;
+  }
+  // Hastes in any slot: the aura's percent on both sides. The tower's first Haste copy sets it at
+  // the first-form percent; each extra copy adds its added-form percent (30% + 15% each).
+  let hasteSeen = false;
+  for (let i = 0; i < augments.length; i++) {
+    const c = augments[i]!;
+    const a = getAugment(c.id);
+    if (a.id !== haste.id) continue;
+    spec.hastePct += hasteSeen ? tierAdded(a, c.tier).haste?.pct ?? 0 : a.first.haste?.pct ?? 0;
+    hasteSeen = true;
+    spec.hasteCount += 1;
   }
   // Splashes in any slot, at any tier: how many enemies its hits may strike.
   for (const a of augments) if (a.id === 'splash') spec.splashCount += 1;
@@ -293,7 +314,9 @@ export function describeSpec(spec: TowerSpec): string {
   } else if (spec.kind === 'rally') {
     const r = getAugment('rally');
     const reach = spec.range % 1 === 0 ? spec.range : spec.range.toFixed(1);
-    line = `Towers within ${reach} cells attack ${Math.round((r.added.rally?.pct ?? 0) * 100)}% faster`;
+    line = spec.firstId === haste.id
+      ? `Towers and enemies within ${reach} cells run ${Math.round(spec.hastePct * 100)}% faster`
+      : `Towers within ${reach} cells attack ${Math.round((r.added.rally?.pct ?? 0) * 100)}% faster`;
   } else if (spec.damage <= 0) {
     if (spec.root) {
       line = spec.slow ? `Slows everything around it by ${slow}%, and roots it for ${spec.root.sec}s` : `Roots everything around it for ${spec.root.sec}s`;
@@ -319,6 +342,11 @@ export function describeSpec(spec: TowerSpec): string {
   else if (spec.goldPerKill > 0) line += `, kills drop +${spec.goldPerKill} gold`;
   if (spec.tollPerLeak > 0) line += `, every leak pays +${spec.tollPerLeak} gold`;
   if (spec.pushPerHit > 0 && spec.kind !== 'beam') line += `, and its hits push back ${spec.pushPerHit.toFixed(1)} cells`;
+  // Hastes added to another first: the aura works from any tower they are in (a Haste first says it in its own line).
+  if (spec.hasteCount > 0 && spec.firstId !== haste.id) {
+    const reach = spec.range % 1 === 0 ? spec.range : spec.range.toFixed(1);
+    line += `, and towers and enemies within ${reach} cells run ${Math.round(spec.hastePct * 100)}% faster`;
+  }
   return `${line}.`;
 }
 
@@ -339,6 +367,15 @@ export function slotCost(index: number): number | undefined {
 /** How many cards the draft offers at draft number `draftNumber` (1-based): four every fifth draft, three otherwise. */
 export function draftCardCount(draftNumber: number): number {
   return draftNumber > 0 && draftNumber % 5 === 0 ? 4 : 3;
+}
+
+/**
+ * The pool a draft rolls from: every augment except the ones a tech node gates (`tech`) that the
+ * profile has not bought yet. Keeps the registry's order, so an unowned profile rolls the same
+ * offers as before the gated ones existed.
+ */
+export function draftPool(owned: readonly string[]): readonly AugmentDef[] {
+  return AUGMENTS.filter((a) => a.tech === undefined || owned.includes(a.tech));
 }
 
 /**

@@ -21,6 +21,7 @@ import { ComboBar } from '../systems/ComboBar';
 import { EnemySystem } from '../systems/EnemySystem';
 import { ExitWarning } from '../systems/ExitWarning';
 import { FxSystem } from '../systems/FxSystem';
+import { HasteSystem } from '../systems/HasteSystem';
 import { LeakCost } from '../systems/LeakCost';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { PushWindup } from '../systems/PushWindup';
@@ -60,6 +61,7 @@ export class GameScene extends Phaser.Scene {
   saver!: RunSave;
   speed!: WaveSpeed;
   rally!: RallySystem;
+  haste!: HasteSystem;
   beams!: BeamSystem;
   towers!: TowerSystem;
   enemies!: EnemySystem;
@@ -87,7 +89,9 @@ export class GameScene extends Phaser.Scene {
     const iron = this.registry.pop('ironMode') === true;
     const seed = saved ? saved.seed : (flags.seed ?? ghost?.seed ?? Math.floor(Math.random() * 2 ** 31));
     const bgen = saved ? saved.bgen : (ghost ? ghost.bgen : 2);
-    this.run = new RunState(seed, bgen);
+    // The profile's purchased tech nodes at run start gate the draft's pool (Haste's `tech`).
+    const purchased = loadProfile(window.localStorage).purchased;
+    this.run = new RunState(seed, purchased, bgen);
     this.registry.set('run', this.run);
     // New and ghost runs start with the owned tech tree's bonuses; a resumed run keeps its saved numbers.
     if (!saved) {
@@ -139,6 +143,7 @@ export class GameScene extends Phaser.Scene {
     });
     this.speed = new WaveSpeed();
     this.rally = new RallySystem(this, this.towers, this.fx);
+    this.haste = new HasteSystem(this.towers, this.enemies);
     this.beams = new BeamSystem(this, this.towers, this.enemies, sfx);
     this.saver = new RunSave(this, window.localStorage);
     if (saved) this.saver.restore(saved);
@@ -217,6 +222,7 @@ export class GameScene extends Phaser.Scene {
     this.exitWarn.update(simDt);
     this.leakCost.update(simDt);
     this.rally.update(simDt);
+    this.haste.update(simDt);
     this.beams.update(simDt);
     this.windup.update(simDt);
     this.comboBar.update();

@@ -157,6 +157,8 @@ export interface FirstForm {
   goldRadius?: number;
   /** Every leak pays this much gold while the tower stands (Toll). */
   goldPerLeak?: number;
+  /** The haste aura's percent on the enemy side while inside (Haste first). */
+  haste?: { pct: number };
 }
 
 /**
@@ -192,6 +194,8 @@ export interface AddedForm {
   goldPerKill?: number;
   /** Every leak pays this much more gold while the tower stands (Toll). */
   goldPerLeak?: number;
+  /** Added to the haste aura's percent per extra Haste copy, both sides (Haste). */
+  haste?: { pct: number };
 }
 
 /**
@@ -216,6 +220,8 @@ export interface AugmentDef {
   added: AddedForm;
   /** This augment only ever appears as cards of this tier (undefined: any tier). */
   tier?: Tier;
+  /** The tech node id that must be in the profile's purchased list before it rolls (core/augments.ts). */
+  tech?: string;
   /** May be offered in the opening draft despite dealing no damage as a tower's first. */
   opening?: boolean;
   /** The Rare and Epic values of a copy (Common is `first`/`added` themselves; see core/tiers.ts). */

@@ -115,7 +115,8 @@ export class TowerSystem {
           t.cooldown -= dt;
           if (t.cooldown <= 0) {
             attacked = this.attack(t, enemies);
-            if (attacked) t.cooldown += 1 / (t.spec.rate * t.rallyRateMul);
+            // Rally and haste are additive on the attack-speed stat (10% + 30% = 1.4), not a product.
+            if (attacked) t.cooldown += 1 / (t.spec.rate * (t.rallyRateMul + t.hasteRatePct));
             else t.cooldown = 0; // nothing in range: ready the moment something walks in
           }
         }

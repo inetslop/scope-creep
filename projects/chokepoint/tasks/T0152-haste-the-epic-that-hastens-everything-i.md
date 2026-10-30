@@ -4,11 +4,12 @@ title: "Haste: the Epic that hastens everything it touches"
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T12:14:31Z
 claimed_at: 2026-10-30T10:14:04Z
+finished_at: 2026-10-30T10:37:21Z
 epic: E4
 ---
 
@@ -142,3 +143,29 @@ for (let i = 0; i < augments.length; i++) {
 
 ### Tests
 - `tests/core/haste.test.ts`: `towerSpec` haste math — `[haste]` → 0.3/1, `[bolt, haste]` → 0.3/1, `[haste, haste]` → 0.45/2, `[haste, haste, haste]` → 0.6/3, `[haste, rally]` → 0.3 (rally adds no haste); `draftPool` — `[]` excludes `haste` and keeps the other 14 in order, `['haste']` includes it, `['gold-1']` still excludes it; `rollOffer(new Rng(1), draftPool([]), 3, w, w === 0)` never yields `haste` for a run of waves.
+
+## Result (attempt 1, desktop)
+
+Added Haste, the first tech-gated Epic augment and the first aura that works on enemies and towers at once: `src/content/augments/haste.ts` (2 cells: towers +30% attack speed, enemies +30% speed; each extra copy +15% to both), gated behind the `haste` pool node via a new `AugmentDef.tech` field and `draftPool()` in `core/augments.ts` (both draft and reroll now roll from it, so unowned profiles never see it and roll byte-identical offers). The aura lives in a new `systems/HasteSystem.ts` (per-frame enemy/tower buffs with a 0.2 s entry beat), the tower cooldown folds `hasteRatePct` in additively with Rally, enemies walk `(1 − slow) × (1 + haste)` in both the walk and dash legs, and the tower shows a flat wide red base ring with one tick per copy at 40%/100% alpha. The pool lands at exactly 16 augments, so the 16-cap removal was not triggered (nothing removed); `haste.aura` invariant and `tests/core/haste.test.ts` cover the math and the gate, and `npm run check` + `npm run smoke` pass.
+
+- Self-review: APPROVE
+- Time: 23.3 min
+
+```
+.../chokepoint/game/src/content/augments/haste.ts  | 26 ++++++
+ .../chokepoint/game/src/content/augments/index.ts  |  2 +
+ projects/chokepoint/game/src/content/types.ts      |  6 ++
+ projects/chokepoint/game/src/core/augments.ts      | 39 ++++++++-
+ projects/chokepoint/game/src/core/run.ts           |  5 +-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  5 ++
+ projects/chokepoint/game/src/entities/Enemy.ts     |  8 +-
+ projects/chokepoint/game/src/entities/Tower.ts     | 17 +++-
+ projects/chokepoint/game/src/entities/towerLook.ts | 16 ++++
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  8 +-
+ .../chokepoint/game/src/systems/HasteSystem.ts     | 64 +++++++++++++++
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  8 +-
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  3 +-
+ projects/chokepoint/game/tests/core/haste.test.ts  | 94 ++++++++++++++++++++++
+ projects/chokepoint/game/tests/core/mark.test.ts   |  2 +-
+ 15 files changed, 291 insertions(+), 12 deletions(-)
+```

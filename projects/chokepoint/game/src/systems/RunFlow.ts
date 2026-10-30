@@ -1,8 +1,7 @@
 import { BUILD_SEC, REROLL_COST } from '../config';
-import { AUGMENTS } from '../content/augments';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
-import { rollOffer } from '../core/augments';
+import { draftPool, rollOffer } from '../core/augments';
 import { isLevelClear, isRunWin, levelOfWave } from '../core/level';
 import type { RunState } from '../core/run';
 import { draftCardsFor } from '../core/techEffects';
@@ -99,7 +98,8 @@ export class RunFlow {
   openDraft(): void {
     this.run.phase = 'draft';
     this.draftWave = this.run.wave + 1;
-    this.offer = rollOffer(this.run.rng, AUGMENTS, draftCardsFor(this.draftWave, this.run.fourthCard), this.draftWave, this.run.wave === 0, this.lastOffer);
+    // The pool respects the tech-gated augments (Haste): owned at run start, or not at all.
+    this.offer = rollOffer(this.run.rng, draftPool(this.run.techOwned), draftCardsFor(this.draftWave, this.run.fourthCard), this.draftWave, this.run.wave === 0, this.lastOffer);
     this.lastOffer = this.offer.map((c) => c.id);
     if (this.offer.length === 0) {
       this.finishDraft(undefined);
@@ -113,7 +113,7 @@ export class RunFlow {
   rerollOffer(): boolean {
     if (this.run.phase !== 'draft') return false;
     if (!this.run.reroll(REROLL_COST)) return false;
-    this.offer = rollOffer(this.run.rng, AUGMENTS, draftCardsFor(this.draftWave, this.run.fourthCard), this.draftWave, this.run.wave === 0, this.lastOffer);
+    this.offer = rollOffer(this.run.rng, draftPool(this.run.techOwned), draftCardsFor(this.draftWave, this.run.fourthCard), this.draftWave, this.run.wave === 0, this.lastOffer);
     this.lastOffer = this.offer.map((c) => c.id);
     return true;
   }

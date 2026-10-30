@@ -6,7 +6,7 @@ import type { AugmentCopy } from '../content/types';
 import type { Cell } from '../core/map';
 import { BEAM_ORB_LIFT, barrelTexture, beamDiscTexture, orbTexture } from '../art/barrels';
 import { ART_SCALE, artScale, TOWER_BASE, TOWER_BODY, towerTexture } from '../art/textures';
-import { barrelCount, barrelLook, drawDecorations, pipColor } from './towerLook';
+import { barrelCount, barrelLook, drawDecorations, drawHasteRing, pipColor } from './towerLook';
 
 /** Where the body sits above the plinth's center, in board units. */
 const BODY_LIFT = 4;
@@ -44,6 +44,8 @@ export class Tower extends Phaser.GameObjects.Image {
   idleSec = 0;
   /** Attack speed from Rally (set by systems/RallySystem.ts; 1 when not buffed). */
   rallyRateMul = 1;
+  /** Attack-speed fraction the haste auras add on top of rallyRateMul, additive (set by systems/HasteSystem.ts). */
+  hasteRatePct = 0;
   /** Held by a Mute: no attacks; systems/enemyHooks/muteJam.ts. */
   jammed = false;
   /** A beam line held on an enemy this frame (systems/BeamSystem.ts); its quiet dot stays off. */
@@ -60,6 +62,8 @@ export class Tower extends Phaser.GameObjects.Image {
   /** The orb's white centre disc, on a beam tower: it pulses while the beam is on. */
   private disc: Phaser.GameObjects.Image | undefined;
   private beamOn = false;
+  /** The flat red base ring while a haste aura radiates; its own graphics so it can take an alpha (undefined until it has Haste). */
+  hasteRing: Phaser.GameObjects.Graphics | undefined;
 
   constructor(scene: Phaser.Scene, x: number, y: number, cell: Cell) {
     super(scene, x, y - BODY_LIFT, towerTexture(undefined));
@@ -120,7 +124,17 @@ export class Tower extends Phaser.GameObjects.Image {
     this.setTexture(towerTexture(spec.firstId));
     this.buildGun(spec, towerColor(this.augments));
     drawDecorations(this.deco, spec);
+    this.refreshHasteRing(spec);
     this.drawPips();
+  }
+
+  /** The flat red base ring, one tick per Haste copy; created once at the plinth's center. */
+  private refreshHasteRing(spec: TowerSpec): void {
+    if (this.hasteRing === undefined) {
+      this.hasteRing = this.scene.add.graphics().setDepth(DEPTH.towers).setPosition(this.base.x, this.base.y);
+      this.hasteRing.setAlpha(0.4);
+    }
+    drawHasteRing(this.hasteRing, spec);
   }
 
   /** The barrels side by side, looking the way the spec says. */
@@ -263,6 +277,7 @@ export class Tower extends Phaser.GameObjects.Image {
     this.deco.destroy();
     this.pips.destroy();
     this.jamDot.destroy();
+    if (this.hasteRing) this.hasteRing.destroy();
     this.scene.tweens.killTweensOf(this.idleDot);
     this.idleDot.destroy();
     super.destroy(fromScene);
