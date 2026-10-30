@@ -1,3 +1,4 @@
+import { ensureChoke } from './choke';
 import type { Rng } from './rng';
 
 export interface Cell {
@@ -25,9 +26,10 @@ export interface GameMap {
  * Portrait boards (rows > cols) run top to bottom. `rocks` open cells become unbuildable. With
  * `extraBends` of 1 or more the road starts one bend windier (a sideways step at the entrance).
  * With `lengthMul` above 1 the runs are 1–2 cells, so the road turns more often and comes out
- * about 25% longer (the realized length follows the grid).
+ * about 25% longer (the realized length follows the grid). `bgen` 1 boards (old saves, old ghosts)
+ * are the board as grown; `bgen` 2 boards always have a choke cell.
  */
-export function generateMap(rng: Rng, cols: number, rows: number, rocks: number, extraBends = 0, lengthMul = 1): GameMap {
+export function generateMap(rng: Rng, cols: number, rows: number, rocks: number, extraBends = 0, lengthMul = 1, bgen = 2): GameMap {
   const vertical = rows > cols;
   // Work in "along x across" space, then map to cells.
   const length = vertical ? rows : cols;
@@ -79,7 +81,8 @@ export function generateMap(rng: Rng, cols: number, rows: number, rocks: number,
   }
   for (const c of rng.shuffle(candidates).slice(0, rocks)) kinds[c.row]![c.col] = 'rock';
 
-  return { cols, rows, kinds, path, vertical };
+  const map: GameMap = { cols, rows, kinds, path, vertical };
+  return bgen >= 2 ? ensureChoke(map) : map;
 }
 
 /** 1 when the road's second cell is the entrance jog (not one step along the entrance axis), else 0. */

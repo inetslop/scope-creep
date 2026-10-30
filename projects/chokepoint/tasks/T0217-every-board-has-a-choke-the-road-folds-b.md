@@ -4,11 +4,12 @@ title: "Every board has a choke: the road folds back on itself"
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T16:16:13Z
 claimed_at: 2026-10-29T23:10:47Z
+finished_at: 2026-10-30T05:15:58Z
 ---
 
 ## Goal
@@ -103,3 +104,32 @@ Then `kinds`: copy; set old path cells not in `newPath` back to `'open'`; the ro
 
 ### Tests
 - `tests/core/choke.test.ts`: for each of 14x8 and 8x14, seeds 1..50: `chokeCells` non-empty; each choke is `'open'` and really within 1.7 of two path cells `>= 3` steps apart; path continuous, no cell twice, in bounds, entrance/exit edges; rocks 4-5 and none on the path; same seed → `toEqual`. Plus: over 200 landscape seeds, every seed whose `bgen`-1 board already has a choke regenerates `toEqual` with `bgen` 2 (assert at least one such seed), and at least one seed has no `bgen`-1 choke whose `bgen`-2 board differs from it (the fold actually runs).
+
+## Result (attempt 1, asus)
+
+(no summary)
+
+- Self-review: NO VERDICT
+- Time: 365.2 min
+- Self-review edits were discarded (checks failed at "check").
+
+```
+projects/chokepoint/game/src/core/choke.ts         | 113 +++++++++++++++++++++
+ projects/chokepoint/game/src/core/map.ts           |   9 +-
+ projects/chokepoint/game/src/core/profile.ts       |  15 ++-
+ projects/chokepoint/game/src/core/run.ts           |   5 +-
+ projects/chokepoint/game/src/core/saveRun.ts       |   4 +
+ projects/chokepoint/game/src/debug/runChecks.ts    |   2 +
+ .../chokepoint/game/src/scenes/GameOverScene.ts    |   2 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  12 ++-
+ projects/chokepoint/game/src/scenes/MenuScene.ts   |   2 +-
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |   2 +-
+ .../chokepoint/game/src/scenes/RewardsScene.ts     |   2 +-
+ projects/chokepoint/game/src/systems/RunSave.ts    |   1 +
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts   |   2 +-
+ projects/chokepoint/game/tests/core/choke.test.ts  |  97 ++++++++++++++++++
+ projects/chokepoint/game/tests/core/map.test.ts    |   6 +-
+ .../chokepoint/game/tests/core/profile.test.ts     |  50 ++++-----
+ .../chokepoint/game/tests/core/saveRun.test.ts     |  13 +++
+ 17 files changed, 295 insertions(+), 42 deletions(-)
+```

@@ -14,6 +14,8 @@ export type RunPhase = 'build' | 'wave' | 'draft' | 'over';
 /** Everything about the current run that isn't an engine object. Shared through the registry as 'run'. */
 export class RunState {
   readonly seed: number;
+  /** The board-generation version: 1 for resumed old boards and old ghosts, 2 for boards that always carry a choke cell. */
+  readonly bgen: number;
   readonly rng: Rng;
   gold: number = START.gold;
   lives: number = START.lives;
@@ -37,8 +39,9 @@ export class RunState {
   streakPaid = false; // the run's one +1 life for a streak of 3 was paid
   private leaksThisWave = 0;
 
-  constructor(seed: number) {
+  constructor(seed: number, bgen: number = 2) {
     this.seed = seed;
+    this.bgen = bgen;
     this.rng = new Rng(seed);
   }
 

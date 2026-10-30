@@ -77,8 +77,10 @@ export class GameScene extends Phaser.Scene {
     const sfx = getSfx(this);
 
     const saved = this.registry.pop('resumeRun') as SavedRun | undefined;
-    const ghostSeed = this.registry.pop('ghostSeed') as number | undefined;
-    this.run = new RunState(saved ? saved.seed : (flags.seed ?? ghostSeed ?? Math.floor(Math.random() * 2 ** 31)));
+    const ghost = this.registry.pop('ghostSeed') as { seed: number; bgen: number } | undefined;
+    const seed = saved ? saved.seed : (flags.seed ?? ghost?.seed ?? Math.floor(Math.random() * 2 ** 31));
+    const bgen = saved ? saved.bgen : (ghost ? ghost.bgen : 2);
+    this.run = new RunState(seed, bgen);
     this.registry.set('run', this.run);
     // New and ghost runs start with the owned tech tree's bonuses; a resumed run keeps its saved numbers.
     if (!saved) {
@@ -94,11 +96,11 @@ export class GameScene extends Phaser.Scene {
     // The board's tech nodes wind new runs' roads one turn further and lengthen them; a resumed
     // run keeps its saved board (its own bends and length), and a ghost run replays the best
     // board as generated (0 bends, length 1).
-    const bends = saved ? saved.bends : ghostSeed === undefined ? boardBends(loadProfile(window.localStorage).purchased) : 0;
-    const lengthMul = saved ? saved.lengthMul : ghostSeed === undefined ? boardLengthMul(loadProfile(window.localStorage).purchased) : 1;
+    const bends = saved ? saved.bends : ghost === undefined ? boardBends(loadProfile(window.localStorage).purchased) : 0;
+    const lengthMul = saved ? saved.lengthMul : ghost === undefined ? boardLengthMul(loadProfile(window.localStorage).purchased) : 1;
     const view = viewSize(this);
     const portrait = saved ? saved.rows > saved.cols : view.height > view.width;
-    const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, bends, lengthMul);
+    const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, bends, lengthMul, this.run.bgen);
     this.mapLengthMul = lengthMul;
 
     this.board = new Board(this, map);

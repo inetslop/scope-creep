@@ -96,7 +96,7 @@ export class MenuScene extends Phaser.Scene {
       const seed = p.bestSeed;
       ghost = makeButton(this, 0, 0, `Ghost · Wave ${p.bestWave}`, () => {
         clearSavedRun(window.localStorage); // a new run abandons a saved one for nothing
-        this.registry.set('ghostSeed', seed);
+        this.registry.set('ghostSeed', { seed, bgen: p.bestSeedBgen ?? 1 });
         this.scene.start(SCENES.game);
       }, { width: 220, height: 60, fontSize: 24, radius: 30 }); // Resume's shape, white card: no fill
       ghostLine = this.add.text(0, 0, 'the board of your best run', textStyle(14, PALETTE.muted)).setOrigin(0.5);

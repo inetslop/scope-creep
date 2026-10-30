@@ -13,6 +13,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   rows: 8,
   bends: 0,
   lengthMul: 1,
+  bgen: 2,
   gold: 260,
   lives: 17,
   wave: 3,
@@ -93,6 +94,18 @@ describe('saveRun', () => {
     delete without.lengthMul; // older saves predate the field
     store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
     expect(loadSavedRun(store)).toEqual(sample());
+  });
+
+  it('rejects a broken board-generation version, but a save written without the key loads as 1', () => {
+    broken({ bgen: 0 });
+    broken({ bgen: 9 });
+    broken({ bgen: 1.5 });
+    broken({ bgen: 'x' });
+    const store = memory();
+    const without = { ...sample() } as Record<string, unknown>;
+    delete without.bgen; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
+    expect(loadSavedRun(store)).toEqual({ ...sample(), bgen: 1 });
   });
 
   it('round-trips a longer-road save', () => {

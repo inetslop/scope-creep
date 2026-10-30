@@ -32,6 +32,7 @@ export class RunSave {
     saveRun(this.store, {
       v: 1,
       seed: run.seed,
+      bgen: run.bgen,
       cols: this.game.board.map.cols,
       rows: this.game.board.map.rows,
       bends: mapExtraBends(this.game.board.map),

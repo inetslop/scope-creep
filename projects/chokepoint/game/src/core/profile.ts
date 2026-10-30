@@ -5,6 +5,8 @@ export interface Profile {
   bestWave: number;
   /** Seed of the board the best wave was fought on; null until a finished run sets one. */
   bestSeed: number | null;
+  /** The board-generation version of that board (1 = old board, 2 = guaranteed choke); null until a best seed is set. */
+  bestSeedBgen: number | null;
   runsPlayed: number;
   coins: number;
   /** Tech tree node ids bought with the coins; spent coins are gone. */
@@ -25,6 +27,8 @@ export interface RunResult {
   clean: number;
   /** This run's seed. */
   seed: number;
+  /** This run's board-generation version (1 = old board, 2 = guaranteed choke). */
+  bgen: number;
 }
 
 export interface RecordResult {
@@ -58,12 +62,20 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
       typeof parsed.bestSeed === 'number' && Number.isInteger(parsed.bestSeed) && parsed.bestSeed >= 0 && parsed.bestSeed <= 2 ** 31
         ? parsed.bestSeed
         : null;
+    // A best board always has a generation version: 1 for boards grown before the choke pass, 2 since.
+    const bestSeedBgen =
+      bestSeed === null
+        ? null
+        : typeof parsed.bestSeedBgen === 'number' && Number.isInteger(parsed.bestSeedBgen) && parsed.bestSeedBgen >= 1 && parsed.bestSeedBgen <= 8
+          ? parsed.bestSeedBgen
+          : 1;
     const purchased = Array.isArray(parsed.purchased)
       ? [...new Set(parsed.purchased.filter((id): id is string => typeof id === 'string' && id.length > 0))]
       : [];
     return {
       bestWave: Number(parsed.bestWave) || 0,
       bestSeed,
+      bestSeedBgen,
       runsPlayed: Number(parsed.runsPlayed) || 0,
       coins: Number(parsed.coins) || 0,
       purchased,
@@ -72,7 +84,7 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
       sound: typeof parsed.sound === 'boolean' ? parsed.sound : true,
     };
   } catch {
-    return { bestWave: 0, bestSeed: null, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true };
+    return { bestWave: 0, bestSeed: null, bestSeedBgen: null, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true };
   }
 }
 
@@ -90,6 +102,7 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
     bestWave: Math.max(old.bestWave, result.waves),
     // A ghost run replays the best board, so it never moves the button.
     bestSeed: newBest && result.seed !== old.bestSeed ? result.seed : old.bestSeed,
+    bestSeedBgen: newBest && result.seed !== old.bestSeed ? result.bgen : old.bestSeedBgen,
     runsPlayed: old.runsPlayed + 1,
     coins: old.coins + coins,
     purchased: old.purchased,

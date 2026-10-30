@@ -136,10 +136,12 @@ describe('generateMap', () => {
     });
   }
 
-  it('places exactly the requested rocks, off the path', () => {
+  it('places the requested rocks (a choke fold may relocate one), never on the path', () => {
     const map = generateMap(new Rng(7), 14, 8, 5);
     const rocks = map.kinds.flat().filter((k) => k === 'rock').length;
-    expect(rocks).toBe(5);
+    expect(rocks).toBeGreaterThanOrEqual(4);
+    expect(rocks).toBeLessThanOrEqual(5);
+    for (const c of map.path) expect(map.kinds[c.row]![c.col]!).not.toBe('rock');
   });
 
   it('is the same board for the same seed', () => {

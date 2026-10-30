@@ -60,7 +60,7 @@ export class PauseScene extends Phaser.Scene {
     const profile = loadProfile(window.localStorage);
     const starred = profile.bestWave > 0 && game.run.wave >= profile.bestWave;
     const waveWord = game.run.wave > 0 ? `Wave ${game.run.wave}` : 'Ready';
-    const coins = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed }, cleanWavePay(profile.purchased));
+    const coins = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed, bgen: game.run.bgen }, cleanWavePay(profile.purchased));
     const lineStyle = textStyle(13, PALETTE.muted);
     const waveText = this.add.text(0, 0, waveWord, lineStyle).setOrigin(0, 0.5);
     const restText = this.add.text(0, 0, ` · ${game.run.lives} lives · ${game.run.gold} gold`, lineStyle).setOrigin(0, 0.5);
