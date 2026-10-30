@@ -1,12 +1,14 @@
 ---
 id: T0276
 title: "Endless rerolls: every reroll costs more"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T09:47:06Z
+claimed_at: 2026-10-30T11:47:02Z
 epic: E4
 ---
 
