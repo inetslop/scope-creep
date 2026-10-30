@@ -4,11 +4,12 @@ title: Enemy hp grows a little faster in the late waves
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T19:48:31Z
 claimed_at: 2026-10-30T20:49:31Z
+finished_at: 2026-10-30T21:02:13Z
 ---
 
 ## Goal
@@ -51,3 +52,16 @@ No new or changed types or signatures; `waveHpMul(wave: number): number` is unch
 
 ### Tests
 - `tests/core/waves.test.ts`: the one line above (a rule in `src/core` changed; the test guards both coefficients).
+
+## Result (attempt 1, yoga)
+
+Enemy hp now grows a little faster in the late waves: the squared term of `waveHpMul` in `src/core/waves.ts` went from 0.004 to 0.006, so the hp multiplier rises from ~20.4× to 25.2× by wave 50 while staying 1× on wave 1. Bosses and quiet waves pick up the new multiplier automatically through `waveHpMul`, and nothing else (the 0.2 per wave, budget, spacing) changed. Added one test in `tests/core/waves.test.ts` pinning `waveHpMul(31)` = 12.4. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 12.7 min
+
+```
+projects/chokepoint/game/src/core/waves.ts        | 2 +-
+ projects/chokepoint/game/tests/core/waves.test.ts | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+```

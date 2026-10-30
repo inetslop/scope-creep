@@ -134,6 +134,7 @@ describe('planWave', () => {
       expect(waveHpMul(wave)).toBeGreaterThan(waveHpMul(wave - 1));
     }
     expect(waveHpMul(1)).toBe(1);
+    expect(waveHpMul(31)).toBe(1 + 0.2 * 30 + 0.006 * 30 * 30); // 12.4
   });
 });
 

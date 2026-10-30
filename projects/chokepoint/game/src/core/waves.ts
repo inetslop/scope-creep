@@ -33,7 +33,7 @@ export function waveSpacing(wave: number): number {
 /** Enemy hp grows 20% per wave, plus a little extra later on so towers alone never keep up. */
 export function waveHpMul(wave: number): number {
   const n = Math.max(0, wave - 1);
-  return 1 + 0.2 * n + 0.004 * n * n;
+  return 1 + 0.2 * n + 0.006 * n * n;
 }
 
 /** What wave the menu demo plays: the player's saved best wave, clamped to at least 1. */
