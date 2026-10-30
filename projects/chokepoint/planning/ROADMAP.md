@@ -129,8 +129,13 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 ### E9 — Level augments: harder runs for a bigger payout (active — opened 2026-10-30, by hand)
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
-- **Unlock:** reaching wave 30 in any run, normal or Iron, unlocks level augments for good (saved in the profile). Before then the menu doesn't show them, apart from one muted "reach wave 30 to unlock" teaser line.
-- **The choice:** before a run, the menu offers a small set of level augments to switch on. Each one makes the run harder in one plain way and adds its own bonus.
+- **Unlock, a slot ladder:** level augments are picked into **slots**, and slots are earned one at a time.
+  - Reaching wave 30 in any run, normal or Iron, unlocks the **first** slot.
+  - Reaching wave 30 with **all** your unlocked slots filled unlocks the next one. Wave 30 with 1 level augment on gives 2 slots, wave 30 with 2 on gives 3, and so on, up to the size of the set.
+  - The slot count is saved in the profile and never goes down.
+  - Before the first unlock the menu doesn't show level augments, apart from one muted "reach wave 30 to unlock" teaser line.
+  - With slots unlocked, the picker shows the next goal, for example "wave 30 with 2 on unlocks a 3rd".
+- **The choice:** before a run, the menu offers a small set of level augments. Switch on up to as many as you have slots for. Each one makes the run harder in one plain way and adds its own bonus.
   - Examples: **Tough** (enemies have +25% health), **Swift** (enemies move 15% faster), **Crowded** (+20% enemies per wave), **Lean** (−25% kill gold), **Short fuse** (−30% build time).
   - Each carries a number such as "+20%". The chosen augments' bonuses add up into one run multiplier, shown on the menu before starting.
 - **The payout:** the run multiplier scales the run's **score** and the **coins** it pays into the tech tree. It stacks multiplicatively with Iron's doubled coins.
@@ -144,12 +149,13 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 - Choices are saved and preselected for the next run. The run's save records them, so a resumed run keeps its level augments and multiplier.
 
 **Breakdown (to task, in this order):**
-- the unlock and the menu choice: wave 30 unlocks it (profile flag), the menu's level-augment picker, the chosen set saved in the profile and the run save, the run multiplier shown before starting — no augments yet beyond one (Tough), so the slice is small and playable
+- the unlock and the menu choice: wave 30 unlocks the first slot (a slot count in the profile), the menu's level-augment picker capped at the slot count, the chosen set saved in the profile and the run save, the run multiplier shown before starting — no augments yet beyond one (Tough), so the slice is small and playable
 - the payout: the run multiplier applied to score and coins (core coin and score formulas, pure, tested), the HUD chips, the claim card's recipe line, the leaderboard row's multiplier
 - the rest of the first set: Swift, Crowded, Lean, Short fuse, each a pure rule with tests and its own percentage
 - the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned
 - deeper tech nodes: a third node in each branch priced on the new curve, so the bigger payout has a sink
-- (later) more level augments and ranks (Tough I/II/III), unlocked by reaching wave 30 with level augments on
+- the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line)
+- (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set
 
 ### Enemy queue (non-epic)
 
