@@ -3,10 +3,12 @@ id: T0311
 title: The record pass gets its note (the T0308 re-file)
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T23:07:23Z
+claimed_at: 2026-10-30T23:08:30Z
+designer: yoga
 ---
 
 ## Goal
