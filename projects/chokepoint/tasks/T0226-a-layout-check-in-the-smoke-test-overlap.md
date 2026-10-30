@@ -1,12 +1,14 @@
 ---
 id: T0226
 title: "A layout check in the smoke test: overlapping text and text leaving its card fail the gate"
+assignee: inet-racing
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0222, T0223, T0224, T0225]
-attempts: 0
+attempts: 1
 created: 2026-10-29T17:39:04Z
+claimed_at: 2026-10-30T10:28:07Z
 ---
 
 ## Goal
