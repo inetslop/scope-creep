@@ -4,11 +4,12 @@ title: "The shield breaks: the moment the Titan takes full damage"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T17:15:59Z
 claimed_at: 2026-10-30T17:28:45Z
+finished_at: 2026-10-30T17:39:38Z
 ---
 
 ## Goal
@@ -82,3 +83,16 @@ export const shieldDown: MakeEnemyHook = ({ enemies, fx }) => {
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The shield break is now visible at the moment the Titan's state changes: a new enemy hook, `src/systems/enemyHooks/shieldDown.ts`, fires on a Guard's death only while its Titan is still on the board — one 8-chip burst in the shield's orange and a "shield down" name chip over the Titan's token for ~1 s — registered in `src/systems/enemyHooks/index.ts` right after `titanShield` (both the import and the array entry). A closure boolean caps it at one play per run, so a Titan-first kill, a Guard on a non-boss wave, or a resumed run with the Guard already dead plays nothing; the Guard's own gold kill burst is untouched, and there is no sound and no new HUD element. `npm run check` (453 tests) and the desktop 1280×720 / mobile 412×915 smoke both pass.
+
+- Self-review: APPROVE
+- Time: 10.9 min
+
+```
+.../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../game/src/systems/enemyHooks/shieldDown.ts      | 26 ++++++++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```

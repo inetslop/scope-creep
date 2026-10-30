@@ -6,6 +6,7 @@ import { leakEcho } from './leakEcho';
 import { bossEscape } from './bossEscape';
 import { bossDeath } from './bossDeath';
 import { titanShield } from './titanShield';
+import { shieldDown } from './shieldDown';
 import { comboGold } from './comboGold';
 import { haulerLeak } from './haulerLeak';
 import { mintRing } from './mintRing';
@@ -34,6 +35,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   bossEscape,
   bossDeath,
   titanShield,
+  shieldDown,
   split,
   midSplit,
   nameTag,
