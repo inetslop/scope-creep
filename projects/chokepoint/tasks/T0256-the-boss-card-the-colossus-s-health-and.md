@@ -1,12 +1,14 @@
 ---
 id: T0256
 title: "The boss card: the Colossus's health and phase, pinned to the top edge"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0253]
-attempts: 0
+attempts: 1
 created: 2026-10-30T04:48:47Z
+claimed_at: 2026-10-30T11:00:46Z
 epic: E5
 ---
 
