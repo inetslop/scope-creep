@@ -42,13 +42,28 @@ export function ensureChoke(map: GameMap): GameMap {
 }
 
 /**
+ * A board carries `count` choke cells. One is today's guarantee (see `ensureChoke`); two folds
+ * the tail back twice, so the road passes close on itself at two points. When the road already
+ * passes near one of its own stretches enough times the board is untouched (byte-identical to
+ * the as-grown board, so old saves and ghosts are safe). No rng: a given seed gives the same
+ * board every time.
+ */
+export function ensureChokes(map: GameMap, count: number): GameMap {
+  if (count <= 1) return ensureChoke(map);
+  if (chokeCells(map).length >= count) return map;
+  return foldTail(map, 2);
+}
+
+/**
  * Folds the road's tail back onto the stretch before it so a choke cell exists. The path is a
  * staircase — along-runs of 2-3 with sideways turns, always ending in an along-run — so walking the
  * tail back finds the last along-run, the corner P before it, the corner C before that, and the far
  * end `a` of the stretch ending at C. The fold only rewrites the tail (after `keep`), so nothing
- * upstream cascades: path[0] and the exit edge are untouched.
+ * upstream cascades: path[0] and the exit edge are untouched. With `folds` 2 and room to spare
+ * (the tail is longer than the second U needs) the tail turns back a second time, adding a second
+ * choke cell; when there is no room it keeps the single fold.
  */
-function foldTail(map: GameMap): GameMap {
+function foldTail(map: GameMap, folds = 1): GameMap {
   const { path } = map;
   const A = (c: Cell) => (map.vertical ? c.row : c.col); // along
   const B = (c: Cell) => (map.vertical ? c.col : c.row); // across
@@ -75,9 +90,14 @@ function foldTail(map: GameMap): GameMap {
   const b2 = b > a ? b - 1 : b + 1; // one step back into the stretch before C: a lane, inside its span
   const up = rB - rA === 3; // the two horizontals are 3 rows apart: pull the last one up a row so they are 2
   const keep = up ? iC + 1 : iP; // last old index that stays
-  const tail: Cell[] = up ? [cell(rA + 2, b), cell(rA + 2, b2)] : [cell(rA + 2, b2)];
-  for (let r = rA + 3; r < length; r++) tail.push(cell(r, b2));
-  const newPath = [...path.slice(0, keep + 1), ...tail]; // last cell is (length-1, b2): still on the exit edge
+  const double = folds >= 2 && rA + 4 < length; // room for a second U back into lane b
+  const tail: Cell[] = double
+    ? (up
+      ? [cell(rA + 2, b), cell(rA + 2, b2), cell(rA + 3, b2), cell(rA + 4, b2), cell(rA + 4, b)]
+      : [cell(rA + 2, b2), cell(rA + 3, b2), cell(rA + 4, b2), cell(rA + 4, b)])
+    : (up ? [cell(rA + 2, b), cell(rA + 2, b2)] : [cell(rA + 2, b2)]);
+  for (let r = (double ? rA + 5 : rA + 3); r < length; r++) tail.push(cell(r, double ? b : b2));
+  const newPath = [...path.slice(0, keep + 1), ...tail]; // last cell is on the exit edge
 
   const newPathKeys = new Set(newPath.map(key));
   const kinds = map.kinds.map((row) => [...row]);
@@ -87,12 +107,19 @@ function foldTail(map: GameMap): GameMap {
   const protectedKeys = new Set<string>();
   for (let k = Math.min(a, b); k <= Math.max(a, b); k++) protectedKeys.add(key(cell(rA + 1, k)));
 
-  // A rock in the way (a new path cell, or the choke cell itself) is relocated to another open cell.
+  // A rock in the way (a new path cell, or a choke cell itself) is relocated to another open cell.
   const moveList: Cell[] = [];
   const queued = new Set<string>();
   for (const c of newPath) if (kinds[c.row]![c.col] === 'rock' && !queued.has(key(c))) { queued.add(key(c)); moveList.push(c); }
   const choke = cell(rA + 1, b2);
   if (kinds[choke.row]![choke.col] === 'rock' && !queued.has(key(choke))) { queued.add(key(choke)); moveList.push(choke); }
+  // The second fold's choke sits between its two stretches of lane b: it is not a path cell, so
+  // protect it and clear a rock from it the same way.
+  if (double) {
+    const choke2 = cell(rA + 3, b);
+    protectedKeys.add(key(choke2));
+    if (kinds[choke2.row]![choke2.col] === 'rock' && !queued.has(key(choke2))) { queued.add(key(choke2)); moveList.push(choke2); }
+  }
   for (const c of moveList) {
     kinds[c.row]![c.col] = 'open';
     let placed = false;

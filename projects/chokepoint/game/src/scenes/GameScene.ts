@@ -7,7 +7,7 @@ import { cellsBesidePath, generateMap } from '../core/map';
 import { loadProfile } from '../core/profile';
 import { RunState } from '../core/run';
 import type { SavedRun } from '../core/saveRun';
-import { boardBends, boardLengthMul, startBonuses } from '../core/tech';
+import { boardBends, boardChokes, boardLengthMul, startBonuses } from '../core/tech';
 import { draftTech } from '../core/techEffects';
 import { flags } from '../debug/flags';
 import { registerRunChecks, syncHookStats } from '../debug/runChecks';
@@ -50,6 +50,8 @@ export class GameScene extends Phaser.Scene {
   techLife = 0;
   /** The road length multiplier this board was generated with (the save round-trips it; the board shape can't tell a long road from a plain one). */
   mapLengthMul = 1;
+  /** The choke cells this board was generated with (the save round-trips it; 2 for the "Two chokes" node). */
+  mapChokes = 1;
   board!: Board;
   building!: Building;
   ghost!: TowerGhost;
@@ -103,15 +105,18 @@ export class GameScene extends Phaser.Scene {
       // New and ghost runs take the profile's level-augment choice, capped at its slots.
       this.run.level = capLevelChoice(profile.levelSlots, profile.levelOn);
     }
-    // The board's tech nodes wind new runs' roads one turn further and lengthen them; a resumed
-    // run keeps its saved board (its own bends and length), and a ghost run replays the best
-    // board as generated (0 bends, length 1).
+    // The board's tech nodes wind new runs' roads one turn further, lengthen them, and with
+    // "Two chokes" fold them back for a second choke cell; a resumed run keeps its saved board
+    // (its own bends, length and chokes), and a ghost run replays the best board as generated
+    // (0 bends, length 1, the owned nodes' choke count).
     const bends = saved ? saved.bends : ghost === undefined ? boardBends(loadProfile(window.localStorage).purchased) : 0;
     const lengthMul = saved ? saved.lengthMul : ghost === undefined ? boardLengthMul(loadProfile(window.localStorage).purchased) : 1;
+    const chokes = saved ? saved.chokes : boardChokes(loadProfile(window.localStorage).purchased);
     const view = viewSize(this);
     const portrait = saved ? saved.rows > saved.cols : view.height > view.width;
-    const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, bends, lengthMul, this.run.bgen);
+    const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, bends, lengthMul, this.run.bgen, chokes);
     this.mapLengthMul = lengthMul;
+    this.mapChokes = chokes;
 
     this.board = new Board(this, map);
     this.fx = new FxSystem(this, sfx);

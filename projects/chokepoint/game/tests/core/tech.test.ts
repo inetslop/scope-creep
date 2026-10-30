@@ -3,7 +3,7 @@ import { BOARD_NODES } from '../../src/content/tech/board';
 import { CLAIM_NODES, cleanWavePay } from '../../src/content/tech/claim';
 import { POOL_NODES } from '../../src/content/tech/pool';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { boardBends, boardLengthMul, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES } from '../../src/core/tech';
+import { boardBends, boardChokes, boardLengthMul, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -153,10 +153,11 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste', 'clean2']);
   });
 
-  it('the board row is two nodes: One more bend at 30 and The long way at 30, each for new runs', () => {
-    expect(BOARD_NODES.map((n) => [n.id, n.price, n.bends, n.lengthMul])).toEqual([
-      ['one-more-bend', 30, 1, 1],
-      ['long-way', 30, 0, 1.25],
+  it('the board row is three nodes: One more bend, The long way and Two chokes, each at 30 for new runs', () => {
+    expect(BOARD_NODES.map((n) => [n.id, n.price, n.bends, n.lengthMul, n.chokes])).toEqual([
+      ['one-more-bend', 30, 1, 1, 1],
+      ['long-way', 30, 0, 1.25, 1],
+      ['two-chokes', 30, 0, 1, 2],
     ]);
   });
 
@@ -175,6 +176,16 @@ describe('tech', () => {
     expect(buyBoardNode(store, 'one-more-bend')).toBe(true);
     expect(loadProfile(store).coins).toBe(30);
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste', 'one-more-bend']);
+  });
+
+  it('the third board node buys at the depth price: 155 coins with the other two owned, 154 refuses', () => {
+    const store = withCoins(155, ['one-more-bend', 'long-way']);
+    expect(buyBoardNode(store, 'two-chokes')).toBe(true);
+    expect(loadProfile(store).coins).toBe(0);
+    expect(loadProfile(store).purchased).toEqual(['one-more-bend', 'long-way', 'two-chokes']);
+    const broke = withCoins(154, ['one-more-bend', 'long-way']);
+    expect(buyBoardNode(broke, 'two-chokes')).toBe(false); // unaffordable: 154 < 155
+    expect(loadProfile(broke).coins).toBe(154);
   });
 
   it('the second board node buys at the depth price: 85 coins with one owned, 84 refuses', () => {
@@ -198,6 +209,13 @@ describe('tech', () => {
     expect(boardLengthMul(['one-more-bend'])).toBe(1);
     expect(boardLengthMul(['long-way'])).toBe(1.25);
     expect(boardLengthMul(['one-more-bend', 'long-way', 'long-way', 'haste', 'nope'])).toBe(1.25);
+  });
+
+  it("boardChokes takes the biggest owned node's choke count; duplicates and unknown ids count for nothing", () => {
+    expect(boardChokes([])).toBe(1);
+    expect(boardChokes(['one-more-bend', 'long-way'])).toBe(1);
+    expect(boardChokes(['two-chokes'])).toBe(2);
+    expect(boardChokes(['two-chokes', 'two-chokes', 'one-more-bend', 'haste', 'nope'])).toBe(2);
   });
 
   it('a board id counts for no run-start bonus', () => {
@@ -234,5 +252,8 @@ describe('tech', () => {
     expect(nodeInReach([], 5)).toBe(true); // gold-1, the run-start branch's cheapest node
     expect(nodeInReach([], 4)).toBe(false); // a balance that reaches no unowned node
     expect(nodeInReach([...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES].map((n) => n.id), 99999)).toBe(false); // every node owned
+    const allButTwo = [...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES.filter((n) => n.id !== 'two-chokes')].map((n) => n.id);
+    expect(nodeInReach(allButTwo, 154)).toBe(false); // the last unowned node costs 155 at its depth
+    expect(nodeInReach(allButTwo, 155)).toBe(true);
   });
 });

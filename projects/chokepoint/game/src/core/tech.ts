@@ -72,6 +72,20 @@ export function boardLengthMul(owned: readonly string[]): number {
   return mul;
 }
 
+/** The choke cells a new run's board carries: the biggest owned node's, 1 when none has more; each node counts once. */
+export function boardChokes(owned: readonly string[]): number {
+  let chokes = 1;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = BOARD_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    if (node.chokes > chokes) chokes = node.chokes;
+  }
+  return chokes;
+}
+
 /** A branch's first-node price scaled by depth^1.5 and rounded to the nearest multiple of 5 (halves up). */
 export function nodePrice(base: number, depth: number): number {
   return Math.round((base * Math.pow(depth, 1.5)) / 5) * 5;

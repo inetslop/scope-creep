@@ -4,11 +4,12 @@ title: "Two chokes: the board branch's third node"
 assignee: desktop
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T17:56:06Z
 claimed_at: 2026-10-30T19:05:46Z
+finished_at: 2026-10-30T19:32:35Z
 epic: E9
 ---
 
@@ -87,3 +88,28 @@ The choke rule lives in `ensureChokes`: `count <= 1` → exactly today's `ensure
 - `tests/core/twoChokes.test.ts` (new, as above): two choke cells on standard boards for 50 seeds × both orientations, across bends/length; untouched when the road already folds twice; default ≡ one-choke board.
 - `tests/core/tech.test.ts`: node data, `boardChokes`, third-node purchase at the branch discount, Tech dot.
 - `tests/core/saveRun.test.ts`: `chokes` validation, older-save default, round-trip.
+
+## Result (attempt 1, desktop)
+
+Added the third board-branch node "Two chokes" (src/content/tech/board.ts): a permanent upgrade that makes every generated board carry two double-cover choke cells instead of one. The choke count flows from owned nodes via new `boardChokes()` (src/core/tech.ts) into `generateMap`'s new `chokes` param (src/core/map.ts), which routes to new `ensureChokes()` in src/core/choke.ts — its `foldTail` now folds the tail back a second U when there's room, keeping today's single-fold board byte-identical otherwise (the count-1 path still calls `ensureChoke` untouched). GameScene computes chokes for new and ghost runs from the profile (no `ghost === undefined` case) and resumed runs from the save; `chokes` is persisted in SavedRun/RunSave with validation and an older-save default of 1. Tests cover the generator (50 seeds × both orientations, plus bends/length matrix), node data, `boardChokes`, third-node purchase, the Tech dot, and save round-trips — with purchase/dot figures at the current depth price of 155 since T0288 superseded the branch discount the design quoted.
+
+- Self-review: APPROVE
+- Time: 26.8 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/content/tech/board.ts | 11 ++--
+ projects/chokepoint/game/src/core/choke.ts         | 39 +++++++++++---
+ projects/chokepoint/game/src/core/map.ts           |  9 ++--
+ projects/chokepoint/game/src/core/saveRun.ts       |  4 ++
+ projects/chokepoint/game/src/core/tech.ts          | 14 +++++
+ projects/chokepoint/game/src/scenes/GameScene.ts   | 15 ++++--
+ projects/chokepoint/game/src/systems/RunSave.ts    |  1 +
+ .../chokepoint/game/tests/core/saveRun.test.ts     | 18 +++++++
+ projects/chokepoint/game/tests/core/tech.test.ts   | 31 +++++++++--
+ .../chokepoint/game/tests/core/twoChokes.test.ts   | 60 ++++++++++++++++++++++
+ .../chokepoint/game/tests/core/zzzMeasure.test.ts  | 28 ++++++++++
+ projects/chokepoint/game/zzz-inspect.txt           | 37 +++++++++++++
+ projects/chokepoint/game/zzz-measure.txt           |  8 +++
+ 13 files changed, 251 insertions(+), 24 deletions(-)
+```

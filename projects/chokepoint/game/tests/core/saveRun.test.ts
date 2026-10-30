@@ -13,6 +13,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   rows: 8,
   bends: 0,
   lengthMul: 1,
+  chokes: 1,
   bgen: 2,
   gold: 260,
   lives: 17,
@@ -97,6 +98,23 @@ describe('saveRun', () => {
     delete without.lengthMul; // older saves predate the field
     store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
     expect(loadSavedRun(store)).toEqual(sample());
+  });
+
+  it('rejects a broken choke count, but a save written without the key loads as 1', () => {
+    broken({ chokes: 0 });
+    broken({ chokes: 3 });
+    broken({ chokes: 1.5 });
+    const store = memory();
+    const without = { ...sample() } as Record<string, unknown>;
+    delete without.chokes; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
+    expect(loadSavedRun(store)).toEqual(sample());
+  });
+
+  it('round-trips a two-chokes save', () => {
+    const store = memory();
+    saveRun(store, sample({ chokes: 2 }));
+    expect(loadSavedRun(store)).toEqual(sample({ chokes: 2 }));
   });
 
   it('rejects a broken board-generation version, but a save written without the key loads as 1', () => {
