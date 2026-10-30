@@ -1,14 +1,14 @@
 ---
 id: T0233
 title: "The quiet tower: a dim dot on the idle tower"
-assignee: yoga
 size: S
 priority: 1
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-29T22:31:19Z
 claimed_at: 2026-10-29T23:20:34Z
+finished_at: 2026-10-30T00:51:14Z
 ---
 
 ## Goal
@@ -69,3 +69,13 @@ export function quietDot(t: Tower, road: boolean, attacked: boolean, dt: number)
 
 ### Tests
 none
+
+## Attempt 1 failed (yoga)
+
+Could not merge into main (broken-after-rebase). The work was saved to projects/chokepoint/tasks/salvage/T0233.diff; the next attempt re-applies it on the latest code.
+- Deleted src/systemstowerIdle.ts, as the agent asked.
+- Self-review made fixes (kept; checks pass).
+- Conflicts in: projects/chokepoint/game/src/debug/runChecks.ts
+- Auto-resolved 1 spot(s) where both sides only added lines (clean: projects/chokepoint/game/src/debug/runChecks.ts).
+- Resolved without the conflict agent.
+- After rebasing onto newer main the gate failed at "check".

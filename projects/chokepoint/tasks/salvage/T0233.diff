@@ -1,0 +1,210 @@
+# T0233 attempt 1 (yoga) passed the checks on 1419715 but could not be merged into main (broken-after-rebase).
+# Commits on main since then that touch the same files:
+# - 93eb15c agent-inet-racing: T0234: Toll: the Epic that pays gold when a leak gets through
+
+diff --git a/projects/chokepoint/game/src/debug/runChecks.ts b/projects/chokepoint/game/src/debug/runChecks.ts
+index 58860ad..15422ee 100644
+--- a/projects/chokepoint/game/src/debug/runChecks.ts
++++ b/projects/chokepoint/game/src/debug/runChecks.ts
+@@ -50,6 +50,10 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
+     for (const t of g.towers.towers) if (!Number.isInteger(t.spec.goldPerKill) || t.spec.goldPerKill < 0 || t.spec.goldPerKill > t.augments.length) return `kill-gold ${t.spec.goldPerKill} at (${t.cell.col}, ${t.cell.row})`;
+     return null;
+   }],
++  ['towers.quietDot', (g) => {
++    for (const t of g.towers.towers) if (t.idleOn && (!t.spec.attacks || t.spec.kind === 'rally')) return `a ${t.spec.kind} tower shows its quiet dot`;
++    return null;
++  }],
+   ['rally.valid', (g) => {
+     for (const t of g.towers.towers) if (t.rallyRateMul < 1 - 1e-9 || t.rallyRateMul > 1.2) return `rally multiplier ${t.rallyRateMul}`;
+     return null;
+diff --git a/projects/chokepoint/game/src/entities/Tower.ts b/projects/chokepoint/game/src/entities/Tower.ts
+index abb75ba..0485e2d 100644
+--- a/projects/chokepoint/game/src/entities/Tower.ts
++++ b/projects/chokepoint/game/src/entities/Tower.ts
+@@ -30,6 +30,7 @@ export class Tower extends Phaser.GameObjects.Image {
+   private readonly deco: Phaser.GameObjects.Graphics;
+   private readonly pips: Phaser.GameObjects.Graphics;
+   private readonly jamDot: Phaser.GameObjects.Graphics;
++  private readonly idleDot: Phaser.GameObjects.Graphics;
+   private poppingSlot = -1; // slot mid pop-in; drawPips skips it until its tween lands
+   private pipPop: Phaser.GameObjects.Graphics | undefined;
+   /** Augment copies (id + tier) in its slots, in the order they were put in. */
+@@ -39,10 +40,16 @@ export class Tower extends Phaser.GameObjects.Image {
+   spec: TowerSpec = towerSpec([]);
+   /** Seconds until it may attack again. */
+   cooldown = 0;
++  /** Seconds since its last attack (systems/towerIdle.ts resets it); its quiet dot shows at 4. */
++  idleSec = 0;
+   /** Attack speed from Rally (set by systems/RallySystem.ts; 1 when not buffed). */
+   rallyRateMul = 1;
+   /** Held by a Mute: no attacks; systems/enemyHooks/muteJam.ts. */
+   jammed = false;
++  /** A beam line held on an enemy this frame (systems/BeamSystem.ts); its quiet dot stays off. */
++  beamHolding = false;
++  /** Its quiet dot shown: the dot bookkeeping runs every frame (systems/towerIdle.ts). */
++  idleOn = false;
+   /** Enemies this tower killed with its own damage this run (the panel's "kills N" line). */
+   kills = 0;
+   /** Where the barrels point, in radians (0 = up, clockwise). */
+@@ -65,6 +72,10 @@ export class Tower extends Phaser.GameObjects.Image {
+     this.jamDot.fillStyle(PALETTE.muted, 1);
+     this.jamDot.fillCircle(0, -32, 3); // above the body, same float as the rally chevron
+     this.jamDot.setVisible(false);
++    this.idleDot = scene.add.graphics().setDepth(DEPTH.towers + 3).setPosition(x, y);
++    this.idleDot.fillStyle(PALETTE.muted, 1);
++    this.idleDot.fillCircle(0, -32, 3);
++    this.idleDot.setVisible(false);
+     this.setDepth(DEPTH.towers + 2);
+     artScale(this);
+     scene.add.existing(this);
+@@ -222,6 +233,22 @@ export class Tower extends Phaser.GameObjects.Image {
+     this.jamDot.setVisible(on);
+   }
+ 
++  /**
++   * The quiet dot: it fades in over its idle seconds (systems/towerIdle.ts) and clears the
++   * moment the tower next has an attack event. It rides the token, like the Mute's jam dot.
++   */
++  setIdleDot(on: boolean): void {
++    if (this.idleOn === on) return;
++    this.idleOn = on;
++    this.scene.tweens.killTweensOf(this.idleDot);
++    if (on) {
++      this.idleDot.setAlpha(0).setVisible(true);
++      this.scene.tweens.add({ targets: this.idleDot, alpha: 1, duration: 200 });
++    } else {
++      this.scene.tweens.add({ targets: this.idleDot, alpha: 0, duration: 150, onComplete: () => this.idleDot.setVisible(false) });
++    }
++  }
++
+   destroy(fromScene?: boolean): void {
+     if (this.pipPop) { this.scene.tweens.killTweensOf(this.pipPop); this.pipPop.destroy(); this.pipPop = undefined; }
+     if (this.disc) { this.scene.tweens.killTweensOf(this.disc); this.disc = undefined; }
+@@ -230,6 +257,8 @@ export class Tower extends Phaser.GameObjects.Image {
+     this.deco.destroy();
+     this.pips.destroy();
+     this.jamDot.destroy();
++    this.scene.tweens.killTweensOf(this.idleDot);
++    this.idleDot.destroy();
+     super.destroy(fromScene);
+   }
+ }
+diff --git a/projects/chokepoint/game/src/systems/BeamSystem.ts b/projects/chokepoint/game/src/systems/BeamSystem.ts
+index 57117c4..6f4acac 100644
+--- a/projects/chokepoint/game/src/systems/BeamSystem.ts
++++ b/projects/chokepoint/game/src/systems/BeamSystem.ts
+@@ -74,7 +74,8 @@ export class BeamSystem {
+       if (t.jammed) {
+         if (wasHumming) { this.sfx?.beamHumStop(t); this.humming.delete(t); }
+         t.setBeamOn(false);
+-        continue; // a Mute holds it: no attack, no line
++        t.beamHolding = false; // a Mute holds it: no attack, no line (a stale hold would keep the quiet dot off)
++        continue;
+       }
+       const range = t.spec.range * CELL;
+       // held grows/shrinks with the tower's lines (an augment just placed): [main, rays, extras].
+@@ -150,6 +151,8 @@ export class BeamSystem {
+         if (holds && steps) holds[i] = alive ? steps[i]!.hold : EMPTY_BEAM_HOLD;
+       }
+       this.held.set(t, now);
++      // A held line counts as firing: a shot+beam tower's quiet dot stays off while the beam holds one.
++      t.beamHolding = now.some((e) => e !== undefined);
+       t.setBeamOn(main !== -1); // the orb's disc pulses only while the beam is on
+       // The hum follows the line's own visibility: on at the lock, off with no target; a retarget
+       // is on→on, so the hum stays up (now[0], not main: a beamTick kill drops the line this frame).
+diff --git a/projects/chokepoint/game/src/systems/TowerSystem.ts b/projects/chokepoint/game/src/systems/TowerSystem.ts
+index f49a170..30e4b62 100644
+--- a/projects/chokepoint/game/src/systems/TowerSystem.ts
++++ b/projects/chokepoint/game/src/systems/TowerSystem.ts
+@@ -1,11 +1,13 @@
+ import type Phaser from 'phaser';
+ import { CELL } from '../config';
++import { getAugment } from '../content/augments';
+ import { PALETTE } from '../content/palette';
+-import type { AugmentCopy } from '../content/types';
++import type { AugmentCopy, FirstForm } from '../content/types';
+ import { slotCost, splashHits, towerColor } from '../core/augments';
+ import type { Cell } from '../core/map';
+ import type { RunState } from '../core/run';
+ import { slotPrice } from '../core/techEffects';
++import { tierFirst } from '../core/tiers';
+ import { hook } from '../debug/testHook';
+ import { Tower } from '../entities/Tower';
+ import type { Sfx } from '../audio/Sfx';
+@@ -15,6 +17,7 @@ import type { EnemySystem } from './EnemySystem';
+ import type { FxSystem } from './FxSystem';
+ import { auraRing } from './fx/auraRing';
+ import type { ProjectileSystem } from './ProjectileSystem';
++import { quietDot } from './towerIdle';
+ 
+ /** Why something didn't happen. */
+ export type Refusal = 'blocked' | 'gold' | 'full' | 'max';
+@@ -92,17 +95,26 @@ export class TowerSystem {
+ 
+   update(dt: number): void {
+     const enemies = this.enemies.all;
++    const road = this.enemies.aliveCount > 0;
+     for (const t of this.towers) {
+-      if (t.spec.kind === 'beam') continue; // its lines are held by BeamSystem, not on a cooldown
+-      if (t.jammed) continue;
+-      if (!t.spec.attacks) continue;
+-      // A pure support (no damage, slow, root, gust, burn, bolts or marks, like a bare Mint) never attacks:
+-      // pulse.ts would only fire its wave fx, kick and sound around a tower that does nothing.
+-      if (t.spec.damage <= 0 && !t.spec.slow && !t.spec.root && t.spec.gust === 0 && !t.spec.burn && t.spec.bolts === 0 && t.spec.markPct === 0) continue;
+-      t.cooldown -= dt;
+-      if (t.cooldown > 0) continue;
+-      if (this.attack(t, enemies)) t.cooldown += 1 / (t.spec.rate * t.rallyRateMul);
+-      else t.cooldown = 0; // nothing in range: ready the moment something walks in
++      // The dot is for a first form that acts on the board on a cadence (or holds a beam line): a
++      // passive first (Mint, Rally, the future Haste/Momentum/Mend/Toll) never dots, even when an
++      // added augment gives the tower an attack (a Mint+Bolt that does shoot).
++      const firstAttacks = t.spec.attacks && t.spec.kind !== 'rally' && firstActs(tierFirst(getAugment(t.augments[0]!.id), t.augments[0]!.tier));
++      let attacked = false;
++      if (t.spec.kind !== 'beam' && !t.jammed && t.spec.attacks) {
++        // A pure support (no damage, slow, root, gust, burn, bolts or marks, like a bare Mint) never attacks:
++        // pulse.ts would only fire its wave fx, kick and sound around a tower that does nothing.
++        if (!(t.spec.damage <= 0 && !t.spec.slow && !t.spec.root && t.spec.gust === 0 && !t.spec.burn && t.spec.bolts === 0 && t.spec.markPct === 0)) {
++          t.cooldown -= dt;
++          if (t.cooldown <= 0) {
++            attacked = this.attack(t, enemies);
++            if (attacked) t.cooldown += 1 / (t.spec.rate * t.rallyRateMul);
++            else t.cooldown = 0; // nothing in range: ready the moment something walks in
++          }
++        }
++      }
++      if (firstAttacks) quietDot(t, road, attacked || t.beamHolding, dt);
+     }
+   }
+ 
+@@ -158,3 +170,8 @@ export class TowerSystem {
+     return undefined;
+   }
+ }
++
++/** Whether a first form has an on-board action of its own: a strike, a slow, a root, a gust, a burn, a mark or a held beam line. */
++function firstActs(f: FirstForm): boolean {
++  return f.damage > 0 || f.slow !== undefined || f.root !== undefined || (f.push ?? 0) > 0 || f.burn !== undefined || f.mark !== undefined || f.beam !== undefined;
++}
+diff --git a/projects/chokepoint/game/src/systems/towerIdle.ts b/projects/chokepoint/game/src/systems/towerIdle.ts
+new file mode 100644
+index 0000000..128c8b4
+--- /dev/null
++++ b/projects/chokepoint/game/src/systems/towerIdle.ts
+@@ -0,0 +1,17 @@
++import type { Tower } from '../entities/Tower';
++
++/** Idle seconds after a tower's last attack before its quiet dot shows. */
++export const IDLE_DOT_SEC = 4;
++
++/**
++ * The quiet dot: an attack-first tower that has work but nothing in range shows a small dim
++ * dot above its token while enemies are alive, and it clears the instant the tower next acts.
++ * The caller never runs it for the no-attack supports (Mint, Rally and the future
++ * Haste/Momentum/Mend/Toll): they are the tower's pure-support branch.
++ */
++export function quietDot(t: Tower, road: boolean, attacked: boolean, dt: number): void {
++  if (attacked) { t.idleSec = 0; t.setIdleDot(false); return; }
++  if (!road) { t.idleSec = 0; t.setIdleDot(false); return; }
++  t.idleSec += dt;
++  if (t.idleSec >= IDLE_DOT_SEC) t.setIdleDot(true);
++}
