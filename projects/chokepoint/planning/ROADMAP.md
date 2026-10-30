@@ -108,12 +108,12 @@ Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one
 
 ### E6 — Iron run: one life, double coins (done; history in planning/archive/ROADMAP.md)
 
-### E7 — Changing your mind: a misplaced tower is not permanent (active — opened 2026-10-30)
+### E7 — Changing your mind: a misplaced tower is not permanent (done — closed 2026-10-30; history in planning/archive/ROADMAP.md)
 **Goal:** a mistake can be fixed mid-run: a misplaced tower is sold back. (The take-out, T0275, was cancelled by hand 2026-10-30.)
 **When done:** in the build phase the tower panel wears a bottom line, "Sell · +N": tap it and the tower lifts out and pays 70% of what its slots cost (the augments are gone — selling is a refund, not a retrieve; the cell frees, the gold pops at the plinth and slides to the tally). The line is build-phase only, it is on the pause's controls line, and the end card's by-tower list shows only towers standing at run end (a sold tower's kills stay in the run's totals). Selling costs 30% of the tower, so it is a fix, not a free repick.
 **Breakdown:**
-- T0274 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — the T0263 re-file (T0263 failed 2026-10-30 on an architect context overflow before any design; the line stood as written) — in the pool (todo)
-- T0275 — take out — **dropped by hand 2026-10-30**; E7 closes when T0274 lands
+- T0274 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — the T0263 re-file (T0263 failed 2026-10-30 on an architect context overflow before any design; the line stood as written) — **done** (2026-10-30, desktop)
+- T0275 — take out — **dropped by hand 2026-10-30**; E7 closed 2026-10-30 when T0274 landed
 
 ### E8 — A run you can show (dropped — 2026-10-30, by hand)
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
@@ -177,7 +177,7 @@ Ideas that may become epics or tasks of one.
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **tasked as T0239 (L, non-epic)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
-- Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**
+- Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**; the mid-run page is **tasked as T0304 (M, non-epic, in the pool)** — the pause's "Summary": the ledger's rows and the standing towers' kills and ≈N/s (the end card's and claim card's reads, re-used); damage per tower and leaks per wave still need the ledger's new terms
 - The board shows its corners: a notch on the bend cells — **built as T0140 (2026-10-29), removed as T0227 (2026-10-29)**
 - Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **built as T0217 (2026-10-30, asus)**
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
