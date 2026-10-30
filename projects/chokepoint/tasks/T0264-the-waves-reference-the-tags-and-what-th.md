@@ -4,11 +4,12 @@ title: "The waves reference: the tags and what they do, off the pause"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T06:24:50Z
 claimed_at: 2026-10-30T07:15:13Z
+finished_at: 2026-10-30T07:45:24Z
 ---
 
 ## Goal
@@ -83,3 +84,20 @@ Row data wording: quiet/tight meanings are the `TEACH` texts in `src/ui/hud/Next
 
 ### Tests
 - `tests/core/waveTags.test.ts`: `nextTaggedWave(0, isQuietWave) === 4`, `nextTaggedWave(4, isQuietWave) === 8`, `nextTaggedWave(5, isTightWave) === 6`, `nextTaggedWave(6, isTightWave) === 14`, `nextTaggedWave(0, isBossWave) === 10`, `nextTaggedWave(19, isBossWave) === 20`; row order is `['quiet', 'tight', 'boss']` and each row's `rule` returns true for its first taught wave (4, 6, 10).
+
+## Result (attempt 1, inet-racing)
+
+Added a "Waves" reference off the pause (T0264): a new `WavesScene` (EnemiesScene pattern — dimmed pause behind, one white card) lists the three wave tags in run order, each with its own preview chip, the preview's own teach wording, its "when" line, and a derived "next: wave N" from the game's own tag rules (`nextTaggedWave` in new `src/core/waveTags.ts`, rows next to the tag rules). The pause card gained a "Waves" row and controls line, and `tests/core/waveTags.test.ts` pins the next-wave math to the rules (fresh run: next quiet is wave 4). Check and smoke pass on desktop and phone.
+
+- Self-review: APPROVE
+- Time: 30.2 min
+
+```
+projects/chokepoint/game/src/core/waveTags.ts      |  31 ++++++
+ projects/chokepoint/game/src/main.ts               |   3 +-
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  13 ++-
+ projects/chokepoint/game/src/scenes/WavesScene.ts  | 107 +++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/keys.ts        |   1 +
+ .../chokepoint/game/tests/core/waveTags.test.ts    |  23 +++++
+ 6 files changed, 175 insertions(+), 3 deletions(-)
+```
