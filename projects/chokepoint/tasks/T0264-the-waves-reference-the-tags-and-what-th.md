@@ -3,10 +3,12 @@ id: T0264
 title: "The waves reference: the tags and what they do, off the pause"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T06:24:50Z
+claimed_at: 2026-10-30T06:48:55Z
+designer: inet-racing
 ---
 
 ## Goal
