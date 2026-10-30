@@ -1,12 +1,14 @@
 ---
 id: T0239
 title: "Music: a quiet generative bed under the wave phase"
+assignee: asus
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T23:53:23Z
+claimed_at: 2026-10-30T11:27:13Z
 ---
 
 ## Goal
