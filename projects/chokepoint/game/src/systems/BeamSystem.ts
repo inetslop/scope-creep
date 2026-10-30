@@ -74,7 +74,8 @@ export class BeamSystem {
       if (t.jammed) {
         if (wasHumming) { this.sfx?.beamHumStop(t); this.humming.delete(t); }
         t.setBeamOn(false);
-        continue; // a Mute holds it: no attack, no line
+        t.beamHolding = false; // a Mute holds it: no attack, no line (a stale hold would keep the quiet dot off)
+        continue;
       }
       const range = t.spec.range * CELL;
       // held grows/shrinks with the tower's lines (an augment just placed): [main, rays, extras].
@@ -150,6 +151,8 @@ export class BeamSystem {
         if (holds && steps) holds[i] = alive ? steps[i]!.hold : EMPTY_BEAM_HOLD;
       }
       this.held.set(t, now);
+      // A held line counts as firing: a shot+beam tower's quiet dot stays off while the beam holds one.
+      t.beamHolding = now.some((e) => e !== undefined);
       t.setBeamOn(main !== -1); // the orb's disc pulses only while the beam is on
       // The hum follows the line's own visibility: on at the lock, off with no target; a retarget
       // is on→on, so the hum stays up (now[0], not main: a beamTick kill drops the line this frame).

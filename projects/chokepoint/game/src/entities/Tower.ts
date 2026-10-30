@@ -30,6 +30,7 @@ export class Tower extends Phaser.GameObjects.Image {
   private readonly deco: Phaser.GameObjects.Graphics;
   private readonly pips: Phaser.GameObjects.Graphics;
   private readonly jamDot: Phaser.GameObjects.Graphics;
+  private readonly idleDot: Phaser.GameObjects.Graphics;
   private poppingSlot = -1; // slot mid pop-in; drawPips skips it until its tween lands
   private pipPop: Phaser.GameObjects.Graphics | undefined;
   /** Augment copies (id + tier) in its slots, in the order they were put in. */
@@ -39,10 +40,16 @@ export class Tower extends Phaser.GameObjects.Image {
   spec: TowerSpec = towerSpec([]);
   /** Seconds until it may attack again. */
   cooldown = 0;
+  /** Seconds since its last attack (systems/towerIdle.ts resets it); its quiet dot shows at 4. */
+  idleSec = 0;
   /** Attack speed from Rally (set by systems/RallySystem.ts; 1 when not buffed). */
   rallyRateMul = 1;
   /** Held by a Mute: no attacks; systems/enemyHooks/muteJam.ts. */
   jammed = false;
+  /** A beam line held on an enemy this frame (systems/BeamSystem.ts); its quiet dot stays off. */
+  beamHolding = false;
+  /** Its quiet dot shown: the dot bookkeeping runs every frame (systems/towerIdle.ts). */
+  idleOn = false;
   /** Enemies this tower killed with its own damage this run (the panel's "kills N" line). */
   kills = 0;
   /** Where the barrels point, in radians (0 = up, clockwise). */
@@ -65,6 +72,10 @@ export class Tower extends Phaser.GameObjects.Image {
     this.jamDot.fillStyle(PALETTE.muted, 1);
     this.jamDot.fillCircle(0, -32, 3); // above the body, same float as the rally chevron
     this.jamDot.setVisible(false);
+    this.idleDot = scene.add.graphics().setDepth(DEPTH.towers + 3).setPosition(x, y);
+    this.idleDot.fillStyle(PALETTE.muted, 1);
+    this.idleDot.fillCircle(0, -32, 3);
+    this.idleDot.setVisible(false);
     this.setDepth(DEPTH.towers + 2);
     artScale(this);
     scene.add.existing(this);
@@ -222,6 +233,22 @@ export class Tower extends Phaser.GameObjects.Image {
     this.jamDot.setVisible(on);
   }
 
+  /**
+   * The quiet dot: it fades in over its idle seconds (systems/towerIdle.ts) and clears the
+   * moment the tower next has an attack event. It rides the token, like the Mute's jam dot.
+   */
+  setIdleDot(on: boolean): void {
+    if (this.idleOn === on) return;
+    this.idleOn = on;
+    this.scene.tweens.killTweensOf(this.idleDot);
+    if (on) {
+      this.idleDot.setAlpha(0).setVisible(true);
+      this.scene.tweens.add({ targets: this.idleDot, alpha: 1, duration: 200 });
+    } else {
+      this.scene.tweens.add({ targets: this.idleDot, alpha: 0, duration: 150, onComplete: () => this.idleDot.setVisible(false) });
+    }
+  }
+
   destroy(fromScene?: boolean): void {
     if (this.pipPop) { this.scene.tweens.killTweensOf(this.pipPop); this.pipPop.destroy(); this.pipPop = undefined; }
     if (this.disc) { this.scene.tweens.killTweensOf(this.disc); this.disc = undefined; }
@@ -230,6 +257,8 @@ export class Tower extends Phaser.GameObjects.Image {
     this.deco.destroy();
     this.pips.destroy();
     this.jamDot.destroy();
+    this.scene.tweens.killTweensOf(this.idleDot);
+    this.idleDot.destroy();
     super.destroy(fromScene);
   }
 }

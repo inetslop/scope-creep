@@ -4,11 +4,12 @@ title: "The quiet tower: a dim dot on the idle tower"
 assignee: yoga
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-10-29T22:31:19Z
 claimed_at: 2026-10-30T00:51:19Z
+finished_at: 2026-10-30T02:13:19Z
 ---
 
 ## Goal
@@ -79,3 +80,19 @@ Could not merge into main (broken-after-rebase). The work was saved to projects/
 - Auto-resolved 1 spot(s) where both sides only added lines (clean: projects/chokepoint/game/src/debug/runChecks.ts).
 - Resolved without the conflict agent.
 - After rebasing onto newer main the gate failed at "check".
+
+## Result (attempt 2, yoga)
+
+The quiet tower now says so: during a wave, an attack-first tower with no attack event for 4 s while enemies are alive shows a small muted-gray dot (radius 3, HUD muted ink) just above its token, fading in over 200 ms and out over 150 ms the moment it next acts — a held beam line counts as acting. New file `src/systems/towerIdle.ts` (`quietDot`, `IDLE_DOT_SEC`); `Tower.ts` gained the `idleDot` graphics at the jam dot's float plus `idleSec`/`beamHolding`/`idleOn` and `setIdleDot()`; `TowerSystem.update()` captures whether the tower attacked and runs the dot for first forms that act on the board (a `firstActs` gate keeps Mint, Toll and Rally passive-firsts — and a shooting Mint+Bolt — dot-free, which the design's plain formula would have dotted); `BeamSystem` marks `beamHolding` (false on a Mute jam, true while any line holds); one new invariant in `runChecks.ts`. Check and smoke (desktop + mobile) pass.
+
+- Self-review: APPROVE
+- Time: 82.0 min
+
+```
+projects/chokepoint/game/src/debug/runChecks.ts    |  4 +++
+ projects/chokepoint/game/src/entities/Tower.ts     | 29 ++++++++++++++++
+ projects/chokepoint/game/src/systems/BeamSystem.ts |  5 ++-
+ .../chokepoint/game/src/systems/TowerSystem.ts     | 39 ++++++++++++++++------
+ projects/chokepoint/game/src/systems/towerIdle.ts  | 17 ++++++++++
+ 5 files changed, 82 insertions(+), 12 deletions(-)
+```

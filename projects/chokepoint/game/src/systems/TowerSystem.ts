@@ -1,11 +1,13 @@
 import type Phaser from 'phaser';
 import { CELL } from '../config';
+import { getAugment } from '../content/augments';
 import { PALETTE } from '../content/palette';
-import type { AugmentCopy } from '../content/types';
+import type { AugmentCopy, FirstForm } from '../content/types';
 import { slotCost, splashHits, towerColor } from '../core/augments';
 import type { Cell } from '../core/map';
 import type { RunState } from '../core/run';
 import { slotPrice } from '../core/techEffects';
+import { tierFirst } from '../core/tiers';
 import { hook } from '../debug/testHook';
 import { Tower } from '../entities/Tower';
 import type { Sfx } from '../audio/Sfx';
@@ -15,6 +17,7 @@ import type { EnemySystem } from './EnemySystem';
 import type { FxSystem } from './FxSystem';
 import { auraRing } from './fx/auraRing';
 import type { ProjectileSystem } from './ProjectileSystem';
+import { quietDot } from './towerIdle';
 
 /** Why something didn't happen. */
 export type Refusal = 'blocked' | 'gold' | 'full' | 'max';
@@ -92,17 +95,26 @@ export class TowerSystem {
 
   update(dt: number): void {
     const enemies = this.enemies.all;
+    const road = this.enemies.aliveCount > 0;
     for (const t of this.towers) {
-      if (t.spec.kind === 'beam') continue; // its lines are held by BeamSystem, not on a cooldown
-      if (t.jammed) continue;
-      if (!t.spec.attacks) continue;
-      // A pure support (no damage, slow, root, gust, burn, bolts or marks, like a bare Mint) never attacks:
-      // pulse.ts would only fire its wave fx, kick and sound around a tower that does nothing.
-      if (t.spec.damage <= 0 && !t.spec.slow && !t.spec.root && t.spec.gust === 0 && !t.spec.burn && t.spec.bolts === 0 && t.spec.markPct === 0) continue;
-      t.cooldown -= dt;
-      if (t.cooldown > 0) continue;
-      if (this.attack(t, enemies)) t.cooldown += 1 / (t.spec.rate * t.rallyRateMul);
-      else t.cooldown = 0; // nothing in range: ready the moment something walks in
+      // The dot is for a first form that acts on the board on a cadence (or holds a beam line): a
+      // passive first (Mint, Rally, the future Haste/Momentum/Mend/Toll) never dots, even when an
+      // added augment gives the tower an attack (a Mint+Bolt that does shoot).
+      const firstAttacks = t.spec.attacks && t.spec.kind !== 'rally' && firstActs(tierFirst(getAugment(t.augments[0]!.id), t.augments[0]!.tier));
+      let attacked = false;
+      if (t.spec.kind !== 'beam' && !t.jammed && t.spec.attacks) {
+        // A pure support (no damage, slow, root, gust, burn, bolts or marks, like a bare Mint) never attacks:
+        // pulse.ts would only fire its wave fx, kick and sound around a tower that does nothing.
+        if (!(t.spec.damage <= 0 && !t.spec.slow && !t.spec.root && t.spec.gust === 0 && !t.spec.burn && t.spec.bolts === 0 && t.spec.markPct === 0)) {
+          t.cooldown -= dt;
+          if (t.cooldown <= 0) {
+            attacked = this.attack(t, enemies);
+            if (attacked) t.cooldown += 1 / (t.spec.rate * t.rallyRateMul);
+            else t.cooldown = 0; // nothing in range: ready the moment something walks in
+          }
+        }
+      }
+      if (firstAttacks) quietDot(t, road, attacked || t.beamHolding, dt);
     }
   }
 
@@ -157,4 +169,9 @@ export class TowerSystem {
     }
     return undefined;
   }
+}
+
+/** Whether a first form has an on-board action of its own: a strike, a slow, a root, a gust, a burn, a mark or a held beam line. */
+function firstActs(f: FirstForm): boolean {
+  return f.damage > 0 || f.slow !== undefined || f.root !== undefined || (f.push ?? 0) > 0 || f.burn !== undefined || f.mark !== undefined || f.beam !== undefined;
 }
