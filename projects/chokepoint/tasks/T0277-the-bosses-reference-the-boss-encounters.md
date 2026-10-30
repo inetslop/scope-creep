@@ -3,11 +3,13 @@ id: T0277
 title: "The bosses reference: the boss encounters, off the pause"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T10:09:05Z
+claimed_at: 2026-10-30T10:36:03Z
 epic: E5
+designer: cachyos-x8664
 ---
 
 ## Goal
