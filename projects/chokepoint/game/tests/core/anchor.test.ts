@@ -3,7 +3,7 @@ import { anchor } from '../../src/content/augments/anchor';
 import type { AugmentCopy, Tier } from '../../src/content/types';
 import { AUGMENTS } from '../../src/content/augments';
 import { describeSpec, rollOffer, towerSpec } from '../../src/core/augments';
-import { applyRoot, ROOT_IMMUNE_SEC, tickRoot, type RootState } from '../../src/core/root';
+import { applyRoot, tickRoot, type RootState } from '../../src/core/root';
 import { Rng } from '../../src/core/rng';
 import { tierAddedLine, tierTowerLine } from '../../src/core/tiers';
 
@@ -57,46 +57,15 @@ describe('anchor (root)', () => {
   });
 });
 
-describe('the root never holds for good', () => {
-  const fresh = (): RootState => ({ rootLeft: 0, rootImmuneLeft: 0 });
-  /** Seconds out of `total` that an enemy hit every `period` seconds with a `sec` root spends rooted. */
-  const rootedTime = (sec: number, period: number, total = 30, dt = 1 / 60): number => {
-    const s = fresh();
-    let rooted = 0;
-    let next = 0;
-    for (let t = 0; t < total; t += dt) {
-      if (t >= next) {
-        applyRoot(s, sec);
-        next += period;
-      }
-      if (s.rootLeft > 0) rooted += dt;
-      tickRoot(s, dt);
-    }
-    return rooted / total;
-  };
+describe('the root holds for its own time', () => {
+  const fresh = (): RootState => ({ rootLeft: 0 });
 
-  it('a root holds for its time, then the enemy shrugs roots off for ROOT_IMMUNE_SEC', () => {
+  it('a root holds for its time, is never refreshed while it holds, and once it wears off a new root takes hold again immediately', () => {
     const s = fresh();
     expect(applyRoot(s, 0.5)).toBe(true);
     expect(applyRoot(s, 1)).toBe(false); // never refreshed or extended while it holds
     tickRoot(s, 0.5);
-    expect(s).toEqual({ rootLeft: 0, rootImmuneLeft: ROOT_IMMUNE_SEC });
-    expect(applyRoot(s, 0.5)).toBe(false);
-    tickRoot(s, ROOT_IMMUNE_SEC);
-    expect(s.rootImmuneLeft).toBe(0);
-    expect(applyRoot(s, 0.5)).toBe(true);
-  });
-
-  it('Splash with an Anchor added (a 0.5s root every 1s) stops an enemy about a fifth of the time, not half', () => {
-    expect(rootedTime(0.5, 1)).toBeLessThan(0.25);
-  });
-
-  it('a root as long as the pulse gap, or a faster tower, no longer holds everything in place', () => {
-    expect(rootedTime(1, 1)).toBeLessThan(0.4);
-    expect(rootedTime(0.75, 0.67)).toBeLessThan(0.35);
-  });
-
-  it('a lone Anchor tower (0.75s every 3s) roots on every pulse, as before', () => {
-    expect(rootedTime(0.75, 3, 30)).toBeCloseTo(0.25, 1);
+    expect(s).toEqual({ rootLeft: 0 });
+    expect(applyRoot(s, 0.5)).toBe(true); // the fatigue that stops a re-root lives in core/control.ts, not here
   });
 });

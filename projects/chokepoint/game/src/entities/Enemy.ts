@@ -6,6 +6,7 @@ import { ART_SCALE, DISC_TEXTURE, PLATE_TEXTURE, enemyTexture } from '../art/tex
 import { ignite } from '../core/burn';
 import { outOfReachLeg } from '../core/outOfReach';
 import { applyRoot, tickRoot } from '../core/root';
+import { controlScale, noteControl, tickControl } from '../core/control';
 import { shieldMul } from '../core/shield';
 import type { LiveBurn } from '../core/burn';
 import type { Tower } from './Tower';
@@ -49,8 +50,10 @@ export class Enemy extends Phaser.GameObjects.Image {
   hastePct = 0;
   /** Seconds of a full stop left (Anchor): a rooted enemy does not move at all. */
   rootLeft = 0;
-  /** Seconds it still shrugs off roots after one wore off (core/root.ts). */
-  rootImmuneLeft = 0;
+  /** Pushes and roots taken in the current streak (core/control.ts); each halves the next one. */
+  controlCount = 0;
+  /** Seconds since the last push or root; at `CONTROL_WINDOW_SEC` the streak recovers (core/control.ts). */
+  controlQuietSec = 0;
   /** Board units a gust (Push) still has to slide it back along the road. */
   pushLeft = 0;
   /** Fraction of extra damage it takes from everything until it dies (Mark); 0: unmarked. */
@@ -97,7 +100,8 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.slowLeft = 0;
     this.hastePct = 0;
     this.rootLeft = 0;
-    this.rootImmuneLeft = 0;
+    this.controlCount = 0;
+    this.controlQuietSec = 0;
     this.pushLeft = 0;
     this.markPct = 0;
     this.markAge = 0;
@@ -150,6 +154,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     }
     // The slow keeps counting down while rooted, so it still holds when the root wears off.
     tickRoot(this, dt);
+    tickControl(this, dt); // the push/root streak recovers after CONTROL_WINDOW_SEC quiet (core/control.ts)
     // The gust slides it back along the road: a position change, never a speed change, clamped
     // at the start (no enemy slides before it) and at PUSH_RATE (the slide, not a teleport).
     if (this.pushLeft > 0) {
@@ -263,10 +268,17 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.slowLeft = Math.max(this.slowLeft, sec);
   }
 
-  /** Roots it: fully stopped for `sec` seconds, unless it is rooted already or shrugs roots off (core/root.ts). */
+  /** Roots it: fully stopped for `sec` seconds, unless it is rooted already; halved by the
+   * push/root streak (core/control.ts). A root that would be shorter than 0.05s is skipped but
+   * still counts, so an enemy hit nonstop stays fatigued. */
   root(sec: number): void {
-    if (this.def.ignoresControl) return;
-    applyRoot(this, sec);
+    if (this.def.ignoresControl || this.rootLeft > 0) return;
+    const s = sec * controlScale(this);
+    if (s < 0.05) {
+      noteControl(this);
+      return;
+    }
+    if (applyRoot(this, s)) noteControl(this);
   }
 
   /** Marks it: it takes `pct` extra damage from everything until it dies. The first mark wins. */
@@ -277,10 +289,12 @@ export class Enemy extends Phaser.GameObjects.Image {
     return true;
   }
 
-  /** Queues a slide back along the road by `units` board units (Push); advance() consumes it. */
+  /** Queues a slide back along the road by `units` board units (Push), halved by the push/root
+   * streak (core/control.ts); advance() consumes it. */
   pushBack(units: number): void {
     if (!this.active || this.def.ignoresControl || units <= 0) return;
-    this.pushLeft += units;
+    this.pushLeft += units * controlScale(this);
+    noteControl(this);
   }
 
   despawn(): void {

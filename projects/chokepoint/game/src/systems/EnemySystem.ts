@@ -9,7 +9,7 @@ import { mintGoldBonus } from '../core/mint';
 import { burnRate, burnStep } from '../core/burn';
 import { TICK_SEC } from '../config';
 import { plateMul } from '../core/plate';
-import { ROOT_IMMUNE_SEC } from '../core/root';
+import { CONTROL_WINDOW_SEC } from '../core/control';
 import { pickNearest } from '../core/targeting';
 import { bossId, quietGoldMul } from '../core/waves';
 import { hook } from '../debug/testHook';
@@ -247,12 +247,15 @@ export class EnemySystem {
     return bad ? `${bad.def.id} at (${bad.x}, ${bad.y}) hp ${bad.hp}` : undefined;
   }
 
-  /** Invariant: no active enemy carries a NaN or out-of-range root timer, or is rooted while immune. */
+  /** Invariant: no active enemy carries a NaN or out-of-range root timer, or a broken control streak. */
   brokenRoot(): string | undefined {
     const bad = this.pool.find(
-      (e) => e.active && (!Number.isFinite(e.rootLeft) || e.rootLeft < 0 || e.rootLeft > 10 || !Number.isFinite(e.rootImmuneLeft) || e.rootImmuneLeft < 0 || e.rootImmuneLeft > ROOT_IMMUNE_SEC || (e.rootLeft > 0 && e.rootImmuneLeft > 0)),
+      (e) => e.active
+        && (!Number.isFinite(e.rootLeft) || e.rootLeft < 0 || e.rootLeft > 10
+          || !Number.isFinite(e.controlCount) || e.controlCount < 0 || e.controlCount > 1024
+          || !Number.isFinite(e.controlQuietSec) || e.controlQuietSec < 0 || e.controlQuietSec > CONTROL_WINDOW_SEC),
     );
-    return bad ? `${bad.def.id} rooted for ${bad.rootLeft}s, immune for ${bad.rootImmuneLeft}s` : undefined;
+    return bad ? `${bad.def.id} rooted for ${bad.rootLeft}s, control ${bad.controlCount} in ${bad.controlQuietSec.toFixed(2)}s` : undefined;
   }
 
   /** Invariant: no active enemy carries a NaN or out-of-[0, 1] mark. */

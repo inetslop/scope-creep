@@ -4,11 +4,12 @@ title: "Control fatigue: repeated pushes and roots on one enemy grow weaker"
 assignee: desktop
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T19:32:38Z
 claimed_at: 2026-10-30T20:46:08Z
+finished_at: 2026-10-30T20:58:15Z
 ---
 
 ## Goal
@@ -90,3 +91,21 @@ export function tickControl(s: ControlState, dt: number): void;
 ### Tests
 - `tests/core/control.test.ts` as specified in step 6 (halving within the window, recovery at exactly 1.5 s, the 1.5-cell push queue, the nonstop-root cap, and full-strength lone Push 1.8 s / Anchor 2.6 s pulses).
 - `tests/core/anchor.test.ts` updated as in step 5 so `npm run check` typechecks.
+
+## Result (attempt 1, desktop)
+
+Push and roots now share one fatigue rule in a new pure module `src/core/control.ts`: each push or root on an enemy that just took one is half as strong (1, 0.5, 0.25…), recovering after 1.5 s without any. Push towers, Push added to any tower, and beam pulses all push weaker in a streak (`Enemy.pushBack`), and roots halve the same way (`Enemy.root`, sub-0.05 s roots are skipped but still count), so nothing can lock an enemy in place. The old 2 s root immunity (`ROOT_IMMUNE_SEC`, `rootImmuneLeft`) is removed from `core/root.ts`, `Enemy`, the `enemies.root` invariant (which now bounds the two control fields), and `tests/core/anchor.test.ts`; a new `tests/core/control.test.ts` covers halving, recovery, the 1.5-cell push queue, the nonstop-root cap, and full-strength lone Push (1.8 s) / Anchor (2.6 s) pulses.
+
+- Self-review: APPROVE
+- Time: 12.1 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/control.ts       | 38 ++++++++++
+ projects/chokepoint/game/src/core/root.ts          | 27 ++------
+ projects/chokepoint/game/src/entities/Enemy.ts     | 30 +++++---
+ .../chokepoint/game/src/systems/EnemySystem.ts     | 11 +--
+ projects/chokepoint/game/tests/core/anchor.test.ts | 43 ++----------
+ .../chokepoint/game/tests/core/control.test.ts     | 80 ++++++++++++++++++++++
+ 6 files changed, 159 insertions(+), 70 deletions(-)
+```
