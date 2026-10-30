@@ -1,7 +1,6 @@
 ---
 id: T0274
 title: "Sell: the panel's line that sells a misplaced tower back"
-assignee: baby-mama
 size: M
 priority: 2
 status: todo
