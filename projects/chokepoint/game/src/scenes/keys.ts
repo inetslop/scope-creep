@@ -10,6 +10,8 @@ export const SCENES = {
   menu: 'Menu',
   tech: 'Tech',
   codex: 'Codex',
+  boards: 'Boards',
+  name: 'Name',
   game: 'Game',
   hud: 'Hud',
   draft: 'Draft',

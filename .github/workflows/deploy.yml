@@ -82,6 +82,9 @@ jobs:
             projects/*/game/package-lock.json
 
       - name: Install, check and build
+        env:
+          # The leaderboard's address (leaderboard/README.md); the repository variable LEADERBOARD_URL overrides it.
+          VITE_BOARDS_URL: ${{ vars.LEADERBOARD_URL || 'https://chokepoint-leaderboard.scope-creep.workers.dev' }}
         run: |
           set -e
           for dir in game projects/*/game; do

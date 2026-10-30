@@ -44,9 +44,10 @@ How to draw:
 | `entities/` | Game objects: pooled `Enemy` and `Projectile`; `Tower` and its look rules (`towerLook.ts`) | yes |
 | `systems/` | Owned by GameScene: `RunFlow` (phases), `Building` (hand, selection, taps), `Board` (cells, camera), `WaveSystem`, `EnemySystem` (+ `enemyMarks.ts`), `enemyHooks/` (one file per reaction to kills, leaks or every frame of a wave), `TowerSystem`, `attacks/` (one file per attack kind), `ProjectileSystem`, `FxSystem` (+ `fx/`, one file per new effect) | yes |
 | `input/` | `BoardGestures` (tap, drag, pinch, wheel) and `hotkeys.ts` (the key table) | yes |
-| `scenes/` | Boot, Menu (+ `menu/MenuDemo.ts`), Game, Hud, Draft, Pause, GameOver. Keys in `scenes/keys.ts` | yes |
+| `scenes/` | Boot, Menu (+ `menu/MenuDemo.ts`), Game, Hud, Draft, Pause, GameOver, and the leaderboards' Boards and Name overlays. Keys in `scenes/keys.ts` | yes |
 | `ui/` | Text, cards, buttons, rings, the pixel ratio (`display.ts`), the new-version notice (`updateNotice.ts`), and the HUD parts (`ui/hud/`, one per element) | yes |
 | `debug/` | URL flags, the `window.__SC__` test hook, and the run's invariants (`runChecks.ts`) | yes |
+| `net/` | The leaderboard client (`boards.ts`), off without `VITE_BOARDS_URL` and in `?smoke`. Its server is `leaderboard/` at the repo root, outside the game | yes |
 
 ## Rules
 

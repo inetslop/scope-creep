@@ -4,6 +4,7 @@ import { cssColor, PALETTE } from '../content/palette';
 import { recordRun } from '../core/profile';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
+import { addBoardsCard } from '../ui/boardsLine';
 import { makeButton } from '../ui/button';
 import { makeByTowerCard, type ByTowerEntry } from '../ui/byTower';
 import { makeCard } from '../ui/card';
@@ -62,14 +63,19 @@ export class GameOverScene extends Phaser.Scene {
     parts.push(scoreRecipe, wavesText, stoppedText, cleanText, coinsText, bestText, claimButton.container, againButton.container, menuButton.container);
     const entries = this.registry.get('towerKills') as ByTowerEntry[] | undefined;
     let byTowerH = 0;
+    // The leaderboards' card (ui/boardsLine.ts) sits right under the panel, above By tower.
+    const boardsBox = this.add.container(0, 0);
+    parts.push(boardsBox);
+    const boardsH = addBoardsCard(this, boardsBox, panelH / 2 + 16 + 22, run);
+    const underY = panelH / 2 + (boardsH ? 16 + boardsH : 0);
     if (entries && entries.length > 0) {
       const built = makeByTowerCard(this, entries);
-      built.card.setPosition(0, panelH / 2 + 16 + built.height / 2);
+      built.card.setPosition(0, underY + 16 + built.height / 2);
       byTowerH = built.height;
       parts.push(built.card);
     }
     const box = this.add.container(0, 0, parts);
-    const bottom = panelH / 2 + (byTowerH ? 16 + byTowerH : 0); // how far the content extends below the panel's center
+    const bottom = underY + (byTowerH ? 16 + byTowerH : 0); // how far the content extends below the panel's center
 
     const layout = (width: number, height: number): void => {
       box.setPosition(width / 2, height / 2).setScale(Math.min(1, (width - 24) / panelW, (height / 2 - 12) / (panelH / 2), (height / 2 - 12) / bottom));

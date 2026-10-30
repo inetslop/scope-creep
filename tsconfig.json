@@ -17,5 +17,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["loop/**/*.ts", "site/**/*.ts", "setup/**/*.ts"]
+  "include": ["loop/**/*.ts", "site/**/*.ts", "setup/**/*.ts", "leaderboard/src/**/*.ts"]
 }

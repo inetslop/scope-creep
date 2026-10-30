@@ -7,6 +7,7 @@ import { nodeInReach } from '../core/tech';
 import { MENU_ROAD_SIZE } from '../art/menu';
 import { artScale, augmentTexture } from '../art/textures';
 import { flags } from '../debug/flags';
+import { boardsOn } from '../net/boards';
 import { hook } from '../debug/testHook';
 import { makeButton, type Button } from '../ui/button';
 import { addUpdateNotice } from '../ui/updateNotice';
@@ -111,6 +112,13 @@ export class MenuScene extends Phaser.Scene {
       this.scene.launch(SCENES.codex);
       this.scene.pause();
     }, { width: 220, height: 60, fontSize: 24, radius: 30 });
+    // The leaderboards (scenes/BoardsScene.ts), only when the build has a server for them.
+    const boards = boardsOn()
+      ? makeButton(this, 0, 0, 'Boards', () => {
+          this.scene.launch(SCENES.boards);
+          this.scene.pause();
+        }, { width: 220, height: 60, fontSize: 24, radius: 30 })
+      : undefined;
     const hint = this.add.text(0, 0, 'Enter or Space', textStyle(14, PALETTE.faint)).setOrigin(0.5);
 
     // Entrances: the title drops in with a bounce, the rest fades up after it; Play breathes.
@@ -122,6 +130,7 @@ export class MenuScene extends Phaser.Scene {
     fadeIn.push(tech.container);
     fadeIn.push(techLine);
     fadeIn.push(augments.container);
+    if (boards) fadeIn.push(boards.container);
     if (ghost && ghostLine) {
       fadeIn.push(ghost.container);
       fadeIn.push(ghostLine);
@@ -145,9 +154,10 @@ export class MenuScene extends Phaser.Scene {
       // The gap between the road and the column counts for the fit, too.
       let below = GAP + title.height + GAP + cardH + GAP + howH + GAP;
       if (resume) below += BUTTON_H + GAP;
-      below += BUTTON_H + GAP + BUTTON_H + CAPTION_GAP + techLine.height + BUTTON_H;
+      below += BUTTON_H + GAP + BUTTON_H + CAPTION_GAP + techLine.height + GAP + BUTTON_H;
+      if (boards) below += GAP + BUTTON_H;
       if (ghost && ghostLine) below += GAP + BUTTON_H + CAPTION_GAP + ghostLine.height + GAP;
-      below += hint.height;
+      below += (ghost && ghostLine ? 0 : GAP) + hint.height; // the gap above the hint (the ghost's line adds its own)
       const kMax = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width);
       const kMin = 0.35;
       const room = avail - below;
@@ -195,8 +205,14 @@ export class MenuScene extends Phaser.Scene {
       gap(CAPTION_GAP);
       techLine.setScale(s);
       techLine.setPosition(cx, put(techLine.height));
+      gap(GAP);
       augments.container.setScale(s);
       augments.container.setPosition(cx, put(BUTTON_H));
+      if (boards) {
+        gap(GAP);
+        boards.container.setScale(s);
+        boards.container.setPosition(cx, put(BUTTON_H));
+      }
       if (ghost && ghostLine) {
         gap(GAP);
         ghost.container.setScale(s);

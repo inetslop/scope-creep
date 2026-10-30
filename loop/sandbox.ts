@@ -45,7 +45,7 @@ export async function enforceWritable(git: Git, profile: Profile): Promise<strin
 const rule = (tool: string, absPath: string, glob = '/**'): string => `${tool}(${permissionPath(absPath)}${glob})`;
 
 /** Root-level loop folders/files no agent may touch. */
-const LOOP_AREAS = [path.join(REPO, 'loop'), path.join(REPO, 'setup'), path.join(REPO, 'site'), AGENTS_DIR, AGENT_DIR, path.join(REPO, '.github'), path.join(REPO, 'node_modules')];
+const LOOP_AREAS = [path.join(REPO, 'loop'), path.join(REPO, 'setup'), path.join(REPO, 'site'), path.join(REPO, 'leaderboard'), AGENTS_DIR, AGENT_DIR, path.join(REPO, '.github'), path.join(REPO, 'node_modules')];
 const ROOT_FILES = ['package.json', 'package-lock.json', 'tsconfig.json', '.gitignore', 'README.md'].map((f) => path.join(REPO, f));
 
 /** The other games in the repo: agents see only the project they work on, so they never copy from or edit the wrong one. */
