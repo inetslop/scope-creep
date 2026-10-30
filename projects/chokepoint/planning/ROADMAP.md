@@ -18,10 +18,14 @@ The game grows through epics: bigger features that take several tasks. One or tw
 
 ### E2 — Tech tree (done; history in planning/archive/ROADMAP.md)
 
-### E3 — Levels: a run is a journey (not started)
+### E3 — Levels: a run is a journey (active — opened 2026-10-30)
 **Goal:** a run has a shape: a few boards in a row, each harder, and a build that grows across them.
 **Groundwork (outside the epic):** T0015 (wave preview — done, 2026-10-28, narcissus) becomes the per-level wave preview once levels exist; T0014 (leak warning) teaches what a leak is before levels make leaking costlier; T0019 (fast-forward 2x) keeps runs in flow and pays off once a run spans several levels; the lives danger-pip idea was rejected as T0022 (the stats card has no room — see IDEAS) and is the one to revisit if levels make leaking costlier.
-**When done:** a run goes through levels, like the acts of a roguelite: each level is its own board with a set number of waves, ending in a tougher final wave. Clear it and the run moves on to the next level: a new, harder board (a longer or more winding road, tougher enemies) that starts empty. What you carry is your **pool**: the run starts with a small pool of augments that the drafts offer from, and every time you clear a level you pick one new augment to add to it, so each level offers more to combine. The HUD shows the level ("Level 2 · Wave 3/8"), the pick between levels is its own moment, and the game-over screen says how far you got. Clearing the last level wins the run.
+**When done:** a run goes through levels, like the acts of a roguelite: each level is its own board with a set number of waves, ending in a tougher final wave. Clear it and the run moves on to the next level: a new, harder board (a longer or more winding road, tougher enemies) that starts empty. What you carry is your **pool**: the run starts with a small pool of augments that the drafts offer from, and every time you clear a level you pick one new augment to add to it, so each level offers more to combine. The HUD shows the level (the wave card's muted "level 2 · 3/10" line), the pick between levels is its own moment, and the game-over screen says how far you got. Clearing the last level (wave 30) wins the run.
+**Breakdown:**
+- T0260 (L, priority 1) — the level rule: three levels of ten waves (waves number continuously 1-30, the bosses end levels 1 and 2), the road re-grows longer and empty at each clear, gold and lives carry, the wave-30 win, the game-over "how far" line — written 2026-10-30, in the pool
+- T0261 (M, priority 2, behind T0260) — the pool: the draft offers from six augments (Bolt, Rapid, Splash, Lance, Reach, Push), and the level clear's pick adds one (its own moment, the draft's pattern) — written 2026-10-30
+- T0262 (S, priority 2, behind T0260) — the wave card's muted "level N · w/10" line — written 2026-10-30
 
 ### E4 — Augment rarity (active — started 2026-10-28)
 **Goal:** the draft is exciting: sometimes a card is something special.
@@ -98,7 +102,7 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 
 **16-cap (protocol):** the pipeline holds 21 augments (15 in + T0025, T0064, T0062, T0095, T0152, T0235); the cap is 16, so the six registrations land five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Mark and Anchor extend the order (2026-10-30): the beam carries the mark (T0132), and Ward already punishes the root build; Bolt, Beam, Splash, Lance, Rapid, Reach, Push, Ember, Spray and Toll never leave the index — the draft floor (T0048) and the beam-combo web (T0210, T0242) depend on them.
 
-### E5 — Bosses: every 10th wave is something you remember (active — opened 2026-10-30; fully tasked 2026-10-30: all five slices are written, the next epic opens once T0253 lands)
+### E5 — Bosses: every 10th wave is something you remember (active — opened 2026-10-30; fully tasked 2026-10-30: all five slices are written; E3 opened 2026-10-30, E5's tasks wait only on T0253)
 **Goal:** the run has a peak: the deep waves bring one big shape with its own mechanic, not just more of the same.
 **When done:** every 10th wave the road sends a boss instead of a crowd: a single big shape (6× Block's hp, Block's speed, one life on a leak) under its own health bar (a small white card pinned to the top edge, counting down as it is hit). The wave-10 boss phases at 50% hp — translucent and untargetable for 2.5 s, every 8 s — so a one-trick single-target build needs a second line (Splash, Lance, Chain, Beam and Ember all answer it). The wave preview (T0015) shows it coming, and a boss death is a moment: a big chip burst, a Block's double in gold, and a card that names it. Later bosses swap the mechanic (one shields its escort, one splits at half hp).
 **Breakdown (in this order):**
@@ -136,12 +140,12 @@ Ideas that may become epics or tasks of one.
 - Targeting modes per tower (first, strongest, closest) — **tasked as T0114 (L, non-epic, in the pool)** — the spec and its parked follow-ups (the plinth notch, the chip's teach line) stand in IDEAS
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
-- Bosses every 10 waves, each with its own mechanic — now **E5** (not started; sketched in the epics above; the first boss design is in IDEAS)
+- Bosses every 10 waves, each with its own mechanic — now **E5** (active, fully tasked 2026-10-30; the first boss design is in IDEAS)
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **tasked as T0239 (L, non-epic)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
 - Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**
 - The board shows its corners: a notch on the bend cells — **built as T0140 (2026-10-29), removed as T0227 (2026-10-29)**
-- Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **T0217 (L, non-epic) in progress on asus**
+- Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **built as T0217 (2026-10-30, asus)**
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**

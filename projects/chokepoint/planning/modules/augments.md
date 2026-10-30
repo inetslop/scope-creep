@@ -71,7 +71,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - look: shape circle, color teal, size 0.21
 - first: kind shot, damage 12, range 2.6, rate 1.6, projectileSpeed 10
 - added: extraShots 1
-- tiers: rare {damageMul 1.3, cooldownMul 0.85}, epic {damageMul 1.7, cooldownMul 0.7}
+- tiers: rare {damageMul 1.3, cooldownMul 0.85, addedShots 2, asAdded Two more shots each attack.}, epic {damageMul 1.7, cooldownMul 0.7, addedShots 3, asAdded Three more shots each attack.}
 
 ### Lance (`lance`)
 - description: "A long thin shot that flies straight. Added: +1 pierce."
@@ -80,7 +80,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - look: shape square, color teal, size 0.22
 - first: kind shot, damage 12, range 2.6, rate 1.11, projectileSpeed 10, pierce 1
 - added: pierce 1
-- tiers: rare {damageMul 1.333, cooldownMul 0.854, pierce 2, asAdded +1 pierce.}, epic {damageMul 1.667, cooldownMul 0.698, pierce 3, asAdded +1 pierce.}
+- tiers: rare {damageMul 1.333, cooldownMul 0.854, pierce 2, asAdded +2 pierce.}, epic {damageMul 1.667, cooldownMul 0.698, pierce 3, asAdded +3 pierce.}
 
 ### Splash (`splash`)
 - description: "Blasts the 3 furthest around it. Added: hits burst over 1 cell, to 2 more enemies."
@@ -98,7 +98,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - look: shape diamond, color yellow, size 0.24
 - first: kind spray, damage 4, range 2.5, rate 0.833, spray 5
 - added: spray 2
-- tiers: rare {damageMul 1.25, cooldownMul 0.875, asAdded +2 pellets per blast.}, epic {damageMul 1.5, cooldownMul 0.75, asAdded +2 pellets per blast.}
+- tiers: rare {damageMul 1.25, cooldownMul 0.875, addedSpray 3, asAdded +3 pellets per blast.}, epic {damageMul 1.5, cooldownMul 0.75, addedSpray 4, asAdded +4 pellets per blast.}
 
 ### Frost (`frost`)
 - description: "Slows everything around it. Added: hits slow enemies by 40%."
@@ -112,12 +112,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
 ### Push (`push`)
 - description: "Pushes everything back along the road. Added: hits push back 0.4 cells."
 - asTower: "Pushes everything back 0.8 cells, every 2.4 s."
-- asAdded: Hits push back 0.4 cells, +0.4 per Push.
+- asAdded: "Hits push back 0.4 cells, more with each Push."
 - look: shape triangle, color purple, size 0.22
 - first: kind pulse, damage 0, range 2.5, rate 0.417, push 0.8
 - added: push 0.4
 - opening: true
-- tiers: rare {cooldownMul 0.833, push 1, asAdded Hits push back 0.4 cells, +0.4 per Push.}, epic {cooldownMul 0.75, push 1.2, asAdded Hits push back 0.4 cells, +0.4 per Push.}
+- tiers: rare {cooldownMul 0.833, push 1, addedPush 0.6}, epic {cooldownMul 0.75, push 1.2, addedPush 0.8}
 
 ### Anchor (`anchor`)
 - description: "Roots everything around it. Added: hits root enemies."
