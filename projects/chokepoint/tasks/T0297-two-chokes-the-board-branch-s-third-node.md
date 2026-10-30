@@ -1,12 +1,14 @@
 ---
 id: T0297
 title: "Two chokes: the board branch's third node"
+assignee: desktop
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T17:56:06Z
+claimed_at: 2026-10-30T19:05:46Z
 epic: E9
 ---
 
