@@ -3,14 +3,14 @@ id: T0282
 title: "Spray crits: the shotgun rolls for double damage"
 size: M
 priority: 1
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-30T10:37:56Z
 claimed_at: 2026-10-30T12:45:34Z
+finished_at: 2026-10-30T13:06:31Z
 epic: E4
-design_attempts: 1
-designer: cachyos-x8664
+design_attempts: 2
 ---
 
 ## Goal
@@ -58,3 +58,11 @@ Today an added Spray does nothing on any tower except a Spray tower: its only ad
 - [ ] The same seed gives the same drafts with or without crits in play.
 - [ ] Card lines, panel line and damage-per-second figure as above. Unit tests cover the crit chance in `towerSpec` (first, added, stacked, capped), the expected value in `towerDps`, and that the damage is exactly ×2 on a crit roll.
 - [ ] `npm run check` passes. Desktop 1280x720 and mobile 412x915 smoke pass.
+
+## Architect could not design it (cachyos-x8664)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+Prompt is too long
+```
