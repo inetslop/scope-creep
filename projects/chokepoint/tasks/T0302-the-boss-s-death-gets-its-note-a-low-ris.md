@@ -4,11 +4,12 @@ title: "The boss's death gets its note: a low rising horn under the burst"
 assignee: cachyos-x8664
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T19:42:22Z
 claimed_at: 2026-10-30T20:06:48Z
+finished_at: 2026-10-30T20:16:20Z
 ---
 
 ## Goal
@@ -82,3 +83,16 @@ The task's "one line" undercounts: the hook's `onKill` does not fire at the Orb'
 
 ### Tests
 none
+
+## Result (attempt 1, cachyos-x8664)
+
+Added `Sfx.bossDown()` in `src/audio/Sfx.ts` — a low rising horn of three 120 ms sine notes G2→B2→D3 (98/123/147 Hz) 60 ms apart at volume 0.15, sequenced through `tone()`'s existing delay parameter, placed right after `bossOut()`. Extended `src/systems/enemyHooks/bossDeath.ts`: its `onKill` now plays the horn at the Colossus/Titan kill beat, and a new `update()` plays it at the Orb's half-hp split (midSplit's ring beat, where there is no kill), using the hook's `enemies`/`sfx` context. The registry line and hook order in `ENEMY_HOOKS` are unchanged, so the Orb is still `active` when the horn's frame runs. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 9.6 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts                   |  7 +++++++
+ .../chokepoint/game/src/systems/enemyHooks/bossDeath.ts     | 13 ++++++++++++-
+ 2 files changed, 19 insertions(+), 1 deletion(-)
+```

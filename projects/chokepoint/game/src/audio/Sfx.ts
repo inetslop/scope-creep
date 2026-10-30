@@ -138,6 +138,13 @@ export class Sfx {
     this.tone(220, 0.12, 'sine', 0.08, 180);
   }
 
+  /** The boss dies: a low rising horn, G2 then B2 then D3 (98, 123, 147 Hz), 120 ms sines 60 ms apart, the sting's volume class up. */
+  bossDown(): void {
+    this.tone(98, 0.12, 'sine', 0.15);
+    this.tone(123, 0.12, 'sine', 0.15, undefined, 0.06);
+    this.tone(147, 0.12, 'sine', 0.15, undefined, 0.12);
+  }
+
   leakWarn(): void {
     this.tone(200, 0.08, 'sine', 0.1, 150);
   }
