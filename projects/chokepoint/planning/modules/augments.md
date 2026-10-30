@@ -65,13 +65,13 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - `spray`: Spray
 
 ### Bolt (`bolt`)
-- description: "Shoots the enemy furthest along. Added: one more shot each attack."
+- description: "Shoots the enemy furthest along. Added: one more shot at the same enemy each attack."
+- asAdded: "One more shot at the same enemy each attack."
 - asTower: Shoots the enemy furthest along.
-- asAdded: One more shot each attack.
 - look: shape circle, color teal, size 0.21
 - first: kind shot, damage 12, range 2.6, rate 1.6, projectileSpeed 10
 - added: extraShots 1
-- tiers: rare {damageMul 1.3, cooldownMul 0.85, asAdded One more shot each attack.}, epic {damageMul 1.7, cooldownMul 0.7, asAdded One more shot each attack.}
+- tiers: rare {damageMul 1.3, cooldownMul 0.85}, epic {damageMul 1.7, cooldownMul 0.7}
 
 ### Lance (`lance`)
 - description: "A long thin shot that flies straight. Added: +1 pierce."
