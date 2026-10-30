@@ -1,12 +1,14 @@
 ---
 id: T0277
 title: "The bosses reference: the boss encounters, off the pause"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T10:09:05Z
+claimed_at: 2026-10-30T11:58:34Z
 epic: E5
 ---
 
