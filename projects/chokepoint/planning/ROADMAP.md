@@ -25,76 +25,82 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 **Goal:** the draft is exciting: sometimes a card is something special.
 **When done:** every augment card in the draft comes in a rarity: Common, Rare or Epic. A rarer card is the same augment with stronger numbers (a Rare Rapid attacks faster than a Common one), and a few rule-changing augments only ever come as Epic. Rarity shows everywhere the augment does: the card's frame and a small gem row on the draft, hand and tower-panel cards, and on the tower itself (its slot pip). Rarer cards turn up more often the further the run gets; the odds are shown in the draft.
 **Breakdown:**
-- T0002 (asus, L) — the tiers: the draft roll, card frame + gem row, odds line — **done** (2026-10-28)
-- T0004 (asus, L) — Lance — **done** (2026-10-28)
-- T0008 (desktop, M) — rarity on the hand and the tower panel — **done** (2026-10-28)
-- T0010 (yoga, S) — the tier pip per slot on the tower — **done** (2026-10-28)
-- T0011 (asus, M) — the odds shift deeper into the run — **done** (2026-10-28)
-- T0012 (asus, L) — Mark: the first rule-changing Epic — **done** (2026-10-28)
-- T0020 (asus, L) — Rally: the cluster Epic — **done** (2026-10-28)
-- T0021 (desktop, L) — Mint: the economy Epic — **done** (2026-10-28)
-- T0023 (asus, L) — Anchor: the root Epic — **done** (2026-10-28)
-- T0024 (yoga, S) — the draft reveal flip — **done** (2026-10-28)
-- T0025 (asus, L) — Chain: the leap-zap augment (pool, all tiers): first, a zap that strikes the enemy furthest along and leaps to the nearest unstruck enemy; added, +1 leap to any first augment's attack — the first attack that changes target mid-attack — in the pool
-- T0026 (yoga, S) — the tier word on the draft card — **done** (2026-10-28)
-- T0027 (asus, L) — Push: the first augment that moves enemies along the road — **done** (2026-10-28)
-- T0028 (asus, L) — Ember: the first damage over time — **done** (2026-10-28)
-- T0029 (asus, L) — Beam: **failed three times**; landed as T0073 — superseded
-- T0032 (yoga, S) — the tier chime on the draft reveal — **done** (2026-10-28)
-- T0036 (M) — reroll: once per run, three new draft cards for 15 gold — **done** (2026-10-28, desktop)
-- T0038 (L) — Ricochet: **rejected** — shots home, there is no line of sight; don't re-propose unless rocks start blocking shots
-- T0039 (S) — Mint's gold pop — **done** (2026-10-28, baby-mama)
-- T0040 (M) — Lead: **removed by hand the same day** — shots home and never miss; don't re-propose an aimed or predictive shot
-- T0041 (S) — the Epic frame shimmer on the reveal — **done** (2026-10-28, yoga)
-- T0043 (S) — the beam hum: **landed as T0112** (three attempts were blocked on the Beam missing)
-- T0044 (S) — the owned dot on the draft card — **done** (2026-10-28, yoga)
-- T0048 (S) — the first draft always offers a Common Bolt — **done** (2026-10-28, baby-mama)
-- T0052 (S) — the draft never repeats the previous offer — **done** (2026-10-28, inet-racing)
-- T0055 (S) — the working-aura ring under support towers — **done** (2026-10-28, desktop)
-- T0058 (S) — the Push wind-up ring — **done** (2026-10-28, yoga)
-- T0059 (S) — the burn jumps once to the nearest on death — **done** (2026-10-28, yoga)
-- T0062 (M) — Trap (a bomb that springs on the road: the first triggered attack — the spring is the enemy's proximity, not the tower's cadence; added, kills leave a trap at the kill spot): the design stands as written (its one failure was an environment failure before any design); in the pool (todo), claim-order behind Momentum (T0064) so the pool lands one registration at a time
-- T0064 (L) — Momentum (the fourth rule-changing Epic, Epic-only: each clean wave makes every tower deal +5% more damage for the rest of the run; added, each extra copy adds +5% more; a low wide yellow disc with a notch per copy) — in the pool (todo); claim-order keeps the shared augment files at one registration at a time
-- T0065 (M) — second pick: every 5th draft offers a fourth card — **done** (2026-10-29, asus)
-- T0073 (L) — Beam: the first sustained attack (the T0029 re-task) — **done** (2026-10-29, asus)
-- T0084 (M) — the "≈ N/s" DPS line in the tower panel — **done** (2026-10-29, cachyos-x8664)
-- T0088 (S) — the tier chime plays on the build commit — **done** (2026-10-29, desktop-4070)
-- T0089 (L) — Pulse: **dropped** — Splash without the cap plus Reach's added form; fails the content bar, don't re-task it or a variant
-- T0093 (L) — Mend: **rejected** on the 56-char tier-line cap; re-filed as T0095
-- T0094 (S) — the owned dot counts copies (×N) — **done** (2026-10-29, narcissus)
-- T0095 (L) — **Mend: the Epic that buys a life back (the T0093 re-file)**: Epic-only, a support with no attack of its own — every 12 kills this run the run regains 1 life (a pay at the starting lives is held and pays at the next leak); added, −2 kills per extra copy (12, 10, 8, 6, 4 floor) — the only change from the rejected T0093 is the shortened Added line; in the pool (priority 3)
-- T0096 (M) — the what-if preview of the held card — **done** (2026-10-29, asus)
-- T0099 (M) — the mark shows on the enemy (first telegraph slice) — **done** (2026-10-29, desktop-4070)
-- T0100 (S) — the tier word wears its tier's color — **done** (2026-10-29, yoga)
-- T0101 (L) — Spray: the pool's aimed spread — **done** (2026-10-29, desktop)
-- T0104 (S) — the Sprinter shows its ramp (telegraph slice) — **done** (2026-10-29, baby-mama)
-- T0105 (S) — the Splitter's crack widens at half hp (telegraph slice) — **done** (2026-10-29, inet-racing)
-- T0112 (S) — the beam hum (the T0043 re-file) — **done** (2026-10-29, asus)
-- T0113 (S) — the burn shows on the enemy (telegraph slice) — **done** (2026-10-29, baby-mama)
-- T0130 (M, priority 1) — Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam — **done** (2026-10-29, desktop)
-- T0131 (M, priority 2) — Beam combos II: Lance pierces, Splash scorches, Spray splits a beam kill — **failed** (2026-10-29, the architect's prompt overflowed cachyos's context before any design) — re-filed tighter: Lance + Splash as T0210; the needle clause (a beam kill splits into Spray needles) parked in IDEAS until T0210 lands
-- T0210 (M, priority 2) — Beam combos II (the re-file): Lance pierces the beam's main line, Splash scorches its target — **done** (2026-10-29, inet-racing)
-- T0242 (M, priority 2) — Beam combos IIb: a beam kill splits into one homing needle per added Spray (12 damage, the pellet's look and speed, different nearest other enemies within 2 cells, only on kills) — in design
-- T0248 (S, priority 2) — the codex lock: the gated pool augments (Haste, Momentum, Mend today) wear a small muted lock on their codex cards, plus a state line under the grid — in design (2026-10-30)
-- T0132 (M, priority 2) — Beam combos III: the beam carries Ember, Anchor, Push and Mark (Frost only if the 16-cap hasn't removed it) — **done** (2026-10-29, desktop)
-- T0133 (M, priority 2) — A new look for the Beam tower: a tower with a circle on top — **done** (2026-10-29, desktop)
-- T0134 (L, priority 2) — Spray becomes a shotgun: a cone of pellets — **done** (2026-10-29, inet-racing)
-- T0135 (S) — Spray gets its own look, not Beam's — **done** (2026-10-29, yoga)
-- T0152 (L, priority 2) — Haste: the Epic that hastens everything it touches (2-cell aura: enemies walk +30% faster, towers attack +30% faster, +15% to both per extra copy, no cap; Epic-only; gated — absent from the draft roll until the tech tree's pool node, T0153, is bought) — in the pool, next registration behind the pool augments
-- T0138 (S) — the slow shows on the enemy (telegraph slice) — **done** (2026-10-29, narcissus)
-- T0139 (S) — the root shows on the enemy (telegraph slice) — **done** (2026-10-29, yoga)
-- T0221 (L, priority 2) — the Augments codex: a menu screen that shows every augment in the pool (icon, name, a purple “Epic” word for the Epic-only ones, the first and added rows) — **done** (2026-10-29, desktop)
-- T0228 (S, priority 2) — the end card's towers wear their tier: T0010's pip on each by-tower chip — **done** (2026-10-29, asus)
-- T0234 (M, priority 2) — Toll: the Epic that pays gold when a leak gets through (the first augment whose income comes from losing) — **done** (2026-10-30, inet-racing)
-- T0235 (L, priority 2) — Feast: the Epic that feeds on the kill chain (its added form lengthens the chain's window) — in the pool
-- T0236 (S, priority 2) — the what-if says "nothing": a held card whose added form does nothing to a tower shows the ghost's marker dimmed (the tower's own spec is the judge) — in the pool
-- T0238 (L, priority 2) — the draft shows where the card lands: **failed** (2026-10-29, rejected: it delegated the dim rule to T0236's not-yet-written judge, and its own restatement of that rule contradicted its acceptance example) — re-filed as T0243 (re-scoped without T0236's dim rule) — **done** (2026-10-30, desktop)
+- T0002 (L) — the tiers: the draft roll, card frame + gem row, odds line — done
+- T0004 (L) — Lance — done
+- T0008 (M) — rarity on the hand and the tower panel — done
+- T0010 (S) — the tier pip per slot on the tower — done
+- T0011 (M) — the odds shift deeper into the run — done
+- T0012 (L) — Mark: the first rule-changing Epic — done
+- T0020 (L) — Rally: the cluster Epic — done
+- T0021 (L) — Mint: the economy Epic — done
+- T0023 (L) — Anchor: the root Epic — done
+- T0024 (S) — the draft reveal flip — done
+- T0025 (L) — Chain: the leap-zap augment — the first attack that changes target mid-attack — in the pool (todo)
+- T0026 (S) — the tier word on the draft card — done
+- T0027 (L) — Push: moves enemies back along the road — done
+- T0028 (L) — Ember: the first damage over time — done
+- T0029 (L) — Beam: failed three times — superseded by T0073
+- T0032 (S) — the tier chime on the draft reveal — done
+- T0036 (M) — reroll: once per run, three new cards for 15 gold — done
+- T0038 (L) — Ricochet: rejected (shots home) — don't re-propose unless rocks block shots
+- T0039 (S) — Mint's gold pop — done
+- T0040 (M) — Lead: removed (shots home and never miss) — don't re-propose an aimed shot
+- T0041 (S) — the Epic frame shimmer on the reveal — done
+- T0043 (S) — the beam hum: landed as T0112 — done
+- T0044 (S) — the owned dot on the draft card — done
+- T0048 (S) — the first draft always offers a Common Bolt — done
+- T0052 (S) — the draft never repeats the previous offer — done
+- T0055 (S) — the working-aura ring under support towers — done
+- T0058 (S) — the Push wind-up ring — done
+- T0059 (S) — the burn jumps once to the nearest on death — done
+- T0062 (M) — Trap: the bomb that springs on the road, the first triggered attack — in the pool (todo)
+- T0064 (L) — Momentum: each clean wave, +5% damage to every tower (Epic-only, gated) — in the pool (todo)
+- T0065 (M) — second pick: every 5th draft offers a fourth card — done
+- T0073 (L) — Beam: the first sustained attack — done
+- T0084 (M) — the "≈ N/s" DPS line in the tower panel — done
+- T0088 (S) — the tier chime plays on the build commit — done
+- T0089 (L) — Pulse: dropped (fails the content bar) — don't re-task it or a variant
+- T0093 (L) — Mend: rejected on the 56-char tier-line cap — re-filed as T0095
+- T0094 (S) — the owned dot counts copies (×N) — done
+- T0095 (L) — Mend: the Epic that buys a life back (every 12 kills, +1 life; −2 per extra copy, floor 4) — in the pool (todo, priority 3)
+- T0096 (M) — the what-if preview of the held card — done
+- T0099 (M) — the mark shows on the enemy — done
+- T0100 (S) — the tier word wears its tier's color — done
+- T0101 (L) — Spray: the pool's aimed spread — done
+- T0104 (S) — the Sprinter shows its ramp — done
+- T0105 (S) — the Splitter's crack widens at half hp — done
+- T0112 (S) — the beam hum — done
+- T0113 (S) — the burn shows on the enemy — done
+- T0130 (M) — Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam — done
+- T0131 (M) — Beam combos II: failed (context overflow) — re-filed as T0210, the needle clause parked for T0242
+- T0210 (M) — Beam combos II: Lance pierces the beam's main line, Splash scorches its target — done
+- T0242 (M) — Beam combos IIb: a beam kill splits into one homing needle per added Spray — in the pool (todo)
+- T0248 (S) — the codex lock: a muted lock on the gated augments' codex cards — in the pool (todo, waits on T0062 and T0095)
+- T0132 (M) — Beam combos III: the beam carries Ember, Anchor, Push and Mark — done
+- T0133 (M) — a new look for the Beam tower — done
+- T0134 (L) — Spray becomes a shotgun: a cone of pellets — done
+- T0135 (S) — Spray gets its own look — done
+- T0152 (L) — Haste: the Epic that hastens everything it touches (2-cell aura, +30% to both sides, +15% per copy; gated by its tech node) — done (2026-10-30)
+- T0138 (S) — the slow shows on the enemy — done
+- T0139 (S) — the root shows on the enemy — done
+- T0221 (L) — the Augments codex: every augment in the pool, one card each — done
+- T0228 (S) — the end card's towers wear their tier — done
+- T0234 (M) — Toll: the Epic that pays gold when a leak gets through — done (2026-10-30)
+- T0235 (L) — Feast: the Epic that feeds on the kill chain (its added form lengthens the chain's window) — in the pool (todo)
+- T0236 (S) — the what-if says "nothing": failed on a wrong premise — dropped, don't re-propose a hits-card dim
+- T0238 (L) — the draft shows where the card lands: failed (wrong premise) — re-filed as T0243
+- T0243 (L) — the draft shows where the card lands (the re-file): each offered card shows the towers a pick would land on — done (2026-10-30)
+- T0276 (M) — endless rerolls: every reroll costs more — in the pool (todo)
+- T0279 (S) — balance: Beam hits too softly — in design
+- T0280 (M) — Beam added is a damage boost, not another beam — in design
+- T0281 (L) — Beam and burn deal damage in ticks — in the pool (todo)
+- T0282 (M) — Spray crits: the shotgun rolls for double damage — in design
 
-Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T0235 (one at a time, in claim order, under the 16-cap; T0234 landed 2026-10-30, pool 15, no removal); the beam work is done but the needle (T0242, in the pool); the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is done; the what-if dim (T0236) failed on a wrong premise and is dropped; the draft fit row (T0243) is built; the codex lock (T0248) is in design.
+Progress: Haste (T0152) and Toll (T0234) landed 2026-10-30; the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0242, T0248 (waits on T0062 and T0095), T0276, T0281 and the Beam/Spray pass T0279, T0280, T0282; T0150 rides behind T0025.
 
-**E4 closes when T0025, T0064, T0062, T0095, T0152, T0235, T0242 and T0248 land** (T0130, T0132, T0133, T0210, T0228, T0234, T0243 done; T0236 failed → dropped; T0131 failed → T0210; T0238 failed → T0243; T0150 waits on T0025; T0089 is dropped).
+**E4 closes when T0025, T0062, T0064, T0095, T0235, T0242, T0248, T0276, T0279, T0280, T0281 and T0282 land.**
 
-**16-cap (protocol):** the pipeline holds 21 augments (15 in + T0025, T0064, T0062, T0095, T0152, T0235); the cap is 16, so the six registrations land five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Mark and Anchor extend the order (2026-10-30): the beam carries the mark (T0132), and Ward already punishes the root build; Bolt, Beam, Splash, Lance, Rapid, Reach, Push, Ember, Spray and Toll never leave the index — the draft floor (T0048) and the beam-combo web (T0210, T0242) depend on them.
+**16-cap (protocol):** the pool is 16 (Haste landed with no removal triggered); the five queued registrations (T0025, T0062, T0064, T0095, T0235) land exactly five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
 
 ### E5 — Bosses: every 10th wave is something you remember (active — opened 2026-10-30; the eight slices written, the arrival and escape moments added 2026-10-30, the bosses reference (T0277) added 2026-10-30)
 **Goal:** the run has a peak: the deep waves bring one big shape with its own mechanic, not just more of the same.
@@ -106,7 +112,7 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 - T0258 (M, priority 2, behind T0253) — the boss moment: the death — the 24-chip burst (2× the milestone count) in the boss's own color and the two-line name card (topBanner's pattern) — **failed** (2026-10-30, the architect's context overflowed before any design); the design stands as written — re-filed as T0273 (with T0266's Orb split carve-out)
 - T0259 (L, priority 2, behind T0256) — the second boss (wave 20): the Titan (a red square at 0.5, 6× Block) and its Guard (a red diamond carrying an orange disc) — while the Guard lives, every hit on the Titan is halved; the escort-shield member of the pair — unblocked 2026-10-30 (the failed T0258 dep becomes T0273; its design is written)
 - T0266 (L, priority 2) — the third boss (wave 30): the Orb (a purple hexagon at 0.5 with the crack) splits into two faster Shards at half health, unless it dies to a single hit first; the "splits at half hp" later boss — **done** (2026-10-30, inet-racing)
-- T0268 (M, priority 2, behind T0253) — the boss's arrival: a deep horn and a pulse at the entrance gate the moment the boss walks in — in design (2026-10-30)
+- T0268 (M, priority 2, behind T0253) — the boss's arrival: a deep horn and a pulse at the entrance gate the moment the boss walks in — in the pool (todo, waits on T0254)
 - T0269 (M, priority 2, behind T0253) — the boss's escape: when the boss leaks, a distinct low note — the run's worst moment, heard — **done** (2026-10-30, baby-mama)
 - T0277 (M, priority 2) — the bosses reference: a pause row (with Enemies / Waves) that lists the boss encounters in wave order — token, name, wave, trick in the teach language — read from the boss defs so it grows as they do — written 2026-10-30
 
@@ -165,10 +171,10 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Splitter (T0068, M) — **done** (2026-10-28, desktop-4070): breaks into two fast splinters at its spot.
 - Hauler (T0057, M) — **done** (2026-10-28, cachyos-x8664): a big slow hexagon — worth 10 gold, a leak costs a life plus 5 gold.
 - Mute (T0074, M) — **done** (2026-10-29, desktop-4070): silences every tower within 2 cells. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
-- Feeder (IDEAS) — next in line (from wave 13): the cap opens when T0237's Dart removal lands; see the queue order below.
+- Feeder (IDEAS) — next in line (from wave 13): the cap is open (T0237's Dart removal landed); task it when the pool has room.
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
-Queue order: the Bulwark (T0102) and the Ward (T0111) are done. The regular-enemy cap is at 10 (the bar in modules/enemies.md), so the Feeder (from wave 13) needs a removal first — **tasked as T0237 (M, non-epic, in the pool)**: the Dart goes (a faster, weaker Dot — the one regular enemy the bar says is not a new enemy); once it lands the Feeder is the next enemy to task, the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
+Queue order: the Bulwark (T0102), the Ward (T0111) and the Dart's removal (T0237) are done — the regular-enemy cap (10, the bar in modules/enemies.md) is open, so the Feeder (from wave 13) is the next enemy to task when the pool has room; the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
 
 ## Later
 

@@ -34,7 +34,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-15 in the game, from game/src/content/augments/ (the real values).
+16 in the game, from game/src/content/augments/ (the real values).
 
 **By `first.kind`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -42,7 +42,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - `burn`: Ember
 - `mark`: Mark
 - `pulse`: Splash, Frost, Push, Anchor, Mint, Toll
-- `rally`: Rally
+- `rally`: Rally, Haste
 - `shot`: Bolt, Lance, Rapid, Reach
 - `spray`: Spray
 
@@ -54,6 +54,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - `extraShots`: Bolt
 - `goldPerKill`: Mint
 - `goldPerLeak`: Toll
+- `haste`: Haste
 - `mark`: Mark
 - `pierce`: Lance
 - `push`: Push
@@ -158,6 +159,17 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - added: rally {pct 0.1}
 - tier: epic
 - tiers: rare {}, epic {}
+
+### Haste (`haste`)
+- description: "Towers and enemies within 2 cells run 30% faster. Added: each extra +15% to both."
+- asTower: "2 cells: towers +30% attack, enemies +30% speed."
+- asAdded: Each extra Haste: +15% to both.
+- look: shape ring, color red, size 0.22
+- first: kind rally, damage 0, range 2, rate 1, haste {pct 0.3}
+- added: haste {pct 0.15}
+- tier: epic
+- tech: haste
+- tiers: rare {asAdded Each extra Haste: +15% to both.}, epic {asAdded Each extra Haste: +15% to both.}
 
 ### Mark (`mark`)
 - description: "Marks the enemy furthest along: it takes more damage from everything. Added: hits apply the mark."
