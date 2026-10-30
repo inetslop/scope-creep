@@ -74,7 +74,7 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 - T0130 (M) — Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam — done
 - T0131 (M) — Beam combos II: failed (context overflow) — re-filed as T0210, the needle clause parked for T0242
 - T0210 (M) — Beam combos II: Lance pierces the beam's main line, Splash scorches its target — done
-- T0242 (M) — Beam combos IIb: a beam kill splits into one homing needle per added Spray — in the pool (todo)
+- T0242 (M) — Beam combos IIb: a beam kill splits into one homing needle per added Spray — **done** (2026-10-30, desktop-4070)
 - T0248 (S) — the codex lock: a muted lock on the gated augments' codex cards — in the pool (todo, waits on T0062 and T0095)
 - T0132 (M) — Beam combos III: the beam carries Ember, Anchor, Push and Mark — done
 - T0133 (M) — a new look for the Beam tower — done
@@ -91,14 +91,14 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 - T0238 (L) — the draft shows where the card lands: failed (wrong premise) — re-filed as T0243
 - T0243 (L) — the draft shows where the card lands (the re-file): each offered card shows the towers a pick would land on — done (2026-10-30)
 - T0276 (M) — endless rerolls: every reroll costs more — **done** (2026-10-30, desktop)
-- T0279 (S) — balance: Beam hits too softly — in progress (yoga)
+- T0279 (S) — balance: Beam hits too softly — **done** (2026-10-30, desktop)
 - T0280 (M) — Beam added is a damage boost, not another beam — in the pool (todo)
-- T0281 (L) — Beam and burn deal damage in ticks — in the pool (todo)
+- T0281 (L) — Beam and burn deal damage in ticks — in progress (asus)
 - T0282 (M) — Spray crits: the shotgun rolls for double damage — in design
 
-Progress: Haste (T0152), Toll (T0234) and the endless rerolls (T0276) landed 2026-10-30; the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0242, T0248 (waits on T0062 and T0095), T0281 and the Beam/Spray pass T0279, T0280, T0282; T0150 rides behind T0025.
+Progress: T0242 and T0279 landed 2026-10-30; the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095), T0280, T0281 and T0282; T0150 rides behind T0025.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0235, T0242, T0248, T0279, T0280, T0281 and T0282 land.**
+**E4 closes when T0025, T0062, T0064, T0095, T0235, T0248, T0280, T0281 and T0282 land.**
 
 **16-cap (protocol):** the pool is 16 (Haste landed with no removal triggered); the five queued registrations (T0025, T0062, T0064, T0095, T0235) land exactly five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
 
@@ -111,13 +111,13 @@ Progress: Haste (T0152), Toll (T0234) and the endless rerolls (T0276) landed 202
 - T0256 (M, priority 2, behind T0253) — the boss card: a small white card pinned to the top edge — the token, the name, a thin hp bar with a notch at 50%, so the phase is read on the bar before it happens — written 2026-10-30
 - T0258 (M, priority 2, behind T0253) — the boss moment: the death — the 24-chip burst (2× the milestone count) in the boss's own color and the two-line name card (topBanner's pattern) — **failed** (2026-10-30, the architect's context overflowed before any design); the design stands as written — re-filed as T0273 (with T0266's Orb split carve-out)
 - T0273 (M, priority 2) — the boss moment: the death (the T0258 re-file) — in the pool (todo)
-- T0259 (L, priority 2, behind T0256) — the second boss (wave 20): the Titan (a red square at 0.5, 6× Block) and its Guard (a red diamond carrying an orange disc) — while the Guard lives, every hit on the Titan is halved; the escort-shield member of the pair — unblocked 2026-10-30 (the failed T0258 dep becomes T0273; its design is written)
+- T0259 (L, priority 2, behind T0256) — the second boss (wave 20): the Titan (a red square at 0.5, 6× Block) and its Guard (a red diamond carrying an orange disc) — while the Guard lives, every hit on the Titan is halved; the escort-shield member of the pair — **done** (2026-10-30, asus)
 - T0266 (L, priority 2) — the third boss (wave 30): the Orb (a purple hexagon at 0.5 with the crack) splits into two faster Shards at half health, unless it dies to a single hit first; the "splits at half hp" later boss — **done** (2026-10-30, inet-racing)
 - T0268 (M, priority 2, behind T0253) — the boss's arrival: a deep horn and a pulse at the entrance gate the moment the boss walks in — **done** (2026-10-30, desktop)
 - T0269 (M, priority 2, behind T0253) — the boss's escape: when the boss leaks, a distinct low note — the run's worst moment, heard — **done** (2026-10-30, baby-mama)
 - T0277 (M, priority 2) — the bosses reference: a pause row (with Enemies / Waves) that lists the boss encounters in wave order — token, name, wave, trick in the teach language — read from the boss defs so it grows as they do — **done** (2026-10-30, desktop)
-- T0284 (S, priority 2) — the boss's phase gets its note: a quiet tone the instant the out-of-reach boss (the Colossus, T0253) flashes white and goes out of reach — a 120 ms sine 220→180 Hz, vol 0.08 (T0091's shape reduced to one note) — once per beat, the return to targetable silent; a new enemy-hook file on the bossArrival pattern (T0268), silent with sound off, no HUD or board mark — in the pool (todo)
-- T0286 (M, priority 2) — the boss's phase wind-up: at half health or below, a thin purple ring under the Colossus's token sweeps 0°→360° over the 8 s between phases, completing as the telegraph flashes and resting dim through the out-of-reach beat (the Push wind-up's sweep, T0258, at the Mute ring's ground, T0219) — a new enemy-mark hook file — in the pool (todo)
+- T0284 (S, priority 2) — the boss's phase gets its note: a quiet tone the instant the out-of-reach boss (the Colossus, T0253) flashes white and goes out of reach — a 120 ms sine 220→180 Hz, vol 0.08 (T0091's shape reduced to one note) — once per beat, the return to targetable silent; a new enemy-hook file on the bossArrival pattern (T0268), silent with sound off, no HUD or board mark — **done** (2026-10-30, yoga)
+- T0286 (M, priority 2) — the boss's phase wind-up: at half health or below, a thin purple ring under the Colossus's token sweeps 0°→360° over the 8 s between phases, completing as the telegraph flashes and resting dim through the out-of-reach beat (the Push wind-up's sweep, T0258, at the Mute ring's ground, T0219) — a new enemy-mark hook file — **done** (2026-10-30, cachyos-x8664)
 
 ### E6 — Iron run: one life, double coins (done; history in planning/archive/ROADMAP.md)
 
@@ -132,7 +132,7 @@ Progress: Haste (T0152), Toll (T0234) and the endless rerolls (T0276) landed 202
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
 ### E9 — Level augments: harder runs for a bigger payout (active, **top priority** — opened 2026-10-30, by hand)
-**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. The first slice is in the inbox (by hand): "Level augments I: the unlock, the menu choice and Tough".
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. The first slice is in the pool (T0285 in progress, T0287 in design); the reprice slice is tasked as T0288.
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
 - **Unlock, a slot ladder:** level augments are picked into **slots**, and slots are earned one at a time.
@@ -155,10 +155,10 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - Choices are saved and preselected for the next run. The run's save records them, so a resumed run keeps its level augments and multiplier.
 
 **Breakdown (to task, in this order):**
-- the unlock, the menu choice and Tough — **in the inbox (by hand, priority 1)**: wave 30 unlocks the first slot (`levelSlots` in the profile, existing wave-30 profiles migrated), the menu picker capped at the slot count, Tough (+25% enemy health, +20%), the run multiplier applied to coins and score (stacks with Iron), the set saved in the profile and the run save
+- the unlock, the menu choice and Tough — **T0285 (L, in progress) and T0287 (L, in design)**: wave 30 unlocks the first slot (`levelSlots` in the profile, existing wave-30 profiles migrated), the menu picker capped at the slot count, Tough (+25% enemy health, +20%), the run multiplier applied to coins and score (stacks with Iron), the set saved in the profile and the run save
 - the payout made visible: the HUD chips, the claim card's recipe line, the leaderboard row's multiplier
 - the rest of the first set: Swift, Crowded, Lean, Short fuse, each a pure rule with tests and its own percentage
-- the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned
+- the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned — **tasked as T0288 (M, priority 1, in the pool)**
 - deeper tech nodes: a third node in each branch priced on the new curve, so the bigger payout has a sink
 - the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line)
 - (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set
@@ -171,7 +171,7 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Splitter (T0068, M) — **done** (2026-10-28, desktop-4070): breaks into two fast splinters at its spot.
 - Hauler (T0057, M) — **done** (2026-10-28, cachyos-x8664): a big slow hexagon — worth 10 gold, a leak costs a life plus 5 gold.
 - Mute (T0074, M) — **done** (2026-10-29, desktop-4070): silences every tower within 2 cells. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
-- Feeder (IDEAS) — next in line (from wave 13): the cap is open (T0237's Dart removal landed); task it when the pool has room.
+- Feeder (IDEAS) — **tasked as T0289 (M, in the pool)**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring (the queue lands one enemy at a time; the Wall stays parked behind it).
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
 Queue order: the Bulwark (T0102), the Ward (T0111) and the Dart's removal (T0237) are done — the regular-enemy cap (10, the bar in modules/enemies.md) is open, so the Feeder (from wave 13) is the next enemy to task when the pool has room; the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
