@@ -112,14 +112,14 @@ Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one
 **Goal:** a mistake can be fixed mid-run: a misplaced tower is sold back. (The take-out, T0275, was cancelled by hand 2026-10-30.)
 **When done:** in the build phase the tower panel wears a bottom line, "Sell · +N": tap it and the tower lifts out and pays 70% of what its slots cost (the augments are gone — selling is a refund, not a retrieve; the cell frees, the gold pops at the plinth and slides to the tally). The line is build-phase only, it is on the pause's controls line, and the end card's by-tower list shows only towers standing at run end (a sold tower's kills stay in the run's totals). Selling costs 30% of the tower, so it is a fix, not a free repick.
 **Breakdown:**
-- T0274 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — the T0263 re-file (T0263 failed 2026-10-30 on an architect context overflow before any design; the line stood as written) — in progress (baby-mama)
+- T0274 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — the T0263 re-file (T0263 failed 2026-10-30 on an architect context overflow before any design; the line stood as written) — in the pool (todo)
 - T0275 — take out — **dropped by hand 2026-10-30**; E7 closes when T0274 lands
 
 ### E8 — A run you can show (dropped — 2026-10-30, by hand)
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
 ### E9 — Level augments: harder runs for a bigger payout (active, **top priority** — opened 2026-10-30, by hand)
-**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. In the pool: T0291 (the payout), T0294, T0295 (the rest of the first set) and T0297 (the board branch's third node); the reprice T0288 landed. T0287 (a duplicate first slice) failed 2026-10-30 — its unlock/picker/Tough scope is T0285's (done); its payout scope is T0291's.
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. In the pool: T0291 (the payout) and T0295 (the rest of the first set); T0294 is in progress; the reprice T0288 and the third node T0297 landed. T0287 (a duplicate first slice) failed 2026-10-30 — its unlock/picker/Tough scope is T0285's (done); its payout scope is T0291's.
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
 - **Unlock, a slot ladder:** level augments are picked into **slots**, and slots are earned one at a time.
@@ -144,9 +144,9 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Breakdown (to task, in this order):**
 - the unlock, the menu choice and Tough — **T0285 (L) — done** (2026-10-30, asus): wave 30 unlocks the first slot, the menu picker capped at the slot count, Tough (+25% enemy health, bonus +25%), the multiplier shown on the menu (×1.25) and the set saved in the profile and the run save
 - the payout made visible: the multiplier applied to score and coins (stacks with Iron), the claim card's line, the leaderboard row's tag, the HUD chips — **tasked as T0291 (L, priority 1, waits on T0285)**
-- the rest of the first set, one task per side: Swift (+15% enemy speed) + Crowded (+20% enemies per wave) — **tasked as T0294 (M, in the pool)**; Lean (−25% kill gold) + Short fuse (−30% build time) — **tasked as T0295 (M, in the pool)**; each a pure rule with tests, each one's multiplier bonus is its own number
+- the rest of the first set, one task per side: Swift (+15% enemy speed) + Crowded (+20% enemies per wave) — **T0294 (M, in progress, asus)**; Lean (−25% kill gold) + Short fuse (−30% build time) — **tasked as T0295 (M, in the pool)**; each a pure rule with tests, each one's multiplier bonus is its own number
 - the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned — **done as T0288 (M, 2026-10-30, cachyos-x8664)**
-- deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **tasked as T0297 (M, priority 1, in the pool)**, on the branch's price rule (155 at depth 3 once T0288's curve lands); the claim branch's second node (Flawless pays 10 coins, T0076's open door) waits on the payout's files (T0291's claim card, T0274's pause line)
+- deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **done as T0297 (M, 2026-10-30, desktop)**; the claim branch's second node (Flawless pays 10 coins, T0076's open door) waits on the payout's files (T0291's claim card, T0274's pause line)
 - the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line)
 - (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set
 
