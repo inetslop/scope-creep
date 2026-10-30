@@ -6,6 +6,7 @@ import type { Tower } from '../../entities/Tower';
 import type { Board } from '../Board';
 import type { EnemySystem } from '../EnemySystem';
 import type { FxSystem } from '../FxSystem';
+import type { ProjectileSystem } from '../ProjectileSystem';
 
 /** What an enemy hook can use: the run's systems, as EnemySystem has them. */
 export interface EnemyHookContext {
@@ -18,6 +19,8 @@ export interface EnemyHookContext {
   readonly enemies: EnemySystem;
   /** The run's towers right now. */
   towers(): readonly Tower[];
+  /** The projectile pool (set after it exists, like `towers`): a beam's kill needles fly through it (T0242). */
+  projectiles(): ProjectileSystem | undefined;
 }
 
 /** A kill, after it paid its gold (the enemy's own plus the Mint bonus) and showed its pop. */

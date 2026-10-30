@@ -67,6 +67,11 @@ export class ProjectileSystem {
     }
   }
 
+  /** A Spray needle from a beam's kill (T0242): a homing bolt in the pellet's thin look. */
+  fireNeedle(x: number, y: number, target: Enemy, payload: HitPayload, speed: number): void {
+    this.take().fire(x, y, target, payload, speed, true); // true = asTracer
+  }
+
   update(dt: number): void {
     for (const p of this.pool) {
       if (!p.active) continue;

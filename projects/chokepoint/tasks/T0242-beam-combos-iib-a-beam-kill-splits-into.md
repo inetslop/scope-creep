@@ -4,11 +4,12 @@ title: "Beam combos IIb: a beam kill splits into Spray needles"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T00:29:56Z
 claimed_at: 2026-10-30T12:10:27Z
+finished_at: 2026-10-30T13:32:03Z
 epic: E4
 design_attempts: 1
 ---
@@ -114,3 +115,22 @@ Imports: `CELL` from `../../config`; `PALETTE, lightOf` from `../../content/pale
 
 ### Tests
 - `tests/core/sprayNeedles.test.ts`: `needleCount` — beam + 2 Sprays → 2, plain beam → 0, Spray-first with added Spray → 0, shot tower with added Spray → 0 (build specs with `towerSpec` and `AugmentCopy` copies, as `tests/core/mint.test.ts` does). `needleTargets` — returns [] when nothing within 2 cells; nearest-first with one distinct enemy per needle; skips the corpse (same object in the list); includes an enemy at exactly `2*CELL`, excludes one just past; returns fewer than `count` when fewer are in reach; skips `active: false` entries.
+
+## Result (attempt 1, desktop-4070)
+
+A Beam-first tower with Sprays added now splits its kills: each kill fires one thin homing needle per Spray copy out of the corpse (12 damage, at the pellet's speed, tinted a lighter shade of the tower's color) toward the nearest other living enemy within two cells, nothing fires at nothing, and needle kills count for the beam tower — which also means the split re-triggers off each kill it causes, cascading until the board runs out of nearby enemies. Beams without Sprays, Spray-first towers, non-beam kills, beam ticks, the "≈ N/s" line, cards, sounds, marks and invariants are all unchanged; the feature rides the existing projectile pool's homing path and its stuck-projectile invariant, with pure targeting/count logic in core/sprayNeedles.ts covered by new unit tests (one deviation from the design: `needleCount` takes `kind: AttackKind | 'none'` so a real `TowerSpec` satisfies it — body unchanged). Verified with `npm run check` (typecheck, lint, 434 tests) and `npm run smoke` (desktop + mobile, both PASS).
+
+- Self-review: APPROVE
+- Time: 81.6 min
+
+```
+projects/chokepoint/game/src/core/sprayNeedles.ts  | 19 ++++++++
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  1 +
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  5 +-
+ .../game/src/systems/ProjectileSystem.ts           |  5 ++
+ .../chokepoint/game/src/systems/enemyHooks/hook.ts |  3 ++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/sprayNeedles.ts    | 26 ++++++++++
+ .../game/tests/core/sprayNeedles.test.ts           | 56 ++++++++++++++++++++++
+ 8 files changed, 116 insertions(+), 1 deletion(-)
+```

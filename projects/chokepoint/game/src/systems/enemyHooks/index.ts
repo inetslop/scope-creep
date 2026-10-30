@@ -1,4 +1,5 @@
 import { burnLeap } from './burnLeap';
+import { sprayNeedles } from './sprayNeedles';
 import type { MakeEnemyHook } from './hook';
 import { comboBreak } from './comboBreak';
 import { leakEcho } from './leakEcho';
@@ -41,6 +42,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   haulerLeak,
   tollLeak,
   burnLeap,
+  sprayNeedles,
   muteJam,
   mintRing,
 ];

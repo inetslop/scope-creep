@@ -20,6 +20,7 @@ import type { EnemyHook } from './enemyHooks/hook';
 import type { Sfx } from '../audio/Sfx';
 import type { Board } from './Board';
 import type { FxSystem } from './FxSystem';
+import type { ProjectileSystem } from './ProjectileSystem';
 
 /** What one hit of a tower does (built by TowerSystem from the tower's spec). */
 export interface HitPayload {
@@ -57,6 +58,8 @@ export class EnemySystem {
   private readonly sfx: Sfx | undefined;
   /** The run's towers (set by GameScene): a kill pays each mint tower that reaches it extra gold. */
   towers: () => readonly Tower[] = () => [];
+  /** The projectile pool (set by GameScene): a beam's kill needles fly through it (T0242). */
+  projectiles: () => ProjectileSystem | undefined = () => undefined;
   private readonly pool: Enemy[] = [];
   private readonly bars: Phaser.GameObjects.Graphics;
   /** What reacts to kills, leaks and every frame of a wave (systems/enemyHooks/), made fresh for this run. */
@@ -69,7 +72,7 @@ export class EnemySystem {
     this.fx = fx;
     this.sfx = sfx;
     this.bars = scene.add.graphics().setDepth(DEPTH.bars);
-    const ctx = { scene, board, run, fx, sfx, enemies: this, towers: () => this.towers() };
+    const ctx = { scene, board, run, fx, sfx, enemies: this, towers: () => this.towers(), projectiles: () => this.projectiles() };
     this.hooks = ENEMY_HOOKS.map((make) => make(ctx));
   }
 
