@@ -1,12 +1,14 @@
 ---
 id: T0295
 title: "Lean and Short fuse: the gold and clock level augments"
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T17:33:38Z
+claimed_at: 2026-10-30T21:50:08Z
 epic: E9
 ---
 
