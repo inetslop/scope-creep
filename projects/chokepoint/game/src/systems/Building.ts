@@ -3,11 +3,13 @@ import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
 import { slotCost, towerSpec } from '../core/augments';
 import { cellsBesidePath, type Cell } from '../core/map';
+import type { Point } from '../core/path';
 import type { RunState } from '../core/run';
 import type { Tower } from '../entities/Tower';
 import type { Sfx } from '../audio/Sfx';
 import type { Board } from './Board';
 import type { FxSystem } from './FxSystem';
+import { goldCoin } from './fx/goldCoin';
 import { TowerGhost } from './towerGhost';
 import type { TowerSystem } from './TowerSystem';
 
@@ -142,6 +144,29 @@ export class Building {
     if (result === 'gold') this.hint(tower.cell, `Need ${this.towers.nextSlotCost(tower)} gold`, PALETTE.red);
     if (result === true && this.heldCopy) this.placeHeld(tower);
     this.selectTower(tower);
+    this.refreshGhosts();
+  }
+
+  /**
+   * The panel's "Sell · +N" line (build phase only): the tower lifts out of the board, its cell
+   * frees, and the gold pays at the plinth — the pop, and one coin to the stats gold. The
+   * augments are gone (a refund, not a retrieve), and the panel closes.
+   */
+  sellTower(): void {
+    const tower = this.selectedTower;
+    if (!tower || this.run.phase !== 'build') return;
+    const paid = this.towers.sell(tower);
+    const c = this.board.centerOf(tower.cell);
+    this.fx.popText(c.x, c.y - 20, `+${paid}`);
+    // One coin to the stats card's gold number, the kill coin's size at the current zoom.
+    const spot = this.fx.scene.registry.get('statsGold') as Point | undefined;
+    if (spot) {
+      const px = this.board.toScreen({ x: 1, y: 0 }).x - this.board.toScreen({ x: 0, y: 0 }).x;
+      goldCoin(this.fx, { x: c.x, y: c.y - 20 }, this.board.toBoard(spot), 10 / px, 24 / px);
+    }
+    this.sfx?.coinBlip();
+    this.pointerTower = undefined;
+    this.closePanel();
     this.refreshGhosts();
   }
 

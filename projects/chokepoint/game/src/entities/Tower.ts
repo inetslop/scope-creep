@@ -226,6 +226,13 @@ export class Tower extends Phaser.GameObjects.Image {
     this.scene.tweens.add({ targets: this.gun, scale: 1, duration: ms, ease: 'Quad.easeOut' });
   }
 
+  /** Sold: the whole token rises and fades out in the drop-in's bounce tempo, then it is gone. */
+  sellAway(): void {
+    const parts: Phaser.GameObjects.GameObject[] = [this, this.base, this.gun, this.deco, this.pips, this.jamDot, this.idleDot];
+    if (this.hasteRing) parts.push(this.hasteRing);
+    this.scene.tweens.add({ targets: parts, y: '-=12', alpha: 0, duration: 200, ease: 'Back.easeOut', onComplete: () => this.destroy() });
+  }
+
   /** The new pip grows in on the plinth with the same bounce as the tower's drop-in. */
   private popPip(slot: number): void {
     if (this.pipPop) { this.scene.tweens.killTweensOf(this.pipPop); this.pipPop.destroy(); }

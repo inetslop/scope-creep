@@ -3,7 +3,8 @@ import { HUD, MAX_SLOTS } from '../../config';
 import { getAugment } from '../../content/augments';
 import { cssColor, PALETTE } from '../../content/palette';
 import { describeSpec } from '../../core/augments';
-import { slotPrice } from '../../core/techEffects';
+import type { RunPhase } from '../../core/run';
+import { sellPrice, slotPrice } from '../../core/techEffects';
 import { towerDps } from '../../core/towerDps';
 import { tierAddedLine } from '../../core/tiers';
 import { artScale, augmentTexture, COIN_TEXTURE } from '../../art/textures';
@@ -20,12 +21,14 @@ const ROW_H = 64;
 const ROW_GAP = 6;
 const SLOT = 50;
 const DPS_LINE = 14; // one muted line of 11px
+const SELL_H = 44; // the "Sell · +N" line, build phase only
 
 /**
  * Above the hand, while a tower is selected: what its augments make it, one card per augment
  * (icon, "Name · Tier", the tier's gems, its added line), its stats, and its slots (filled,
- * free, the next one's price, locked). The panel grows with the number of augments. Rebuilt when
- * Building.uiVersion changes; the unlock price turns red while the gold is short.
+ * free, the next one's price, locked). In the build phase it wears a "Sell · +N" line. The panel
+ * grows with the number of augments. Rebuilt when Building.uiVersion changes or the phase
+ * changes; the unlock price turns red while the gold is short.
  */
 export class TowerPanel implements HudPart {
   private readonly scene: Phaser.Scene;
@@ -34,6 +37,8 @@ export class TowerPanel implements HudPart {
   private killsText: Phaser.GameObjects.Text | undefined;
   private size = { width: 0, height: 0 };
   private builtVersion = -1;
+  /** The phase the panel was built for: the sell line wears only in the build phase, and a phase change does not bump `uiVersion`. */
+  private builtPhase: RunPhase | '' = '';
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -45,8 +50,9 @@ export class TowerPanel implements HudPart {
   }
 
   update(game: GameScene): void {
-    if (this.builtVersion !== game.building.uiVersion) {
+    if (this.builtVersion !== game.building.uiVersion || this.builtPhase !== game.run.phase) {
       this.builtVersion = game.building.uiVersion;
+      this.builtPhase = game.run.phase;
       this.build(game);
     }
     const tower = game.building.selectedTower;
@@ -71,12 +77,14 @@ export class TowerPanel implements HudPart {
     const left = -w / 2 + 18;
     const n = tower.augments.length;
     const RW = w - 36;
+    const sell = game.run.phase === 'build'; // the sell line wears only in the build phase
+    const below = sell ? SELL_H + ROW_GAP : 0; // the sell line and its row gap, under the slot row
     // Pass 1: lay each row's added line out at (0,0) to measure it, then let the row grow to fit.
     const rows = tower.augments.map((c) => {
       const addedLine = scene.add.text(0, 0, tierAddedLine(getAugment(c.id), c.tier), textStyle(11, PALETTE.muted, { wordWrap: { width: RW - 52 } })).setOrigin(0, 0);
       return { addedLine, rowH: Math.max(ROW_H, Math.round(addedLine.height) + 52) }; // 52 = 44 px from the row's top to the added line + 8 px under its last line
     });
-    const H = (ROW_H + ROW_GAP) * n + 146 + 18 + DPS_LINE + rows.reduce((s, r) => s + r.rowH - ROW_H, 0); // room for the kills line and the damage per second under it
+    const H = (ROW_H + ROW_GAP) * n + 146 + 18 + DPS_LINE + below + rows.reduce((s, r) => s + r.rowH - ROW_H, 0); // room for the kills line and the damage per second under it
     const top = -H / 2;
     // The card swallows taps, so tapping the panel never builds on the board under it.
     const card = makeCard(scene, 0, 0, w, H, 22).setInteractive();
@@ -108,21 +116,25 @@ export class TowerPanel implements HudPart {
       items.push(scene.add.text(left, top + 80, 'Put an augment in a slot', textStyle(13, PALETTE.muted)).setOrigin(0, 0));
     }
     // This run's kills by this tower, in the gap between the augment rows and the slot row.
-    this.killsText = scene.add.text(left, H / 2 - 79 - DPS_LINE, `kills ${tower.kills}`, textStyle(11, PALETTE.muted)).setOrigin(0, 0);
+    this.killsText = scene.add.text(left, H / 2 - 79 - below - DPS_LINE, `kills ${tower.kills}`, textStyle(11, PALETTE.muted)).setOrigin(0, 0);
     items.push(this.killsText);
     const dps = towerDps(tower.spec, tower.rallyRateMul);
     const perSec = Math.floor(dps);
-    if (perSec >= 1) items.push(scene.add.text(left, H / 2 - 79, `≈ ${perSec}/s`, textStyle(11, PALETTE.muted)).setOrigin(0, 0));
-    items.push(...this.slots(game, tower, left, w, H));
+    if (perSec >= 1) items.push(scene.add.text(left, H / 2 - 79 - below, `≈ ${perSec}/s`, textStyle(11, PALETTE.muted)).setOrigin(0, 0));
+    items.push(...this.slots(game, tower, left, w, H, below));
+    if (sell) {
+      const price = sellPrice(tower.slots, game.run.slotDiscount);
+      items.push(makeButton(scene, 0, H / 2 - 16 - SELL_H / 2, `Sell · +${price}`, () => game.building.sellTower(), { width: RW, height: SELL_H, radius: 12 }).container);
+    }
     const x = isNarrow(width) ? width / 2 : EDGE + w / 2;
     this.box = scene.add.container(x, height - HUD.bottom - 10 - H / 2, items);
   }
 
-  /** The slot row: filled (the augment), free (a plus), the next to unlock (its price), locked. */
-  private slots(game: GameScene, tower: Tower, left: number, w: number, H: number): Phaser.GameObjects.GameObject[] {
+  /** The slot row: filled (the augment), free (a plus), the next to unlock (its price), locked. `below` is what sits under it (the sell line). */
+  private slots(game: GameScene, tower: Tower, left: number, w: number, H: number, below: number): Phaser.GameObjects.GameObject[] {
     const scene = this.scene;
     const items: Phaser.GameObjects.GameObject[] = [];
-    const y = H / 2 - 16 - SLOT / 2;
+    const y = H / 2 - 16 - below - SLOT / 2;
     for (let i = 0; i < MAX_SLOTS; i++) {
       const x = left + SLOT / 2 + i * (SLOT + 8);
       const copy = tower.augments[i];

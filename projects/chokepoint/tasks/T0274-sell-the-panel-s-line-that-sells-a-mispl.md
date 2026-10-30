@@ -4,11 +4,12 @@ title: "Sell: the panel's line that sells a misplaced tower back"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-10-30T09:46:01Z
 claimed_at: 2026-10-30T19:48:34Z
+finished_at: 2026-10-30T20:08:30Z
 epic: E7
 design_attempts: 1
 ---
@@ -89,3 +90,22 @@ sellTower(): void;
 ## Attempt 1 released (baby-mama)
 
 Put back in the pool by the owner: baby-mama is paused and had held this task for six hours without pushing.
+
+## Result (attempt 2, desktop)
+
+A selected tower's panel now wears a "Sell · +N" bottom line in the build phase only (N = 70% of its slots' cost, floored, via new `sellPrice` in core/techEffects.ts); tapping it pays the gold (pop + coin trail to the stats gold), lifts the tower out with a 200 ms rise-and-fade, frees its cell, and closes the panel — augments are gone, supports stop the same frame, and saves/resume cover it like a placement. TowerSystem.sell, Board.place accepting `undefined`, Tower.sellAway, and Building.sellTower do the work; the pause screen lists the new action. Two minimal deviations from the design: `sellPrice` uses `*7/10` (not `*0.7`, which would floor a full tower 1 gold short in float), and the slot/kills rows are lifted by the sell line's height in the panel layout, since the design's button position would have overlapped the slot row. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 20.0 min
+
+```
+projects/chokepoint/game/src/core/techEffects.ts   | 11 +++++++
+ projects/chokepoint/game/src/entities/Tower.ts     |  7 +++++
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  1 +
+ projects/chokepoint/game/src/systems/Board.ts      |  3 +-
+ projects/chokepoint/game/src/systems/Building.ts   | 25 ++++++++++++++++
+ .../chokepoint/game/src/systems/TowerSystem.ts     | 16 +++++++++-
+ projects/chokepoint/game/src/ui/hud/TowerPanel.ts  | 34 +++++++++++++++-------
+ .../chokepoint/game/tests/core/techEffects.test.ts | 10 ++++++-
+ 8 files changed, 93 insertions(+), 14 deletions(-)
+```

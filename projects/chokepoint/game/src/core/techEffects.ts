@@ -35,6 +35,17 @@ export function slotPrice(index: number, discount: number): number | undefined {
   return index === 1 ? Math.max(5, base - discount) : base;
 }
 
+/**
+ * What selling a tower with `slots` unlocked slots pays: 70% of what the slots cost
+ * (`slotPrice(i, discount)` each), floored. A refund, not a retrieve: the augments are gone.
+ */
+export function sellPrice(slots: number, discount: number): number {
+  let paid = 0;
+  for (let i = 0; i < slots; i++) paid += slotPrice(i, discount)!;
+  // *7/10, not *0.7: paid is whole, and in float 670 * 0.7 is 468.999…, a gold short of the 469 the run owes.
+  return Math.floor((paid * 7) / 10);
+}
+
 /** How many cards the draft at `draftNumber` offers, with the "Fourth card" node owned or not. */
 export function draftCardsFor(draftNumber: number, fourthCard: boolean): number {
   return fourthCard && draftNumber === 1 ? 4 : draftCardCount(draftNumber);

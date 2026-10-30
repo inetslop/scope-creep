@@ -6,7 +6,7 @@ import type { AugmentCopy, FirstForm } from '../content/types';
 import { slotCost, splashHits, towerColor } from '../core/augments';
 import type { Cell } from '../core/map';
 import type { RunState } from '../core/run';
-import { slotPrice } from '../core/techEffects';
+import { sellPrice, slotPrice } from '../core/techEffects';
 import { tierFirst } from '../core/tiers';
 import { hook } from '../debug/testHook';
 import { Tower } from '../entities/Tower';
@@ -160,6 +160,20 @@ export class TowerSystem {
       if (t.spec.firstId === 'anchor') auraRing(this.fx, t.x, t.y, color ? PALETTE[color] : PALETTE.faint);
     }
     return attacked;
+  }
+
+  /**
+   * Sells `tower`: the run pays back 70% of what its slots cost, its cell frees, and it leaves the
+   * board — the auras read the towers standing, so a sold one stops working this frame. The
+   * augments are gone: a refund, not a retrieve. Returns the gold paid.
+   */
+  sell(tower: Tower): number {
+    const paid = sellPrice(tower.slots, this.run.slotDiscount);
+    this.run.gold += paid;
+    this.board.place(tower.cell, undefined);
+    this.towers.splice(this.towers.indexOf(tower), 1);
+    tower.sellAway();
+    return paid;
   }
 
   /** Invariant: every tower stands on an open cell and holds no more augments than slots. */

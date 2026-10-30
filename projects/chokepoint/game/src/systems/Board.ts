@@ -147,7 +147,8 @@ export class Board {
     return kindAt(this.map, cell.col, cell.row) === 'open' && !this.towerAt(cell);
   }
 
-  place(cell: Cell, tower: Tower): void {
+  /** Puts `tower` on `cell`; `undefined` frees the cell (a sold tower lifts out of it). */
+  place(cell: Cell, tower: Tower | undefined): void {
     this.towers[cell.row]![cell.col] = tower;
   }
 
