@@ -1,12 +1,14 @@
 ---
 id: T0307
 title: "The Hauler's extra leak cost, taught once"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T21:22:19Z
+claimed_at: 2026-10-30T22:20:51Z
 ---
 
 ## Goal
