@@ -4,7 +4,7 @@ title: "The second boss: wave 20 sends the Titan and its Guard, and the Guard ca
 size: L
 priority: 2
 status: todo
-depends_on: [T0253, T0256, T0258, T0257]
+depends_on: [T0256]
 attempts: 0
 created: 2026-10-30T05:08:57Z
 epic: E5
@@ -27,7 +27,7 @@ The run's second peak swaps the mechanic (E5: "later bosses swap the mechanic"):
   - Behavior walk. Numbers: hp 60, speed 0.9 (the Titan's, so the two hold their gap), gold 8, livesCost 1, threat 5, fromWave 20, size 0.2.
   - Look: a red diamond at 0.2 carrying one flat orange disc on its road-facing front — the shield is visible on the enemy that carries it (the Hauler's coin language, T0098); when the Guard dies, the disc dies with it.
 
-**The wave rule (core/waves.ts):** wave 20's plan is exactly the Guard and the Titan — the Guard at 0 s, the Titan 1.2 s behind, walking about one cell closer to the exit with the shield in front of the boss. The wave-20 plan declares which of its spawns is the boss (the Titan) the way T0258's death hook and T0256's card read it: if T0256's card picks the boss as "the plan's single spawn", that rule becomes "the plan's declared boss spawn" as part of this task. Waves 10, 30, 40 and every later multiple of 10 keep sending the Colossus (T0253's rule) until a later boss reassigns them. The preview (T0257's chip, if it has landed) shows the two tokens and the "boss" tag straight from the plan with no change to that file.
+**The wave rule (core/waves.ts):** wave 20's plan is exactly the Guard and the Titan — the Guard at 0 s, the Titan 1.2 s behind, walking about one cell closer to the exit with the shield in front of the boss. The wave-20 plan declares which of its spawns is the boss (the Titan) the way the boss-death hook (T0273) and the boss card (T0256) read it: if T0256's card picks the boss as "the plan's single spawn" or by a def field, that rule becomes "the plan's declared boss spawn" as part of this task. Waves 10 and 40 keep sending the Colossus (T0253's rule); wave 30 sends the Orb (T0266). The preview (T0257's chip, if it has landed) shows the two tokens and the "boss" tag straight from the plan with no change to that file.
 
 **Everything else is automatic:** the name tags say "Titan" and "Guard" on their first spawn in a run (T0085); a Guard leak is an ordinary 1-life leak (the warning, the jolt scaled to its size, the combo break, the Toll pay) and leaves the Titan shielded; a Titan leak is an ordinary 1-life leak; kills are ordinary kills (20 / 8 gold, chips, the combo, the Mint, the by-tower count); a boss wave held clean counts clean; the save writes at the start of the wave, before spawns, so a mid-fight Titan is never in a save; the enemies reference (T0252) lists both with no change to that screen.
 
@@ -69,9 +69,9 @@ The run's second peak swaps the mechanic (E5: "later bosses swap the mechanic"):
 - [ ] While the Guard is alive, every source of damage to the Titan lands at half (a Bolt shot, a Splash burst, a Lance pierce, a Chain leap, a Beam's rate, an Ember tick); the Titan stays an ordinary target and fully controllable the whole time.
 - [ ] The moment the Guard dies (any source), the Titan takes full damage from every source; the disc is gone.
 - [ ] A Guard leak costs exactly 1 life (the ordinary leak: warning, size-scaled jolt, combo break, Toll pay) and leaves the Titan shielded; a Titan leak costs exactly 1 life.
-- [ ] Kills pay 20 (Titan) and 8 (Guard) with the ordinary kill (chips, combo, Mint, by-tower count); a boss wave held clean counts clean; the boss card (T0256) shows the Titan — no notch on the bar, the fill in the Titan's own red — and the boss death moment (T0258) fires on the Titan.
+- [ ] Kills pay 20 (Titan) and 8 (Guard) with the ordinary kill (chips, combo, Mint, by-tower count); a boss wave held clean counts clean; the boss card (T0256) shows the Titan — no notch on the bar, the fill in the Titan's own red — and the boss death moment (T0273) fires on the Titan.
 - [ ] The first Titan and the first Guard spawn in a run each pop their name tag; the enemies reference lists both.
-- [ ] Every wave except 20 is byte-identical to today (wave 10 and 40 still send the Colossus; wave 30 sends the Colossus unless T0266's Orb has landed first — assert what wave 30 currently sends, don't pin it); the Titan and the Guard never appear in a normal mix.
+- [ ] Every wave except 20 is byte-identical to today (wave 10 and 40 still send the Colossus; wave 30 sends the Orb, T0266); the Titan and the Guard never appear in a normal mix.
 
 ## Design (architect, desktop)
 
@@ -93,7 +93,7 @@ The run's second peak swaps the mechanic (E5: "later bosses swap the mechanic"):
 - edit `tests/content.test.ts` — allow the Titan's 0.5 size (line 27)
 - edit `src/scenes/EnemiesScene.ts` — line 76 label, only if T0253 left "from a Splitter" on every `spawnOnly` enemy
 - edit the boss card T0256 added (find its line in `HudScene`'s parts list, likely `src/ui/hud/BossCard.ts`) — boss selection reads the plan's declared boss
-- edit the boss death hook T0258 added (find it in `ENEMY_HOOKS`, likely `src/systems/enemyHooks/bossDeath.ts`) — fires on the declared boss
+- edit the boss death hook T0273 adds (find it in `ENEMY_HOOKS`, likely `src/systems/enemyHooks/bossDeath.ts`) — fires on the declared boss
 
 ### Interfaces
 ```ts
@@ -128,17 +128,17 @@ export const titanShield: MakeEnemyHook = ({ enemies }) => {
 ```
 
 ### Steps
-1. Read the post-dependency state first: `core/waves.ts` (the every-10 Colossus branch and the tag T0257 gives those plans), T0256's card, T0258's hook. Note the plan's boss-declaration mechanism and the exact tag string. You will copy both, never invent them.
+1. Read the post-dependency state first: `core/waves.ts` (the every-10 Colossus branch, T0266's Orb plan on wave 30, and the tag T0257 gives those plans), T0256's card, T0273's hook. Note the plan's boss-declaration mechanism and the exact tag string. You will copy both, never invent them.
 2. Create `titan.ts` and `guard.ts` (values above; comment style like `bulwark.ts`). Register in `index.ts` (imports alphabetical; list lines right after the Colossus's line).
 3. Add `shieldCarrier` to `EnemyDef`; create `core/shield.ts`.
 4. `Enemy.ts`: add `shielded = false;` (next to `markPct`, ~line 51) and reset it in `spawn()`; change the `hit()` line exactly as above (import `shieldMul`).
 5. Create `titanShield.ts` (snippet above); add one line to `ENEMY_HOOKS`.
 6. `waves.ts`: `isQuietWave` → `wave > 0 && wave !== 20 && wave % 4 === 0` (comment: wave 20 is the boss's slot, not a breather). At the top of `planWave`, before the `unlocked` line: `if (wave === 20) return { number: wave, spawns: [{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }], hpMul: waveHpMul(wave), tags: <the every-10 tag>, <boss: 'titan' via the step-1 mechanism> };`.
 7. Disc art: `DISC_TEXTURE = 'enemy:disc'` in `art/textures.ts`; in `art/entities.ts` paint it after the plate block — flat circle, radius `gR * 0.42`, centered `gR * 0.55` above the token center (front of the face), fill `PALETTE.orange`, no shadow (it rotates), `gR = getEnemy('guard').look.size * CELL`, size `tokenRoom(gR, tokenDepth(gR)) * 2`. In `Enemy.ts` mirror the plate exactly: private `disc?` next to `plate`; create it in `spawn()` when `this.def.id === 'guard'` (import `DISC_TEXTURE`); place it in `advance()` with the plate's line (same `setPosition/setScale(ART_SCALE * pop)/setRotation(Math.atan2(this.dirX, -this.dirY))/setVisible(true)`); hide it in `despawn()`.
-8. Align T0256's card and T0258's hook to the plan's declared boss if they still find it by "single spawn" or the Colossus's id. Verify the card's bar fills in the boss's `look.color` (Titan red) and its phase notch only renders for a boss with a timed phase (the Colossus's field) — the Titan has none.
+8. Align T0256's card and T0273's hook to the plan's declared boss if they still find it by "single spawn" or a def field (T0273's hook reads the plan's boss, so it likely needs nothing). Verify the card's bar fills in the boss's `look.color` (Titan red) and its phase notch only renders for a boss with a timed phase (the Colossus's field) — the Titan has none.
 9. `EnemiesScene.ts:76`: end state — "from a Splitter" only when some def's `splitsInto === def.id`, else `wave ${def.fromWave}`; Titan and Guard read "wave 20". Skip if T0253 already did this.
 10. `runChecks.ts`, after `enemies.push`: `['enemies.bossSlot', (g) => (g.run.wave === 20 || !g.enemies.all.some((e) => e.active && (e.def.id === 'titan' || e.def.id === 'guard')) ? null : 'a Titan or Guard alive off its wave 20')],`
-11. Tests: `waves.test.ts` — new test asserting wave 20's plan is exactly `[{guard,0},{titan,1.2}]`, boss declared as the Titan, tags equal the every-10 plans' tags, `isQuietWave(20)` false (add 20 to the isQuietWave vector), and `[10,30,40]` still declare the Colossus with no Titan/Guard spawn; carve `wave !== 20` into the Mute (~line 99) and Bulwark (~line 108) expectations like the Ward line; drop 20 from the quiet list (line 162). `content.test.ts:27` → `toBeLessThanOrEqual(e.id === 'titan' ? 0.5 : 0.45)`. New `tests/core/shield.test.ts`: `shieldMul` is 0.5 for the Titan when shielded, 1 otherwise, 1 for a Dot.
+11. Tests: `waves.test.ts` — new test asserting wave 20's plan is exactly `[{guard,0},{titan,1.2}]`, boss declared as the Titan, tags equal the every-10 plans' tags, `isQuietWave(20)` false (add 20 to the isQuietWave vector), and `[10,40]` still declare the Colossus (wave 30 declares the Orb, T0266) with no Titan/Guard spawn; carve `wave !== 20` into the Mute (~line 99) and Bulwark (~line 108) expectations like the Ward line; drop 20 from the quiet list (line 162). `content.test.ts:27` → `toBeLessThanOrEqual(e.id === 'titan' ? 0.5 : 0.45)`. New `tests/core/shield.test.ts`: `shieldMul` is 0.5 for the Titan when shielded, 1 otherwise, 1 for a Dot.
 12. `npm run check`, then `npm run smoke`.
 
 ### Pitfalls

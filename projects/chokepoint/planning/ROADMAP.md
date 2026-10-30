@@ -109,8 +109,8 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 - T0253 (L, priority 1) — the Colossus: the wave-10 shape (6× Block's hp, Block's speed, 1 life on a leak, 20 gold, purple square at 0.45) with the timed untargetable phase — **done** (2026-10-30, inet-racing)
 - T0257 (S, priority 2, behind T0253) — the preview says "boss": the every-10 plan's "boss" tag, the preview chip, a one-time teach line (T0092's pattern), the banner chip (T0080's pattern) — **done** (2026-10-30, yoga)
 - T0256 (M, priority 2, behind T0253) — the boss card: a small white card pinned to the top edge — the token, the name, a thin hp bar with a notch at 50%, so the phase is read on the bar before it happens — written 2026-10-30
-- T0258 (M, priority 2, behind T0253) — the boss moment: the death — the 24-chip burst (2× the milestone count) in the boss's own color and the two-line name card (topBanner's pattern) — written 2026-10-30
-- T0259 (L, priority 2, behind T0253, T0256 and T0258) — the second boss (wave 20): the Titan (a red square at 0.5, 6× Block) and its Guard (a red diamond carrying an orange disc) — while the Guard lives, every hit on the Titan is halved; the escort-shield member of the pair — written 2026-10-30
+- T0258 (M, priority 2, behind T0253) — the boss moment: the death — the 24-chip burst (2× the milestone count) in the boss's own color and the two-line name card (topBanner's pattern) — **failed** (2026-10-30, the architect's context overflowed before any design); the design stands as written — re-filed as T0273 (with T0266's Orb split carve-out)
+- T0259 (L, priority 2, behind T0256) — the second boss (wave 20): the Titan (a red square at 0.5, 6× Block) and its Guard (a red diamond carrying an orange disc) — while the Guard lives, every hit on the Titan is halved; the escort-shield member of the pair — unblocked 2026-10-30 (the failed T0258 dep becomes T0273; its design is written)
 - T0266 (L, priority 2) — the third boss (wave 30): the Orb (a purple hexagon at 0.5 with the crack) splits into two faster Shards at half health, unless it dies to a single hit first; the "splits at half hp" later boss — written 2026-10-30
 - T0268 (M, priority 2, behind T0253) — the boss's arrival: a deep horn and a pulse at the entrance gate the moment the boss walks in — written 2026-10-30
 - T0269 (M, priority 2, behind T0253) — the boss's escape: when the boss leaks, a distinct low note — the run's worst moment, heard — written 2026-10-30
@@ -121,8 +121,8 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 **Goal:** a mistake can be fixed mid-run: a misplaced tower is sold back, a wrong augment is pulled back into the hand.
 **When done:** in the build phase the tower panel wears a bottom line, "Sell · +N": tap it and the tower lifts out and pays 70% of what its slots cost (the augments are gone — selling is a refund, not a retrieve; the cell frees, the gold pops at the plinth and slides to the tally). A second line, "Take out · 5", pulls the tower's last augment back into the hand for 5 gold (the card returns to the hand, the tower stays, its attack reverting to what the rest make it; a one-slot tower only sells). Both lines are build-phase only, both are on the pause's controls line, and the end card's by-tower list shows only towers standing at run end (a sold tower's kills stay in the run's totals). Selling costs 30% of the tower, so it is a fix, not a free repick.
 **Breakdown:**
-- T0263 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — **failed** (2026-10-30, the architect's context overflowed before any design); the line stands as written — re-file it next, then the take-out behind it
-- take out (M, priority 2, behind T0263) — "Take out · 5": the last augment back into the hand for 5 gold; a one-slot tower has no line — to be tasked
+- T0274 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — the T0263 re-file (T0263 failed 2026-10-30 on an architect context overflow before any design; the line stood as written) — written 2026-10-30
+- T0275 (M, priority 2, behind T0274) — take out: "Take out · 5" — the last augment back into the hand for 5 gold, the vacated slot stays the tower's (free to refit); a one-augment tower shows only the sell line — written 2026-10-30
 
 ### Enemy queue (non-epic)
 
@@ -141,7 +141,7 @@ Queue order: the Bulwark (T0102) and the Ward (T0111) are done. The regular-enem
 
 Ideas that may become epics or tasks of one.
 
-- Selling a tower, or taking an augment back out (for part of the gold) — now **E7** (active, opened 2026-10-30; the first slice T0263 is in the pool)
+- Selling a tower, or taking an augment back out (for part of the gold) — now **E7** (active, opened 2026-10-30; both slices written: T0274 the sell, T0275 the take-out behind it)
 - Targeting modes per tower (first, strongest, closest) — **tasked as T0114 (L, non-epic, in the pool)** — the spec and its parked follow-ups (the plinth notch, the chip's teach line) stand in IDEAS
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)

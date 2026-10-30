@@ -27,12 +27,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-12 in the game, from game/src/content/enemies/ (the real values).
+14 in the game, from game/src/content/enemies/ (the real values).
 
 **By `behavior`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
 - `dash`: Dasher
-- `walk`: Dot, Dart, Block, Colossus, Sprinter, Splitter, Hauler, Mute, Ward, Bulwark, Splinter
+- `walk`: Dot, Dart, Block, Colossus, Orb, Shard, Sprinter, Splitter, Hauler, Mute, Ward, Bulwark, Splinter
 
 ### Dot (`dot`)
 - description: "The basic walker: steady speed, middling health."
@@ -79,6 +79,31 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - spawnOnly: true
 - outOfReach: hpFrac 0.5, telegraphSec 0.5, phaseSec 2.5, periodSec 8
 - look: shape square, color purple, size 0.45
+
+### Orb (`orb`)
+- description: "The whole wave in one cracked shape: at half health it splits into two Shards that keep walking."
+- behavior: walk
+- hp: 720
+- speed: 0.9
+- gold: 20
+- livesCost: 1
+- threat: 150
+- fromWave: 30
+- spawnOnly: true
+- splitsAt: hpFrac 0.5, into shard
+- look: shape hexagon, color purple, size 0.5
+
+### Shard (`shard`)
+- description: A small, fast piece of a split Orb.
+- behavior: walk
+- hp: 180
+- speed: 1.3
+- gold: 12
+- livesCost: 1
+- threat: 2
+- fromWave: 30
+- spawnOnly: true
+- look: shape hexagon, color purple, size 0.2
 
 ### Dasher (`dasher`)
 - description: "Crawls, stops to wind up, then dashes: catch it mid-stop."
