@@ -6,7 +6,7 @@ export const dasher: EnemyDef = {
   description: 'Crawls, stops to wind up, then dashes: catch it mid-stop.',
   behavior: 'dash',
   hp: 30,
-  speed: 1.4, // the crawl: half of Dart's 2.8; the surge lives in dashCycle
+  speed: 1.4, // the crawl: half of 2.8; the surge lives in dashCycle
   gold: 4,
   livesCost: 1,
   threat: 2,

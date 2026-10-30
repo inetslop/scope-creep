@@ -4,11 +4,12 @@ title: "The Dart goes: a faster, weaker Dot frees the enemy cap"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T23:34:09Z
 claimed_at: 2026-10-30T10:26:24Z
+finished_at: 2026-10-30T10:36:00Z
 ---
 
 ## Goal
@@ -84,3 +85,21 @@ None. This is a data removal: `ENEMIES` loses one entry, and everything downstre
 
 ### Tests
 None (the removal changes content data, not a `src/core` rule; the two fixture edits above are updates to existing tests, and no test may name the Dart afterwards).
+
+## Result (attempt 1, cachyos-x8664)
+
+Removed the Dart, the numbers-only walk enemy, opening the 10th regular slot for the Feeder: its content file is deleted (listed above for the runner) and its import + list entry are out of `src/content/enemies/index.ts`, so `planWave`'s fill pool drops it automatically with `waves.ts` untouched — wave 1 stays byte-identical (Dart was fromWave 2, pool was already Dot-only), waves 2–3 fill with Dots, and all reserved slots are unchanged. Sprinter plays byte-identically (`2.52` / `+0.28` / cap `5.32`): the 2.8-derived constants are now inlined in its comment, and Dasher's crawl comment likewise names no Dart. The only tests that named the Dart had their fixture ids swapped `'dart'` → `'dasher'` in `tests/core/waves.test.ts` (4 strings + the "dropped dasher's 1" comment) and `tests/core/tightWaves.test.ts` (2 strings), with every expected array and delay number kept exactly as they were. `npm run check` passes (typecheck + lint + 421 tests) and `npm run smoke` passes on desktop and mobile, so saves, previews, name tags and textures all re-derive cleanly from the 9-regular pool.
+
+- Self-review: APPROVE
+- Time: 9.6 min
+- Deleted src/content/enemies/dart.ts, as the agent asked.
+
+```
+projects/chokepoint/game/src/content/enemies/dart.ts     | 15 ---------------
+ projects/chokepoint/game/src/content/enemies/dasher.ts   |  2 +-
+ projects/chokepoint/game/src/content/enemies/index.ts    |  2 --
+ projects/chokepoint/game/src/content/enemies/sprinter.ts |  2 +-
+ projects/chokepoint/game/tests/core/tightWaves.test.ts   |  4 ++--
+ projects/chokepoint/game/tests/core/waves.test.ts        | 10 +++++-----
+ 6 files changed, 9 insertions(+), 26 deletions(-)
+```

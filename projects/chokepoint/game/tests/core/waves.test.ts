@@ -190,16 +190,16 @@ describe('quiet waves (every 4th)', () => {
   });
   it('quietHalve: keeps every other spawn, same types, delays take on the gaps', () => {
     const full = [
-      { enemy: 'dot', delaySec: 0 }, { enemy: 'dart', delaySec: 1 }, { enemy: 'block', delaySec: 1 },
-      { enemy: 'dot', delaySec: 1 }, { enemy: 'dart', delaySec: 1 },
+      { enemy: 'dot', delaySec: 0 }, { enemy: 'dasher', delaySec: 1 }, { enemy: 'block', delaySec: 1 },
+      { enemy: 'dot', delaySec: 1 }, { enemy: 'dasher', delaySec: 1 },
     ];
     expect(quietHalve(full)).toEqual([
       { enemy: 'dot', delaySec: 0 },
-      { enemy: 'block', delaySec: 2 }, // own 1 + the dropped dart's 1
-      { enemy: 'dart', delaySec: 2 },
+      { enemy: 'block', delaySec: 2 }, // own 1 + the dropped dasher's 1
+      { enemy: 'dasher', delaySec: 2 },
     ]);
     expect(quietHalve(full.slice(0, 4))).toEqual([ // ceil(4/2)=2 < 3, the min-3 floor wins
-      { enemy: 'dot', delaySec: 0 }, { enemy: 'dart', delaySec: 1 }, { enemy: 'block', delaySec: 1 },
+      { enemy: 'dot', delaySec: 0 }, { enemy: 'dasher', delaySec: 1 }, { enemy: 'block', delaySec: 1 },
     ]);
   });
   it('a quiet wave sends between 3 and half the usual budget, deterministically', () => {

@@ -12,5 +12,5 @@ export const sprinter: EnemyDef = {
   threat: 3,
   fromWave: 8,
   look: { shape: 'chevron', color: 'orange', size: 0.21 },
-  speedRamp: { perHit: 0.28, max: 5.32 }, // 90% of Dart's 2.8; +10% of it per hit; capped at 190% (10 hits)
+  speedRamp: { perHit: 0.28, max: 5.32 }, // base 2.52 is 90% of 2.8; +10% of 2.8 per hit; capped at 190% of it (10 hits)
 };

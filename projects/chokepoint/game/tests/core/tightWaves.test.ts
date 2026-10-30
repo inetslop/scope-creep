@@ -9,12 +9,12 @@ describe('tight wave plans', () => {
   });
   it('tightHalve: same enemies in order, first at once, every later gap halved', () => {
     const full = [
-      { enemy: 'dot', delaySec: 0 }, { enemy: 'dart', delaySec: 1 }, { enemy: 'block', delaySec: 1 },
+      { enemy: 'dot', delaySec: 0 }, { enemy: 'dasher', delaySec: 1 }, { enemy: 'block', delaySec: 1 },
       { enemy: 'dot', delaySec: 2 },
     ];
     expect(tightHalve(full)).toEqual([
       { enemy: 'dot', delaySec: 0 },
-      { enemy: 'dart', delaySec: 0.5 },
+      { enemy: 'dasher', delaySec: 0.5 },
       { enemy: 'block', delaySec: 0.5 },
       { enemy: 'dot', delaySec: 1 },
     ]);

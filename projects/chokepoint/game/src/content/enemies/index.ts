@@ -5,7 +5,6 @@ import { orb } from './orb';
 import { shard } from './shard';
 import { bulwark } from './bulwark';
 import { dasher } from './dasher';
-import { dart } from './dart';
 import { dot } from './dot';
 import { hauler } from './hauler';
 import { mute } from './mute';
@@ -17,7 +16,6 @@ import { ward } from './ward';
 /** Every enemy type. Waves draw from the ones whose fromWave has been reached. */
 export const ENEMIES: readonly EnemyDef[] = [
   dot,
-  dart,
   block,
   colossus,
   orb,
