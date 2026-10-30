@@ -3,14 +3,14 @@ id: T0258
 title: "The boss moment: the death burst and the name card"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: [T0253]
 attempts: 0
 created: 2026-10-30T05:08:57Z
 claimed_at: 2026-10-30T07:19:39Z
+finished_at: 2026-10-30T09:19:41Z
 epic: E5
-design_attempts: 1
-designer: desktop-4070
+design_attempts: 2
 ---
 
 ## Goal
@@ -31,3 +31,11 @@ A boss death is a moment, not a pop: the corpse bursts big in the boss's own col
 - [ ] A boss kill does not break the kill-combo chain (it is an ordinary kill for the combo, T0031).
 - [ ] If the last-stand banner would show on the same frame, the boss death card takes the top-center card; at most one card at a time.
 - [ ] The card fits at 412x915 and 1280x720 without overlapping the stats card (top left) or the wave card / pause button (top right).
+
+## Architect could not design it (desktop-4070)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+
+```
