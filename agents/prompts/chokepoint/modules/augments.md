@@ -15,6 +15,7 @@ Towers have no types: a tower is the augments in its slots. Every augment has tw
 - **Both forms are new.** Use the index under "What exists now": if the new first form has the same `kind` as an existing augment, say exactly what it does that they don't (not "more range", "slower but harder", "no cap": those are numbers). If the new added form changes the same fields as an existing one, it is a copy of that one: `rangeMul` is Reach, `extraShots` is Bolt.
 - **The added form says what it does on every attack kind.** "Hits do X" means nothing on a `beam` (no hits), `rally` or a 0-damage support tower. Write one line per kind where it differs, or say it does nothing there and why that is acceptable. (Beam shipped ignoring almost every added augment because of this.)
 - **It matters in play now**, not only under conditions the game doesn't have.
+- **Rarity matters in both forms.** Rare beats Common and Epic beats Rare as a first augment and when added, and each tier's card line states its own numbers (Lance adds +1, +2, +3 pierce).
 - **At most 16 augments.** Past that, the same task (or one before it) removes or merges one and says which.
 
 ## A task that adds or changes an augment
