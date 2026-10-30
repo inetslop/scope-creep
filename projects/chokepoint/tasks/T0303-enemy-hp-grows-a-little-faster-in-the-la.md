@@ -1,12 +1,14 @@
 ---
 id: T0303
 title: Enemy hp grows a little faster in the late waves
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T19:48:31Z
+claimed_at: 2026-10-30T20:49:31Z
 ---
 
 ## Goal
