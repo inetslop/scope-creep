@@ -3,10 +3,12 @@ id: T0312
 title: "The boss's arrival gets its ring"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T23:07:23Z
+claimed_at: 2026-10-30T23:15:46Z
+designer: yoga
 ---
 
 ## Goal
