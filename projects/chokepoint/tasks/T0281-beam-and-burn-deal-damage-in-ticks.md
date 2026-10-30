@@ -1,7 +1,12 @@
 ---
-title: "Beam and burn deal damage in ticks"
+id: T0281
+title: Beam and burn deal damage in ticks
 size: L
 priority: 1
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-30T10:37:56Z
 epic: E4
 ---
 

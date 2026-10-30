@@ -1,7 +1,12 @@
 ---
+id: T0282
 title: "Spray crits: the shotgun rolls for double damage"
 size: M
 priority: 1
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-30T10:37:56Z
 epic: E4
 ---
 
