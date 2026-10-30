@@ -117,7 +117,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - look: shape triangle, color purple, size 0.22
 - first: kind pulse, damage 0, range 2.5, rate 0.417, push 0.8
 - added: push 0.4
-- opening: true
+- tier: epic
 - tiers: rare {cooldownMul 0.833, push 1, addedPush 0.6}, epic {cooldownMul 0.75, push 1.2, addedPush 0.8}
 
 ### Anchor (`anchor`)
@@ -127,8 +127,8 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - look: shape square, color pink, size 0.22
 - first: kind pulse, damage 0, range 2.5, rate 0.333, root {sec 0.75}
 - added: root {sec 0.5}
-- tier: epic
-- tiers: rare {}, epic {}
+- minTier: rare
+- tiers: rare {}, epic {rootSec 1, cooldownMul 0.867, addedRootSec 0.75}
 
 ### Mint (`mint`)
 - description: "Kills within 2 cells drop +1 gold. Added: this tower kills drop +1 gold."
