@@ -1,12 +1,14 @@
 ---
 id: T0284
 title: "The boss's phase gets its note: a quiet tone when it goes out of reach"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T12:12:05Z
+claimed_at: 2026-10-30T12:45:17Z
 epic: E5
 ---
 
