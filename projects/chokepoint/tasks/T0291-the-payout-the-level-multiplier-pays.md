@@ -4,11 +4,12 @@ title: "The payout: the level multiplier pays"
 assignee: asus
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: [T0285]
 attempts: 1
 created: 2026-10-30T17:15:59Z
 claimed_at: 2026-10-30T20:29:06Z
+finished_at: 2026-10-30T21:49:25Z
 epic: E9
 ---
 
@@ -100,3 +101,29 @@ LevelChips body: constants `CHIP_H = 22`, `CHIP_GAP = 6`, `TOP = 12 + 72 + 6` (s
 - `tests/core/profile.test.ts`: new cases next to the Iron one — `coinsForRun({waves:12,stopped:148,clean:5,seed:1,bgen:2}, 1, 1, 1.25)` → 38 (floor 38.75); `(..., 1, 2, 1.25)` → 77 (Iron+Tough, floor 77.5); `({waves:0,stopped:19,clean:0,...}, 1, 1, 1.25)` → 1; `(..., 2, 1, 1)` → 36 (×1.0 identical); `recordRun(memory(), {waves:12,stopped:148,clean:5,seed:1,bgen:2, levelMul:1.25}).coins` → 38 and with `mul: 2` → 77; `levelMul: 1` run stores `lastRun.coins` 31.
 - `tests/core/run.test.ts`: run at wavesCleared 1, kills 31 (score 131): `finalScore` 131 with no level, 163 after `run.level = ['tough']` (floor 163.75).
 - `tests/core/levels.test.ts`: `levelMultiplierTag(1.25)` → `'×1.25'`, `levelMultiplierTag(1.5)` → `'×1.5'`.
+
+## Result (attempt 1, asus)
+
+The level multiplier now pays: `coinsForRun` and a new `RunState.finalScore` scale the run's coins and score by the chosen level augments' multiplier (stacking with Iron's ×2, rounded down once), surfaced on the claim card (with one muted "×1.25 level augments" line), the end card's score breakdown, the leaderboard rows (small muted ×N tag beside the score, submitted via the boards client), and a new LevelChips HUD row of name-chips under the stats card during the run. Runs with no level augments are byte-identical; the multiplier rides on the saved run's level list, so closed-and-resumed runs pay it too. Covered by new unit tests in profile/run/levels; npm run check and the desktop/mobile smoke both pass.
+
+- Self-review: APPROVE
+- Time: 80.3 min
+
+```
+projects/chokepoint/game/src/core/levels.ts        |  5 +++
+ projects/chokepoint/game/src/core/profile.ts       | 11 +++--
+ projects/chokepoint/game/src/core/run.ts           |  5 +++
+ projects/chokepoint/game/src/net/boards.ts         |  4 ++
+ projects/chokepoint/game/src/scenes/BoardsScene.ts |  8 +++-
+ .../chokepoint/game/src/scenes/GameOverScene.ts    |  7 +--
+ projects/chokepoint/game/src/scenes/HudScene.ts    |  2 +
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  2 +-
+ .../chokepoint/game/src/scenes/RewardsScene.ts     | 15 +++++--
+ projects/chokepoint/game/src/ui/boardsLine.ts      |  2 +-
+ projects/chokepoint/game/src/ui/hud/LevelChips.ts  | 52 ++++++++++++++++++++++
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts   |  2 +-
+ projects/chokepoint/game/tests/core/levels.test.ts |  4 +-
+ .../chokepoint/game/tests/core/profile.test.ts     | 15 +++++++
+ projects/chokepoint/game/tests/core/run.test.ts    | 12 +++++
+ 15 files changed, 131 insertions(+), 15 deletions(-)
+```

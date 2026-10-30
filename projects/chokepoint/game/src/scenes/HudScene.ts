@@ -8,6 +8,7 @@ import { BossDeathBanner } from '../ui/hud/BossDeathBanner';
 import { HandBar } from '../ui/hud/HandBar';
 import type { HudPart } from '../ui/hud/hud';
 import { LastStandBanner } from '../ui/hud/LastStandBanner';
+import { LevelChips } from '../ui/hud/LevelChips';
 import { NextWaveButton } from '../ui/hud/NextWaveButton';
 import { NextWavePreview } from '../ui/hud/NextWavePreview';
 import { PauseButton } from '../ui/hud/PauseButton';
@@ -39,6 +40,7 @@ export class HudScene extends Phaser.Scene {
     const preview = new NextWavePreview(this);
     this.parts = [
       new StatsCard(this),
+      new LevelChips(this, game),
       new WaveCard(this),
       new WaveBanner(this),
       new BossCard(this),

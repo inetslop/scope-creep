@@ -53,7 +53,7 @@ export function addBoardsCard(scene: Phaser.Scene, parent: Phaser.GameObjects.Co
 
   const post = (name: string): void => {
     show('Posting to the boards…', PALETTE.muted);
-    void submitRun({ name, waves: run.wavesCleared, kills: run.kills, seed: run.seed }).then((result) => {
+    void submitRun({ name, waves: run.wavesCleared, kills: run.kills, seed: run.seed, mul: run.levelHpMul }).then((result) => {
       if (!line.active) return; // the card was left meanwhile
       if (!isBoardError(result)) show(postedText(result), PALETTE.ink);
       else if (result === 'name') show('That name isn\'t allowed: pick another ›', PALETTE.red, () => askName('That name isn\'t allowed on the boards. Pick another.'));

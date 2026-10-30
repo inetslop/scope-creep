@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { PALETTE } from '../content/palette';
 import { loadBoardName } from '../core/boardName';
+import { levelMultiplierTag } from '../core/levels';
 import { hook } from '../debug/testHook';
 import { fetchBoard, isBoardError, type Board, type BoardEntry, type BoardError, type BoardName } from '../net/boards';
 import { makeButton, type Button } from '../ui/button';
@@ -162,11 +163,16 @@ export class BoardsScene extends Phaser.Scene {
       this.listBox.add(hl);
     }
     const style = (size: number, bold: boolean, color: number = PALETTE.ink) => textStyle(size, color, { fontStyle: bold ? 'bold' : 'normal' });
+    // A run that wore level augments shows the factor beside its score, in the muted language of
+    // the iron star; rows without one keep the score exactly where it always sat.
+    const tag = e.mul !== undefined && e.mul > 1.0001 ? this.add.text(right - 54, y, levelMultiplierTag(e.mul), style(11, false, PALETTE.muted)).setOrigin(1, 0.5) : undefined;
+    const scoreX = right - 54 - (tag ? tag.width + 6 : 0);
     this.listBox.add([
       this.add.text(left + 22, y, `${e.rank}`, style(14, false, PALETTE.muted)).setOrigin(1, 0.5),
       this.add.text(left + 36, y, e.name, style(16, true)).setOrigin(0, 0.5),
-      this.add.text(right - 54, y, e.score.toLocaleString('en-US'), style(15, mine)).setOrigin(1, 0.5),
+      this.add.text(scoreX, y, e.score.toLocaleString('en-US'), style(15, mine)).setOrigin(1, 0.5),
       this.add.text(right, y, `W${e.waves}`, style(13, false, PALETTE.muted)).setOrigin(1, 0.5),
     ]);
+    if (tag) this.listBox.add(tag);
   }
 }

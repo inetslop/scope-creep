@@ -47,3 +47,8 @@ export function levelCountMul(ids: readonly string[]): number {
 export function levelMultiplierLabel(ids: readonly string[]): string {
   return `×${levelMultiplier(ids).toFixed(2).replace(/0$/, '')}`;
 }
+
+/** A stored run multiplier as the payout and the boards show it: '×1.25' at 1.25, '×1.5' at 1.5. */
+export function levelMultiplierTag(mul: number): string {
+  return `×${mul.toFixed(2).replace(/0$/, '')}`;
+}

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { ENEMIES } from '../../src/content/enemies';
 import { dot } from '../../src/content/enemies/dot';
 import { LEVEL_AUGMENTS, getLevelAugment } from '../../src/content/levels';
-import { LEVEL_UNLOCK_WAVE, capLevelChoice, levelCountMul, levelMultiplier, levelMultiplierLabel, levelSlotsAfter, levelSpeedMul } from '../../src/core/levels';
+import { LEVEL_UNLOCK_WAVE, capLevelChoice, levelCountMul, levelMultiplier, levelMultiplierLabel, levelMultiplierTag, levelSlotsAfter, levelSpeedMul } from '../../src/core/levels';
 import { Rng } from '../../src/core/rng';
 import { planWave, planWithLevel, waveHpMul, type WavePlan } from '../../src/core/waves';
 
@@ -36,6 +36,8 @@ describe('level augments', () => {
     expect(levelMultiplierLabel(['crowded'])).toBe('×1.2');
     expect(levelMultiplierLabel(['swift', 'crowded'])).toBe('×1.35');
     expect(levelMultiplierLabel(['tough', 'swift', 'crowded'])).toBe('×1.6');
+    expect(levelMultiplierTag(1.25)).toBe('×1.25');
+    expect(levelMultiplierTag(1.5)).toBe('×1.5');
   });
 
   it('the three level augments, in the menu order, with their bonuses', () => {

@@ -81,6 +81,18 @@ describe('RunState', () => {
     expect(run.score).toBe(102);
   });
 
+  it('the payout score wears the level augments\' multiplier, rounded down; without one it is the score as is', () => {
+    const run = new RunState(1);
+    run.startWave();
+    run.kills = 31;
+    run.clearWave();
+    expect(run.score).toBe(131);
+    expect(run.finalScore).toBe(131); // no level augments on: byte-identical
+    run.level = ['tough'];
+    expect(run.levelHpMul).toBe(1.25);
+    expect(run.finalScore).toBe(163); // floor 163.75
+  });
+
   it("rerolls charge the run's curve and climb", () => {
     const run = new RunState(1);
     for (let n = 0; n <= 5; n += 1) {

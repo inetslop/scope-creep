@@ -18,6 +18,8 @@ export interface BoardEntry {
   name: string;
   score: number;
   waves: number;
+  /** The run's level-augment multiplier; older boards don't echo it, and 1 wears no tag. */
+  mul?: number;
 }
 
 export type BoardName = 'today' | 'forever';
@@ -50,6 +52,8 @@ export interface RunForBoards {
   waves: number;
   kills: number;
   seed: number;
+  /** The run's level-augment multiplier: the score it wears on the board (1 with none on). */
+  mul: number;
 }
 
 /** Why a call failed: the server refused the name, a rate limit, or anything else (offline, server down). */

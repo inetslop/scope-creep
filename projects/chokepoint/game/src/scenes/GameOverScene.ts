@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { artScale, STAR_TEXTURE } from '../art/textures';
 import { cssColor, PALETTE } from '../content/palette';
+import { levelMultiplierLabel } from '../core/levels';
 import { recordRun } from '../core/profile';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
@@ -25,7 +26,7 @@ export class GameOverScene extends Phaser.Scene {
     hook.overlay = '';
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
     const run = getRun(this);
-    const result = recordRun(window.localStorage, { waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed, bgen: run.bgen, mul: run.mode === 'iron' ? 2 : 1, reached: run.wave });
+    const result = recordRun(window.localStorage, { waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed, bgen: run.bgen, mul: run.mode === 'iron' ? 2 : 1, levelMul: run.levelHpMul, reached: run.wave });
     const again = (): void => {
       this.scene.start(SCENES.game);
     };
@@ -38,8 +39,8 @@ export class GameOverScene extends Phaser.Scene {
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
     const title = this.add.text(0, -178, 'Overrun', titleStyle(44, PALETTE.red)).setOrigin(0.5);
     const waveText = this.add.text(0, -130, `Held until wave ${run.wave}`, titleStyle(22)).setOrigin(0.5);
-    const score = this.add.text(0, -100, `${run.score} points · ${run.kills} kills`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
-    const scoreRecipe = this.add.text(0, -80, `waves +${run.wavesCleared * 100} · stopped +${run.kills}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
+    const score = this.add.text(0, -100, `${run.finalScore} points · ${run.kills} kills`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
+    const scoreRecipe = this.add.text(0, -80, `waves +${run.wavesCleared * 100} · stopped +${run.kills}${run.levelHpMul > 1 ? ` · ${levelMultiplierLabel(run.level)}` : ''}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
     const flawless = run.wavesCleared === run.cleanWaves && run.wavesCleared > 0;
     let flawlessStar: Phaser.GameObjects.Image | undefined;
     if (flawless) flawlessStar = artScale(this.add.image(score.width / 2 + 13, -99, STAR_TEXTURE));

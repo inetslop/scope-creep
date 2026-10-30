@@ -37,6 +37,21 @@ describe('profile', () => {
     expect(recordRun(memory(), { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2 }).coins).toBe(5); // an ordinary run is untouched
   });
 
+  it('the level augments\' multiplier scales the whole payout, after the mode\'s, rounded down once', () => {
+    expect(coinsForRun({ waves: 12, stopped: 148, clean: 5, seed: 1, bgen: 2 }, 1, 1, 1.25)).toBe(38); // floor 38.75
+    expect(coinsForRun({ waves: 12, stopped: 148, clean: 5, seed: 1, bgen: 2 }, 1, 2, 1.25)).toBe(77); // Iron + Tough: floor 77.5
+    expect(coinsForRun({ waves: 0, stopped: 19, clean: 0, seed: 1, bgen: 2 }, 1, 1, 1.25)).toBe(1); // floor 1.25
+    expect(coinsForRun({ waves: 12, stopped: 148, clean: 5, seed: 1, bgen: 2 }, 2, 1, 1)).toBe(36); // ×1.0: the payout of today, untouched
+  });
+
+  it('a recorded level-augment run pays the multiplied payout, Iron still doubled on top', () => {
+    expect(recordRun(memory(), { waves: 12, stopped: 148, clean: 5, seed: 1, bgen: 2, levelMul: 1.25 }).coins).toBe(38);
+    expect(recordRun(memory(), { waves: 12, stopped: 148, clean: 5, seed: 1, bgen: 2, mul: 2, levelMul: 1.25 }).coins).toBe(77); // Iron + Tough
+    const plain = recordRun(memory(), { waves: 12, stopped: 148, clean: 5, seed: 1, bgen: 2, levelMul: 1 });
+    expect(plain.coins).toBe(31); // a ×1.0 run pays exactly what it pays today
+    expect(plain.profile.lastRun).toEqual({ wave: 12, coins: 31 });
+  });
+
   it('a recorded run pays the doubled clean term only once the claim node is owned', () => {
     const store = memory();
     store.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2'] }));

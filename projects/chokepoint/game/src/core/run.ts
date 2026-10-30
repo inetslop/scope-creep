@@ -76,6 +76,11 @@ export class RunState {
     return levelMultiplier(this.level);
   }
 
+  /** The score as the run pays it out: the level augments' multiplier over it, rounded down. */
+  get finalScore(): number {
+    return Math.floor(this.score * this.levelHpMul);
+  }
+
   canAfford(cost: number): boolean {
     return this.gold >= cost;
   }

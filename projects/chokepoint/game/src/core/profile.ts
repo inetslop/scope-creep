@@ -39,6 +39,8 @@ export interface RunResult {
   bgen: number;
   /** The mode's coin multiplier (2 for the Iron mode); the whole payout is doubled after the node terms. */
   mul?: number;
+  /** The chosen level augments' multiplier on the payout (1 with none on). */
+  levelMul?: number;
   /** The wave number the run reached (it started that wave); a run dying during wave 30 reports 30. */
   reached?: number;
 }
@@ -110,15 +112,16 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
 }
 
 /** What a run is worth in coins: the waves held, a coin per ten stopped, and one per clean wave
- * (two with the claim node), then the mode's multiplier (2 for Iron) over the whole sum. */
-export function coinsForRun(result: RunResult, cleanPay = 1, mul = 1): number {
-  return (result.waves + Math.floor(result.stopped / 10) + result.clean * cleanPay) * mul;
+ * (two with the claim node), then the mode's multiplier (2 for Iron), and the level augments'
+ * multiplier, over the whole sum, rounded down. */
+export function coinsForRun(result: RunResult, cleanPay = 1, mul = 1, levelMul = 1): number {
+  return Math.floor((result.waves + Math.floor(result.stopped / 10) + result.clean * cleanPay) * mul * levelMul);
 }
 
 /** Folds a finished run into the saved profile and saves it. */
 export function recordRun(store: KeyValueStore | undefined, result: RunResult): RecordResult {
   const old = loadProfile(store);
-  const coins = coinsForRun(result, cleanWavePay(old.purchased), result.mul ?? 1);
+  const coins = coinsForRun(result, cleanWavePay(old.purchased), result.mul ?? 1, result.levelMul ?? 1);
   const newBest = result.waves > old.bestWave;
   const profile: Profile = {
     bestWave: Math.max(old.bestWave, result.waves),
