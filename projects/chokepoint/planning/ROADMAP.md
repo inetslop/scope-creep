@@ -77,6 +77,7 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0131 (M, priority 2) — Beam combos II: Lance pierces, Splash scorches, Spray splits a beam kill — **failed** (2026-10-29, the architect's prompt overflowed cachyos's context before any design) — re-filed tighter: Lance + Splash as T0210; the needle clause (a beam kill splits into Spray needles) parked in IDEAS until T0210 lands
 - T0210 (M, priority 2) — Beam combos II (the re-file): Lance pierces the beam's main line, Splash scorches its target — **done** (2026-10-29, inet-racing)
 - T0242 (M, priority 2) — Beam combos IIb: a beam kill splits into one homing needle per added Spray (12 damage, the pellet's look and speed, different nearest other enemies within 2 cells, only on kills) — in the pool
+- T0248 (S, priority 2) — the codex lock: the gated pool augments (Haste, Momentum, Mend today) wear a small muted lock on their codex cards, plus a state line under the grid — in the pool (2026-10-30)
 - T0132 (M, priority 2) — Beam combos III: the beam carries Ember, Anchor, Push and Mark (Frost only if the 16-cap hasn't removed it) — **done** (2026-10-29, desktop)
 - T0133 (M, priority 2) — A new look for the Beam tower: a tower with a circle on top — **done** (2026-10-29, desktop)
 - T0134 (L, priority 2) — Spray becomes a shotgun: a cone of pellets — **done** (2026-10-29, inet-racing)
@@ -91,9 +92,9 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0236 (S, priority 2) — the what-if says "nothing": a held card whose added form does nothing to a tower shows the ghost's marker dimmed (the tower's own spec is the judge) — in the pool
 - T0238 (L, priority 2) — the draft shows where the card lands: **failed** (2026-10-29, rejected: it delegated the dim rule to T0236's not-yet-written judge, and its own restatement of that rule contradicted its acceptance example) — re-filed as T0243 (waits on T0236)
 
-Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T0235 (one at a time, in claim order, under the 16-cap; T0234 landed 2026-10-30, pool 15, no removal); the beam work is done but the needle (T0242, in the pool); the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is done; the what-if dim (T0236) is designing and the draft fit row waits on it (T0243, the T0238 re-file).
+Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T0235 (one at a time, in claim order, under the 16-cap; T0234 landed 2026-10-30, pool 15, no removal); the beam work is done but the needle (T0242, in the pool); the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is done; the what-if dim (T0236) failed on a wrong premise and is dropped, the draft fit row (T0243) now stands alone (no dim) and the codex lock (T0248) is in the pool.
 
-**E4 closes when T0025, T0064, T0062, T0095, T0152, T0235, T0236, T0242 and T0243 land** (T0130, T0132, T0133, T0210, T0228, T0234 done; T0131 failed → T0210; T0238 failed → T0243; T0150 waits on T0025; T0089 is dropped).
+**E4 closes when T0025, T0064, T0062, T0095, T0152, T0235, T0242, T0243 and T0248 land** (T0130, T0132, T0133, T0210, T0228, T0234 done; T0236 failed → dropped; T0131 failed → T0210; T0238 failed → T0243; T0150 waits on T0025; T0089 is dropped).
 
 **16-cap (protocol):** the pipeline holds 21 augments (15 in + T0025, T0064, T0062, T0095, T0152, T0235); the cap is 16. Every queued registration, after registering, removes one more if the pool is over 16 — the first still in the index of **Frost, then Rally, then Mint** — and says which in its result (the canonical statement is in T0064's task).
 
@@ -111,7 +112,7 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 **When done:** the menu offers “Iron” beside Play: the run starts with 1 life, pays double coins, and the last stand (T0054) is off for it (its doubling is baked into the coin rate). The claim card says “Iron” beside the waves line, and the profile card remembers the iron best wave with its own muted star. A normal Play is byte-identical.
 **Breakdown:**
 - T0241 (M, priority 2) — the Iron button and the mode's rules: 1 life, 2× coins, last stand off; the claim card's “Iron” line — **in the pool**
-- (S, priority 2, behind T0241) — the profile card's iron best wave with its own muted star
+- T0249 (S, priority 2, behind T0241) — the profile card's iron best wave with its own muted star — written 2026-10-30, waits on T0241
 
 ### Enemy queue (non-epic)
 
