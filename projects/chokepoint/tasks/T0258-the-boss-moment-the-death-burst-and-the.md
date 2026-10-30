@@ -3,13 +3,12 @@ id: T0258
 title: "The boss moment: the death burst and the name card"
 size: M
 priority: 2
-status: designing
+status: design
 depends_on: [T0253]
 attempts: 0
 created: 2026-10-30T05:08:57Z
-claimed_at: 2026-10-30T05:19:34Z
 epic: E5
-designer: desktop-4070
+design_attempts: 1
 ---
 
 ## Goal
