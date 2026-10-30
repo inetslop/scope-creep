@@ -1,12 +1,14 @@
 ---
 id: T0281
 title: Beam and burn deal damage in ticks
+assignee: asus
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T10:37:56Z
+claimed_at: 2026-10-30T14:02:24Z
 epic: E4
 ---
 
