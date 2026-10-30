@@ -3,11 +3,13 @@ id: T0241
 title: "Iron: the mode that plays a run at one life for double coins"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T00:29:56Z
+claimed_at: 2026-10-30T00:29:59Z
 epic: E6
+designer: desktop
 ---
 
 ## Goal
