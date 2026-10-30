@@ -3,12 +3,11 @@ id: T0289
 title: "Feeder: the enemy that feeds the group it walks with"
 size: M
 priority: 2
-status: designing
+status: design
 depends_on: []
 attempts: 0
 created: 2026-10-30T16:07:56Z
-claimed_at: 2026-10-30T16:28:30Z
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
