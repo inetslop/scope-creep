@@ -3,10 +3,12 @@ id: T0296
 title: "The record pass: the wave card says it once"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T17:56:06Z
+claimed_at: 2026-10-30T17:57:05Z
+designer: yoga
 ---
 
 ## Goal
