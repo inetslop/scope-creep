@@ -3,11 +3,13 @@ id: T0295
 title: "Lean and Short fuse: the gold and clock level augments"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T17:33:38Z
+claimed_at: 2026-10-30T18:02:22Z
 epic: E9
+designer: desktop
 ---
 
 ## Goal
