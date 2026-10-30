@@ -1,7 +1,12 @@
 ---
+id: T0283
 title: "Remove the levels: a run is one board again"
 size: M
 priority: 1
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-30T10:50:50Z
 ---
 
 ## Goal
