@@ -3,13 +3,11 @@ id: T0279
 title: "Balance: Beam hits too softly"
 size: S
 priority: 1
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-30T10:37:56Z
-claimed_at: 2026-10-30T10:39:02Z
 epic: E4
-designer: yoga
 ---
 
 ## Goal
@@ -45,3 +43,33 @@ Beam is far weaker than the other attack augments: a Beam-first tower does about
 - [ ] A lone Beam deals 14 / 20 / 28 per second by tier with range 3.5, and its card, range ring and panel say so.
 - [ ] In a waves 1–10 comparison, a Beam-first opening holds about as well as a Bolt-first one. The result notes the numbers seen and any nudge made.
 - [ ] `npm run check` passes with the updated tests. Desktop 1280x720 and mobile 412x915 smoke pass.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/augments/beam.ts` - the only content change: `first.range` 4.5→3.5, `first.beam.dps` 6→14, `tiers.rare.beamDps` 8→20, `tiers.epic.beamDps` 10→28, and the three `asTower` lines
+- edit `tests/core/towerDps.test.ts` - rebase the beam expectations (lines 44–66)
+- edit `tests/core/augments.test.ts` - rebase the `beam (Beam)` block (lines 200–254)
+- edit `tests/core/beamShapes.test.ts` - rebase the range fixture and scorch/panel rates
+
+### Interfaces
+None. Data values only; no type, function or signature changes. The panel, range ring, card, Reach multiplier and Bolt rays all read the spec (`spec.beamDps`, `spec.range`), so they update automatically.
+
+### Steps
+1. In `src/content/augments/beam.ts` set exactly: `asTower: 'Beams the furthest enemy: 14 per second, range 3.5.'`; `first: { kind: 'beam', damage: 0, range: 3.5, rate: 1, beam: { dps: 14 } }`; `tiers.rare.beamDps: 20` with `asTower: 'Beams the furthest enemy: 20 per second, range 3.5.'`; `tiers.epic.beamDps: 28` with `asTower: 'Beams the furthest enemy: 28 per second, range 3.5.'`. Leave `added`, `addedBeamDps` (3/4/5), `opening`, `look` untouched.
+2. In `tests/core/towerDps.test.ts` change only the numbers, keeping each matcher: 6→14, 8→20 (lone beam); 12→28, 16→40 (Bolt rays); 18→45 (Rapid 1.125 × 40); 6.6→15.4, 19.8→49.5 (Rally 1.1); 9→17, 10.125→19.125 (Beam added 14+3, ×1.125).
+3. In `tests/core/augments.test.ts` rebase: line 202 `beamDps: 14`; line 203 `toBeCloseTo(3.5)`; line 208 title → 'deal 20 and 28 per second', lines 209/210 → 20, 28; line 219 `beamDps: 14`; lines 228–230 the three `asTower` strings with the new numbers and `range 3.5`; line 237 → 'Beams the furthest enemy: 14 per second.'; line 238 → 28; line 254 → 'Beams 2 enemies: 14 per second each.'. `beamExtras` (3/3/4/5) stay.
+4. In `tests/core/beamShapes.test.ts`: line 10 `const R = 3.5 * CELL;` (224 units). Move the in-range fixtures under 224, above main (200): `a = e(205, 0, 30)`, `b = e(210, 0, 40)`, `c = e(215, 0, 50)`, and the corridor pair's x from 230 to 205 (lines 36–37). Out-of-range enemies (300/400/500) stay. Scorch rates: 3→7 (line 59), 4→10 and 5→14 (lines 66–67); tier loop `[6, 8, 10]`→`[14, 20, 28]` (line 85); panel strings 6→14, 'at 3 per second'→'at 7 per second', 'at 5 per second'→'at 14 per second' (lines 91–98).
+5. `npm run check` must pass.
+6. Playtest: with the smoke/sim harness, play one Beam-first and one Bolt-first opening through waves 1–10 and read leaks at wave 10 from `window.__SC__.stats` (`enemiesLeaked`/`lives`; in `?smoke` mode the first draft card is auto-picked, deterministic per `?seed`). Both must hold wave 10 with similar leaks. If one loses ≥2 more lives by wave 10, nudge 14/20/28 by at most ~15% (e.g. 14→16 max), re-edit `beam.ts` and the same three test files, and record the final values plus the reason in the result.
+7. `npm run smoke` (desktop 1280x720 + phone 412x915) must pass.
+
+### Pitfalls
+- `added` is T0280's file territory and Spray is out of scope: never edit `added.beam.dps` or `addedBeamDps` here, and keep the added card lines ("3/4/5 per second") as they are.
+- Shrinking R to 224 silently un-includes the old fixtures (230/260/285): the pierce test will fail, not just change — move the coordinates as step 4 says, don't only change R.
+- Change numbers, never matchers: 15.4/49.5 come from ×1.1 and 19.125 from ×1.125, keep `toBeCloseTo`.
+- The card, range ring and panel are data-driven: after the edit, grep `src` for `4.5` and `6 per second` — nothing may remain but `PUSH_RATE` in `Enemy.ts`.
+- Reach added multiplies the new base (3.5 × its `rangeMul`) with no code change; don't touch `reach.ts` or `core/augments.ts`.
+
+### Tests
+None added — the task rebases the existing pinning tests named in the steps (`towerDps`, `augments`, `beamShapes`); `npm run check` covers them.
