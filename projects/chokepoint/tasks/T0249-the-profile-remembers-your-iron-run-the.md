@@ -3,11 +3,13 @@ id: T0249
 title: "The profile remembers your iron run: the iron best wave with its muted star"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0241]
 attempts: 0
 created: 2026-10-30T01:33:38Z
+claimed_at: 2026-10-30T02:14:07Z
 epic: E6
+designer: yoga
 ---
 
 ## Goal
