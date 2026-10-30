@@ -4,11 +4,12 @@ title: "The pause card: one tidy column that fits, and a Sound row like the othe
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T00:51:08Z
 claimed_at: 2026-10-30T01:34:35Z
+finished_at: 2026-10-30T02:26:29Z
 ---
 
 ## Goal
@@ -68,3 +69,15 @@ No new exports. One module-level const above the class: `const CONTROLS: string[
 
 ### Tests
 none
+
+## Result (attempt 1, desktop-4070)
+
+Reworked the pause card in `src/scenes/PauseScene.ts` from a fixed 360x460 panel with eight hand-picked y-offsets into one even column built from its parts in order — groups of "Paused"/stats/worth, "Controls" and its lines, and Resume/Quit/Sound — with 28 px top/bottom padding, 10 px gaps inside groups and 22 px between them, and the card height computed from the content so it always fits. The controls are now a module-level `CONTROLS` list: each line is fitted (shrink to at most 11 px, then centered wrap) so it never crosses the card's edges, and adding or removing a line needs no other change. The Sound row is now the same 240-wide button as the others, with "Sound on"/"Sound off" as one label centered beside the speaker glyph instead of labels split across the row. `npm run check` and `npm run smoke` both pass. One deviation from the design: Phaser's `Text` has no `setWordWrap` method (that's BitmapText), so wrapping is enabled with `t.setStyle({ wordWrap: { width: maxW } })`, the same mechanism used elsewhere in the codebase.
+
+- Self-review: APPROVE
+- Time: 51.9 min
+
+```
+projects/chokepoint/game/src/scenes/PauseScene.ts | 122 +++++++++++++++++-----
+ 1 file changed, 97 insertions(+), 25 deletions(-)
+```

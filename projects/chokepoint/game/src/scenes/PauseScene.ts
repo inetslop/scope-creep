@@ -12,6 +12,14 @@ import { textStyle, titleStyle } from '../ui/text';
 import { uiCamera, viewSize } from '../ui/display';
 import { getGameScene, getSfx, onKey, onResize, SCENES } from './keys';
 
+/** The lines shown under "Controls", one per entry; the card lays out however many there are. */
+const CONTROLS: string[] = [
+  'Space or the big button — start the wave early, +2 gold per second left',
+  'F — fast-forward (2x) during waves',
+  '1-9 — pick a card from the hand',
+  '+ / - — zoom the board',
+];
+
 /** Pause overlay: resume or quit, on one card. In ?smoke mode it resumes on its own. */
 export class PauseScene extends Phaser.Scene {
   constructor() {
@@ -41,29 +49,56 @@ export class PauseScene extends Phaser.Scene {
 
     const shade = this.add.rectangle(0, 0, 10, 10, PALETTE.ground, 0.78).setOrigin(0).setInteractive();
     const panelW = 360;
-    const panelH = 460;
-    const panel = makeCard(this, 0, 0, panelW, panelH, 28);
-    const title = this.add.text(0, -panelH / 2 + 54, 'Paused', titleStyle(34)).setOrigin(0.5);
+    const PAD = 28;
+    const GAP_S = 10;
+    const GAP_B = 22;
+    const maxW = panelW - 32;
+
+    // Group 1: "Paused", the stats line, and "worth" (only after wave 1)
+    const title = this.add.text(0, 0, 'Paused', titleStyle(34)).setOrigin(0.5);
     const profile = loadProfile(window.localStorage);
     const starred = profile.bestWave > 0 && game.run.wave >= profile.bestWave;
     const waveWord = game.run.wave > 0 ? `Wave ${game.run.wave}` : 'Ready';
     const coins = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed }, cleanWavePay(profile.purchased));
     const lineStyle = textStyle(13, PALETTE.muted);
-    const kids: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [];
-    let x = 0;
     const waveText = this.add.text(0, 0, waveWord, lineStyle).setOrigin(0, 0.5);
-    kids.push(waveText);
-    x += waveText.width;
-    if (starred) { kids.push(artScale(this.add.image(x + 13, 1, STAR_TEXTURE))); x += 21; }
-    const restText = this.add.text(x, 0, ` · ${game.run.lives} lives · ${game.run.gold} gold`, lineStyle).setOrigin(0, 0.5);
+    const restText = this.add.text(0, 0, ` · ${game.run.lives} lives · ${game.run.gold} gold`, lineStyle).setOrigin(0, 0.5);
+    const worthText: Phaser.GameObjects.Text | undefined = game.run.wave > 0 ? this.add.text(0, 0, `worth +${coins} coins`, lineStyle).setOrigin(0.5) : undefined;
+    // Group 2: "Controls" and its lines, one per entry
+    const heading = this.add.text(0, 0, 'Controls', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
+    const lines: Phaser.GameObjects.Text[] = [];
+    for (const line of CONTROLS) {
+      lines.push(this.add.text(0, 0, line, textStyle(12, PALETTE.muted, { align: 'center' })).setOrigin(0.5));
+    }
+
+    // Shrink to fit the card, never below 11 px; wrap only if it is still too wide then
+    const fitTo = (texts: Phaser.GameObjects.Text[], start: number, extra = 0): void => {
+      let size = start;
+      while (texts.reduce((w, t) => w + t.width, extra) > maxW && size > 11) {
+        size -= 0.5;
+        for (const t of texts) t.setFontSize(size);
+      }
+    };
+    fitTo([waveText, restText], 13, starred ? 21 : 0);
+    for (const t of lines) {
+      fitTo([t], 12);
+      if (t.width > maxW) t.setStyle({ wordWrap: { width: maxW } });
+    }
+
+    // Assemble the stats line now that its widths are final
+    const kids: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] = [waveText];
+    let x = waveText.width;
+    if (starred) {
+      kids.push(artScale(this.add.image(x + 13, 1, STAR_TEXTURE)));
+      x += 21;
+    }
+    restText.setX(x);
     kids.push(restText);
     x += restText.width;
-    const stats = this.add.container(-x / 2, -panelH / 2 + 78, kids);
-    const worthText: Phaser.GameObjects.Text | undefined = game.run.wave > 0 ? this.add.text(0, -panelH / 2 + 96, `worth +${coins} coins`, lineStyle).setOrigin(0.5) : undefined;
-    const heading = this.add.text(0, -panelH / 2 + 114, 'Controls', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
-    const keys = this.add.text(0, -panelH / 2 + 176, 'Space or the big button — start the wave early, +2 gold per second left\nF — fast-forward (2x) during waves\n1-9 — pick a card from the hand\n+ / - — zoom the board', textStyle(12, PALETTE.muted, { align: 'center', lineSpacing: 6 })).setOrigin(0.5);
-    const resumeButton = makeButton(this, 0, -panelH / 2 + 276, 'Resume', resume, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
-    const quitButton = makeButton(this, 0, -panelH / 2 + 344, 'Quit run', quit, { width: 240, height: 52, radius: 26 });
+    const statsH = waveText.height;
+    const stats = this.add.container(-x / 2, 0, kids);
+
+    // Group 3: the action rows, all the same width
     const sfx = getSfx(this);
     const glyph = this.add.graphics();
     const paintGlyph = (isOn: boolean): void => {
@@ -97,15 +132,16 @@ export class PauseScene extends Phaser.Scene {
         glyph.strokePath();
       }
     };
-    const wordText = this.add.text(-62, 0, 'Sound', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
-    const stateText = this.add.text(92, 0, '', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(1, 0.5);
+    const soundText = this.add.text(0, 0, 'Sound on', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
     const refreshRow = (): void => {
       const isOn = sfx ? !sfx.muted : true;
       paintGlyph(isOn);
-      const color = cssColor(isOn ? PALETTE.ink : PALETTE.muted);
-      wordText.setColor(color);
-      stateText.setText(isOn ? 'On' : 'Off');
-      stateText.setColor(color);
+      soundText.setText(isOn ? 'Sound on' : 'Sound off');
+      soundText.setColor(cssColor(isOn ? PALETTE.ink : PALETTE.muted));
+      // glyph spans -12..+8 (20 wide), 8 gap to the word: the pair is centered together
+      const leftEdge = -(28 + soundText.width) / 2;
+      glyph.setPosition(leftEdge + 12, 0);
+      soundText.setPosition(leftEdge + 28, 0);
     };
     const toggleSound = (): void => {
       if (!sfx) return;
@@ -114,11 +150,47 @@ export class PauseScene extends Phaser.Scene {
       refreshRow();
       if (!sfx.muted) sfx.blip();
     };
-    const soundRow = makeButton(this, 0, -panelH / 2 + 406, '', toggleSound, { width: 280, height: 48, radius: 24 });
-    glyph.setPosition(-88, 0);
-    soundRow.content.add([glyph, wordText, stateText]);
+    const resumeButton = makeButton(this, 0, 0, 'Resume', resume, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
+    const quitButton = makeButton(this, 0, 0, 'Quit run', quit, { width: 240, height: 52, radius: 26 });
+    const soundRow = makeButton(this, 0, 0, '', toggleSound, { width: 240, height: 52, radius: 26 });
+    soundRow.content.add([glyph, soundText]);
     refreshRow();
-    const boxKids: Phaser.GameObjects.GameObject[] = [panel, title, stats, heading, keys, resumeButton.container, quitButton.container, soundRow.container];
+
+    // Card height from the content, then place everything top-down in one column
+    let h = PAD + title.height + GAP_S + statsH;
+    if (worthText) h += worthText.height + GAP_S;
+    h += GAP_B + heading.height;
+    for (const t of lines) h += GAP_S + t.height;
+    h += GAP_B + 56 + GAP_S + 52 + GAP_S + 52 + PAD;
+    const panelH = Math.ceil(h);
+    const panel = makeCard(this, 0, 0, panelW, panelH, 28);
+    let y = -panelH / 2 + PAD;
+    const cy = (hh: number): number => {
+      const c = y + hh / 2;
+      y += hh;
+      return c;
+    };
+    title.setY(cy(title.height));
+    y += GAP_S;
+    stats.setY(cy(statsH));
+    if (worthText) {
+      y += GAP_S;
+      worthText.setY(cy(worthText.height));
+    }
+    y += GAP_B;
+    heading.setY(cy(heading.height));
+    for (const t of lines) {
+      y += GAP_S;
+      t.setY(cy(t.height));
+    }
+    y += GAP_B;
+    resumeButton.container.setY(cy(56));
+    y += GAP_S;
+    quitButton.container.setY(cy(52));
+    y += GAP_S;
+    soundRow.container.setY(cy(52));
+
+    const boxKids: Phaser.GameObjects.GameObject[] = [panel, title, stats, heading, ...lines, resumeButton.container, quitButton.container, soundRow.container];
     if (worthText) boxKids.push(worthText);
     const box = this.add.container(0, 0, boxKids);
 
