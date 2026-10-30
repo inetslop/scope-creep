@@ -3,12 +3,10 @@ id: T0272
 title: "The early-send teach: the button's banked gold, taught once"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-30T09:22:16Z
-claimed_at: 2026-10-30T09:23:17Z
-designer: yoga
 ---
 
 ## Goal
@@ -25,3 +23,39 @@ A first-time player sees the big button's "+N" pill but may not know it is gold 
 - [ ] The line never shows on any later build phase of the same run.
 - [ ] A resumed run at wave 1 or later does not show the line.
 - [ ] The line fits its card at 412x915 and 1280x720; no sound, no input, and the preview card and button are otherwise unchanged.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/ui/hud/NextWavePreview.ts` - add the one-time early-send teach line (first build phase) and pin the card to its scaled size so a wide card fits its corner.
+
+### Interfaces
+None. No new types or signatures; `teachLine` and `place` keep theirs.
+
+### Steps
+1. After the `TEACH` array (line 25), add a module constant, exact text (em dash, no quotes beyond the string):
+   ```ts
+   /** The one-time teach for the run's first build phase: the big button's "+N" pill banks the seconds left as gold. Shown while `wavesCleared` is 0, re-derived from the run, never stored. */
+   const EARLY_SEND = 'start early — the button banks the seconds left as gold';
+   ```
+2. In `teachLine`, add one line at the top of the method body, before the tag loop, and extend its doc comment to mention the early-send teach:
+   ```ts
+   if (run.wavesCleared === 0) return EARLY_SEND;
+   ```
+3. In `place()`, pin the card to its *scaled* size (a no-op for every card that already fits, fitScale = 1). Compute it once and use it for `x`, the y offset and `setScale`:
+   ```ts
+   const s = this.fitScale();
+   const x = Math.min(width - EDGE - NEXT_SIZE / 2 - 4, width - EDGE - (this.cardW / 2) * s);
+   const above = isNarrow(width) ? bottom - NEXT_SIZE / 2 - 22 - 30 : bottom - (NEXT_SIZE / 2 + 7) - 10;
+   box.setScale(s).setPosition(x, above - (this.cardH / 2) * s);
+   ```
+   (This replaces the current `x = Math.min(..., width - EDGE - this.cardW / 2)`, `box.setScale(this.fitScale()).setPosition(x, above - this.cardH / 2)`; `s` is a new `const` right after `const bottom = ...`.)
+
+### Pitfalls
+- The wording is ~55 chars; at the tag line's 14px rounded font the card is ~420–460px wide, wider than the 412px phone corner. Without the `place()` fix its left edge leaves the screen by up to ~20px. The fix is a no-op for every card that already fits (all tag teach lines, short counts rows → fitScale 1) and only repositions a card that is scaled down.
+- Keep the font 14 and `PALETTE.muted` exactly as the tag teach line; do not shorten the text or resize it — the task fixes the wording and style.
+- The line is part of the preview card's container, so it hides/destroys with the card when the build phase ends — no separate cleanup, tween or sound.
+- `T0260` (level rule) is editing `core/run.ts` (not this file). Re-verify after it lands that `run.wavesCleared` is still `0` only before wave 1 and ≥1 thereafter; if it were made per-board, the `wavesCleared === 0` guard would re-fire at boards 2 and 3.
+
+### Tests
+none (UI task).
