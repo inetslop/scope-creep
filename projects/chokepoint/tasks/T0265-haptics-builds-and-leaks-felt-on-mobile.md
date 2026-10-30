@@ -4,11 +4,12 @@ title: "Haptics: builds and leaks felt on mobile"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T06:24:50Z
 claimed_at: 2026-10-30T21:02:57Z
+finished_at: 2026-10-30T21:11:19Z
 ---
 
 ## Goal
@@ -104,3 +105,18 @@ describe('haptics', () => {
 
 ### Tests
 - `tests/input/haptics.test.ts`: asserts the pattern table (`place`→`[20]`, `leak`→`[80]`) and that `haptic` is a throw-free no-op where `vibrate` is absent (the node env), which is what proves the guard (a missing guard would throw, i.e. prove an attempted call). The real-phone buzz path (vibrate actually firing) is a browser behavior verified by smoke/manual, not unit.
+
+## Result (attempt 1, yoga)
+
+Added `src/input/haptics.ts` — a tiny guard module that buzzes a phone on the two board celebrations: `haptic('place')` in `TowerSystem.build()` at the same moment the build chime plays (successful placements only; failed placements return early and buzz nothing), and `haptic('leak')` in `EnemySystem.leak()` right by the leak jolt. Patterns are `[20]`/`[80]` ms via `navigator.vibrate`, a total no-op on desktop and unsupported browsers (throw swallowed, nothing printed), un-gated by the sound toggle, and real-time so 2× fast-forward vibrates once per leak. A new unit test covers the pattern table and the unsupported-environment guard; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 8.4 min
+
+```
+projects/chokepoint/game/src/input/haptics.ts      | 28 ++++++++++++++++++++++
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  2 ++
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  2 ++
+ .../chokepoint/game/tests/input/haptics.test.ts    | 15 ++++++++++++
+ 4 files changed, 47 insertions(+)
+```

@@ -11,6 +11,7 @@ import { tierFirst } from '../core/tiers';
 import { hook } from '../debug/testHook';
 import { Tower } from '../entities/Tower';
 import type { Sfx } from '../audio/Sfx';
+import { haptic } from '../input/haptics';
 import type { Board } from './Board';
 import { ATTACKS } from './attacks';
 import type { EnemySystem } from './EnemySystem';
@@ -68,6 +69,7 @@ export class TowerSystem {
     hook.stats.towersBuilt += 1;
     this.sfx?.build();
     this.place(tower, copy);
+    haptic('place');
     return tower;
   }
 
