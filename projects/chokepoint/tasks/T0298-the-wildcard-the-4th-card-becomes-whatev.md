@@ -3,14 +3,14 @@ id: T0298
 title: "The wildcard: the 4th card becomes whatever you pick, always Rare or better"
 size: L
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-30T18:18:58Z
 claimed_at: 2026-10-30T20:28:24Z
+finished_at: 2026-10-30T22:28:28Z
 epic: E4
-design_attempts: 1
-designer: inet-racing
+design_attempts: 2
 ---
 
 ## Goal
@@ -37,3 +37,11 @@ The draft gets a card that is sometimes something special: in every 4-card draft
 - [ ] The run's first 4-card draft shows the muted teach line under the cards; later 4-card drafts and a resumed run past draft 5 do not.
 - [ ] Closing the tab with an unresolved Wildcard in the hand and resuming restores the "?" card, which resolves the same way.
 - [ ] The codex is unchanged (no Wildcard entry) and the draft pool still lists the same 16 augments.
+
+## Architect could not design it (inet-racing)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+
+```
