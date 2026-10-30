@@ -3,10 +3,12 @@ id: T0302
 title: "The boss's death gets its note: a low rising horn under the burst"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T19:42:22Z
+claimed_at: 2026-10-30T19:42:44Z
+designer: yoga
 ---
 
 ## Goal
