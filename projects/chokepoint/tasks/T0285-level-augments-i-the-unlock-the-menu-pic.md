@@ -1,12 +1,14 @@
 ---
 id: T0285
 title: "Level augments I: the unlock, the menu picker and Tough"
+assignee: inet-racing
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T12:31:05Z
+claimed_at: 2026-10-30T14:55:24Z
 epic: E9
 ---
 
