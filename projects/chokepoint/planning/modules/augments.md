@@ -194,13 +194,13 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ### Beam (`beam`)
 - description: "A continuous beam on the furthest enemy. Added: a second beam on the nearest."
-- asTower: "Beams the furthest enemy: 6 per second, range 4.5."
+- asTower: "Beams the furthest enemy: 14 per second, range 3.5."
 - asAdded: "A second beam on the nearest enemy: 3 per second."
 - look: shape chevron, color green, size 0.22
-- first: kind beam, damage 0, range 4.5, rate 1, beam {dps 6}
+- first: kind beam, damage 0, range 3.5, rate 1, beam {dps 14}
 - added: beam {dps 3}
 - opening: true
-- tiers: rare {beamDps 8, addedBeamDps 4}, epic {beamDps 10, addedBeamDps 5}
+- tiers: rare {beamDps 20, addedBeamDps 4}, epic {beamDps 28, addedBeamDps 5}
 
 ### Rapid (`rapid`)
 - description: "Shoots fast, light needles. Added: attacks 50% faster, hits 25% lighter."
