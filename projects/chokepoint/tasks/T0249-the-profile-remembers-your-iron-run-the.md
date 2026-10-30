@@ -1,12 +1,14 @@
 ---
 id: T0249
 title: "The profile remembers your iron run: the iron best wave with its muted star"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0241]
-attempts: 0
+attempts: 1
 created: 2026-10-30T01:33:38Z
+claimed_at: 2026-10-30T07:09:19Z
 epic: E6
 ---
 
