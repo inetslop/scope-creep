@@ -1,7 +1,12 @@
 ---
+id: T0287
 title: "Level augments I: the unlock, the menu choice and Tough"
 size: L
 priority: 1
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-30T13:56:21Z
 epic: E9
 ---
 
