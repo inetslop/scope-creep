@@ -3,12 +3,13 @@ id: T0267
 title: "The leak thud: one soft low note when an enemy gets through"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-30T08:00:10Z
 claimed_at: 2026-10-30T08:00:54Z
-designer: yoga
+finished_at: 2026-10-30T08:11:47Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -26,3 +27,7 @@ The run's costliest moment gets a note: the moment an enemy leaks, a soft low th
 - [ ] Exactly one thud per leak: a Hauler leak plays it once, and the leak that brings the run to 1 life plays the thud and the sting, both unchanged.
 - [ ] At 2× fast-forward (T019) the thud plays once and unstretched; with sound off (T0035) it is silent and the leak's visual feedback is byte-identical.
 - [ ] No gameplay change: lives, gold, damage, waves and resume are byte-identical with the sound on.
+
+## Rejected by architect (yoga)
+
+the premise contradicts the code — every leak already plays a prominent low thud (Sfx.leak(), 140→70 Hz sawtooth, 0.3 s, volume 0.25, called at EnemySystem.ts:217 at the jolt), so "the leak itself is silent" is false, and the task never says whether the new 98 Hz thud replaces that sound or stacks under it — as written it would build a double thud (the 0.12 sine masked by the 0.25 sawtooth), so the product owner must decide: re-file as "replace the leak sound with the 98 Hz thud" or drop it.
