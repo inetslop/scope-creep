@@ -1,12 +1,14 @@
 ---
 id: T0272
 title: "The early-send teach: the button's banked gold, taught once"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T09:22:16Z
+claimed_at: 2026-10-30T10:00:37Z
 ---
 
 ## Goal
