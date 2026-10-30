@@ -116,6 +116,12 @@ export class Sfx {
     this.tone(140, 0.3, 'sawtooth', 0.25, 70);
   }
 
+  /** A boss got through: a low two-note horn, 82 Hz then 62 Hz, 200 ms each, ~100 ms apart, the sting's quiet class. */
+  bossEscape(): void {
+    this.tone(82, 0.2, 'sine', 0.14);
+    this.tone(62, 0.2, 'sine', 0.14, undefined, 0.1);
+  }
+
   leakWarn(): void {
     this.tone(200, 0.08, 'sine', 0.1, 150);
   }

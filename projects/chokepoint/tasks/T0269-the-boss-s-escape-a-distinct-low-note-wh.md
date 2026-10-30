@@ -4,11 +4,12 @@ title: "The boss's escape: a distinct low note when the boss gets through"
 assignee: baby-mama
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0253]
 attempts: 1
 created: 2026-10-30T08:43:10Z
 claimed_at: 2026-10-30T09:08:57Z
+finished_at: 2026-10-30T09:15:28Z
 epic: E5
 ---
 
@@ -107,3 +108,19 @@ it('bossId: the boss the plan declares, undefined off the boss waves', () => {
 });
 ```
 The last line is what stops a later boss change from drifting the rule and the plan apart.
+
+## Result (attempt 1, baby-mama)
+
+A boss leaking now plays a distinct low descending two-note horn (82→62 Hz, 200 ms each, ~100 ms apart, vol 0.14) on top of all the existing leak feedback. New leak hook `bossEscape` in `src/systems/enemyHooks/` fires when the leaker is the enemy the current wave's plan declares as boss, read via a new pure `bossId(wave)` in `src/core/waves.ts` (which `planWave` now uses as the single source of the boss id); the sound is one new `Sfx.bossEscape()` method in `src/audio/Sfx.ts`, silent when muted and unstretched at 2×. Non-boss leaks are byte-identical to before; no HUD, input, resume or gameplay value changed.
+
+- Self-review: APPROVE
+- Time: 6.5 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts                |  6 ++++++
+ projects/chokepoint/game/src/core/waves.ts               |  8 +++++++-
+ .../chokepoint/game/src/systems/enemyHooks/bossEscape.ts | 16 ++++++++++++++++
+ projects/chokepoint/game/src/systems/enemyHooks/index.ts |  2 ++
+ projects/chokepoint/game/tests/core/waves.test.ts        | 11 ++++++++++-
+ 5 files changed, 41 insertions(+), 2 deletions(-)
+```

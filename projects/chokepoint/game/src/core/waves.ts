@@ -105,6 +105,12 @@ export function isBossWave(wave: number): boolean {
   return wave > 0 && wave % 10 === 0;
 }
 
+/** The enemy the plan declares as the boss of wave `wave`; undefined on non-boss waves. */
+export function bossId(wave: number): string | undefined {
+  if (!isBossWave(wave)) return undefined;
+  return wave === 30 ? 'orb' : 'colossus';
+}
+
 /**
  * Which enemies a wave sends, in order, and when. A boss wave is exactly one boss — the Colossus,
  * the Orb on wave 30 — and nothing else; every other wave spends the wave's budget on enemies
@@ -117,7 +123,7 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
     // Still draws its share of the run's rng, so the waves after it keep today's seeded plans.
     planNormalWave(wave, rng, enemies);
     // Wave 30 is the Orb's wave: the boss wave's shape is its own (the Colossus on every other boss wave).
-    return { number: wave, spawns: [{ enemy: wave === 30 ? 'orb' : 'colossus', delaySec: 0 }], hpMul: waveHpMul(wave), tags: ['boss'] };
+    return { number: wave, spawns: [{ enemy: bossId(wave)!, delaySec: 0 }], hpMul: waveHpMul(wave), tags: ['boss'] };
   }
   return planNormalWave(wave, rng, enemies);
 }

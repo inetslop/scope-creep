@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ENEMIES } from '../../src/content/enemies';
 import { Rng } from '../../src/core/rng';
-import { dashCount, demoWave, isBossWave, isQuietWave, planWave, quietCount, quietGoldMul, quietHalve, rampCount, waveBudget, waveCounts, waveHpMul } from '../../src/core/waves';
+import { bossId, dashCount, demoWave, isBossWave, isQuietWave, planWave, quietCount, quietGoldMul, quietHalve, rampCount, waveBudget, waveCounts, waveHpMul } from '../../src/core/waves';
 
 describe('planWave', () => {
   it('spends the budget on unlocked enemies only', () => {
@@ -140,6 +140,15 @@ describe('planWave', () => {
 describe('boss waves (every 10th)', () => {
   it('isBossWave: every 10th wave, not wave 0', () => {
     expect([0, 1, 9, 10, 11, 19, 20, 30, 40].map(isBossWave)).toEqual([false, false, false, true, false, false, true, true, true]);
+  });
+  it('bossId: the boss the plan declares, undefined off the boss waves', () => {
+    expect(bossId(10)).toBe('colossus');
+    expect(bossId(30)).toBe('orb');
+    expect(bossId(1)).toBeUndefined();
+    expect(bossId(9)).toBeUndefined();
+    for (const wave of [10, 20, 30, 40]) {
+      expect(bossId(wave)).toBe(planWave(wave, new Rng(wave), ENEMIES).spawns[0]!.enemy); // the rule and the plan agree
+    }
   });
   it('a boss wave is exactly one boss — the Colossus, the Orb on wave 30 — nothing else: the boss tag, the wave-scaled hp', () => {
     for (const wave of [10, 20, 30, 40]) {
