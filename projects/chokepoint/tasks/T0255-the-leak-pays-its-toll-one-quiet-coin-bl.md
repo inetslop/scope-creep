@@ -1,12 +1,14 @@
 ---
 id: T0255
 title: "The leak pays its Toll: one quiet coin blip at the exit"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T04:48:47Z
+claimed_at: 2026-10-30T05:01:41Z
 epic: E4
 ---
 
