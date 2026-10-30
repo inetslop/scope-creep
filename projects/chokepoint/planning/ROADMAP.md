@@ -98,7 +98,7 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 - T0298 (L) — Wildcard: the 4th card of the 4-card drafts becomes whatever you pick, always Rare or better — in the pool (todo)
 - T0299 (M) — Spray crits (the T0282 re-file): 15% of pellets hit for double, a yellow chip at the impact — in the pool (todo)
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095), T0280, T0298 and T0299; T0150 rides behind T0025.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095), T0298 and T0299; T0280 is in progress (cachyos-x8664); T0150 rides behind T0025.
 
 **E4 closes when T0025, T0062, T0064, T0095, T0235, T0248, T0280 and T0299 land.**
 
@@ -114,7 +114,7 @@ Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
 ### E9 — Level augments: harder runs for a bigger payout (active, **top priority** — opened 2026-10-30, by hand)
-**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. In the pool: T0291 (the payout), T0295 (the rest of the first set) and T0305 (the slot ladder); T0294 is in progress; the reprice T0288 and the third node T0297 landed. T0287 (a duplicate first slice) failed 2026-10-30 — its unlock/picker/Tough scope is T0285's (done); its payout scope is T0291's.
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0291 (the payout) is in progress (asus); T0295 (the rest of the first set) and T0305 (the slot ladder) are in the pool; T0285, T0294 (Swift and Crowded), the reprice T0288 and the third node T0297 landed.
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
 - **Unlock, a slot ladder:** level augments are picked into **slots**, and slots are earned one at a time.
@@ -138,8 +138,8 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 **Breakdown (to task, in this order):**
 - the unlock, the menu choice and Tough — **T0285 (L) — done** (2026-10-30, asus): wave 30 unlocks the first slot, the menu picker capped at the slot count, Tough (+25% enemy health, bonus +25%), the multiplier shown on the menu (×1.25) and the set saved in the profile and the run save
-- the payout made visible: the multiplier applied to score and coins (stacks with Iron), the claim card's line, the leaderboard row's tag, the HUD chips — **tasked as T0291 (L, priority 1, waits on T0285)**
-- the rest of the first set, one task per side: Swift (+15% enemy speed) + Crowded (+20% enemies per wave) — **T0294 (M, in progress, asus)**; Lean (−25% kill gold) + Short fuse (−30% build time) — **tasked as T0295 (M, in the pool)**; each a pure rule with tests, each one's multiplier bonus is its own number
+- the payout made visible: the multiplier applied to score and coins (stacks with Iron), the claim card's line, the leaderboard row's tag, the HUD chips — **T0291 (L, priority 1) — in progress (asus)**
+- the rest of the first set, one task per side: Swift (+15% enemy speed) + Crowded (+20% enemies per wave) — **T0294 (M) — done** (2026-10-30, asus); Lean (−25% kill gold) + Short fuse (−30% build time) — **tasked as T0295 (M, in the pool)**; each a pure rule with tests, each one's multiplier bonus is its own number
 - the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned — **done as T0288 (M, 2026-10-30, cachyos-x8664)**
 - deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **done as T0297 (M, 2026-10-30, desktop)**; the claim branch's second node (Flawless pays 10 coins, T0076's open door) waits on the payout's files (T0291's claim card, T0274's pause line)
 - the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line) — **tasked as T0305 (M, priority 1, in the pool)**
@@ -172,7 +172,7 @@ Ideas that may become epics or tasks of one.
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **tasked as T0239 (L, non-epic)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
-- Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**; the mid-run page is **tasked as T0304 (M, non-epic, in the pool)** — the pause's "Summary": the ledger's rows and the standing towers' kills and ≈N/s (the end card's and claim card's reads, re-used); damage per tower and leaks per wave still need the ledger's new terms
+- Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**; the mid-run page is **tasked as T0306 (M, non-epic, in the pool)** — the pause's "Summary": the ledger's rows and the standing towers' kills and ≈N/s (the end card's and claim card's reads, re-used); damage per tower and leaks per wave still need the ledger's new terms
 - The board shows its corners: a notch on the bend cells — **built as T0140 (2026-10-29), removed as T0227 (2026-10-29)**
 - Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **built as T0217 (2026-10-30, asus)**
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
