@@ -8,7 +8,7 @@ group_by: [first.kind, added]
 Towers have no types: a tower is the augments in its slots. Every augment has two forms:
 - **First form** (`first`): what the tower does when this augment goes into its first slot. Its `kind` is the tower's attack: `shot` (projectiles at one enemy each), `spray` (a shot that splits into homing needles), `pulse` (hits everything in range at once, around the tower), `beam` (a continuous line, never fires), `burn` (sets ablaze), `mark` (marked enemies take more damage), `rally` (support: nearby towers attack faster). Plus its damage, range (cells), rate (attacks per second) and any effect fields.
 - **Added form** (`added`): the change it makes when put into any later slot of any tower. The field names say what it changes: `extraShots`, `pierce`, `splash`, `rateMul`/`damageMul`, `rangeMul`, `slow`, `root`, `burn`, `push`, `mark`, `beam`, `spray`, `rally`, `goldPerKill`.
-- **Tiers:** every card rolls Common, Rare or Epic; `tiers` lists what Rare and Epic change. `tier: epic` means the augment only ever comes as an Epic. `opening: true` lets a support augment be offered in the first draft.
+- **Tiers:** every card rolls Common, Rare or Epic; `tiers` lists what Rare and Epic change. `tier: epic` means the augment only ever comes as an Epic; `minTier: rare` means Rare or Epic, never Common. `opening: true` lets a support augment be offered in the first draft.
 - **Look:** `look` is its icon (shape, color, size); the tower shows it too (a barrel, a ring, ticks...). Two augments never share the same shape and color.
 
 ## The bar for a new augment
