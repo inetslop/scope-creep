@@ -1,12 +1,14 @@
 ---
 id: T0253
 title: "The Colossus: wave 10 sends one big shape that goes out of reach at half health"
+assignee: inet-racing
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T04:09:41Z
+claimed_at: 2026-10-30T05:20:34Z
 epic: E5
 ---
 
