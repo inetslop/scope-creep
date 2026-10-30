@@ -3,11 +3,13 @@ id: T0285
 title: "Level augments I: the unlock, the menu picker and Tough"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T12:31:05Z
+claimed_at: 2026-10-30T12:31:07Z
 epic: E9
+designer: desktop
 ---
 
 ## Goal
