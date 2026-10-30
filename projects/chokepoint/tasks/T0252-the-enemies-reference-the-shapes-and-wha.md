@@ -3,10 +3,12 @@ id: T0252
 title: "The enemies reference: the shapes and what they do, off the pause"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T02:57:28Z
+claimed_at: 2026-10-30T03:03:23Z
+designer: inet-racing
 ---
 
 ## Goal
