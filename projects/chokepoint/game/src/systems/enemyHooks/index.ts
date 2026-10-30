@@ -13,6 +13,7 @@ import { crackTick } from './crackTick';
 import { split } from './split';
 import { midSplit } from './midSplit';
 import { killCoin } from './killCoin';
+import { killMilestone } from './killMilestone';
 import { waveClose } from './waveClose';
 
 /**
@@ -29,6 +30,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   nameTag,
   crackTick,
   killCoin,
+  killMilestone,
   waveClose,
   haulerLeak,
   tollLeak,

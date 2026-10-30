@@ -4,11 +4,12 @@ title: "The tower's milestone: a ring when a tower crosses a kill count"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T09:22:16Z
 claimed_at: 2026-10-30T09:37:47Z
+finished_at: 2026-10-30T09:48:48Z
 ---
 
 ## Goal
@@ -85,3 +86,17 @@ export const killMilestone: MakeEnemyHook = ({ fx }) => {
 
 ### Tests
 none (no rule in `src/core/` changes; pattern has no test file, like `mintRing.ts`/`auraRing.ts`).
+
+## Result (attempt 1, desktop-4070)
+
+A tower now blooms a small ring in its own color at its base when its session kill count first crosses 10, 25 or 50 (the same number the panel's kills line reads) — one quick (~300 ms) fading ring per milestone per run. The bloom is a new transient board effect (`systems/fx/milestoneRing.ts`) driven by a new enemy hook (`systems/enemyHooks/killMilestone.ts`, registered right after `killCoin`), so it works identically on desktop and mobile, resets with new/resumed runs exactly like the kills counter, and never shows for pure-support towers with no kills. No sound, text, HUD, or persistent marks.
+
+- Self-review: APPROVE
+- Time: 11.0 min
+
+```
+.../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../game/src/systems/enemyHooks/killMilestone.ts   | 31 ++++++++++++++++++++++
+ .../game/src/systems/fx/milestoneRing.ts           | 12 +++++++++
+ 3 files changed, 45 insertions(+)
+```
