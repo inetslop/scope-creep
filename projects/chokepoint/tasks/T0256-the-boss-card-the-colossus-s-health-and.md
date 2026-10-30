@@ -3,13 +3,11 @@ id: T0256
 title: "The boss card: the Colossus's health and phase, pinned to the top edge"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: [T0253]
 attempts: 0
 created: 2026-10-30T04:48:47Z
-claimed_at: 2026-10-30T05:08:47Z
 epic: E5
-designer: cachyos-x8664
 ---
 
 ## Goal
@@ -30,3 +28,39 @@ The run's peak is readable from anywhere on the board: while the Colossus (T0253
 - [ ] The card fades out (~200 ms) the moment the Colossus dies or leaks; it blocks nothing and takes no input, and the wave banner still slides above it at wave start.
 - [ ] The card fits at 412x915 and 1280x720 without overlapping the stats card (top left) or the wave card / pause button (top right).
 - [ ] The token, the name and the notch position are read from the boss's def (the notch at its `outOfReach.hpFrac`), not hard-coded.
+
+## Design (architect, cachyos-x8664)
+
+### Files
+- create `src/ui/hud/BossCard.ts` — the boss card HUD part (token, name, live hp bar with a notch at `def.outOfReach.hpFrac`); pops in/fades out with the boss, and dims token + bar to the board token's alpha on its out-of-reach beats.
+- edit `src/scenes/HudScene.ts` — one line in the `parts` list, after `new WaveBanner(this)`: `new BossCard(this),`.
+
+### Interfaces
+```ts
+// src/ui/hud/BossCard.ts — new, existing HudPart, no signature changes
+export class BossCard implements HudPart {
+  constructor(scene: Phaser.Scene);
+  layout(width: number, height: number): void;
+  update(game: GameScene): void;
+}
+```
+Contract T0253 must provide (build it first): `EnemyDef.outOfReach` in `src/content/types.ts` with `hpFrac: number` (0..1, the Colossus's is 0.5) — the card reads *only* `hpFrac`; the Colossus's def in `ENEMIES` (`name: 'Colossus'`, `look: { shape: 'square', color: 'purple', big size }`); and its board token at alpha 0.5 during every out-of-reach beat — the card reads `boss.alpha`, never re-derives the cycle. Boss lookup, every frame: `game.enemies.all.find((e) => e.active && e.def.outOfReach !== undefined)` — one on the board at a time; no wave number, no def import, so a later second boss shows here unchanged.
+
+### Steps
+1. Wait for T0253: the Colossus's def (with `outOfReach.hpFrac`), its registration, and the board-token dim it implements.
+2. Create `src/ui/hud/BossCard.ts` (imports `CELL, HUD` from `../../config`, `PALETTE` from `../../content/palette`, `artScale, enemyTexture` from `../../art/textures`, `makeCard` from `../card`, `textStyle` from `../text`, `isNarrow, type HudPart` from `./hud`, `type { Enemy }` from `../../entities/Enemy`, `type { GameScene }` from `../../scenes/GameScene`). Constants `BAR_W = 160, BAR_H = 6, PAD = 12`. In `update(game)`: find the boss; if none, `fadeOut()`; else if `!this.box`: build it (below), `place()`, then `box.setScale(0.4)` tweened to `1` over 200 ms `Back.easeOut` (the pop-in — scale only, never touch alpha). Every frame after: `token.setAlpha(boss.alpha)` and redraw the bar (ComboBar pattern, `bar.clear()` first): track `fillRoundedRect(-80, -3, 160, 6, 3)` in `PALETTE.muted` alpha 0.2; fill at `frac = clamp(boss.hp / boss.maxHp, 0, 1)` in `PALETTE[boss.def.look.color]` — `fillRoundedRect(-80, -3, 160 * frac, 6, Math.min(3, 160 * frac / 2))` — then the notch after the fill, at the def's own mark: `fillRect(-80 + 160 * boss.def.outOfReach.hpFrac - 1, -4, 2, 8)` in `PALETTE.ink`; then `bar.setAlpha(boss.alpha)`. `build(boss)`: `name = add.text(0, 0, boss.name, textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5)`; `w = Math.max(160, 16 + 6 + name.width) + 2 * PAD` (a longer second-boss name widens the card); `token = artScale(add.image(0, 0, enemyTexture(boss.id)), 8 / (boss.def.look.size * CELL))` — the same ~16 px the preview shows; `bar = add.graphics()`; `card = makeCard(scene, 0, 0, w, 54, 12)`; row 1 center `-7`, row 2 center `12`: token `(-w/2 + PAD + 8, -7)`, name `(-w/2 + PAD + 22, -7)`, bar `(0, 12)`; `return add.container(0, 0, [card, token, name, bar])`. `place()`: `box.setPosition(width / 2, (isNarrow(width) ? HUD.top + 24 : 12) + 48 + 8 + 54 / 2)` — under the banner's settle (it holds at 12..60 wide, 96..144 narrow), so the card sits at 68..122 wide and 152..206 narrow. `fadeOut()`: guarded by a `fading` flag; tween `box.alpha` to 0 over 200 ms, `onComplete` `box.destroy(true)`, clear `box` and the flag — the next boss wave rebuilds and pops in again.
+3. Edit `src/scenes/HudScene.ts`: the one line after `new WaveBanner(this)` in `create()`.
+4. `npm run check` and `npm run smoke`.
+
+### Pitfalls
+- Lockstep: the scene clock does not run at 2x — never time the dim yourself; hp, alpha and dim all come off the boss's live state (the Enemy the board advances).
+- `boss.alpha` is the dim source ("the same 50% as the board's token"); if T0253's dim lands somewhere other than the Enemy image's alpha, swap that one read — nothing else moves.
+- Fade-out must not restart while running (the `fading` flag) and must not destroy the box before the next boss: `destroy(true)` in `onComplete` only, so wave 20's boss still pops the card in.
+- The bar is redrawn, not tweened: `clear()` every frame; clamp `frac` (`maxHp >= 1` by spawn); clamp the rounded radius to the fill's half-width or a degenerate rect at tiny fills.
+- 412x915: the card sits at 152..206, clear of the stats card (y ≤ 84) and the wave card / pause button (top right, y ≤ ~100); ~184 wide fits both sizes; `w` grows with a longer second-boss name and the rows flow from their y — no hand-picked offsets.
+- Pop-in is scale-only, so a dimmed boss still pops correctly; don't touch alpha in the pop-in.
+- No interactive objects (a texture Image takes no input); the wave banner plays as usual and slides above — it is 12..60 / 96..144, the card starts below it.
+- Dim token and bar only; the name stays full alpha (the acceptance criterion names the two).
+
+### Tests
+- none (UI part; no core rule — the bar and phase live entirely in the HUD part off the boss's def and state).
