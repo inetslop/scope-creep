@@ -1,12 +1,14 @@
 ---
 id: T0252
 title: "The enemies reference: the shapes and what they do, off the pause"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T02:57:28Z
+claimed_at: 2026-10-30T03:24:08Z
 ---
 
 ## Goal
