@@ -3,11 +3,13 @@ id: T0278
 title: "A run you can show: the claim card's result becomes a copyable line"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T10:09:05Z
+claimed_at: 2026-10-30T10:48:08Z
 epic: E8
+designer: desktop
 ---
 
 ## Goal
