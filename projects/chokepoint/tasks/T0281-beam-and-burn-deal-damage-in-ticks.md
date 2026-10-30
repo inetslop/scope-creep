@@ -4,11 +4,12 @@ title: Beam and burn deal damage in ticks
 assignee: asus
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T10:37:56Z
 claimed_at: 2026-10-30T14:02:24Z
+finished_at: 2026-10-30T15:58:52Z
 epic: E4
 ---
 
@@ -121,3 +122,28 @@ ignite(dps: number, sec: number, mul: number): boolean;
 - `tests/core/ember.test.ts` (update): totals 9/12/15 per tier via `burnStep` (12 ticks of 0.75); re-ignition rules with `mul`; new: `ignite(live, 3, 3, 0.75)` burns 6.75 over 3 s; overtake compares effective rate (4/s × 1 beats 3/s × 1.25 = 3.75; 5/s × 1 loses to 4/s × 1.5 = 6); `towerSpec([ember, rapid]).damageMul === 0.75` and `describeSpec` says "2.25 per second"; `towerSpec([bolt rare]).damageMul === 1.3`.
 - `tests/core/towerDps.test.ts`: `towerDps(spec('ember', 'rapid'))` ≈ 2.25 (existing plain-ember 3 unchanged).
 - `tests/core/beam.test.ts` and `tests/core/beamEffects.test.ts` need no functional changes (targeting rules and `beamFx` are untouched) — verify they still pass.
+
+## Result (attempt 1, asus)
+
+Beams and burns now deal damage in discrete ticks (TICK_SEC = 0.25 s, 4/s) instead of per-frame: each beam line and each burn keeps a tick clock (core/beamHold.ts, core/burn.ts rewritten), and every tick is an ordinary hit through EnemySystem, so kills, gold, Mint, combo, Mark, crits, slows and pushes apply to them like a shot — root and push land every 4th tick (once per second of contact, unchanged rate). Burns now scale with the burning tower's damage: TowerSpec gained damageMul (tier × Rapids, 1 for a plain Common), stored on the burn at ignite, so a Rapid-added Ember burns 2.25/s and the panel/DPS show the multiplied figure; the beam pulse is a small white brightening of the existing tick mark that fades between ticks. Rewrote tests/core/beamHold.test.ts to the tick model and updated ember, towerDps and augments tests; beam and beamEffects tests pass unchanged. `npm run check` (444 tests) and `npm run smoke` (desktop + phone) pass.
+
+- Self-review: APPROVE
+- Time: 116.5 min
+
+```
+projects/chokepoint/game/src/config.ts             |   3 +
+ projects/chokepoint/game/src/core/augments.ts      |  11 +-
+ projects/chokepoint/game/src/core/beamEffects.ts   |  13 +-
+ projects/chokepoint/game/src/core/beamHold.ts      |  57 +++++---
+ projects/chokepoint/game/src/core/burn.ts          |  61 ++++++--
+ projects/chokepoint/game/src/core/towerDps.ts      |   5 +-
+ projects/chokepoint/game/src/entities/Enemy.ts     |  13 +-
+ projects/chokepoint/game/src/systems/BeamSystem.ts | 161 ++++++++++++---------
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  54 ++++---
+ .../game/src/systems/enemyHooks/burnLeap.ts        |   2 +-
+ .../chokepoint/game/tests/core/augments.test.ts    |   9 ++
+ .../chokepoint/game/tests/core/beamHold.test.ts    | 129 ++++++++++-------
+ projects/chokepoint/game/tests/core/ember.test.ts  |  62 ++++++--
+ .../chokepoint/game/tests/core/towerDps.test.ts    |   1 +
+ 14 files changed, 372 insertions(+), 209 deletions(-)
+```

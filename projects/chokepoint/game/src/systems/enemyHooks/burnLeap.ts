@@ -24,7 +24,7 @@ export const burnLeap: MakeEnemyHook = ({ enemies, fx }) => {
       }
       if (!best) return;
       jumped.set(best, best.serial);
-      best.ignite(enemy.burn.dps, 3); // fresh 3 s at the dying burn's rate (re-ignition keeps the higher)
+      best.ignite(enemy.burn.dps, 3, enemy.burn.mul); // fresh 3 s at the dying burn's rate and multiplier (re-ignition keeps the hotter)
       burnSpark(fx, enemy.x, enemy.y, best.x, best.y);
     },
   };

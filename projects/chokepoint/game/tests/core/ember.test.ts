@@ -3,7 +3,8 @@ import { AUGMENTS } from '../../src/content/augments';
 import { ember } from '../../src/content/augments/ember';
 import type { AugmentCopy, Tier } from '../../src/content/types';
 import { describeSpec, rollOffer, towerSpec } from '../../src/core/augments';
-import { burnTick, ignite } from '../../src/core/burn';
+import { burnRate, burnStep, ignite } from '../../src/core/burn';
+import type { LiveBurn } from '../../src/core/burn';
 import { Rng } from '../../src/core/rng';
 import { tierAdded, tierAddedLine, tierFirst, tierTowerLine } from '../../src/core/tiers';
 
@@ -18,32 +19,63 @@ describe('ember', () => {
     expect(s.rate).toBeCloseTo(1 / 1.5);
   });
 
-  it('the burn deals its rate over its life: about 9, 12 and 15 for Common, Rare and Epic', () => {
+  it('the burn ticks its rate over its life: about 9, 12 and 15 for Common, Rare and Epic', () => {
     for (const [tier, total] of [['common', 9], ['rare', 12], ['epic', 15]] as const) {
       const b = tierFirst(ember, tier).burn!;
-      const live = { dps: b.dps, left: b.sec };
+      const live: LiveBurn = { dps: b.dps, mul: 1, acc: 0, left: b.sec };
       let dealt = 0;
-      for (let i = 0; i < 8; i++) dealt += burnTick(live, 0.5);
+      let ticks = 0;
+      for (let i = 0; i < 12; i++) for (const d of burnStep(live, 0.25)) { dealt += d; ticks += 1; }
+      expect(ticks).toBe(12); // one tick per 0.25 s of the 3 s ablaze
       expect(dealt).toBeCloseTo(total);
       expect(live.left).toBe(0);
     }
   });
 
-  it('re-ignition refreshes the duration and keeps the higher rate; it never adds up', () => {
-    const live = { dps: 0, left: 0 };
-    expect(ignite(live, 3, 3)).toBe(true); // the first ablaze
-    expect(ignite(live, 3, 3)).toBe(false); // a Common over a Common: a silent refresh
-    expect(live).toEqual({ dps: 3, left: 3 });
-    expect(ignite(live, 4, 3)).toBe(false); // a Rare over a Common burns at 4/s
+  it('re-ignition refreshes the duration and keeps the hotter burn; it never adds up', () => {
+    const live: LiveBurn = { dps: 0, mul: 1, acc: 0, left: 0 };
+    expect(ignite(live, 3, 3, 1)).toBe(true); // the first ablaze
+    expect(ignite(live, 3, 3, 1)).toBe(false); // a Common over a Common: a silent refresh
+    expect(live).toEqual({ dps: 3, mul: 1, acc: 0, left: 3 });
+    expect(ignite(live, 4, 3, 1)).toBe(false); // a Rare over a Common burns at 4/s
     expect(live.dps).toBe(4);
-    expect(ignite(live, 3, 3)).toBe(false); // a Common over a Rare: still 4/s, never 6
-    expect(live).toEqual({ dps: 4, left: 3 });
+    expect(ignite(live, 3, 3, 1)).toBe(false); // a Common over a Rare: still 4/s, never 6
+    expect(live).toEqual({ dps: 4, mul: 1, acc: 0, left: 3 });
     let dealt = 0;
-    for (let i = 0; i < 8; i++) dealt += burnTick(live, 0.5);
+    for (let i = 0; i < 12; i++) for (const d of burnStep(live, 0.25)) dealt += d;
     expect(dealt).toBeCloseTo(12);
     // A fresh ablaze after the burn has spent starts at the igniter's rate, not the spent one's.
-    expect(ignite(live, 3, 3)).toBe(true); // a Common re-ignites the enemy after its burn ran out
-    expect(live).toEqual({ dps: 3, left: 3 });
+    expect(ignite(live, 3, 3, 1)).toBe(true); // a Common re-ignites the enemy after its burn ran out
+    expect(live).toEqual({ dps: 3, mul: 1, acc: 0, left: 3 });
+  });
+
+  it('a burn burns at its igniter\'s rate times the burning tower\'s damage multiplier', () => {
+    const live: LiveBurn = { dps: 0, mul: 1, acc: 0, left: 0 };
+    expect(ignite(live, 3, 3, 0.75)).toBe(true); // a Rapid-added tower: the lighter hits burn lighter
+    expect(burnRate(live)).toBeCloseTo(2.25);
+    let dealt = 0;
+    for (let i = 0; i < 12; i++) for (const d of burnStep(live, 0.25)) dealt += d;
+    expect(dealt).toBeCloseTo(6.75); // 12 ticks of 2.25 / 4
+    expect(live.left).toBe(0);
+  });
+
+  it('overtaking compares the effective rate (rate times the burning tower\'s multiplier)', () => {
+    const live: LiveBurn = { dps: 0, mul: 1, acc: 0, left: 0 };
+    ignite(live, 3, 3, 1.25); // burning at 3.75/s
+    expect(ignite(live, 4, 3, 1)).toBe(false); // 4/s x 1 = 4 beats 3/s x 1.25 = 3.75
+    expect(live).toMatchObject({ dps: 4, mul: 1 });
+    expect(ignite(live, 4, 3, 1.5)).toBe(false); // 4/s x 1.5 = 6 beats 4/s x 1
+    expect(live).toMatchObject({ dps: 4, mul: 1.5 });
+    expect(ignite(live, 5, 3, 1)).toBe(false); // 5/s x 1 = 5 loses to 6/s
+    expect(live).toMatchObject({ dps: 4, mul: 1.5 });
+    expect(burnRate(live)).toBeCloseTo(6);
+  });
+
+  it('the tower\'s damage multiplier scales its burn: Rapid adds 0.75, a Rare tier adds its own', () => {
+    expect(towerSpec([copy('ember'), copy('rapid')]).damageMul).toBeCloseTo(0.75);
+    expect(describeSpec(towerSpec([copy('ember'), copy('rapid')]))).toContain('2.25 per second');
+    expect(towerSpec([copy('bolt', 'rare')]).damageMul).toBeCloseTo(1.3);
+    expect(towerSpec([copy('ember', 'rare'), copy('rapid')]).damageMul).toBeCloseTo(0.75); // the burn's own rate, not its multiplier
   });
 
   it('rare and epic Embers burn at 4 and 5 per second, first and added', () => {

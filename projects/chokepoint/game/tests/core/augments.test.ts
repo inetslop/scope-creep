@@ -37,6 +37,15 @@ describe('towerSpec', () => {
     expect(describeSpec(spec('bolt', 'splash'))).toMatch(/burst/);
   });
 
+  it('the damage multiplier is the first\'s tier and its added damageMuls: 1 for a Common without Rapids', () => {
+    expect(spec().damageMul).toBe(1);
+    expect(spec('bolt').damageMul).toBe(1);
+    expect(towerSpec([copy('bolt', 'rare')]).damageMul).toBeCloseTo(1.3);
+    expect(spec('bolt', 'rapid').damageMul).toBeCloseTo(0.75);
+    expect(spec('bolt', 'rapid', 'rapid').damageMul).toBeCloseTo(0.5625);
+    expect(spec('bolt', 'frost').damageMul).toBe(1);
+  });
+
   it('on a pulse tower, Splash reaches further and Bolt adds shots with its own damage', () => {
     expect(spec('splash', 'splash').range).toBe(spec('splash').range + 1);
     expect(spec('frost', 'bolt').bolts).toBe(1);

@@ -19,6 +19,9 @@ export interface TowerSpec {
   firstId: string | undefined;
   /** 0 for a support tower that only slows (Frost first). */
   damage: number;
+  /** The multiplier its damage takes from the first's tier and its added damageMuls (1 for a
+   * Common without Rapids): its burns burn at `burn.dps × damageMul`, its panel says so too. */
+  damageMul: number;
   range: number;
   /** Attacks per second. */
   rate: number;
@@ -83,6 +86,7 @@ const EMPTY: TowerSpec = {
   kind: 'none',
   firstId: undefined,
   damage: 0,
+  damageMul: 1,
   range: 0,
   rate: 0,
   shots: 0,
@@ -127,12 +131,14 @@ const EMPTY: TowerSpec = {
 export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
   const first = augments[0];
   if (!first) return EMPTY;
-  const f = tierFirst(getAugment(first.id), first.tier);
+  const def = getAugment(first.id);
+  const f = tierFirst(def, first.tier);
   const spec: TowerSpec = {
     attacks: true,
     kind: f.kind,
     firstId: first.id,
     damage: f.damage,
+    damageMul: first.tier === 'common' ? 1 : def.tiers[first.tier].damageMul ?? 1,
     range: f.range,
     rate: f.rate,
     shots: 1,
@@ -174,6 +180,7 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
   for (const a of augments.slice(1)) {
     const e = tierAdded(getAugment(a.id), a.tier);
     spec.damage *= e.damageMul ?? 1;
+    spec.damageMul *= e.damageMul ?? 1;
     spec.boltDamage *= e.damageMul ?? 1;
     spec.rate *= e.rateMul ?? 1;
     spec.range *= e.rangeMul ?? 1;
@@ -292,7 +299,7 @@ export function describeSpec(spec: TowerSpec): string {
     line = `Marks the enemy furthest along: marked enemies take ${marked}% more damage`;
     if (slow) line += `, slowing them by ${slow}%`;
   } else if (spec.kind === 'burn') {
-    line = spec.burn ? `Sets ablaze the furthest enemy: ${spec.burn.dps} per second for ${spec.burn.sec} s` : 'Does not attack';
+    line = spec.burn ? `Sets ablaze the furthest enemy: ${spec.burn.dps * spec.damageMul} per second for ${spec.burn.sec} s` : 'Does not attack';
     if (slow) line += `, slowing them by ${slow}%`;
   } else if (spec.kind === 'beam') {
     const beams = spec.beamRays + 1;

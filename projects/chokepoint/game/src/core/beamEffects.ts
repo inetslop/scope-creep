@@ -5,16 +5,17 @@ import type { AugmentCopy, Burn } from '../content/types';
 import type { TowerSpec } from './augments';
 
 /**
- * What the lines of a Beam-first tower do to the enemy they hold (T0132, applied per frame by
- * systems/BeamSystem.ts through EnemySystem.beamEffects): the contact effects (Frost's slow,
- * Mark's mark, Ember's ablaze) while held, and the pulse effects (Anchor's root, Push's push)
- * once per second of contact (core/beamHold.ts). The values come straight from the tower's spec,
- * which for a Beam-first tower only ever holds these from ADDED augments (Beam's first form has none).
+ * What the lines of a Beam-first tower do to the enemy they hold (T0132, T0281, applied per tick
+ * by systems/BeamSystem.ts through EnemySystem.beamEffects): every tick of the hold (one per
+ * TICK_SEC, core/beamHold.ts) carries the tick effects (Frost's slow, Mark's mark, Ember's
+ * ablaze), and every 4th tick — once per second of contact — the tick is also a pulse (Anchor's
+ * root, Push's push). The values come straight from the tower's spec, which for a Beam-first
+ * tower only ever holds these from ADDED augments (Beam's first form has none).
  */
 
 /** What one line of a Beam-first tower does to the enemy it holds. */
 export interface BeamFx {
-  /** The slow it holds the enemy under (Frost added), refreshed for 2 s on every contact frame; undefined: none. */
+  /** The slow it holds the enemy under (Frost added), refreshed for 2 s on every tick; undefined: none. */
   slow: { pct: number; sec: number } | undefined;
   /** The mark it holds the enemy under (Mark added), for as long as the beam holds it; 0: none. */
   markPct: number;

@@ -59,8 +59,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   shielded = false;
   /** Seconds since its out-of-reach beat started (the Colossus); -1 before its hp first dropped to half (core/outOfReach.ts). */
   reachClock = -1;
-  /** The burn on it (Ember): its rate and the seconds left; left 0: not ablaze. */
-  burn: LiveBurn = { dps: 0, left: 0 };
+  /** The burn on it (Ember): the burning tower's rate and damage multiplier, and the seconds left; left 0: not ablaze. */
+  burn: LiveBurn = { dps: 0, mul: 1, acc: 0, left: 0 };
   /** The tower that lit the burn: when the tick kills, its mints pay like a normal kill. */
   burnSource: Tower | undefined;
   /** Which leg of its dash cycle (Dasher) it is in: the slow crawl, the stop-and-flash, the surge. */
@@ -100,6 +100,8 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.markAge = 0;
     this.shielded = false;
     this.burn.dps = 0;
+    this.burn.mul = 1;
+    this.burn.acc = 0;
     this.burn.left = 0;
     this.burnSource = undefined;
     this.dashLeg = 'crawl';
@@ -243,10 +245,11 @@ export class Enemy extends Phaser.GameObjects.Image {
     return this.hp <= 0;
   }
 
-  /** Sets ablaze, or re-ignites: the duration refreshes and the rate keeps the higher of the two.
+  /** Sets ablaze, or re-ignites: the duration refreshes and the rate keeps the hotter of the two.
+   * `mul` is the burning tower's damage multiplier; the burn keeps it after the tower changes.
    * True when it was not ablaze before (that is the moment that whooshes). */
-  ignite(dps: number, sec: number): boolean {
-    return ignite(this.burn, dps, sec);
+  ignite(dps: number, sec: number, mul: number): boolean {
+    return ignite(this.burn, dps, sec, mul);
   }
 
   /** Slows it by `pct` for `sec` seconds; a weaker slow doesn't replace a stronger one. */

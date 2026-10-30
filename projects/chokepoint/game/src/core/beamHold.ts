@@ -1,34 +1,45 @@
+import { TICK_SEC } from '../config';
+
 /**
- * A beam line's "hit" (T0132, applied by systems/BeamSystem.ts through EnemySystem.beamEffects):
- * while a line holds an enemy, its contact effects (Frost's slow, Mark's mark, Ember's ablaze)
- * apply every frame; once per second of contact on the same enemy — first at the moment of lock —
- * the line takes a pulse (Anchor's root, Push's push), so a root or push never chains forever.
- * Pure — the hold state lives in the system.
+ * A beam line's "tick" (T0281, applied by systems/BeamSystem.ts through EnemySystem.beamTick and
+ * beamEffects): while a line holds an enemy it deals one small hit every TICK_SEC — a quarter of
+ * its per-second rate — each one an ordinary hit, so crits, slows, marks and burns apply to it
+ * like to a shot; every BEAM_PULSE_EVERY ticks of contact on the same enemy the tick is also a
+ * pulse (Anchor's root, Push's push), once per second of contact as before, so a root or push
+ * never chains forever. Pure — the hold state lives in the system.
  */
 
-/** One beam hit: the seconds of contact on the same enemy between two pulses. */
-export const BEAM_HIT_SEC = 1;
-
-/** One beam line's hold: the enemy it holds (undefined: free), and the seconds to its next pulse. */
+/** One beam line's hold: the enemy it holds (undefined: free), its tick clock, and the ticks it
+ * has dealt on that enemy so far (the pulse counts every BEAM_PULSE_EVERY of them). */
 export interface BeamHold {
   enemy: object | undefined;
-  nextHit: number;
+  /** [0, TICK_SEC): seconds held since the last tick. */
+  acc: number;
+  /** Ticks dealt on `enemy` so far. */
+  ticks: number;
 }
 
-/** A free line: its first lock is a pulse at once. */
-export const EMPTY_BEAM_HOLD: BeamHold = { enemy: undefined, nextHit: BEAM_HIT_SEC };
+/** A free line. */
+export const EMPTY_BEAM_HOLD: BeamHold = { enemy: undefined, acc: 0, ticks: 0 };
+
+/** The tick of contact one pulse (root, push) comes on: once per second of hold. */
+export const BEAM_PULSE_EVERY = Math.round(1 / TICK_SEC);
 
 /**
- * One frame of a line's hold. `contact` is true while the line holds `enemy` (its contact effects
- * apply on every such frame); `pulse` is true on the frame it locks `enemy` and then once per
- * BEAM_HIT_SEC of contact on it. A frame with no enemy, or a new enemy, is a fresh hold.
- * `dt` in seconds.
+ * One frame of a line's hold: `ticks` is how many ticks the line deals this frame (0 or 1 at a
+ * clamped dt, a few in a spike), and `pulse` is true when one of them is the BEAM_PULSE_EVERY-th
+ * tick on this enemy. A frame with no enemy, or with a new enemy, deals nothing for the partial
+ * tick and starts a fresh clock. `dt` in seconds.
  */
-export function beamHoldStep(hold: BeamHold, enemy: object | undefined, dt: number): { contact: boolean; pulse: boolean; hold: BeamHold } {
-  if (!enemy) return { contact: false, pulse: false, hold: EMPTY_BEAM_HOLD };
-  if (hold.enemy !== enemy) return { contact: true, pulse: true, hold: { enemy, nextHit: BEAM_HIT_SEC } };
-  const nextHit = hold.nextHit - dt;
-  return nextHit <= 0
-    ? { contact: true, pulse: true, hold: { enemy, nextHit: BEAM_HIT_SEC } }
-    : { contact: true, pulse: false, hold: { enemy, nextHit } };
+export function beamHoldStep(hold: BeamHold, enemy: object | undefined, dt: number): { ticks: number; pulse: boolean; hold: BeamHold } {
+  if (!enemy || hold.enemy !== enemy) return { ticks: 0, pulse: false, hold: enemy ? { enemy, acc: 0, ticks: 0 } : EMPTY_BEAM_HOLD };
+  let acc = hold.acc + dt;
+  let ticks = 0;
+  let pulse = false;
+  while (acc >= TICK_SEC) {
+    acc -= TICK_SEC;
+    ticks += 1;
+    if ((hold.ticks + ticks) % BEAM_PULSE_EVERY === 0) pulse = true;
+  }
+  return { ticks, pulse, hold: { enemy, acc, ticks: hold.ticks + ticks } };
 }

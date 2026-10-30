@@ -29,6 +29,7 @@ describe('towerDps', () => {
   it('the burn counts at its rate, on top of the hits that set it', () => {
     expect(towerDps(spec('ember'))).toBeCloseTo(3);
     expect(towerDps(spec('bolt', 'ember'))).toBeCloseTo(19.2 + 3);
+    expect(towerDps(spec('ember', 'rapid'))).toBeCloseTo(2.25); // the Rapid's lighter hits burn lighter
   });
 
   it('a support tower adds nothing', () => {

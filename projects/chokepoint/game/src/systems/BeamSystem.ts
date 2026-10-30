@@ -1,10 +1,10 @@
 import type Phaser from 'phaser';
-import { CELL, DEPTH } from '../config';
+import { CELL, DEPTH, TICK_SEC } from '../config';
 import { PALETTE } from '../content/palette';
 import { towerColor } from '../core/augments';
 import { beamLines, inBeamRange, rayTargets } from '../core/beam';
 import { beamEffectLines, beamFx } from '../core/beamEffects';
-import { EMPTY_BEAM_HOLD, BEAM_HIT_SEC, beamHoldStep } from '../core/beamHold';
+import { EMPTY_BEAM_HOLD, beamHoldStep } from '../core/beamHold';
 import type { BeamHold } from '../core/beamHold';
 import { beamPierceVictims, beamScorch } from '../core/beamShapes';
 import { pickNearest } from '../core/targeting';
@@ -17,13 +17,14 @@ import type { TowerSystem } from './TowerSystem';
 
 /**
  * The beam (Beam): the first sustained attack. A continuous line from the muzzle on the enemy it
- * holds — no shots, no cooldown: the line appears the instant a target is locked and is gone the
- * instant there is none (the target rules in core/beam.ts). A Beam-first tower's main line is
- * sticky; a Bolt added to it adds a full-rate ray on the next enemy furthest along (core/beam.ts's
+ * holds — the line appears the instant a target is locked and is gone the instant there is none
+ * (the target rules in core/beam.ts). Each line deals its rate in ticks: one hit per TICK_SEC
+ * held, a quarter of its rate (core/beamHold.ts). A Beam-first tower's main line is sticky; a
+ * Bolt added to it adds a full-rate ray on the next enemy furthest along (core/beam.ts's
  * rayTargets, re-derived every frame); a Beam added adds a half-rate line on the enemy nearest the
- * main target. Rapid and Rally scale every line the same way. Damage goes through
- * EnemySystem.beamTick, so a beam kill pays through the normal kill
- * path — gold, the combo, the mints, the tower's kills — attributed to the beam's tower.
+ * main target. Rapid and Rally scale every line the same way. Every tick goes through
+ * EnemySystem.beamTick, so it credits kills, gold, the combo, the mints and the tower's kills
+ * like a shot, attributed to the beam's tower.
  */
 export class BeamSystem {
   private readonly towers: TowerSystem;
@@ -31,11 +32,10 @@ export class BeamSystem {
   private readonly sfx: Sfx | undefined;
   /** One Graphics for every line, cleared and redrawn each frame (the scene destroys it). */
   private readonly lines: Phaser.GameObjects.Graphics;
-  /** Each beam tower's held targets from the last frame: [main line, one per Bolt ray, one per extra line]. */
-  private readonly held = new Map<Tower, (Enemy | undefined)[]>();
-  /** Each beam tower's hold state per line (core/beamHold.ts): the same slots as `held`, kept only
-   * while its spec carries a beam effect (core/beamEffects.ts). */
-  private readonly holds = new Map<Tower, BeamHold[]>();
+  /** Each beam tower's line state (core/beamHold.ts): the tick clock per line
+   * [main line, one per Bolt ray, one per extra line], and the pierce and the scorch shapes'
+   * clocks, which tick with the main line. */
+  private readonly state = new Map<Tower, { lines: BeamHold[]; pierce: BeamHold; scorch: BeamHold }>();
   /** The beam towers whose hum is on (or asked for): it follows the main line's on/off. */
   private readonly humming = new Set<Tower>();
 
@@ -46,23 +46,23 @@ export class BeamSystem {
     this.lines = scene.add.graphics().setDepth(DEPTH.bars);
   }
 
-  /** This tower's hold state per line, grown or shrunk in lockstep with `held` when its line
-   * count changes (an augment just placed): the main and the old extras keep theirs, new slots
-   * start empty so the first lock pulses at once. */
-  private holdsFor(t: Tower, size: number): BeamHold[] {
-    let holds = this.holds.get(t);
-    if (!holds || holds.length !== size) {
-      // The rays sit between the main and the extras, like in the `held` resize: keep the main in
-      // slot 0 and the old extras at their new end; the ray slots start free.
+  /** This tower's line state, grown or shrunk in lockstep when its line count changes (an augment
+   * just placed): the main and the old extras keep their clocks, new slots start empty so their
+   * first tick comes a full TICK_SEC into the next hold; the pierce and the scorch keep running. */
+  private stateFor(t: Tower, size: number): { lines: BeamHold[]; pierce: BeamHold; scorch: BeamHold } {
+    let st = this.state.get(t);
+    if (!st || st.lines.length !== size) {
+      // The rays sit between the main and the extras, like in the old `held` resize: keep the main
+      // in slot 0 and the old extras at their new end; the ray slots start free.
+      const old = st?.lines ?? [];
       const next: BeamHold[] = new Array<BeamHold>(size).fill(EMPTY_BEAM_HOLD);
-      const old = holds ?? [];
       next[0] = old[0] ?? EMPTY_BEAM_HOLD;
       const extras = t.spec.beamExtras.length;
       for (let i = 0; i < Math.min(old.length - 1, extras); i++) next[size - extras + i] = old[1 + i]!;
-      holds = next;
-      this.holds.set(t, holds);
+      st = { lines: next, pierce: st?.pierce ?? EMPTY_BEAM_HOLD, scorch: st?.scorch ?? EMPTY_BEAM_HOLD };
+      this.state.set(t, st);
     }
-    return holds;
+    return st;
   }
 
   update(dt: number): void {
@@ -79,79 +79,82 @@ export class BeamSystem {
         continue;
       }
       const range = t.spec.range * CELL;
-      // held grows/shrinks with the tower's lines (an augment just placed): [main, rays, extras].
-      let held = this.held.get(t);
+      // The tower's lines: [main, one per Bolt ray, one per extra line], each with its tick clock.
       const size = 1 + t.spec.beamRays + t.spec.beamExtras.length;
-      if (!held || held.length !== size) {
-        // The rays sit between the main and the extras: keep the main in slot 0 and the old extras
-        // at their new end; the ray slots start free.
-        const next: (Enemy | undefined)[] = new Array<Enemy | undefined>(size).fill(undefined);
-        const old = held ?? [];
-        next[0] = old[0];
-        const extras = t.spec.beamExtras.length;
-        for (let i = 0; i < Math.min(old.length - 1, extras); i++) next[size - extras + i] = old[1 + i];
-        held = next;
-        this.held.set(t, held);
-      }
+      const st = this.stateFor(t, size);
       // The effects the tower's lines carry (core/beamEffects.ts): none on a plain beam or a
-      // Beam added to another kind, and then there is no hold state to keep either.
+      // Beam added to another kind.
       const fx = beamFx(t.spec);
-      const holds = fx ? this.holdsFor(t, size) : undefined;
-      const { main, lines } = beamLines(held[0], held.slice(1 + t.spec.beamRays), this.enemies.all, t.x, t.y, range, t.spec.kind === 'beam');
+      const { main, lines } = beamLines(
+        st.lines[0]!.enemy as Enemy | undefined,
+        st.lines.slice(1 + t.spec.beamRays).map((h) => h.enemy as Enemy | undefined),
+        this.enemies.all, t.x, t.y, range, t.spec.kind === 'beam');
       // Rapid's net factor times the Rally's speed: one factor for every line, the same as towerDps.
       const m = t.spec.beamRapidMul * t.rallyRateMul;
       const mainTarget = main === -1 ? undefined : this.enemies.all[main]!;
       // The rays are not sticky: re-derived every frame on the next enemies furthest along.
       const rays = mainTarget ? rayTargets(this.enemies.all, t.x, t.y, range, mainTarget, t.spec.beamRays) : [];
       // What every line holds this frame, in the lines' slot order [main, rays, extras]: a ray
-      // with no enemy this frame holds undefined, so its hold resets with it.
+      // with no enemy this frame holds undefined, so its clock starts fresh with the next lock.
       const targets: (Enemy | undefined)[] = [mainTarget];
       for (let i = 0; i < t.spec.beamRays; i++) targets.push(i < rays.length ? rays[i]! : undefined);
       for (let i = 0; i < lines.length; i++) targets.push(lines[i]);
-      const steps = holds ? targets.map((e, i) => beamHoldStep(holds[i]!, e, dt)) : undefined;
-      // The beam is sustained: each line's per-second rate over the frame, through the normal hit.
+      // One frame of every line's tick clock (core/beamHold.ts): a missing or new target deals
+      // nothing for its partial tick and starts a fresh clock; a pulse rides every 4th tick.
+      const steps = targets.map((e, i) => beamHoldStep(st.lines[i]!, e, dt));
+      // The beam is sustained: each line deals one tick per TICK_SEC held, a quarter of its rate.
       if (mainTarget) {
-        if (!held[0]) hook.stats.shotsFired += 1; // a new lock: the tower attacked (the line then sustains)
-        this.enemies.beamTick(mainTarget, t.spec.beamDps * m * dt, t);
+        if (!st.lines[0]!.enemy) hook.stats.shotsFired += 1; // a new lock: the tower attacked (the line then sustains)
+        for (let k = 0; k < steps[0]!.ticks; k++) this.enemies.beamTick(mainTarget, t.spec.beamDps * m * TICK_SEC, t);
       }
       // The main line's shapes (core/beamShapes.ts): Lance pierces past the target in a straight
-      // corridor at the full rate, Splash scorches the nearest others around it at half. Both die
-      // with the main target: a tick that killed it leaves no line, so no shapes either.
+      // corridor at the full rate, Splash scorches the nearest others around it at half. Both tick
+      // with the main line and die with the main target: a tick that killed it leaves no line, so
+      // no shapes either.
       let pierced: number[] = [];
       let scorched: number[] = [];
       const scorch = beamScorch(t.spec);
-      if (mainTarget && mainTarget.active) {
+      const held = mainTarget && mainTarget.active;
+      const pierceStep = beamHoldStep(st.pierce, held ? mainTarget : undefined, dt);
+      const scorchStep = beamHoldStep(st.scorch, held ? mainTarget : undefined, dt);
+      if (held) {
         if (t.spec.kind === 'beam' && t.spec.pierce > 0) {
           pierced = beamPierceVictims(this.enemies.all, t.x, t.y, range, mainTarget, t.spec.pierce);
-          for (const i of pierced) this.enemies.beamTick(this.enemies.all[i]!, t.spec.beamDps * m * dt, t); // full rate, the same feed
+          if (pierceStep.ticks > 0) for (const i of pierced) this.enemies.beamTick(this.enemies.all[i]!, t.spec.beamDps * m * TICK_SEC, t); // full rate, the same feed
         }
         if (scorch) {
           scorched = pickNearest(mainTarget, scorch.radius, this.enemies.all, scorch.cap);
-          for (const i of scorched) this.enemies.beamTick(this.enemies.all[i]!, scorch.rate * m * dt, t);
+          if (scorchStep.ticks > 0) for (const i of scorched) this.enemies.beamTick(this.enemies.all[i]!, scorch.rate * m * TICK_SEC, t);
         }
       }
-      for (const e of rays) this.enemies.beamTick(e, t.spec.beamDps * m * dt, t);
+      for (let i = 1; i <= t.spec.beamRays; i++) {
+        const e = targets[i];
+        if (e) for (let k = 0; k < steps[i]!.ticks; k++) this.enemies.beamTick(e, t.spec.beamDps * m * TICK_SEC, t);
+      }
       for (let i = 0; i < lines.length; i++) {
         const e = lines[i];
-        if (e) this.enemies.beamTick(e, t.spec.beamExtras[i]! * m * dt, t);
+        if (e) for (let k = 0; k < steps[1 + t.spec.beamRays + i]!.ticks; k++) this.enemies.beamTick(e, t.spec.beamExtras[i]! * m * TICK_SEC, t);
       }
       // The hold's effects, only on the targets still alive after the tick (it may have killed one).
-      if (fx && steps) {
+      if (fx) {
         for (let i = 0; i < targets.length; i++) {
           const e = targets[i];
-          if (e && e.active) this.enemies.beamEffects(e, fx, steps[i]!.pulse, t);
+          if (e && e.active && steps[i]!.ticks > 0) this.enemies.beamEffects(e, fx, steps[i]!.pulse, t);
         }
       }
       // A tick may have killed its target this frame: the line is gone the instant the target dies,
-      // and a dead line's hold resets, so a recycled pool object never resumes a stale contact.
+      // and a dead line's clock resets, so a recycled pool object never resumes a stale hold.
       const now: (Enemy | undefined)[] = [];
       for (let i = 0; i < targets.length; i++) {
         const e = targets[i];
         const alive = e && e.active;
         now.push(alive ? e : undefined);
-        if (holds && steps) holds[i] = alive ? steps[i]!.hold : EMPTY_BEAM_HOLD;
+        st.lines[i] = alive ? steps[i]!.hold : EMPTY_BEAM_HOLD;
       }
-      this.held.set(t, now);
+      // The shapes die with the main target too: a tick that killed it clears their clocks.
+      const mainAlive = mainTarget && mainTarget.active;
+      st.pierce = mainAlive ? pierceStep.hold : EMPTY_BEAM_HOLD;
+      st.scorch = mainAlive ? scorchStep.hold : EMPTY_BEAM_HOLD;
       // A held line counts as firing: a shot+beam tower's quiet dot stays off while the beam holds one.
       t.beamHolding = now.some((e) => e !== undefined);
       t.setBeamOn(main !== -1); // the orb's disc pulses only while the beam is on
@@ -174,15 +177,20 @@ export class BeamSystem {
         g.lineBetween(muzzle.x, muzzle.y, end.x, end.y);
         fxLines(g, muzzle, end, fxs);
         hitTick(g, muzzle, mainE);
+        hitPulse(g, muzzle, mainE, 1 - st.lines[0]!.acc / TICK_SEC);
         for (const i of pierced) {
           const e = this.enemies.all[i]!;
-          if (e.active) hitTick(g, muzzle, e);
+          if (e.active) {
+            hitTick(g, muzzle, e);
+            hitPulse(g, muzzle, e, 1 - st.pierce.acc / TICK_SEC);
+          }
         }
       } else if (mainE) {
         g.lineStyle(4, color, 1);
         g.lineBetween(muzzle.x, muzzle.y, mainE.x, mainE.y);
         fxLines(g, muzzle, mainE, fxs);
         hitTick(g, muzzle, mainE);
+        hitPulse(g, muzzle, mainE, 1 - st.lines[0]!.acc / TICK_SEC);
       }
       for (let i = 1; i < now.length; i++) {
         const e = now[i];
@@ -191,6 +199,7 @@ export class BeamSystem {
         g.lineBetween(muzzle.x, muzzle.y, e.x, e.y);
         fxLines(g, muzzle, e, fxs);
         hitTick(g, muzzle, e);
+        hitPulse(g, muzzle, e, 1 - st.lines[i]!.acc / TICK_SEC);
       }
       if (scorch && mainE && scorched.length > 0) {
         g.lineStyle(2, color, 0.3); // the scorch ring: faint, only while someone is scorched
@@ -200,24 +209,21 @@ export class BeamSystem {
   }
 
   /** Invariant: no held beam target is inactive or out of its tower's range, and no hold state
-   * disagrees with its line (one hold per line, nextHit counting down in (0, BEAM_HIT_SEC]). */
+   * disagrees with its line (one hold per line, its clock in [0, TICK_SEC), the pierce and the
+   * scorch on the main line's target). */
   broken(): string | undefined {
-    for (const [t, held] of this.held) {
-      // A Mute holds it: the lines are off and the held targets are frozen; beamLines re-validates
+    for (const [t, st] of this.state) {
+      // A Mute holds it: the lines are off and the holds are frozen; beamLines re-validates
       // every one of them the frame the jam lifts, so a stale target never beams.
       if (t.jammed) continue;
       const range = t.spec.range * CELL;
-      for (const e of held) {
+      for (const h of st.lines) {
+        const e = h.enemy as Enemy | undefined;
         if (e && (!e.active || !inBeamRange(e, t.x, t.y, range))) return `a beam from (${t.cell.col}, ${t.cell.row}) holds an out-of-range target`;
+        if (!Number.isFinite(h.acc) || h.acc < 0 || h.acc >= TICK_SEC) return `a beam from (${t.cell.col}, ${t.cell.row}) holds ${h.acc}s into its tick`;
+        if (!Number.isFinite(h.ticks) || h.ticks < 0) return `a beam from (${t.cell.col}, ${t.cell.row}) has dealt ${h.ticks} ticks`;
       }
-      const holds = this.holds.get(t);
-      if (!holds) continue;
-      if (holds.length !== held.length) return `a beam from (${t.cell.col}, ${t.cell.row}) keeps ${holds.length} holds for its ${held.length} lines`;
-      for (let i = 0; i < holds.length; i++) {
-        const h = holds[i]!;
-        if ((h.enemy !== undefined) !== (held[i] !== undefined)) return `a beam from (${t.cell.col}, ${t.cell.row}) has a hold that disagrees with its line`;
-        if (h.enemy && (!Number.isFinite(h.nextHit) || h.nextHit < 0 || h.nextHit > BEAM_HIT_SEC)) return `a beam from (${t.cell.col}, ${t.cell.row}) holds ${h.nextHit}s to its next hit`;
-      }
+      if (st.pierce.enemy !== st.lines[0]!.enemy || st.scorch.enemy !== st.lines[0]!.enemy) return `a beam from (${t.cell.col}, ${t.cell.row}) keeps its shapes off its main line`;
     }
     return undefined;
   }
@@ -231,6 +237,19 @@ function hitTick(g: Phaser.GameObjects.Graphics, from: { x: number; y: number },
   if (d < 1) return;
   const px = -dy / d;
   const py = dx / d;
+  g.lineBetween(to.x - px * 4, to.y - py * 4, to.x + px * 4, to.y + py * 4);
+}
+
+/** A short brightening of the hit tick: the beam's tick pulse, bright at the tick, faded by the next. */
+function hitPulse(g: Phaser.GameObjects.Graphics, from: { x: number; y: number }, to: { x: number; y: number }, glow: number): void {
+  if (glow < 0.05) return;
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const d = Math.hypot(dx, dy);
+  if (d < 1) return;
+  const px = -dy / d;
+  const py = dx / d;
+  g.lineStyle(2, PALETTE.road, glow);
   g.lineBetween(to.x - px * 4, to.y - py * 4, to.x + px * 4, to.y + py * 4);
 }
 

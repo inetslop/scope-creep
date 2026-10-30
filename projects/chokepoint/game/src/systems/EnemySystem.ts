@@ -6,7 +6,8 @@ import type { RunState } from '../core/run';
 import type { BeamFx } from '../core/beamEffects';
 import { killGold } from '../core/lastStand';
 import { mintGoldBonus } from '../core/mint';
-import { burnTick } from '../core/burn';
+import { burnRate, burnStep } from '../core/burn';
+import { TICK_SEC } from '../config';
 import { plateMul } from '../core/plate';
 import { ROOT_IMMUNE_SEC } from '../core/root';
 import { pickNearest } from '../core/targeting';
@@ -113,36 +114,42 @@ export class EnemySystem {
     for (const h of this.hooks) h.update?.(dt);
   }
 
-  /** One frame of the burn: its damage over the seconds still ablaze, through the normal hit. */
+  /** One frame of the burn: its ticks this frame (one per TICK_SEC ablaze), each a small hit
+   * through the normal hit — no white flash, and the mints pay like a normal kill when one lands. */
   private tickBurn(e: Enemy, dt: number): void {
-    const damage = burnTick(e.burn, dt);
-    if (damage <= 0) return;
-    if (e.hit(damage, false)) this.kill(e, e.burnSource);
+    for (const damage of burnStep(e.burn, dt)) {
+      if (!e.active) break;
+      if (e.hit(damage, false)) { this.kill(e, e.burnSource); break; }
+    }
   }
 
-  /** One frame of a beam line: its per-second rate over these seconds (systems/BeamSystem.ts).
-   * No white flash, like the burn tick; gold, the combo, the mints and `source.kills` all pay. */
+  /** One tick of a beam line: its damage this tick (a quarter of its per-second rate, dealt by
+   * systems/BeamSystem.ts). No white flash, like the burn tick; gold, the combo, the mints and
+   * `source.kills` all pay. */
   beamTick(target: Enemy, damage: number, source: Tower): void {
     if (damage <= 0 || !target.active) return;
     if (target.hit(damage, false)) this.kill(target, source);
   }
 
   /**
-   * One frame of a beam line's hold on `target` (systems/BeamSystem.ts): its contact effects
-   * (Frost's slow, Mark's mark, Ember's ablaze) every frame it holds, and its pulse effects
-   * (Anchor's root, Push's push) on `pulse` — once per second of contact (core/beamHold.ts).
-   * All through the enemy's own methods, so a Ward shrugs the control off like from anything else.
+   * One tick of a beam line's hold on `target` (systems/BeamSystem.ts): its tick effects
+   * (Frost's slow, Mark's mark, Ember's ablaze) on every tick it holds, and its pulse effects
+   * (Anchor's root, Push's push) on `pulse` — every 4th tick, once per second of contact
+   * (core/beamHold.ts). All through the enemy's own methods, so a Ward shrugs the control off
+   * like from anything else.
    */
   beamEffects(target: Enemy, fx: BeamFx, pulse: boolean, source: Tower): void {
     if (!target.active) return;
     if (fx.slow) target.slow(fx.slow.pct, fx.slow.sec);
     if (fx.markPct > 0) target.mark(fx.markPct);
-    // The burn keeps ticking after the hold: refreshed every contact frame, only the first ablaze whooshes.
+    // The burn keeps ticking after the hold: refreshed on every tick, only the first ablaze whooshes.
     if (fx.burn) {
       // The tower whose rate is live gets the killing tick: a fresh ablaze is the igniter's, a
-      // refresh only moves it over when that tower burns at least as hot (the rules of strike()).
-      const overtook = target.burn.left <= 0 || fx.burn.dps >= target.burn.dps;
-      const fresh = target.ignite(fx.burn.dps, fx.burn.sec);
+      // refresh only moves it over when that tower burns at least as hot — in effective rate,
+      // its own damage multiplier included (the rules of strike()).
+      const mul = source.spec.damageMul;
+      const overtook = target.burn.left <= 0 || fx.burn.dps * mul >= burnRate(target.burn);
+      const fresh = target.ignite(fx.burn.dps, fx.burn.sec, mul);
       if (overtook) target.burnSource = source;
       if (fresh) this.sfx?.ignite();
     }
@@ -178,9 +185,11 @@ export class EnemySystem {
     // The burn keeps ticking after the hit: refreshed on every hit, only the first ablaze whooshes.
     if (payload.burn) {
       // The tower whose rate is live gets the killing tick: a fresh ablaze is the igniter's, a
-      // refresh only moves it over when that tower burns at least as hot.
-      const overtook = e.burn.left <= 0 || payload.burn.dps >= e.burn.dps;
-      const fresh = e.ignite(payload.burn.dps, payload.burn.sec);
+      // refresh only moves it over when that tower burns at least as hot — in effective rate,
+      // its own damage multiplier included.
+      const mul = payload.source.spec.damageMul;
+      const overtook = e.burn.left <= 0 || payload.burn.dps * mul >= burnRate(e.burn);
+      const fresh = e.ignite(payload.burn.dps, payload.burn.sec, mul);
       if (overtook) e.burnSource = payload.source;
       if (fresh) this.sfx?.ignite();
     }
@@ -249,9 +258,14 @@ export class EnemySystem {
     return bad ? `${bad.def.id} marked by ${bad.markPct}` : undefined;
   }
 
-  /** Invariant: no active enemy carries a NaN or negative burn. */
+  /** Invariant: no active enemy carries a NaN or out-of-range burn (its multiplier, its tick
+   * clock in [0, TICK_SEC)). */
   brokenBurn(): string | undefined {
-    const bad = this.pool.find((e) => e.active && (!Number.isFinite(e.burn.dps) || e.burn.dps < 0 || !Number.isFinite(e.burn.left) || e.burn.left < 0));
+    const bad = this.pool.find((e) => e.active
+      && (!Number.isFinite(e.burn.dps) || e.burn.dps < 0
+        || !Number.isFinite(e.burn.mul) || e.burn.mul < 0
+        || !Number.isFinite(e.burn.acc) || e.burn.acc < 0 || e.burn.acc >= TICK_SEC
+        || !Number.isFinite(e.burn.left) || e.burn.left < 0));
     return bad ? `${bad.def.id} burning at ${bad.burn.dps}/s for ${bad.burn.left}s` : undefined;
   }
 

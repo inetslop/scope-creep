@@ -46,6 +46,9 @@ export const ZOOM = { min: 1, max: 2.4, step: 1.3 } as const;
 /** A press that moves less than this many screen pixels is a tap (builds); more is a drag (pans). */
 export const TAP_SLOP = 10;
 
+/** The tick: beam lines and burns deal their damage in hits this often (4 per second). */
+export const TICK_SEC = 0.25;
+
 /** Draw order on the board. Higher is on top. */
 export const DEPTH = {
   board: 0,
