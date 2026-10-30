@@ -1,6 +1,6 @@
 /** The device's profile: best wave, runs played, coins, and the four most recent runs. Storage is passed in, so this stays pure and testable. */
 import { cleanWavePay } from '../content/tech/claim';
-import { getLevelAugment } from '../content/levels';
+import { LEVEL_AUGMENTS, getLevelAugment } from '../content/levels';
 import { levelSlotsAfter } from './levels';
 
 export interface Profile {
@@ -18,7 +18,7 @@ export interface Profile {
   lastRun: { wave: number; coins: number } | null;
   recent: { wave: number; coins: number }[];
   sound: boolean;
-  /** Level slots earned: one, first time a run reached wave 30 (never decreases). */
+  /** Level slots earned: one per run that reached wave 30 with every slot filled, capped at the set (never decreases). */
   levelSlots: number;
   /** The level augments on for the next run, in the player's order. */
   levelOn: string[];
@@ -49,6 +49,7 @@ export interface RecordResult {
   profile: Profile;
   coins: number;
   newBest: boolean;
+  levelSlotEarned: boolean; // this run earned a slot (first or later): the claim card prints its line
 }
 
 export const PROFILE_KEY = 'chokepoint:profile';
@@ -123,6 +124,7 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
   const old = loadProfile(store);
   const coins = coinsForRun(result, cleanWavePay(old.purchased), result.mul ?? 1, result.levelMul ?? 1);
   const newBest = result.waves > old.bestWave;
+  const levelSlots = levelSlotsAfter(old.levelSlots, result.reached ?? result.waves, old.levelOn.length, LEVEL_AUGMENTS.length);
   const profile: Profile = {
     bestWave: Math.max(old.bestWave, result.waves),
     // A ghost run replays the best board, so it never moves the button.
@@ -136,7 +138,7 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
     lastRun: { wave: result.waves, coins },
     recent: [{ wave: result.waves, coins }, ...old.recent].slice(0, 4),
     sound: old.sound,
-    levelSlots: levelSlotsAfter(old.levelSlots, result.reached ?? result.waves),
+    levelSlots,
     levelOn: old.levelOn,
   };
   try {
@@ -144,7 +146,7 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
   } catch {
     /* private mode or full storage: the profile just isn't kept */
   }
-  return { profile, coins, newBest };
+  return { profile, coins, newBest, levelSlotEarned: levelSlots > old.levelSlots };
 }
 
 /** Saves the sound preference; the profile's other fields keep what they had. */

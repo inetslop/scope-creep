@@ -34,11 +34,16 @@ export function buildLevelCard(scene: Phaser.Scene, slots: number, initial: stri
     return { container: scene.add.container(0, 0, [card, line]), width: CARD_W, height, on };
   }
   const n = LEVEL_AUGMENTS.length;
-  const height = 12 + 20 + 10 + n * ROW_H + (n - 1) * ROW_GAP + 12;
+  const goalShown = slots < n;
+  const headerToRows = goalShown ? 32 : 10; // 8 down to the line, 14 for it, 10 to the rows
+  const height = 12 + 20 + headerToRows + n * ROW_H + (n - 1) * ROW_GAP + 12;
   const card = makeCard(scene, 0, 0, CARD_W, height, 20);
   const header = scene.add.text(-98, 0, 'Level', textStyle(16, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
   const mul = scene.add.text(98, 0, '', textStyle(14, PALETTE.muted)).setOrigin(1, 0.5);
+  let goal: Phaser.GameObjects.Text | undefined;
+  if (goalShown) goal = scene.add.text(0, 0, `wave 30 with ${slots} on unlocks the next`, textStyle(12, PALETTE.muted)).setOrigin(0.5);
   const kids: Phaser.GameObjects.GameObject[] = [card, header, mul];
+  if (goal) kids.push(goal);
   const rows: { def: LevelAugmentDef; row: Button; state: Phaser.GameObjects.Text }[] = [];
   const toggle = (def: LevelAugmentDef): void => {
     const i = on.indexOf(def.id);
@@ -54,12 +59,13 @@ export function buildLevelCard(scene: Phaser.Scene, slots: number, initial: stri
     const line = scene.add.text(-84, 11, def.line, textStyle(12, PALETTE.muted, { wordWrap: { width: 132 }, lineSpacing: 2 })).setOrigin(0, 0.5);
     const state = scene.add.text(84, 0, '', textStyle(14, PALETTE.muted)).setOrigin(1, 0.5);
     row.content.add([name, line, state]);
-    row.container.setY(-height / 2 + 12 + 20 + 10 + ROW_H / 2 + i * (ROW_H + ROW_GAP));
+    row.container.setY(-height / 2 + 12 + 20 + headerToRows + ROW_H / 2 + i * (ROW_H + ROW_GAP));
     kids.push(row.container);
     rows.push({ def, row, state });
   });
   header.setY(-height / 2 + 12 + 10);
   mul.setY(header.y);
+  if (goal) goal.setY(-height / 2 + 47);
   const refresh = (): void => {
     mul.setText(levelMultiplierLabel(on));
     mul.setColor(cssColor(levelMultiplier(on) > 1 ? PALETTE.ink : PALETTE.muted));

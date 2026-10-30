@@ -4,11 +4,12 @@ title: "The slot ladder: wave 30 with every slot filled unlocks one more"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T20:35:44Z
 claimed_at: 2026-10-30T22:20:05Z
+finished_at: 2026-10-30T22:51:30Z
 epic: E9
 ---
 
@@ -77,3 +78,22 @@ Set size is always `LEVEL_AUGMENTS.length` from `src/content/levels/index.ts` (3
 ### Tests
 - `tests/core/levels.test.ts`: the ladder `it` above (the five acceptance vectors plus the not-filled and capped cases).
 - `tests/core/profile.test.ts`: the `recordRun` ladder `it` above (save moment, never-decrease, not-all-filled, `levelSlotEarned`).
+
+## Result (attempt 1, asus)
+
+The slot ladder is in: `levelSlotsAfter` is now the one rule (wave 30 + every unlocked slot filled → +1 slot, 0-filled counts as full, capped at the set size read from `LEVEL_AUGMENTS.length`), and `recordRun` applies it at the same save moment as T0285's first unlock, returning `levelSlotEarned`. The claim card prints a bold "Level slot · N of S" line exactly when a run earned a slot, and the menu's Level card shows one muted "wave 30 with N on unlocks the next" goal line below its header while slots are under the cap (teaser and toggle cap unchanged). New unit tests cover the ladder vectors through both the pure function and `recordRun`; typecheck, lint, unit tests, and desktop+mobile smoke all pass.
+
+- Self-review: APPROVE
+- Time: 31.4 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/levels.ts           |  8 +++++---
+ projects/chokepoint/game/src/core/profile.ts          | 10 ++++++----
+ projects/chokepoint/game/src/scenes/GameOverScene.ts  |  2 +-
+ projects/chokepoint/game/src/scenes/RewardsScene.ts   | 11 ++++++++++-
+ projects/chokepoint/game/src/scenes/menu/LevelCard.ts | 10 ++++++++--
+ projects/chokepoint/game/tests/core/levels.test.ts    | 15 +++++++++------
+ projects/chokepoint/game/tests/core/profile.test.ts   | 15 +++++++++++++++
+ 7 files changed, 54 insertions(+), 17 deletions(-)
+```

@@ -135,6 +135,21 @@ describe('profile', () => {
     expect(recordRun(store, { waves: 12, stopped: 0, clean: 0, seed: 304, bgen: 2 }).profile.levelSlots).toBe(1); // never fewer
   });
 
+  it('the slot ladder saves a new slot at the run\'s end, never loses one, and flags the earn', () => {
+    const store = memory();
+    store.setItem('chokepoint:profile', JSON.stringify({ levelSlots: 2, levelOn: ['tough', 'swift'] }));
+    const earned = recordRun(store, { waves: 29, stopped: 0, clean: 0, seed: 311, bgen: 2, reached: 30 });
+    expect(earned.profile.levelSlots).toBe(3); // died during wave 30 with both slots filled
+    expect(earned.levelSlotEarned).toBe(true);
+    const short = recordRun(store, { waves: 5, stopped: 0, clean: 0, seed: 312, bgen: 2 });
+    expect(short.profile.levelSlots).toBe(3); // a short run never takes the slot back
+    expect(short.levelSlotEarned).toBe(false);
+    store.setItem('chokepoint:profile', JSON.stringify({ levelSlots: 2, levelOn: ['tough'] }));
+    const gap = recordRun(store, { waves: 30, stopped: 0, clean: 0, seed: 313, bgen: 2 });
+    expect(gap.profile.levelSlots).toBe(2); // a slot left empty: nothing earned
+    expect(gap.levelSlotEarned).toBe(false);
+  });
+
   it('saves the level-augment choice, drops unknown ids on load, and keeps it through runs', () => {
     const store = memory();
     saveLevelOn(store, ['tough', 'nope']);

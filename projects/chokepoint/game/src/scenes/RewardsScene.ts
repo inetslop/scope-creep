@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { ART, artScale, COIN_TEXTURE, STAR_TEXTURE } from '../art/textures';
+import { LEVEL_AUGMENTS } from '../content/levels';
 import { cssColor, PALETTE } from '../content/palette';
 import { cleanWavePay } from '../content/tech/claim';
 import { boardCode } from '../core/boardCode';
@@ -59,7 +60,7 @@ export class RewardsScene extends Phaser.Scene {
     super(SCENES.rewards);
   }
 
-  create(): void {
+  create(data?: { slotEarned?: boolean }): void {
     uiCamera(this);
     hook.scene = SCENES.game;
     hook.overlay = SCENES.rewards;
@@ -131,6 +132,8 @@ export class RewardsScene extends Phaser.Scene {
       flawlessText = this.add.text(0, 0, 'Flawless', titleStyle(22, PALETTE.muted)).setOrigin(0.5);
       flawlessStar = artScale(this.add.image(0, 0, STAR_TEXTURE), 1.5);
     }
+    let slotText: Phaser.GameObjects.Text | undefined;
+    if (data?.slotEarned) slotText = this.add.text(0, 0, `Level slot · ${profile.levelSlots} of ${LEVEL_AUGMENTS.length}`, titleStyle(22, PALETTE.ink)).setOrigin(0.5);
     const menuButton = makeButton(this, 0, 0, 'Menu', menu, { width: 240, height: 52, radius: 26 });
 
     // The column's groups: the title; the run; the score and its recipe; the coins and their
@@ -153,6 +156,7 @@ export class RewardsScene extends Phaser.Scene {
       { height: boardText.height, after: flawlessText ? gapSmall : gapBig },
     );
     if (flawlessText) rows.push({ height: flawlessText.height, after: gapBig });
+    if (slotText) rows.push({ height: slotText.height, after: gapBig });
     rows.push({ height: menuButton.container.height, after: 0 });
 
     const col = stack(rows, pad);
@@ -183,6 +187,10 @@ export class RewardsScene extends Phaser.Scene {
       flawlessStar.setY(top + col.ys[i] + 1).setX(flawlessText.width / 2 + 13); // the texture is painted 1px low
       i++;
     }
+    if (slotText) {
+      slotText.setY(top + col.ys[i]);
+      i++;
+    }
     menuButton.container.setY(top + col.ys[i]);
     this.centerCoins();
 
@@ -192,6 +200,7 @@ export class RewardsScene extends Phaser.Scene {
     parts.push(this.scoreText, scoreRecipe, this.coinText, this.coinIcon, coinRecipe, boardText);
     if (levelLine) parts.push(levelLine);
     if (flawlessText && flawlessStar) parts.push(flawlessText, flawlessStar);
+    if (slotText) parts.push(slotText);
     parts.push(menuButton.container);
     if (this.ironTag) parts.push(this.ironTag);
     const box = this.add.container(0, 0, parts).setDepth(2);

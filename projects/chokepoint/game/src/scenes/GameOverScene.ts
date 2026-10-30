@@ -31,7 +31,7 @@ export class GameOverScene extends Phaser.Scene {
       this.scene.start(SCENES.game);
     };
     const claim = (): void => {
-      this.scene.start(SCENES.rewards);
+      this.scene.start(SCENES.rewards, { slotEarned: result.levelSlotEarned });
     };
 
     const panelW = 360;

@@ -10,13 +10,16 @@ import { Rng } from '../../src/core/rng';
 import { planWave, planWithLevel, quietGoldMul, waveHpMul, type WavePlan } from '../../src/core/waves';
 
 describe('level augments', () => {
-  it('the unlock is wave 30, and a slot is earned once and never lost', () => {
+  it('the slot ladder: wave 30 with every unlocked slot filled earns one more, capped at the set', () => {
     expect(LEVEL_UNLOCK_WAVE).toBe(30);
-    expect(levelSlotsAfter(0, 29)).toBe(0); // ended just short
-    expect(levelSlotsAfter(0, 30)).toBe(1); // reached the unlock wave (a run dying during it counts)
-    expect(levelSlotsAfter(1, 30)).toBe(1); // a second run there earns nothing more
-    expect(levelSlotsAfter(1, 40)).toBe(1); // never more than one
-    expect(levelSlotsAfter(1, 10)).toBe(1); // never fewer
+    expect(levelSlotsAfter(0, 29, 0, 5)).toBe(0); // ended just short
+    expect(levelSlotsAfter(0, 30, 0, 5)).toBe(1); // 0 filled counts as all filled: the first slot
+    expect(levelSlotsAfter(1, 30, 0, 5)).toBe(1); // a slot left empty: nothing earned
+    expect(levelSlotsAfter(1, 30, 1, 5)).toBe(2); // filled: one more
+    expect(levelSlotsAfter(2, 30, 2, 5)).toBe(3);
+    expect(levelSlotsAfter(2, 29, 2, 5)).toBe(2); // short of the wave: nothing
+    expect(levelSlotsAfter(5, 40, 5, 5)).toBe(5); // capped at the set's size
+    expect(levelSlotsAfter(4, 10, 4, 5)).toBe(4); // never fewer
   });
 
   it('the capped choice keeps only known ids, the first of them up to the slots', () => {

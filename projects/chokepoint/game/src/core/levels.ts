@@ -3,9 +3,11 @@ import { getLevelAugment } from '../content/levels';
 /** The wave a run reaches to earn the first level slot: the wave has started (a run dying during it counts). */
 export const LEVEL_UNLOCK_WAVE = 30;
 
-/** The slots after a finished run: one earned the first time a run reaches the unlock wave, never more, never fewer. */
-export function levelSlotsAfter(old: number, wavesReached: number): number {
-  return wavesReached >= LEVEL_UNLOCK_WAVE ? Math.max(old, 1) : old;
+/** A run that reached the unlock wave with every unlocked slot filled earns one more slot, capped at the set's size.
+ * 0 filled counts as all filled, so the first earn is the first slot. Never fewer. */
+export function levelSlotsAfter(old: number, wavesReached: number, on: number, setSize: number): number {
+  const slots = Math.min(Math.max(old, 0), Math.max(setSize, 0)); // a broken save can't hold more slots than the set
+  return wavesReached >= LEVEL_UNLOCK_WAVE && on >= slots ? Math.min(slots + 1, setSize) : slots;
 }
 
 /** The capped choice: known ids only, the first `slots` of them in order. */
