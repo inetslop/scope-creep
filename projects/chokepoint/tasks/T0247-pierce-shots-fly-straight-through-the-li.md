@@ -1,7 +1,12 @@
 ---
-title: "Pierce shots fly straight through the line instead of homing"
+id: T0247
+title: Pierce shots fly straight through the line instead of homing
 size: M
 priority: 2
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-30T00:51:08Z
 ---
 
 ## Goal
