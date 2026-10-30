@@ -3,11 +3,13 @@ id: T0298
 title: "The wildcard: the 4th card becomes whatever you pick, always Rare or better"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T18:18:58Z
+claimed_at: 2026-10-30T18:28:18Z
 epic: E4
+designer: inet-racing
 ---
 
 ## Goal
