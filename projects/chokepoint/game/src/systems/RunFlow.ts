@@ -142,6 +142,7 @@ export class RunFlow {
     hook.stats.wavesCleared += 1;
     this.s.sfx?.waveClear();
     this.s.sfx?.waveSweep();
+    if (!streakPaidBefore && this.run.streakPaid) this.s.sfx?.streakPay(); // the one pay: the note on top of the sweep
     const cx = this.s.board.width / 2;
     const cy = this.s.board.height / 2;
     this.s.fx.popText(cx, cy, `Wave ${this.run.wave} cleared  +${bonus}`, PALETTE.greenDeep);

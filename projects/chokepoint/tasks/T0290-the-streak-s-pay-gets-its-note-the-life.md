@@ -4,11 +4,12 @@ title: "The streak's pay gets its note: the life-back heard"
 assignee: inet-racing
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T16:07:56Z
 claimed_at: 2026-10-30T17:08:48Z
+finished_at: 2026-10-30T17:20:46Z
 ---
 
 ## Goal
@@ -60,3 +61,19 @@ SavedRun gains `streakPaid: boolean;` (after `cleanWaves: number;`): `streakPaid
 - No invariant, no HUD, no text; silence-with-sound-off comes from `tone()`'s existing muted check.
 ### Tests
 - `tests/core/saveRun.test.ts`: the new round-trip/absence/case above (core save-format rule a later change could silently break). Sound method itself: none.
+
+## Result (attempt 1, inet-racing)
+
+The clean streak's one life-back now has its own note: a new quiet `streakPay()` in Sfx.ts (the wave sweep's E5→G5 rise at the sting's volume) plays on top of the wave sweep exactly when the streak pays in RunFlow.clearWave(), gated once-per-run by the existing streakPaid flag, which is now persisted in the run save (RunSave + core/saveRun, older saves load as unpaid) with a round-trip/absence/broken test.
+
+- Self-review: APPROVE
+- Time: 12.0 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts           |  6 ++++++
+ projects/chokepoint/game/src/core/saveRun.ts        |  4 ++++
+ projects/chokepoint/game/src/systems/RunFlow.ts     |  1 +
+ projects/chokepoint/game/src/systems/RunSave.ts     |  2 ++
+ projects/chokepoint/game/tests/core/saveRun.test.ts | 12 ++++++++++++
+ 5 files changed, 25 insertions(+)
+```

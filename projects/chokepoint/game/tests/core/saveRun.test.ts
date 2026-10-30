@@ -22,6 +22,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   hand: [{ id: 'frost', tier: 'rare' }],
   kills: 42,
   cleanWaves: 2,
+  streakPaid: false,
   rerollsUsed: 1,
   level: [],
   towers: [
@@ -145,6 +146,17 @@ describe('saveRun', () => {
     expect(loadSavedRun(store)).toEqual(sample());
     broken({ mode: 'ghost' });
     broken({ mode: 1 });
+  });
+
+  it('round-trips a streak-paid save, and a save written without the key loads as unpaid', () => {
+    const store = memory();
+    saveRun(store, sample({ streakPaid: true }));
+    expect(loadSavedRun(store)).toEqual(sample({ streakPaid: true }));
+    const without = { ...sample() } as Record<string, unknown>;
+    delete without.streakPaid; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
+    expect(loadSavedRun(store)).toEqual(sample());
+    broken({ streakPaid: 'x' });
   });
 
   it('migrates the old rerollUsed flag to the reroll count', () => {

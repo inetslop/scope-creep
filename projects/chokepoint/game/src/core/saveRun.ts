@@ -48,6 +48,8 @@ export interface SavedRun {
   hand: AugmentCopy[];
   kills: number;
   cleanWaves: number;
+  /** The run's one +1 life for a streak of 3 was paid; older saves predate the field. */
+  streakPaid: boolean;
   rerollsUsed: number; // how many rerolls the run has bought; older saves carried rerollUsed: boolean
   /** The level augments on for the run; older saves predate the field. */
   level: string[];
@@ -92,6 +94,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
   if (p.bends !== undefined && p.bends !== 0 && p.bends !== 1) return undefined;
   if (p.lengthMul !== undefined && p.lengthMul !== 1 && p.lengthMul !== 1.25) return undefined;
   if (p.bgen !== undefined && !inInt(p.bgen, 1, 8)) return undefined;
+  if (p.streakPaid !== undefined && typeof p.streakPaid !== 'boolean') return undefined;
   if (!inRange(p.gold, 0, 1e6)) return undefined;
   if (!inInt(p.lives, 0, 1e6) || !inInt(p.kills, 0, 1e6) || !inInt(p.cleanWaves, 0, 1e6)) return undefined;
   if (p.mode !== undefined && p.mode !== 'play' && p.mode !== 'iron') return undefined;
@@ -127,6 +130,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
     hand: p.hand as AugmentCopy[],
     kills: p.kills,
     cleanWaves: p.cleanWaves,
+    streakPaid: p.streakPaid === true,
     rerollsUsed,
     level: Array.isArray(p.level) ? (p.level as string[]) : [],
     towers: p.towers as SavedTower[],

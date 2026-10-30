@@ -45,6 +45,7 @@ export class RunSave {
       hand: run.hand.map((c) => ({ id: c.id, tier: c.tier })),
       kills: run.kills,
       cleanWaves: run.cleanWaves,
+      streakPaid: run.streakPaid,
       rerollsUsed: run.rerollsUsed,
       level: [...run.level],
       towers: this.game.towers.towers.map((t) => ({
@@ -67,6 +68,7 @@ export class RunSave {
     run.wave = saved.wave;
     run.kills = saved.kills;
     run.cleanWaves = saved.cleanWaves;
+    run.streakPaid = saved.streakPaid;
     run.rerollsUsed = saved.rerollsUsed;
     run.hand = saved.hand.map((c) => ({ id: c.id, tier: c.tier }));
     for (const t of saved.towers) {
