@@ -102,7 +102,7 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 
 **16-cap (protocol):** the pipeline holds 21 augments (15 in + T0025, T0064, T0062, T0095, T0152, T0235); the cap is 16, so the six registrations land five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Mark and Anchor extend the order (2026-10-30): the beam carries the mark (T0132), and Ward already punishes the root build; Bolt, Beam, Splash, Lance, Rapid, Reach, Push, Ember, Spray and Toll never leave the index — the draft floor (T0048) and the beam-combo web (T0210, T0242) depend on them.
 
-### E5 — Bosses: every 10th wave is something you remember (active — opened 2026-10-30; fully tasked 2026-10-30: all eight slices written, the arrival and escape moments added 2026-10-30)
+### E5 — Bosses: every 10th wave is something you remember (active — opened 2026-10-30; the eight slices written, the arrival and escape moments added 2026-10-30, the bosses reference (T0277) added 2026-10-30)
 **Goal:** the run has a peak: the deep waves bring one big shape with its own mechanic, not just more of the same.
 **When done:** every 10th wave the road sends a boss instead of a crowd: a single big shape (6× Block's hp, Block's speed, one life on a leak) under its own health bar (a small white card pinned to the top edge, counting down as it is hit). The wave-10 boss phases at 50% hp — translucent and untargetable for 2.5 s, every 8 s — so a one-trick single-target build needs a second line (Splash, Lance, Chain, Beam and Ember all answer it). The wave preview (T0015) shows it coming, and a boss death is a moment: a big chip burst, a Block's double in gold, and a card that names it. The boss's arrival is a moment too (a deep horn and a pulse at the gate), and its escape — letting the peak through — is the run's worst moment, heard as a distinct low note. Later bosses swap the mechanic (one shields its escort, one splits at half hp).
 **Breakdown (in this order):**
@@ -111,9 +111,10 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 - T0256 (M, priority 2, behind T0253) — the boss card: a small white card pinned to the top edge — the token, the name, a thin hp bar with a notch at 50%, so the phase is read on the bar before it happens — written 2026-10-30
 - T0258 (M, priority 2, behind T0253) — the boss moment: the death — the 24-chip burst (2× the milestone count) in the boss's own color and the two-line name card (topBanner's pattern) — **failed** (2026-10-30, the architect's context overflowed before any design); the design stands as written — re-filed as T0273 (with T0266's Orb split carve-out)
 - T0259 (L, priority 2, behind T0256) — the second boss (wave 20): the Titan (a red square at 0.5, 6× Block) and its Guard (a red diamond carrying an orange disc) — while the Guard lives, every hit on the Titan is halved; the escort-shield member of the pair — unblocked 2026-10-30 (the failed T0258 dep becomes T0273; its design is written)
-- T0266 (L, priority 2) — the third boss (wave 30): the Orb (a purple hexagon at 0.5 with the crack) splits into two faster Shards at half health, unless it dies to a single hit first; the "splits at half hp" later boss — written 2026-10-30
-- T0268 (M, priority 2, behind T0253) — the boss's arrival: a deep horn and a pulse at the entrance gate the moment the boss walks in — written 2026-10-30
-- T0269 (M, priority 2, behind T0253) — the boss's escape: when the boss leaks, a distinct low note — the run's worst moment, heard — written 2026-10-30
+- T0266 (L, priority 2) — the third boss (wave 30): the Orb (a purple hexagon at 0.5 with the crack) splits into two faster Shards at half health, unless it dies to a single hit first; the "splits at half hp" later boss — **done** (2026-10-30, inet-racing)
+- T0268 (M, priority 2, behind T0253) — the boss's arrival: a deep horn and a pulse at the entrance gate the moment the boss walks in — in design (2026-10-30)
+- T0269 (M, priority 2, behind T0253) — the boss's escape: when the boss leaks, a distinct low note — the run's worst moment, heard — **done** (2026-10-30, baby-mama)
+- T0277 (M, priority 2) — the bosses reference: a pause row (with Enemies / Waves) that lists the boss encounters in wave order — token, name, wave, trick in the teach language — read from the boss defs so it grows as they do — written 2026-10-30
 
 ### E6 — Iron run: one life, double coins (done; history in planning/archive/ROADMAP.md)
 
@@ -123,6 +124,13 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 **Breakdown:**
 - T0274 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — the T0263 re-file (T0263 failed 2026-10-30 on an architect context overflow before any design; the line stood as written) — written 2026-10-30
 - T0275 (M, priority 2, behind T0274) — take out: "Take out · 5" — the last augment back into the hand for 5 gold, the vacated slot stays the tower's (free to refit); a one-augment tower shows only the sell line — written 2026-10-30
+
+### E8 — A run you can show (active — opened 2026-10-30)
+**Goal:** a finished run is a result you can keep and share, not a number that fades with the claim card.
+**When done:** the claim card's result is one copyable line (wave, board, coins, mode) a player pastes where runs are shared, and a shared line's seed plays back the exact board (the ghost run, extended from "your best seed" to any seed); the leaderboard (Today / Forever) is where the lines land.
+**Breakdown:**
+- T0278 (M, priority 2) — the claim card's "Copy": one tap puts "Chokepoint · Wave N · Board SEED · +C coins" (· Iron) on the clipboard — written 2026-10-30
+- (parked) replay a shared seed: the ghost run (T0078) grows to take a pasted board seed, not only your own best — task it when the pool has room
 
 ### Enemy queue (non-epic)
 
