@@ -142,7 +142,8 @@ export class TowerSystem {
       },
       fireBolt: (n, target, payload) => {
         const m = t.muzzle(n);
-        this.projectiles.fire(m.x, m.y, target, payload, spec.projectileSpeed * CELL);
+        // A piercing bolt flies straight: out to 1.5 × the tower's range (from the muzzle, like the pellets).
+        this.projectiles.fire(m.x, m.y, target, payload, spec.projectileSpeed * CELL, 1.5 * spec.range * CELL);
       },
       firePellets: (target, count, payload, maxDist) => {
         const m = t.muzzle(0);

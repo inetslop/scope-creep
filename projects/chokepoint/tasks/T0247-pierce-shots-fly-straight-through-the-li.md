@@ -4,11 +4,12 @@ title: Pierce shots fly straight through the line instead of homing
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T00:51:08Z
 claimed_at: 2026-10-30T02:15:54Z
+finished_at: 2026-10-30T02:24:08Z
 ---
 
 ## Goal
@@ -135,3 +136,22 @@ fire(x: number, y: number, target: Enemy, payload: HitPayload, speed: number, ma
 - `tests/core/aim.test.ts` (new): stationary target returns its spot; moving away: `leadPoint(0, 0, 10, 10, 0, 1, 0, 2)` → `{ x: 12.5, y: 0 }` (t = d/(S−v) = 1.25, and shot arrival time 12.5/10 equals enemy travel time); moving toward: `leadPoint(0, 0, 10, 10, 0, −1, 0, 2)` → x ≈ 8.3333 (t = d/(S+v)); perpendicular: `leadPoint(0, 0, 10, 0, 10, 1, 0, 5)` → `{ x: 5*10/Math.sqrt(75), y: 10 }`; shot as slow or slower than target → current spot; target on top of the shot → current spot. Use `toBeCloseTo`.
 - `tests/core/targeting.test.ts`: only the removal in step 6; all other blocks unchanged.
 - Existing `tests/core/augments.test.ts` pierce specs and `tests/content.test.ts` must pass unmodified (no spec numbers change).
+
+## Result (attempt 1, desktop)
+
+Pierce shots (Lance towers, any shot tower with Lance, and Pulse bolts with pierce) now fly straight like pellets instead of homing and jumping: ProjectileSystem.fire() aims them at core/aim.ts's new leadPoint (target's future spot, honoring root/dash/slow speed) and sends them down the existing straight-pellet path, vanishing after 1.5× the tower's range from the muzzle. Removed the now-dead pickPierceTarget and PIERCE_REACH plus their tests; Lance's card lines say it flies straight. npm run check (377 tests) and npm run smoke (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 8.2 min
+
+```
+projects/chokepoint/game/src/config.ts             |  3 --
+ .../chokepoint/game/src/content/augments/lance.ts  |  8 ++--
+ projects/chokepoint/game/src/core/aim.ts           | 16 ++++++++
+ projects/chokepoint/game/src/core/targeting.ts     | 21 ----------
+ .../game/src/systems/ProjectileSystem.ts           | 45 ++++++++++++----------
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  3 +-
+ projects/chokepoint/game/tests/core/aim.test.ts    | 36 +++++++++++++++++
+ .../chokepoint/game/tests/core/targeting.test.ts   | 33 +---------------
+ 8 files changed, 83 insertions(+), 82 deletions(-)
+```

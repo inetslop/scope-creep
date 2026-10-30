@@ -63,24 +63,3 @@ export function pickNearest(near: TargetCandidate, radius: number, enemies: read
     .filter((i) => enemies[i] !== near)
     .slice(0, Math.max(0, max));
 }
-
-/**
- * Index of the closest ACTIVE enemy strictly behind `behind` on the path (smallest gap
- * `behind.distance - e.distance`), only gaps > 0 and <= maxBehind (board units); skips `behind`
- * itself. A piercing shot re-aims at this one. -1 when nothing is behind it within the distance.
- */
-export function pickPierceTarget(behind: TargetCandidate, enemies: readonly TargetCandidate[], maxBehind: number): number {
-  let best = -1;
-  let bestGap = Infinity;
-  for (let i = 0; i < enemies.length; i++) {
-    const e = enemies[i]!;
-    if (e === behind || !e.active) continue;
-    const gap = behind.distance - e.distance;
-    if (gap <= 0 || gap > maxBehind) continue;
-    if (gap < bestGap) {
-      best = i;
-      bestGap = gap;
-    }
-  }
-  return best;
-}

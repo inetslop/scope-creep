@@ -1,11 +1,11 @@
 import type Phaser from 'phaser';
-import { CELL, PIERCE_REACH } from '../config';
-import { pickPierceTarget } from '../core/targeting';
+import { CELL } from '../config';
+import { leadPoint } from '../core/aim';
 import type { Enemy } from '../entities/Enemy';
 import { Projectile } from '../entities/Projectile';
 import type { EnemySystem, HitPayload } from './EnemySystem';
 
-/** Owns the projectile pool: homing bolts, and the straight pellets of a Spray's blast. */
+/** Owns the projectile pool: homing bolts, and the straight shots (a Spray's pellets, a pierce bolt). */
 export class ProjectileSystem {
   private readonly scene: Phaser.Scene;
   private readonly enemies: EnemySystem;
@@ -37,8 +37,23 @@ export class ProjectileSystem {
     return p;
   }
 
-  fire(x: number, y: number, target: Enemy, payload: HitPayload, speed: number, asTracer = false): void {
-    this.take().fire(x, y, target, payload, speed, asTracer);
+  /** A bolt from a shot tower: with pierce it flies straight like a pellet, aimed where the
+   * target will be, striking every enemy on its line until its pierce is used up or it flies
+   * `maxDist` board units out (from the muzzle, like a pellet); without pierce it homes. */
+  fire(x: number, y: number, target: Enemy, payload: HitPayload, speed: number, maxDist: number): void {
+    if (payload.pierce > 0) {
+      // Its current speed along the road: the crawl (slowed), the dash surge, or a full stop.
+      const c = target.def.dashCycle;
+      const v = target.rootLeft > 0 ? 0
+        : c !== undefined && target.dashLeg === 'dash' ? (c.dashCells / c.dashSec) * CELL
+        : c !== undefined && target.dashLeg === 'pause' ? 0
+        : target.speed * (1 - target.slowPct);
+      const lead = leadPoint(x, y, speed, target.x, target.y, target.dirX, target.dirY, v);
+      const d = Math.hypot(lead.x - x, lead.y - y);
+      this.take().firePellet(x, y, d > 1e-6 ? (lead.x - x) / d : 0, d > 1e-6 ? (lead.y - y) / d : -1, payload, speed, maxDist, ++this.blastSeq);
+      return;
+    }
+    this.take().fire(x, y, target, payload, speed);
   }
 
   /** A Spray's blast: `count` pellets from (x, y) in a 50-degree cone centred on the aim at `target`, each flying straight to `maxDist` board units. */
@@ -73,25 +88,13 @@ export class ProjectileSystem {
     }
   }
 
-  /**
-   * A shot that reached its target: with pierce it strikes the enemy (no burst: the shot is not
-   * done yet) and keeps going at the closest enemy behind it; without, it hits (bursting with
-   * splash) and despawns.
-   */
+  /** A homing shot that reached its target: it hits (bursting with splash) and despawns.
+   * Piercing shots never land here: they fly straight and settle on whatever they touch. */
   private land(p: Projectile): void {
     const target = p.target!;
-    const payload = p.payload!;
     const flight = { x: p.fx, y: p.fy }; // the plate halves what a shot flying into the face deals
-    const next = payload.pierce > 0 ? pickPierceTarget(target, this.enemies.all, PIERCE_REACH * CELL) : -1;
-    if (next < 0) {
-      this.enemies.hit(target, payload, flight);
-      p.despawn();
-      return;
-    }
-    const x = target.x;
-    const y = target.y;
-    this.enemies.strike(target, payload, flight); // no burst yet: the shot keeps going
-    p.fire(x, y, this.enemies.all[next]!, { ...payload, pierce: payload.pierce - 1 }, p.speed);
+    this.enemies.hit(target, p.payload!, flight);
+    p.despawn();
   }
 
   /** A pellet that touched an enemy: it strikes it; with pierce the pellet keeps going along its own line. */
