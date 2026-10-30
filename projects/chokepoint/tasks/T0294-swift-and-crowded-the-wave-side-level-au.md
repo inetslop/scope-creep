@@ -1,12 +1,14 @@
 ---
 id: T0294
 title: "Swift and Crowded: the wave-side level augments"
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T17:33:38Z
+claimed_at: 2026-10-30T18:02:55Z
 epic: E9
 ---
 
