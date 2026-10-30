@@ -7,6 +7,6 @@ export const split: MakeEnemyHook = ({ board, enemies }) => ({
   onKill({ enemy }) {
     if (!enemy.def.splitsInto) return;
     const child = getEnemy(enemy.def.splitsInto);
-    for (const d of splitDistances(enemy.distance, board.path.length)) enemies.spawn(child, enemy.hpMul, d);
+    for (const d of splitDistances(enemy.distance, board.path.length)) enemies.spawn(child, enemy.hpMul, enemy.speedMul, d);
   },
 });

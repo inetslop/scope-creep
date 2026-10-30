@@ -17,9 +17,9 @@ export const midSplit: MakeEnemyHook = ({ board, enemies, fx }) => ({
       if (!e.active || !atSplitLine(e.def, e.hp, e.maxHp)) continue;
       const child = getEnemy(e.def.splitsAt!.into); // atSplitLine guarantees it
       const half = splitChildHp(e.hp);
-      const x = e.x, y = e.y, d = e.distance, size = e.def.look.size * CELL; // capture before spawning: spawn may recycle this slot
+      const x = e.x, y = e.y, d = e.distance, size = e.def.look.size * CELL, sm = e.speedMul; // capture before spawning: spawn may recycle this slot
       e.despawn(); // gone with no kill: no gold, no combo, no onKill, no name tag, no Toll, no count
-      for (const dd of splitDistances(d, board.path.length)) enemies.spawn(child, half / child.hp, dd);
+      for (const dd of splitDistances(d, board.path.length)) enemies.spawn(child, half / child.hp, sm, dd);
       clearRing(fx, x, y, size); // T0229's soft white ring, 300 ms
     }
   },

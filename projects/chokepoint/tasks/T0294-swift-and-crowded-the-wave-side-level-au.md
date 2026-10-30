@@ -4,11 +4,12 @@ title: "Swift and Crowded: the wave-side level augments"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T17:33:38Z
 claimed_at: 2026-10-30T18:02:55Z
+finished_at: 2026-10-30T20:28:20Z
 epic: E9
 ---
 
@@ -103,3 +104,29 @@ RunState needs no new getter: `WaveSystem` calls `levelSpeedMul(this.run.level)`
 ### Tests
 - `tests/core/levels.test.ts`: update the "Tough is the one level augment" test to `['tough', 'swift', 'crowded']` with bonuses 0.25/0.15/0.2; multiplier/label cases `['swift']`→1.15, `['crowded']`→1.2, `['swift','crowded']`→1.35, `['tough','swift','crowded']`→1.6; `levelSpeedMul` (1 off, 1.15 with swift, 1 with tough+swift, 1 with crowded); count table via `planWithLevel` on synthetic plans (5→6, 10→12, first entries untouched, extras repeat entries in order, `mul === 1` returns the same object, boss plans for waves 10/20/30 returned unchanged) and the quiet final plan: `planWave(4, new Rng(seed), ENEMIES)` (already halved) then `planWithLevel(..., 1.2)` has length `Math.floor(n*1.2+0.5)`.
 - `tests/systems/enemyHooks.test.ts`: extend the fake context's `spawn` to record `speedMul`; the splitter test passes `speedMul: 1.15` on the parent and asserts both children were spawned with it (a boss's spawned Dots inherit it the same way).
+
+## Result (attempt 1, asus)
+
+The level picker now offers three pre-run rules — Tough (+25% hp), the new Swift (enemies walk 15% faster, applied as a spawn-speed factor to every enemy including split children, in `Enemy.spawn`/`EnemySystem.spawn`/`WaveSystem`/both split hooks) and the new Crowded (waves send 20% more enemies, via the pure `planWithLevel` in `core/waves.ts` that inflates the final plan half-up and leaves boss plans byte-identical). The picker rows, slot cap, save/restore, multiplier readout (×1.15/×1.2/×1.35/×1.6) and both new invariants all flow through T0285's existing plumbing; when both are off, plans, speeds and the readout are exactly as before. Note: per the design, `core/run.ts` is untouched, so the run multiplier — which since T0285 also acts as the enemy-hp factor — now sums all selected bonuses (a Swift-only run's enemies are therefore also 15% tougher), matching the displayed multiplier. Verified with `npm run check` and `npm run smoke` (desktop + phone).
+
+- Self-review: NO VERDICT
+- Time: 145.4 min
+- Self-review edits were discarded (checks failed at "check").
+
+```
+.../chokepoint/game/src/content/levels/crowded.ts  | 10 ++++
+ .../chokepoint/game/src/content/levels/index.ts    |  4 +-
+ .../chokepoint/game/src/content/levels/swift.ts    | 10 ++++
+ projects/chokepoint/game/src/content/types.ts      |  4 ++
+ projects/chokepoint/game/src/core/levels.ts        | 20 +++++++
+ projects/chokepoint/game/src/core/waves.ts         | 12 +++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  3 ++
+ projects/chokepoint/game/src/entities/Enemy.ts     |  7 ++-
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  4 +-
+ projects/chokepoint/game/src/systems/WaveSystem.ts |  9 ++--
+ .../game/src/systems/enemyHooks/midSplit.ts        |  4 +-
+ .../game/src/systems/enemyHooks/split.ts           |  2 +-
+ projects/chokepoint/game/tests/core/levels.test.ts | 63 +++++++++++++++++++---
+ .../game/tests/systems/enemyHooks.test.ts          |  7 +--
+ 14 files changed, 137 insertions(+), 22 deletions(-)
+```

@@ -1,10 +1,12 @@
 import type { LevelAugmentDef } from '../types';
+import { crowded } from './crowded';
+import { swift } from './swift';
 import { tough } from './tough';
 
 export type { LevelAugmentDef };
 
 /** Every level augment: the pre-run switches on the menu (never in the draft, hand, towers or codex). */
-export const LEVEL_AUGMENTS: readonly LevelAugmentDef[] = [tough];
+export const LEVEL_AUGMENTS: readonly LevelAugmentDef[] = [tough, swift, crowded];
 
 const byId = new Map(LEVEL_AUGMENTS.map((a) => [a.id, a]));
 

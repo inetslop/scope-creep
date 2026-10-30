@@ -1,6 +1,7 @@
 import { ENEMIES, getEnemy } from '../content/enemies';
+import { levelCountMul, levelSpeedMul } from '../core/levels';
 import type { RunState } from '../core/run';
-import { planWave, type WavePlan } from '../core/waves';
+import { planWave, planWithLevel, type WavePlan } from '../core/waves';
 import { hook } from '../debug/testHook';
 import type { EnemySystem } from './EnemySystem';
 
@@ -33,7 +34,7 @@ export class WaveSystem {
 
   /** Plans the run's next wave; RunFlow calls it when the build phase starts. */
   planNext(): void {
-    this.planned = planWave(this.run.wave + 1, this.run.rng, ENEMIES);
+    this.planned = planWithLevel(planWave(this.run.wave + 1, this.run.rng, ENEMIES), levelCountMul(this.run.level));
   }
 
   /** Starts the run's next wave, planned at the build phase's start. */
@@ -41,7 +42,7 @@ export class WaveSystem {
     this.run.startWave();
     this.livesAtStart = this.run.lives;
     this.heldLost = 0;
-    this.plan = this.planned ?? planWave(this.run.wave, this.run.rng, ENEMIES);
+    this.plan = this.planned ?? planWithLevel(planWave(this.run.wave, this.run.rng, ENEMIES), levelCountMul(this.run.level));
     this.planned = undefined;
     this.next = 0;
     this.timer = 0;
@@ -70,7 +71,7 @@ export class WaveSystem {
     while (this.next < plan.spawns.length && this.timer >= plan.spawns[this.next]!.delaySec) {
       const spawn = plan.spawns[this.next]!;
       this.timer -= spawn.delaySec;
-      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul);
+      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul, levelSpeedMul(this.run.level));
       this.next += 1;
     }
   }

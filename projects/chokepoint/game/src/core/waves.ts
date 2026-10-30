@@ -203,6 +203,18 @@ function planNormalWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): W
   return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : [] };
 }
 
+/**
+ * A wave plan under the run's level augments (Crowded): the enemy count times the run's count
+ * factor, rounded half up — the extras repeat the plan's entries in order. Off (factor 1) and
+ * on a boss wave it returns the same plan, so those runs stay byte-identical.
+ */
+export function planWithLevel(plan: WavePlan, mul: number): WavePlan {
+  if (mul === 1 || isBossWave(plan.number)) return plan;
+  const want = Math.floor(plan.spawns.length * mul + 0.5);
+  if (want <= plan.spawns.length) return plan;
+  return { ...plan, spawns: [...plan.spawns, ...plan.spawns.slice(0, want - plan.spawns.length)] };
+}
+
 /** What a wave sends: each enemy type it sends, and how many (no zeros), in first-arrival order. */
 export function waveCounts(plan: WavePlan): { id: string; count: number }[] {
   const counts = new Map<string, number>();

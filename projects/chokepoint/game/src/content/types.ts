@@ -242,4 +242,8 @@ export interface LevelAugmentDef {
   line: string;
   /** Added to the run multiplier; for Tough also the enemy-health factor over the wave's own growth. */
   bonus: number;
+  /** The spawn-speed factor while it is on (Swift: 1.15); absent when it doesn't touch speed. */
+  speedMul?: number;
+  /** The wave's enemy-count factor while it is on (Crowded: 1.2); absent when it doesn't touch counts. */
+  countMul?: number;
 }

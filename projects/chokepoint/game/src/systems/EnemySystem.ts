@@ -88,14 +88,14 @@ export class EnemySystem {
     return n;
   }
 
-  spawn(def: EnemyDef, hpMul: number, distance = 0): Enemy {
+  spawn(def: EnemyDef, hpMul: number, speedMul = 1, distance = 0): Enemy {
     let enemy = this.pool.find((e) => !e.active);
     if (!enemy) {
       enemy = new Enemy(this.scene);
       this.scene.add.existing(enemy);
       this.pool.push(enemy);
     }
-    enemy.spawn(def, hpMul, this.board.path, distance);
+    enemy.spawn(def, hpMul, this.board.path, speedMul, distance);
     hook.stats.enemiesSpawned += 1;
     return enemy;
   }

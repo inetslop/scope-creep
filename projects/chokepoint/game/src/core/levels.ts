@@ -23,6 +23,26 @@ export function levelMultiplier(ids: readonly string[]): number {
   return mul;
 }
 
+/** The spawn-speed factor of the chosen augments: the product of their speedMuls, 1 when none of them touch speed. */
+export function levelSpeedMul(ids: readonly string[]): number {
+  let mul = 1;
+  for (const id of ids) {
+    const def = getLevelAugment(id);
+    if (def?.speedMul !== undefined) mul *= def.speedMul;
+  }
+  return mul;
+}
+
+/** The wave's enemy-count factor of the chosen augments: the product of their countMuls, 1 when none of them touch counts. */
+export function levelCountMul(ids: readonly string[]): number {
+  let mul = 1;
+  for (const id of ids) {
+    const def = getLevelAugment(id);
+    if (def?.countMul !== undefined) mul *= def.countMul;
+  }
+  return mul;
+}
+
 /** The multiplier as shown on the menu card: '×1.25' with Tough on, '×1.0' with none. */
 export function levelMultiplierLabel(ids: readonly string[]): string {
   return `×${levelMultiplier(ids).toFixed(2).replace(/0$/, '')}`;
