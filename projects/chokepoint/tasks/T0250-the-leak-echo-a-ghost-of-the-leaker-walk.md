@@ -1,12 +1,14 @@
 ---
 id: T0250
 title: "The leak echo: a ghost of the leaker walks back up the road"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T01:33:38Z
+claimed_at: 2026-10-30T04:15:50Z
 ---
 
 ## Goal
