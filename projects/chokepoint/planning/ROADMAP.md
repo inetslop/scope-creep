@@ -98,14 +98,15 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 
 **16-cap (protocol):** the pipeline holds 21 augments (15 in + T0025, T0064, T0062, T0095, T0152, T0235); the cap is 16. Every queued registration, after registering, removes one more if the pool is over 16 — the first still in the index of **Frost, then Rally, then Mint** — and says which in its result (the canonical statement is in T0064's task).
 
-### E5 — Bosses: every 10th wave is something you remember (not started; starts when E4 closes)
+### E5 — Bosses: every 10th wave is something you remember (active — opened 2026-10-30: E4 and E6 are fully tasked and winding down; the boss needs nothing from them)
 **Goal:** the run has a peak: the deep waves bring one big shape with its own mechanic, not just more of the same.
 **When done:** every 10th wave the road sends a boss instead of a crowd: a single big shape (6× Block's hp, Block's speed, one life on a leak) under its own health bar (a small white card pinned to the top edge, counting down as it is hit). The wave-10 boss phases at 50% hp — translucent and untargetable for 2.5 s, every 8 s — so a one-trick single-target build needs a second line (Splash, Lance, Chain, Beam and Ember all answer it). The wave preview (T0015) shows it coming, and a boss death is a moment: a big chip burst, a Block's double in gold, and a card that names it. Later bosses swap the mechanic (one shields its escort, one splits at half hp).
-**Breakdown (sketch — tasked when E4 closes, in this order):**
-- (L) the first boss: the wave-10 shape, the top-center health bar, the 50% untargetable phase — a new enemy behavior (timed untargetable) and a new HUD element
-- (S) the preview says "boss": the wave preview card shows the boss token with a small muted tag for wave 10
-- (M) the boss moment: the death burst, its gold, the name card
-- (L) the second boss (wave 20): a different mechanic from the pair in the design (escort shield / half-hp split)
+**Breakdown (in this order):**
+- T0253 (L, priority 1) — the Colossus: the wave-10 shape (6× Block's hp, Block's speed, 1 life on a leak, 20 gold, purple square at 0.45) with the timed untargetable phase — written 2026-10-30, in the pool
+- (S, behind T0253) the preview says "boss": the "boss" tag on the every-10 plans, the preview chip, a one-time teach line (T0092's pattern), the banner chip (T0080's pattern)
+- (M, behind T0253) the boss card: a small white card pinned to the top edge — the token, the name, a thin hp bar with a notch at 50%, so the phase is read on the bar before it happens
+- (M, behind T0253) the boss moment: the death — the big chip burst (2× the milestone count) and the name card (topBanner's two-line pattern)
+- (L, behind T0253) the second boss (wave 20): one of the pair in the design (escort shield / half-hp split)
 
 ### E6 — Iron run: one life, double coins (active — opened 2026-10-29, when E2 closed)
 **Goal:** a second small mode off the menu: the same game with the risk made explicit — one life, and a payout that says so.
