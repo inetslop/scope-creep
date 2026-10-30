@@ -1,7 +1,12 @@
 ---
+id: T0276
 title: "Endless rerolls: every reroll costs more"
 size: M
 priority: 2
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-30T09:47:06Z
 epic: E4
 ---
 
