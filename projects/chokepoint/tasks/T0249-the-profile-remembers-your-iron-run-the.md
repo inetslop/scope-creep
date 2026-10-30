@@ -3,13 +3,11 @@ id: T0249
 title: "The profile remembers your iron run: the iron best wave with its muted star"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: [T0241]
 attempts: 0
 created: 2026-10-30T01:33:38Z
-claimed_at: 2026-10-30T02:14:07Z
 epic: E6
-designer: yoga
 ---
 
 ## Goal
@@ -26,3 +24,35 @@ The start screen's profile card remembers the best iron wave with its own muted 
 - [ ] Before any iron run the profile card is byte-identical to today; after an iron run that reaches wave 7 the card shows the unchanged "Best wave" line plus "Iron wave 7" with the muted star.
 - [ ] A later normal run never changes the iron line; a later iron run at a higher wave raises its number; the yellow star appears only on the normal best-wave line, as today.
 - [ ] The card fits at 412x915 and 1280x720 with both lines at their longest.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/palette.ts` — add one line `mutedDeep: 0x4e5e63,` after the `muted: 0x6f8287,` line (the darker side face for the muted star, matching the `*Deep` twin pattern).
+- edit `src/art/textures.ts` — add `export const STAR_MUTED_TEXTURE = 'ui:star-muted';` on the line after `STAR_TEXTURE`.
+- edit `src/art/icons.ts` — add a `paintTexture(scene, STAR_MUTED_TEXTURE, 16, 16, ...)` block immediately after the yellow star block, an exact copy of the star geometry recolored to `muted`/`mutedDeep`.
+- edit `src/scenes/menu/ProfileCard.ts` — add the "Iron wave N" line with the muted star under the "Best wave" line.
+
+### Interfaces
+No new functions or types in T0249. T0249 reads the field T0241 adds to `Profile`: `ironBestWave: number` (best wave reached in an iron run; `0` until an iron run sets one). No other `Profile` field changes.
+
+### Steps
+1. `content/palette.ts`: after `muted: 0x6f8287,` add `mutedDeep: 0x4e5e63,`.
+2. `art/textures.ts`: after `export const STAR_TEXTURE = 'ui:star';` add `export const STAR_MUTED_TEXTURE = 'ui:star-muted';`.
+3. `art/icons.ts`: extend the existing `./textures` import to include `STAR_MUTED_TEXTURE`. After the yellow `paintTexture(scene, STAR_TEXTURE, 16, 16, (ctx) => {...})` block, add the same block with key `STAR_MUTED_TEXTURE` and the two `fillStyle`s swapped to `rgba(PALETTE.mutedDeep, 1)` then `rgba(PALETTE.muted, 1)` (identical `pts`/`roundedPolygon` geometry).
+4. `ProfileCard.ts`: extend the `./art/textures` import to include `STAR_MUTED_TEXTURE`. In `buildProfileCard`, after the `star`/`h2` block and before the `runs` text, add:
+   `const iron = profile.ironBestWave >= 1 ? scene.add.text(0, 0, `Iron wave ${profile.ironBestWave}`, textStyle(17, PALETTE.muted)).setOrigin(0.5) : null;`
+   `const ironStar = iron ? artScale(scene.add.image(0, 0, STAR_MUTED_TEXTURE)) : null;`
+   `if (iron && ironStar) ironStar.setX(iron.width / 2 + 13);`
+   Then `const hIron = iron ? iron.height : 0;` and compute `const gaps = (recent ? 3 : 2) + (iron ? 1 : 0);` and `const height = PAD * 2 + h1 + h2 + hIron + h3 + h4 + gaps * LINE_GAP;`.
+   In the `put` loop, after `best.setY(c2); star.setY(c2 + 1);` add: `if (iron && ironStar) { const ci = put(hIron); iron.setY(ci); ironStar.setY(ci + 1); }`.
+   Replace the final `scene.add.container(0, 0, recent ? [...] : [...])` with: `const kids: Phaser.GameObjects.GameObject[] = [card, coin, coins, best, star]; if (iron && ironStar) kids.push(iron, ironStar); kids.push(runs); if (recent) kids.push(recent.container);` and pass `kids`.
+### Pitfalls
+- The line is shown only when `profile.ironBestWave >= 1`; with no iron run the card must be byte‑identical to today (same height, same children) — create `iron`/`ironStar` as `null` and skip them in `height`, the `put` loop, and `kids`.
+- The muted star must NOT be the yellow `STAR_TEXTURE`; it is the new `STAR_MUTED_TEXTURE` (muted token), placed like the yellow star (`x = text.width/2 + 13`, `y = center + 1`).
+- The star is 16px via `artScale` (no bare `setScale`); do not add a size arg.
+- `mutedDeep` is a new `PALETTE` color; do not hardcode a hex in `icons.ts`.
+- The menu column auto‑fits (`cardH = card.height * cardScale`), so the added line only grows the card height and is absorbed at 412x915 and 1280x720; no menu change needed. "Iron wave 128" is no wider than "Best wave 128".
+- `ironBestWave` is T0241's field on `Profile`; if T0241 named it differently, update the single field read in `buildProfileCard`. T0249 does not write the profile.
+### Tests
+none
