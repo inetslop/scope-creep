@@ -3,12 +3,10 @@ id: T0292
 title: "The Hive: the wave-40 boss that grows the group"
 size: L
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-30T17:15:59Z
-claimed_at: 2026-10-30T17:20:51Z
-designer: inet-racing
 ---
 
 ## Goal
@@ -49,3 +47,50 @@ The run's next peak past the Orb: wave 40 sends a boss that answers a single-tar
 - [ ] The next-wave button's enemies-left count includes the popped Dots and never dips below zero.
 - [ ] The arrival horn, the boss card, the death burst and name card, and the escape note all fire for the Hive from the existing boss hooks; the bosses reference lists it in wave order.
 - [ ] Unit tests pin the pop schedule (6 s apart, first at 6 s, five max) and the wave-40 plan; npm run check and the desktop 1280×720 / mobile 412×915 smoke pass.
+
+## Design (architect, inet-racing)
+
+### Files
+- create `src/content/enemies/hive.ts` — the Hive `EnemyDef` (copy of `orb.ts` with the `pops` field).
+- edit `src/content/enemies/index.ts` — one `hive` line in `ENEMIES`, next to `orb`.
+- edit `src/content/types.ts` — one new optional field on `EnemyDef` (after `splitsAt`, line 35).
+- create `src/core/hivePops.ts` — pure pop-schedule math (`popsDue`, `nextPopAt`).
+- create `src/systems/enemyHooks/hivePops.ts` — the hook: per-hive clock, telegraph ring, spawns the Dots.
+- edit `src/systems/enemyHooks/index.ts` — import + one `hivePops` entry next to `midSplit`.
+- edit `src/core/waves.ts` — `bossId(40)` returns `'hive'` (+ comments on the boss waves).
+- edit `src/core/run.ts` — new `RunState.pendingPops` field next to `leaksThisWave`.
+- edit `src/systems/RunFlow.ts` — `enemiesLeft` adds `run.pendingPops`.
+- edit `src/debug/runChecks.ts` — two invariant lines next to `enemies.orb`.
+- create `tests/core/hivePops.test.ts` — pins the schedule.
+- edit `tests/content.test.ts` — size cap + `pops` validation.
+- edit `tests/core/waves.test.ts` — wave-40 assertions become the Hive.
+
+### Interfaces
+- `EnemyDef.pops?: { everySec: number; max: number; telegraphSec: number; into: string }` — the periodic pop (Hive): every `everySec` after its own spawn, up to `max`, each telegraphed `telegraphSec` early; `into` is the child enemy id.
+- `core/hivePops.ts`: `popsDue(clockSec: number, rule: NonNullable<EnemyDef['pops']>): number` (how many popped by that time, capped) and `nextPopAt(clockSec: number, rule: ...): number` (seconds until next pop, -1 when done).
+- `RunState.pendingPops: number` — Dots a live Hive will still pop; the hook writes it every wave frame, `RunFlow.enemiesLeft` reads it.
+- Hook uses existing ctx: `enemies.spawn(def, waveHpMul(run.wave) * run.levelHpMul, e.distance)` (same scaling as a plan spawn), `fx.ring(x, y, radius, color)`, `auraRing(fx, x, y, color)` (T0055 ring).
+
+### Steps
+1. `hive.ts` def: `id 'hive'`, `behavior 'walk'`, `hp 720`, `speed 0.9`, `gold 20`, `livesCost 1`, `threat 200`, `fromWave 40`, `spawnOnly: true`, `pops { everySec: 6, max: 5, telegraphSec: 0.8, into: 'dot' }`, `look { shape: 'pentagon', color: 'purple', size: 0.5 }`; description "The whole wave in one shape: it pops a Dot every 6 s while it walks — area kills answer it." Register it; the token, name tag, wave preview (×1), BossesScene row and all boss hooks follow from the def + `bossId`.
+2. `types.ts` field with a doc comment mirroring `splitsAt`'s.
+3. `core/hivePops.ts` + its test (pure: `popsDue = min(max, floor(clock/everySec))`, clamped at 0; `nextPopAt = (done+1)*everySec` or -1).
+4. `enemyHooks/hivePops.ts`: closure `Map<Enemy, {serial, clock, pops, telegraphed}>` (reset on serial change — the pool reuses objects; prune inactive each frame). Per active enemy with `def.pops`: `clock += dt`; bloom `auraRing` once when `clock >= nextPopAt - telegraphSec` and not yet telegraphed; `while (pops < popsDue(clock))` spawn the Dot at the hive's distance (capture `x, y, distance` before the loop) with the hp mul above, plus a small `fx.ring` in the Dot's color at that spot; reset `telegraphed` on each pop; sum `max - pops` into `run.pendingPops` (0 when no hive is alive). Register next to `midSplit`.
+5. `waves.ts`: `bossId` gains `wave === 40 ? 'hive'` before the existing branches; the generic boss-plan branch emits it unchanged (boss tag, `waveHpMul(40)`, horn, card, burst, escape note all fire with no other change).
+6. `run.ts`: `pendingPops = 0;` with a comment. `RunFlow.ts`: `enemiesLeft` returns `waves.remaining + enemies.aliveCount + run.pendingPops`.
+7. `runChecks.ts` next to `enemies.orb`: `['enemies.hive', ≤ 1 active hive]` and `['hive.pending', pendingPops integer in 0..5]`.
+8. Test edits (see Tests).
+
+### Pitfalls
+- `threat` must be exactly `waveBudget(40)` = 200 or the BossesScene row (auto-discovery) and the "whole budget in one shape" premise break.
+- `tests/content.test.ts:27` caps non-titan/orb sizes at 0.45 — add `'hive'` to the 0.5 allowance or `npm run check` fails.
+- `tests/core/waves.test.ts` hard-asserts wave 40 = Colossus (lines 148, 159, 172) — update all three, don't leave a red suite.
+- The boss branch draws the normal plan first for rng stability — keep it; only `bossId` changes, so seeded plans for 10/20/30 stay identical.
+- Popped Dots take Tough via `run.levelHpMul` exactly like plan spawns; keep the two in sync if the formula changes.
+- Count can't dip or lie: `pendingPops` is rewritten every wave frame and the hook stops counting the dead hive, so the total hits zero exactly when the board is clear.
+
+### Tests
+- `tests/core/hivePops.test.ts`: rule `{everySec: 6, max: 5, telegraphSec: 0.8}` — `popsDue` 0 at 0 and 5.99, 1 at 6, 2 at 12, 4 at 29.99, 5 at 30 and 1e6; `nextPopAt` 6 at 0, 12 at 6, 30 at 24, -1 at 30.
+- `waves.test.ts`: `bossId(40)` is `'hive'`; wave-40 plan `[{ enemy: 'hive', delaySec: 0 }]` with the boss tag and `waveHpMul(40)`; same plan on every rng stream; no wave but 40 sends a Hive; fix line 172's comment.
+- `content.test.ts`: line 27 gains `|| e.id === 'hive'`; a `pops` block mirrors `splitsAt`'s (`everySec > 0`, `max > 0`, `0 < telegraphSec < everySec`, `into` exists in `ENEMIES`).
+- `npm run check` and `npm run smoke` (1280×720 + 412×915) pass.
