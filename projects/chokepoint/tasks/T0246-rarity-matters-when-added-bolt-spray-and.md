@@ -1,12 +1,14 @@
 ---
 id: T0246
 title: "Rarity matters when added: Bolt, Spray and Push grow at Rare and Epic"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T00:51:08Z
+claimed_at: 2026-10-30T04:15:38Z
 design_attempts: 1
 ---
 
