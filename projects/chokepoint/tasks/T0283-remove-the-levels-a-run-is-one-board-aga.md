@@ -3,10 +3,12 @@ id: T0283
 title: "Remove the levels: a run is one board again"
 size: M
 priority: 1
-status: todo
+assignee: tobias
+status: in-progress
 depends_on: []
 attempts: 0
 created: 2026-10-30T10:50:50Z
+claimed_at: 2026-10-30T11:59:49Z
 ---
 
 ## Goal
@@ -119,3 +121,7 @@ No new files or functions. Everything below is deletion plus small comment fixes
 - `tests/core/saveRun.test.ts`: the new "level field is ignored" round-trip (required by the task).
 - `tests/systems/runFlow.test.ts`: the two replacement clearWave tests (wave 10 ordinary, clean-wave beat).
 - `tests/core/chokeGuarantee.test.ts` and `tests/core/map.test.ts` adapted per Steps 15; `tests/core/level.test.ts` deleted.
+
+## Claimed (by hand, 2026-10-30)
+
+Taken out of the pool: Tobias is doing this by hand, since the file locks kept every machine off it. Do not claim it.
