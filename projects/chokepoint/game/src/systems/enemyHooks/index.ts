@@ -10,6 +10,7 @@ import { tollLeak } from './tollLeak';
 import { muteJam } from './muteJam';
 import { nameTag } from './nameTag';
 import { bossArrival } from './bossArrival';
+import { bossOut } from './bossOut';
 import { crackTick } from './crackTick';
 import { split } from './split';
 import { midSplit } from './midSplit';
@@ -31,6 +32,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   midSplit,
   nameTag,
   bossArrival,
+  bossOut,
   crackTick,
   killCoin,
   killMilestone,

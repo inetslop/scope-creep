@@ -4,11 +4,12 @@ title: "The boss's phase gets its note: a quiet tone when it goes out of reach"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T12:12:05Z
 claimed_at: 2026-10-30T12:45:17Z
+finished_at: 2026-10-30T12:57:58Z
 epic: E5
 ---
 
@@ -87,3 +88,17 @@ index.ts: add `import { bossOut } from './bossOut';` with the other hook imports
 
 ### Tests
 none (juice/audio task; `npm run check` and the desktop + mobile smoke gates are the verification).
+
+## Result (attempt 1, yoga)
+
+The Colossus's out-of-reach beat now has its quiet note: a new `bossOut()` method in `Sfx.ts` (one 120 ms sine, 220→180 Hz, vol 0.08, the sting's softest class) and a new enemy hook `src/systems/enemyHooks/bossOut.ts` that plays it the frame the boss's white telegraph flash ends and it goes untargetable — one note per 8 s beat, silent on the return to targetable and when the sound toggle is off. Registered with one import line and one list line in `enemyHooks/index.ts` next to `bossArrival`. No HUD, mark, text or boss-card changes; check and desktop + mobile smoke all pass.
+
+- Self-review: APPROVE
+- Time: 12.7 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          |  5 +++++
+ .../game/src/systems/enemyHooks/bossOut.ts         | 25 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ 3 files changed, 32 insertions(+)
+```

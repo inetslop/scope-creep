@@ -133,6 +133,11 @@ export class Sfx {
     this.tone(62, 0.2, 'sine', 0.14, undefined, 0.1);
   }
 
+  /** The boss goes out of reach: a quiet falling note, A3 to G3, 120 ms, the sting's softest class. */
+  bossOut(): void {
+    this.tone(220, 0.12, 'sine', 0.08, 180);
+  }
+
   leakWarn(): void {
     this.tone(200, 0.08, 'sine', 0.1, 150);
   }
