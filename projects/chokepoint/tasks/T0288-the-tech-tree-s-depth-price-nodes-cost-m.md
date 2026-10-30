@@ -3,11 +3,13 @@ id: T0288
 title: "The tech tree's depth price: nodes cost more the deeper they are"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T16:07:56Z
+claimed_at: 2026-10-30T16:08:59Z
 epic: E9
+designer: desktop-4070
 ---
 
 ## Goal
