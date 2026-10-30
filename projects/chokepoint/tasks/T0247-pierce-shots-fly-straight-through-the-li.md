@@ -1,12 +1,14 @@
 ---
 id: T0247
 title: Pierce shots fly straight through the line instead of homing
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T00:51:08Z
+claimed_at: 2026-10-30T02:15:54Z
 ---
 
 ## Goal
