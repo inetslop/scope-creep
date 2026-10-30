@@ -3,10 +3,12 @@ id: T0309
 title: "The Feeder: the enemy that speeds the group around it"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T21:36:17Z
+claimed_at: 2026-10-30T21:36:20Z
+designer: desktop
 ---
 
 ## Goal
