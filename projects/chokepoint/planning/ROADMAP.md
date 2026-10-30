@@ -121,7 +121,7 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 **Goal:** a mistake can be fixed mid-run: a misplaced tower is sold back, a wrong augment is pulled back into the hand.
 **When done:** in the build phase the tower panel wears a bottom line, "Sell · +N": tap it and the tower lifts out and pays 70% of what its slots cost (the augments are gone — selling is a refund, not a retrieve; the cell frees, the gold pops at the plinth and slides to the tally). A second line, "Take out · 5", pulls the tower's last augment back into the hand for 5 gold (the card returns to the hand, the tower stays, its attack reverting to what the rest make it; a one-slot tower only sells). Both lines are build-phase only, both are on the pause's controls line, and the end card's by-tower list shows only towers standing at run end (a sold tower's kills stay in the run's totals). Selling costs 30% of the tower, so it is a fix, not a free repick.
 **Breakdown:**
-- T0263 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — written 2026-10-30, in the pool
+- T0263 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — **failed** (2026-10-30, the architect's context overflowed before any design); the line stands as written — re-file it next, then the take-out behind it
 - take out (M, priority 2, behind T0263) — "Take out · 5": the last augment back into the hand for 5 gold; a one-slot tower has no line — to be tasked
 
 ### Enemy queue (non-epic)
