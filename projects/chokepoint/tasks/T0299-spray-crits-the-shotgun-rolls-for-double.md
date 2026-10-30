@@ -3,12 +3,14 @@ id: T0299
 title: "Spray crits: the shotgun rolls for double damage (the T0282 re-file)"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T18:18:58Z
+claimed_at: 2026-10-30T19:26:53Z
 epic: E4
 design_attempts: 1
+designer: cachyos-x8664
 ---
 
 ## Goal
