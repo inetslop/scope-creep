@@ -3,10 +3,12 @@ id: T0308
 title: "The record pass gets its note: a quiet rise when the star pops"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T21:22:19Z
+claimed_at: 2026-10-30T21:47:59Z
+designer: desktop
 ---
 
 ## Goal
