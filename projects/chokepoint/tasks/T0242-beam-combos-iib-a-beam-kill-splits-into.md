@@ -3,12 +3,14 @@ id: T0242
 title: "Beam combos IIb: a beam kill splits into Spray needles"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T00:29:56Z
+claimed_at: 2026-10-30T02:31:14Z
 epic: E4
 design_attempts: 1
+designer: inet-racing
 ---
 
 ## Goal
