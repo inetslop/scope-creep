@@ -1,12 +1,14 @@
 ---
 id: T0241
 title: "Iron: the mode that plays a run at one life for double coins"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T00:29:56Z
+claimed_at: 2026-10-30T05:16:42Z
 epic: E6
 ---
 
