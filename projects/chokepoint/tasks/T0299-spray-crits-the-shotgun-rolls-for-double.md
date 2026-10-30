@@ -1,12 +1,14 @@
 ---
 id: T0299
 title: "Spray crits: the shotgun rolls for double damage (the T0282 re-file)"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T18:18:58Z
+claimed_at: 2026-10-30T22:59:45Z
 epic: E4
 design_attempts: 1
 ---
