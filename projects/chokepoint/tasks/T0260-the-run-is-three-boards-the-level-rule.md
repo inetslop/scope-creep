@@ -3,11 +3,13 @@ id: T0260
 title: "The run is three boards: the level rule"
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T05:49:22Z
+claimed_at: 2026-10-30T05:49:24Z
 epic: E3
+designer: desktop
 ---
 
 ## Goal
