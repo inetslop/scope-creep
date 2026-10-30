@@ -2,12 +2,15 @@ import type { WaveSystem } from '../WaveSystem';
 import { bossId } from '../../core/waves';
 import type { MakeEnemyHook } from './hook';
 import { gatePulse } from '../fx/gatePulse';
+import { bossRing } from '../fx/bossRing';
+import { PALETTE } from '../../content/palette';
 
 /**
  * The boss's arrival: the moment the boss's token first appears on the board, one deep horn rises
- * and a wide ring of muted ink blooms from the entrance gate. Once per boss wave; a non-boss wave
- * is byte-identical (no horn, no ring). The name tag says *what* and the boss card says *how
- * much*; this says the peak is beginning.
+ * and a wide ring of muted ink blooms from the entrance gate, and a muted ring in the boss's own
+ * color blooms from the boss's base (T0312). Once per boss wave; a non-boss wave is byte-identical
+ * (no horn, no ring). The name tag says *what* and the boss card says *how much*; this says the
+ * peak is beginning.
  */
 export const bossArrival: MakeEnemyHook = ({ scene, board, run, fx, sfx, enemies }) => {
   let announcedWave = -1;
@@ -19,12 +22,14 @@ export const bossArrival: MakeEnemyHook = ({ scene, board, run, fx, sfx, enemies
       if (announcedWave === run.wave) return;                // already sounded this wave
       const boss = bossId(run.wave);                          // the boss the plan declares (wave 20's walks in behind its Guard)
       if (boss === undefined) return;
-      if (!enemies.all.some((e) => e.active && e.def.id === boss)) return; // the boss's first frame on the board
+      const e = enemies.all.find((e) => e.active && e.def.id === boss); // the boss's first frame on the board
+      if (!e) return;
       announcedWave = run.wave;
       // The entrance gate: the midpoint of the two path points around the road's start (art/board.ts).
       const pts = board.path.points;
       sfx?.bossHorn();
       gatePulse(fx, (pts[0]!.x + pts[1]!.x) / 2, (pts[0]!.y + pts[1]!.y) / 2);
+      bossRing(fx, e.x, e.y, PALETTE[e.def.look.color]); // the boss's own ring at its base, in its own color (T0312)
     },
   };
 };

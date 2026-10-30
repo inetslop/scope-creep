@@ -4,11 +4,12 @@ title: "The boss's arrival gets its ring"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T23:07:23Z
 claimed_at: 2026-10-30T23:38:23Z
+finished_at: 2026-10-30T23:52:16Z
 ---
 
 ## Goal
@@ -66,3 +67,16 @@ export function bossRing(fx: FxSystem, x: number, y: number, color: number): voi
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The boss's arrival now announces its spot on the board: the moment the run's boss first appears, a muted ring in the boss's own body color blooms from its base out to two cells and fades over 0.6 s, in the working-aura ring's language at boss scale. It's one ring per boss (wave 10, 20, 30 and any later bosses inherit it), silent, and fires at the same once-per-boss moment as the existing horn and gate pulse — so resuming mid-boss shows no ring, and the boss card, death burst and phase windup are untouched. Changes: new file src/systems/fx/bossRing.ts and the two-line change in src/systems/enemyHooks/bossArrival.ts.
+
+- Self-review: APPROVE
+- Time: 13.9 min
+
+```
+.../chokepoint/game/src/systems/enemyHooks/bossArrival.ts   | 13 +++++++++----
+ projects/chokepoint/game/src/systems/fx/bossRing.ts         | 13 +++++++++++++
+ 2 files changed, 22 insertions(+), 4 deletions(-)
+```
