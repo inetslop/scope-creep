@@ -1,12 +1,14 @@
 ---
 id: T0271
 title: "The near miss: a 'close' chip when the wave's last kill stops an enemy at the exit"
+assignee: baby-mama
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T09:22:16Z
+claimed_at: 2026-10-30T09:46:49Z
 ---
 
 ## Goal
