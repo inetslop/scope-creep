@@ -33,14 +33,14 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-14 in the game, from game/src/content/augments/ (the real values).
+15 in the game, from game/src/content/augments/ (the real values).
 
 **By `first.kind`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
 - `beam`: Beam
 - `burn`: Ember
 - `mark`: Mark
-- `pulse`: Splash, Frost, Push, Anchor, Mint
+- `pulse`: Splash, Frost, Push, Anchor, Mint, Toll
 - `rally`: Rally
 - `shot`: Bolt, Lance, Rapid, Reach
 - `spray`: Spray
@@ -52,6 +52,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - `damageMul + rateMul`: Rapid
 - `extraShots`: Bolt
 - `goldPerKill`: Mint
+- `goldPerLeak`: Toll
 - `mark`: Mark
 - `pierce`: Lance
 - `push`: Push
@@ -136,6 +137,16 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - added: goldPerKill 1
 - tier: epic
 - tiers: rare {asAdded This tower's kills drop +1 gold.}, epic {asAdded This tower's kills drop +1 gold.}
+
+### Toll (`toll`)
+- description: "Every leak pays +2 gold while a Toll tower stands. Added: +1 more per leak."
+- asTower: "While a Toll tower stands, every leak pays +2 gold."
+- asAdded: Each extra Toll: +1 more gold per leak.
+- look: shape circle, color yellow, size 0.2
+- first: kind pulse, damage 0, range 1, rate 1, goldPerLeak 2
+- added: goldPerLeak 1
+- tier: epic
+- tiers: rare {asAdded Each extra Toll: +1 more gold per leak.}, epic {asAdded Each extra Toll: +1 more gold per leak.}
 
 ### Rally (`rally`)
 - description: "Towers within 2 cells attack 10% faster. Added: joins its own rally."
