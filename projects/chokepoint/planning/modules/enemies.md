@@ -27,12 +27,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-13 in the game, from game/src/content/enemies/ (the real values).
+15 in the game, from game/src/content/enemies/ (the real values).
 
 **By `behavior`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
 - `dash`: Dasher
-- `walk`: Dot, Block, Colossus, Orb, Shard, Sprinter, Splitter, Hauler, Mute, Ward, Bulwark, Splinter
+- `walk`: Dot, Block, Colossus, Guard, Titan, Orb, Shard, Sprinter, Splitter, Hauler, Mute, Ward, Bulwark, Splinter
 
 ### Dot (`dot`)
 - description: "The basic walker: steady speed, middling health."
@@ -68,6 +68,31 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - spawnOnly: true
 - outOfReach: hpFrac 0.5, telegraphSec 0.5, phaseSec 2.5, periodSec 8
 - look: shape square, color purple, size 0.45
+
+### Guard (`guard`)
+- description: "Carries the Titan's shield: kill it to make the Titan take full damage."
+- behavior: walk
+- hp: 60
+- speed: 0.9
+- gold: 8
+- livesCost: 1
+- threat: 5
+- fromWave: 20
+- spawnOnly: true
+- look: shape diamond, color red, size 0.2
+
+### Titan (`titan`)
+- description: "A bigger wall of Block: while its Guard lives, every hit on it is halved."
+- behavior: walk
+- hp: 720
+- speed: 0.9
+- gold: 20
+- livesCost: 1
+- threat: 95
+- fromWave: 20
+- spawnOnly: true
+- shieldCarrier: guard
+- look: shape square, color red, size 0.5
 
 ### Orb (`orb`)
 - description: "The whole wave in one cracked shape: at half health it splits into two Shards that keep walking."
