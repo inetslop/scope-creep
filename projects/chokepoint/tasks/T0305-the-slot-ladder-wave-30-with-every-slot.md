@@ -1,12 +1,14 @@
 ---
 id: T0305
 title: "The slot ladder: wave 30 with every slot filled unlocks one more"
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T20:35:44Z
+claimed_at: 2026-10-30T22:20:05Z
 epic: E9
 ---
 
