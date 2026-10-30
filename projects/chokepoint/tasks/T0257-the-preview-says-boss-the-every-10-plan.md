@@ -3,11 +3,13 @@ id: T0257
 title: "The preview says boss: the every-10 plan's tag, the preview chip, the teach line and the banner chip"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0253]
 attempts: 0
 created: 2026-10-30T05:08:57Z
+claimed_at: 2026-10-30T05:09:10Z
 epic: E5
+designer: yoga
 ---
 
 ## Goal
