@@ -3,11 +3,13 @@ id: T0291
 title: "The payout: the level multiplier pays"
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: [T0285]
 attempts: 0
 created: 2026-10-30T17:15:59Z
+claimed_at: 2026-10-30T17:16:02Z
 epic: E9
+designer: desktop
 ---
 
 ## Goal
