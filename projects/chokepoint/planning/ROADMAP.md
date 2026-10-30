@@ -112,7 +112,7 @@ Progress: Haste (T0152) and Toll (T0234) landed 2026-10-30; the pool's registrat
 - T0258 (M, priority 2, behind T0253) — the boss moment: the death — the 24-chip burst (2× the milestone count) in the boss's own color and the two-line name card (topBanner's pattern) — **failed** (2026-10-30, the architect's context overflowed before any design); the design stands as written — re-filed as T0273 (with T0266's Orb split carve-out)
 - T0259 (L, priority 2, behind T0256) — the second boss (wave 20): the Titan (a red square at 0.5, 6× Block) and its Guard (a red diamond carrying an orange disc) — while the Guard lives, every hit on the Titan is halved; the escort-shield member of the pair — unblocked 2026-10-30 (the failed T0258 dep becomes T0273; its design is written)
 - T0266 (L, priority 2) — the third boss (wave 30): the Orb (a purple hexagon at 0.5 with the crack) splits into two faster Shards at half health, unless it dies to a single hit first; the "splits at half hp" later boss — **done** (2026-10-30, inet-racing)
-- T0268 (M, priority 2, behind T0253) — the boss's arrival: a deep horn and a pulse at the entrance gate the moment the boss walks in — in the pool (todo, waits on T0254)
+- T0268 (M, priority 2, behind T0253) — the boss's arrival: a deep horn and a pulse at the entrance gate the moment the boss walks in — in the pool (todo)
 - T0269 (M, priority 2, behind T0253) — the boss's escape: when the boss leaks, a distinct low note — the run's worst moment, heard — **done** (2026-10-30, baby-mama)
 - T0277 (M, priority 2) — the bosses reference: a pause row (with Enemies / Waves) that lists the boss encounters in wave order — token, name, wave, trick in the teach language — read from the boss defs so it grows as they do — written 2026-10-30
 
