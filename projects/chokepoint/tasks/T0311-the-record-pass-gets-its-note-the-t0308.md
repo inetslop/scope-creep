@@ -4,11 +4,12 @@ title: The record pass gets its note (the T0308 re-file)
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T23:07:23Z
 claimed_at: 2026-10-30T23:34:11Z
+finished_at: 2026-10-30T23:43:32Z
 ---
 
 ## Goal
@@ -63,3 +64,15 @@ No other file changes. The play site is already correct and must not be touched:
 
 ### Tests
 none
+
+## Result (attempt 1, asus)
+
+Rewrote `recordNote()` in `src/audio/Sfx.ts` so the run's record moment now plays the streak note's quiet shape — E5→G5 sines, 80 ms each, 90 ms apart, volume 0.08 — instead of the old G5→B5 at 0.1, and updated its doc comment. The play site (`WaveCard.record()`) already handles the once-per-run guard, Iron's muted star, and resumed-run silence, so no other file was touched.
+
+- Self-review: APPROVE
+- Time: 9.4 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+```
