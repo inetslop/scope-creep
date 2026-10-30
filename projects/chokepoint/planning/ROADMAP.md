@@ -90,11 +90,11 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0234 (M, priority 2) — Toll: the Epic that pays gold when a leak gets through (the first augment whose income comes from losing) — **done** (2026-10-30, inet-racing)
 - T0235 (L, priority 2) — Feast: the Epic that feeds on the kill chain (its added form lengthens the chain's window) — in the pool
 - T0236 (S, priority 2) — the what-if says "nothing": a held card whose added form does nothing to a tower shows the ghost's marker dimmed (the tower's own spec is the judge) — in the pool
-- T0238 (L, priority 2) — the draft shows where the card lands: **failed** (2026-10-29, rejected: it delegated the dim rule to T0236's not-yet-written judge, and its own restatement of that rule contradicted its acceptance example) — re-filed as T0243 (re-scoped without T0236's dim rule; in the pool)
+- T0238 (L, priority 2) — the draft shows where the card lands: **failed** (2026-10-29, rejected: it delegated the dim rule to T0236's not-yet-written judge, and its own restatement of that rule contradicted its acceptance example) — re-filed as T0243 (re-scoped without T0236's dim rule) — **done** (2026-10-30, desktop)
 
 Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T0235 (one at a time, in claim order, under the 16-cap; T0234 landed 2026-10-30, pool 15, no removal); the beam work is done but the needle (T0242, in the pool); the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is done; the what-if dim (T0236) failed on a wrong premise and is dropped, the draft fit row (T0243) now stands alone (no dim) and the codex lock (T0248) is in the pool.
 
-**E4 closes when T0025, T0064, T0062, T0095, T0152, T0235, T0242, T0243 and T0248 land** (T0130, T0132, T0133, T0210, T0228, T0234 done; T0236 failed → dropped; T0131 failed → T0210; T0238 failed → T0243; T0150 waits on T0025; T0089 is dropped).
+**E4 closes when T0025, T0064, T0062, T0095, T0152, T0235, T0242 and T0248 land** (T0130, T0132, T0133, T0210, T0228, T0234, T0243 done; T0236 failed → dropped; T0131 failed → T0210; T0238 failed → T0243; T0150 waits on T0025; T0089 is dropped).
 
 **16-cap (protocol):** the pipeline holds 21 augments (15 in + T0025, T0064, T0062, T0095, T0152, T0235); the cap is 16. Every queued registration, after registering, removes one more if the pool is over 16 — the first still in the index of **Frost, then Rally, then Mint** — and says which in its result (the canonical statement is in T0064's task).
 
