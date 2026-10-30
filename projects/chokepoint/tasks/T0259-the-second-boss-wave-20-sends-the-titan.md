@@ -3,11 +3,13 @@ id: T0259
 title: "The second boss: wave 20 sends the Titan and its Guard, and the Guard carries the shield"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: [T0253, T0256, T0258]
 attempts: 0
 created: 2026-10-30T05:08:57Z
+claimed_at: 2026-10-30T05:09:00Z
 epic: E5
+designer: desktop
 ---
 
 ## Goal
