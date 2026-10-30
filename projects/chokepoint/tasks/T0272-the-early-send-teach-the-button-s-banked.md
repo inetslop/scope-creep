@@ -3,10 +3,12 @@ id: T0272
 title: "The early-send teach: the button's banked gold, taught once"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T09:22:16Z
+claimed_at: 2026-10-30T09:23:17Z
+designer: yoga
 ---
 
 ## Goal
