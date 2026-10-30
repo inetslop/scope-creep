@@ -1,12 +1,14 @@
 ---
 id: T0270
 title: "The tower's milestone: a ring when a tower crosses a kill count"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T09:22:16Z
+claimed_at: 2026-10-30T09:37:47Z
 ---
 
 ## Goal
