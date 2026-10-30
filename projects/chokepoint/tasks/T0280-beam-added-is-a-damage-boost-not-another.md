@@ -4,11 +4,12 @@ title: Beam added is a damage boost, not another beam
 assignee: cachyos-x8664
 size: M
 priority: 1
-status: in-progress
+status: failed
 depends_on: []
 attempts: 3
 created: 2026-10-30T10:37:56Z
 claimed_at: 2026-10-30T21:58:36Z
+finished_at: 2026-10-30T22:37:44Z
 epic: E4
 ---
 
@@ -120,6 +121,14 @@ Prompt is too long · automatic compaction failed: summarization produced empty 
 ```
 
 ## Attempt 2 failed (cachyos-x8664)
+
+The agent made no changes to the game (success).
+
+```
+Prompt is too long
+```
+
+## Attempt 3 failed (cachyos-x8664)
 
 The agent made no changes to the game (success).
 
