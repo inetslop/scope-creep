@@ -2,7 +2,7 @@
 
 The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a behavior no existing enemy has; a new augment needs an attack of its own (as a tower's first) and a change that combines in a new way (when added). Never a copy with other numbers. And its effect must matter in the game as it is: not only under conditions the game doesn't have (shots never miss, so an aiming-ahead shot adds nothing).
 
-- Sell a tower for 70% of what its slots cost (tap it, then Sell) — **now E7 (active); the first slice is re-filed as T0274 (in the pool), the take-out behind it as T0275**
+- Sell a tower for 70% of what its slots cost (tap it, then Sell) — **now E7 (active); the first slice is re-filed as T0274 (in the pool), the take-out (T0275) dropped by hand 2026-10-30**
 - Take an augment back out of a tower into the hand, for a fee — **E7's second slice, behind T0274 (the fee: 5 gold; the vacated slot stays the tower's; a one-augment tower only sells)**
 - Targeting modes per tower (First / Strongest / Closest) — **tasked as T0114 (L, non-epic, in the pool)**: a chip on the tower panel (tap to cycle) that aims the tower's main attack — First is today's furthest-along (default, byte-identical), Strongest the most current hp in range, Closest the nearest; auras and nearest-pick added forms untouched; the mode survives a resume (absent = First); the pause screen lists the chip. Parked follow-ups (S): a muted plinth notch on a non-First mode; the chip says what it means once (T0092's pattern)
 - Lance augment: first, a long piercing line that hits everything along it; added, shots pierce one more enemy — built as T0004 (asus)
@@ -19,7 +19,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Wave preview strip in the build phase: the shapes and counts of the next wave — built as T0015 (2026-10-28, narcissus)
 - Interest: unspent gold at the end of a build phase earns 5% (capped)
 - Fast-forward (2x) for the wave phase — **built as T0019 (2026-10-28)**: the SpeedButton, one scaled clock for the whole wave phase
-- Daily seeded run with a shareable result — the leaderboard (Today / Forever, added by hand 2026-10-30) is where a shared result lands — now **E8 (active)**: the first slice is T0278 (the claim card's Copy), written 2026-10-30
+- Daily seeded run with a shareable result — the leaderboard (Today / Forever, added by hand 2026-10-30) is where a shared result lands — was **E8 — dropped by hand 2026-10-30** (T0278 dropped); do not re-task
 - Colorblind mode: patterns on the shapes, not just color
 - Map modifiers chosen in the draft instead of an augment (e.g. "the next wave comes from both ends")
 - Haptics on mobile for builds and leaks — **tasked as T0265 (S, non-epic, in the pool)**: one new small input module (a guarded navigator.vibrate, a no-op where unsupported), two patterns (place 20 ms, leak 80 ms) called from the one place towers are placed and the one place leaks happen; no HUD, no toggle, no interplay with sound

@@ -122,20 +122,17 @@ Progress: Haste (T0152), Toll (T0234) and the endless rerolls (T0276) landed 202
 ### E6 — Iron run: one life, double coins (done; history in planning/archive/ROADMAP.md)
 
 ### E7 — Changing your mind: a misplaced tower is not permanent (active — opened 2026-10-30)
-**Goal:** a mistake can be fixed mid-run: a misplaced tower is sold back, a wrong augment is pulled back into the hand.
-**When done:** in the build phase the tower panel wears a bottom line, "Sell · +N": tap it and the tower lifts out and pays 70% of what its slots cost (the augments are gone — selling is a refund, not a retrieve; the cell frees, the gold pops at the plinth and slides to the tally). A second line, "Take out · 5", pulls the tower's last augment back into the hand for 5 gold (the card returns to the hand, the tower stays, its attack reverting to what the rest make it; a one-slot tower only sells). Both lines are build-phase only, both are on the pause's controls line, and the end card's by-tower list shows only towers standing at run end (a sold tower's kills stay in the run's totals). Selling costs 30% of the tower, so it is a fix, not a free repick.
+**Goal:** a mistake can be fixed mid-run: a misplaced tower is sold back. (The take-out, T0275, was cancelled by hand 2026-10-30.)
+**When done:** in the build phase the tower panel wears a bottom line, "Sell · +N": tap it and the tower lifts out and pays 70% of what its slots cost (the augments are gone — selling is a refund, not a retrieve; the cell frees, the gold pops at the plinth and slides to the tally). The line is build-phase only, it is on the pause's controls line, and the end card's by-tower list shows only towers standing at run end (a sold tower's kills stay in the run's totals). Selling costs 30% of the tower, so it is a fix, not a free repick.
 **Breakdown:**
 - T0274 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — the T0263 re-file (T0263 failed 2026-10-30 on an architect context overflow before any design; the line stood as written) — in design
-- T0275 (M, priority 2, behind T0274) — take out: "Take out · 5" — the last augment back into the hand for 5 gold, the vacated slot stays the tower's (free to refit); a one-augment tower shows only the sell line — in the pool (todo, waits on T0274)
+- T0275 — take out — **dropped by hand 2026-10-30**; E7 closes when T0274 lands
 
-### E8 — A run you can show (active — opened 2026-10-30)
-**Goal:** a finished run is a result you can keep and share, not a number that fades with the claim card.
-**When done:** the claim card's result is one copyable line (wave, board, coins, mode) a player pastes where runs are shared, and a shared line's seed plays back the exact board (the ghost run, extended from "your best seed" to any seed); the leaderboard (Today / Forever) is where the lines land.
-**Breakdown:**
-- T0278 (M, priority 2) — the claim card's "Copy": one tap puts "Chokepoint · Wave N · Board SEED · +C coins" (· Iron) on the clipboard — written 2026-10-30
-- (parked) replay a shared seed: the ghost run (T0078) grows to take a pasted board seed, not only your own best — task it when the pool has room
+### E8 — A run you can show (dropped — 2026-10-30, by hand)
+Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
-### E9 — Level augments: harder runs for a bigger payout (active — opened 2026-10-30, by hand)
+### E9 — Level augments: harder runs for a bigger payout (active, **top priority** — opened 2026-10-30, by hand)
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. The first slice is in the inbox (by hand): "Level augments I: the unlock, the menu choice and Tough".
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
 - **Unlock, a slot ladder:** level augments are picked into **slots**, and slots are earned one at a time.
@@ -158,8 +155,8 @@ Progress: Haste (T0152), Toll (T0234) and the endless rerolls (T0276) landed 202
 - Choices are saved and preselected for the next run. The run's save records them, so a resumed run keeps its level augments and multiplier.
 
 **Breakdown (to task, in this order):**
-- the unlock and the menu choice: wave 30 unlocks the first slot (a slot count in the profile), the menu's level-augment picker capped at the slot count, the chosen set saved in the profile and the run save, the run multiplier shown before starting — no augments yet beyond one (Tough), so the slice is small and playable — **tasked as T0285 (L, in the pool)**
-- the payout: the run multiplier applied to score and coins (core coin and score formulas, pure, tested), the HUD chips, the claim card's recipe line, the leaderboard row's multiplier
+- the unlock, the menu choice and Tough — **in the inbox (by hand, priority 1)**: wave 30 unlocks the first slot (`levelSlots` in the profile, existing wave-30 profiles migrated), the menu picker capped at the slot count, Tough (+25% enemy health, +20%), the run multiplier applied to coins and score (stacks with Iron), the set saved in the profile and the run save
+- the payout made visible: the HUD chips, the claim card's recipe line, the leaderboard row's multiplier
 - the rest of the first set: Swift, Crowded, Lean, Short fuse, each a pure rule with tests and its own percentage
 - the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned
 - deeper tech nodes: a third node in each branch priced on the new curve, so the bigger payout has a sink
@@ -183,7 +180,7 @@ Queue order: the Bulwark (T0102), the Ward (T0111) and the Dart's removal (T0237
 
 Ideas that may become epics or tasks of one.
 
-- Selling a tower, or taking an augment back out (for part of the gold) — now **E7** (active, opened 2026-10-30; both slices written: T0274 the sell, T0275 the take-out behind it)
+- Selling a tower (for part of the gold) — now **E7** (active, opened 2026-10-30; T0274 the sell; the take-out T0275 dropped by hand 2026-10-30)
 - Targeting modes per tower (first, strongest, closest) — **tasked as T0114 (L, non-epic, in the pool)** — the spec and its parked follow-ups (the plinth notch, the chip's teach line) stand in IDEAS
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)

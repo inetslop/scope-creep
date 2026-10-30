@@ -3,7 +3,7 @@ id: T0275
 title: "Take out: the panel's line that pulls the last augment back into the hand"
 size: M
 priority: 2
-status: todo
+status: failed
 depends_on: [T0274]
 attempts: 0
 created: 2026-10-30T09:46:01Z
@@ -102,3 +102,7 @@ private takeOut: { button: Button; price: Phaser.GameObjects.Text } | undefined;
 - Layout: 412x915 centers the 340 px panel; with both buttons (150 + 8 + sell ≤ 146) the line stays inside `w - 36`. The pause card grows by one line and scales down; verify both sizes in the smoke run.
 ### Tests
 none (the rule lives in `Building`/`Tower`/`TowerPanel`, not `src/core`; the new invariant covers the smoke run).
+
+## Dropped (by hand, 2026-10-30)
+
+Cancelled by the player: E7 keeps only the sell (T0274). There is no take-out; do not re-task it.

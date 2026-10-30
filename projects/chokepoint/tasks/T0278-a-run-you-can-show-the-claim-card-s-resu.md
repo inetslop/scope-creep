@@ -3,7 +3,7 @@ id: T0278
 title: "A run you can show: the claim card's result becomes a copyable line"
 size: M
 priority: 2
-status: todo
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-30T10:09:05Z
@@ -80,3 +80,7 @@ Do not touch any existing line object, `update()`, the count-up, `centerCoins()`
 
 ### Tests
 None (UI only; no core rule added).
+
+## Dropped (by hand, 2026-10-30)
+
+Cancelled by the player with the whole of E8 (a run you can show). Do not re-task it or the shared-seed replay.
