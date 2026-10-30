@@ -3,11 +3,13 @@ id: T0305
 title: "The slot ladder: wave 30 with every slot filled unlocks one more"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T20:35:44Z
+claimed_at: 2026-10-30T20:35:48Z
 epic: E9
+designer: desktop
 ---
 
 ## Goal
