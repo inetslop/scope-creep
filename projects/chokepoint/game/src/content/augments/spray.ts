@@ -13,7 +13,7 @@ export const spray: AugmentDef = {
   first: { kind: 'spray', damage: 4, range: 2.5, rate: 1 / 1.2, spray: SPRAY_PELLETS },
   added: { spray: 2 },
   tiers: {
-    rare: { damageMul: 5 / 4, cooldownMul: 1.05 / 1.2, asAdded: '+2 pellets per blast.' },
-    epic: { damageMul: 6 / 4, cooldownMul: 0.9 / 1.2, asAdded: '+2 pellets per blast.' },
+    rare: { damageMul: 5 / 4, cooldownMul: 1.05 / 1.2, addedSpray: 3, asAdded: '+3 pellets per blast.' },
+    epic: { damageMul: 6 / 4, cooldownMul: 0.9 / 1.2, addedSpray: 4, asAdded: '+4 pellets per blast.' },
   },
 };

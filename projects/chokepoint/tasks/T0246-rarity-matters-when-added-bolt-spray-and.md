@@ -4,11 +4,12 @@ title: "Rarity matters when added: Bolt, Spray and Push grow at Rare and Epic"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T00:51:08Z
 claimed_at: 2026-10-30T04:15:38Z
+finished_at: 2026-10-30T05:18:57Z
 design_attempts: 1
 ---
 
@@ -87,3 +88,23 @@ push: t.addedPush ?? a.push,
 - MAX_BARRELS stays exported (other tasks may import it); only the number changes.
 ### Tests
 - The new `tests/core/tierStrength.test.ts` itself: fails if any multi-tier augment's added form is identical at two rarities, if any of bolt/spray/push/lance's card line misnames its number, or if a tower doesn't take a second copy at its rolled tier.
+
+## Result (attempt 1, desktop-4070)
+
+Rare and Epic added forms are now stronger than Common: Bolt adds +2/+3 extra shots, Spray +3/+4 pellets, and Push's per-hit push-back grows to 0.6/0.8 cells, with every tier's card line stating its real number — including Lance, whose Rare/Epic lines were fixed to "+2 pierce." / "+3 pierce." to match the pierce values already in its tiers (new `addedShots`/`addedSpray`/`addedPush` tier overrides in content/types.ts applied by tierAdded() in core/tiers.ts, and towerSpec in core/augments.ts now reads the tier's push value). Towers with many shots still draw at most 5 barrels (MAX_BARRELS raised to 5; muzzle already wraps). Common values, first forms, asTower lines, draft odds and the five epic-only augments are unchanged, and a new test in tests/core/tierStrength.test.ts fails if any augment's added form is ever identical at two rarities or a card line drifts from its number.
+
+- Self-review: APPROVE
+- Time: 63.3 min
+
+```
+.../chokepoint/game/src/content/augments/bolt.ts   |  4 +--
+ .../chokepoint/game/src/content/augments/lance.ts  |  4 +--
+ .../chokepoint/game/src/content/augments/push.ts   |  6 ++--
+ .../chokepoint/game/src/content/augments/spray.ts  |  4 +--
+ projects/chokepoint/game/src/content/types.ts      |  6 ++++
+ projects/chokepoint/game/src/core/augments.ts      |  2 +-
+ projects/chokepoint/game/src/core/tiers.ts         |  5 ++-
+ projects/chokepoint/game/src/entities/towerLook.ts |  2 +-
+ .../game/tests/core/tierStrength.test.ts           | 36 ++++++++++++++++++++++
+ 9 files changed, 57 insertions(+), 12 deletions(-)
+```

@@ -16,7 +16,7 @@ import { fillRing } from '../ui/ring';
  */
 
 /** At most this many barrels are drawn side by side (more shots still fire). */
-export const MAX_BARRELS = 4;
+export const MAX_BARRELS = 5;
 
 /** Barrels, one per shot (Bolt); a pulse tower with Bolt added gets them for its bolts. */
 export function barrelCount(spec: TowerSpec): number {

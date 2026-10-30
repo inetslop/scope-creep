@@ -77,6 +77,12 @@ export interface TierValues {
   addedBeamDps?: number;
   addedRateMul?: number;
   addedRangeMul?: number;
+  /** Replaces this copy's added extra shots per attack (Bolt). */
+  addedShots?: number;
+  /** Replaces this copy's added pellets per blast (Spray). */
+  addedSpray?: number;
+  /** Replaces this copy's added per-hit push-back cells (Push). */
+  addedPush?: number;
   asAdded: string;
   /** The card's tower line at this tier (Common: `asTower` itself). */
   asTower?: string;

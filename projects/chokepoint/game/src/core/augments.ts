@@ -213,7 +213,7 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     const a = getAugment(augments[i]!.id);
     if (a.id !== 'push') continue;
     spec.pushCount += 1;
-    if (i > 0) spec.pushPerHit += a.added.push ?? 0;
+    if (i > 0) spec.pushPerHit += tierAdded(a, augments[i]!.tier).push ?? 0;
   }
   // Splashes in any slot, at any tier: how many enemies its hits may strike.
   for (const a of augments) if (a.id === 'splash') spec.splashCount += 1;

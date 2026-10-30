@@ -56,7 +56,7 @@ export function tierFirst(def: AugmentDef, tier: Tier): FirstForm {
 
 /**
  * The added form of this copy of the augment at `tier` (Common: the base form). A new object:
- * the added multipliers, splash and pierce are replaced, the slow % replaced.
+ * the added multipliers, extra shots, pellets, push cells, splash and pierce are replaced, the slow % replaced.
  */
 export function tierAdded(def: AugmentDef, tier: Tier): AddedForm {
   const a = def.added;
@@ -68,6 +68,9 @@ export function tierAdded(def: AugmentDef, tier: Tier): AddedForm {
     rangeMul: t.addedRangeMul ?? a.rangeMul,
     splash: t.splash ?? a.splash,
     pierce: t.pierce ?? a.pierce,
+    extraShots: t.addedShots ?? a.extraShots,
+    spray: t.addedSpray ?? a.spray,
+    push: t.addedPush ?? a.push,
     slow: a.slow ? { ...a.slow, pct: t.slowPct ?? a.slow.pct } : undefined,
     root: a.root ? { ...a.root, sec: t.addedRootSec ?? t.rootSec ?? a.root.sec } : undefined,
     burn: a.burn ? { ...a.burn, dps: t.burnDps ?? a.burn.dps } : undefined,

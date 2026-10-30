@@ -14,7 +14,7 @@ export const lance: AugmentDef = {
   first: { kind: 'shot', damage: 12, range: 2.6, rate: 1.11, projectileSpeed: 10, pierce: 1 },
   added: { pierce: 1 },
   tiers: {
-    rare: { damageMul: 16 / 12, cooldownMul: 1.11 / 1.3, pierce: 2, asAdded: '+1 pierce.' },
-    epic: { damageMul: 20 / 12, cooldownMul: 1.11 / 1.59, pierce: 3, asAdded: '+1 pierce.' },
+    rare: { damageMul: 16 / 12, cooldownMul: 1.11 / 1.3, pierce: 2, asAdded: '+2 pierce.' },
+    epic: { damageMul: 20 / 12, cooldownMul: 1.11 / 1.59, pierce: 3, asAdded: '+3 pierce.' },
   },
 };
