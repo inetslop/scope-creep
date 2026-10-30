@@ -1,12 +1,14 @@
 ---
 id: T0244
 title: "Bolt's volley: every shot goes at the same enemy, one per barrel"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0247]
-attempts: 0
+attempts: 1
 created: 2026-10-30T00:51:08Z
+claimed_at: 2026-10-30T02:27:06Z
 ---
 
 ## Goal
