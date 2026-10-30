@@ -3,10 +3,12 @@ id: T0271
 title: "The near miss: a 'close' chip when the wave's last kill stops an enemy at the exit"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T09:22:16Z
+claimed_at: 2026-10-30T09:42:50Z
+designer: baby-mama
 ---
 
 ## Goal
