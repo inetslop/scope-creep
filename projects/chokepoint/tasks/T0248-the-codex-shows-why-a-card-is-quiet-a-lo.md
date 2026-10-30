@@ -3,13 +3,12 @@ id: T0248
 title: "The codex shows why a card is quiet: a lock on the gated augments"
 size: S
 priority: 2
-status: designing
+status: design
 depends_on: []
 attempts: 0
 created: 2026-10-30T01:33:38Z
-claimed_at: 2026-10-30T02:06:53Z
 epic: E4
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
