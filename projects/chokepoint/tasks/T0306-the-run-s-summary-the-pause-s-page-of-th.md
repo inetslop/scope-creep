@@ -1,12 +1,14 @@
 ---
 id: T0306
 title: "The run's summary: the pause's page of the run so far (the T0304 re-file)"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T20:35:44Z
+claimed_at: 2026-10-30T22:28:32Z
 ---
 
 ## Goal
