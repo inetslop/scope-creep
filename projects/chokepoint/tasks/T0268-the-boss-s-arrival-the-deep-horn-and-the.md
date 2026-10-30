@@ -4,11 +4,12 @@ title: "The boss's arrival: the deep horn and the gate pulse"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0253, T0254]
 attempts: 1
 created: 2026-10-30T08:43:10Z
 claimed_at: 2026-10-30T11:34:42Z
+finished_at: 2026-10-30T11:41:52Z
 epic: E5
 ---
 
@@ -133,3 +134,18 @@ bossHorn(): void {
   - **Sound off:** the horn is silent; the ring still plays.
   - Liveness: the run reaches and clears the boss wave without a crash; `brokenEnemy`/invariants in `EnemySystem` stay clean.
 - Layout: at 412x915 (phone) and 1280x720 the ring is centered on the entrance gate and reads as a board-level pulse (not clipped by the HUD bars).
+
+## Result (attempt 1, desktop)
+
+The boss's arrival is now a moment: the instant the boss wave's declared boss (today the Colossus) first spawns, a new deep rising two-note horn plays (`Sfx.bossHorn()`, 65→82 Hz) and one wide muted-ink ring blooms from the entrance gate out to two cells over 500 ms (`gatePulse`), driven by a new fire-once enemy hook `bossArrival` registered next to `nameTag` — once per boss wave, byte-identical elsewhere, no new HUD, readout or input.
+
+- Self-review: APPROVE
+- Time: 7.2 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          |  6 +++++
+ .../game/src/systems/enemyHooks/bossArrival.ts     | 29 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../chokepoint/game/src/systems/fx/gatePulse.ts    | 14 +++++++++++
+ 4 files changed, 51 insertions(+)
+```

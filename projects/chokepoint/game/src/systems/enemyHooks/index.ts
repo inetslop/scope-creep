@@ -9,6 +9,7 @@ import { mintRing } from './mintRing';
 import { tollLeak } from './tollLeak';
 import { muteJam } from './muteJam';
 import { nameTag } from './nameTag';
+import { bossArrival } from './bossArrival';
 import { crackTick } from './crackTick';
 import { split } from './split';
 import { midSplit } from './midSplit';
@@ -29,6 +30,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   split,
   midSplit,
   nameTag,
+  bossArrival,
   crackTick,
   killCoin,
   killMilestone,
