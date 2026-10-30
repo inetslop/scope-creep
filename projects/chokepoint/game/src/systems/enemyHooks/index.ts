@@ -15,6 +15,7 @@ import { midSplit } from './midSplit';
 import { killCoin } from './killCoin';
 import { killMilestone } from './killMilestone';
 import { waveClose } from './waveClose';
+import { nearMiss } from './nearMiss';
 
 /**
  * Everything that reacts to kills, leaks or every frame of a wave, one per line (see hook.ts).
@@ -32,6 +33,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   killCoin,
   killMilestone,
   waveClose,
+  nearMiss,
   haulerLeak,
   tollLeak,
   burnLeap,

@@ -4,11 +4,12 @@ title: "The near miss: a 'close' chip when the wave's last kill stops an enemy a
 assignee: baby-mama
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T09:22:16Z
 claimed_at: 2026-10-30T09:46:49Z
+finished_at: 2026-10-30T09:51:16Z
 ---
 
 ## Goal
@@ -70,3 +71,16 @@ export const nearMiss: MakeEnemyHook = (ctx) => ({
 - Do not touch `waveClose.ts` (the T0229 ring must play unchanged), `EnemySystem`, `Sfx`, HUD files, or `debug/runChecks.ts`.
 ### Tests
 none
+
+## Result (attempt 1, baby-mama)
+
+A wave now feels its hair when it wins by one: if the wave-ending kill lands within 1.5 road-cells of the exit, a small "close" chip (the name tag's look, muted ink) pops above the kill spot, holds ~1 s and fades — so the leak warning's danger gets named after. It's a new enemy hook (`src/systems/enemyHooks/nearMiss.ts`) registered next to `waveClose` in `src/systems/enemyHooks/index.ts`; no sound, no input, no HUD, and the last-kill ring and exit treatment are unchanged.
+
+- Self-review: APPROVE
+- Time: 4.5 min
+
+```
+projects/chokepoint/game/src/systems/enemyHooks/index.ts  |  2 ++
+ .../chokepoint/game/src/systems/enemyHooks/nearMiss.ts    | 15 +++++++++++++++
+ 2 files changed, 17 insertions(+)
+```
