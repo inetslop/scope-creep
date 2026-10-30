@@ -4,11 +4,12 @@ title: "The profile remembers your iron run: the iron best wave with its muted s
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0241]
 attempts: 1
 created: 2026-10-30T01:33:38Z
 claimed_at: 2026-10-30T07:09:19Z
+finished_at: 2026-10-30T07:38:19Z
 epic: E6
 ---
 
@@ -58,3 +59,20 @@ No new functions or types in T0249. T0249 reads the field T0241 adds to `Profile
 - `ironBestWave` is T0241's field on `Profile`; if T0241 named it differently, update the single field read in `buildProfileCard`. T0249 does not write the profile.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The start screen's profile card now shows "Iron wave N" in muted text with a new muted star (a recolored copy of the record star, painted as `STAR_MUTED_TEXTURE`) under the unchanged "Best wave" line, exactly when an iron best wave of at least 1 is recorded. Since T0241's `ironBestWave` profile field did not exist yet, I added that one field to the profile's record path in `core/profile.ts` (same place the best wave is written; only a run with the Iron multiplier counts) and its display in `src/scenes/menu/ProfileCard.ts`, plus the `mutedDeep` palette color and the star texture/painter. The card is otherwise byte-identical with no iron run, the yellow record star and all other lines are untouched, and the menu auto-fits the taller card at both required viewports.
+
+- Self-review: APPROVE
+- Time: 29.0 min
+
+```
+projects/chokepoint/game/src/art/icons.ts          | 15 ++++++++++++-
+ projects/chokepoint/game/src/art/textures.ts       |  1 +
+ projects/chokepoint/game/src/content/palette.ts    |  1 +
+ projects/chokepoint/game/src/core/profile.ts       |  7 +++++-
+ .../chokepoint/game/src/scenes/menu/ProfileCard.ts | 25 ++++++++++++++++------
+ .../chokepoint/game/tests/core/profile.test.ts     | 10 ++++-----
+ 6 files changed, 45 insertions(+), 14 deletions(-)
+```

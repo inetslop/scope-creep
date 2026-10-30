@@ -25,6 +25,7 @@ export const CHIP_TEXTURE = 'fx:chip';
 export const COIN_TEXTURE = 'ui:coin';
 export const LIFE_TEXTURE = 'ui:life';
 export const STAR_TEXTURE = 'ui:star';
+export const STAR_MUTED_TEXTURE = 'ui:star-muted';
 export const GEM_TEXTURE = 'ui:gem';
 
 /** Size of a tower body (radius, in cells). */

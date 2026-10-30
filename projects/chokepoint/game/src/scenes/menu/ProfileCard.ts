@@ -1,5 +1,5 @@
 import type Phaser from 'phaser';
-import { artScale, COIN_TEXTURE, STAR_TEXTURE } from '../../art/textures';
+import { artScale, COIN_TEXTURE, STAR_MUTED_TEXTURE, STAR_TEXTURE } from '../../art/textures';
 import { PALETTE } from '../../content/palette';
 import type { Profile } from '../../core/profile';
 import { makeCard } from '../../ui/card';
@@ -50,13 +50,19 @@ export function buildProfileCard(scene: Phaser.Scene, profile: Profile): Profile
   star.setVisible(profile.lastRun !== null && profile.lastRun.wave === profile.bestWave);
   const h2 = best.height;
 
+  const iron = profile.ironBestWave >= 1 ? scene.add.text(0, 0, `Iron wave ${profile.ironBestWave}`, textStyle(17, PALETTE.muted)).setOrigin(0.5) : null;
+  const ironStar = iron ? artScale(scene.add.image(0, 0, STAR_MUTED_TEXTURE)) : null;
+  if (iron && ironStar) ironStar.setX(iron.width / 2 + 13);
+  const hIron = iron ? iron.height : 0;
+
   const runs = scene.add.text(0, 0, runsText(profile), textStyle(17, PALETTE.muted)).setOrigin(0.5);
   const h3 = runs.height;
 
   const recent = buildRecentLine(scene, profile);
   const h4 = recent ? 16 : 0;
 
-  const height = PAD * 2 + h1 + h2 + h3 + h4 + (recent ? 3 : 2) * LINE_GAP;
+  const gaps = (recent ? 3 : 2) + (iron ? 1 : 0);
+  const height = PAD * 2 + h1 + h2 + hIron + h3 + h4 + gaps * LINE_GAP;
   const card = makeCard(scene, 0, 0, PROFILE_CARD_W, height, 20);
 
   let y = -height / 2 + PAD;
@@ -71,6 +77,11 @@ export function buildProfileCard(scene: Phaser.Scene, profile: Profile): Profile
   const c2 = put(h2);
   best.setY(c2);
   star.setY(c2 + 1);
+  if (iron && ironStar) {
+    const ci = put(hIron);
+    iron.setY(ci);
+    ironStar.setY(ci + 1);
+  }
   const c3 = put(h3);
   runs.setY(c3);
   if (recent) {
@@ -79,12 +90,12 @@ export function buildProfileCard(scene: Phaser.Scene, profile: Profile): Profile
     recent.container.setPosition(-(recent.width * s) / 2, c4);
     recent.container.setScale(s);
   }
+  const kids: Phaser.GameObjects.GameObject[] = [card, coin, coins, best, star];
+  if (iron && ironStar) kids.push(iron, ironStar);
+  kids.push(runs);
+  if (recent) kids.push(recent.container);
   return {
-    container: scene.add.container(
-      0,
-      0,
-      recent ? [card, coin, coins, best, star, runs, recent.container] : [card, coin, coins, best, star, runs],
-    ),
+    container: scene.add.container(0, 0, kids),
     width: PROFILE_CARD_W,
     height,
   };

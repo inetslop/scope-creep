@@ -16,6 +16,7 @@ export const PALETTE = {
   /** Text, icons, the exit gate. */
   ink: 0x2c3a40,
   muted: 0x6f8287,
+  mutedDeep: 0x4e5e63,
   faint: 0xa7b6b9,
   /** Gold numbers (popups): darker than the coin so they read on the light board. */
   goldText: 0x9c6c00,

@@ -7,6 +7,8 @@ export interface Profile {
   bestSeed: number | null;
   /** The board-generation version of that board (1 = old board, 2 = guaranteed choke); null until a best seed is set. */
   bestSeedBgen: number | null;
+  /** The best wave reached in an Iron run; 0 until an Iron run sets one. */
+  ironBestWave: number;
   runsPlayed: number;
   coins: number;
   /** Tech tree node ids bought with the coins; spent coins are gone. */
@@ -78,6 +80,7 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
       bestWave: Number(parsed.bestWave) || 0,
       bestSeed,
       bestSeedBgen,
+      ironBestWave: Number(parsed.ironBestWave) || 0,
       runsPlayed: Number(parsed.runsPlayed) || 0,
       coins: Number(parsed.coins) || 0,
       purchased,
@@ -86,7 +89,7 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
       sound: typeof parsed.sound === 'boolean' ? parsed.sound : true,
     };
   } catch {
-    return { bestWave: 0, bestSeed: null, bestSeedBgen: null, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true };
+    return { bestWave: 0, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true };
   }
 }
 
@@ -106,6 +109,8 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
     // A ghost run replays the best board, so it never moves the button.
     bestSeed: newBest && result.seed !== old.bestSeed ? result.seed : old.bestSeed,
     bestSeedBgen: newBest && result.seed !== old.bestSeed ? result.bgen : old.bestSeedBgen,
+    // Only a run with the Iron multiplier (2) counts for the Iron record.
+    ironBestWave: result.mul === 2 ? Math.max(old.ironBestWave, result.waves) : old.ironBestWave,
     runsPlayed: old.runsPlayed + 1,
     coins: old.coins + coins,
     purchased: old.purchased,
