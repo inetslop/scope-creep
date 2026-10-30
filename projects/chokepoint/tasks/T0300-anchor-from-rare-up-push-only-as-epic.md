@@ -1,7 +1,12 @@
 ---
-title: "Anchor from Rare up, Push only as Epic"
+id: T0300
+title: Anchor from Rare up, Push only as Epic
 size: M
 priority: 1
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-30T19:32:38Z
 ---
 
 ## Goal
