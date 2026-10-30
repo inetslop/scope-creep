@@ -4,11 +4,12 @@ title: "The bosses reference: the boss encounters, off the pause"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T10:09:05Z
 claimed_at: 2026-10-30T11:58:34Z
+finished_at: 2026-10-30T12:05:02Z
 epic: E5
 ---
 
@@ -71,3 +72,18 @@ const bossesButton = makeButton(this, 0, 0, 'Bosses', showBosses, { width: 240, 
 - Keep `if (flags.smoke) this.time.delayedCall(1000, doBack);` so a smoke tap on the new row cannot strand the run.
 ### Tests
 - none (the scene reads defs + the every-10 rule; content is auto-validated by `tests/content.test.ts`).
+
+## Result (attempt 1, desktop)
+
+Added the "Bosses" reference (T0277): a new `src/scenes/BossesScene.ts` (the EnemiesScene pattern) lists every boss encounter in wave order — each row with the boss's on-board token, name, wave and its trick in the def's own description — reading the list off the boss defs and the every-10 rule (`spawnOnly` + `isBossWave` + threat = wave budget), so today it shows the Colossus (wave 10) and the Orb (wave 30) and the wave-20 Titan joins later with no edit. The pause card gained a "Bosses" row styled like the Enemies and Waves rows with a matching controls line; the new scene is registered in `keys.ts` and `main.ts` after WavesScene. `npm run check` and `npm run smoke` (desktop + phone) both pass.
+
+- Self-review: APPROVE
+- Time: 6.5 min
+
+```
+projects/chokepoint/game/src/main.ts               |   3 +-
+ projects/chokepoint/game/src/scenes/BossesScene.ts | 105 +++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  13 ++-
+ projects/chokepoint/game/src/scenes/keys.ts        |   1 +
+ 4 files changed, 119 insertions(+), 3 deletions(-)
+```

@@ -18,6 +18,7 @@ export const SCENES = {
   pause: 'Pause',
   enemies: 'Enemies',
   waves: 'Waves',
+  bosses: 'Bosses',
   gameOver: 'GameOver',
   rewards: 'Rewards',
 } as const;

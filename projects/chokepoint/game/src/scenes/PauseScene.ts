@@ -20,6 +20,7 @@ const CONTROLS: string[] = [
   '+ / - — zoom the board',
   'Enemies — the shapes and what they do',
   'Waves — the tags and when they come',
+  'Bosses — the bosses and their trick',
 ];
 
 /** Pause overlay: resume or quit, on one card. In ?smoke mode it resumes on its own. */
@@ -169,13 +170,19 @@ export class PauseScene extends Phaser.Scene {
       this.scene.pause(); // the pause card's Escape key must not fire under the reference
     };
     const wavesButton = makeButton(this, 0, 0, 'Waves', showWaves, { width: 240, height: 52, radius: 26 });
+    const showBosses = (): void => {
+      if (closed) return;
+      this.scene.launch(SCENES.bosses);
+      this.scene.pause(); // the pause card's Escape key must not fire under the reference
+    };
+    const bossesButton = makeButton(this, 0, 0, 'Bosses', showBosses, { width: 240, height: 52, radius: 26 });
 
     // Card height from the content, then place everything top-down in one column
     let h = PAD + title.height + GAP_S + statsH;
     if (worthText) h += worthText.height + GAP_S;
     h += GAP_B + heading.height;
     for (const t of lines) h += GAP_S + t.height;
-    h += GAP_B + 56 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + PAD;
+    h += GAP_B + 56 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + PAD;
     const panelH = Math.ceil(h);
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
     let y = -panelH / 2 + PAD;
@@ -207,8 +214,10 @@ export class PauseScene extends Phaser.Scene {
     enemiesButton.container.setY(cy(52));
     y += GAP_S;
     wavesButton.container.setY(cy(52));
+    y += GAP_S;
+    bossesButton.container.setY(cy(52));
 
-    const boxKids: Phaser.GameObjects.GameObject[] = [panel, title, stats, heading, ...lines, resumeButton.container, quitButton.container, soundRow.container, enemiesButton.container, wavesButton.container];
+    const boxKids: Phaser.GameObjects.GameObject[] = [panel, title, stats, heading, ...lines, resumeButton.container, quitButton.container, soundRow.container, enemiesButton.container, wavesButton.container, bossesButton.container];
     if (worthText) boxKids.push(worthText);
     const box = this.add.container(0, 0, boxKids);
 
