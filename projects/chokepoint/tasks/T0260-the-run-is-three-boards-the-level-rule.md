@@ -1,12 +1,14 @@
 ---
 id: T0260
 title: "The run is three boards: the level rule"
+assignee: asus
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T05:49:22Z
+claimed_at: 2026-10-30T07:04:29Z
 epic: E3
 ---
 
