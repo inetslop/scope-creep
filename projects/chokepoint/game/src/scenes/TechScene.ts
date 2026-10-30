@@ -7,7 +7,7 @@ import { CLAIM_NODES } from '../content/tech/claim';
 import { POOL_NODES } from '../content/tech/pool';
 import { DRAFT_NODES } from '../content/tech/draft';
 import { loadProfile, type Profile } from '../core/profile';
-import { branchPrice, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, ownedInBranch, TECH_NODES } from '../core/tech';
+import { buyBoardNode, buyClaimNode, buyNode, buyPoolNode, nodeCost, TECH_NODES } from '../core/tech';
 import { hook } from '../debug/testHook';
 import { makeButton, type Button } from '../ui/button';
 import { makeCard } from '../ui/card';
@@ -37,8 +37,6 @@ interface TechCard {
   node: RowNode;
   button: Button;
   price: Phaser.GameObjects.Text;
-  full: Phaser.GameObjects.Text;
-  strike: Phaser.GameObjects.Graphics;
   coin: Phaser.GameObjects.Image;
   border: Phaser.GameObjects.Graphics;
   h: number; // this card's (its row's) height
@@ -174,7 +172,7 @@ export class TechScene extends Phaser.Scene {
           name.setFontSize(size);
         }
         const desc = this.add.text(0, 0, node.line, textStyle(13, PALETTE.muted, { align: 'center', wordWrap: { width: WRAP_W }, lineSpacing: 2 })).setOrigin(0.5, 0);
-        const price = this.add.text(0, 0, String(node.price), textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
+        const price = this.add.text(0, 0, String(nodeCost(row, node.id)), textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
         return { node, name, desc, price, h: PAD_TOP + name.height + GAP_ND + desc.height + GAP_DP + PRICE_H + PAD_TOP };
       });
       const rowH = Math.max(...rowCards.map((c) => c.h)); // every card in the row shares its tallest height
@@ -233,14 +231,12 @@ export class TechScene extends Phaser.Scene {
         m.name.setPosition(0, -m.h / 2 + PAD_TOP);
         m.desc.setPosition(0, -m.h / 2 + PAD_TOP + m.name.height + GAP_ND);
         m.price.setPosition(0, priceY);
-        const full = this.add.text(0, priceY, '', textStyle(13, PALETTE.muted, { fontStyle: 'bold' })).setOrigin(0, 0.5);
-        const strike = this.add.graphics();
         const nodeCoin = artScale(this.add.image(0, priceY, COIN_TEXTURE), 12 / 28);
-        button.content.add([m.name, m.desc, m.price, full, strike, nodeCoin]);
+        button.content.add([m.name, m.desc, m.price, nodeCoin]);
         const border = this.add.graphics();
         button.container.add(border); // a sibling of the content, so it never lifts with the card
         button.container.setPosition(x, -this.panelH / 2 + cardTops[r][grid] + m.h / 2);
-        this.cards.push({ node, button, price: m.price, full, strike, coin: nodeCoin, border, h: m.h });
+        this.cards.push({ node, button, price: m.price, coin: nodeCoin, border, h: m.h });
         parts.push(button.container);
       });
     });
@@ -278,8 +274,7 @@ export class TechScene extends Phaser.Scene {
       const unlocked = c.node.requires === null || this.profile.purchased.includes(c.node.requires);
       const inContent = c.node.unlocks === null || AUGMENTS.some((a) => a.id === c.node.unlocks);
       const row = this.rows.find((r) => r.some((n) => n.id === c.node.id))!;
-      const ownedCount = ownedInBranch(row, this.profile.purchased);
-      const now = branchPrice(c.node.price, ownedCount);
+      const now = nodeCost(row, c.node.id);
       const afford = this.profile.coins >= now;
       c.border.clear();
       if (owned) {
@@ -288,45 +283,22 @@ export class TechScene extends Phaser.Scene {
         c.price.setText('owned').setColor(cssColor(PALETTE.muted));
         c.price.x = -c.price.width / 2; // the price text is left-origin (the coin row); center it on its own
         c.coin.setVisible(false);
-        c.full.setVisible(false);
-        c.strike.setVisible(false);
         c.button.content.setAlpha(1);
       } else if (!unlocked) {
         c.price.setText('needs the previous').setColor(cssColor(PALETTE.muted));
         c.price.x = -c.price.width / 2;
         c.coin.setVisible(false);
-        c.full.setVisible(false);
-        c.strike.setVisible(false);
         c.button.content.setAlpha(0.5);
       } else if (!inContent) {
         c.price.setText('not in the game yet').setColor(cssColor(PALETTE.muted));
         c.price.x = -c.price.width / 2;
         c.coin.setVisible(false);
-        c.full.setVisible(false);
-        c.strike.setVisible(false);
         c.button.content.setAlpha(0.5);
-      } else if (ownedCount === 0) {
-        c.price.setText(String(c.node.price)).setColor(cssColor(afford ? PALETTE.ink : PALETTE.red));
+      } else {
+        c.price.setText(String(now)).setColor(cssColor(afford ? PALETTE.ink : PALETTE.red));
         const w = 20 + c.price.width;
         c.coin.x = -w / 2 + 6;
         c.price.x = -w / 2 + 20;
-        c.full.setVisible(false);
-        c.strike.setVisible(false);
-        c.coin.setVisible(true);
-        c.button.content.setAlpha(afford ? 1 : 0.6);
-      } else {
-        c.full.setText(String(c.node.price));
-        c.price.setText(String(now)).setColor(cssColor(afford ? PALETTE.ink : PALETTE.red));
-        const w = 20 + c.full.width + 8 + c.price.width;
-        c.coin.x = -w / 2 + 6;
-        c.full.x = -w / 2 + 20;
-        c.price.x = -w / 2 + 20 + c.full.width + 8;
-        c.strike.clear();
-        c.strike.lineStyle(1, PALETTE.muted, 1);
-        const strikeY = c.h / 2 - PAD_TOP - PRICE_H / 2; // the card's price line
-        c.strike.lineBetween(c.full.x, strikeY, c.full.x + c.full.width, strikeY);
-        c.full.setVisible(true);
-        c.strike.setVisible(true);
         c.coin.setVisible(true);
         c.button.content.setAlpha(afford ? 1 : 0.6);
       }

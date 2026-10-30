@@ -4,11 +4,12 @@ title: "The tech tree's depth price: nodes cost more the deeper they are"
 assignee: cachyos-x8664
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T16:07:56Z
 claimed_at: 2026-10-30T18:36:31Z
+finished_at: 2026-10-30T18:51:19Z
 epic: E9
 ---
 
@@ -103,3 +104,18 @@ Update coins math: "full chain of five" → `withCoins(150)`, remainder `10` (co
 
 ### Tests
 Step-3 tests cover AC#1 (`nodePrice` table incl. halves-up rounding to multiples of 5); the rewritten purchase tests cover AC#3 (pool 70/130, run-start 15/40/55, board 85, draft 30/50, deduction never below zero); the untouched `nodeInReach` test covers AC#4 (cheapest derived price is still gold-1 at 5). AC#2 holds by construction (`nodePrice(base,1) = base`, one number per row, no strike). Gate: `npm run check` and `npm run smoke` must pass.
+
+## Result (attempt 1, cachyos-x8664)
+
+Replaced the branch discount (`ownedInBranch` + `branchPrice`) in `src/core/tech.ts` with a superlinear depth price: `nodePrice(base, depth) = base × depth^1.5` rounded to the nearest multiple of 5 (halves up) and `nodeCost(branch, id)` reading each branch's first node as base; all four buy functions and `nodeInReach` now use derived prices. `TechScene.ts` dropped the struck-through old-price line (`full`/`strike` fields and every use) so each card shows one number — the derived price — with no geometry change (3-digit prices like 130 fit both viewports). Updated the tests: new `nodePrice`/`nodeCost` tests replacing the removed discount tests, and purchase math rewritten (pool 70/130, run-start 15/40/55, draft 30/50, board 85, deduction never below zero).
+
+- Self-review: APPROVE
+- Time: 14.8 min
+
+```
+projects/chokepoint/game/src/core/tech.ts          | 27 +++++-----
+ projects/chokepoint/game/src/scenes/TechScene.ts   | 42 +++------------
+ projects/chokepoint/game/tests/core/tech.test.ts   | 59 +++++++++++-----------
+ .../chokepoint/game/tests/core/techEffects.test.ts |  8 +--
+ 4 files changed, 55 insertions(+), 81 deletions(-)
+```

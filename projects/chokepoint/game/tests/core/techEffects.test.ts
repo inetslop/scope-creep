@@ -68,13 +68,13 @@ describe('techEffects', () => {
   });
 
   it('a draft-node purchase deducts exactly the price and saves the id', () => {
-    const store = withCoins(45);
+    const store = withCoins(95);
     expect(buyNode(store, 'slot2-1')).toBe(true);
-    expect(loadProfile(store).coins).toBe(35);
+    expect(loadProfile(store).coins).toBe(85);
     expect(buyNode(store, 'slot2-2')).toBe(true); // unlocked by the first slot node now
-    expect(loadProfile(store).coins).toBe(20); // slot2-2 at 15, one draft node owned
+    expect(loadProfile(store).coins).toBe(55); // slot2-2 at 30
     expect(buyNode(store, 'fourth-card')).toBe(true);
-    expect(loadProfile(store).coins).toBe(15); // fourth-card at 5, two draft nodes owned
+    expect(loadProfile(store).coins).toBe(5); // fourth-card at 50
     expect(loadProfile(store).purchased).toEqual(['slot2-1', 'slot2-2', 'fourth-card']);
   });
 

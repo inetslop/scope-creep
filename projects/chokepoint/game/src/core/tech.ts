@@ -72,15 +72,14 @@ export function boardLengthMul(owned: readonly string[]): number {
   return mul;
 }
 
-/** How many of a branch's nodes are already owned: the branch discount prices a node off this count. */
-export function ownedInBranch(nodes: readonly { id: string }[], purchased: readonly string[]): number {
-  return nodes.reduce((n, node) => n + (purchased.includes(node.id) ? 1 : 0), 0);
+/** A branch's first-node price scaled by depth^1.5 and rounded to the nearest multiple of 5 (halves up). */
+export function nodePrice(base: number, depth: number): number {
+  return Math.round((base * Math.pow(depth, 1.5)) / 5) * 5;
 }
 
-/** The price a branch node costs now: full price, 5 less with one owned, 10 less with two or more, never below 5. */
-export function branchPrice(price: number, ownedCount: number): number {
-  const discount = ownedCount >= 2 ? 10 : ownedCount === 1 ? 5 : 0;
-  return Math.max(price - discount, 5);
+/** One node's price now: its branch's first-node base, at the node's 1-based position in the branch. */
+export function nodeCost(branch: readonly { id: string; price: number }[], id: string): number {
+  return nodePrice(branch[0].price, branch.findIndex((n) => n.id === id) + 1);
 }
 
 /**
@@ -93,7 +92,7 @@ export function buyNode(store: KeyValueStore | undefined, id: string): boolean {
   const node = branch.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
   if (node.requires !== null && !profile.purchased.includes(node.requires)) return false;
-  const price = branchPrice(node.price, ownedInBranch(branch, profile.purchased));
+  const price = nodeCost(branch, id);
   if (profile.coins < price) return false;
   profile.coins -= price;
   profile.purchased.push(id);
@@ -113,7 +112,7 @@ export function buyPoolNode(store: KeyValueStore | undefined, id: string): boole
   const profile = loadProfile(store);
   const node = POOL_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
-  const price = branchPrice(node.price, ownedInBranch(POOL_NODES, profile.purchased));
+  const price = nodeCost(POOL_NODES, id);
   if (profile.coins < price) return false;
   profile.coins -= price;
   profile.purchased.push(id);
@@ -130,8 +129,10 @@ export function buyPoolNode(store: KeyValueStore | undefined, id: string): boole
  * branch node lists are the ones the tech screen's rows read (TechScene's `rows`).
  */
 export function nodeInReach(purchased: readonly string[], coins: number): boolean {
-  for (const node of [...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES]) {
-    if (!purchased.includes(node.id) && node.price <= coins) return true;
+  for (const branch of [TECH_NODES, POOL_NODES, CLAIM_NODES, BOARD_NODES]) {
+    for (const node of branch) {
+      if (!purchased.includes(node.id) && coins >= nodeCost(branch, node.id)) return true;
+    }
   }
   return false;
 }
@@ -145,7 +146,7 @@ export function buyClaimNode(store: KeyValueStore | undefined, id: string): bool
   const profile = loadProfile(store);
   const node = CLAIM_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
-  const price = branchPrice(node.price, ownedInBranch(CLAIM_NODES, profile.purchased));
+  const price = nodeCost(CLAIM_NODES, id);
   if (profile.coins < price) return false;
   profile.coins -= price;
   profile.purchased.push(id);
@@ -166,7 +167,7 @@ export function buyBoardNode(store: KeyValueStore | undefined, id: string): bool
   const profile = loadProfile(store);
   const node = BOARD_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
-  const price = branchPrice(node.price, ownedInBranch(BOARD_NODES, profile.purchased));
+  const price = nodeCost(BOARD_NODES, id);
   if (profile.coins < price) return false;
   profile.coins -= price;
   profile.purchased.push(id);

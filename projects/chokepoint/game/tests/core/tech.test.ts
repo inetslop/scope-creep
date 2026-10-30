@@ -3,7 +3,7 @@ import { BOARD_NODES } from '../../src/content/tech/board';
 import { CLAIM_NODES, cleanWavePay } from '../../src/content/tech/claim';
 import { POOL_NODES } from '../../src/content/tech/pool';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { boardBends, boardLengthMul, branchPrice, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, nodeInReach, ownedInBranch, startBonuses, TECH_NODES } from '../../src/core/tech';
+import { boardBends, boardLengthMul, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -63,9 +63,9 @@ describe('tech', () => {
   });
 
   it('the full chain of five, bought in order, leaves the remainder', () => {
-    const store = withCoins(110);
+    const store = withCoins(150);
     for (const node of TECH_NODES) expect(buyNode(store, node.id)).toBe(true);
-    expect(loadProfile(store).coins).toBe(45); // 5, then 5, 5, 20 and 30 at the branch discount
+    expect(loadProfile(store).coins).toBe(10); // 5, then 15, 25, 40 and 55 at their depth
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'gold-2', 'gold-3', 'life-1', 'life-2']);
   });
 
@@ -94,13 +94,13 @@ describe('tech', () => {
     expect(buyPoolNode(store, 'haste')).toBe(false); // already owned
     expect(loadProfile(store).coins).toBe(60);
     const brokeM = withCoins(29);
-    expect(buyPoolNode(brokeM, 'momentum')).toBe(false); // unaffordable: 29 < 30
+    expect(buyPoolNode(brokeM, 'momentum')).toBe(false); // unaffordable: 29 < 70
     expect(loadProfile(brokeM).coins).toBe(29);
     const ownedM = withCoins(60, ['momentum']);
     expect(buyPoolNode(ownedM, 'momentum')).toBe(false); // already owned
     expect(loadProfile(ownedM).coins).toBe(60);
     const brokeM2 = withCoins(29);
-    expect(buyPoolNode(brokeM2, 'mend')).toBe(false); // unaffordable: 29 < 30
+    expect(buyPoolNode(brokeM2, 'mend')).toBe(false); // unaffordable: 29 < 130
     expect(loadProfile(brokeM2).coins).toBe(29);
     const ownedM2 = withCoins(60, ['mend']);
     expect(buyPoolNode(ownedM2, 'mend')).toBe(false); // already owned
@@ -112,13 +112,13 @@ describe('tech', () => {
     expect(buyPoolNode(store, 'haste')).toBe(true);
     expect(loadProfile(store).coins).toBe(35);
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste']);
-    const store2 = withCoins(55, ['haste']);
+    const store2 = withCoins(100, ['haste']);
     expect(buyPoolNode(store2, 'momentum')).toBe(true);
-    expect(loadProfile(store2).coins).toBe(30); // momentum at 25, one pool node owned
+    expect(loadProfile(store2).coins).toBe(30); // momentum at 70
     expect(loadProfile(store2).purchased).toEqual(['haste', 'momentum']);
-    const store3 = withCoins(85, ['haste', 'momentum']);
+    const store3 = withCoins(145, ['haste', 'momentum']);
     expect(buyPoolNode(store3, 'mend')).toBe(true);
-    expect(loadProfile(store3).coins).toBe(65); // mend at 20, two pool nodes owned
+    expect(loadProfile(store3).coins).toBe(15); // mend at 130
     expect(loadProfile(store3).purchased).toEqual(['haste', 'momentum', 'mend']);
   });
 
@@ -177,14 +177,14 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste', 'one-more-bend']);
   });
 
-  it('the second board node buys at the branch discount: 25 coins with one owned, 24 refuses', () => {
-    const store = withCoins(25, ['one-more-bend']);
+  it('the second board node buys at the depth price: 85 coins with one owned, 84 refuses', () => {
+    const store = withCoins(85, ['one-more-bend']);
     expect(buyBoardNode(store, 'long-way')).toBe(true);
     expect(loadProfile(store).coins).toBe(0);
     expect(loadProfile(store).purchased).toEqual(['one-more-bend', 'long-way']);
-    const broke = withCoins(24, ['one-more-bend']);
-    expect(buyBoardNode(broke, 'long-way')).toBe(false); // unaffordable: 24 < 25
-    expect(loadProfile(broke).coins).toBe(24);
+    const broke = withCoins(84, ['one-more-bend']);
+    expect(buyBoardNode(broke, 'long-way')).toBe(false); // unaffordable: 84 < 85
+    expect(loadProfile(broke).coins).toBe(84);
   });
 
   it('boardBends sums the owned board nodes once each; unknown and other-branch ids count for nothing', () => {
@@ -204,28 +204,29 @@ describe('tech', () => {
     expect(startBonuses(['one-more-bend'])).toEqual({ gold: 0, life: 0 });
   });
 
-  it('the branch discount: full price with none owned, 5 less with one, 10 less with two or more, never below 5', () => {
-    expect(branchPrice(30, 0)).toBe(30);
-    expect(branchPrice(30, 1)).toBe(25);
-    expect(branchPrice(30, 2)).toBe(20);
-    expect(branchPrice(30, 3)).toBe(20);
-    expect(branchPrice(5, 1)).toBe(5);
-    expect(branchPrice(10, 2)).toBe(5);
+  it('nodePrice rounds base × depth^1.5 to the nearest multiple of 5 (halves up)', () => {
+    expect(nodePrice(10, 1)).toBe(10);
+    expect(nodePrice(10, 2)).toBe(30);
+    expect(nodePrice(10, 3)).toBe(50);
+    expect(nodePrice(10, 4)).toBe(80);
+    expect(nodePrice(10, 5)).toBe(110);
+    expect(nodePrice(25, 2)).toBe(70);
+    expect(nodePrice(25, 3)).toBe(130);
+    expect(nodePrice(30, 2)).toBe(85);
   });
 
-  it('ownedInBranch counts only the given branch; unknown and other-branch ids count for nothing', () => {
-    expect(ownedInBranch(TECH_NODES, [])).toBe(0);
-    expect(ownedInBranch(TECH_NODES, ['gold-1', 'haste', 'nope'])).toBe(1);
-    expect(ownedInBranch(TECH_NODES, ['haste', 'clean2'])).toBe(0);
+  it('nodeCost: the first node is the base, later nodes scale by their position', () => {
+    expect(nodeCost(TECH_NODES, 'gold-1')).toBe(5);
+    expect(nodeCost(TECH_NODES, 'life-2')).toBe(55);
   });
 
-  it('a later node buys cheaper, deducted from the coins', () => {
+  it('a later node buys at its depth price, deducted from the coins', () => {
     const s = withCoins(100, ['gold-1']);
     expect(buyNode(s, 'gold-2')).toBe(true);
-    expect(loadProfile(s).coins).toBe(95); // gold-2 at 5, one run-start node owned
-    const s2 = withCoins(25, ['gold-1', 'gold-2', 'gold-3']);
+    expect(loadProfile(s).coins).toBe(85); // gold-2 at 15
+    const s2 = withCoins(60, ['gold-1', 'gold-2', 'gold-3']);
     expect(buyNode(s2, 'life-1')).toBe(true);
-    expect(loadProfile(s2).coins).toBe(5); // life-1 at 20, three run-start nodes owned
+    expect(loadProfile(s2).coins).toBe(20); // life-1 at 40, its fourth depth
   });
 
   it("the Tech button's dot: in reach while some unowned node's price is within the coins", () => {
