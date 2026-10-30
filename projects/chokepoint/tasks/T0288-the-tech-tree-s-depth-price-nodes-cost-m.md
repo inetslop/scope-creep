@@ -1,12 +1,14 @@
 ---
 id: T0288
 title: "The tech tree's depth price: nodes cost more the deeper they are"
+assignee: cachyos-x8664
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T16:07:56Z
+claimed_at: 2026-10-30T18:36:31Z
 epic: E9
 ---
 
