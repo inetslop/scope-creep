@@ -175,6 +175,12 @@ export class Sfx {
     this.tone(784, 0.08, 'sine', 0.1, undefined, 0.09);
   }
 
+  /** The ×10 kill-chain milestone: a soft two-note rise, E5 then G5, 90 ms apart, the tier-chime's quiet volume. */
+  comboChime(): void {
+    this.tone(659, 0.08, 'sine', 0.1);
+    this.tone(784, 0.08, 'sine', 0.1, undefined, 0.09);
+  }
+
   deny(): void {
     this.tone(200, 0.1, 'square', 0.15, 150);
   }

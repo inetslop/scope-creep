@@ -4,11 +4,12 @@ title: "The combo milestone chime: the ×10 kill moment, heard"
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-10-30T04:48:47Z
 claimed_at: 2026-10-30T11:17:04Z
+finished_at: 2026-10-30T11:27:08Z
 epic: E4
 ---
 
@@ -88,4 +89,18 @@ error: cannot lock ref 'refs/remotes/origin/main': is at 4cd695f40a9646de941cc68
     at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:260:5)
     at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
     at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
+
+## Result (attempt 2, asus)
+
+Added the ×10 kill-chain milestone chime: a new `comboChime()` in `src/audio/Sfx.ts` (E5→G5, 80 ms sines, 90 ms apart, volume 0.1, same shape as `waveSweep()`), wired through an optional `sfx` parameter on `FxSystem` (`src/systems/FxSystem.ts`, injected from `src/scenes/GameScene.ts`) so `killCount()` plays it exactly once when the chain hits ×10. The ×5 milestone and ×11+ kills stay silent, later chains chime at their own ×10, and the existing yellow counter and 12-chip burst are unchanged. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 10.1 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts        | 6 ++++++
+ projects/chokepoint/game/src/scenes/GameScene.ts | 2 +-
+ projects/chokepoint/game/src/systems/FxSystem.ts | 6 +++++-
+ 3 files changed, 12 insertions(+), 2 deletions(-)
 ```

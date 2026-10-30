@@ -4,6 +4,7 @@ import { cssColor, PALETTE } from '../content/palette';
 import { artScale, CHIP_TEXTURE } from '../art/textures';
 import { fillRing } from '../ui/ring';
 import { textStyle } from '../ui/text';
+import type { Sfx } from '../audio/Sfx';
 
 /**
  * Short-lived feedback on the board: rings, waves, chips and floating text. Soft and quick.
@@ -13,6 +14,7 @@ import { textStyle } from '../ui/text';
 export class FxSystem {
   /** The game scene (effects in systems/fx/ create their objects on it). */
   readonly scene: Phaser.Scene;
+  private readonly sfx: Sfx | undefined;
   /** Live effects, capped so a big wave can't flood the scene. */
   private live = 0;
   private static readonly MAX = 160;
@@ -25,8 +27,9 @@ export class FxSystem {
   private comboFade: Phaser.Tweens.Tween | null = null;
   private comboTimer: Phaser.Time.TimerEvent | null = null;
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, sfx?: Sfx) {
     this.scene = scene;
+    this.sfx = sfx;
   }
 
   get count(): number {
@@ -152,6 +155,7 @@ export class FxSystem {
     this.comboPop?.remove();
     this.comboPop = this.scene.tweens.add({ targets: t, scale: 1, duration: 150, ease: 'Quad.easeOut' });
     this.comboTimer = this.scene.time.delayedCall(1500, () => this.comboFadeStart());
+    if (this.comboN === 10) this.sfx?.comboChime();
     return this.comboN === 10;
   }
 

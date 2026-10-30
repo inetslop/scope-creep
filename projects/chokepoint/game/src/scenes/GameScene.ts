@@ -120,7 +120,7 @@ export class GameScene extends Phaser.Scene {
     this.mapLengthMul = boardMul;
 
     this.board = new Board(this, map);
-    this.fx = new FxSystem(this);
+    this.fx = new FxSystem(this, sfx);
     this.enemies = new EnemySystem(this, this.board, this.run, this.fx, sfx);
     this.exitWarn = new ExitWarning(this, this.board, this.enemies, sfx);
     this.leakCost = new LeakCost(this.run, this.fx, this.board);
