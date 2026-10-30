@@ -19,7 +19,7 @@ The game grows through epics: bigger features that take several tasks. One or tw
 ### E2 — Tech tree (done; history in planning/archive/ROADMAP.md)
 
 ### E3 — Levels: a run is a journey (dropped — 2026-10-30, by hand)
-The level rule (T0260) and its wave-card line (T0262) landed and played badly: re-growing the board empty every 10 waves throws away the build. Both are being removed (inbox: "Remove the levels: a run is one board again", priority 1), and T0261 (the pool) is dropped with them. Do not re-task levels, the level-clear pick or the level-clear sting. The difficulty-for-reward idea lives on as **E9**.
+The level rule (T0260) and its wave-card line (T0262) landed and played badly: re-growing the board empty every 10 waves throws away the build. Both are being removed by T0283 (in the pool, priority 1), and T0261 (the pool) is dropped with them. Do not re-task levels, the level-clear pick or the level-clear sting. The difficulty-for-reward idea lives on as **E9**.
 
 ### E4 — Augment rarity (active — started 2026-10-28)
 **Goal:** the draft is exciting: sometimes a card is something special.
@@ -91,8 +91,8 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 - T0238 (L) — the draft shows where the card lands: failed (wrong premise) — re-filed as T0243
 - T0243 (L) — the draft shows where the card lands (the re-file): each offered card shows the towers a pick would land on — done (2026-10-30)
 - T0276 (M) — endless rerolls: every reroll costs more — in the pool (todo)
-- T0279 (S) — balance: Beam hits too softly — in design
-- T0280 (M) — Beam added is a damage boost, not another beam — in design
+- T0279 (S) — balance: Beam hits too softly — in progress (yoga)
+- T0280 (M) — Beam added is a damage boost, not another beam — in the pool (todo)
 - T0281 (L) — Beam and burn deal damage in ticks — in the pool (todo)
 - T0282 (M) — Spray crits: the shotgun rolls for double damage — in design
 
@@ -112,7 +112,7 @@ Progress: Haste (T0152) and Toll (T0234) landed 2026-10-30; the pool's registrat
 - T0258 (M, priority 2, behind T0253) — the boss moment: the death — the 24-chip burst (2× the milestone count) in the boss's own color and the two-line name card (topBanner's pattern) — **failed** (2026-10-30, the architect's context overflowed before any design); the design stands as written — re-filed as T0273 (with T0266's Orb split carve-out)
 - T0259 (L, priority 2, behind T0256) — the second boss (wave 20): the Titan (a red square at 0.5, 6× Block) and its Guard (a red diamond carrying an orange disc) — while the Guard lives, every hit on the Titan is halved; the escort-shield member of the pair — unblocked 2026-10-30 (the failed T0258 dep becomes T0273; its design is written)
 - T0266 (L, priority 2) — the third boss (wave 30): the Orb (a purple hexagon at 0.5 with the crack) splits into two faster Shards at half health, unless it dies to a single hit first; the "splits at half hp" later boss — **done** (2026-10-30, inet-racing)
-- T0268 (M, priority 2, behind T0253) — the boss's arrival: a deep horn and a pulse at the entrance gate the moment the boss walks in — in the pool (todo)
+- T0268 (M, priority 2, behind T0253) — the boss's arrival: a deep horn and a pulse at the entrance gate the moment the boss walks in — **done** (2026-10-30, desktop)
 - T0269 (M, priority 2, behind T0253) — the boss's escape: when the boss leaks, a distinct low note — the run's worst moment, heard — **done** (2026-10-30, baby-mama)
 - T0277 (M, priority 2) — the bosses reference: a pause row (with Enemies / Waves) that lists the boss encounters in wave order — token, name, wave, trick in the teach language — read from the boss defs so it grows as they do — written 2026-10-30
 
