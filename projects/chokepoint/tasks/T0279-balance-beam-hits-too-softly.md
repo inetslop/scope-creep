@@ -1,14 +1,14 @@
 ---
 id: T0279
 title: "Balance: Beam hits too softly"
-assignee: yoga
 size: S
 priority: 1
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-30T10:37:56Z
 claimed_at: 2026-10-30T11:02:03Z
+finished_at: 2026-10-30T12:34:04Z
 epic: E4
 ---
 
@@ -75,3 +75,35 @@ None. Data values only; no type, function or signature changes. The panel, range
 
 ### Tests
 None added — the task rebases the existing pinning tests named in the steps (`towerDps`, `augments`, `beamShapes`); `npm run check` covers them.
+
+## Attempt 1 failed (yoga)
+
+Checks still failing at "check" after 2 fix round(s).
+- Gate failed at "check"; fix round 1.
+- Deleted tests/zz-playtest-scratch.test.ts, as the agent asked.
+- Did not delete playtest-probe.mjs: only files in src/, tests/, docs/, public/ can be deleted.
+- Did not delete playtest-out.txt: only files in src/, tests/, docs/, public/ can be deleted.
+- Gate failed at "check"; fix round 2.
+- Did not delete playtest-probe.mjs: only files in src/, tests/, docs/, public/ can be deleted.
+- Did not delete playtest-out.txt: only files in src/, tests/, docs/, public/ can be deleted.
+
+```
+> chokepoint-game@0.1.0 check
+> npm run typecheck && npm run lint && npm run test
+
+
+> chokepoint-game@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json
+
+
+> chokepoint-game@0.1.0 lint
+> eslint . --max-warnings 0
+
+
+C:\Users\InetMarknad\Documents\Repos\scope-creep\projects\chokepoint\game\playtest-probe.mjs
+  3:3  error  'console' is not defined  no-undef
+  6:3  error  'console' is not defined  no-undef
+  8:3  error  'console' is not defined  no-undef
+
+✖ 3 problems (3 errors, 0 warnings)
+```
