@@ -4,11 +4,12 @@ title: "The boss card: the Colossus's health and phase, pinned to the top edge"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0253]
 attempts: 1
 created: 2026-10-30T04:48:47Z
 claimed_at: 2026-10-30T11:00:46Z
+finished_at: 2026-10-30T11:59:43Z
 epic: E5
 ---
 
@@ -66,3 +67,16 @@ Contract T0253 must provide (build it first): `EnemyDef.outOfReach` in `src/cont
 
 ### Tests
 - none (UI part; no core rule — the bar and phase live entirely in the HUD part off the boss's def and state).
+
+## Result (attempt 1, desktop-4070)
+
+Added `src/ui/hud/BossCard.ts`, a HUD part that pins a small white card top-center below the banner's resting place while the out-of-reach boss (the run's Colossus) is alive, showing its ~16 px token, name and live hp bar in its own color over a muted track with one ink notch at `outOfReach.hpFrac`; it pops in on spawn (~200 ms scale-in), fades out (~200 ms) on death or leak, takes no input and blocks nothing, and the token plus bar dim to `boss.alpha` for the untargetable leg in lockstep through fast-forward while the name stays full alpha. Registered it with one import and one line after `WaveBanner` in `HudScene.create()`; the card is fully data-driven off the boss def and fits both 412×915 and 1280×720 without overlapping the stats, wave or pause HUD. `npm run check` (typecheck, lint, 432 tests) and `npm run smoke` (desktop + mobile) both pass; no files were removed.
+
+- Self-review: APPROVE
+- Time: 59.0 min
+
+```
+projects/chokepoint/game/src/scenes/HudScene.ts |   2 +
+ projects/chokepoint/game/src/ui/hud/BossCard.ts | 117 ++++++++++++++++++++++++
+ 2 files changed, 119 insertions(+)
+```

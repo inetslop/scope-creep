@@ -3,6 +3,7 @@ import { HUD } from '../config';
 import { PALETTE } from '../content/palette';
 import { flags } from '../debug/flags';
 import { uiCamera, viewSize } from '../ui/display';
+import { BossCard } from '../ui/hud/BossCard';
 import { HandBar } from '../ui/hud/HandBar';
 import type { HudPart } from '../ui/hud/hud';
 import { LastStandBanner } from '../ui/hud/LastStandBanner';
@@ -40,6 +41,7 @@ export class HudScene extends Phaser.Scene {
       new StatsCard(this),
       new WaveCard(this),
       new WaveBanner(this),
+      new BossCard(this),
       new PauseButton(this, game),
       new ZoomButtons(this, game),
       new NextWaveButton(this, game),
