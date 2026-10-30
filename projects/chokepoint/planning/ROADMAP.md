@@ -85,12 +85,12 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0152 (L, priority 2) — Haste: the Epic that hastens everything it touches (2-cell aura: enemies walk +30% faster, towers attack +30% faster, +15% to both per extra copy, no cap; Epic-only; gated — absent from the draft roll until the tech tree's pool node, T0153, is bought) — in the pool, next registration behind the pool augments
 - T0138 (S) — the slow shows on the enemy (telegraph slice) — **done** (2026-10-29, narcissus)
 - T0139 (S) — the root shows on the enemy (telegraph slice) — **done** (2026-10-29, yoga)
-- T0221 (L, priority 2) — the Augments codex: a menu screen that shows every augment in the pool (icon, name, a purple “Epic” word for the Epic-only ones, the first and added rows) — **done** (2026-10-29, desktop; the menu row it added overflows 1280x720 with Resume + Ghost — T0222's column must take it in)
+- T0221 (L, priority 2) — the Augments codex: a menu screen that shows every augment in the pool (icon, name, a purple “Epic” word for the Epic-only ones, the first and added rows) — **done** (2026-10-29, desktop)
 - T0228 (S, priority 2) — the end card's towers wear their tier: T0010's pip on each by-tower chip — **done** (2026-10-29, asus)
 - T0234 (M, priority 2) — Toll: the Epic that pays gold when a leak gets through (the first augment whose income comes from losing) — **done** (2026-10-30, inet-racing)
 - T0235 (L, priority 2) — Feast: the Epic that feeds on the kill chain (its added form lengthens the chain's window) — in the pool
 - T0236 (S, priority 2) — the what-if says "nothing": a held card whose added form does nothing to a tower shows the ghost's marker dimmed (the tower's own spec is the judge) — in the pool
-- T0238 (L, priority 2) — the draft shows where the card lands: **failed** (2026-10-29, rejected: it delegated the dim rule to T0236's not-yet-written judge, and its own restatement of that rule contradicted its acceptance example) — re-filed as T0243 (waits on T0236)
+- T0238 (L, priority 2) — the draft shows where the card lands: **failed** (2026-10-29, rejected: it delegated the dim rule to T0236's not-yet-written judge, and its own restatement of that rule contradicted its acceptance example) — re-filed as T0243 (re-scoped without T0236's dim rule; in the pool)
 
 Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T0235 (one at a time, in claim order, under the 16-cap; T0234 landed 2026-10-30, pool 15, no removal); the beam work is done but the needle (T0242, in the pool); the telegraph slices are done; T0150 rides behind T0025; the codex (T0221) is done; the by-tower pip (T0228) is done; the what-if dim (T0236) failed on a wrong premise and is dropped, the draft fit row (T0243) now stands alone (no dim) and the codex lock (T0248) is in the pool.
 
@@ -141,6 +141,6 @@ Ideas that may become epics or tasks of one.
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **tasked as T0239 (L, non-epic)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
 - Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**
-- The board shows its corners: a notch on the bend cells — **built as T0140 (S, non-epic, 2026-10-29, narcissus)**
+- The board shows its corners: a notch on the bend cells — **built as T0140 (2026-10-29), removed as T0227 (2026-10-29)**
 - Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **tasked as T0217 (L, non-epic, in the pool)**
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **tasked as T0233 (S, non-epic, in the pool)**
