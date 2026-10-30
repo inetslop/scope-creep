@@ -3,10 +3,12 @@ id: T0303
 title: Enemy hp grows a little faster in the late waves
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T19:48:31Z
+claimed_at: 2026-10-30T20:05:51Z
+designer: yoga
 ---
 
 ## Goal
