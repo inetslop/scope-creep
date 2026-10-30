@@ -3,12 +3,13 @@ id: T0251
 title: "The what-if says the price: the next slot's cost beside the ghost's marker"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-30T02:57:28Z
 claimed_at: 2026-10-30T02:57:36Z
-designer: yoga
+finished_at: 2026-10-30T03:40:12Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -26,3 +27,7 @@ While a hand card is held, the player sees what the next slot costs on every tow
 - [ ] Clearing the card selection removes all prices; a tower with no free slot shows none; an empty cell shows none.
 - [ ] The price sits beside the marker without covering it and stays on the plinth's face at 1x zoom, at 412x915 and 1280x720.
 - [ ] No gameplay change: with no card held the run is byte-identical (damage, gold, waves, resume).
+
+## Rejected by architect (yoga)
+
+The ~11 px "· N" cannot sit beside the ghost's marker and stay on the plinth's face — the face is 43 board units wide, the pip row alone spans 38 of them, the marker rides one of the pips, and the widest price ("· 400", for a tower's 3rd slot) is ~23 units, leaving no gap anywhere on the face (right of the marker ≤ 8, left of it the pips) at 412x915 or 1280x720.
