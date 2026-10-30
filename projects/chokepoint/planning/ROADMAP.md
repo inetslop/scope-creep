@@ -23,7 +23,7 @@ The game grows through epics: bigger features that take several tasks. One or tw
 **Groundwork (outside the epic):** T0015 (wave preview — done, 2026-10-28, narcissus) becomes the per-level wave preview once levels exist; T0014 (leak warning) teaches what a leak is before levels make leaking costlier; T0019 (fast-forward 2x) keeps runs in flow and pays off once a run spans several levels; the lives danger-pip idea was rejected as T0022 (the stats card has no room — see IDEAS) and is the one to revisit if levels make leaking costlier.
 **When done:** a run goes through levels, like the acts of a roguelite: each level is its own board with a set number of waves, ending in a tougher final wave. Clear it and the run moves on to the next level: a new, harder board (a longer or more winding road, tougher enemies) that starts empty. What you carry is your **pool**: the run starts with a small pool of augments that the drafts offer from, and every time you clear a level you pick one new augment to add to it, so each level offers more to combine. The HUD shows the level (the wave card's muted "level 2 · 3/10" line), the pick between levels is its own moment, and the game-over screen says how far you got. Clearing the last level (wave 30) wins the run.
 **Breakdown:**
-- T0260 (L, priority 1) — the level rule: three levels of ten waves (waves number continuously 1-30, the bosses end levels 1 and 2), the road re-grows longer and empty at each clear, gold and lives carry, the wave-30 win, the game-over "how far" line — written 2026-10-30, in the pool
+- T0260 (L, priority 1) — the level rule: three levels of ten waves (waves number continuously 1-30, the bosses end levels 1 and 2), the road re-grows longer and empty at each clear, gold and lives carry, the wave-30 win, the game-over "how far" line — **in progress on asus**
 - T0261 (M, priority 2, behind T0260) — the pool: the draft offers from six augments (Bolt, Rapid, Splash, Lance, Reach, Push), and the level clear's pick adds one (its own moment, the draft's pattern) — written 2026-10-30
 - T0262 (S, priority 2, behind T0260) — the wave card's muted "level N · w/10" line — written 2026-10-30
 
@@ -102,23 +102,23 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 
 **16-cap (protocol):** the pipeline holds 21 augments (15 in + T0025, T0064, T0062, T0095, T0152, T0235); the cap is 16, so the six registrations land five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Mark and Anchor extend the order (2026-10-30): the beam carries the mark (T0132), and Ward already punishes the root build; Bolt, Beam, Splash, Lance, Rapid, Reach, Push, Ember, Spray and Toll never leave the index — the draft floor (T0048) and the beam-combo web (T0210, T0242) depend on them.
 
-### E5 — Bosses: every 10th wave is something you remember (active — opened 2026-10-30; fully tasked 2026-10-30: all six slices are written; E3 opened 2026-10-30, E5's tasks wait only on T0253)
+### E5 — Bosses: every 10th wave is something you remember (active — opened 2026-10-30; fully tasked 2026-10-30: all six slices are written)
 **Goal:** the run has a peak: the deep waves bring one big shape with its own mechanic, not just more of the same.
 **When done:** every 10th wave the road sends a boss instead of a crowd: a single big shape (6× Block's hp, Block's speed, one life on a leak) under its own health bar (a small white card pinned to the top edge, counting down as it is hit). The wave-10 boss phases at 50% hp — translucent and untargetable for 2.5 s, every 8 s — so a one-trick single-target build needs a second line (Splash, Lance, Chain, Beam and Ember all answer it). The wave preview (T0015) shows it coming, and a boss death is a moment: a big chip burst, a Block's double in gold, and a card that names it. Later bosses swap the mechanic (one shields its escort, one splits at half hp).
 **Breakdown (in this order):**
-- T0253 (L, priority 1) — the Colossus: the wave-10 shape (6× Block's hp, Block's speed, 1 life on a leak, 20 gold, purple square at 0.45) with the timed untargetable phase — written 2026-10-30, in the pool
-- T0257 (S, priority 2, behind T0253) — the preview says "boss": the every-10 plan's "boss" tag, the preview chip, a one-time teach line (T0092's pattern), the banner chip (T0080's pattern) — written 2026-10-30
+- T0253 (L, priority 1) — the Colossus: the wave-10 shape (6× Block's hp, Block's speed, 1 life on a leak, 20 gold, purple square at 0.45) with the timed untargetable phase — **done** (2026-10-30, inet-racing)
+- T0257 (S, priority 2, behind T0253) — the preview says "boss": the every-10 plan's "boss" tag, the preview chip, a one-time teach line (T0092's pattern), the banner chip (T0080's pattern) — **done** (2026-10-30, yoga)
 - T0256 (M, priority 2, behind T0253) — the boss card: a small white card pinned to the top edge — the token, the name, a thin hp bar with a notch at 50%, so the phase is read on the bar before it happens — written 2026-10-30
 - T0258 (M, priority 2, behind T0253) — the boss moment: the death — the 24-chip burst (2× the milestone count) in the boss's own color and the two-line name card (topBanner's pattern) — written 2026-10-30
 - T0259 (L, priority 2, behind T0253, T0256 and T0258) — the second boss (wave 20): the Titan (a red square at 0.5, 6× Block) and its Guard (a red diamond carrying an orange disc) — while the Guard lives, every hit on the Titan is halved; the escort-shield member of the pair — written 2026-10-30
 - T0266 (L, priority 2) — the third boss (wave 30): the Orb (a purple hexagon at 0.5 with the crack) splits into two faster Shards at half health, unless it dies to a single hit first; the "splits at half hp" later boss — written 2026-10-30
 
-### E6 — Iron run: one life, double coins (active — opened 2026-10-29, when E2 closed)
+### E6 — Iron run: one life, double coins (done — opened 2026-10-29, closed 2026-10-30)
 **Goal:** a second small mode off the menu: the same game with the risk made explicit — one life, and a payout that says so.
 **When done:** the menu offers “Iron” beside Play: the run starts with 1 life, pays double coins, and the last stand (T0054) is off for it (its doubling is baked into the coin rate). The claim card says “Iron” beside the waves line, and the profile card remembers the iron best wave with its own muted star. A normal Play is byte-identical.
 **Breakdown:**
-- T0241 (M, priority 2) — the Iron button and the mode's rules: 1 life, 2× coins, last stand off; the claim card's “Iron” line — **in the pool**
-- T0249 (S, priority 2, behind T0241) — the profile card's iron best wave with its own muted star — written 2026-10-30, waits on T0241
+- T0241 (M, priority 2) — the Iron button and the mode's rules: 1 life, 2× coins, last stand off; the claim card's “Iron” line — **done** (2026-10-30, asus)
+- T0249 (S, priority 2, behind T0241) — the profile card's iron best wave with its own muted star — **done** (2026-10-30, yoga)
 
 ### E7 — Changing your mind: a misplaced tower is not permanent (active — opened 2026-10-30)
 **Goal:** a mistake can be fixed mid-run: a misplaced tower is sold back, a wrong augment is pulled back into the hand.
