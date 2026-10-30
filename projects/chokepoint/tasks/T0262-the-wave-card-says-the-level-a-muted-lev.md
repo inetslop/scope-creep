@@ -1,14 +1,15 @@
 ---
 id: T0262
-title: "The wave card says the level: a muted \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"level N · w/10\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" line"
+title: "The wave card says the level: a muted \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"level N · w/10\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" line"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0260]
 attempts: 1
 created: 2026-10-30T05:49:22Z
 claimed_at: 2026-10-30T10:14:50Z
+finished_at: 2026-10-30T10:37:38Z
 epic: E3
 ---
 
@@ -69,3 +70,15 @@ then add `+ GAP + LINE` to the chip's y offset (it becomes `-this.h / 2 + H_NUM 
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The wave card (top right) now shows, from wave 1, a small muted "level N · w/10" line under the wave number — N the run's level, w the wave's place in it ("level 1 · 1/10" at wave 1, "level 2 · 1/10" at wave 11). It is hidden while the card reads "Ready", and during the build phase it refers to the wave about to start, like the number above. The plain 11px muted text (no chip, no background) pushes the "held · N" chip down so both fit at once; the card only grows down (h 48→70 at least) and `W` stays 120, so nothing at the top right is pushed or overlapped at 412x915 or 1280x720. Only `src/ui/hud/WaveCard.ts` changed: two private fields (`line`, `shownLine`), a level computation in `update()`, the extra line in `wear()` with its destroy, and the docstring.
+
+- Self-review: APPROVE
+- Time: 22.8 min
+
+```
+projects/chokepoint/game/src/ui/hud/WaveCard.ts | 33 ++++++++++++++++++-------
+ 1 file changed, 24 insertions(+), 9 deletions(-)
+```
