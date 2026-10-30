@@ -3,10 +3,12 @@ id: T0251
 title: "The what-if says the price: the next slot's cost beside the ghost's marker"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T02:57:28Z
+claimed_at: 2026-10-30T02:57:36Z
+designer: yoga
 ---
 
 ## Goal
