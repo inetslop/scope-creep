@@ -11,7 +11,7 @@ import { TICK_SEC } from '../config';
 import { plateMul } from '../core/plate';
 import { ROOT_IMMUNE_SEC } from '../core/root';
 import { pickNearest } from '../core/targeting';
-import { quietGoldMul } from '../core/waves';
+import { bossId, quietGoldMul } from '../core/waves';
 import { hook } from '../debug/testHook';
 import { Enemy } from '../entities/Enemy';
 import type { Tower } from '../entities/Tower';
@@ -210,7 +210,10 @@ export class EnemySystem {
     const mint = paid - baseGold; // one per Mint bonus, each pays exactly +1 (T0021)
     const milestone = this.fx.killCount(e.x, e.y);
     this.run.noteCombo(this.fx.chain);
-    this.fx.burst(e.x, e.y, PALETTE[e.def.look.color], milestone);
+    // A boss kill (the plan's own boss, core/waves.ts) is its moment: 24 chips in its own color,
+    // never the milestone's 12; its name card comes from systems/enemyHooks/bossDeath.ts.
+    const boss = bossId(this.run.wave) === e.def.id;
+    this.fx.burst(e.x, e.y, PALETTE[e.def.look.color], boss ? 24 : milestone ? 12 : 6);
     this.fx.popText(e.x, e.y - 20, `+${paid}`);
     if (mint > 0) this.fx.mintPop(e.x, e.y - 20, mint);
     this.sfx?.kill();

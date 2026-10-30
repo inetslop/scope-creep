@@ -108,8 +108,9 @@ export class FxSystem {
     this.track(g, 200, { scale: 1.25, alpha: 0, ease: 'Quad.easeOut' });
   }
 
-  /** Rounded chips that scatter where an enemy died, plus a white pop. `double` scatters 12 chips instead of 6 (the ×10 milestone kill). */
-  burst(x: number, y: number, color: number, double: boolean = false): void {
+  /** Rounded chips that scatter where an enemy died, plus a white pop: 6 normal, 12 the ×10
+   * milestone kill, 24 a boss kill (its own color, from EnemySystem.kill). */
+  burst(x: number, y: number, color: number, chips: number = 6): void {
     if (this.live < FxSystem.MAX) {
       const pop = this.scene.add.graphics().setDepth(DEPTH.fx).setPosition(x, y);
       pop.fillStyle(0xffffff, 0.9);
@@ -117,7 +118,7 @@ export class FxSystem {
       pop.setScale(0.5);
       this.track(pop, 180, { scale: 1.3, alpha: 0 });
     }
-    const n = double ? 12 : 6;
+    const n = chips;
     for (let i = 0; i < n && this.live < FxSystem.MAX; i++) {
       const a = (i / n) * Math.PI * 2 + Math.random() * 0.6;
       const d = 22 + Math.random() * 14;

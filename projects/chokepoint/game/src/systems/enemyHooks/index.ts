@@ -4,6 +4,7 @@ import type { MakeEnemyHook } from './hook';
 import { comboBreak } from './comboBreak';
 import { leakEcho } from './leakEcho';
 import { bossEscape } from './bossEscape';
+import { bossDeath } from './bossDeath';
 import { titanShield } from './titanShield';
 import { comboGold } from './comboGold';
 import { haulerLeak } from './haulerLeak';
@@ -31,6 +32,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   comboBreak,
   leakEcho,
   bossEscape,
+  bossDeath,
   titanShield,
   split,
   midSplit,

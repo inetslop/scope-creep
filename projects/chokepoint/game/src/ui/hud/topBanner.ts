@@ -8,6 +8,17 @@ import { isNarrow } from './hud';
 const W = 140;
 const CHIP_GAP = 6;
 
+// The "at most one card at a time" slot, shared by every TopBanner (the wave banner, the last
+// stand, the boss's name card): a timestamp lock, so a card cut off by a scene shutdown frees
+// itself on its own — a boolean released in the fade's onComplete would stick forever.
+const SLOT_HOLD_MS = 1300; // the card plays 1000 ms; hold a touch past it so a shutdown-cut card frees itself
+let slotHeldUntil = 0;
+const takeSlot = (now: number): boolean => {
+  if (now < slotHeldUntil) return false;
+  slotHeldUntil = now + SLOT_HOLD_MS;
+  return true;
+};
+
 /**
  * Top-center card that slides in from above, holds, and fades out (~1 s total) — the wave's
  * moment ("Wave N", from WaveBanner) and, the same way, the last stand banner's two lines:
@@ -40,7 +51,7 @@ export class TopBanner {
 
   /** Slides in from above (~200 ms), holds (~500 ms), fades out (~300 ms). No-op while playing. */
   show(lines: string[], tags: string[] = []): void {
-    if (this.playing) return;
+    if (this.playing || !takeSlot(this.scene.time.now)) return;
     this.playing = true;
     for (const c of this.chips) c.destroy();
     this.chips = [];

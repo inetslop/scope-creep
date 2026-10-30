@@ -4,11 +4,12 @@ title: "The boss's death: the burst and the name card"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T09:46:01Z
 claimed_at: 2026-10-30T15:59:35Z
+finished_at: 2026-10-30T16:41:17Z
 epic: E5
 design_attempts: 1
 ---
@@ -149,3 +150,22 @@ export class BossDeathBanner implements HudPart {
 
 ### Tests
 - none — no `src/core` rule changes (`bossId` pre-exists); everything else is juice, HUD and wiring.
+
+## Result (attempt 1, asus)
+
+A boss death is now its own moment: killing the enemy the wave plan declares as its boss (bossId in core/waves.ts) bursts 24 chips in the boss's own color (instead of the usual 6, or the milestone's 12) and slides the shared top-center card with the boss's name in bold ink over a muted "stopped", via a new bossDeath enemy hook and a new BossDeathBanner HUD part; the burst count was generalized in FxSystem.burst (chips param) and decided in EnemySystem.kill(), topBanner gained a shared timestamp slot so at most one card holds the top-center at a time (the boss death beats the last stand on a collision frame), and a new bossDeath.name invariant guards the flag. Non-boss waves, the Orb's half-hp split, the kill gold, combo and coin slide are all unchanged.
+
+- Self-review: APPROVE
+- Time: 41.7 min
+
+```
+projects/chokepoint/game/src/debug/runChecks.ts    |  8 ++++++
+ projects/chokepoint/game/src/scenes/HudScene.ts    |  2 ++
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  7 +++--
+ projects/chokepoint/game/src/systems/FxSystem.ts   |  7 ++---
+ .../game/src/systems/enemyHooks/bossDeath.ts       | 16 ++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../chokepoint/game/src/ui/hud/BossDeathBanner.ts  | 30 ++++++++++++++++++++++
+ projects/chokepoint/game/src/ui/hud/topBanner.ts   | 13 +++++++++-
+ 8 files changed, 79 insertions(+), 6 deletions(-)
+```

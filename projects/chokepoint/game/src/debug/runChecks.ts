@@ -1,8 +1,10 @@
 import { CELL, START } from '../config';
 import { AUGMENTS } from '../content/augments';
+import { getEnemy } from '../content/enemies';
 import { draftCardCount } from '../core/augments';
 import { chokeCells } from '../core/choke';
 import { TIER_ORDER } from '../core/tiers';
+import { bossId } from '../core/waves';
 import type { GameScene } from '../scenes/GameScene';
 import { SCENES } from '../scenes/keys';
 import { hook } from './testHook';
@@ -21,6 +23,12 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['resume.taken', (g) => (g.registry.get('resumeRun') ? 'a saved run is waiting for the game that never took it' : null)],
   ['ghost.taken', (g) => (g.registry.get('ghostSeed') ? 'a ghost seed is waiting for the game that never took it' : null)],
   ['iron.taken', (g) => (g.registry.get('ironMode') ? 'an iron flag is waiting for the game that never took it' : null)],
+  ['bossDeath.name', (g) => {
+    const name = g.registry.get('bossDeathName');
+    if (name === undefined) return null;
+    const boss = bossId(g.run.wave);
+    return boss && getEnemy(boss).name === name ? null : `the name card says "${name}" on wave ${g.run.wave}`;
+  }],
   ['board.path', (g) => {
     const p = g.board.map.path;
     const seen = new Set<string>();

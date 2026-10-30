@@ -4,6 +4,7 @@ import { PALETTE } from '../content/palette';
 import { flags } from '../debug/flags';
 import { uiCamera, viewSize } from '../ui/display';
 import { BossCard } from '../ui/hud/BossCard';
+import { BossDeathBanner } from '../ui/hud/BossDeathBanner';
 import { HandBar } from '../ui/hud/HandBar';
 import type { HudPart } from '../ui/hud/hud';
 import { LastStandBanner } from '../ui/hud/LastStandBanner';
@@ -48,6 +49,7 @@ export class HudScene extends Phaser.Scene {
       preview,
       new HandBar(this),
       new TowerPanel(this),
+      new BossDeathBanner(this), // before the banners it beats: the boss death takes the top card
       new LastStandBanner(this), // last on purpose: slides in over the other cards
     ];
     this.fps = flags.debug ? this.add.text(16, HUD.top + 4, '', textStyle(12, PALETTE.muted)) : undefined;
