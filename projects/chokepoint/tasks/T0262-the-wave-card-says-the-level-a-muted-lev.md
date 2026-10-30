@@ -1,12 +1,14 @@
 ---
 id: T0262
-title: "The wave card says the level: a muted \\\\\\\\\\\\\\\"level N · w/10\\\\\\\\\\\\\\\" line"
+title: "The wave card says the level: a muted \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"level N · w/10\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" line"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0260]
-attempts: 0
+attempts: 1
 created: 2026-10-30T05:49:22Z
+claimed_at: 2026-10-30T10:14:50Z
 epic: E3
 ---
 
