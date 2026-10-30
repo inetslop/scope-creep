@@ -3,13 +3,11 @@ id: T0259
 title: "The second boss: wave 20 sends the Titan and its Guard, and the Guard carries the shield"
 size: L
 priority: 2
-status: designing
-depends_on: [T0253, T0256, T0258]
+status: todo
+depends_on: [T0253, T0256, T0258, T0257]
 attempts: 0
 created: 2026-10-30T05:08:57Z
-claimed_at: 2026-10-30T05:09:00Z
 epic: E5
-designer: desktop
 ---
 
 ## Goal
@@ -74,3 +72,85 @@ The run's second peak swaps the mechanic (E5: "later bosses swap the mechanic"):
 - [ ] Kills pay 20 (Titan) and 8 (Guard) with the ordinary kill (chips, combo, Mint, by-tower count); a boss wave held clean counts clean; the boss card (T0256) shows the Titan — no notch on the bar, the fill in the Titan's own red — and the boss death moment (T0258) fires on the Titan.
 - [ ] The first Titan and the first Guard spawn in a run each pop their name tag; the enemies reference lists both.
 - [ ] Every wave except 20 is byte-identical to today (wave 10 and every later multiple of 10 still sends the Colossus); the Titan and the Guard never appear in a normal mix.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/enemies/titan.ts` — the Titan's `EnemyDef`
+- create `src/content/enemies/guard.ts` — the Guard's `EnemyDef`
+- edit `src/content/enemies/index.ts` — two imports + two registry lines next to the Colossus's line (T0253's)
+- edit `src/content/types.ts` — one field on `EnemyDef`, next to `plate` (line 35)
+- create `src/core/shield.ts` — the shield multiplier
+- edit `src/core/waves.ts` — wave-20 fixed plan + boss declaration; wave 20 out of `isQuietWave`
+- create `src/systems/enemyHooks/titanShield.ts` — keeps `Enemy.shielded` current
+- edit `src/systems/enemyHooks/index.ts` — one hook line, next to its kin
+- edit `src/entities/Enemy.ts` — `shielded` field + reset, the shield line in `hit()`, the Guard's disc image (plate pattern)
+- edit `src/art/textures.ts` — `DISC_TEXTURE`, next to `PLATE_TEXTURE` (line 21)
+- edit `src/art/entities.ts` — paint the disc (after the plate block, ~line 86)
+- edit `src/debug/runChecks.ts` — one invariant, next to the other `enemies.*` lines
+- edit `tests/core/waves.test.ts` — wave-20 test; carve wave 20 out of the Mute/Bulwark/quiet expectations
+- create `tests/core/shield.test.ts`
+- edit `tests/content.test.ts` — allow the Titan's 0.5 size (line 27)
+- edit `src/scenes/EnemiesScene.ts` — line 76 label, only if T0253 left "from a Splitter" on every `spawnOnly` enemy
+- edit the boss card T0256 added (find its line in `HudScene`'s parts list, likely `src/ui/hud/BossCard.ts`) — boss selection reads the plan's declared boss
+- edit the boss death hook T0258 added (find it in `ENEMY_HOOKS`, likely `src/systems/enemyHooks/bossDeath.ts`) — fires on the declared boss
+
+### Interfaces
+```ts
+// content/types.ts, on EnemyDef, next to `plate`:
+/** Its shield is carried by enemies of this id: until one is killed, every damage it takes lands at half, after every other modifier (core/shield.ts). */
+shieldCarrier?: string;
+
+// core/shield.ts:
+import type { EnemyDef } from '../content/types';
+export const SHIELD_MUL = 0.5;
+/** 0.5 only for a shield-carrying enemy whose shield is up; the caller multiplies it last (after the plate, after the mark). */
+export function shieldMul(def: EnemyDef, shielded: boolean): number { return def.shieldCarrier !== undefined && shielded ? SHIELD_MUL : 1; }
+
+// entities/Enemy.ts: public field `shielded = false;` (reset in spawn()); hit() becomes:
+this.hp -= damage * (1 + this.markPct) * shieldMul(this.def, this.shielded);
+
+// systems/enemyHooks/titanShield.ts:
+import type { MakeEnemyHook } from './hook';
+export const titanShield: MakeEnemyHook = ({ enemies }) => {
+  let guardKilled = false; // a leak leaves the shield up: only a death on the road strips it
+  return {
+    onKill(kill) { if (kill.enemy.def.id === 'guard') guardKilled = true; },
+    update() { for (const e of enemies.all) { if (!e.active || e.def.shieldCarrier === undefined) continue; e.shielded = !guardKilled; } },
+  };
+};
+
+// content/enemies/titan.ts: id 'titan', name 'Titan', description "A bigger wall of Block: while its Guard lives, every hit on it is halved.",
+//   behavior 'walk', hp 720, speed 0.9, gold 20, livesCost 1, threat 95, fromWave 20, spawnOnly: true, shieldCarrier: 'guard',
+//   look { shape: 'square', color: 'red', size: 0.5 }.
+// content/enemies/guard.ts: id 'guard', name 'Guard', description "Carries the Titan's shield: kill it to make the Titan take full damage.",
+//   behavior 'walk', hp 60, speed 0.9, gold 8, livesCost 1, threat 5, fromWave 20, spawnOnly: true, look { shape: 'diamond', color: 'red', size: 0.2 }.
+```
+
+### Steps
+1. Read the post-dependency state first: `core/waves.ts` (the every-10 Colossus branch and the tag T0257 gives those plans), T0256's card, T0258's hook. Note the plan's boss-declaration mechanism and the exact tag string. You will copy both, never invent them.
+2. Create `titan.ts` and `guard.ts` (values above; comment style like `bulwark.ts`). Register in `index.ts` (imports alphabetical; list lines right after the Colossus's line).
+3. Add `shieldCarrier` to `EnemyDef`; create `core/shield.ts`.
+4. `Enemy.ts`: add `shielded = false;` (next to `markPct`, ~line 51) and reset it in `spawn()`; change the `hit()` line exactly as above (import `shieldMul`).
+5. Create `titanShield.ts` (snippet above); add one line to `ENEMY_HOOKS`.
+6. `waves.ts`: `isQuietWave` → `wave > 0 && wave !== 20 && wave % 4 === 0` (comment: wave 20 is the boss's slot, not a breather). At the top of `planWave`, before the `unlocked` line: `if (wave === 20) return { number: wave, spawns: [{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }], hpMul: waveHpMul(wave), tags: <the every-10 tag>, <boss: 'titan' via the step-1 mechanism> };`.
+7. Disc art: `DISC_TEXTURE = 'enemy:disc'` in `art/textures.ts`; in `art/entities.ts` paint it after the plate block — flat circle, radius `gR * 0.42`, centered `gR * 0.55` above the token center (front of the face), fill `PALETTE.orange`, no shadow (it rotates), `gR = getEnemy('guard').look.size * CELL`, size `tokenRoom(gR, tokenDepth(gR)) * 2`. In `Enemy.ts` mirror the plate exactly: private `disc?` next to `plate`; create it in `spawn()` when `this.def.id === 'guard'` (import `DISC_TEXTURE`); place it in `advance()` with the plate's line (same `setPosition/setScale(ART_SCALE * pop)/setRotation(Math.atan2(this.dirX, -this.dirY))/setVisible(true)`); hide it in `despawn()`.
+8. Align T0256's card and T0258's hook to the plan's declared boss if they still find it by "single spawn" or the Colossus's id. Verify the card's bar fills in the boss's `look.color` (Titan red) and its phase notch only renders for a boss with a timed phase (the Colossus's field) — the Titan has none.
+9. `EnemiesScene.ts:76`: end state — "from a Splitter" only when some def's `splitsInto === def.id`, else `wave ${def.fromWave}`; Titan and Guard read "wave 20". Skip if T0253 already did this.
+10. `runChecks.ts`, after `enemies.push`: `['enemies.bossSlot', (g) => (g.run.wave === 20 || !g.enemies.all.some((e) => e.active && (e.def.id === 'titan' || e.def.id === 'guard')) ? null : 'a Titan or Guard alive off its wave 20')],`
+11. Tests: `waves.test.ts` — new test asserting wave 20's plan is exactly `[{guard,0},{titan,1.2}]`, boss declared as the Titan, tags equal the every-10 plans' tags, `isQuietWave(20)` false (add 20 to the isQuietWave vector), and `[10,30,40]` still declare the Colossus with no Titan/Guard spawn; carve `wave !== 20` into the Mute (~line 99) and Bulwark (~line 108) expectations like the Ward line; drop 20 from the quiet list (line 162). `content.test.ts:27` → `toBeLessThanOrEqual(e.id === 'titan' ? 0.5 : 0.45)`. New `tests/core/shield.test.ts`: `shieldMul` is 0.5 for the Titan when shielded, 1 otherwise, 1 for a Dot.
+12. `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- Wave 20 % 4 === 0: without the `isQuietWave` carve-out, kills pay 40/16 (acceptance says 20/8) and the preview wears a "quiet" chip.
+- The wave-20 return must be the first statement of `planWave` — later the Bulwark/Mute reservations or the quiet halving would touch the plan.
+- A Guard *leak* keeps the Titan halved; only `onKill` (any source, burn and beam included) strips it. Do not react to `onLeak`.
+- Pooled slots: reset `shielded` in `spawn()`, hide the disc in `despawn()` (a slot that was a Bulwark must not flash a disc).
+- The disc texture must be flat (no shadow/side face) or it breaks when rotated; keep the plate's rotation math verbatim.
+- Don't add Titan/Guard to `planWave`'s id-exclusion lists — `spawnOnly` already keeps them out of the mix, and the ten mix-eligible types stay ten.
+- The tag string and boss field come from the landed dependencies; a mismatched invented tag is the main way this goes wrong.
+
+### Tests
+- `tests/core/waves.test.ts`: wave-20 plan/boss/tags/isQuietWave assertions + Mute/Bulwark carves (guards against a later change silently re-mixing wave 20 or re-quieting it).
+- `tests/core/shield.test.ts`: the 0.5 rule and that unshielded enemies are untouched.
+- `tests/content.test.ts`: the Titan's 0.5 cap.
