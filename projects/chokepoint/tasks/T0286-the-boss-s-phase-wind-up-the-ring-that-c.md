@@ -1,12 +1,14 @@
 ---
 id: T0286
 title: "The boss's phase wind-up: the ring that counts the eight seconds"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T12:31:05Z
+claimed_at: 2026-10-30T13:22:36Z
 epic: E5
 ---
 
