@@ -1,12 +1,14 @@
 ---
 id: T0273
 title: "The boss's death: the burst and the name card"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T09:46:01Z
+claimed_at: 2026-10-30T15:59:35Z
 epic: E5
 design_attempts: 1
 ---
