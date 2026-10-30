@@ -9,6 +9,9 @@ import type { HitPayload } from '../systems/EnemySystem';
 export class Projectile extends Phaser.GameObjects.Image {
   target: Enemy | undefined;
   private targetSerial = 0;
+  /** Sideways from the target it homes at: a volley bolt aims beside it, the way its barrel sits. */
+  private aimDX = 0;
+  private aimDY = 0;
   /** What it does when it lands (damage, splash, slow). */
   payload: HitPayload | undefined;
   /** Board units per second. */
@@ -39,9 +42,11 @@ export class Projectile extends Phaser.GameObjects.Image {
     this.setActive(false).setVisible(false);
   }
 
-  fire(x: number, y: number, target: Enemy, payload: HitPayload, speed: number, asTracer = false): void {
+  fire(x: number, y: number, target: Enemy, payload: HitPayload, speed: number, asTracer = false, aim?: { x: number; y: number }): void {
     this.target = target;
     this.targetSerial = target.serial;
+    this.aimDX = aim?.x ?? 0;
+    this.aimDY = aim?.y ?? 0;
     this.payload = payload;
     this.speed = speed;
     this.age = 0;
@@ -55,11 +60,13 @@ export class Projectile extends Phaser.GameObjects.Image {
     this.setTint(payload.color);
     artScale(this, !this.tracer && payload.splash > 0 ? 1.4 : 1);
     this.setPosition(x, y);
-    // A pierce leg and a needle re-fire from their spot: each gets its own flight toward its target.
-    const d = Math.hypot(target.x - x, target.y - y);
+    // A volley bolt flies at its target beside where its barrel sits, and homes in from there.
+    const ax = target.x + this.aimDX;
+    const ay = target.y + this.aimDY;
+    const d = Math.hypot(ax - x, ay - y);
     if (d > 0) {
-      this.fx = (target.x - x) / d;
-      this.fy = (target.y - y) / d;
+      this.fx = (ax - x) / d;
+      this.fy = (ay - y) / d;
     }
     this.setActive(true).setVisible(true);
   }
@@ -78,6 +85,8 @@ export class Projectile extends Phaser.GameObjects.Image {
     this.traveled = 0;
     this.maxDist = maxDist;
     this.blast = blast;
+    this.aimDX = 0;
+    this.aimDY = 0;
     this.skip.length = 0;
     this.tracer = true;
     this.setTexture(TRACER_TEXTURE);
@@ -105,8 +114,8 @@ export class Projectile extends Phaser.GameObjects.Image {
     const t = this.target;
     if (!t || this.lost) return false;
     this.age += dt;
-    const dx = t.x - this.x;
-    const dy = t.y - this.y;
+    const dx = t.x + this.aimDX - this.x;
+    const dy = t.y + this.aimDY - this.y;
     // A tracer points where it flies (its texture is flat, so rotating it is allowed).
     if (this.tracer) this.setRotation(Math.atan2(dx, -dy));
     const dist = Math.hypot(dx, dy);

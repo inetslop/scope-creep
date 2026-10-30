@@ -4,11 +4,12 @@ title: "Bolt's volley: every shot goes at the same enemy, one per barrel"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0247]
 attempts: 1
 created: 2026-10-30T00:51:08Z
 claimed_at: 2026-10-30T02:27:06Z
+finished_at: 2026-10-30T04:15:35Z
 ---
 
 ## Goal
@@ -88,3 +89,21 @@ aimOffset(n: number): { x: number; y: number } {
 
 ### Tests
 None added: no core rule changes (`pickTarget` is covered by `tests/core/targeting.test.ts`), card lines are validated by `tests/content.test.ts`. Gate on `npm run check` + `npm run smoke`.
+
+## Result (attempt 1, desktop-4070)
+
+Autocompact is thrashing: the context refilled to the limit within 3 turns of the previous compact, 3 times in a row. A file being read or a tool output is likely too large for the context window. Try reading in smaller chunks, or use /clear to start fresh.
+
+- Self-review: APPROVE
+- Time: 108.5 min
+
+```
+.../chokepoint/game/src/content/augments/bolt.ts   |  8 ++++----
+ .../chokepoint/game/src/entities/Projectile.ts     | 23 +++++++++++++++-------
+ projects/chokepoint/game/src/entities/Tower.ts     |  6 ++++++
+ .../game/src/systems/ProjectileSystem.ts           |  6 +++---
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  2 +-
+ .../chokepoint/game/src/systems/attacks/pulse.ts   | 12 +++++------
+ .../chokepoint/game/src/systems/attacks/shot.ts    | 12 +++++------
+ 7 files changed, 42 insertions(+), 27 deletions(-)
+```

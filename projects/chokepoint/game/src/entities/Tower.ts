@@ -188,6 +188,12 @@ export class Tower extends Phaser.GameObjects.Image {
     };
   }
 
+  /** Shot n's sideways aim: perpendicular to the aim, the same offset as its muzzle. */
+  aimOffset(n: number): { x: number; y: number } {
+    const offset = this.barrelOffsets.length ? this.barrelOffsets[n % this.barrelOffsets.length]! : 0;
+    return { x: Math.cos(this.aim) * offset, y: Math.sin(this.aim) * offset };
+  }
+
   /** The orb's centre disc pulses while a beam is on, and stays still when it is off. */
   setBeamOn(on: boolean): void {
     if (!this.disc || this.beamOn === on) return;

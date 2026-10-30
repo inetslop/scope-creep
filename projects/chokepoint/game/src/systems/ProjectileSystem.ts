@@ -40,7 +40,7 @@ export class ProjectileSystem {
   /** A bolt from a shot tower: with pierce it flies straight like a pellet, aimed where the
    * target will be, striking every enemy on its line until its pierce is used up or it flies
    * `maxDist` board units out (from the muzzle, like a pellet); without pierce it homes. */
-  fire(x: number, y: number, target: Enemy, payload: HitPayload, speed: number, maxDist: number): void {
+  fire(x: number, y: number, target: Enemy, payload: HitPayload, speed: number, maxDist: number, aim?: { x: number; y: number }): void {
     if (payload.pierce > 0) {
       // Its current speed along the road: the crawl (slowed), the dash surge, or a full stop.
       const c = target.def.dashCycle;
@@ -48,12 +48,12 @@ export class ProjectileSystem {
         : c !== undefined && target.dashLeg === 'dash' ? (c.dashCells / c.dashSec) * CELL
         : c !== undefined && target.dashLeg === 'pause' ? 0
         : target.speed * (1 - target.slowPct);
-      const lead = leadPoint(x, y, speed, target.x, target.y, target.dirX, target.dirY, v);
+      const lead = leadPoint(x, y, speed, target.x + (aim?.x ?? 0), target.y + (aim?.y ?? 0), target.dirX, target.dirY, v);
       const d = Math.hypot(lead.x - x, lead.y - y);
       this.take().firePellet(x, y, d > 1e-6 ? (lead.x - x) / d : 0, d > 1e-6 ? (lead.y - y) / d : -1, payload, speed, maxDist, ++this.blastSeq);
       return;
     }
-    this.take().fire(x, y, target, payload, speed);
+    this.take().fire(x, y, target, payload, speed, false, aim);
   }
 
   /** A Spray's blast: `count` pellets from (x, y) in a 50-degree cone centred on the aim at `target`, each flying straight to `maxDist` board units. */

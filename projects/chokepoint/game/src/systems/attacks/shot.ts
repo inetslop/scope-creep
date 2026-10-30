@@ -1,14 +1,14 @@
-import { pickTargets } from '../../core/targeting';
+import { pickTarget } from '../../core/targeting';
 import type { Attack } from './attack';
 
-/** Bolts at the enemies furthest along: one per shot, each from its own barrel. */
+/** A volley: every shot at the enemy furthest along, each from its own barrel. */
 export const shot: Attack = ({ tower, enemies, range, payload, fireBolt, sfx }) => {
-  const targets = pickTargets(tower.x, tower.y, range, enemies, tower.spec.shots);
-  if (targets.length === 0) return false;
-  const first = enemies[targets[0]!]!;
+  const t = pickTarget(tower.x, tower.y, range, enemies);
+  if (t < 0) return false;
+  const first = enemies[t]!;
   tower.aimAt(first.x, first.y);
   tower.kick();
-  targets.forEach((target, n) => fireBolt(n, enemies[target]!, payload));
+  for (let n = 0; n < tower.spec.shots; n++) fireBolt(n, first, payload);
   sfx?.shoot();
   return true;
 };
