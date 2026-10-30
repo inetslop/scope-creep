@@ -102,7 +102,7 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 
 **16-cap (protocol):** the pipeline holds 21 augments (15 in + T0025, T0064, T0062, T0095, T0152, T0235); the cap is 16, so the six registrations land five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Mark and Anchor extend the order (2026-10-30): the beam carries the mark (T0132), and Ward already punishes the root build; Bolt, Beam, Splash, Lance, Rapid, Reach, Push, Ember, Spray and Toll never leave the index — the draft floor (T0048) and the beam-combo web (T0210, T0242) depend on them.
 
-### E5 — Bosses: every 10th wave is something you remember (active — opened 2026-10-30; fully tasked 2026-10-30: all five slices are written; E3 opened 2026-10-30, E5's tasks wait only on T0253)
+### E5 — Bosses: every 10th wave is something you remember (active — opened 2026-10-30; fully tasked 2026-10-30: all six slices are written; E3 opened 2026-10-30, E5's tasks wait only on T0253)
 **Goal:** the run has a peak: the deep waves bring one big shape with its own mechanic, not just more of the same.
 **When done:** every 10th wave the road sends a boss instead of a crowd: a single big shape (6× Block's hp, Block's speed, one life on a leak) under its own health bar (a small white card pinned to the top edge, counting down as it is hit). The wave-10 boss phases at 50% hp — translucent and untargetable for 2.5 s, every 8 s — so a one-trick single-target build needs a second line (Splash, Lance, Chain, Beam and Ember all answer it). The wave preview (T0015) shows it coming, and a boss death is a moment: a big chip burst, a Block's double in gold, and a card that names it. Later bosses swap the mechanic (one shields its escort, one splits at half hp).
 **Breakdown (in this order):**
@@ -111,6 +111,7 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 - T0256 (M, priority 2, behind T0253) — the boss card: a small white card pinned to the top edge — the token, the name, a thin hp bar with a notch at 50%, so the phase is read on the bar before it happens — written 2026-10-30
 - T0258 (M, priority 2, behind T0253) — the boss moment: the death — the 24-chip burst (2× the milestone count) in the boss's own color and the two-line name card (topBanner's pattern) — written 2026-10-30
 - T0259 (L, priority 2, behind T0253, T0256 and T0258) — the second boss (wave 20): the Titan (a red square at 0.5, 6× Block) and its Guard (a red diamond carrying an orange disc) — while the Guard lives, every hit on the Titan is halved; the escort-shield member of the pair — written 2026-10-30
+- T0266 (L, priority 2) — the third boss (wave 30): the Orb (a purple hexagon at 0.5 with the crack) splits into two faster Shards at half health, unless it dies to a single hit first; the "splits at half hp" later boss — written 2026-10-30
 
 ### E6 — Iron run: one life, double coins (active — opened 2026-10-29, when E2 closed)
 **Goal:** a second small mode off the menu: the same game with the risk made explicit — one life, and a payout that says so.

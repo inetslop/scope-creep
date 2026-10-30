@@ -71,7 +71,7 @@ The run's second peak swaps the mechanic (E5: "later bosses swap the mechanic"):
 - [ ] A Guard leak costs exactly 1 life (the ordinary leak: warning, size-scaled jolt, combo break, Toll pay) and leaves the Titan shielded; a Titan leak costs exactly 1 life.
 - [ ] Kills pay 20 (Titan) and 8 (Guard) with the ordinary kill (chips, combo, Mint, by-tower count); a boss wave held clean counts clean; the boss card (T0256) shows the Titan — no notch on the bar, the fill in the Titan's own red — and the boss death moment (T0258) fires on the Titan.
 - [ ] The first Titan and the first Guard spawn in a run each pop their name tag; the enemies reference lists both.
-- [ ] Every wave except 20 is byte-identical to today (wave 10 and every later multiple of 10 still sends the Colossus); the Titan and the Guard never appear in a normal mix.
+- [ ] Every wave except 20 is byte-identical to today (wave 10 and 40 still send the Colossus; wave 30 sends the Colossus unless T0266's Orb has landed first — assert what wave 30 currently sends, don't pin it); the Titan and the Guard never appear in a normal mix.
 
 ## Design (architect, desktop)
 

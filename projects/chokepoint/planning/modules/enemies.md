@@ -27,12 +27,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-11 in the game, from game/src/content/enemies/ (the real values).
+12 in the game, from game/src/content/enemies/ (the real values).
 
 **By `behavior`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
 - `dash`: Dasher
-- `walk`: Dot, Dart, Block, Sprinter, Splitter, Hauler, Mute, Ward, Bulwark, Splinter
+- `walk`: Dot, Dart, Block, Colossus, Sprinter, Splitter, Hauler, Mute, Ward, Bulwark, Splinter
 
 ### Dot (`dot`)
 - description: "The basic walker: steady speed, middling health."
@@ -66,6 +66,19 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - threat: 4
 - fromWave: 4
 - look: shape square, color purple, size 0.26
+
+### Colossus (`colossus`)
+- description: "The whole wave in one shape: at half health it is out of reach for a beat, again every 8 s."
+- behavior: walk
+- hp: 720
+- speed: 0.9
+- gold: 20
+- livesCost: 1
+- threat: 50
+- fromWave: 10
+- spawnOnly: true
+- outOfReach: hpFrac 0.5, telegraphSec 0.5, phaseSec 2.5, periodSec 8
+- look: shape square, color purple, size 0.45
 
 ### Dasher (`dasher`)
 - description: "Crawls, stops to wind up, then dashes: catch it mid-stop."
