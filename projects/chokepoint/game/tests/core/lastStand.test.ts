@@ -15,6 +15,15 @@ describe('isLastStand', () => {
     r.lives = 1; // a later leak back to one life turns it on again
     expect(isLastStand(r)).toBe(true);
   });
+
+  it('is off for the Iron mode: its one life is the chosen risk, not a last stand', () => {
+    const r = new RunState(1);
+    r.mode = 'iron';
+    r.lives = 1;
+    expect(isLastStand(r)).toBe(false);
+    r.lives = 2; // the streak's payback
+    expect(isLastStand(r)).toBe(false);
+  });
 });
 
 describe('killGold', () => {
@@ -25,5 +34,12 @@ describe('killGold', () => {
     expect(killGold(r, 4)).toBe(8);
     r.lives = 2;
     expect(killGold(r, 4)).toBe(4); // back to normal the moment a life comes back
+  });
+
+  it('pays the bounty normally on an Iron run, even at one life', () => {
+    const r = new RunState(1);
+    r.mode = 'iron';
+    r.lives = 1;
+    expect(killGold(r, 4)).toBe(4);
   });
 });

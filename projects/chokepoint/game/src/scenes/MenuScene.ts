@@ -21,6 +21,7 @@ const MARGIN = 16;
 const GAP = 28;
 const CAPTION_GAP = 8;
 const BUTTON_H = 60;
+const IRON_H = 68; // the Iron card carries a title and a line, so it is taller than a one-line button
 
 /** A faint augment shape drifting across the background. */
 interface Drifter {
@@ -75,6 +76,16 @@ export class MenuScene extends Phaser.Scene {
     const card = buildProfileCard(this, p);
     const button = makeButton(this, 0, 0, 'Play', play, { width: 200, height: 60, fontSize: 24, radius: 30, fill: PALETTE.ink });
     const playBox = this.add.container(0, 0, [button.container]);
+    // The Iron mode: the same run at one life that pays double coins, chosen before wave 1.
+    const iron = makeButton(this, 0, 0, '', () => {
+      clearSavedRun(window.localStorage); // a new run abandons a saved one for nothing
+      this.registry.set('ironMode', true);
+      this.scene.start(SCENES.game);
+    }, { width: 220, height: IRON_H, radius: 30 });
+    iron.label.setVisible(false);
+    const ironTitle = this.add.text(0, -10, 'Iron', titleStyle(24)).setOrigin(0.5);
+    const ironLine = this.add.text(0, 16, '1 life · 2× coins', textStyle(14, PALETTE.muted)).setOrigin(0.5);
+    iron.content.add([ironTitle, ironLine]);
     const savedRun = loadSavedRun(window.localStorage);
     let resume: Button | undefined;
     if (savedRun) {
@@ -127,6 +138,7 @@ export class MenuScene extends Phaser.Scene {
     const fadeIn: (Phaser.GameObjects.Container | Phaser.GameObjects.Text)[] = [card.container, how];
     if (resume) fadeIn.push(resume.container);
     fadeIn.push(playBox);
+    fadeIn.push(iron.container);
     fadeIn.push(tech.container);
     fadeIn.push(techLine);
     fadeIn.push(augments.container);
@@ -154,7 +166,7 @@ export class MenuScene extends Phaser.Scene {
       // The gap between the road and the column counts for the fit, too.
       let below = GAP + title.height + GAP + cardH + GAP + howH + GAP;
       if (resume) below += BUTTON_H + GAP;
-      below += BUTTON_H + GAP + BUTTON_H + CAPTION_GAP + techLine.height + GAP + BUTTON_H;
+      below += BUTTON_H + GAP + IRON_H + GAP + BUTTON_H + CAPTION_GAP + techLine.height + GAP + BUTTON_H;
       if (boards) below += GAP + BUTTON_H;
       if (ghost && ghostLine) below += GAP + BUTTON_H + CAPTION_GAP + ghostLine.height + GAP;
       below += (ghost && ghostLine ? 0 : GAP) + hint.height; // the gap above the hint (the ghost's line adds its own)
@@ -199,6 +211,9 @@ export class MenuScene extends Phaser.Scene {
       }
       playBox.setScale(s);
       playBox.setPosition(cx, put(BUTTON_H));
+      gap(GAP);
+      iron.container.setScale(s);
+      iron.container.setPosition(cx, put(IRON_H));
       gap(GAP);
       tech.container.setScale(s);
       tech.container.setPosition(cx, put(BUTTON_H));

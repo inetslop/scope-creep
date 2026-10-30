@@ -11,6 +11,9 @@ import { Rng } from './rng';
  */
 export type RunPhase = 'build' | 'wave' | 'draft' | 'over';
 
+/** How the run was started: a normal run, or the Iron mode (one life, doubled coins). */
+export type RunMode = 'play' | 'iron';
+
 /** Everything about the current run that isn't an engine object. Shared through the registry as 'run'. */
 export class RunState {
   readonly seed: number;
@@ -19,6 +22,8 @@ export class RunState {
   readonly rng: Rng;
   gold: number = START.gold;
   lives: number = START.lives;
+  /** How the run was started; the Iron mode starts at one life and pays doubled coins. */
+  mode: RunMode = 'play';
   /** Gold off a tower's second slot from the owned "Slot II" tech nodes (0 in resumed runs). */
   slotDiscount = 0;
   /** The pre-wave-1 draft offers a fourth card (the "Fourth card" node, off in resumed runs). */

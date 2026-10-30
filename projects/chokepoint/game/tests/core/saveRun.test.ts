@@ -16,6 +16,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   bgen: 2,
   gold: 260,
   lives: 17,
+  mode: 'play',
   wave: 3,
   phase: 'build',
   hand: [{ id: 'frost', tier: 'rare' }],
@@ -112,6 +113,18 @@ describe('saveRun', () => {
     const store = memory();
     saveRun(store, sample({ lengthMul: 1.25, bends: 1 }));
     expect(loadSavedRun(store)).toEqual(sample({ lengthMul: 1.25, bends: 1 }));
+  });
+
+  it('round-trips an Iron save, and a save written without the key loads as play', () => {
+    const store = memory();
+    saveRun(store, sample({ mode: 'iron', lives: 1 }));
+    expect(loadSavedRun(store)).toEqual(sample({ mode: 'iron', lives: 1 }));
+    const without = { ...sample() } as Record<string, unknown>;
+    delete without.mode; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
+    expect(loadSavedRun(store)).toEqual(sample());
+    broken({ mode: 'ghost' });
+    broken({ mode: 1 });
   });
 
   it('rejects a broken hand or towers', () => {

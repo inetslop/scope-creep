@@ -10,7 +10,7 @@ import { Board } from '../systems/Board';
 import { makeButton } from '../ui/button';
 import { makeCard } from '../ui/card';
 import { display, uiCamera, viewSize } from '../ui/display';
-import { titleStyle } from '../ui/text';
+import { textStyle, titleStyle } from '../ui/text';
 import { getRun, onResize, SCENES } from './keys';
 
 /** The coin icon beside "+N coins": its shown size (the 28-unit texture at artScale 1.5) and the small fixed gap. */
@@ -52,6 +52,7 @@ export class RewardsScene extends Phaser.Scene {
   private scoreText!: Phaser.GameObjects.Text;
   private coinText!: Phaser.GameObjects.Text;
   private coinIcon!: Phaser.GameObjects.Image;
+  private ironTag?: Phaser.GameObjects.Text;
 
   constructor() {
     super(SCENES.rewards);
@@ -66,15 +67,17 @@ export class RewardsScene extends Phaser.Scene {
     const profile = loadProfile(window.localStorage);
     const lastRun = profile.lastRun;
     const cleanPay = cleanWavePay(profile.purchased);
+    const mul = run.mode === 'iron' ? 2 : 1; // Iron pays the doubled formula: node terms first, then doubled
     this.waves = lastRun ? lastRun.wave : run.wavesCleared;
     this.stopped = run.kills; // the ledger stores no stopped count; the card printed run.kills
     this.clean = run.cleanWaves;
     this.combo = run.bestCombo;
     this.score = run.score; // the same number the end-of-run screen shows
-    this.coins = lastRun ? lastRun.coins : coinsForRun({ waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed, bgen: run.bgen }, cleanPay);
+    this.coins = lastRun ? lastRun.coins : coinsForRun({ waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed, bgen: run.bgen }, cleanPay, mul);
     this.elapsed = 0;
     this.cleanText = undefined;
     this.comboText = undefined;
+    this.ironTag = undefined; // the scene instance is reused between runs; a tag from an Iron run must not linger
     const flawless = this.waves === this.clean && this.waves > 0; // every held wave was clean
     let closed = false;
     const menu = (): void => {
@@ -116,7 +119,7 @@ export class RewardsScene extends Phaser.Scene {
     const scoreRecipe = recipe(`waves +${run.wavesCleared * 100} · stopped +${run.kills}`);
     this.coinText = this.add.text(0, 0, '+0 coins', titleStyle(28, PALETTE.goldText)).setOrigin(0.5);
     this.coinIcon = artScale(this.add.image(0, 0, COIN_TEXTURE), 1.5);
-    const coinRecipe = recipe(`waves +${this.waves} · stopped +${Math.floor(this.stopped / 10)} · clean +${this.clean * cleanPay}`);
+    const coinRecipe = recipe(`waves +${this.waves * mul} · stopped +${Math.floor(this.stopped / 10) * mul} · clean +${this.clean * cleanPay * mul}`);
     const boardText = this.add.text(0, 0, `Board ${boardCode(run.seed)}`, titleStyle(22, PALETTE.muted)).setOrigin(0.5);
     let flawlessText: Phaser.GameObjects.Text | undefined;
     let flawlessStar: Phaser.GameObjects.Image | undefined;
@@ -150,6 +153,12 @@ export class RewardsScene extends Phaser.Scene {
     const panel = makeCard(this, 0, 0, panelW, col.height, 28);
     title.setY(top + col.ys[0]);
     this.wavesText.setY(top + col.ys[1]);
+    if (run.mode === 'iron') {
+      // Nothing else says which mode the run was: a small muted tag beside the waves line.
+      this.ironTag = this.add.text(0, 0, 'Iron', textStyle(13, PALETTE.muted, { fontStyle: 'bold' })).setOrigin(0.5);
+      this.ironTag.setY(top + col.ys[1]);
+      this.ironTag.setX(this.wavesText.width / 2 + 8 + this.ironTag.width / 2);
+    }
     this.stoppedText.setY(top + col.ys[2]);
     let i = 3;
     if (this.cleanText) this.cleanText.setY(top + col.ys[i++]);
@@ -175,6 +184,7 @@ export class RewardsScene extends Phaser.Scene {
     parts.push(this.scoreText, scoreRecipe, this.coinText, this.coinIcon, coinRecipe, boardText);
     if (flawlessText && flawlessStar) parts.push(flawlessText, flawlessStar);
     parts.push(menuButton.container);
+    if (this.ironTag) parts.push(this.ironTag);
     const box = this.add.container(0, 0, parts).setDepth(2);
 
     const layout = (width: number, height: number): void => {
@@ -194,6 +204,8 @@ export class RewardsScene extends Phaser.Scene {
     const k = Math.min(1, this.elapsed / 0.6);
     const kc = Math.min(1, this.elapsed / 1.0);
     this.wavesText.setText(`Waves held ${Math.round(this.waves * k)}`);
+    // The number grows while counting up, and the tag sits right of it.
+    if (this.ironTag) this.ironTag.setX(this.wavesText.width / 2 + 8 + this.ironTag.width / 2);
     this.stoppedText.setText(`Stopped ${Math.round(this.stopped * k)}`);
     this.cleanText?.setText(`Clean ${Math.round(this.clean * k)}`);
     this.comboText?.setText(`Best combo ×${Math.round(this.combo * k)}`);

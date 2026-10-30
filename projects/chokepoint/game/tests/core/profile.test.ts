@@ -21,6 +21,22 @@ describe('profile', () => {
     expect(coinsForRun({ waves: 12, stopped: 148, clean: 5, seed: 1, bgen: 2 }, 2)).toBe(36); // the waves and stopped terms are untouched
   });
 
+  it('the Iron multiplier doubles the whole payout, after the claim node has applied', () => {
+    expect(coinsForRun({ waves: 12, stopped: 148, clean: 5, seed: 1, bgen: 2 }, 1, 2)).toBe(62); // (12 + 14 + 5) * 2
+    expect(coinsForRun({ waves: 12, stopped: 148, clean: 5, seed: 1, bgen: 2 }, 2, 2)).toBe(72); // the node's doubled clean term is doubled too
+    expect(coinsForRun({ waves: 0, stopped: 19, clean: 1, seed: 1, bgen: 2 }, 2, 2)).toBe(6); // (1 + 2) * 2
+    expect(coinsForRun({ waves: 0, stopped: 0, clean: 0, seed: 1, bgen: 2 }, 2, 2)).toBe(0);
+  });
+
+  it('a recorded Iron run pays the doubled payout', () => {
+    const store = memory();
+    store.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2'] }));
+    const owned = recordRun(store, { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2, mul: 2 });
+    expect(owned.coins).toBe(16); // (1 + 1 + 6) * 2, the claim node's term first
+    expect(recordRun(memory(), { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2, mul: 2 }).coins).toBe(10); // (1 + 1 + 3) * 2
+    expect(recordRun(memory(), { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2 }).coins).toBe(5); // an ordinary run is untouched
+  });
+
   it('a recorded run pays the doubled clean term only once the claim node is owned', () => {
     const store = memory();
     store.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2'] }));

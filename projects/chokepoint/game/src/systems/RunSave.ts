@@ -39,6 +39,7 @@ export class RunSave {
       lengthMul: this.game.mapLengthMul,
       gold: run.gold,
       lives: run.lives,
+      mode: run.mode,
       wave: run.wave,
       phase,
       hand: run.hand.map((c) => ({ id: c.id, tier: c.tier })),
@@ -60,6 +61,7 @@ export class RunSave {
     const run = game.run;
     run.gold = saved.gold;
     run.lives = saved.lives;
+    run.mode = saved.mode;
     run.wave = saved.wave;
     run.kills = saved.kills;
     run.cleanWaves = saved.cleanWaves;

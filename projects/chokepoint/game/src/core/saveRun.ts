@@ -1,6 +1,7 @@
 import { MAX_SLOTS } from '../config';
 import { AUGMENTS } from '../content/augments';
 import type { AugmentCopy, Tier } from '../content/types';
+import type { RunMode } from './run';
 import { TIER_ORDER } from './tiers';
 
 /**
@@ -38,6 +39,8 @@ export interface SavedRun {
   bgen: number;
   gold: number;
   lives: number;
+  /** How the run was started; the Iron mode's one life and doubled coins resume with it. */
+  mode: RunMode;
   /** The wave being fought, or the last one fought (0 before the first). */
   wave: number;
   phase: 'build' | 'wave';
@@ -88,6 +91,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
   if (p.bgen !== undefined && !inInt(p.bgen, 1, 8)) return undefined;
   if (!inRange(p.gold, 0, 1e6)) return undefined;
   if (!inInt(p.lives, 0, 1e6) || !inInt(p.kills, 0, 1e6) || !inInt(p.cleanWaves, 0, 1e6)) return undefined;
+  if (p.mode !== undefined && p.mode !== 'play' && p.mode !== 'iron') return undefined;
   if (typeof p.rerollUsed !== 'boolean') return undefined;
   if (!Array.isArray(p.hand) || p.hand.length > 100 || !p.hand.every(isCopy)) return undefined;
   if (!Array.isArray(p.towers) || p.towers.length > 200) return undefined;
@@ -109,6 +113,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
     bgen: inInt(p.bgen, 1, 8) ? p.bgen : 1,
     gold: p.gold,
     lives: p.lives,
+    mode: p.mode === 'iron' ? 'iron' : 'play',
     wave: p.wave,
     phase: p.phase,
     hand: p.hand as AugmentCopy[],

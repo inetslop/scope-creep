@@ -4,11 +4,12 @@ title: "Iron: the mode that plays a run at one life for double coins"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T00:29:56Z
 claimed_at: 2026-10-30T05:16:42Z
+finished_at: 2026-10-30T07:03:47Z
 epic: E6
 ---
 
@@ -109,3 +110,30 @@ add `if (this.ironTag) parts.push(this.ironTag);` after `parts` is made, and in 
 - `tests/core/lastStand.test.ts`: Iron run at 1 life → `isLastStand` false and `killGold(r, 4) === 4`.
 - `tests/core/profile.test.ts`: `coinsForRun({waves:12, stopped:148, clean:5, seed:1}, 2, 2) === 72` (node terms first, then doubled); `recordRun` with `mul: 2` stores doubled coins.
 - `tests/core/saveRun.test.ts`: `sample()` gains `mode: 'play'`; round-trip `mode: 'iron'`; a JSON save without `mode` loads as `'play'`; `broken({ mode: 'ghost' })`.
+
+## Result (attempt 1, asus)
+
+Added the Iron mode: a white "Iron / 1 life · 2× coins" card under Play on the menu (`MenuScene.ts`, card included in the fit-sum and layout so every option still fits without scrolling at 412x915 and 1280x720), which starts a run with exactly 1 life and skips the tech tree's "Life +1" nodes while gold nodes still apply (`GameScene.ts`, new `RunState.mode` in `core/run.ts`). The last stand is off for Iron in one gate — `isLastStand` now requires `mode === 'play'` (`core/lastStand.ts`), which kills the banner, sting, red/pulsing lives and kill-gold doubling at once. Coins pay 2× through the one formula: `coinsForRun` gained a `mul` param applied after the claim node's term (`core/profile.ts`), passed by the live tally, pause "worth" line, `recordRun` and the claim card, whose recipe terms are each doubled so they sum to the payout and whose run line wears a muted "Iron" tag that tracks the counting-up number (`StatsCard.ts`, `PauseScene.ts`, `GameOverScene.ts`, `RewardsScene.ts`). Closed Iron runs save and resume their mode and 1 life (`core/saveRun.ts` — old saves without the field load as 'play', invalid values rejected — and `systems/RunSave.ts`), and two invariants (`iron.taken`, `iron.lives`) guard it; normal Play runs are untouched (every change gated on `mode === 'iron'` or a param defaulting to the old value), confirmed by the passing smoke run. One deliberate deviation: the design's menu fit line was missing the `GAP` between the tech caption and the Augments button t…
+
+- Self-review: APPROVE
+- Time: 107.1 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/lastStand.ts        |  5 +++--
+ projects/chokepoint/game/src/core/profile.ts          | 11 +++++++----
+ projects/chokepoint/game/src/core/run.ts              |  5 +++++
+ projects/chokepoint/game/src/core/saveRun.ts          |  5 +++++
+ projects/chokepoint/game/src/debug/runChecks.ts       |  2 ++
+ projects/chokepoint/game/src/scenes/GameOverScene.ts  |  2 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts      |  5 +++--
+ projects/chokepoint/game/src/scenes/MenuScene.ts      | 17 ++++++++++++++++-
+ projects/chokepoint/game/src/scenes/PauseScene.ts     |  2 +-
+ projects/chokepoint/game/src/scenes/RewardsScene.ts   | 18 +++++++++++++++---
+ projects/chokepoint/game/src/systems/RunSave.ts       |  2 ++
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts      |  2 +-
+ projects/chokepoint/game/tests/core/lastStand.test.ts | 16 ++++++++++++++++
+ projects/chokepoint/game/tests/core/profile.test.ts   | 16 ++++++++++++++++
+ projects/chokepoint/game/tests/core/saveRun.test.ts   | 13 +++++++++++++
+ 15 files changed, 106 insertions(+), 15 deletions(-)
+```

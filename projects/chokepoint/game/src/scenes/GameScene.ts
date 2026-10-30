@@ -78,6 +78,7 @@ export class GameScene extends Phaser.Scene {
 
     const saved = this.registry.pop('resumeRun') as SavedRun | undefined;
     const ghost = this.registry.pop('ghostSeed') as { seed: number; bgen: number } | undefined;
+    const iron = this.registry.pop('ironMode') === true;
     const seed = saved ? saved.seed : (flags.seed ?? ghost?.seed ?? Math.floor(Math.random() * 2 ** 31));
     const bgen = saved ? saved.bgen : (ghost ? ghost.bgen : 2);
     this.run = new RunState(seed, bgen);
@@ -87,8 +88,8 @@ export class GameScene extends Phaser.Scene {
       const profile = loadProfile(window.localStorage);
       const tech = startBonuses(profile.purchased);
       this.run.gold += tech.gold;
-      this.run.lives += tech.life;
-      this.techLife = tech.life;
+      if (iron) { this.run.mode = 'iron'; this.run.lives = 1; } // the "Life +1" nodes don't apply; gold still does (line above)
+      else { this.run.lives += tech.life; this.techLife = tech.life; }
       const draft = draftTech(profile.purchased);
       this.run.slotDiscount = draft.slotDiscount;
       this.run.fourthCard = draft.fourthCard;
