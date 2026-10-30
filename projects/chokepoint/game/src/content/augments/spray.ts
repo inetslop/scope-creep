@@ -6,8 +6,8 @@ export const SPRAY_PELLETS = 5;
 export const spray: AugmentDef = {
   id: 'spray',
   name: 'Spray',
-  description: 'Blasts 5 pellets in a cone: deadly up close. Added: +2 pellets per blast.',
-  asTower: 'Blasts 5 pellets in a cone: deadly up close.',
+  description: 'Blasts 5 pellets in a cone: deadly up close, 15% hit for double. Added: +2 pellets per blast.',
+  asTower: 'Blasts 5 pellets in a cone: 15% hit for double.',
   asAdded: '+2 pellets per blast.',
   look: { shape: 'diamond', color: 'yellow', size: 0.24 },
   first: { kind: 'spray', damage: 4, range: 2.5, rate: 1 / 1.2, spray: SPRAY_PELLETS },

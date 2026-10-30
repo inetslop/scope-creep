@@ -1,4 +1,5 @@
 import type { TowerSpec } from './augments';
+import { SPRAY_CRIT_CHANCE } from './sprayCrit';
 
 /**
  * The damage a tower deals per second from its spec: the damage of its hits times how often
@@ -7,7 +8,8 @@ import type { TowerSpec } from './augments';
  * adds nothing - Frost, Push, Anchor,
  * Mark, Mint, Rally - and an empty tower (no augment) is 0. Extra shots and splash hit more
  * enemies, but the damage to one is still damage times rate. A spray's pellets all fly at the
- * one enemy up close, so every pellet counts: damage times pellets times rate. A beam tower's
+ * one enemy up close, so every pellet counts: damage times pellets times rate, each pellet also
+ * expected to crit now and then (×1.15). A beam tower's
  * lines count too: the main line plus a ray per Bolt and a line per Beam added, every one
  * scaled by Rapid's net factor on the beam and the Rally's speed (`rallyRateMul`).
  */
@@ -21,8 +23,9 @@ export function towerDps(spec: TowerSpec, rallyRateMul = 1): number {
   }
   // A shot or pulse term: the damage of its hits times its rate against one enemy.
   if (spec.kind === 'shot' || spec.kind === 'pulse') dps += spec.damage * spec.rate;
-  // A spray's term: every pellet of the blast flies at the enemy up close, so all of them count.
-  if (spec.kind === 'spray') dps += spec.damage * spec.spray * spec.rate;
+  // A spray's term: every pellet of the blast flies at the enemy up close, so all of them count —
+  // each also rolling for its double-damage crit (core/sprayCrit.ts), so the expected damage runs (1 + chance) high.
+  if (spec.kind === 'spray') dps += spec.damage * spec.spray * spec.rate * (1 + SPRAY_CRIT_CHANCE);
   if (spec.burn) dps += spec.burn.dps * spec.damageMul;
   return dps;
 }

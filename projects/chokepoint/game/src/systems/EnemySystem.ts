@@ -17,6 +17,7 @@ import { hook } from '../debug/testHook';
 import { Enemy } from '../entities/Enemy';
 import type { Tower } from '../entities/Tower';
 import { drawEnemyMarks } from './enemyMarks';
+import { critChip } from './fx/critChip';
 import { ENEMY_HOOKS } from './enemyHooks';
 import type { EnemyHook } from './enemyHooks/hook';
 import type { Sfx } from '../audio/Sfx';
@@ -43,6 +44,8 @@ export interface HitPayload {
   mark: { pct: number; x: number; y: number } | undefined;
   /** The burn this hit sets ablaze, `dps` per second for `sec` seconds (Ember); undefined without one. */
   burn: Burn | undefined;
+  /** This pellet of a Spray crits: it doubled its own damage and shows a chip at the impact (T0299). */
+  crit?: boolean;
   /** The tower's color, for the shot and the burst. */
   color: number;
   /** The tower that made the hit: its mints (and the mints around the kill) decide the extra kill gold. */
@@ -175,6 +178,8 @@ export class EnemySystem {
       this.fx.ring(target.x, target.y, payload.splash, payload.color);
     }
     for (const e of victims) this.strike(e, payload, flight);
+    // A critting pellet shows its moment where it landed (T0299); splash and pierce victims strike through and don't.
+    if (payload.crit) critChip(this.fx, target.x, target.y);
   }
 
   /** Damage and slow on one enemy, handling the kill. Returns true when it died. */

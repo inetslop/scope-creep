@@ -5,6 +5,7 @@ import { beam } from '../../src/content/augments/beam';
 import { rapid } from '../../src/content/augments/rapid';
 import type { AugmentCopy, Tier } from '../../src/content/types';
 import { describeSpec, draftCardCount, rollOffer, slotCost, towerColor, towerSpec } from '../../src/core/augments';
+import { SPRAY_CRIT_CHANCE } from '../../src/core/sprayCrit';
 import { towerDps } from '../../src/core/towerDps';
 import { Rng } from '../../src/core/rng';
 import { rollTier, tierAddedLine, tierFirst, tierTowerLine } from '../../src/core/tiers';
@@ -130,10 +131,10 @@ describe('spray (Spray)', () => {
     expect(towerSpec([copy('spray', 'epic')]).rate).toBeCloseTo(1 / 0.9);
   });
 
-  it('the per-target estimate counts every pellet of the blast up close', () => {
-    expect(towerDps(spec('spray'))).toBeCloseTo(4 * 5 / 1.2);
-    expect(towerDps(towerSpec([copy('spray', 'rare')]))).toBeCloseTo(5 * 5 / 1.05);
-    expect(towerDps(towerSpec([copy('spray', 'epic')]))).toBeCloseTo(6 * 5 / 0.9);
+  it('the per-target estimate counts every pellet of the blast up close, with the expected crits', () => {
+    expect(towerDps(spec('spray'))).toBeCloseTo(4 * 5 / 1.2 * (1 + SPRAY_CRIT_CHANCE));
+    expect(towerDps(towerSpec([copy('spray', 'rare')]))).toBeCloseTo(5 * 5 / 1.05 * (1 + SPRAY_CRIT_CHANCE));
+    expect(towerDps(towerSpec([copy('spray', 'epic')]))).toBeCloseTo(6 * 5 / 0.9 * (1 + SPRAY_CRIT_CHANCE));
   });
 
   it('the tower line says how many pellets the blast fires, and only for a spray', () => {

@@ -4,11 +4,12 @@ title: "Spray crits: the shotgun rolls for double damage (the T0282 re-file)"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T18:18:58Z
 claimed_at: 2026-10-30T22:59:45Z
+finished_at: 2026-10-30T23:33:27Z
 epic: E4
 design_attempts: 1
 ---
@@ -84,3 +85,23 @@ No existing augment rolls per-hit damage variance; the crit joins no `first.kind
 - `tests/core/sprayCrit.test.ts`: `sprayPelletDamage(8, 0) → { damage: 16, crit: true }` (exactly 2×; damageMul applied before — e.g. `sprayPelletDamage(4 * 5 / 4, 0).damage === (4 * 5 / 4) * 2`); `sprayPelletDamage(8, 0.5) → { damage: 8, crit: false }` (byte-identical to today); threshold `roll < 0.15` (0.15 is not a crit).
 - `tests/core/augments.test.ts` lines 134–136: `4 * 5 / 1.2 * (1 + SPRAY_CRIT_CHANCE)` etc. (the other augments' `towerDps` tests stay).
 - The chip and the crit kill are smoke, not unit tests: the chip shows on a crit pellet's impact (no chip on a non-crit), and a crit kill pays gold/mints/combo/`source.kills` exactly like a non-crit (`kill()` is unchanged).
+
+## Result (attempt 1, asus)
+
+Spray pellets now each roll 15% for double damage (new pure core in `src/core/sprayCrit.ts`, rolled per pellet from the run's seeded RNG in `TowerSystem.firePellets`, carried on per-pellet payload copies through the `fireCone` array signature), shown as a small yellow chip at the impact point (`src/systems/fx/critChip.ts` from `EnemySystem.hit()`); a crit kill pays exactly like a normal one. The spray term in `towerDps` now counts expected crits (×1.15), the card/codex lines read "Blasts 5 pellets in a cone: 15% hit for double.", and the split needles stay flat-12 and never crit.
+
+- Self-review: APPROVE
+- Time: 33.7 min
+
+```
+.../chokepoint/game/src/content/augments/spray.ts  |  4 ++--
+ projects/chokepoint/game/src/core/sprayCrit.ts     |  9 ++++++++
+ projects/chokepoint/game/src/core/towerDps.ts      |  9 +++++---
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  5 +++++
+ .../game/src/systems/ProjectileSystem.ts           | 11 +++++-----
+ .../chokepoint/game/src/systems/TowerSystem.ts     | 11 ++++++++--
+ .../chokepoint/game/src/systems/fx/critChip.ts     | 11 ++++++++++
+ .../chokepoint/game/tests/core/augments.test.ts    |  9 ++++----
+ .../chokepoint/game/tests/core/sprayCrit.test.ts   | 24 ++++++++++++++++++++++
+ 9 files changed, 77 insertions(+), 16 deletions(-)
+```

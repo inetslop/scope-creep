@@ -56,14 +56,15 @@ export class ProjectileSystem {
     this.take().fire(x, y, target, payload, speed, false, aim);
   }
 
-  /** A Spray's blast: `count` pellets from (x, y) in a 50-degree cone centred on the aim at `target`, each flying straight to `maxDist` board units. */
-  fireCone(x: number, y: number, target: Enemy, count: number, payload: HitPayload, speed: number, maxDist: number): void {
+  /** A Spray's blast: one pellet per `payloads` entry from (x, y) in a 50-degree cone centred on the aim
+   * at `target`, each flying straight to `maxDist` board units (T0299: each payload carries its own crit roll). */
+  fireCone(x: number, y: number, target: Enemy, payloads: HitPayload[], speed: number, maxDist: number): void {
     const blast = ++this.blastSeq;
     const a0 = Math.atan2(target.x - x, target.y - y);
     const half = (50 * Math.PI) / 180 / 2;
-    for (let i = 0; i < count; i++) {
-      const a = count > 1 ? a0 - half + (2 * half * i) / (count - 1) : a0;
-      this.take().firePellet(x, y, Math.sin(a), Math.cos(a), payload, speed, maxDist, blast);
+    for (let i = 0; i < payloads.length; i++) {
+      const a = payloads.length > 1 ? a0 - half + (2 * half * i) / (payloads.length - 1) : a0;
+      this.take().firePellet(x, y, Math.sin(a), Math.cos(a), payloads[i]!, speed, maxDist, blast);
     }
   }
 

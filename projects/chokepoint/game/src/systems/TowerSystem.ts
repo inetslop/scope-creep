@@ -8,13 +8,14 @@ import type { Cell } from '../core/map';
 import type { RunState } from '../core/run';
 import { sellPrice, slotPrice } from '../core/techEffects';
 import { tierFirst } from '../core/tiers';
+import { sprayPelletDamage } from '../core/sprayCrit';
 import { hook } from '../debug/testHook';
 import { Tower } from '../entities/Tower';
 import type { Sfx } from '../audio/Sfx';
 import { haptic } from '../input/haptics';
 import type { Board } from './Board';
 import { ATTACKS } from './attacks';
-import type { EnemySystem } from './EnemySystem';
+import type { EnemySystem, HitPayload } from './EnemySystem';
 import type { FxSystem } from './FxSystem';
 import { auraRing } from './fx/auraRing';
 import type { ProjectileSystem } from './ProjectileSystem';
@@ -150,7 +151,13 @@ export class TowerSystem {
       },
       firePellets: (target, count, payload, maxDist) => {
         const m = t.muzzle(0);
-        this.projectiles.fireCone(m.x, m.y, target, count, payload, spec.projectileSpeed * CELL, maxDist);
+        // Every pellet of the blast rolls for double damage on its own (T0299): its copy carries the result.
+        const pellets: HitPayload[] = [];
+        for (let i = 0; i < count; i++) {
+          const r = sprayPelletDamage(payload.damage, this.run.rng.next());
+          pellets.push({ ...payload, damage: r.damage, crit: r.crit });
+        }
+        this.projectiles.fireCone(m.x, m.y, target, pellets, spec.projectileSpeed * CELL, maxDist);
       },
       strike: (target, payload) => this.enemies.strike(target, payload),
       fx: this.fx,
