@@ -3,12 +3,13 @@ id: T0304
 title: "Summary: the pause's page of the run so far"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-30T20:16:45Z
 claimed_at: 2026-10-30T20:16:48Z
-designer: desktop
+finished_at: 2026-10-30T20:20:10Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -31,3 +32,7 @@ While a run is on, the player can read the run's own numbers from the pause: one
 - [ ] No readout on the page duplicates the pause's own run line (wave, lives, gold, coins, worth).
 - [ ] Close and resume mid-run: the page shows the same values as before the close.
 - [ ] npm run check and the desktop/mobile smoke pass.
+
+## Rejected by architect (desktop)
+
+The "richest minute, +N gold" row has no data source — no per-minute gold is tracked in the run ledger or the run save (the T0082 "richest minute" is only the transient ×4 tag on the HUD's gold number), and the task's own criteria forbid adding a field to the run or profile, so that row cannot be read from the ledger as written; file the per-minute tracking (a RunState field, a window updater, and its save/restore) as its own task or drop the row before re-filing T0304.
