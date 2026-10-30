@@ -3,13 +3,11 @@ id: T0266
 title: "The third boss: wave 30 sends the Orb, and the Orb splits in two at half health"
 size: L
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-30T07:33:51Z
-claimed_at: 2026-10-30T07:33:55Z
 epic: E5
-designer: desktop
 ---
 
 ## Goal
@@ -80,3 +78,88 @@ The Shard's newness is its parent's: the Orb's mid-life split. The Shard itself 
 - [ ] The enemies reference lists the Orb ("wave 30") and the Shard ("from the Orb"); the boss card (if it has landed) shows the Orb's hp while it is alive, hides after the split, and wears no phase notch.
 - [ ] Wave 30 is the only wave that sends the Orb or a Shard (both stay out of every normal mix); every other wave is byte-identical to today (wave 10 and 40 keep sending the Colossus; wave 20 sends whatever T0259 has landed, or the Colossus).
 - [ ] No new HUD, no new sound, no new input.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/enemies/orb.ts` - the Orb's `EnemyDef` (id `orb`, name `Orb`, description "The whole wave in one cracked shape: at half health it splits into two Shards that keep walking.", behavior `walk`, hp 720, speed 0.9, gold 20, livesCost 1, threat 150 // a wave-30 budget's worth: it is the wave, fromWave 30, spawnOnly: true, splitsAt: { hpFrac: 0.5, into: 'shard' }, look { shape: 'hexagon', color: 'purple', size: 0.5 })
+- create `src/content/enemies/shard.ts` - the Shard's `EnemyDef` (id `shard`, name `Shard`, description "A small, fast piece of a split Orb.", behavior `walk`, hp 180, speed 1.3, gold 12, livesCost 1, threat 2, fromWave 30, spawnOnly: true, no splitsAt/splitsInto, look { shape: 'hexagon', color: 'purple', size: 0.2 })
+- create `src/core/midSplit.ts` - pure split rule (see Interfaces); modeled on `core/split.ts`
+- create `src/systems/enemyHooks/midSplit.ts` - the hook that performs the split (see Interfaces); modeled on `systems/enemyHooks/split.ts`
+- create `tests/core/midSplit.test.ts` - pins the crossing test and the hp inheritance (see Tests)
+- edit `src/content/types.ts` - one new optional field on `EnemyDef`, directly after `splitsInto` (line 33)
+- edit `src/content/enemies/index.ts` - two imports (orb after colossus, shard after orb) and two `ENEMIES` lines after `colossus,`
+- edit `src/core/waves.ts` - the boss branch's one spawn line (wave 30 → `orb`) plus its two doc comments; nothing else
+- edit `src/systems/enemyHooks/index.ts` - import + one `ENEMY_HOOKS` line after `split,` (before `nameTag`, so a first Shard is name-tagged the frame it spawns)
+- edit `src/art/entities.ts` - one `if (e.id === 'orb')` crack block after the `ward` block in the enemy paint loop
+- edit `src/scenes/EnemiesScene.ts` - the parent label (lines 76-77) recognizes `splitsAt`
+- edit `src/debug/runChecks.ts` - one invariant line after `['enemies.reach', ...]`
+- edit `tests/content.test.ts` - size cap 0.45 → 0.5; a `splitsAt` validation block after the `outOfReach` block
+- edit `tests/core/waves.test.ts` - wave 30 now expects the Orb; two new expectations
+
+### Interfaces
+```ts
+// content/types.ts, EnemyDef, after `splitsInto?: string;`:
+/** The mid-life split (the Orb): when its hp first drops to `hpFrac` of its max after a hit and it survives, it vanishes with no kill and leaves two of `into` at its road spot, 0.25 cells either side (core/split.ts), each with half its hp after the triggering hit (core/midSplit.ts). */
+splitsAt?: { hpFrac: number; into: string };
+
+// core/midSplit.ts (import type { EnemyDef } from '../content/types'):
+export function atSplitLine(def: EnemyDef, hp: number, maxHp: number): boolean {
+  return def.splitsAt !== undefined && hp > 0 && hp <= maxHp * def.splitsAt.hpFrac;
+}
+export function splitChildHp(hp: number): number {
+  return Math.max(1, Math.floor(hp / 2));
+}
+
+// systems/enemyHooks/midSplit.ts:
+import { CELL } from '../../config';
+import { getEnemy } from '../../content/enemies';
+import { splitDistances } from '../../core/split';
+import { atSplitLine, splitChildHp } from '../../core/midSplit';
+import { clearRing } from '../fx/clearRing';
+import type { MakeEnemyHook } from './hook';
+export const midSplit: MakeEnemyHook = ({ board, enemies, fx }) => ({
+  update() {
+    for (const e of enemies.all) {
+      if (!e.active || !atSplitLine(e.def, e.hp, e.maxHp)) continue;
+      const child = getEnemy(e.def.splitsAt!.into); // atSplitLine guarantees it
+      const half = splitChildHp(e.hp);
+      const x = e.x, y = e.y, d = e.distance; // capture before spawning: spawn may recycle this slot
+      e.despawn(); // gone with no kill: no gold, no combo, no onKill, no name tag, no Toll, no count
+      for (const dd of splitDistances(d, board.path.length)) enemies.spawn(child, half / child.hp, dd);
+      clearRing(fx, x, y, e.def.look.size * CELL); // T0229's soft white ring, 300 ms
+    }
+  },
+});
+```
+Waves boss branch (`core/waves.ts:118`): `return { number: wave, spawns: [{ enemy: wave === 30 ? 'orb' : 'colossus', delaySec: 0 }], hpMul: waveHpMul(wave), tags: ['boss'] };` — keep the `planNormalWave(wave, rng, enemies)` call above it (it consumes the rng so later seeded plans don't shift).
+EnemiesScene lines 76-77 become:
+```ts
+const parent = def.spawnOnly ? ENEMIES.find((d) => d.splitsInto === def.id) ?? ENEMIES.find((d) => d.splitsAt?.into === def.id) : undefined;
+const wave = this.add.text(0, 0, parent ? (parent.splitsInto === def.id ? `from a ${parent.name}` : `from the ${parent.name}`) : `wave ${def.fromWave}`, textStyle(12, PALETTE.muted)).setOrigin(1, 0.5);
+```
+runChecks.ts: `['enemies.orb', (g) => (g.enemies.all.filter((e) => e.active && e.def.id === 'orb').length <= 1 ? null : 'more than one Orb alive')],`
+
+### Steps
+1. `types.ts` field → `orb.ts`/`shard.ts` → registry (both import lines and both `ENEMIES` lines, after `colossus`).
+2. `core/midSplit.ts`, then `systems/enemyHooks/midSplit.ts` + its two registry lines.
+3. `waves.ts` one line + comments.
+4. Art: in the `paintEntityTextures` loop, after the `ward` block, one `if (e.id === 'orb')` block: stroke `rgba(PALETTE.muted, 1)`, `lineWidth = Math.max(1, r * 0.1)`, round caps/joins, a slightly jagged vertical line down the face center — `moveTo(cx, cy - r * 0.55)`, `lineTo(cx - r * 0.08, cy - r * 0.06)`, `lineTo(cx + r * 0.06, cy + r * 0.12)`, `lineTo(cx, cy + r * 0.5)`, where `cx = size / 2, cy = size / 2 - depth / 2` (same center as the Splitter's crack). The Shard gets nothing (the generic loop covers it).
+5. EnemiesScene label, runChecks invariant.
+6. Tests: `content.test.ts` (cap + splitsAt block), `waves.test.ts` (below), new `tests/core/midSplit.test.ts`. Then `npm run check` and `npm run smoke`.
+Everything else is automatic and must stay untouched: name tags (the `nameTag` hook labels first spawn of any type), leaks/kills (plain `despawn()` skips `kill()`/`leak()` side effects), preview token row/chip/banner/teach line (read the plan's `spawns`/`tags`), save/resume (wave 30 re-derives its plan), MenuDemo (filters `spawnOnly`). No boss card or boss death moment exists yet (T0256/T0258) — nothing to wire.
+
+### Pitfalls
+- `splitsAt` (mid-life) and `splitsInto` (on death) are different fields. Do not put the Orb in `splitsInto`: `crackTick` would draw a live crack line on it, and the death-split hook would split it again on death. The Orb's crack is painted into the texture only.
+- The split uses a bare `e.despawn()` — never route the Orb through `kill()` (it is private anyway); that is what keeps gold, combo, onKill hooks, name tag, Mint, Toll and the "stopped" count out.
+- A single hit from over 50% to zero dies in `strike()` before the hook's `update` runs, so it is an ordinary boss kill with no Shards — do not add a kill path.
+- `enemies.spawn` during the `for...of enemies.all` iteration may push a new pool entry; that is safe (Shards have no `splitsAt`), but capture x/y/distance before spawning, since the first Shard can reuse the Orb's own slot.
+- The check runs in the hook `update` (after enemies moved, before towers fire next frame) — the Colossus's `reachClock` uses the same one-tick-late pattern. Known tolerated edge: an Orb that crosses to ≤50% and is then killed by an active Ember burn tick while at ≤~2 hp dies as an ordinary kill instead of splitting; leave it.
+- `tests/content.test.ts` asserts `look.size <= 0.45` — the Orb's 0.5 fails it; raise the cap to 0.5, do not shrink the Orb.
+- `tests/core/waves.test.ts:144` asserts wave 30 sends the Colossus — update it in the same change or the suite fails.
+- EnemiesScene: the Splinter's row must stay byte-identical ("from a Splitter"); the Orb reads "wave 30"; the Shard "from the Orb". The card gains two rows; its existing scale-to-fit (like the codex) handles 412x915 — check it visually.
+
+### Tests
+- `tests/core/midSplit.test.ts`: `atSplitLine(orb, 3660, 7320)` true (exactly half), `(orb, 3659, 7320)` true, `(orb, 3661, 7320)` false, `(orb, 0, 7320)` false (a corpse is an ordinary kill); `splitChildHp(316.8)` = 158 (a hit from 60% to 44% of base 720 leaves two Shards at 22% each); `splitChildHp(2)` = 1 and `splitChildHp(0.4)` = 1 (the minimum); a def without `splitsAt` (dot) never fires it.
+- `tests/core/waves.test.ts`: the boss test becomes `expect(plan.spawns).toEqual([{ enemy: wave === 30 ? 'orb' : 'colossus', delaySec: 0 }])` for [10, 20, 30, 40]; add "non-boss waves never send the Orb or a Shard" (waves 1-40, skip multiples of 10); add the wave-30 orb plan to the rng-stream test (seeds 1, 7, 42).
+- `tests/content.test.ts`: `expect(e.look.size).toBeLessThanOrEqual(0.5)`; after the `outOfReach` block: `if (e.splitsAt) { expect(e.splitsAt.hpFrac).toBeGreaterThan(0); expect(e.splitsAt.hpFrac).toBeLessThanOrEqual(1); expect(ENEMIES.some((d) => d.id === e.splitsAt.into)).toBe(true); }`.
