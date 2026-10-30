@@ -9,6 +9,7 @@ import { titanShield } from './titanShield';
 import { shieldDown } from './shieldDown';
 import { comboGold } from './comboGold';
 import { haulerLeak } from './haulerLeak';
+import { haulerTeach } from './haulerTeach';
 import { mintRing } from './mintRing';
 import { tollLeak } from './tollLeak';
 import { muteJam } from './muteJam';
@@ -48,6 +49,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   waveClose,
   nearMiss,
   haulerLeak,
+  haulerTeach,
   tollLeak,
   burnLeap,
   sprayNeedles,

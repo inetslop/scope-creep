@@ -47,6 +47,7 @@ export class RunState {
   rerollsUsed = 0; // rerolls the run has bought; the next one costs rerollCost(rerollsUsed)
   cleanStreak = 0; // clean waves in a row; a leak resets it to 0
   streakPaid = false; // the run's one +1 life for a streak of 3 was paid
+  haulerTold = false; // the run's one Hauler teach showed (T0307): a Hauler that leaked has paid
   private leaksThisWave = 0;
 
   constructor(seed: number, techOwned: readonly string[] = [], bgen: number = 2) {

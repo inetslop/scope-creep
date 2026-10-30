@@ -4,11 +4,12 @@ title: "The Hauler's extra leak cost, taught once"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T21:22:19Z
 claimed_at: 2026-10-30T22:20:51Z
+finished_at: 2026-10-30T23:07:46Z
 ---
 
 ## Goal
@@ -102,3 +103,21 @@ it('round-trips a hauler-told save, and a save written without the key loads as 
 
 ### Tests
 - The `saveRun.test.ts` round-trip above (older saves load as untold). No other unit tests: the chip is juice, and the auto "every hook builds" test covers the new hook.
+
+## Result (attempt 1, yoga)
+
+Taught the Hauler's extra leak cost at the exit, once. Added a leak hook `src/systems/enemyHooks/haulerTeach.ts` (registered in `enemyHooks/index.ts` after `haulerLeak`) that, on the run's first Hauler leak, pops the teach chip at the exit gate — and set a new `haulerTold` flag on `RunState` (persisted through `core/saveRun.ts` + `systems/RunSave.ts`) so a second Hauler leak and any resumed run show nothing. The chip is `src/systems/fx/haulerTold.ts`, a byte-identical copy of the first-leak chip with the text "the Hauler also takes 5 gold"; when the Hauler's leak is the run's first leak it waits 1.5 s (the first-leak chip's life) + 1.2 s so the two lines read one after the other, never overlapping. The leak itself (life, −5 gold, thud, jolt) is unchanged, and a run that holds every Hauler never shows the chip.
+
+- Self-review: APPROVE
+- Time: 46.9 min
+
+```
+projects/chokepoint/game/src/core/run.ts           |  1 +
+ projects/chokepoint/game/src/core/saveRun.ts       |  3 +++
+ projects/chokepoint/game/src/systems/RunSave.ts    |  2 ++
+ .../game/src/systems/enemyHooks/haulerTeach.ts     | 23 +++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../chokepoint/game/src/systems/fx/haulerTold.ts   | 26 ++++++++++++++++++++++
+ .../chokepoint/game/tests/core/saveRun.test.ts     | 12 ++++++++++
+ 7 files changed, 69 insertions(+)
+```

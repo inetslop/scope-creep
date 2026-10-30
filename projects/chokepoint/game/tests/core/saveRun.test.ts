@@ -24,6 +24,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   kills: 42,
   cleanWaves: 2,
   streakPaid: false,
+  haulerTold: false,
   rerollsUsed: 1,
   level: [],
   towers: [
@@ -175,6 +176,17 @@ describe('saveRun', () => {
     store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
     expect(loadSavedRun(store)).toEqual(sample());
     broken({ streakPaid: 'x' });
+  });
+
+  it('round-trips a hauler-told save, and a save written without the key loads as untold', () => {
+    const store = memory();
+    saveRun(store, sample({ haulerTold: true }));
+    expect(loadSavedRun(store)).toEqual(sample({ haulerTold: true }));
+    const without = { ...sample() } as Record<string, unknown>;
+    delete without.haulerTold; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
+    expect(loadSavedRun(store)).toEqual(sample());
+    broken({ haulerTold: 'x' });
   });
 
   it('migrates the old rerollUsed flag to the reroll count', () => {
