@@ -3,10 +3,12 @@ id: T0267
 title: "The leak thud: one soft low note when an enemy gets through"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T08:00:10Z
+claimed_at: 2026-10-30T08:00:54Z
+designer: yoga
 ---
 
 ## Goal
