@@ -1,12 +1,14 @@
 ---
 id: T0243
 title: "The draft shows where the card lands: a fit row on every offered card (the T0238 re-file)"
+assignee: desktop
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T00:29:56Z
+claimed_at: 2026-10-30T01:50:22Z
 epic: E4
 ---
 
