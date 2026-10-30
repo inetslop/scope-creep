@@ -3,11 +3,13 @@ id: T0261
 title: "The pool: the draft offers from a set that grows at each clear"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0260]
 attempts: 0
 created: 2026-10-30T05:49:22Z
+claimed_at: 2026-10-30T06:09:26Z
 epic: E3
+designer: cachyos-x8664
 ---
 
 ## Goal
