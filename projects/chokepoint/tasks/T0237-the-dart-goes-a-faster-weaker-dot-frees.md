@@ -1,12 +1,14 @@
 ---
 id: T0237
 title: "The Dart goes: a faster, weaker Dot frees the enemy cap"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T23:34:09Z
+claimed_at: 2026-10-30T10:26:24Z
 ---
 
 ## Goal
