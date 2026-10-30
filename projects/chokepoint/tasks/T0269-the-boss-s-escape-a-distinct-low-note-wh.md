@@ -3,11 +3,13 @@ id: T0269
 title: "The boss's escape: a distinct low note when the boss gets through"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0253]
 attempts: 0
 created: 2026-10-30T08:43:10Z
+claimed_at: 2026-10-30T09:03:18Z
 epic: E5
+designer: baby-mama
 ---
 
 ## Goal
