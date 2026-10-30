@@ -1,12 +1,14 @@
 ---
 id: T0268
 title: "The boss's arrival: the deep horn and the gate pulse"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0253, T0254]
-attempts: 0
+attempts: 1
 created: 2026-10-30T08:43:10Z
+claimed_at: 2026-10-30T11:34:42Z
 epic: E5
 ---
 
