@@ -3,11 +3,13 @@ id: T0253
 title: "The Colossus: wave 10 sends one big shape that goes out of reach at half health"
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T04:09:41Z
+claimed_at: 2026-10-30T04:09:43Z
 epic: E5
+designer: desktop
 ---
 
 ## Goal
