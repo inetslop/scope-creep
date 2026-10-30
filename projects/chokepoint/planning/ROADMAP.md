@@ -19,7 +19,7 @@ The game grows through epics: bigger features that take several tasks. One or tw
 ### E2 — Tech tree (done; history in planning/archive/ROADMAP.md)
 
 ### E3 — Levels: a run is a journey (dropped — 2026-10-30, by hand)
-The level rule (T0260) and its wave-card line (T0262) landed and played badly: re-growing the board empty every 10 waves throws away the build. Both are being removed by T0283 (in the pool, priority 1); T0261 is dropped with them. Do not re-task levels, the level-clear pick or the level-clear sting. The difficulty-for-reward idea lives on as **E9**.
+The level rule (T0260) and its wave-card line (T0262) landed and played badly: re-growing the board empty every 10 waves throws away the build. Both are removed by T0283 (done 2026-10-30); T0261 is dropped with them. Do not re-task levels, the level-clear pick or the level-clear sting. The difficulty-for-reward idea lives on as **E9**.
 
 ### E4 — Augment rarity (active — started 2026-10-28)
 **Goal:** the draft is exciting: sometimes a card is something special.
@@ -119,7 +119,7 @@ Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
 ### E9 — Level augments: harder runs for a bigger payout (active, **top priority** — opened 2026-10-30, by hand)
-**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. In the pool: T0288 (the reprice, in design), T0291 (the payout), T0294, T0295 (the rest of the first set) and T0297 (the board branch's third node). T0287 (a duplicate first slice) failed 2026-10-30 — its unlock/picker/Tough scope is T0285's (done); its payout scope is T0291's.
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. In the pool: T0291 (the payout), T0294, T0295 (the rest of the first set) and T0297 (the board branch's third node); the reprice T0288 landed. T0287 (a duplicate first slice) failed 2026-10-30 — its unlock/picker/Tough scope is T0285's (done); its payout scope is T0291's.
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
 - **Unlock, a slot ladder:** level augments are picked into **slots**, and slots are earned one at a time.
@@ -145,7 +145,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the unlock, the menu choice and Tough — **T0285 (L) — done** (2026-10-30, asus): wave 30 unlocks the first slot, the menu picker capped at the slot count, Tough (+25% enemy health, bonus +25%), the multiplier shown on the menu (×1.25) and the set saved in the profile and the run save
 - the payout made visible: the multiplier applied to score and coins (stacks with Iron), the claim card's line, the leaderboard row's tag, the HUD chips — **tasked as T0291 (L, priority 1, waits on T0285)**
 - the rest of the first set, one task per side: Swift (+15% enemy speed) + Crowded (+20% enemies per wave) — **tasked as T0294 (M, in the pool)**; Lean (−25% kill gold) + Short fuse (−30% build time) — **tasked as T0295 (M, in the pool)**; each a pure rule with tests, each one's multiplier bonus is its own number
-- the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned — **tasked as T0288 (M, priority 1, in the pool)**
+- the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned — **done as T0288 (M, 2026-10-30, cachyos-x8664)**
 - deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **tasked as T0297 (M, priority 1, in the pool)**, on the branch's price rule (155 at depth 3 once T0288's curve lands); the claim branch's second node (Flawless pays 10 coins, T0076's open door) waits on the payout's files (T0291's claim card, T0274's pause line)
 - the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line)
 - (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set
@@ -158,7 +158,7 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Splitter (T0068, M) — **done** (2026-10-28, desktop-4070): breaks into two fast splinters at its spot.
 - Hauler (T0057, M) — **done** (2026-10-28, cachyos-x8664): a big slow hexagon — worth 10 gold, a leak costs a life plus 5 gold.
 - Mute (T0074, M) — **done** (2026-10-29, desktop-4070): silences every tower within 2 cells. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
-- Feeder (IDEAS) — **tasked as T0289 (M, in the pool)**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring (the queue lands one enemy at a time; the Wall stays parked behind it).
+- Feeder (IDEAS) — **T0289 failed 2026-10-30 (architect context overflow); re-file smaller when the pool has room**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring (the queue lands one enemy at a time; the Wall stays parked behind it).
 - The Hive (IDEAS) — **tasked as T0292 (L, in the pool)**: the wave-40 boss, the next peak after the Orb — the first boss that grows the group (a Dot every 6 s, up to 5); `spawnOnly`, so the 10-regular cap is untouched (the Feeder fills it).
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
