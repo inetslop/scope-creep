@@ -3,11 +3,13 @@ id: T0310
 title: "The switchback: the board branch's fourth node, a fold in the road"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T22:00:22Z
+claimed_at: 2026-10-30T22:00:25Z
 epic: E9
+designer: desktop
 ---
 
 ## Goal
