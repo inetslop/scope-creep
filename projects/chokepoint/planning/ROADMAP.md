@@ -153,11 +153,11 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Splitter (T0068, M) — **done** (2026-10-28, desktop-4070): breaks into two fast splinters at its spot.
 - Hauler (T0057, M) — **done** (2026-10-28, cachyos-x8664): a big slow hexagon — worth 10 gold, a leak costs a life plus 5 gold.
 - Mute (T0074, M) — **done** (2026-10-29, desktop-4070): silences every tower within 2 cells. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
-- Feeder (IDEAS) — **T0289 failed 2026-10-30 (architect context overflow); re-file smaller when the pool has room**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring (the queue lands one enemy at a time; the Wall stays parked behind it).
+- Feeder (IDEAS) — **tasked as T0309 (M, in the pool)**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring (the queue lands one enemy at a time; the Wall stays parked behind it).
 - The Hive (IDEAS) — **tasked as T0292 (L, in the pool)**: the wave-40 boss, the next peak after the Orb — the first boss that grows the group (a Dot every 6 s, up to 5); `spawnOnly`, so the 10-regular cap is untouched (the Feeder fills it).
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
-Queue order: the Bulwark (T0102), the Ward (T0111) and the Dart's removal (T0237) are done — the regular-enemy cap (10, the bar in modules/enemies.md) is open, so the Feeder (from wave 13) is the next enemy to task when the pool has room; the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
+Queue order: the Bulwark (T0102), the Ward (T0111) and the Dart's removal (T0237) are done; the Feeder is **T0309 (M, in the pool)** — it brings the regular-enemy cap (10, the bar in modules/enemies.md) to 10 of 10; the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
 
 ## Later
 
