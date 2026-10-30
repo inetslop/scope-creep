@@ -83,15 +83,19 @@ function when(iso: string | undefined): string {
   return `<time datetime="${esc(d.toISOString())}">${esc(text)}</time>`;
 }
 
-function renderTotals(features: Feature[], hand: HandChange[], cycles: readonly PoCycle[]): string {
+function renderTotals(features: Feature[], hand: HandChange[], cycles: readonly PoCycle[], startedAt: string | undefined, generatedAt: string): string {
   const firstTry = features.length ? Math.round((100 * features.filter((f) => f.attempts === 1).length) / features.length) : 0;
+  const sinceMs = startedAt ? Date.parse(generatedAt) - Date.parse(startedAt) : NaN;
+  const since = Number.isFinite(sinceMs) && sinceMs >= 0
+    ? `<div class="tile"><b data-since="${esc(new Date(startedAt!).toISOString())}">${esc(formatMinutes(sinceMs / 60_000))}</b><span>since the first commit</span></div>`
+    : '';
   const tiles: [string, string][] = [
     [String(features.length), 'features built by agents'],
     [formatMinutes(totalAgentMinutes(features, cycles)), 'total agent time: building, designing, planning'],
     [`${firstTry}%`, 'shipped on the first attempt'],
     [String(hand.length), 'changes made by hand'],
   ];
-  return tiles.map(([value, label]) => `<div class="tile"><b>${esc(value)}</b><span>${esc(label)}</span></div>`).join('');
+  return since + tiles.map(([value, label]) => `<div class="tile"><b>${esc(value)}</b><span>${esc(label)}</span></div>`).join('');
 }
 
 function renderMachine(s: MachineStats, info: MachineInfo | undefined, color: string): string {
@@ -229,6 +233,18 @@ const LOCAL_TIME_SCRIPT = `for (const t of document.querySelectorAll('time[datet
   if (!isNaN(d)) t.textContent = d.toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 }`;
 
+/** Keeps the "since the first commit" tile counting while the page is open (formatMinutes, in the browser). */
+const SINCE_SCRIPT = `for (const el of document.querySelectorAll('[data-since]')) {
+  const tick = () => {
+    const m = Math.round((Date.now() - Date.parse(el.dataset.since)) / 60000);
+    if (!(m >= 0)) return;
+    const h = Math.floor(m / 60);
+    el.textContent = m < 1 ? '<1 min' : m < 60 ? m + ' min' : h < 48 ? h + ' h ' + String(m % 60).padStart(2, '0') + ' min' : Math.floor(h / 24) + ' d ' + (h % 24) + ' h';
+  };
+  tick();
+  setInterval(tick, 30000);
+}`;
+
 /** localStorage key (per browser, shared by the game page and the log; namespaced because Pages sites share an origin). */
 const SEEN_KEY = `${PROJECT === ORIGINAL_PROJECT ? 'scope-creep' : `scope-creep:${PROJECT}`}:build-log:seen`;
 
@@ -269,6 +285,8 @@ function renderPage(data: {
   machines: Record<string, MachineInfo>;
   repo?: string;
   sha: string;
+  /** The project's first game commit. */
+  startedAt?: string;
   generatedAt: string;
 }): string {
   const order = Object.keys(data.machines);
@@ -292,7 +310,7 @@ function renderPage(data: {
   <h1>Build log</h1>
   <p class="lede">Every feature in <b>${esc(data.title)}</b>, which machine built it and how long it took. The game is planned, designed and written by local LLM agents; this page is generated on every deploy from the loop's own records, outside anything the agents can edit.</p>
 </header>
-<section class="totals" aria-label="Totals">${renderTotals(data.features, data.hand, data.cycles)}</section>
+<section class="totals" aria-label="Totals">${renderTotals(data.features, data.hand, data.cycles, data.startedAt, data.generatedAt)}</section>
 
 <h2>Machines</h2>
 <section class="machines">${stats.map((s) => renderMachine(s, data.machines[s.id], colorOf(s.id))).join('\n')}</section>
@@ -309,6 +327,7 @@ ${data.hand.length ? `<ul>${data.hand.map((h, i) => renderHand(h, handIds[i]!, d
 </footer>
 </div>
 <script>${LOCAL_TIME_SCRIPT}
+${SINCE_SCRIPT}
 ${SEEN_SCRIPT}</script>
 </body>
 </html>
@@ -385,6 +404,7 @@ function main(): void {
     machines,
     repo: repoUrl(),
     sha: git(['rev-parse', 'HEAD']).trim(),
+    startedAt: gameCommits.at(-1)?.date,
     generatedAt: new Date().toISOString(),
   });
 
