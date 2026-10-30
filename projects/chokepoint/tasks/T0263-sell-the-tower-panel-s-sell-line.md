@@ -3,13 +3,12 @@ id: T0263
 title: "Sell: the tower panel's sell line"
 size: M
 priority: 2
-status: designing
+status: design
 depends_on: []
 attempts: 0
 created: 2026-10-30T06:24:50Z
-claimed_at: 2026-10-30T06:45:28Z
 epic: E7
-designer: baby-mama
+design_attempts: 1
 ---
 
 ## Goal
