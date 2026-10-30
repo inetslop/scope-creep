@@ -76,8 +76,8 @@ The game grows through epics: bigger features that take several tasks. One or tw
 - T0130 (M, priority 1) — Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam — **done** (2026-10-29, desktop)
 - T0131 (M, priority 2) — Beam combos II: Lance pierces, Splash scorches, Spray splits a beam kill — **failed** (2026-10-29, the architect's prompt overflowed cachyos's context before any design) — re-filed tighter: Lance + Splash as T0210; the needle clause (a beam kill splits into Spray needles) parked in IDEAS until T0210 lands
 - T0210 (M, priority 2) — Beam combos II (the re-file): Lance pierces the beam's main line, Splash scorches its target — **done** (2026-10-29, inet-racing)
-- T0242 (M, priority 2) — Beam combos IIb: a beam kill splits into one homing needle per added Spray (12 damage, the pellet's look and speed, different nearest other enemies within 2 cells, only on kills) — in the pool
-- T0248 (S, priority 2) — the codex lock: the gated pool augments (Haste, Momentum, Mend today) wear a small muted lock on their codex cards, plus a state line under the grid — in the pool (2026-10-30)
+- T0242 (M, priority 2) — Beam combos IIb: a beam kill splits into one homing needle per added Spray (12 damage, the pellet's look and speed, different nearest other enemies within 2 cells, only on kills) — in design
+- T0248 (S, priority 2) — the codex lock: the gated pool augments (Haste, Momentum, Mend today) wear a small muted lock on their codex cards, plus a state line under the grid — in design (2026-10-30)
 - T0132 (M, priority 2) — Beam combos III: the beam carries Ember, Anchor, Push and Mark (Frost only if the 16-cap hasn't removed it) — **done** (2026-10-29, desktop)
 - T0133 (M, priority 2) — A new look for the Beam tower: a tower with a circle on top — **done** (2026-10-29, desktop)
 - T0134 (L, priority 2) — Spray becomes a shotgun: a cone of pellets — **done** (2026-10-29, inet-racing)
