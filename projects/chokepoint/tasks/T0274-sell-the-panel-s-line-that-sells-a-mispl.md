@@ -4,11 +4,10 @@ title: "Sell: the panel's line that sells a misplaced tower back"
 assignee: baby-mama
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-30T09:46:01Z
-claimed_at: 2026-10-30T12:10:19Z
 epic: E7
 design_attempts: 1
 ---
@@ -85,3 +84,7 @@ sellTower(): void;
 
 ### Tests
 - Unit test in `tests/core/techEffects.test.ts` for `sellPrice` (core rule change); `npm run check` (typecheck + lint + tests) and `npm run smoke` must pass.
+
+## Attempt 1 released (baby-mama)
+
+Put back in the pool by the owner: baby-mama is paused and had held this task for six hours without pushing.
