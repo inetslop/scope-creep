@@ -19,7 +19,7 @@ The game grows through epics: bigger features that take several tasks. One or tw
 ### E2 — Tech tree (done; history in planning/archive/ROADMAP.md)
 
 ### E3 — Levels: a run is a journey (dropped — 2026-10-30, by hand)
-The level rule (T0260) and its wave-card line (T0262) landed and played badly: re-growing the board empty every 10 waves throws away the build. Both are being removed by T0283 (in the pool, priority 1), and T0261 (the pool) is dropped with them. Do not re-task levels, the level-clear pick or the level-clear sting. The difficulty-for-reward idea lives on as **E9**.
+The level rule (T0260) and its wave-card line (T0262) landed and played badly: re-growing the board empty every 10 waves throws away the build. Both are being removed by T0283 (in the pool, priority 1); T0261 is dropped with them. Do not re-task levels, the level-clear pick or the level-clear sting. The difficulty-for-reward idea lives on as **E9**.
 
 ### E4 — Augment rarity (active — started 2026-10-28)
 **Goal:** the draft is exciting: sometimes a card is something special.
@@ -90,15 +90,15 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 - T0236 (S) — the what-if says "nothing": failed on a wrong premise — dropped, don't re-propose a hits-card dim
 - T0238 (L) — the draft shows where the card lands: failed (wrong premise) — re-filed as T0243
 - T0243 (L) — the draft shows where the card lands (the re-file): each offered card shows the towers a pick would land on — done (2026-10-30)
-- T0276 (M) — endless rerolls: every reroll costs more — in the pool (todo)
+- T0276 (M) — endless rerolls: every reroll costs more — **done** (2026-10-30, desktop)
 - T0279 (S) — balance: Beam hits too softly — in progress (yoga)
 - T0280 (M) — Beam added is a damage boost, not another beam — in the pool (todo)
 - T0281 (L) — Beam and burn deal damage in ticks — in the pool (todo)
 - T0282 (M) — Spray crits: the shotgun rolls for double damage — in design
 
-Progress: Haste (T0152) and Toll (T0234) landed 2026-10-30; the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0242, T0248 (waits on T0062 and T0095), T0276, T0281 and the Beam/Spray pass T0279, T0280, T0282; T0150 rides behind T0025.
+Progress: Haste (T0152), Toll (T0234) and the endless rerolls (T0276) landed 2026-10-30; the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0242, T0248 (waits on T0062 and T0095), T0281 and the Beam/Spray pass T0279, T0280, T0282; T0150 rides behind T0025.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0235, T0242, T0248, T0276, T0279, T0280, T0281 and T0282 land.**
+**E4 closes when T0025, T0062, T0064, T0095, T0235, T0242, T0248, T0279, T0280, T0281 and T0282 land.**
 
 **16-cap (protocol):** the pool is 16 (Haste landed with no removal triggered); the five queued registrations (T0025, T0062, T0064, T0095, T0235) land exactly five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
 
@@ -110,6 +110,7 @@ Progress: Haste (T0152) and Toll (T0234) landed 2026-10-30; the pool's registrat
 - T0257 (S, priority 2, behind T0253) — the preview says "boss": the every-10 plan's "boss" tag, the preview chip, a one-time teach line (T0092's pattern), the banner chip (T0080's pattern) — **done** (2026-10-30, yoga)
 - T0256 (M, priority 2, behind T0253) — the boss card: a small white card pinned to the top edge — the token, the name, a thin hp bar with a notch at 50%, so the phase is read on the bar before it happens — written 2026-10-30
 - T0258 (M, priority 2, behind T0253) — the boss moment: the death — the 24-chip burst (2× the milestone count) in the boss's own color and the two-line name card (topBanner's pattern) — **failed** (2026-10-30, the architect's context overflowed before any design); the design stands as written — re-filed as T0273 (with T0266's Orb split carve-out)
+- T0273 (M, priority 2) — the boss moment: the death (the T0258 re-file) — in the pool (todo)
 - T0259 (L, priority 2, behind T0256) — the second boss (wave 20): the Titan (a red square at 0.5, 6× Block) and its Guard (a red diamond carrying an orange disc) — while the Guard lives, every hit on the Titan is halved; the escort-shield member of the pair — unblocked 2026-10-30 (the failed T0258 dep becomes T0273; its design is written)
 - T0266 (L, priority 2) — the third boss (wave 30): the Orb (a purple hexagon at 0.5 with the crack) splits into two faster Shards at half health, unless it dies to a single hit first; the "splits at half hp" later boss — **done** (2026-10-30, inet-racing)
 - T0268 (M, priority 2, behind T0253) — the boss's arrival: a deep horn and a pulse at the entrance gate the moment the boss walks in — **done** (2026-10-30, desktop)
@@ -122,8 +123,8 @@ Progress: Haste (T0152) and Toll (T0234) landed 2026-10-30; the pool's registrat
 **Goal:** a mistake can be fixed mid-run: a misplaced tower is sold back, a wrong augment is pulled back into the hand.
 **When done:** in the build phase the tower panel wears a bottom line, "Sell · +N": tap it and the tower lifts out and pays 70% of what its slots cost (the augments are gone — selling is a refund, not a retrieve; the cell frees, the gold pops at the plinth and slides to the tally). A second line, "Take out · 5", pulls the tower's last augment back into the hand for 5 gold (the card returns to the hand, the tower stays, its attack reverting to what the rest make it; a one-slot tower only sells). Both lines are build-phase only, both are on the pause's controls line, and the end card's by-tower list shows only towers standing at run end (a sold tower's kills stay in the run's totals). Selling costs 30% of the tower, so it is a fix, not a free repick.
 **Breakdown:**
-- T0274 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — the T0263 re-file (T0263 failed 2026-10-30 on an architect context overflow before any design; the line stood as written) — written 2026-10-30
-- T0275 (M, priority 2, behind T0274) — take out: "Take out · 5" — the last augment back into the hand for 5 gold, the vacated slot stays the tower's (free to refit); a one-augment tower shows only the sell line — written 2026-10-30
+- T0274 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — the T0263 re-file (T0263 failed 2026-10-30 on an architect context overflow before any design; the line stood as written) — in design
+- T0275 (M, priority 2, behind T0274) — take out: "Take out · 5" — the last augment back into the hand for 5 gold, the vacated slot stays the tower's (free to refit); a one-augment tower shows only the sell line — in the pool (todo, waits on T0274)
 
 ### E8 — A run you can show (active — opened 2026-10-30)
 **Goal:** a finished run is a result you can keep and share, not a number that fades with the claim card.
