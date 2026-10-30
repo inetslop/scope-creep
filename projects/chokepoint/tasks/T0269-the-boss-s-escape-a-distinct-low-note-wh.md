@@ -3,13 +3,11 @@ id: T0269
 title: "The boss's escape: a distinct low note when the boss gets through"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: [T0253]
 attempts: 0
 created: 2026-10-30T08:43:10Z
-claimed_at: 2026-10-30T09:03:18Z
 epic: E5
-designer: baby-mama
 ---
 
 ## Goal
@@ -30,3 +28,80 @@ Letting the peak through is the run's worst moment, and today it is heard exactl
 - [ ] At most one note per boss wave (the boss wave sends one boss); at 2× fast-forward (T019) it plays once and unstretched; with sound off it is silent and the leak's visual feedback is byte-identical.
 - [ ] No gameplay change: the boss's livesCost, gold, the Toll's leak gold, the last-stand and resume are byte-identical with the note on; no new HUD element, readout, board mark or key is added.
 - [ ] The note's two falling notes share the arrival horn's (T0268) 62-82 Hz band but descend, so the arrival (rising) and escape (falling) are a heard pair.
+
+## Design (architect, baby-mama)
+
+### Files
+- create `src/systems/enemyHooks/bossEscape.ts` — the leak hook: on an `onLeak`, play the escape note iff the leaker's id is the boss the current wave's plan declares
+- edit `src/core/waves.ts` — add exported `bossId(wave)`; `planWave`'s boss branch reads it (single source for "which enemy is the boss of wave N")
+- edit `src/audio/Sfx.ts` — add one method `bossEscape()` next to the other leak sounds (after `leak()`)
+- edit `src/systems/enemyHooks/index.ts` — one import line (after the `leakEcho` import) and one line `bossEscape,` in `ENEMY_HOOKS` after `leakEcho,`
+- edit `tests/core/waves.test.ts` — a test for `bossId`
+
+### Interfaces
+```ts
+// src/core/waves.ts, after isBossWave
+/** The enemy the plan declares as the boss of wave `wave`; undefined on non-boss waves. */
+export function bossId(wave: number): string | undefined {
+  if (!isBossWave(wave)) return undefined;
+  return wave === 30 ? 'orb' : 'colossus';
+}
+// in planWave, the boss branch becomes:
+//   return { number: wave, spawns: [{ enemy: bossId(wave)!, delaySec: 0 }], hpMul: waveHpMul(wave), tags: ['boss'] };
+
+// src/audio/Sfx.ts, after the leak() method
+/** A boss got through: a low two-note horn, 82 Hz then 62 Hz, 200 ms each, ~100 ms apart, the sting's quiet class. */
+bossEscape(): void {
+  this.tone(82, 0.2, 'sine', 0.14);
+  this.tone(62, 0.2, 'sine', 0.14, undefined, 0.1);
+}
+
+// src/systems/enemyHooks/bossEscape.ts (whole file)
+import { bossId } from '../../core/waves';
+import type { MakeEnemyHook } from './hook';
+
+/**
+ * The boss's escape: when the leaker is the enemy the current wave's plan declares as its boss,
+ * one low descending horn plays, on top of the leak's other feedback (the jolt, the echo ghost,
+ * the thud, the Toll gold and the last-stand banner all still land). A non-boss leaker is
+ * byte-identical to today; a boss wave sends at most one boss, so at most one note per wave.
+ * Live-run only: the note plays at the leak's moment, like the thud; a resumed run replays nothing.
+ */
+export const bossEscape: MakeEnemyHook = ({ run, sfx }) => ({
+  onLeak(enemy) {
+    const boss = bossId(run.wave);
+    if (boss !== undefined && enemy.def.id === boss) sfx?.bossEscape();
+  },
+});
+```
+
+### Steps
+1. `src/core/waves.ts`: add `bossId` right after `isBossWave`; in `planWave` replace `enemy: wave === 30 ? 'orb' : 'colossus'` with `enemy: bossId(wave)!` (the branch is only reached on boss waves, so it is defined).
+2. `src/audio/Sfx.ts`: add the `bossEscape()` method after `leak()` (before `leakWarn()`).
+3. Create `src/systems/enemyHooks/bossEscape.ts` exactly as above (destructure only `{ run, sfx }`).
+4. `src/systems/enemyHooks/index.ts`: add the import after the `leakEcho` import and `bossEscape,` after the `leakEcho,` list line — never at the list's end.
+5. `tests/core/waves.test.ts`: add `bossId` to the import and one test (below).
+6. `npm run check` and `npm run smoke` must pass.
+
+### Pitfalls
+- Never call `planWave`/`planNormalWave` from the hook to read the plan: they draw from `run.rng` and would corrupt the seeded stream of a resumed run — `bossId` is pure and must stay that way.
+- No hard-coded enemy id in the hook: when T0259/T0266 add the Titan and the Orb they update `bossId` (the plan's single source) and the note rides along with no change to the hook; a Guard leaking on such a wave is a non-boss leaker and stays silent.
+- Add, never replace: do not touch `EnemySystem.leak()`, the jolt, `leakEcho`, the thud, `tollLeak`, the last-stand or first-leak feedback — the hook only plays sound.
+- The two notes are scheduled on the AudioContext clock (`tone`'s `delaySec`), not game `dt`: at 2× fast-forward the note plays once and unstretched.
+- `tone` already returns silent when muted, before unlock, or without a context — the sound-off path needs no code.
+- `sfx` is `Sfx | undefined` in the hook context: keep the `sfx?.` call.
+
+### Tests
+In `tests/core/waves.test.ts`, alongside the existing `isBossWave` test:
+```ts
+it('bossId: the boss the plan declares, undefined off the boss waves', () => {
+  expect(bossId(10)).toBe('colossus');
+  expect(bossId(30)).toBe('orb');
+  expect(bossId(1)).toBeUndefined();
+  expect(bossId(9)).toBeUndefined();
+  for (const wave of [10, 20, 30, 40]) {
+    expect(bossId(wave)).toBe(planWave(wave, new Rng(wave), ENEMIES).spawns[0]!.enemy); // the rule and the plan agree
+  }
+});
+```
+The last line is what stops a later boss change from drifting the rule and the plan apart.
