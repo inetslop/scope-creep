@@ -1,14 +1,14 @@
 ---
 id: T0254
 title: "The combo milestone chime: the ×10 kill moment, heard"
-assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-30T04:48:47Z
 claimed_at: 2026-10-30T11:06:58Z
+finished_at: 2026-10-30T11:17:00Z
 epic: E4
 ---
 
@@ -72,3 +72,20 @@ constructor(scene: Phaser.Scene, sfx?: Sfx);
 
 ### Tests
 none
+
+## Attempt 1 failed (asus)
+
+Runner error: git fetch --quiet --prune origin failed (exit 1):
+error: cannot lock ref 'refs/remotes/origin/main': is at 4cd695f40a9646de941cc68e711a86e4894f0a1b but expected 899caa73a8b2051727438934e1949239c8dbfdef
+
+
+```
+Error: git fetch --quiet --prune origin failed (exit 1):
+error: cannot lock ref 'refs/remotes/origin/main': is at 4cd695f40a9646de941cc68e711a86e4894f0a1b but expected 899caa73a8b2051727438934e1949239c8dbfdef
+
+    at Git.fetch (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/git.ts:134:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:260:5)
+    at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
+    at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
