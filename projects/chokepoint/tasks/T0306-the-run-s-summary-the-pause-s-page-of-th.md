@@ -3,10 +3,12 @@ id: T0306
 title: "The run's summary: the pause's page of the run so far (the T0304 re-file)"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T20:35:44Z
+claimed_at: 2026-10-30T20:40:18Z
+designer: desktop
 ---
 
 ## Goal
