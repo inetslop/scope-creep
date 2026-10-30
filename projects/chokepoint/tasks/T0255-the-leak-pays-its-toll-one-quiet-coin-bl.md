@@ -3,11 +3,13 @@ id: T0255
 title: "The leak pays its Toll: one quiet coin blip at the exit"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T04:48:47Z
+claimed_at: 2026-10-30T04:57:21Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
