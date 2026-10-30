@@ -98,7 +98,7 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 
 Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095), T0280 and T0282; T0150 rides behind T0025.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0235, T0248, T0280 and T0282 land.**
+**E4 closes when T0025, T0062, T0064, T0095, T0235, T0248 and T0280 land (T0282's file is missing from the pool — re-file the Spray crit when there is room).**
 
 **16-cap (protocol):** the pool is 16 (Haste landed with no removal triggered); the five queued registrations (T0025, T0062, T0064, T0095, T0235) land exactly five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
 
@@ -117,7 +117,7 @@ Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
 ### E9 — Level augments: harder runs for a bigger payout (active, **top priority** — opened 2026-10-30, by hand)
-**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. In the pool: T0288 (the reprice, in design), T0291 (the payout), T0294 and T0295 (the rest of the first set). T0287 (a duplicate first slice) failed 2026-10-30 — its unlock/picker/Tough scope is T0285's (done); its payout scope is T0291's.
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. In the pool: T0288 (the reprice, in design), T0291 (the payout), T0294, T0295 (the rest of the first set) and T0297 (the board branch's third node). T0287 (a duplicate first slice) failed 2026-10-30 — its unlock/picker/Tough scope is T0285's (done); its payout scope is T0291's.
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
 - **Unlock, a slot ladder:** level augments are picked into **slots**, and slots are earned one at a time.
@@ -144,7 +144,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the payout made visible: the multiplier applied to score and coins (stacks with Iron), the claim card's line, the leaderboard row's tag, the HUD chips — **tasked as T0291 (L, priority 1, waits on T0285)**
 - the rest of the first set, one task per side: Swift (+15% enemy speed) + Crowded (+20% enemies per wave) — **tasked as T0294 (M, in the pool)**; Lean (−25% kill gold) + Short fuse (−30% build time) — **tasked as T0295 (M, in the pool)**; each a pure rule with tests, each one's multiplier bonus is its own number
 - the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned — **tasked as T0288 (M, priority 1, in the pool)**
-- deeper tech nodes: a third node in each branch priced on the new curve, so the bigger payout has a sink
+- deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **tasked as T0297 (M, priority 1, in the pool)**, on the branch's price rule (155 at depth 3 once T0288's curve lands); the claim branch's second node (Flawless pays 10 coins, T0076's open door) waits on the payout's files (T0291's claim card, T0274's pause line)
 - the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line)
 - (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set
 
