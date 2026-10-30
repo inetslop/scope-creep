@@ -23,6 +23,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   kills: 42,
   cleanWaves: 2,
   rerollsUsed: 1,
+  level: [],
   towers: [
     { col: 2, row: 1, slots: 2, augments: [{ id: 'bolt', tier: 'common' }, { id: 'frost', tier: 'epic' }] },
     { col: 9, row: 5, slots: 1, augments: [{ id: 'mint', tier: 'common' }] },
@@ -115,14 +116,23 @@ describe('saveRun', () => {
     expect(loadSavedRun(store)).toEqual(sample({ lengthMul: 1.25, bends: 1 }));
   });
 
-  it('a save written while levels existed still loads: the level field is ignored', () => {
+  it('round-trips the level choice, and a save written without the key loads with none on', () => {
     const store = memory();
-    for (const level of [1, 2, 3]) {
-      const withLevel = { ...sample({ wave: 14 }) } as Record<string, unknown>;
-      withLevel.level = level; // the field saves wrote under the removed level rule (T0260)
-      store.setItem(SAVED_RUN_KEY, JSON.stringify(withLevel));
-      expect(loadSavedRun(store)).toEqual(sample({ wave: 14 }));
-    }
+    saveRun(store, sample({ level: ['tough'] }));
+    expect(loadSavedRun(store)).toEqual(sample({ level: ['tough'] }));
+    const without = { ...sample() } as Record<string, unknown>;
+    delete without.level; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
+    expect(loadSavedRun(store)).toEqual(sample());
+  });
+
+  it('rejects a broken level choice, including the number older saves wrote under the removed level rule', () => {
+    broken({ level: 1 }); // the number saves wrote before this rule (T0260)
+    broken({ level: 'tough' });
+    broken({ level: [1] });
+    broken({ level: ['nope'] });
+    broken({ level: ['tough', 'nope'] });
+    broken({ level: Array(17).fill('tough') });
   });
 
   it('round-trips an Iron save, and a save written without the key loads as play', () => {

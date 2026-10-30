@@ -46,6 +46,7 @@ export class RunSave {
       kills: run.kills,
       cleanWaves: run.cleanWaves,
       rerollsUsed: run.rerollsUsed,
+      level: [...run.level],
       towers: this.game.towers.towers.map((t) => ({
         col: t.cell.col,
         row: t.cell.row,
@@ -62,6 +63,7 @@ export class RunSave {
     run.gold = saved.gold;
     run.lives = saved.lives;
     run.mode = saved.mode;
+    run.level = saved.level;
     run.wave = saved.wave;
     run.kills = saved.kills;
     run.cleanWaves = saved.cleanWaves;

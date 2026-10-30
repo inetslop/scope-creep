@@ -1,5 +1,6 @@
 import { MAX_SLOTS } from '../config';
 import { AUGMENTS } from '../content/augments';
+import { getLevelAugment } from '../content/levels';
 import type { AugmentCopy, Tier } from '../content/types';
 import type { RunMode } from './run';
 import { TIER_ORDER } from './tiers';
@@ -48,6 +49,8 @@ export interface SavedRun {
   kills: number;
   cleanWaves: number;
   rerollsUsed: number; // how many rerolls the run has bought; older saves carried rerollUsed: boolean
+  /** The level augments on for the run; older saves predate the field. */
+  level: string[];
   towers: SavedTower[];
 }
 
@@ -92,6 +95,8 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
   if (!inRange(p.gold, 0, 1e6)) return undefined;
   if (!inInt(p.lives, 0, 1e6) || !inInt(p.kills, 0, 1e6) || !inInt(p.cleanWaves, 0, 1e6)) return undefined;
   if (p.mode !== undefined && p.mode !== 'play' && p.mode !== 'iron') return undefined;
+  // Older saves predate the field; a present one must be a short list of known level-augment ids.
+  if (p.level !== undefined && (!Array.isArray(p.level) || p.level.length > 16 || !p.level.every((id) => typeof id === 'string' && getLevelAugment(id) !== undefined))) return undefined;
   const rerollsUsed = inInt(p.rerollsUsed, 0, 1e6)
     ? p.rerollsUsed
     : p.rerollUsed === true ? 1 : p.rerollUsed === false ? 0 : undefined; // older saves carried the one-reroll flag
@@ -123,6 +128,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
     kills: p.kills,
     cleanWaves: p.cleanWaves,
     rerollsUsed,
+    level: Array.isArray(p.level) ? (p.level as string[]) : [],
     towers: p.towers as SavedTower[],
   };
 }

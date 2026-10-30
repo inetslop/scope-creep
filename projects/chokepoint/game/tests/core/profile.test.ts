@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { coinsForRun, loadProfile, recordRun, saveSound, type KeyValueStore } from '../../src/core/profile';
+import { coinsForRun, loadProfile, recordRun, saveLevelOn, saveSound, type KeyValueStore } from '../../src/core/profile';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -46,12 +46,12 @@ describe('profile', () => {
   });
 
   it('loads an empty profile from missing or broken storage', () => {
-    const empty = { bestWave: 0, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true };
+    const empty = { bestWave: 0, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true, levelSlots: 0, levelOn: [] };
     expect(loadProfile(undefined)).toEqual(empty);
     expect(loadProfile({ getItem: () => '{oops', setItem: () => undefined })).toEqual(empty);
     const store = memory();
     store.setItem('chokepoint:profile', JSON.stringify({ bestWave: 4, lastRun: { wave: 'x', coins: 2 } }));
-    expect(loadProfile(store)).toEqual({ bestWave: 4, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true });
+    expect(loadProfile(store)).toEqual({ bestWave: 4, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true, levelSlots: 0, levelOn: [] });
     store.setItem('chokepoint:profile', JSON.stringify({ recent: [{ wave: 7, coins: 2 }, null, { wave: 1, coins: -4 }] }));
     expect(loadProfile(store).recent).toEqual([{ wave: 7, coins: 2 }]);
   });
@@ -61,11 +61,11 @@ describe('profile', () => {
     const first = recordRun(store, { waves: 5, stopped: 40, clean: 2, seed: 101, bgen: 2 });
     expect(first.coins).toBe(11);
     expect(first.newBest).toBe(true);
-    expect(first.profile).toEqual({ bestWave: 5, bestSeed: 101, bestSeedBgen: 2, ironBestWave: 0, runsPlayed: 1, coins: 11, purchased: [], lastRun: { wave: 5, coins: 11 }, recent: [{ wave: 5, coins: 11 }], sound: true });
+    expect(first.profile).toEqual({ bestWave: 5, bestSeed: 101, bestSeedBgen: 2, ironBestWave: 0, runsPlayed: 1, coins: 11, purchased: [], lastRun: { wave: 5, coins: 11 }, recent: [{ wave: 5, coins: 11 }], sound: true, levelSlots: 0, levelOn: [] });
 
     const second = recordRun(store, { waves: 3, stopped: 10, clean: 1, seed: 102, bgen: 2 });
     expect(second.newBest).toBe(false);
-    expect(second.profile).toEqual({ bestWave: 5, bestSeed: 101, bestSeedBgen: 2, ironBestWave: 0, runsPlayed: 2, coins: 16, purchased: [], lastRun: { wave: 3, coins: 5 }, recent: [{ wave: 3, coins: 5 }, { wave: 5, coins: 11 }], sound: true });
+    expect(second.profile).toEqual({ bestWave: 5, bestSeed: 101, bestSeedBgen: 2, ironBestWave: 0, runsPlayed: 2, coins: 16, purchased: [], lastRun: { wave: 3, coins: 5 }, recent: [{ wave: 3, coins: 5 }, { wave: 5, coins: 11 }], sound: true, levelSlots: 0, levelOn: [] });
     expect(loadProfile(store).coins).toBe(16);
   });
 
@@ -73,7 +73,7 @@ describe('profile', () => {
     const store = memory();
     const result = recordRun(store, { waves: 0, stopped: 0, clean: 0, seed: 103, bgen: 2 });
     expect(result.coins).toBe(0);
-    expect(result.profile).toEqual({ bestWave: 0, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 1, coins: 0, purchased: [], lastRun: { wave: 0, coins: 0 }, recent: [{ wave: 0, coins: 0 }], sound: true });
+    expect(result.profile).toEqual({ bestWave: 0, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 1, coins: 0, purchased: [], lastRun: { wave: 0, coins: 0 }, recent: [{ wave: 0, coins: 0 }], sound: true, levelSlots: 0, levelOn: [] });
   });
 
   it('stores the seed of the run that sets the best wave, and only of it', () => {
@@ -110,6 +110,23 @@ describe('profile', () => {
     expect(loadProfile(store).sound).toBe(false);
     saveSound(store, true);
     expect(loadProfile(store).sound).toBe(true);
+  });
+
+  it('the first run to reach wave 30 earns the one level slot, once and only once', () => {
+    const store = memory();
+    expect(recordRun(store, { waves: 29, stopped: 0, clean: 0, seed: 301, bgen: 2 }).profile.levelSlots).toBe(0); // ended just short
+    expect(recordRun(store, { waves: 29, stopped: 0, clean: 0, seed: 302, bgen: 2, reached: 30 }).profile.levelSlots).toBe(1); // died during wave 30
+    expect(recordRun(store, { waves: 30, stopped: 0, clean: 0, seed: 303, bgen: 2, reached: 31 }).profile.levelSlots).toBe(1); // never more than one
+    expect(recordRun(store, { waves: 12, stopped: 0, clean: 0, seed: 304, bgen: 2 }).profile.levelSlots).toBe(1); // never fewer
+  });
+
+  it('saves the level-augment choice, drops unknown ids on load, and keeps it through runs', () => {
+    const store = memory();
+    saveLevelOn(store, ['tough', 'nope']);
+    expect(loadProfile(store).levelOn).toEqual(['tough']);
+    expect(recordRun(store, { waves: 5, stopped: 0, clean: 0, seed: 305, bgen: 2 }).profile.levelOn).toEqual(['tough']);
+    saveLevelOn(store, []);
+    expect(loadProfile(store).levelOn).toEqual([]);
   });
 
   it('keeps the four most recent runs, newest first', () => {

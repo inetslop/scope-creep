@@ -1,6 +1,7 @@
 import { CELL, START } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { getEnemy } from '../content/enemies';
+import { getLevelAugment } from '../content/levels';
 import { draftCardCount } from '../core/augments';
 import { chokeCells } from '../core/choke';
 import { TIER_ORDER } from '../core/tiers';
@@ -95,6 +96,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['hand.selection', (g) => g.building.brokenSelection()],
   // The clean wave's chip keeps phase 'draft' with an empty offer for a second, so check while the draft overlay is up (the offer is filled before it launches).
   ['draft.offer', (g) => (hook.overlay !== SCENES.draft || g.flow.offer.length === draftCardCount(g.flow.draftWave) ? null : `draft offers ${g.flow.offer.length} cards, expected ${draftCardCount(g.flow.draftWave)}`)],
+  ['level.choice', (g) => (new Set(g.run.level).size === g.run.level.length && g.run.level.every((id) => getLevelAugment(id) !== undefined) ? null : `level choice ${g.run.level.join(',')}`)],
   ['augments.valid', (g) => {
     for (const c of [...g.run.hand, ...g.towers.towers.flatMap((t) => t.augments)])
       if (!AUGMENTS.some((a) => a.id === c.id) || !TIER_ORDER.includes(c.tier)) return `unknown augment copy ${c.id}:${c.tier}`;

@@ -4,11 +4,12 @@ title: "Level augments I: the unlock, the menu picker and Tough"
 assignee: inet-racing
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T12:31:05Z
 claimed_at: 2026-10-30T14:55:24Z
+finished_at: 2026-10-30T17:08:02Z
 epic: E9
 ---
 
@@ -99,3 +100,37 @@ export function buildLevelCard(scene: Phaser.Scene, slots: number, initial: stri
 - `tests/core/levels.test.ts`: `levelSlotsAfter` (29→0, 30→1, repeat 30/40→stays 1, 10 with old 1→1); `capLevelChoice` (0 slots→[], 1 slot with `['tough','nope']`→`['tough']`); `levelMultiplier` (none→1, `['tough']`→1.25, unknown ids ignored) and `levelMultiplierLabel` ('×1.0'/'×1.25'); Tough's health rule: for waves 1–30, `Math.round(dot.hp * waveHpMul(w) * levelMultiplier(['tough'])) === Math.round(dot.hp * waveHpMul(w) * 1.25)` and off equals the base.
 - `tests/core/profile.test.ts`: `recordRun` with `reached: 30` writes `levelSlots` 1 once (second wave-30 run keeps 1), `reached: 29` keeps 0, `waves: 29, reached: 30` unlocks; `saveLevelOn` persists and unknown ids are dropped on reload.
 - `tests/core/saveRun.test.ts`: a save with `level: ['tough']` round-trips; a save without the field loads with `level: []`; an unknown id makes `loadSavedRun` return undefined.
+
+## Result (attempt 1, inet-racing)
+
+Players who reach wave 30 in any run (normal or Iron, dying mid-wave counts) now earn a single permanent level slot, and the menu shows a Level card under Iron — one muted line until a slot is earned, then a bold header with the run multiplier (×1.25 with Tough on, ×1.0 muted otherwise) and a chunky tap row for **Tough** ("enemies +25% health") that toggles on/off, capped at the slot count with a dimmed "full" state when a row can't be added. The choice is saved to the profile, preselects the next run, and round-trips through run saves so closed-and-resumed runs keep it. With Tough on, every enemy gets +25% health on top of the wave's own growth, waves 1 to last, with mix, order, speed, gold and plan unchanged; a run with Tough off is byte-identical to before. The multiplier is shown and saved but, by design for this slice, not yet applied to score or coins. One deviation to note: saves written under the removed T0260 level rule (numeric `level` field) no longer load — the save loader treats a present, non-array level as a broken save per the design, and the old test now asserts that rejection rather than being deleted.
+
+- Self-review: APPROVE
+- Time: 132.6 min
+
+```
+.../chokepoint/game/src/content/levels/index.ts    | 14 ++++
+ .../chokepoint/game/src/content/levels/tough.ts    |  9 +++
+ projects/chokepoint/game/src/content/types.ts      | 14 ++++
+ projects/chokepoint/game/src/core/levels.ts        | 29 ++++++++
+ projects/chokepoint/game/src/core/profile.ts       | 31 ++++++++-
+ projects/chokepoint/game/src/core/run.ts           |  8 +++
+ projects/chokepoint/game/src/core/saveRun.ts       |  6 ++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  2 +
+ .../chokepoint/game/src/scenes/GameOverScene.ts    |  2 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  3 +
+ projects/chokepoint/game/src/scenes/MenuScene.ts   | 17 ++++-
+ .../chokepoint/game/src/scenes/menu/LevelCard.ts   | 77 ++++++++++++++++++++++
+ projects/chokepoint/game/src/systems/RunSave.ts    |  2 +
+ projects/chokepoint/game/src/systems/WaveSystem.ts |  2 +-
+ projects/chokepoint/game/tests/core/levels.test.ts | 46 +++++++++++++
+ .../chokepoint/game/tests/core/profile.test.ts     | 29 ++++++--
+ .../chokepoint/game/tests/core/saveRun.test.ts     | 24 +++++--
+ 17 files changed, 296 insertions(+), 19 deletions(-)
+```
+
+## Merge (attempt 1, inet-racing)
+
+- Conflicts in: projects/chokepoint/game/src/debug/runChecks.ts
+- Auto-resolved 1 spot(s) where both sides only added lines (clean: projects/chokepoint/game/src/debug/runChecks.ts).
+- Resolved without the conflict agent.

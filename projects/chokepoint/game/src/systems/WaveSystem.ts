@@ -70,7 +70,7 @@ export class WaveSystem {
     while (this.next < plan.spawns.length && this.timer >= plan.spawns[this.next]!.delaySec) {
       const spawn = plan.spawns[this.next]!;
       this.timer -= spawn.delaySec;
-      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul);
+      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul);
       this.next += 1;
     }
   }

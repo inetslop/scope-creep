@@ -1,5 +1,6 @@
 import { START, WAVE_BONUS, rerollCost } from '../config';
 import type { AugmentCopy } from '../content/types';
+import { levelMultiplier } from './levels';
 import { Rng } from './rng';
 
 /**
@@ -26,6 +27,8 @@ export class RunState {
   lives: number = START.lives;
   /** How the run was started; the Iron mode starts at one life and pays doubled coins. */
   mode: RunMode = 'play';
+  /** The level augments on for this run (chosen on the menu; restored from the save on resume). */
+  level: string[] = [];
   /** Gold off a tower's second slot from the owned "Slot II" tech nodes (0 in resumed runs). */
   slotDiscount = 0;
   /** The pre-wave-1 draft offers a fourth card (the "Fourth card" node, off in resumed runs). */
@@ -66,6 +69,11 @@ export class RunState {
   /** The run's score: waves cleared, then kills as the tie-break. */
   get score(): number {
     return this.wavesCleared * 100 + this.kills;
+  }
+
+  /** The chosen level augments' combined multiplier on enemy health (1 with none on). */
+  get levelHpMul(): number {
+    return levelMultiplier(this.level);
   }
 
   canAfford(cost: number): boolean {

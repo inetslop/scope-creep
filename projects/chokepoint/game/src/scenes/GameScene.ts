@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { MusicBed } from '../audio/music';
 import { GRID, HUD, ROCKS } from '../config';
 import { cssColor, PALETTE } from '../content/palette';
+import { capLevelChoice } from '../core/levels';
 import { cellsBesidePath, generateMap } from '../core/map';
 import { loadProfile } from '../core/profile';
 import { RunState } from '../core/run';
@@ -99,6 +100,8 @@ export class GameScene extends Phaser.Scene {
       const draft = draftTech(profile.purchased);
       this.run.slotDiscount = draft.slotDiscount;
       this.run.fourthCard = draft.fourthCard;
+      // New and ghost runs take the profile's level-augment choice, capped at its slots.
+      this.run.level = capLevelChoice(profile.levelSlots, profile.levelOn);
     }
     // The board's tech nodes wind new runs' roads one turn further and lengthen them; a resumed
     // run keeps its saved board (its own bends and length), and a ghost run replays the best

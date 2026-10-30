@@ -229,3 +229,17 @@ export interface AugmentDef {
   /** The Rare and Epic values of a copy (Common is `first`/`added` themselves; see core/tiers.ts). */
   tiers: { rare: TierValues; epic: TierValues };
 }
+
+/**
+ * A level augment: a pre-run switch that makes future runs harder (content/levels/). It is never
+ * in the draft, hand, a tower or the codex, and never in the 16-augment pool: the player chooses
+ * which ones are on on the menu, before the run, out of as many as they have earned level slots.
+ */
+export interface LevelAugmentDef {
+  id: string;
+  name: string;
+  /** The card's plain line, e.g. 'enemies +25% health'. */
+  line: string;
+  /** Added to the run multiplier; for Tough also the enemy-health factor over the wave's own growth. */
+  bonus: number;
+}

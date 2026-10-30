@@ -1,5 +1,7 @@
 /** The device's profile: best wave, runs played, coins, and the four most recent runs. Storage is passed in, so this stays pure and testable. */
 import { cleanWavePay } from '../content/tech/claim';
+import { getLevelAugment } from '../content/levels';
+import { levelSlotsAfter } from './levels';
 
 export interface Profile {
   bestWave: number;
@@ -16,6 +18,10 @@ export interface Profile {
   lastRun: { wave: number; coins: number } | null;
   recent: { wave: number; coins: number }[];
   sound: boolean;
+  /** Level slots earned: one, first time a run reached wave 30 (never decreases). */
+  levelSlots: number;
+  /** The level augments on for the next run, in the player's order. */
+  levelOn: string[];
 }
 
 export interface KeyValueStore {
@@ -33,6 +39,8 @@ export interface RunResult {
   bgen: number;
   /** The mode's coin multiplier (2 for the Iron mode); the whole payout is doubled after the node terms. */
   mul?: number;
+  /** The wave number the run reached (it started that wave); a run dying during wave 30 reports 30. */
+  reached?: number;
 }
 
 export interface RecordResult {
@@ -76,6 +84,12 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
     const purchased = Array.isArray(parsed.purchased)
       ? [...new Set(parsed.purchased.filter((id): id is string => typeof id === 'string' && id.length > 0))]
       : [];
+    const levelSlots =
+      typeof parsed.levelSlots === 'number' && Number.isInteger(parsed.levelSlots) && parsed.levelSlots >= 0 ? parsed.levelSlots : 0;
+    // Only ids of level augments that exist load: a broken save can't switch on a run rule.
+    const levelOn = Array.isArray(parsed.levelOn)
+      ? [...new Set(parsed.levelOn.filter((id): id is string => typeof id === 'string' && getLevelAugment(id) !== undefined))]
+      : [];
     return {
       bestWave: Number(parsed.bestWave) || 0,
       bestSeed,
@@ -87,9 +101,11 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
       lastRun,
       recent,
       sound: typeof parsed.sound === 'boolean' ? parsed.sound : true,
+      levelSlots,
+      levelOn,
     };
   } catch {
-    return { bestWave: 0, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true };
+    return { bestWave: 0, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true, levelSlots: 0, levelOn: [] };
   }
 }
 
@@ -117,6 +133,8 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
     lastRun: { wave: result.waves, coins },
     recent: [{ wave: result.waves, coins }, ...old.recent].slice(0, 4),
     sound: old.sound,
+    levelSlots: levelSlotsAfter(old.levelSlots, result.reached ?? result.waves),
+    levelOn: old.levelOn,
   };
   try {
     store?.setItem(PROFILE_KEY, JSON.stringify(profile));
@@ -130,6 +148,17 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
 export function saveSound(store: KeyValueStore | undefined, on: boolean): void {
   const profile = loadProfile(store);
   profile.sound = on;
+  try {
+    store?.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    /* private mode or full storage: the preference just isn't kept */
+  }
+}
+
+/** Saves the level-augment choice for the next run; the profile's other fields keep what they had. */
+export function saveLevelOn(store: KeyValueStore | undefined, on: string[]): void {
+  const profile = loadProfile(store);
+  profile.levelOn = on;
   try {
     store?.setItem(PROFILE_KEY, JSON.stringify(profile));
   } catch {
