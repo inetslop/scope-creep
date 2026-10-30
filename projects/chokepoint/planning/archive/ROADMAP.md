@@ -206,3 +206,12 @@ This cycle (56) nothing new in E4 — the pool's single new-task slot went to th
 - T0215 (M, priority 2, depends_on T0103) — the run-start's fifth node, a second “Life +1” (40 coins), and a small done mark on a fully-owned branch — **done** (2026-10-29, asus)
 
 Status: **done (2026-10-29)** — all five branches landed (run start, draft, pool, claim, board), with the branch discount (T0214) and the menu dot (T0213).
+
+## Archived 2026-10-30
+
+### E6 — Iron run: one life, double coins (done — opened 2026-10-29, closed 2026-10-30)
+**Goal:** a second small mode off the menu: the same game with the risk made explicit — one life, and a payout that says so.
+**When done:** the menu offers “Iron” beside Play: the run starts with 1 life, pays double coins, and the last stand (T0054) is off for it (its doubling is baked into the coin rate). The claim card says “Iron” beside the waves line, and the profile card remembers the iron best wave with its own muted star. A normal Play is byte-identical.
+**Breakdown:**
+- T0241 (M, priority 2) — the Iron button and the mode's rules: 1 life, 2× coins, last stand off; the claim card's “Iron” line — **done** (2026-10-30, asus)
+- T0249 (S, priority 2, behind T0241) — the profile card's iron best wave with its own muted star — **done** (2026-10-30, yoga)
