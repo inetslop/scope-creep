@@ -191,6 +191,12 @@ export class Sfx {
     this.tone(784, 0.08, 'sine', 0.1, undefined, 0.09);
   }
 
+  /** The run's wave number becomes its saved best: the wave sweep's rise, G5 then B5, 80 ms sines 90 ms apart, the sting's quiet volume. */
+  recordNote(): void {
+    this.tone(784, 0.08, 'sine', 0.1);
+    this.tone(988, 0.08, 'sine', 0.1, undefined, 0.09);
+  }
+
   /** The streak pays its one life back: the wave sweep's rise, E5 then G5, 80 ms sine each, 90 ms apart, the sting's volume. */
   streakPay(): void {
     this.tone(659, 0.08, 'sine', 0.1);

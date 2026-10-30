@@ -4,11 +4,12 @@ title: "The record pass: the wave card says it once"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T17:56:06Z
 claimed_at: 2026-10-30T18:18:07Z
+finished_at: 2026-10-30T19:00:09Z
 ---
 
 ## Goal
@@ -96,3 +97,16 @@ recordNote(): void {
 
 ### Tests
 - none (UI + audio; no core rule changes)
+
+## Result (attempt 1, yoga)
+
+The wave card now celebrates the moment the run's wave number first becomes this session's saved best wave: a small yellow record star (~14 px, the record star's texture, muted texture in Iron runs) pops in to the right of the number — a 150 ms scale-in, a 0.7 s hold, a 150 ms fade, then it's destroyed, and the card never changes — and Sfx's new `recordNote()` plays a quiet two-note G5→B5 rise in the wave sweep's shape. `WaveCard` decides `recordAt` on the first update from `loadProfile` (`ironBestWave` for Iron runs, otherwise `bestWave`), so a run with no saved best or one that resumes at or above the best never plays the moment, and the pause line's star is untouched. The design's star tween aimed for `scale: 1`, but since the ART texture is drawn at 3x that would leave a 48 px star, so it tweens to `artScale`'s own scale instead (the star displays at the intended ~14 px). Changes are confined to `src/ui/hud/WaveCard.ts` (record moment + star) and `src/audio/Sfx.ts` (one new `recordNote()` method after `waveSweep()`); no tests were added per the design.
+
+- Self-review: APPROVE
+- Time: 42.1 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts       |  6 +++++
+ projects/chokepoint/game/src/ui/hud/WaveCard.ts | 32 +++++++++++++++++++++++++
+ 2 files changed, 38 insertions(+)
+```
