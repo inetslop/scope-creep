@@ -4,11 +4,12 @@ title: "The leak echo: a ghost of the leaker walks back up the road"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T01:33:38Z
 claimed_at: 2026-10-30T04:15:50Z
+finished_at: 2026-10-30T04:28:51Z
 ---
 
 ## Goal
@@ -114,3 +115,16 @@ export const leakEcho: MakeEnemyHook = ({ scene, board, fx }) => {
 
 ### Tests
 - none (no rule in src/core is added or changed; `tests/content.test.ts` is unaffected)
+
+## Result (attempt 1, cachyos-x8664)
+
+Added `src/systems/enemyHooks/leakEcho.ts` (a leak echo hook, modeled on `comboBreak`) that on every leak spawns a 40%-alpha ghost of the leaker's token at the exit and walks it back up the road at 2.5 cells/s for 2.0 s (≈5 cells), then fades it over 0.5 s; the ghost is a plain display-only scene image — never targeted, counted, saved or fed to Mint/Toll/combo, capped at 3 alive (`live` counter + `fx.full` skip). Registered it in `src/systems/enemyHooks/index.ts` with one import line and one `ENEMY_HOOKS` line, both directly next to `comboBreak`; the leak's own life/gold/jolt/warning/combo/toll effects are untouched. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: NO VERDICT
+- Time: 13.0 min
+
+```
+.../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/leakEcho.ts        | 55 ++++++++++++++++++++++
+ 2 files changed, 57 insertions(+)
+```

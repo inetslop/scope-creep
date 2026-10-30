@@ -1,6 +1,7 @@
 import { burnLeap } from './burnLeap';
 import type { MakeEnemyHook } from './hook';
 import { comboBreak } from './comboBreak';
+import { leakEcho } from './leakEcho';
 import { comboGold } from './comboGold';
 import { haulerLeak } from './haulerLeak';
 import { mintRing } from './mintRing';
@@ -19,6 +20,7 @@ import { waveClose } from './waveClose';
 export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   comboGold,
   comboBreak,
+  leakEcho,
   split,
   nameTag,
   crackTick,
