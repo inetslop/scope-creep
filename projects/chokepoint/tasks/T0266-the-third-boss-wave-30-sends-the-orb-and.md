@@ -3,11 +3,13 @@ id: T0266
 title: "The third boss: wave 30 sends the Orb, and the Orb splits in two at half health"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T07:33:51Z
+claimed_at: 2026-10-30T07:33:55Z
 epic: E5
+designer: desktop
 ---
 
 ## Goal
