@@ -3,13 +3,11 @@ id: T0284
 title: "The boss's phase gets its note: a quiet tone when it goes out of reach"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-30T12:12:05Z
-claimed_at: 2026-10-30T12:34:08Z
 epic: E5
-designer: yoga
 ---
 
 ## Goal
@@ -28,3 +26,62 @@ The Colossus's out-of-reach beat (T0253) is seen — a white flash, the dimmed b
 - [ ] With the sound toggle off, no note plays, and the white flash and the dimmed boss bar are unchanged.
 - [ ] No HUD element, board mark or text was added; the boss card and its dimmed bar are untouched.
 - [ ] `npm run check` passes, and the desktop (1280x720) and mobile (412x915) smoke tests pass.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/systems/enemyHooks/bossOut.ts` - the hook: when the out-of-reach boss's white telegraph flash ends and it goes out of reach (leg `flash` → `out` in `core/outOfReach.ts`), plays one quiet note via `sfx?.bossOut()`; silent on the return to targetable (`out` → `idle`)
+- edit `src/systems/enemyHooks/index.ts` - one import line + one list line for `bossOut`, next to `bossArrival` (not at the list's end)
+- edit `src/audio/Sfx.ts` - one new method `bossOut()` directly after the `bossEscape()` method (the boss block: `bossHorn`/`leak`/`bossEscape`)
+
+### Interfaces
+Sfx (one method, next to `bossHorn()`'s kin):
+```ts
+/** The boss goes out of reach: a quiet falling note, A3 to G3, 120 ms, the sting's softest class. */
+bossOut(): void {
+  this.tone(220, 0.12, 'sine', 0.08, 180);
+}
+```
+bossOut.ts, whole file (model: `bossEscape.ts` for the shape, `nameTag.ts` for the pooled-Enemy `WeakMap`):
+```ts
+import { outOfReachLeg } from '../../core/outOfReach';
+import type { OutOfReachLeg } from '../../core/outOfReach';
+import type { Enemy } from '../../entities/Enemy';
+import type { MakeEnemyHook } from './hook';
+
+/**
+ * The boss's out-of-reach: the frame its white telegraph flash ends and it goes out of reach,
+ * one quiet note plays - the start of its 2.5 s untargetable beat (core/outOfReach.ts). One
+ * note per 8 s beat; the return to targetable is silent; an enemy with no outOfReach spec is
+ * byte-identical.
+ */
+export const bossOut: MakeEnemyHook = ({ enemies, sfx }) => {
+  const prevLeg = new WeakMap<Enemy, OutOfReachLeg>();
+  return {
+    update() {
+      for (const e of enemies.all) {
+        if (!e.active || e.def.outOfReach === undefined || e.reachClock < 0) continue;
+        const now = outOfReachLeg(e.def.outOfReach, e.reachClock);
+        const prev = prevLeg.get(e);
+        if (prev === 'flash' && now === 'out') sfx?.bossOut();
+        if (now !== prev) prevLeg.set(e, now);
+      }
+    },
+  };
+};
+```
+index.ts: add `import { bossOut } from './bossOut';` with the other hook imports, and `bossOut,` in the `ENEMY_HOOKS` list on the line after `bossArrival,`.
+
+### Steps
+1. Add `bossOut()` to `Sfx.ts` after the `bossEscape()` method (exact code above). `tone` already checks `this.muted`, so the sound toggle (T0035) silences it for free.
+2. Create `src/systems/enemyHooks/bossOut.ts` with exactly the code above.
+3. Add the two lines to `src/systems/enemyHooks/index.ts` (import with the other hook imports; list item after `bossArrival,`).
+
+### Pitfalls
+- The note fires on `flash` → `out` only — not at the flash start (`idle` → `flash`) and not on the return to targetable (`out` → `idle`); the acceptance criteria test the return is silent.
+- State lives in the hook's closure (`WeakMap`), never module-level: a new run makes a new hook. Keying by pooled `Enemy` is the `nameTag.ts`/`burnLeap.ts` mark; a recycled enemy's stale leg can't misfire because a new life is skipped while `reachClock < 0` and always passes through `flash` before `out`.
+- `sfx` is `Sfx | undefined` in the hook context — always `sfx?.bossOut()`. No sound scheduling, no held nodes: one `tone` call per beat, so 2× fast-forward (T0019) plays exactly once per beat, like the arrival horn and escape note.
+- No fx, no mark, no text, no `BossCard`/flash change — the existing white flash and dimmed bar stay as they are; `Enemy.ts`, `core/outOfReach.ts` and `BossCard.ts` are untouched.
+
+### Tests
+none (juice/audio task; `npm run check` and the desktop + mobile smoke gates are the verification).
