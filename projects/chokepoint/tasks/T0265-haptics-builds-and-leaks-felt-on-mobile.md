@@ -3,10 +3,12 @@ id: T0265
 title: "Haptics: builds and leaks felt on mobile"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T06:24:50Z
+claimed_at: 2026-10-30T06:25:25Z
+designer: yoga
 ---
 
 ## Goal
