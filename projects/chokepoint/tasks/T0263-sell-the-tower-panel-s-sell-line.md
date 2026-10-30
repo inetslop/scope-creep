@@ -3,14 +3,14 @@ id: T0263
 title: "Sell: the tower panel's sell line"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-30T06:24:50Z
 claimed_at: 2026-10-30T07:07:47Z
+finished_at: 2026-10-30T08:31:53Z
 epic: E7
-design_attempts: 1
-designer: baby-mama
+design_attempts: 2
 ---
 
 ## Goal
@@ -35,3 +35,11 @@ A misplaced tower is a fixable mistake, not a permanent one: in the build phase 
 - [ ] Selling a support tower ends its effect at once: a sold Rally's neighbours return to their old attack rate, a sold Mint pays no more kill gold, a sold Toll pays no more leak gold.
 - [ ] During a wave the row is absent and the panel is otherwise unchanged; a sold tower's kills still count in the run's totals and the end card's by-tower list shows only standing towers.
 - [ ] The pause screen's controls list carries the sell line, and the panel with the sell row fits at 412x915 and 1280x720 in every slot state.
+
+## Architect could not design it (baby-mama)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+Autocompact is thrashing: the context refilled to the limit within 3 turns of the previous compact, 3 times in a row. A file being read or a tool output is likely too large for the context window. Try reading in smaller chunks, or use /clear to start fresh.
+```
