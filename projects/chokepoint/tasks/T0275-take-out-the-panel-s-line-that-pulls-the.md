@@ -3,11 +3,13 @@ id: T0275
 title: "Take out: the panel's line that pulls the last augment back into the hand"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0274]
 attempts: 0
 created: 2026-10-30T09:46:01Z
+claimed_at: 2026-10-30T10:06:37Z
 epic: E7
+designer: inet-racing
 ---
 
 ## Goal
