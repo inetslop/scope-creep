@@ -3,11 +3,13 @@ id: T0280
 title: Beam added is a damage boost, not another beam
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T10:37:56Z
+claimed_at: 2026-10-30T11:05:00Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
