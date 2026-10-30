@@ -3,13 +3,14 @@ id: T0236
 title: "The what-if says nothing: a dead added form dims its ghost marker"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-29T23:34:09Z
 claimed_at: 2026-10-29T23:54:20Z
+finished_at: 2026-10-30T00:37:57Z
 epic: E4
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
@@ -29,3 +30,7 @@ The what-if preview (T0096) never lies: when a held card's added form does nothi
 - [ ] The same check holds for Anchor, Ember, Push and Mark cards on a pure Mint or pure Rally, and for Rapid/Reach (pure number changes) on any tower with a free slot: live, as today.
 - [ ] A build phase with no card selected is byte-identical to today; the draft scene, hand and tower panel are unchanged; the pause screen's controls list is unchanged (no new key or button).
 - [ ] Unit test calls the compare helper on a live and a dead card+tower pair; 412x915 and 1280x720 render the ghost as today (no new element to fit).
+
+## Rejected by architect (cachyos-x8664)
+
+A pure Mint tower is a damage-0 pulse (not a never-hit tower), so adding Frost makes it newly fire and change its spec — the premise that the hits-do-X family is "applied by no attack" there is false, and the AC "nothing new fires" is contradicted; the dim/judge rule is built on a wrong fact.
