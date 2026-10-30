@@ -1,14 +1,14 @@
 ---
 id: T0280
 title: Beam added is a damage boost, not another beam
-assignee: cachyos-x8664
 size: M
 priority: 1
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-30T10:37:56Z
 claimed_at: 2026-10-30T20:30:05Z
+finished_at: 2026-10-30T20:56:29Z
 epic: E4
 ---
 
@@ -110,3 +110,11 @@ Doc comment for `beamMain`: the main line's target this frame (index, -1 when no
 
 ### Tests
 - Rewritten: `tests/core/beam.test.ts` (main-line rule only), `tests/core/augments.test.ts` (boost stacking, tiers, no-damage no-op, card lines, describeSpec), `tests/core/towerDps.test.ts` (boost on beams and shots, multiplicative stacking, Rapid interplay). Updated: `tests/content.test.ts` line 94 (`addedDamageMul > 1`). `tests/core/tierStrength.test.ts` passes untouched: 1.25 / 1.35 / 1.5 differ per tier. Then `npm run check` and `npm run smoke`.
+
+## Attempt 1 failed (cachyos-x8664)
+
+The agent made no changes to the game (success).
+
+```
+Prompt is too long · automatic compaction failed: summarization produced empty response
+```
