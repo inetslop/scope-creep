@@ -4,11 +4,12 @@ title: "The boss's phase wind-up: the ring that counts the eight seconds"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T12:31:05Z
 claimed_at: 2026-10-30T13:22:36Z
+finished_at: 2026-10-30T13:56:00Z
 epic: E5
 ---
 
@@ -98,3 +99,16 @@ export const bossPhase: MakeEnemyHook = ({ fx, enemies }) => {
 
 ### Tests
 none — juice/mark task; the rule it reads (`outOfReachLeg`, `reachClock`) is already tested via `core/outOfReach.ts`.
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the Colossus phase wind-up ring — a new enemy-hook file `src/systems/enemyHooks/bossPhase.ts` (one thin Graphics ring per boss on the road under its token at `DEPTH.preview`, driven by the boss's own `reachClock` via `outOfReachLeg`: full circle while the white telegraph flashes, dim 0.25 un-swept circle through the 2.5 s out-of-reach beat, and a fresh 0°→360° clockwise sweep over the 8 s beat that completes exactly as the next flash begins) and registered it in `ENEMY_HOOKS` in `src/systems/enemyHooks/index.ts` next to its kin (`bossArrival`, `bossOut`). `npm run check` (typecheck + lint + 426 tests) and `npm run smoke` (desktop + phone) both pass; no sound, HUD, boss card, phase note or invariant changes.
+
+- Self-review: APPROVE
+- Time: 33.4 min
+
+```
+.../game/src/systems/enemyHooks/bossPhase.ts       | 56 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ 2 files changed, 58 insertions(+)
+```

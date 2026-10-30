@@ -12,6 +12,7 @@ import { muteJam } from './muteJam';
 import { nameTag } from './nameTag';
 import { bossArrival } from './bossArrival';
 import { bossOut } from './bossOut';
+import { bossPhase } from './bossPhase';
 import { crackTick } from './crackTick';
 import { split } from './split';
 import { midSplit } from './midSplit';
@@ -34,6 +35,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   nameTag,
   bossArrival,
   bossOut,
+  bossPhase,
   crackTick,
   killCoin,
   killMilestone,
