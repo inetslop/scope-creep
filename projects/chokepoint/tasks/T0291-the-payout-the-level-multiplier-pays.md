@@ -1,12 +1,14 @@
 ---
 id: T0291
 title: "The payout: the level multiplier pays"
+assignee: asus
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: [T0285]
-attempts: 0
+attempts: 1
 created: 2026-10-30T17:15:59Z
+claimed_at: 2026-10-30T20:29:06Z
 epic: E9
 ---
 
