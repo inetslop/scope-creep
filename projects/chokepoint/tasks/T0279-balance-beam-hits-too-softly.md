@@ -1,14 +1,14 @@
 ---
 id: T0279
 title: "Balance: Beam hits too softly"
+assignee: desktop
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 1
+attempts: 2
 created: 2026-10-30T10:37:56Z
-claimed_at: 2026-10-30T11:02:03Z
-finished_at: 2026-10-30T12:34:04Z
+claimed_at: 2026-10-30T12:38:32Z
 epic: E4
 ---
 
