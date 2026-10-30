@@ -4,11 +4,12 @@ title: "The leak pays its Toll: one quiet coin blip at the exit"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T04:48:47Z
 claimed_at: 2026-10-30T05:01:41Z
+finished_at: 2026-10-30T05:08:03Z
 epic: E4
 ---
 
@@ -64,3 +65,16 @@ The blip must go inside the `delayedCall` callback, after the `popText`, so blip
 
 ### Tests
 - none (audio/juice).
+
+## Result (attempt 1, yoga)
+
+The Toll's leak payout now has its own note: a new `Sfx.coinBlip()` method (one 60 ms E5 sine at volume 0.08, next to the coin chime in `src/audio/Sfx.ts`) plays inside the tollLeak hook's existing 100 ms `delayedCall` alongside T0234's gold pop at the exit — one blip per leaking event regardless of how many Toll towers pay it. A leak with no Toll tower still early-returns before any pop or blip, and the Hauler's own −5 cost (a separate hook) is untouched. Muting needs no extra work: `tone()` already returns early when sound is off, so the gold pop still shows.
+
+- Self-review: APPROVE
+- Time: 6.4 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts                   |  5 +++++
+ projects/chokepoint/game/src/systems/enemyHooks/tollLeak.ts | 12 ++++++++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
+```

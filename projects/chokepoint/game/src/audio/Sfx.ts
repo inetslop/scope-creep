@@ -90,6 +90,11 @@ export class Sfx {
     this.tone(784, 0.08, 'sine', 0.1, undefined, 0.08);
   }
 
+  /** A leak pays its Toll at the exit: the coin chime's low note (E5) for 60 ms, just under the tier-chime's quiet class. */
+  coinBlip(): void {
+    this.tone(659, 0.06, 'sine', 0.08);
+  }
+
   /** One soft UI blip, the tier-chime note class. */
   blip(): void {
     this.tone(523, 0.08, 'sine', 0.1);
