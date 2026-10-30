@@ -4,11 +4,12 @@ title: "The run is three boards: the level rule"
 assignee: asus
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T05:49:22Z
 claimed_at: 2026-10-30T07:04:29Z
+finished_at: 2026-10-30T10:12:39Z
 epic: E3
 ---
 
@@ -130,3 +131,36 @@ if (isLevelClear(this.run.wave)) {
 - `tests/core/level.test.ts` (new): `levelOfWave` for 1-30 per level plus clamping (0, 31); `isLevelClear` true only for 10/20 (check 0, 4, 8, 9, 11, 12, 19, 21, 29, 30 false); `isRunWin` true only at 30 (10, 20, 29 false); `levelLengthMul` 1/1.25/1.5625 for levels 1/2/3 and the three constants; `boardSeedFor` — level 1 equals `seed >>> 0`, levels 2 and 3 deterministic, distinct from each other and from the seed.
 - `tests/core/saveRun.test.ts`: `level: 1` in `sample()`; a level-2 save round-trips; `level` 0 and 4 are rejected; a save without `level` loads as level 1.
 - `tests/core/map.test.ts`: next to the existing 1.25 tests, an average test — over both orientations, seeds 1-5, bends 0/1, mean `path.length` with `lengthMul 1.5625` is strictly greater than with `1.25` (per-seed strictness is not guaranteed when every 1.25 draw happens to be a 1-cell run, so assert on the mean, like the existing ratio test).
+
+## Result (attempt 1, asus)
+
+A run is now three levels of ten waves (waves numbered 1–30, all existing wave rules untouched): clearing wave 10 or 20 with lives left shows a "Level N clear / the road re-grows" top card, then the island re-grows from (run seed, level) with a quarter-longer road (level 3 is the windiest the grid allows) and no towers, while gold and lives carry on; clearing wave 30 wins the run with a "Made it" game-over card. The rule lives in a new pure `src/core/level.ts` (unit tested), the board swap in `Board.setMap`/`TowerSystem.clearTowers`/`Building.clearForNewBoard`/`GameScene.regrowBoard`, saves persist the level and the base length multiplier so resumed runs replay their exact board, and the game-over card shows "level N · wave M" for wins and joins the level onto the "Held until wave N" line for losses.
+
+- Self-review: APPROVE
+- Time: 188.2 min
+- Deleted tests/systems/levelClear.verify.test.ts, as the agent asked.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/level.ts         | 43 ++++++++++
+ projects/chokepoint/game/src/core/map.ts           |  5 +-
+ projects/chokepoint/game/src/core/run.ts           |  9 ++-
+ projects/chokepoint/game/src/core/saveRun.ts       |  6 +-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  2 +
+ .../chokepoint/game/src/scenes/GameOverScene.ts    | 11 ++-
+ projects/chokepoint/game/src/scenes/GameScene.ts   | 45 ++++++++---
+ projects/chokepoint/game/src/scenes/HudScene.ts    |  2 +
+ projects/chokepoint/game/src/systems/Board.ts      | 28 +++++--
+ projects/chokepoint/game/src/systems/Building.ts   | 15 +++-
+ .../chokepoint/game/src/systems/ExitWarning.ts     |  5 ++
+ projects/chokepoint/game/src/systems/RunFlow.ts    | 30 ++++++-
+ projects/chokepoint/game/src/systems/RunSave.ts    |  8 +-
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  6 ++
+ .../chokepoint/game/src/ui/hud/LevelClearBanner.ts | 32 ++++++++
+ .../game/tests/core/chokeGuarantee.test.ts         | 27 +++++++
+ projects/chokepoint/game/tests/core/level.test.ts  | 56 +++++++++++++
+ projects/chokepoint/game/tests/core/map.test.ts    | 18 +++++
+ .../chokepoint/game/tests/core/saveRun.test.ts     | 20 +++++
+ .../chokepoint/game/tests/systems/runFlow.test.ts  | 94 +++++++++++++++++++++-
+ 20 files changed, 428 insertions(+), 34 deletions(-)
+```

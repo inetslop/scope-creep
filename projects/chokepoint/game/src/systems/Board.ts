@@ -16,15 +16,17 @@ import type { Tower } from '../entities/Tower';
  * pointer.worldX/worldY (or toBoard() for a screen point).
  */
 export class Board {
-  readonly map: GameMap;
-  readonly path: PathLine;
+  map: GameMap;
+  path: PathLine;
   /** Board size in board units. */
-  readonly width: number;
-  readonly height: number;
+  width: number;
+  height: number;
   private readonly scene: Phaser.Scene;
-  private readonly towers: (Tower | undefined)[][];
+  private towers: (Tower | undefined)[][];
   private readonly hover: Phaser.GameObjects.Graphics;
   private readonly range: Phaser.GameObjects.Graphics;
+  /** The painted board (replaced when the level re-grows it). */
+  private boardImage: Phaser.GameObjects.Image | undefined;
   private area: ViewArea = { x: 0, y: 0, width: 1, height: 1 };
   private view: View = { fit: 1, zoom: 1, focus: { x: 0, y: 0 } };
   private everLaidOut = false;
@@ -43,10 +45,24 @@ export class Board {
     this.range = scene.add.graphics().setDepth(DEPTH.preview);
   }
 
+  /** The level cleared: a new island and road in the same frame. The old board's towers went
+   * first (TowerSystem.clearTowers); the camera keeps its fit (the board is the same size). */
+  setMap(map: GameMap): void {
+    this.boardImage?.destroy();
+    this.map = map;
+    this.path = pathLineFor(map, CELL);
+    this.width = map.cols * CELL;
+    this.height = map.rows * CELL;
+    this.towers = Array.from({ length: map.rows }, () => Array.from({ length: map.cols }, () => undefined));
+    this.hover.clear();
+    this.range.clear();
+    this.drawCells();
+  }
+
   /** The painted board (art/textures.ts paintBoard): island, grid dots, rocks, road, gates. */
   private drawCells(): void {
     const key = paintBoard(this.scene, Board.TEXTURE, this.map, this.path);
-    artScale(this.scene.add.image(-BOARD_MARGIN, -BOARD_MARGIN, key).setOrigin(0).setDepth(DEPTH.board));
+    this.boardImage = artScale(this.scene.add.image(-BOARD_MARGIN, -BOARD_MARGIN, key).setOrigin(0).setDepth(DEPTH.board));
   }
 
   /** Texture key of the current run's board (repainted every run). */

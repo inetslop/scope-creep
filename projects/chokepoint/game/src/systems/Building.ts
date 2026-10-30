@@ -52,7 +52,7 @@ export class Building {
    * - an empty cell with nothing held: close the panel.
    */
   tap(x: number, y: number): void {
-    if (this.run.phase === 'over' || this.run.phase === 'draft') return;
+    if (this.run.over || this.run.phase === 'draft') return;
     const cell = this.board.cellAt(x, y);
     if (!cell) return;
     this.pointerTower = this.board.towerAt(cell); // a tap is also a pointer position
@@ -112,7 +112,7 @@ export class Building {
    * slot, the augment goes straight in; otherwise the card is selected.
    */
   pickCard(index: number): void {
-    if (index < 0 || index >= this.run.hand.length || this.run.phase === 'over') return;
+    if (index < 0 || index >= this.run.hand.length || this.run.over) return;
     const tower = this.selectedTower;
     this.selectedAugment = index;
     this.refreshGhosts();
@@ -131,6 +131,15 @@ export class Building {
     if (!this.selectedTower) return;
     this.selectedTower = undefined;
     this.board.showRange(undefined, 0);
+    this.uiVersion += 1;
+  }
+
+  /** The level cleared: the old board's selection and previews go with its towers. */
+  clearForNewBoard(): void {
+    this.selectedTower = undefined;
+    this.pointerTower = undefined;
+    this.board.showRange(undefined, 0);
+    this.ghost.clearAll();
     this.uiVersion += 1;
   }
 
@@ -196,7 +205,7 @@ export class Building {
    */
   private refreshGhosts(): void {
     const held = this.heldCopy;
-    if (!held || this.run.phase === 'over') { this.ghost.clearAll(); return; }
+    if (!held || this.run.over) { this.ghost.clearAll(); return; }
     const targets = this.hoverSeen
       ? (this.pointerTower && this.pointerTower.freeSlots > 0 ? [this.pointerTower] : [])
       : this.towers.towers.filter((t) => t.freeSlots > 0);

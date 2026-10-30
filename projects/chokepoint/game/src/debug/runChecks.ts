@@ -2,6 +2,7 @@ import { CELL, START } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { draftCardCount } from '../core/augments';
 import { chokeCells } from '../core/choke';
+import { LEVELS, MAX_WAVE } from '../core/level';
 import { TIER_ORDER } from '../core/tiers';
 import type { GameScene } from '../scenes/GameScene';
 import { SCENES } from '../scenes/keys';
@@ -17,6 +18,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['run.streak', (g) => (g.run.lives <= START.lives + 1 + g.techLife ? null : `lives ${g.run.lives} above start plus the streak's one`)],
   ['iron.lives', (g) => (g.run.mode !== 'iron' || (g.techLife === 0 && g.run.lives <= 2) ? null : `iron run at ${g.run.lives} lives with techLife ${g.techLife}`)],
   ['run.ledger', (g) => (Number.isInteger(g.run.goldEarned) && g.run.goldEarned >= 0 && g.run.cleanWaves >= 0 && g.run.cleanWaves <= g.run.wavesCleared ? null : 'ledger')],
+  ['run.level', (g) => (g.run.wave >= 0 && g.run.wave <= MAX_WAVE && g.run.level >= 1 && g.run.level <= LEVELS && (g.run.phase !== 'won' || g.run.wave === MAX_WAVE) ? null : `wave ${g.run.wave}, level ${g.run.level}, phase ${g.run.phase}`)],
   ['board.choke', (g) => (g.run.bgen < 2 || chokeCells(g.board.map).length > 0 ? null : 'a gen-2 board has no choke cell')],
   ['resume.taken', (g) => (g.registry.get('resumeRun') ? 'a saved run is waiting for the game that never took it' : null)],
   ['ghost.taken', (g) => (g.registry.get('ghostSeed') ? 'a ghost seed is waiting for the game that never took it' : null)],

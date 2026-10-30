@@ -18,13 +18,13 @@ export class RunSave {
     private readonly store: RunStore,
   ) {}
 
-  /** Each frame: on a phase change, save into build or wave, clear into over; never into draft. */
+  /** Each frame: on a phase change, save into build or wave, clear into over or won; never into draft. */
   update(): void {
     const phase = this.game.run.phase;
     if (phase === this.phase) return;
     this.phase = phase;
     if (phase === 'build' || phase === 'wave') this.persist(phase);
-    else if (phase === 'over') clearSavedRun(this.store);
+    else if (phase === 'over' || phase === 'won') clearSavedRun(this.store);
   }
 
   private persist(phase: 'build' | 'wave'): void {
@@ -36,7 +36,8 @@ export class RunSave {
       cols: this.game.board.map.cols,
       rows: this.game.board.map.rows,
       bends: mapExtraBends(this.game.board.map),
-      lengthMul: this.game.mapLengthMul,
+      lengthMul: this.game.baseLengthMul, // the base (level 1) multiplier; the level multiplies it on resume
+      level: run.level,
       gold: run.gold,
       lives: run.lives,
       mode: run.mode,
@@ -62,6 +63,7 @@ export class RunSave {
     run.gold = saved.gold;
     run.lives = saved.lives;
     run.mode = saved.mode;
+    run.level = saved.level;
     run.wave = saved.wave;
     run.kills = saved.kills;
     run.cleanWaves = saved.cleanWaves;

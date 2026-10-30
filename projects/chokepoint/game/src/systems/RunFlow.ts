@@ -1,13 +1,14 @@
-import type Phaser from 'phaser';
 import { BUILD_SEC, REROLL_COST } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
 import { rollOffer } from '../core/augments';
+import { isLevelClear, isRunWin, levelOfWave } from '../core/level';
 import type { RunState } from '../core/run';
 import { draftCardsFor } from '../core/techEffects';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
+import type { GameScene } from '../scenes/GameScene';
 import { SCENES } from '../scenes/keys';
 import type { Sfx } from '../audio/Sfx';
 import type { Board } from './Board';
@@ -44,9 +45,11 @@ export class RunFlow {
   draftWave = 1;
   /** Length of the current build countdown (the HUD draws its ring from it). */
   buildTotalSec = 0;
+  /** The cleared wave that re-grows the board (10 or 20); the LevelClearBanner shows its card once per wave number. */
+  pendingLevelClear = 0;
 
   constructor(
-    private readonly scene: Phaser.Scene,
+    private readonly scene: GameScene,
     private readonly run: RunState,
     private readonly s: RunSystems,
   ) {}
@@ -144,6 +147,20 @@ export class RunFlow {
     const cx = this.s.board.width / 2;
     const cy = this.s.board.height / 2;
     this.s.fx.popText(cx, cy, `Wave ${this.run.wave} cleared  +${bonus}`, PALETTE.greenDeep);
+    if (isRunWin(this.run.wave)) {
+      // Wave 30: the run is won — the game-over card a beat after the cleared text.
+      this.run.phase = 'won';
+      this.scene.time.delayedCall(1000, () => this.winRun());
+      return;
+    }
+    if (isLevelClear(this.run.wave)) {
+      // Wave 10 or 20: the level is done — the banner shows, the board re-grows, then the draft.
+      this.run.level = levelOfWave(this.run.wave + 1);
+      this.pendingLevelClear = this.run.wave;
+      if (clean) this.s.fx.cleanLines(cx, cy + 40, this.run.cleanStreakLine(!streakPaidBefore && this.run.streakPaid));
+      this.scene.time.delayedCall(1000, () => { this.scene.regrowBoard(this.run.level); this.openDraft(); });
+      return;
+    }
     if (clean) {
       const second = this.run.cleanStreakLine(!streakPaidBefore && this.run.streakPaid);
       // Under the wave-cleared text, for the beat before the draft veils the board.
@@ -156,6 +173,15 @@ export class RunFlow {
 
   private endRun(): void {
     hook.stats.runsLost += 1;
+    this.toGameOver();
+  }
+
+  /** Wave 30 cleared: the win ends the run the same way a loss does (no loss count). */
+  private winRun(): void {
+    this.toGameOver();
+  }
+
+  private toGameOver(): void {
     this.scene.registry.set('towerKills', this.s.towers.towers.map((t) => ({ first: t.augments[0]?.id, tier: t.augments[0]?.tier, kills: t.kills })));
     this.scene.scene.stop(SCENES.hud);
     this.scene.scene.start(SCENES.gameOver);

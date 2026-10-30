@@ -13,6 +13,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   rows: 8,
   bends: 0,
   lengthMul: 1,
+  level: 1,
   bgen: 2,
   gold: 260,
   lives: 17,
@@ -113,6 +114,25 @@ describe('saveRun', () => {
     const store = memory();
     saveRun(store, sample({ lengthMul: 1.25, bends: 1 }));
     expect(loadSavedRun(store)).toEqual(sample({ lengthMul: 1.25, bends: 1 }));
+  });
+
+  it('round-trips a mid-level save, and a save written without the key loads as level 1', () => {
+    const store = memory();
+    saveRun(store, sample({ level: 2, wave: 14 }));
+    expect(loadSavedRun(store)).toEqual(sample({ level: 2, wave: 14 }));
+    saveRun(store, sample({ level: 3, wave: 27 }));
+    expect(loadSavedRun(store)).toEqual(sample({ level: 3, wave: 27 }));
+    const without = { ...sample() } as Record<string, unknown>;
+    delete without.level; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
+    expect(loadSavedRun(store)).toEqual(sample());
+  });
+
+  it('rejects a broken level', () => {
+    broken({ level: 0 });
+    broken({ level: 4 });
+    broken({ level: 1.5 });
+    broken({ level: 'x' });
   });
 
   it('round-trips an Iron save, and a save written without the key loads as play', () => {
