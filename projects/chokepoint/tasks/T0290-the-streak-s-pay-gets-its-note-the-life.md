@@ -1,12 +1,14 @@
 ---
 id: T0290
 title: "The streak's pay gets its note: the life-back heard"
+assignee: inet-racing
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T16:07:56Z
+claimed_at: 2026-10-30T17:08:48Z
 ---
 
 ## Goal
