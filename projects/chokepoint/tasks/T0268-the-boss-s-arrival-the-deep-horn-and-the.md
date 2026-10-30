@@ -3,11 +3,13 @@ id: T0268
 title: "The boss's arrival: the deep horn and the gate pulse"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0253]
 attempts: 0
 created: 2026-10-30T08:43:10Z
+claimed_at: 2026-10-30T09:03:14Z
 epic: E5
+designer: cachyos-x8664
 ---
 
 ## Goal
