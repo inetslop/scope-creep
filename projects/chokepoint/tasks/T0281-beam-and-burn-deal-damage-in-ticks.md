@@ -3,11 +3,13 @@ id: T0281
 title: Beam and burn deal damage in ticks
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T10:37:56Z
+claimed_at: 2026-10-30T10:37:59Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
