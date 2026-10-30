@@ -4,11 +4,12 @@ title: "Music: a quiet generative bed under the wave phase"
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T23:53:23Z
 claimed_at: 2026-10-30T11:27:13Z
+finished_at: 2026-10-30T12:00:11Z
 ---
 
 ## Goal
@@ -170,3 +171,20 @@ export class MusicBed {
 
 ### Tests
 - none (audio task; `npm run check` and `npm run smoke` gate it)
+
+## Result (attempt 1, asus)
+
+The wave phase now has a quiet generative heartbeat: a new `MusicBed` (`src/audio/music.ts`) plays an 8-note E–G–A loop (sine, 0.4 s steps, 0.04) on Sfx's WebAudio context, fading in/out 0.5 s at wave start/end, and while the ExitWarning is live it doubles the tempo and adds an octave-up second voice (0.03). Wired into GameScene (one import, field, create/update/shutdown line each), exposed via a one-line `Sfx.audio()` accessor and `ExitWarning.live` getter, plus a `music.bed` invariant in `runChecks.ts`; existing sounds are untouched. Two tiny deviations from the architect's sketch: the constructor takes `Sfx | undefined` (GameScene's sfx is nullable — `sfx?.stopBeamHums()` proves it) and their `gain.gain.gain.value` typo became `gain.gain.value`. Check and smoke pass on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 33.0 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          |  5 ++
+ projects/chokepoint/game/src/audio/music.ts        | 93 ++++++++++++++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  5 ++
+ .../chokepoint/game/src/systems/ExitWarning.ts     |  3 +
+ 5 files changed, 107 insertions(+)
+```

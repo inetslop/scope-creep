@@ -33,6 +33,9 @@ export class ExitWarning {
     this.img.setDepth(DEPTH.preview).setVisible(false);
   }
 
+  /** The warning's own state: any living enemy within 3 s of the exit (the wave bed reads it). */
+  get live(): boolean { return this.active; }
+
   update(dt: number): void {
     if (!this.inRange()) {
       this.active = false;

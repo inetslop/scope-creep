@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { MusicBed } from '../audio/music';
 import { GRID, HUD, ROCKS } from '../config';
 import { cssColor, PALETTE } from '../content/palette';
 import { boardSeedFor, levelLengthMul } from '../core/level';
@@ -69,6 +70,7 @@ export class GameScene extends Phaser.Scene {
   projectiles!: ProjectileSystem;
   fx!: FxSystem;
   exitWarn!: ExitWarning;
+  music!: MusicBed;
   leakCost!: LeakCost;
   windup!: PushWindup;
   comboBar!: ComboBar;
@@ -123,6 +125,7 @@ export class GameScene extends Phaser.Scene {
     this.fx = new FxSystem(this, sfx);
     this.enemies = new EnemySystem(this, this.board, this.run, this.fx, sfx);
     this.exitWarn = new ExitWarning(this, this.board, this.enemies, sfx);
+    this.music = new MusicBed(sfx);
     this.leakCost = new LeakCost(this.run, this.fx, this.board);
     this.waves = new WaveSystem(this.run, this.enemies);
     this.projectiles = new ProjectileSystem(this, this.enemies);
@@ -170,6 +173,7 @@ export class GameScene extends Phaser.Scene {
     );
     this.events.once('shutdown', () => {
       sfx?.stopBeamHums(); // held hums must not outlive the run (the Sfx singleton does)
+      this.music.stop(); // the bed's fade and ringing notes must not outlive the run (the Sfx singleton does)
       hook.clearInvariants();
       hook.setBuildSpots(() => []);
     });
@@ -220,6 +224,7 @@ export class GameScene extends Phaser.Scene {
     this.flow.update(simDt);
     this.saver.update();
     this.exitWarn.update(simDt);
+    this.music.update(simDt, this.run.phase === 'wave', this.exitWarn.live); // after, so `live` is this frame's
     this.leakCost.update(simDt);
     this.rally.update(simDt);
     this.haste.update(simDt);

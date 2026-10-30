@@ -50,6 +50,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['enemies.orb', (g) => (g.enemies.all.filter((e) => e.active && e.def.id === 'orb').length <= 1 ? null : 'more than one Orb alive')],
   ['enemies.onRoad', (g) => (g.enemies.all.some((e) => e.active && (e.distance < 0 || e.distance > g.board.path.length + 1)) ? 'an enemy is off its road' : null)],
   ['exitWarn.valid', (g) => g.exitWarn.broken()],
+  ['music.bed', (g) => g.music.broken()],
   ['leakCost.valid', (g) => g.leakCost.broken()],
   ['projectiles.count', (g) => (g.projectiles.activeCount > 600 ? `${g.projectiles.activeCount} projectiles in flight` : null)],
   ['projectiles.stuck', (g) => g.projectiles.brokenProjectile()],

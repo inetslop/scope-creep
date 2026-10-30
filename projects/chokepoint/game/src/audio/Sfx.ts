@@ -31,6 +31,11 @@ export class Sfx {
     }
   }
 
+  /** The unlocked context and its master gain, once audio can run (the wave bed schedules its notes on them). */
+  audio(): { ctx: AudioContext; master: GainNode } | undefined {
+    return this.ctx && this.master && this.ctx.state === 'running' ? { ctx: this.ctx, master: this.master } : undefined;
+  }
+
   /** One note: `freq` Hz for `durSec` (sliding to `slideTo`), fading out; silent while audio is locked or muted. */
   tone(freq: number, durSec: number, type: OscillatorType, volume: number, slideTo?: number, delaySec = 0): void {
     const ctx = this.ctx;
