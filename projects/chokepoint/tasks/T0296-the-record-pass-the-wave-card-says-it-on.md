@@ -1,12 +1,14 @@
 ---
 id: T0296
 title: "The record pass: the wave card says it once"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T17:56:06Z
+claimed_at: 2026-10-30T18:18:07Z
 ---
 
 ## Goal
