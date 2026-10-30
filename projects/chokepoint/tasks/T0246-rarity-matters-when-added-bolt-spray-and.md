@@ -3,13 +3,11 @@ id: T0246
 title: "Rarity matters when added: Bolt, Spray and Push grow at Rare and Epic"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-30T00:51:08Z
-claimed_at: 2026-10-30T01:54:08Z
 design_attempts: 1
-designer: cachyos-x8664
 ---
 
 ## Goal
@@ -39,3 +37,51 @@ A Rare or Epic card should always be worth more than a Common one, as a tower's 
 - [ ] Every card's added line at every rarity states the number it really gives, Lance included.
 - [ ] A tower with many shots draws at most 5 barrels.
 - [ ] The new test fails if any augment's added form is the same at two rarities.
+
+## Design (architect, cachyos-x8664)
+
+### Files
+- edit `src/content/types.ts` — add three optional fields to `TierValues` (after `addedRangeMul`, line 79): `addedShots?: number`, `addedSpray?: number`, `addedPush?: number`
+- edit `src/core/tiers.ts` — `tierAdded()` applies the three new overrides; doc line on it
+- edit `src/content/augments/bolt.ts` — tiers get `addedShots` + the two rare/epic `asAdded` lines
+- edit `src/content/augments/spray.ts` — tiers get `addedSpray` + the two `asAdded` lines
+- edit `src/content/augments/push.ts` — tiers get `addedPush`; all three `asAdded` lines (common reworded)
+- edit `src/content/augments/lance.ts` — rare/epic `asAdded` lines fixed (its pierce already tiers via `tiers.pierce`)
+- edit `src/core/augments.ts` — in `towerSpec()`, the "Pushes in any slot" loop (line 216) must take the per-hit push from `tierAdded(a, copy.tier)` instead of the raw `a.added.push`
+- edit `src/entities/towerLook.ts` — `MAX_BARRELS` 4 → 5
+- create `tests/core/tierStrength.test.ts` — the guard test
+### Interfaces
+No signatures change; new fields on the existing `TierValues` in `src/content/types.ts`:
+```ts
+/** Replaces this copy's added extra shots per attack (Bolt). */
+addedShots?: number;
+/** Replaces this copy's added pellets per blast (Spray). */
+addedSpray?: number;
+/** Replaces this copy's added per-hit push-back cells (Push). */
+addedPush?: number;
+```
+In `tierAdded()` (`src/core/tiers.ts:61`) add three lines after `pierce: t.pierce ?? a.pierce,`:
+```ts
+extraShots: t.addedShots ?? a.extraShots,
+spray: t.addedSpray ?? a.spray,
+push: t.addedPush ?? a.push,
+```
+(`...a` already copies the common values; `tierAddedLine`/`tierFirst`/`towerSpec` need nothing else.)
+### Steps
+1. `types.ts`: add the three fields one per line with the comments above.
+2. `bolt.ts`: rare `{ addedShots: 2, asAdded: 'Two more shots each attack.' }`, epic `{ addedShots: 3, asAdded: 'Three more shots each attack.' }` (keep damageMul/cooldownMul).
+3. `spray.ts`: rare `{ addedSpray: 3, asAdded: '+3 pellets per blast.' }`, epic `{ addedSpray: 4, asAdded: '+4 pellets per blast.' }`.
+4. `push.ts`: common `asAdded: 'Hits push back 0.4 cells, more with each Push.'`; rare `{ addedPush: 0.6, asAdded: 'Hits push back 0.6 cells, more with each Push.' }`; epic `{ addedPush: 0.8, asAdded: 'Hits push back 0.8 cells, more with each Push.' }` (keep each tier's `push` — first form's gust).
+5. `lance.ts`: rare `asAdded: '+2 pierce.'`, epic `asAdded: '+3 pierce.'` (no field change: `tiers.pierce` already sets the added pierce).
+6. `src/core/augments.ts` line 216: `if (i > 0) spec.pushPerHit += tierAdded(a, augments[i]!.tier).push ?? 0;` (only other raw `added.push` reader in src).
+7. `towerLook.ts` line 19: `export const MAX_BARRELS = 5;` (barrelCount's cap; `Tower.muzzle(i)` already wraps shots past the last barrel).
+8. Create `tests/core/tierStrength.test.ts`: (a) for every `AUGMENTS` entry without a `tier` field, `expect(JSON.stringify(tierAdded(def,'rare'))).not.toEqual(JSON.stringify(tierAdded(def,'common')))` and same rare-vs-epic; (b) for bolt/spray/push/lance, at each `TIER_ORDER` tier, `tierAddedLine(def,tier)` contains the number of `tierAdded(def,tier)`'s field (bolt: word from `{1:'One',2:'Two',3:'Three'}` for `extraShots`; spray: `+${spray}`; push: `push.toFixed(1)`; lance: toBe(`+${pierce} pierce.`)); (c) `towerSpec([{id:'bolt',tier:'common'},{id:'bolt',tier}]).shots` is 3 rare / 4 epic; `...spray` is 8/9; `...pushPerHit` toBeCloseTo 0.6/0.8.
+9. `npm run check`.
+### Pitfalls
+- The pushPerHit fix in towerSpec is mandatory: without it a Rare Push still pushes 0.4 and the acceptance numbers fail (Bolt/Spray already flow through `tierAdded` in towerSpec).
+- Do not touch first forms, `asTower` lines, `TIER_ODDS`, or the five `tier: 'epic'` augments; the generic test skips exactly those (`def.tier !== undefined`).
+- Lance's tier `pierce` replaces both forms' pierce (tierFirst + tierAdded) — pre-existing; only the card line is wrong.
+- New `asAdded` lines fit tests/content.test.ts's 6–56 length check (longest is 46).
+- MAX_BARRELS stays exported (other tasks may import it); only the number changes.
+### Tests
+- The new `tests/core/tierStrength.test.ts` itself: fails if any multi-tier augment's added form is identical at two rarities, if any of bolt/spray/push/lance's card line misnames its number, or if a tower doesn't take a second copy at its rolled tier.
