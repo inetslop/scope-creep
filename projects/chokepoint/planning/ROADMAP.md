@@ -108,18 +108,13 @@ Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one
 
 ### E6 — Iron run: one life, double coins (done; history in planning/archive/ROADMAP.md)
 
-### E7 — Changing your mind: a misplaced tower is not permanent (done — closed 2026-10-30; history in planning/archive/ROADMAP.md)
-**Goal:** a mistake can be fixed mid-run: a misplaced tower is sold back. (The take-out, T0275, was cancelled by hand 2026-10-30.)
-**When done:** in the build phase the tower panel wears a bottom line, "Sell · +N": tap it and the tower lifts out and pays 70% of what its slots cost (the augments are gone — selling is a refund, not a retrieve; the cell frees, the gold pops at the plinth and slides to the tally). The line is build-phase only, it is on the pause's controls line, and the end card's by-tower list shows only towers standing at run end (a sold tower's kills stay in the run's totals). Selling costs 30% of the tower, so it is a fix, not a free repick.
-**Breakdown:**
-- T0274 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — the T0263 re-file (T0263 failed 2026-10-30 on an architect context overflow before any design; the line stood as written) — **done** (2026-10-30, desktop)
-- T0275 — take out — **dropped by hand 2026-10-30**; E7 closed 2026-10-30 when T0274 landed
+### E7 — Changing your mind: a misplaced tower is not permanent (done; history in planning/archive/ROADMAP.md)
 
 ### E8 — A run you can show (dropped — 2026-10-30, by hand)
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
 ### E9 — Level augments: harder runs for a bigger payout (active, **top priority** — opened 2026-10-30, by hand)
-**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. In the pool: T0291 (the payout) and T0295 (the rest of the first set); T0294 is in progress; the reprice T0288 and the third node T0297 landed. T0287 (a duplicate first slice) failed 2026-10-30 — its unlock/picker/Tough scope is T0285's (done); its payout scope is T0291's.
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. In the pool: T0291 (the payout), T0295 (the rest of the first set) and T0305 (the slot ladder); T0294 is in progress; the reprice T0288 and the third node T0297 landed. T0287 (a duplicate first slice) failed 2026-10-30 — its unlock/picker/Tough scope is T0285's (done); its payout scope is T0291's.
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
 - **Unlock, a slot ladder:** level augments are picked into **slots**, and slots are earned one at a time.
@@ -147,7 +142,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the rest of the first set, one task per side: Swift (+15% enemy speed) + Crowded (+20% enemies per wave) — **T0294 (M, in progress, asus)**; Lean (−25% kill gold) + Short fuse (−30% build time) — **tasked as T0295 (M, in the pool)**; each a pure rule with tests, each one's multiplier bonus is its own number
 - the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned — **done as T0288 (M, 2026-10-30, cachyos-x8664)**
 - deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **done as T0297 (M, 2026-10-30, desktop)**; the claim branch's second node (Flawless pays 10 coins, T0076's open door) waits on the payout's files (T0291's claim card, T0274's pause line)
-- the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line)
+- the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line) — **tasked as T0305 (M, priority 1, in the pool)**
 - (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set
 
 ### Enemy queue (non-epic)
@@ -168,11 +163,11 @@ Queue order: the Bulwark (T0102), the Ward (T0111) and the Dart's removal (T0237
 
 Ideas that may become epics or tasks of one.
 
-- Selling a tower (for part of the gold) — now **E7** (active, opened 2026-10-30; T0274 the sell; the take-out T0275 dropped by hand 2026-10-30)
+- Selling a tower (for part of the gold) — **built as T0274 (2026-10-30, desktop); E7 done 2026-10-30**
 - Targeting modes per tower (first, strongest, closest) — **tasked as T0114 (L, non-epic, in the pool)** — the spec and its parked follow-ups (the plinth notch, the chip's teach line) stand in IDEAS
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
-- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is T0292)
+- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is T0292; after it, the wave-50 candidate is the flyer's straight-line crossing (the parked flyer line in IDEAS) at boss scale — the first boss that doesn't walk the road)
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)

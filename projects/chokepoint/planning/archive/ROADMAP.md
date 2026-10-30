@@ -234,3 +234,12 @@ Status: **done (2026-10-29)** — all five branches landed (run start, draft, po
 - T0277 (M, priority 2) — the bosses reference: a pause row (with Enemies / Waves) that lists the boss encounters in wave order — token, name, wave, trick in the teach language — read from the boss defs so it grows as they do — **done** (2026-10-30, desktop)
 - T0284 (S, priority 2) — the boss's phase gets its note: a quiet tone the instant the out-of-reach boss (the Colossus, T0253) flashes white and goes out of reach — a 120 ms sine 220→180 Hz, vol 0.08 (T0091's shape reduced to one note) — once per beat, the return to targetable silent; a new enemy-hook file on the bossArrival pattern (T0268), silent with sound off, no HUD or board mark — **done** (2026-10-30, yoga)
 - T0286 (M, priority 2) — the boss's phase wind-up: at half health or below, a thin purple ring under the Colossus's token sweeps 0°→360° over the 8 s between phases, completing as the telegraph flashes and resting dim through the out-of-reach beat (the Push wind-up's sweep, T0258, at the Mute ring's ground, T0219) — a new enemy-mark hook file — **done** (2026-10-30, cachyos-x8664)
+
+## Archived 2026-10-30
+
+### E7 — Changing your mind: a misplaced tower is not permanent (done — closed 2026-10-30; history in planning/archive/ROADMAP.md)
+**Goal:** a mistake can be fixed mid-run: a misplaced tower is sold back. (The take-out, T0275, was cancelled by hand 2026-10-30.)
+**When done:** in the build phase the tower panel wears a bottom line, "Sell · +N": tap it and the tower lifts out and pays 70% of what its slots cost (the augments are gone — selling is a refund, not a retrieve; the cell frees, the gold pops at the plinth and slides to the tally). The line is build-phase only, it is on the pause's controls line, and the end card's by-tower list shows only towers standing at run end (a sold tower's kills stay in the run's totals). Selling costs 30% of the tower, so it is a fix, not a free repick.
+**Breakdown:**
+- T0274 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — the T0263 re-file (T0263 failed 2026-10-30 on an architect context overflow before any design; the line stood as written) — **done** (2026-10-30, desktop)
+- T0275 — take out — **dropped by hand 2026-10-30**; E7 closed 2026-10-30 when T0274 landed
