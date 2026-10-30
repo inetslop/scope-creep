@@ -3,11 +3,13 @@ id: T0297
 title: "Two chokes: the board branch's third node"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T17:56:06Z
+claimed_at: 2026-10-30T18:19:02Z
 epic: E9
+designer: desktop
 ---
 
 ## Goal
