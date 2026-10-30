@@ -1,12 +1,14 @@
 ---
 id: T0269
 title: "The boss's escape: a distinct low note when the boss gets through"
+assignee: baby-mama
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0253]
-attempts: 0
+attempts: 1
 created: 2026-10-30T08:43:10Z
+claimed_at: 2026-10-30T09:08:57Z
 epic: E5
 ---
 
