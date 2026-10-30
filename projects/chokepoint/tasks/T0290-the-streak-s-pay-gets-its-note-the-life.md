@@ -3,10 +3,12 @@ id: T0290
 title: "The streak's pay gets its note: the life-back heard"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T16:07:56Z
+claimed_at: 2026-10-30T16:09:02Z
+designer: yoga
 ---
 
 ## Goal
