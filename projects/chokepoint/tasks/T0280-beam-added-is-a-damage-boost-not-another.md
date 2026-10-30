@@ -1,12 +1,14 @@
 ---
 id: T0280
 title: Beam added is a damage boost, not another beam
+assignee: cachyos-x8664
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T10:37:56Z
+claimed_at: 2026-10-30T20:30:05Z
 epic: E4
 ---
 
