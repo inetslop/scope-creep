@@ -3,13 +3,13 @@ id: T0289
 title: "Feeder: the enemy that feeds the group it walks with"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-30T16:07:56Z
 claimed_at: 2026-10-30T17:50:11Z
-design_attempts: 1
-designer: cachyos-x8664
+finished_at: 2026-10-30T18:36:28Z
+design_attempts: 2
 ---
 
 ## Goal
@@ -49,3 +49,11 @@ The next enemy in the queue: a slow walker whose quiet ring makes every enemy ne
 - [ ] The Feeder wears its speed-tick circle (orange, 0.28) and pulses its 2-cell ring about every 2 s while alive, visible at the default zoom.
 - [ ] The first Feeder spawn shows the name tag; the enemies reference lists the Feeder in fromWave order; a leaked Feeder costs 1 life with the normal leak feedback.
 - [ ] Unit tests cover the mix rule (13 + 4k, none on boss waves) and the aura's speed math (slow and ramp multiplication, the one-aura cap); the gate passes.
+
+## Architect could not design it (cachyos-x8664)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+Prompt is too long
+```
