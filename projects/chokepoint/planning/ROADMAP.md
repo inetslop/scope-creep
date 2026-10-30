@@ -94,11 +94,13 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 - T0279 (S) — balance: Beam hits too softly — **done** (2026-10-30, desktop)
 - T0280 (M) — Beam added is a damage boost, not another beam — in the pool (todo)
 - T0281 (L) — Beam and burn deal damage in ticks — **done** (2026-10-30, asus)
-- T0282 (M) — Spray crits: the shotgun rolls for double damage — in design
+- T0282 (M) — Spray crits: the shotgun rolls for double damage — file lost from the pool; re-filed as T0299
+- T0298 (L) — Wildcard: the 4th card of the 4-card drafts becomes whatever you pick, always Rare or better — in the pool (todo)
+- T0299 (M) — Spray crits (the T0282 re-file): 15% of pellets hit for double, a yellow chip at the impact — in the pool (todo)
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095), T0280 and T0282; T0150 rides behind T0025.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095), T0280, T0298 and T0299; T0150 rides behind T0025.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0235, T0248 and T0280 land (T0282's file is missing from the pool — re-file the Spray crit when there is room).**
+**E4 closes when T0025, T0062, T0064, T0095, T0235, T0248, T0280 and T0299 land.**
 
 **16-cap (protocol):** the pool is 16 (Haste landed with no removal triggered); the five queued registrations (T0025, T0062, T0064, T0095, T0235) land exactly five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
 

@@ -36,7 +36,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Rally augment (Epic): every tower within 2 cells of a Rally tower attacks 10% faster — rewards building in clusters — built as T0020 (asus)
 - Mint augment (Epic) — **built as T0021 (2026-10-28, desktop)**: no attack of its own — every kill within 2 cells of a Mint tower drops +1 extra gold; added, the host tower's kills drop +1 extra gold too — the third rule-changing Epic (it changes the economy, not combat)
 - Momentum augment (Epic only): a low wide yellow disc with a notch per copy; first — no attack of its own, each clean wave makes every tower deal +5% more damage for the rest of the run; added — each extra copy adds +5% to that bonus (additive, no cap, a leak never takes it back); the bonus multiplies every damage a tower deals and applies to towers built after the clean wave; a muted "Bonus +N%" line in the panel and a "+N%" pop when a clean wave grants it. New: it changes damage instead of gold, and it grows from wave results — **tasked as T0064 (L, E4, in the pool)**; the pool lands one registration at a time
-- Wild card: one draft card is a wildcard that becomes the augment you pick, always at least Rare
+- Wild card: one draft card is a wildcard that becomes the augment you pick, always at least Rare — **tasked as T0298 (L, E4, in the pool): the 4th card of the 4-card drafts, resolved in the hand**
 - Leaker: a big slow enemy that costs 2 lives when it leaks — the first enemy that hurts you twice as much
 - Recent runs: the menu lists your last few runs (wave + coins) so you can see your trend — built as T0018 (desktop)
 - A "New best" star on the menu's profile card when your last run hit your best wave — built as T0016 (yoga)
