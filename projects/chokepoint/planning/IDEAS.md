@@ -2,8 +2,8 @@
 
 The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a behavior no existing enemy has; a new augment needs an attack of its own (as a tower's first) and a change that combines in a new way (when added). Never a copy with other numbers. And its effect must matter in the game as it is: not only under conditions the game doesn't have (shots never miss, so an aiming-ahead shot adds nothing).
 
-- Sell a tower for 70% of what its slots cost (tap it, then Sell)
-- Take an augment back out of a tower into the hand, for a fee
+- Sell a tower for 70% of what its slots cost (tap it, then Sell) — **now E7 (active); the first slice T0263 is in the pool**
+- Take an augment back out of a tower into the hand, for a fee — **E7's second slice, behind T0263 (the fee: 5 gold; a one-slot tower only sells)**
 - Targeting modes per tower (First / Strongest / Closest) — **tasked as T0114 (L, non-epic, in the pool)**: a chip on the tower panel (tap to cycle) that aims the tower's main attack — First is today's furthest-along (default, byte-identical), Strongest the most current hp in range, Closest the nearest; auras and nearest-pick added forms untouched; the mode survives a resume (absent = First); the pause screen lists the chip. Parked follow-ups (S): a muted plinth notch on a non-First mode; the chip says what it means once (T0092's pattern)
 - Lance augment: first, a long piercing line that hits everything along it; added, shots pierce one more enemy — built as T0004 (asus)
 - Chain augment — **tasked as T0025 (L, E4, in the pool)**: first, a zap that strikes the enemy furthest along and leaps to the nearest unstruck enemy; added, +1 leap to any first augment's attack — the first attack that changes target mid-attack
@@ -22,7 +22,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Daily seeded run with a shareable result — the leaderboard (Today / Forever, added by hand 2026-10-30) is where a shared result lands
 - Colorblind mode: patterns on the shapes, not just color
 - Map modifiers chosen in the draft instead of an augment (e.g. "the next wave comes from both ends")
-- Haptics on mobile for builds and leaks
+- Haptics on mobile for builds and leaks — **tasked as T0265 (S, non-epic, in the pool)**: one new small input module (a guarded navigator.vibrate, a no-op where unsupported), two patterns (place 20 ms, leak 80 ms) called from the one place towers are placed and the one place leaks happen; no HUD, no toggle, no interplay with sound
 - Draft reroll — **built as T0036 (2026-10-28, desktop)**: once per run, reroll the three offered cards for 15 gold (a "Reroll · 15" button under the cards, dimmed "used" after the one use)
 - Leak warning: the last 3 seconds before an enemy reaches the exit, the exit pulses red with a quiet tick — built as T0014 (yoga)
 - Ghost run — **built as T0078 (2026-10-29, desktop)**: a menu option "Ghost · Wave N" under Play that re-grows the best run's exact board (same seed) as a normal run; a ghost run never changes the saved seed.
@@ -143,3 +143,4 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Move a tower: during the build phase, tap a tower, then a free build cell, and the tower moves there for 60% of what its slots cost (a muted gold pop at the old cell; augments and its kills carry; one move per tower per wave) — repositioning between waves is a real decision (the preview says what is coming; a fresh placement is gold it often cannot spare); a build-phase action, needs the run and board modules; parked, M, for a later pool
 - The enemies reference: the pause screen offers an "Enemies" screen (a new scene, the codex's pattern) — one row per enemy: its token, name, the content's own description, and the wave it comes from (the Splinter reads "from a Splitter"); the shape that got through, or the shape you haven't met, is readable at any pause; groundwork for E5's bosses, which show up here with no change to the screen. **Tasked as T0252 (M, non-epic, in the pool)**
 - The level clear gets a sting — **parked (E3, behind T0260)**: a soft two-note low sting (T0091's shape) as the "Level N clear" card lands, once per clear, silent with sound off — task it when E3 needs an S
+- The waves reference — **tasked as T0264 (M, non-epic, in the pool)**: the pause screen offers a "Waves" screen (the enemies reference's pattern, T0252) — one row per wave tag (quiet, tight, boss): the tag's own chip, what it means in the preview's own teach wording (T0092), when it comes, and the next one in this run — all read from the wave rules (core/waves.ts) so the reference can never disagree with what actually comes, and the level rule (T0260) keeps it honest for free; the tag you haven't faced is readable at any pause
