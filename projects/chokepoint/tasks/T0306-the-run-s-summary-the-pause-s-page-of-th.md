@@ -4,11 +4,12 @@ title: "The run's summary: the pause's page of the run so far (the T0304 re-file
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T20:35:44Z
 claimed_at: 2026-10-30T22:28:32Z
+finished_at: 2026-10-30T23:08:43Z
 ---
 
 ## Goal
@@ -72,3 +73,27 @@ No new types. `SummaryScene extends Phaser.Scene`, `constructor() { super(SCENES
 
 ### Tests
 - none (UI only; no core logic added)
+
+## Result (attempt 1, inet-racing)
+
+'Summary',` added to `SCENES` after `bosses`.
+- `src/main.ts`: `SummaryScene` imported (after `RewardsScene`) and added to the `scene:` array after `BossesScene,`.
+- `src/scenes/PauseScene.ts`: one `CONTROLS` line, the `showSummary`/`summaryButton` block after the bosses button, `+ GAP_S + 52` in the height line, the `y += GAP_S; summaryButton.container.setY(cy(52));` placement, and the `boxKids` entry.
+- `src/scenes/SummaryScene.ts`: the new page, in the EnemiesScene reference pattern (shade, `hook.overlay`, blip + `scene.start(SCENES.pause)` back, 48px ink arrow button, scale-to-fit layout, smoke auto-back). Its card: `Summary` title, then the claim card's own reads in order — `Waves held`, `Clean` (greenDeep, only when `cleanWaves > 0`), `Stopped`, `Score` with the muted `waves +N · stopped +N` recipe, `Best combo ×N` (only ≥2, yellow at ≥10), `Board <code>` muted, `Flawless` + star (only when every held wave was clean) — all from `run`, plus a "By tower" section of the end card's chip (icon, tier pip, `×N` kills) with the panel's `≈ N/s` line (only when ≥1), sorted by kills descending, created only when towers exist. No run/profile/ledger fields added; no coins line (the pause's worth line already pays).
+
+Verification:
+- `npm run check` — typecheck + lint + 476 unit tests: **pass**.
+- `npm run smoke` — desktop + phone: **PASS**.
+
+SUMMARY: The pause card gains a fourth reference row, "Summary", that opens a new full-screen `SummaryScene` page of the run so far: the claim c…
+
+- Self-review: APPROVE
+- Time: 40.2 min
+
+```
+projects/chokepoint/game/src/main.ts               |   3 +-
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  13 +-
+ .../chokepoint/game/src/scenes/SummaryScene.ts     | 167 +++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/keys.ts        |   1 +
+ 4 files changed, 181 insertions(+), 3 deletions(-)
+```
