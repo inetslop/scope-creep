@@ -1,12 +1,14 @@
 ---
 id: T0242
 title: "Beam combos IIb: a beam kill splits into Spray needles"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T00:29:56Z
+claimed_at: 2026-10-30T12:10:27Z
 epic: E4
 design_attempts: 1
 ---
