@@ -3,11 +3,13 @@ id: T0243
 title: "The draft shows where the card lands: a fit row on every offered card (the T0238 re-file)"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: [T0236]
 attempts: 0
 created: 2026-10-30T00:29:56Z
+claimed_at: 2026-10-30T00:37:40Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
