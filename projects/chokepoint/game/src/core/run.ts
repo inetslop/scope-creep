@@ -1,4 +1,4 @@
-import { START, WAVE_BONUS } from '../config';
+import { START, WAVE_BONUS, rerollCost } from '../config';
 import type { AugmentCopy } from '../content/types';
 import { Rng } from './rng';
 
@@ -44,7 +44,7 @@ export class RunState {
   bestCombo = 0; // the longest kill chain the run reached (the ×N counter's high mark)
   goldEarned = 0; // gold earned this run: kill gold + wave bonuses
   cleanWaves = 0; // waves that ended without a leak
-  rerollUsed = false; // the run's one draft reroll was spent
+  rerollsUsed = 0; // rerolls the run has bought; the next one costs rerollCost(rerollsUsed)
   cleanStreak = 0; // clean waves in a row; a leak resets it to 0
   streakPaid = false; // the run's one +1 life for a streak of 3 was paid
   private leaksThisWave = 0;
@@ -82,11 +82,10 @@ export class RunState {
     return true;
   }
 
-  /** Pays for the run's one reroll: takes the gold and marks it spent. */
-  reroll(cost: number): boolean {
-    if (this.rerollUsed) return false;
-    if (!this.spend(cost)) return false;
-    this.rerollUsed = true;
+  /** Pays for the run's next reroll (it gets dearer with the count); counts it. Fails without charging when the gold is short. */
+  reroll(): boolean {
+    if (!this.spend(rerollCost(this.rerollsUsed))) return false;
+    this.rerollsUsed += 1;
     return true;
   }
 

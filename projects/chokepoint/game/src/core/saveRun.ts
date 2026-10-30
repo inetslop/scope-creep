@@ -49,7 +49,7 @@ export interface SavedRun {
   hand: AugmentCopy[];
   kills: number;
   cleanWaves: number;
-  rerollUsed: boolean;
+  rerollsUsed: number; // how many rerolls the run has bought; older saves carried rerollUsed: boolean
   towers: SavedTower[];
 }
 
@@ -95,7 +95,10 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
   if (!inRange(p.gold, 0, 1e6)) return undefined;
   if (!inInt(p.lives, 0, 1e6) || !inInt(p.kills, 0, 1e6) || !inInt(p.cleanWaves, 0, 1e6)) return undefined;
   if (p.mode !== undefined && p.mode !== 'play' && p.mode !== 'iron') return undefined;
-  if (typeof p.rerollUsed !== 'boolean') return undefined;
+  const rerollsUsed = inInt(p.rerollsUsed, 0, 1e6)
+    ? p.rerollsUsed
+    : p.rerollUsed === true ? 1 : p.rerollUsed === false ? 0 : undefined; // older saves carried the one-reroll flag
+  if (rerollsUsed === undefined) return undefined;
   if (!Array.isArray(p.hand) || p.hand.length > 100 || !p.hand.every(isCopy)) return undefined;
   if (!Array.isArray(p.towers) || p.towers.length > 200) return undefined;
   for (const t of p.towers) {
@@ -123,7 +126,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
     hand: p.hand as AugmentCopy[],
     kills: p.kills,
     cleanWaves: p.cleanWaves,
-    rerollUsed: p.rerollUsed,
+    rerollsUsed,
     towers: p.towers as SavedTower[],
   };
 }

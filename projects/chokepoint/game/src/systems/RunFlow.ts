@@ -1,4 +1,4 @@
-import { BUILD_SEC, REROLL_COST } from '../config';
+import { BUILD_SEC } from '../config';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
 import { draftPool, rollOffer } from '../core/augments';
@@ -109,10 +109,10 @@ export class RunFlow {
     this.scene.scene.pause();
   }
 
-  /** The draft's one reroll: if the run has it, pay REROLL_COST and re-roll all of the draft's cards. */
+  /** The draft's reroll: pay for the run's next one (the price climbs with the run's count) and re-roll all of the draft's cards. */
   rerollOffer(): boolean {
     if (this.run.phase !== 'draft') return false;
-    if (!this.run.reroll(REROLL_COST)) return false;
+    if (!this.run.reroll()) return false;
     this.offer = rollOffer(this.run.rng, draftPool(this.run.techOwned), draftCardsFor(this.draftWave, this.run.fourthCard), this.draftWave, this.run.wave === 0, this.lastOffer);
     this.lastOffer = this.offer.map((c) => c.id);
     return true;

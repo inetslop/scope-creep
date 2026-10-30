@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { REROLL_COST } from '../config';
+import { rerollCost } from '../config';
 import { artScale, augmentTexture, COIN_TEXTURE, GEM_TEXTURE } from '../art/textures';
 import { getAugment } from '../content/augments';
 import { cssColor, PALETTE } from '../content/palette';
@@ -197,7 +197,7 @@ export class DraftScene extends Phaser.Scene {
     };
     buildRow(game.flow.offer);
 
-    // The run's one reroll under the cards: pay REROLL_COST and re-roll all of the draft's cards.
+    // The reroll under the cards: pay for the run's next one (it gets dearer each time) and re-roll all of the draft's cards.
     const reroll = (): void => {
       if (this.picked || !game.flow.rerollOffer()) return;
       refreshReroll();
@@ -206,7 +206,7 @@ export class DraftScene extends Phaser.Scene {
     };
     const rerollButton = makeButton(this, 0, 0, '', reroll, { width: 156, height: 52, fadeWhenDisabled: false });
     const rerollWord = this.add.text(0, 0, 'Reroll ·', textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
-    const rerollPrice = this.add.text(0, 0, String(REROLL_COST), textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
+    const rerollPrice = this.add.text(0, 0, String(rerollCost(game.run.rerollsUsed)), textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
     const rerollCoin = artScale(this.add.image(0, 0, COIN_TEXTURE), 12 / 28); // the HUD "+N coins" glyph
     const rerollHint = this.add.text(-156 / 2 + 12, -52 / 2 + 12, 'R', textStyle(11, PALETTE.faint, { fontStyle: 'bold' }));
     const centerRow = (): void => {
@@ -214,13 +214,13 @@ export class DraftScene extends Phaser.Scene {
       rerollCoin.x = -w / 2 + 6; rerollWord.x = -w / 2 + 20; rerollPrice.x = rerollWord.x + rerollWord.width + 6;
     };
     const refreshReroll = (): void => {
-      const used = game.run.rerollUsed;
-      const afford = game.run.canAfford(REROLL_COST);
-      rerollButton.setEnabled(!used && afford);
-      rerollPrice.setText(used ? 'used' : String(REROLL_COST));
-      rerollWord.setColor(cssColor(used ? PALETTE.muted : PALETTE.ink));
-      rerollPrice.setColor(cssColor(used ? PALETTE.muted : afford ? PALETTE.ink : PALETTE.red));
-      rerollButton.content.setAlpha(used ? 0.5 : afford ? 1 : 0.6);
+      const cost = rerollCost(game.run.rerollsUsed);
+      const afford = game.run.canAfford(cost);
+      rerollButton.setEnabled(afford);
+      rerollPrice.setText(String(cost));
+      rerollWord.setColor(cssColor(PALETTE.ink));
+      rerollPrice.setColor(cssColor(afford ? PALETTE.ink : PALETTE.red));
+      rerollButton.content.setAlpha(afford ? 1 : 0.6);
       centerRow();
     };
     rerollButton.content.add([rerollCoin, rerollWord, rerollPrice, rerollHint]);

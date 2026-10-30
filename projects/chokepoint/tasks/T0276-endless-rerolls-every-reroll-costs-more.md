@@ -4,11 +4,12 @@ title: "Endless rerolls: every reroll costs more"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T09:47:06Z
 claimed_at: 2026-10-30T11:47:02Z
+finished_at: 2026-10-30T11:53:19Z
 epic: E4
 ---
 
@@ -109,3 +110,23 @@ const refreshReroll = (): void => {
 - create `tests/config.test.ts`: `rerollCost(0..5)` equals 50, 70, 100, 140, 190, 250 (and `rerollCost(6)` = 320).
 - edit `tests/core/run.test.ts` (import `rerollCost` instead of `REROLL_COST`): replace both reroll tests with (a) "rerolls charge the run's curve and climb" — a loop n = 0..5: set `run.gold = 1000`, expect `reroll()` true, `gold` = 1000 − `rerollCost(n)`, `rerollsUsed` = n+1; (b) "cannot reroll without the gold, and pays nothing" — `run.gold = rerollCost(0) - 1`, expect `reroll()` false, `rerollsUsed` 0, gold unchanged; then one successful reroll, gold set to `rerollCost(1) - 1`, expect false, `rerollsUsed` 1, gold unchanged.
 - edit `tests/core/saveRun.test.ts`: `sample()` line 25 becomes `rerollsUsed: 1`; the existing round-trip test now covers `rerollsUsed`; add a test "migrates the old rerollUsed flag to the reroll count": old save with `rerollsUsed` deleted and `rerollUsed: true` loads as `sample()` (1), `rerollUsed: false` loads as `{ ...sample(), rerollsUsed: 0 }`; add broken cases `broken({ rerollsUsed: -1 })`, `broken({ rerollsUsed: 1.5 })`, and a store-level case with `rerollsUsed` deleted and `rerollUsed: 'x'` → `undefined`.
+
+## Result (attempt 1, desktop)
+
+Draft rerolls are now unlimited and get dearer: `REROLL_COST = 15` is replaced by the pure curve `rerollCost(n) = 50 + 15n + 5n²` in `src/config.ts`, the run's one-shot `rerollUsed` flag becomes a per-run `rerollsUsed` count that `run.reroll()` charges against, and saves migrate the old `rerollUsed` boolean (true→1, false→0) into the new `rerollsUsed` field. The draft's reroll button always shows the current price, turns red and disabled when gold is short (never "used"), and updates after every reroll; the R key works for all of them. New unit tests cover the curve, the charging/failure behavior, and the save migration; `npm run check` and desktop + mobile smoke both pass.
+
+- Self-review: APPROVE
+- Time: 6.3 min
+
+```
+projects/chokepoint/game/src/config.ts             | 12 ++++++--
+ projects/chokepoint/game/src/core/run.ts           | 13 ++++-----
+ projects/chokepoint/game/src/core/saveRun.ts       |  9 ++++--
+ projects/chokepoint/game/src/scenes/DraftScene.ts  | 20 +++++++-------
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  6 ++--
+ projects/chokepoint/game/src/systems/RunSave.ts    |  4 +--
+ projects/chokepoint/game/tests/config.test.ts      | 14 ++++++++++
+ projects/chokepoint/game/tests/core/run.test.ts    | 32 +++++++++++++---------
+ .../chokepoint/game/tests/core/saveRun.test.ts     | 23 +++++++++++++++-
+ 9 files changed, 92 insertions(+), 41 deletions(-)
+```

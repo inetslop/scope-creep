@@ -23,7 +23,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   hand: [{ id: 'frost', tier: 'rare' }],
   kills: 42,
   cleanWaves: 2,
-  rerollUsed: true,
+  rerollsUsed: 1,
   towers: [
     { col: 2, row: 1, slots: 2, augments: [{ id: 'bolt', tier: 'common' }, { id: 'frost', tier: 'epic' }] },
     { col: 9, row: 5, slots: 1, augments: [{ id: 'mint', tier: 'common' }] },
@@ -145,6 +145,27 @@ describe('saveRun', () => {
     expect(loadSavedRun(store)).toEqual(sample());
     broken({ mode: 'ghost' });
     broken({ mode: 1 });
+  });
+
+  it('migrates the old rerollUsed flag to the reroll count', () => {
+    const store = memory();
+    const oldTrue = { ...sample() } as Record<string, unknown>;
+    delete oldTrue.rerollsUsed; // older saves predate the field
+    oldTrue.rerollUsed = true;
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(oldTrue));
+    expect(loadSavedRun(store)).toEqual(sample()); // sample() counts 1
+    const oldFalse = { ...sample() } as Record<string, unknown>;
+    delete oldFalse.rerollsUsed;
+    oldFalse.rerollUsed = false;
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(oldFalse));
+    expect(loadSavedRun(store)).toEqual({ ...sample(), rerollsUsed: 0 });
+    broken({ rerollsUsed: -1 });
+    broken({ rerollsUsed: 1.5 });
+    const junk = { ...sample() } as Record<string, unknown>;
+    delete junk.rerollsUsed; // an old flag that is not a boolean is not a migration
+    junk.rerollUsed = 'x';
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(junk));
+    expect(loadSavedRun(store)).toBeUndefined();
   });
 
   it('rejects a broken hand or towers', () => {

@@ -26,8 +26,16 @@ export const BUILD_SEC = { first: 8, between: 10 } as const;
 /** Gold for clearing a wave: base + per wave number. */
 export const WAVE_BONUS = { base: 20, perWave: 2 } as const;
 
-/** The run's one draft reroll. */
-export const REROLL_COST = 15;
+/**
+ * Draft rerolls, unlimited: the run's nth (n = 0 for the first) costs base + step·n + curve·n²:
+ * 50, 70, 100, 140, 190, 250, … — each step costs a little more than the last, but never doubles.
+ */
+export const REROLL = { base: 50, step: 15, curve: 5 } as const;
+
+/** The price of the run's nth reroll (n = 0 for the first). */
+export function rerollCost(n: number): number {
+  return REROLL.base + REROLL.step * n + REROLL.curve * n * n;
+}
 
 /** Screen pixels the HUD cards take at the top and bottom; the board fits between them. */
 export const HUD = { top: 72, bottom: 116, margin: 10 } as const;

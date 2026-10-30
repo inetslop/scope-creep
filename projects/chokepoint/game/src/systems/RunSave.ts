@@ -46,7 +46,7 @@ export class RunSave {
       hand: run.hand.map((c) => ({ id: c.id, tier: c.tier })),
       kills: run.kills,
       cleanWaves: run.cleanWaves,
-      rerollUsed: run.rerollUsed,
+      rerollsUsed: run.rerollsUsed,
       towers: this.game.towers.towers.map((t) => ({
         col: t.cell.col,
         row: t.cell.row,
@@ -67,7 +67,7 @@ export class RunSave {
     run.wave = saved.wave;
     run.kills = saved.kills;
     run.cleanWaves = saved.cleanWaves;
-    run.rerollUsed = saved.rerollUsed;
+    run.rerollsUsed = saved.rerollsUsed;
     run.hand = saved.hand.map((c) => ({ id: c.id, tier: c.tier }));
     for (const t of saved.towers) {
       const cell = { col: t.col, row: t.row };

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { REROLL_COST, START } from '../../src/config';
+import { START, rerollCost } from '../../src/config';
 import { RunState } from '../../src/core/run';
 
 describe('RunState', () => {
@@ -81,22 +81,28 @@ describe('RunState', () => {
     expect(run.score).toBe(102);
   });
 
-  it('rerolls the draft once per run, for the cost', () => {
+  it("rerolls charge the run's curve and climb", () => {
     const run = new RunState(1);
-    expect(run.reroll(REROLL_COST)).toBe(true);
-    expect(run.gold).toBe(START.gold - REROLL_COST);
-    expect(run.rerollUsed).toBe(true);
-    expect(run.reroll(REROLL_COST)).toBe(false);
-    expect(run.gold).toBe(START.gold - REROLL_COST);
+    for (let n = 0; n <= 5; n += 1) {
+      run.gold = 1000;
+      expect(run.reroll()).toBe(true);
+      expect(run.gold).toBe(1000 - rerollCost(n));
+      expect(run.rerollsUsed).toBe(n + 1);
+    }
   });
 
-  it('cannot reroll without the gold, and keeps the reroll', () => {
+  it('cannot reroll without the gold, and pays nothing', () => {
     const run = new RunState(1);
-    run.spend(START.gold - (REROLL_COST - 1));
-    expect(run.gold).toBe(REROLL_COST - 1);
-    expect(run.reroll(REROLL_COST)).toBe(false);
-    expect(run.rerollUsed).toBe(false);
-    expect(run.gold).toBe(REROLL_COST - 1);
+    run.gold = rerollCost(0) - 1;
+    expect(run.reroll()).toBe(false);
+    expect(run.rerollsUsed).toBe(0);
+    expect(run.gold).toBe(rerollCost(0) - 1);
+    run.gold = rerollCost(0);
+    expect(run.reroll()).toBe(true);
+    run.gold = rerollCost(1) - 1;
+    expect(run.reroll()).toBe(false);
+    expect(run.rerollsUsed).toBe(1);
+    expect(run.gold).toBe(rerollCost(1) - 1);
   });
 
   it('keeps the run ledger: gold earned and clean waves', () => {
