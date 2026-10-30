@@ -1,5 +1,6 @@
 import type { EnemyDef } from '../types';
 import { block } from './block';
+import { colossus } from './colossus';
 import { bulwark } from './bulwark';
 import { dasher } from './dasher';
 import { dart } from './dart';
@@ -16,6 +17,7 @@ export const ENEMIES: readonly EnemyDef[] = [
   dot,
   dart,
   block,
+  colossus,
   dasher,
   sprinter,
   splitter,

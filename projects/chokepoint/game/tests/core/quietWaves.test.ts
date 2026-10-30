@@ -9,7 +9,7 @@ import { planWave } from '../../src/core/waves';
  */
 describe('quiet wave plans', () => {
   it('start with the first spawn at once and keep a non-negative gap between spawns', () => {
-    for (const wave of [4, 8, 12, 16, 20, 24, 28]) {
+    for (const wave of [4, 8, 12, 16, 24, 28]) { // 20 is the boss wave's slot
       const plan = planWave(wave, new Rng(wave), ENEMIES);
       expect(plan.spawns.length).toBeGreaterThanOrEqual(3);
       expect(plan.spawns[0]!.delaySec).toBe(0);

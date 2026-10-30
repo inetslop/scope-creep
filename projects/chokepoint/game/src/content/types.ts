@@ -33,6 +33,13 @@ export interface EnemyDef {
   splitsInto?: string;
   /** Multiplies damage from a directed shot that strikes its front (flying against its travel); the rear and flightless hits go whole (core/plate.ts). */
   plate?: number;
+  /**
+   * The timed out-of-reach beat (the Colossus): when its hp first drops to `hpFrac` of its max,
+   * a white flash of `telegraphSec` and then it is untargetable for `phaseSec`, repeating every
+   * `periodSec` (core/outOfReach.ts). Untargetable, not immune: the aim picks skip it; area, line
+   * and held damage and all control still reach it.
+   */
+  outOfReach?: { hpFrac: number; telegraphSec: number; phaseSec: number; periodSec: number };
   /** Gold for killing it. */
   gold: number;
   /** Lives lost when it reaches the exit. */
@@ -41,7 +48,7 @@ export interface EnemyDef {
   threat: number;
   /** First wave it can appear in. */
   fromWave: number;
-  /** Never in a wave's mix: it exists only as a split of another enemy (core/waves.ts skips it). */
+  /** Never in a wave's normal mix: it exists only where a plan reserves it — the Colossus as the boss wave's shape, the Splinter as a Splitter's split (core/waves.ts skips it). */
   spawnOnly?: boolean;
   look: Look;
 }

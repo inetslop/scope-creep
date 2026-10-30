@@ -14,8 +14,8 @@ import { getSfx, onResize, SCENES } from './keys';
 
 /**
  * The enemies reference: every enemy in the content, in fromWave order, with its on-board
- * token, name, the content's own description, and the wave it comes from (a spawn-only
- * piece reads "from a Splitter"). One white rounded card that scales to fit the screen;
+ * token, name, the content's own description, and the wave it comes from (a piece only
+ * born from another reads "from a <its parent>"). One white rounded card that scales to fit the screen;
  * the pause sits dimmed behind. It reads the content and owns no state — an enemy added
  * later (a boss) shows up on the next open with no change to this scene.
  */
@@ -73,7 +73,8 @@ export class EnemiesScene extends Phaser.Scene {
     // Pass 1: lay each row's texts out at (0,0) with their final wrap width to measure them.
     const rows = defs.map((def) => {
       const name = this.add.text(0, 0, def.name, titleStyle(14)).setOrigin(0, 0.5);
-      const wave = this.add.text(0, 0, def.spawnOnly ? 'from a Splitter' : `wave ${def.fromWave}`, textStyle(12, PALETTE.muted)).setOrigin(1, 0.5);
+      const from = def.spawnOnly ? ENEMIES.find((d) => d.splitsInto === def.id) : undefined;
+      const wave = this.add.text(0, 0, from ? `from a ${from.name}` : `wave ${def.fromWave}`, textStyle(12, PALETTE.muted)).setOrigin(1, 0.5);
       const desc = this.add.text(0, 0, def.description, textStyle(12, PALETTE.muted, { wordWrap: { width: textW } }));
       return { def, name, wave, desc, h: Math.max(MIN_ROW, name.height + 3 + desc.height) };
     });

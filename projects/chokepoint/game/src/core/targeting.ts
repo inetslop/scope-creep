@@ -5,6 +5,8 @@ export interface TargetCandidate {
   /** Distance walked along the path: bigger is closer to the exit. */
   distance: number;
   active: boolean;
+  /** Out of reach right now (the Colossus's timed beat): the picks skip it; area, line and held damage still reach it. */
+  untargetable?: boolean;
 }
 
 /**
@@ -17,7 +19,7 @@ export function pickTarget(x: number, y: number, range: number, enemies: readonl
   const r2 = range * range;
   for (let i = 0; i < enemies.length; i++) {
     const e = enemies[i]!;
-    if (!e.active) continue;
+    if (!e.active || e.untargetable) continue;
     const dx = e.x - x;
     const dy = e.y - y;
     if (dx * dx + dy * dy > r2) continue;
@@ -43,9 +45,10 @@ export function inRange(x: number, y: number, range: number, enemies: readonly T
   return out;
 }
 
-/** Up to `count` active enemies in range, furthest along the path first (multi-shot towers). */
+/** Up to `count` active enemies in range, furthest along the path first (multi-shot towers). Untargetable ones are skipped. */
 export function pickTargets(x: number, y: number, range: number, enemies: readonly TargetCandidate[], count: number): number[] {
   return inRange(x, y, range, enemies)
+    .filter((i) => !enemies[i]!.untargetable)
     .sort((a, b) => enemies[b]!.distance - enemies[a]!.distance)
     .slice(0, Math.max(0, count));
 }

@@ -100,12 +100,27 @@ export function tightHalve(spawns: WaveSpawn[]): WaveSpawn[] {
   return spawns.map((s, i) => ({ enemy: s.enemy, delaySec: i === 0 ? 0 : s.delaySec / 2 }));
 }
 
+/** Every 10th wave is the boss wave: one Colossus, nothing else. */
+export function isBossWave(wave: number): boolean {
+  return wave > 0 && wave % 10 === 0;
+}
+
 /**
- * Which enemies a wave sends, in order, and when. Spends the wave's budget on enemies that are
- * unlocked (fromWave) and affordable; groups of the same type come in quick succession. Ramping
- * enemies are reserved up front (a fixed count per wave), then interleaved evenly through it.
+ * Which enemies a wave sends, in order, and when. A boss wave is exactly one Colossus and nothing
+ * else; every other wave spends the wave's budget on enemies that are unlocked (fromWave) and
+ * affordable, groups of the same type come in quick succession, and ramping enemies are reserved
+ * up front (a fixed count per wave), then interleaved evenly through it.
  */
 export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): WavePlan {
+  if (isBossWave(wave)) {
+    // Still draws its share of the run's rng, so the waves after it keep today's seeded plans.
+    planNormalWave(wave, rng, enemies);
+    return { number: wave, spawns: [{ enemy: 'colossus', delaySec: 0 }], hpMul: waveHpMul(wave), tags: [] };
+  }
+  return planNormalWave(wave, rng, enemies);
+}
+
+function planNormalWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): WavePlan {
   const unlocked = enemies.filter((e) => !e.spawnOnly && e.fromWave <= wave && e.threat > 0);
   const rampers = unlocked.filter((e) => e.speedRamp !== undefined);
   const walkers = unlocked.filter((e) => e.speedRamp === undefined && e.dashCycle === undefined && e.splitsInto === undefined && e.id !== 'hauler' && e.id !== 'mute' && e.id !== 'bulwark' && e.id !== 'ward');

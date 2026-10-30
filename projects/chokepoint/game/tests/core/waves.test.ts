@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ENEMIES } from '../../src/content/enemies';
 import { Rng } from '../../src/core/rng';
-import { dashCount, demoWave, isQuietWave, planWave, quietCount, quietGoldMul, quietHalve, rampCount, waveBudget, waveCounts, waveHpMul } from '../../src/core/waves';
+import { dashCount, demoWave, isBossWave, isQuietWave, planWave, quietCount, quietGoldMul, quietHalve, rampCount, waveBudget, waveCounts, waveHpMul } from '../../src/core/waves';
 
 describe('planWave', () => {
   it('spends the budget on unlocked enemies only', () => {
@@ -42,8 +42,7 @@ describe('planWave', () => {
       [17, 4],
       [21, 5],
       [25, 6],
-      [30, 6],
-    ];
+    ]; // 30 is the boss wave's slot, so its plan has no rampers to count
     for (const [wave, count] of expected) {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
       expect(plan.spawns.filter((s) => s.enemy === 'sprinter').length).toBe(count);
@@ -96,7 +95,7 @@ describe('planWave', () => {
   it('sends exactly one Mute on 11, 14, 17, ... — a quiet wave keeps it', () => {
     for (let wave = 1; wave <= 30; wave++) {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
-      const expected = wave >= 11 && (wave - 11) % 3 === 0 ? 1 : 0;
+      const expected = wave >= 11 && (wave - 11) % 3 === 0 && wave % 10 !== 0 ? 1 : 0; // a boss wave sends only its Colossus
       expect(plan.spawns.filter((s) => s.enemy === 'mute').length).toBe(expected);
       if (expected === 1) expect(plan.spawns.some((s) => s.enemy !== 'mute')).toBe(true); // never a Mute-only wave
     }
@@ -105,16 +104,16 @@ describe('planWave', () => {
   it('sends exactly one Bulwark on 12, 16, 20, ... — a quiet wave keeps it', () => {
     for (let wave = 1; wave <= 30; wave++) {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
-      const expected = wave >= 12 && (wave - 12) % 4 === 0 ? 1 : 0;
+      const expected = wave >= 12 && (wave - 12) % 4 === 0 && wave % 10 !== 0 ? 1 : 0; // a boss wave sends only its Colossus
       expect(plan.spawns.filter((s) => s.enemy === 'bulwark').length).toBe(expected);
       if (expected === 1) expect(plan.spawns.some((s) => s.enemy !== 'bulwark')).toBe(true); // never a Bulwark-only wave
     }
   });
 
-  it('sends exactly one Ward on 15, 25, 30, ... — wave 20 is the boss slot, a quiet wave keeps it', () => {
+  it('sends exactly one Ward on 15, 25, 35, ... — a boss wave takes its slot, a quiet wave keeps it', () => {
     for (let wave = 1; wave <= 40; wave++) {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
-      const expected = wave >= 15 && wave % 5 === 0 && wave !== 20 ? 1 : 0;
+      const expected = wave >= 15 && wave % 5 === 0 && wave % 10 !== 0 ? 1 : 0; // a boss wave sends only its Colossus
       expect(plan.spawns.filter((s) => s.enemy === 'ward').length).toBe(expected);
     }
   });
@@ -131,6 +130,31 @@ describe('planWave', () => {
       expect(waveHpMul(wave)).toBeGreaterThan(waveHpMul(wave - 1));
     }
     expect(waveHpMul(1)).toBe(1);
+  });
+});
+
+describe('boss waves (every 10th)', () => {
+  it('isBossWave: every 10th wave, not wave 0', () => {
+    expect([0, 1, 9, 10, 11, 19, 20, 30, 40].map(isBossWave)).toEqual([false, false, false, true, false, false, true, true, true]);
+  });
+  it('a boss wave is exactly one Colossus, nothing else: no tags, the wave-scaled hp', () => {
+    for (const wave of [10, 20, 30, 40]) {
+      const plan = planWave(wave, new Rng(wave), ENEMIES);
+      expect(plan.spawns).toEqual([{ enemy: 'colossus', delaySec: 0 }]);
+      expect(plan.tags).toEqual([]);
+      expect(plan.hpMul).toBe(waveHpMul(wave));
+    }
+  });
+  it('non-boss waves never send a Colossus', () => {
+    for (let wave = 1; wave <= 40; wave++) {
+      if (wave % 10 === 0) continue;
+      expect(planWave(wave, new Rng(wave), ENEMIES).spawns.some((s) => s.enemy === 'colossus')).toBe(false);
+    }
+  });
+  it('the boss plan is the same on every rng stream (no draws of its own)', () => {
+    for (const seed of [1, 7, 42]) {
+      expect(planWave(10, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'colossus', delaySec: 0 }]);
+    }
   });
 });
 
@@ -159,7 +183,7 @@ describe('quiet waves (every 4th)', () => {
     ]);
   });
   it('a quiet wave sends between 3 and half the usual budget, deterministically', () => {
-    for (const wave of [4, 8, 12, 16, 20, 24]) {
+    for (const wave of [4, 8, 12, 16, 24]) { // 20 is the boss's slot
       const a = planWave(wave, new Rng(wave), ENEMIES);
       expect(a.spawns).toEqual(planWave(wave, new Rng(wave), ENEMIES).spawns); // no rng in the halving
       expect(a.spawns.length).toBeGreaterThanOrEqual(3);

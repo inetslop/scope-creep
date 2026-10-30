@@ -37,6 +37,14 @@ describe('content', () => {
         expect(c.dashSec).toBeGreaterThan(0);
         expect(c.dashCells / c.dashSec).toBeGreaterThan(e.speed); // the surge outpaces the crawl
       }
+      if (e.outOfReach) {
+        expect(e.outOfReach.hpFrac).toBeGreaterThan(0);
+        expect(e.outOfReach.hpFrac).toBeLessThanOrEqual(1);
+        expect(e.outOfReach.telegraphSec).toBeGreaterThan(0);
+        expect(e.outOfReach.phaseSec).toBeGreaterThan(0);
+        expect(e.outOfReach.periodSec).toBeGreaterThan(0);
+        expect(e.outOfReach.periodSec).toBeGreaterThan(e.outOfReach.telegraphSec + e.outOfReach.phaseSec); // a quiet beat between beats
+      }
     }
   });
 

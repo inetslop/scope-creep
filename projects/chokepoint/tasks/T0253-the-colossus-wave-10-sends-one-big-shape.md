@@ -4,11 +4,12 @@ title: "The Colossus: wave 10 sends one big shape that goes out of reach at half
 assignee: inet-racing
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T04:09:41Z
 claimed_at: 2026-10-30T05:20:34Z
+finished_at: 2026-10-30T06:48:10Z
 epic: E5
 ---
 
@@ -119,3 +120,31 @@ outOfReach?: { hpFrac: number; telegraphSec: number; phaseSec: number; periodSec
 - `tests/core/waves.test.ts`: boss-wave shape and never-in-a-normal-mix; boss-wave exclusions in Mute/Bulwark/Ward/quiet tests.
 - `tests/core/tightWaves.test.ts`: drop wave 30.
 - `tests/content.test.ts`: `outOfReach` validation block.
+
+## Result (attempt 1, inet-racing)
+
+Added the Colossus (every 10th wave is exactly one of them, nothing else) as new content data with a timed out-of-reach beat: at half health it flashes white for 0.5 s, then is untargetable at 50% alpha for 2.5 s, repeating every 8 s, all on the simulation clock. Untargetable only affects the aim picks (pickTarget/pickTargets/mark); splash, pierce, chain, held beams, burn, marks and control all still reach it. The boss branch still consumes the wave's rng draws so waves 11+ keep today's seeded plans, and waves 1–9/11–19 are unchanged. A new `enemies.reach` invariant plus unit tests for the beat, the boss plans, and the content field complete the change; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 87.6 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../game/src/content/enemies/colossus.ts           | 17 +++++++++
+ .../chokepoint/game/src/content/enemies/index.ts   |  2 ++
+ projects/chokepoint/game/src/content/types.ts      |  9 ++++-
+ projects/chokepoint/game/src/core/outOfReach.ts    | 26 ++++++++++++++
+ projects/chokepoint/game/src/core/targeting.ts     |  7 ++--
+ projects/chokepoint/game/src/core/waves.ts         | 21 ++++++++++--
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/entities/Enemy.ts     | 25 ++++++++++++--
+ .../chokepoint/game/src/scenes/EnemiesScene.ts     |  7 ++--
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  6 ++++
+ .../chokepoint/game/src/systems/attacks/mark.ts    |  2 +-
+ projects/chokepoint/game/tests/content.test.ts     |  8 +++++
+ .../chokepoint/game/tests/core/outOfReach.test.ts  | 29 ++++++++++++++++
+ .../chokepoint/game/tests/core/quietWaves.test.ts  |  2 +-
+ .../chokepoint/game/tests/core/tightWaves.test.ts  |  2 +-
+ projects/chokepoint/game/tests/core/waves.test.ts  | 40 +++++++++++++++++-----
+ 16 files changed, 182 insertions(+), 22 deletions(-)
+```

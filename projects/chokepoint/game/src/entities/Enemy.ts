@@ -4,6 +4,7 @@ import type { EnemyDef } from '../content/types';
 import type { PathLine } from '../core/path';
 import { ART_SCALE, PLATE_TEXTURE, enemyTexture } from '../art/textures';
 import { ignite } from '../core/burn';
+import { outOfReachLeg } from '../core/outOfReach';
 import { applyRoot, tickRoot } from '../core/root';
 import type { LiveBurn } from '../core/burn';
 import type { Tower } from './Tower';
@@ -51,6 +52,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   markPct = 0;
   /** Seconds since it was marked (the chevron's pop-in); 0 until marked. */
   markAge = 0;
+  /** Seconds since its out-of-reach beat started (the Colossus); -1 before its hp first dropped to half (core/outOfReach.ts). */
+  reachClock = -1;
   /** The burn on it (Ember): its rate and the seconds left; left 0: not ablaze. */
   burn: LiveBurn = { dps: 0, left: 0 };
   /** The tower that lit the burn: when the tick kills, its mints pay like a normal kill. */
@@ -93,8 +96,10 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.dashLeg = 'crawl';
     this.dashLeft = this.def.dashCycle?.crawlSec ?? 0;
     this.pauseAge = 0;
+    this.reachClock = -1;
     this.setTexture(enemyTexture(def.id));
     this.clearTint();
+    this.setAlpha(1); // a recycled Colossus must not come up half-ghost
     this.setScale(0);
     const p = path.pointAt(distance);
     this.setPosition(p.x, p.y);
@@ -110,7 +115,15 @@ export class Enemy extends Phaser.GameObjects.Image {
   /** Walks for `dt` seconds. Returns true when it reached the end of the path (a leak). */
   advance(dt: number, path: PathLine): boolean {
     const cycle = this.def.dashCycle;
-    const wasWhite = this.flash > 0 || (cycle !== undefined && this.dashLeg === 'pause' && this.pauseAge < cycle.pauseSec / 2);
+    const reach = this.def.outOfReach;
+    const wasWhite =
+      this.flash > 0 ||
+      (cycle !== undefined && this.dashLeg === 'pause' && this.pauseAge < cycle.pauseSec / 2) ||
+      (reach !== undefined && outOfReachLeg(reach, this.reachClock) === 'flash');
+    // The out-of-reach beat: its clock starts the frame its hp first drops to the fraction, then
+    // just runs — the leg (flash, phase, quiet) falls out of it (core/outOfReach.ts).
+    if (this.reachClock < 0 && reach !== undefined && this.hp <= this.maxHp * reach.hpFrac) this.reachClock = 0;
+    if (this.reachClock >= 0) this.reachClock += dt;
     if (this.slowLeft > 0) {
       this.slowLeft -= dt;
       if (this.slowLeft <= 0) this.slowPct = 0;
@@ -180,12 +193,20 @@ export class Enemy extends Phaser.GameObjects.Image {
     }
     const tele = cycle !== undefined && this.dashLeg === 'pause' && this.pauseAge < cycle.pauseSec / 2;
     if (this.flash > 0) this.flash -= dt;
-    const white = tele || this.flash > 0;
+    const leg = reach !== undefined ? outOfReachLeg(reach, this.reachClock) : 'idle';
+    const white = tele || leg === 'flash' || this.flash > 0;
     if (white !== wasWhite) {
       if (white) this.setTintFill(0xffffff);
       else this.clearTint();
     }
+    this.setAlpha(leg === 'out' ? 0.5 : 1); // untargetable, not invisible: the token half-ghosts
     return this.distance >= path.length;
+  }
+
+  /** Out of reach right now (the Colossus's beat): the aim picks skip it; area, line and held damage still reach it. */
+  get untargetable(): boolean {
+    const reach = this.def.outOfReach;
+    return reach !== undefined && outOfReachLeg(reach, this.reachClock) === 'out';
   }
 
   /** Takes damage (a marked enemy takes `markPct` more, from everything); `flash` false for a

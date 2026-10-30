@@ -12,7 +12,7 @@ function furthestUnmarked(x: number, y: number, range: number, enemies: readonly
   const r2 = range * range;
   for (let i = 0; i < enemies.length; i++) {
     const e = enemies[i]!;
-    if (!e.active || e.markPct > 0) continue;
+    if (!e.active || e.markPct > 0 || e.untargetable) continue;
     const dx = e.x - x;
     const dy = e.y - y;
     if (dx * dx + dy * dy > r2) continue;

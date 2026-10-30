@@ -252,6 +252,12 @@ export class EnemySystem {
     return bad ? `${bad.def.id} burning at ${bad.burn.dps}/s for ${bad.burn.left}s` : undefined;
   }
 
+  /** Invariant: no active out-of-reach enemy carries a broken beat clock. */
+  brokenReach(): string | undefined {
+    const bad = this.pool.find((e) => e.active && e.def.outOfReach !== undefined && (!Number.isFinite(e.reachClock) || e.reachClock < -1 - 1e-9));
+    return bad ? `${bad.def.id} with reach clock ${bad.reachClock}` : undefined;
+  }
+
   /** Invariant: no enemy has slid back before the road's start (the gust clamps at 0). */
   brokenPush(): string | undefined {
     const bad = this.pool.find((e) => e.active && e.distance < 0);

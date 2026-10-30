@@ -20,7 +20,7 @@ describe('tight wave plans', () => {
     ]);
   });
   it('a tight wave wears the tight tag and starts at once with non-negative gaps', () => {
-    for (const wave of [6, 14, 22, 30]) {
+    for (const wave of [6, 14, 22]) { // 30 is the boss wave's slot
       const plan = planWave(wave, new Rng(wave), ENEMIES);
       expect(plan.tags).toEqual(['tight']);
       expect(plan.spawns.length).toBeGreaterThan(0);

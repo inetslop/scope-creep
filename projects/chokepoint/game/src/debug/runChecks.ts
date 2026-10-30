@@ -42,6 +42,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['enemies.mark', (g) => g.enemies.brokenMark()],
   ['enemies.burn', (g) => g.enemies.brokenBurn()],
   ['enemies.push', (g) => g.enemies.brokenPush()],
+  ['enemies.reach', (g) => g.enemies.brokenReach()],
   ['enemies.onRoad', (g) => (g.enemies.all.some((e) => e.active && (e.distance < 0 || e.distance > g.board.path.length + 1)) ? 'an enemy is off its road' : null)],
   ['exitWarn.valid', (g) => g.exitWarn.broken()],
   ['leakCost.valid', (g) => g.leakCost.broken()],
