@@ -24,6 +24,9 @@ const TEACH: { tag: string; first: number; text: string }[] = [
   { tag: 'boss', first: 10, text: 'boss: one big shape instead of a crowd' },
 ];
 
+/** The one-time teach for the run's first build phase: the big button's "+N" pill banks the seconds left as gold. Shown while `wavesCleared` is 0, re-derived from the run, never stored. */
+const EARLY_SEND = 'start early — the button banks the seconds left as gold';
+
 /**
  * Directly above the next-wave button while the build phase runs: what the next wave sends, straight from its
  * plan (game.waves.nextPlan), so a new enemy shows up here with no change to this file. Each type
@@ -87,13 +90,15 @@ export class NextWavePreview implements HudPart {
     if (!box) return;
     const { width, height } = this.size;
     const bottom = height - HUD.bottom / 2;
-    const x = Math.min(width - EDGE - NEXT_SIZE / 2 - 4, width - EDGE - this.cardW / 2);
+    const s = this.fitScale();
+    const x = Math.min(width - EDGE - NEXT_SIZE / 2 - 4, width - EDGE - (this.cardW / 2) * s);
     const above = isNarrow(width) ? bottom - NEXT_SIZE / 2 - 22 - 30 : bottom - (NEXT_SIZE / 2 + 7) - 10;
-    box.setScale(this.fitScale()).setPosition(x, above - this.cardH / 2);
+    box.setScale(s).setPosition(x, above - (this.cardH / 2) * s);
   }
 
-  /** The one-time line that teaches this wave's tag on first preview, or none (taught once per run, derived from the run's held-wave count). */
+  /** The one-time line that teaches this wave's tag on first preview, or the early-send teach on the run's first build phase, or none (taught once per run, derived from the run's held-wave count). */
   private teachLine(plan: WavePlan, run: RunState): string | undefined {
+    if (run.wavesCleared === 0) return EARLY_SEND;
     for (const t of TEACH) {
       if (plan.tags.includes(t.tag) && run.wavesCleared < t.first) return t.text;
     }

@@ -4,11 +4,12 @@ title: "The early-send teach: the button's banked gold, taught once"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T09:22:16Z
 claimed_at: 2026-10-30T10:00:37Z
+finished_at: 2026-10-30T10:14:06Z
 ---
 
 ## Goal
@@ -61,3 +62,15 @@ None. No new types or signatures; `teachLine` and `place` keep theirs.
 
 ### Tests
 none (UI task).
+
+## Result (attempt 1, yoga)
+
+The wave-preview card now teaches the early-send gold in a run's first build phase: a one-time muted line under the counts, `start early — the button banks the seconds left as gold`, shown only while `wavesCleared` is 0 (re-derived from the run, so resumed runs at wave 1+ skip it) and fading with the card when the build phase ends. `place()` now pins the card to its scaled size so the wide teach card fits the phone corner; all other cards are unaffected. No sound, input or new card; desktop and mobile smoke pass.
+
+- Self-review: APPROVE
+- Time: 13.5 min
+
+```
+projects/chokepoint/game/src/ui/hud/NextWavePreview.ts | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+```
