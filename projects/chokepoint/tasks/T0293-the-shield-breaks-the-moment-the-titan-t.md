@@ -3,10 +3,12 @@ id: T0293
 title: "The shield breaks: the moment the Titan takes full damage"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T17:15:59Z
+claimed_at: 2026-10-30T17:16:26Z
+designer: yoga
 ---
 
 ## Goal
