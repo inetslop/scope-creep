@@ -3,14 +3,14 @@ id: T0287
 title: "Level augments I: the unlock, the menu choice and Tough"
 size: L
 priority: 1
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-30T13:56:21Z
 claimed_at: 2026-10-30T15:57:12Z
+finished_at: 2026-10-30T16:20:23Z
 epic: E9
-design_attempts: 1
-designer: cachyos-x8664
+design_attempts: 2
 ---
 
 ## Goal
@@ -49,3 +49,11 @@ E9's first playable slice. A player who has reached wave 30 can switch on a leve
 - [ ] The choice is remembered across sessions, and a resumed run keeps its level augments.
 - [ ] Unit tests cover the unlock (including the existing-profile migration), the multiplier, Tough's health rule, the payout with and without Iron, and the save round-trip.
 - [ ] `npm run check` passes. Desktop 1280x720 and mobile 412x915 smoke pass, including the menu card both locked and unlocked.
+
+## Architect could not design it (cachyos-x8664)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+Prompt is too long · automatic compaction failed: summarization produced empty response
+```
