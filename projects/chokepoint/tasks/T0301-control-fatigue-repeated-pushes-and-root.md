@@ -1,12 +1,14 @@
 ---
 id: T0301
 title: "Control fatigue: repeated pushes and roots on one enemy grow weaker"
+assignee: desktop
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T19:32:38Z
+claimed_at: 2026-10-30T20:46:08Z
 ---
 
 ## Goal
