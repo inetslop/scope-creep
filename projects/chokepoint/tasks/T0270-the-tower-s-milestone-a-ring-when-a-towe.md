@@ -3,10 +3,12 @@ id: T0270
 title: "The tower's milestone: a ring when a tower crosses a kill count"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T09:22:16Z
+claimed_at: 2026-10-30T09:22:45Z
+designer: desktop-4070
 ---
 
 ## Goal
