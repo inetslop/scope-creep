@@ -140,6 +140,7 @@ export class RunFlow {
     const clean = this.run.cleanWaves > cleanBefore;
     hook.stats.wavesCleared += 1;
     this.s.sfx?.waveClear();
+    this.s.sfx?.waveSweep();
     const cx = this.s.board.width / 2;
     const cy = this.s.board.height / 2;
     this.s.fx.popText(cx, cy, `Wave ${this.run.wave} cleared  +${bonus}`, PALETTE.greenDeep);

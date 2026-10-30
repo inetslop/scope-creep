@@ -158,6 +158,12 @@ export class Sfx {
     this.tone(440, 0.12, 'triangle', 0.35, 880);
   }
 
+  /** A wave clears and the draft opens: a soft two-note rise, E5 then G5, 90 ms apart, the tier-chime's quiet volume. */
+  waveSweep(): void {
+    this.tone(659, 0.08, 'sine', 0.1);
+    this.tone(784, 0.08, 'sine', 0.1, undefined, 0.09);
+  }
+
   deny(): void {
     this.tone(200, 0.1, 'square', 0.15, 150);
   }

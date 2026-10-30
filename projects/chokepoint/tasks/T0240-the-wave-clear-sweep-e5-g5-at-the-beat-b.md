@@ -4,11 +4,12 @@ title: "The wave-clear sweep: E5→G5 at the beat before the draft"
 assignee: inet-racing
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-29T23:53:23Z
 claimed_at: 2026-10-30T00:21:33Z
+finished_at: 2026-10-30T00:31:00Z
 ---
 
 ## Goal
@@ -61,3 +62,16 @@ This is the only place a wave end opens a draft; `endRun()` (run's end) never ca
 
 ### Tests
 none (audio task; `npm run check` and `npm run smoke` cover it).
+
+## Result (attempt 1, inet-racing)
+
+Added a soft two-note rising sweep — E5 then G5, 80 ms sine each, 90 ms apart, volume 0.1 — as `Sfx.waveSweep()` in `src/audio/Sfx.ts` (placed between `waveClear()` and `deny()`), played once from `RunFlow.clearWave()` at the moment a wave ends and the draft opens. It never plays on the run's end, stays silent when sound is off, and changes no other sound, HUD element or input. Check and smoke pass on desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 9.4 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts       | 6 ++++++
+ projects/chokepoint/game/src/systems/RunFlow.ts | 1 +
+ 2 files changed, 7 insertions(+)
+```
