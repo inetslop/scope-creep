@@ -1,12 +1,14 @@
 ---
 id: T0264
 title: "The waves reference: the tags and what they do, off the pause"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T06:24:50Z
+claimed_at: 2026-10-30T07:15:13Z
 ---
 
 ## Goal
