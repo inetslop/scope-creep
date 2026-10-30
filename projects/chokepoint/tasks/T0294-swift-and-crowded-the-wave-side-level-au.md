@@ -3,11 +3,13 @@ id: T0294
 title: "Swift and Crowded: the wave-side level augments"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T17:33:38Z
+claimed_at: 2026-10-30T17:56:10Z
 epic: E9
+designer: desktop
 ---
 
 ## Goal
