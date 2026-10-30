@@ -68,11 +68,6 @@ export class ExitWarning {
     return false;
   }
 
-  /** The board re-grew: this gate is gone with the old road (a fresh instance watches the new one). */
-  destroy(): void {
-    this.img.destroy();
-  }
-
   /** Invariant: a visible warning has a finite position and scale. */
   broken(): string | undefined {
     if (!this.img.visible) return undefined;

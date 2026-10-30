@@ -8,9 +8,8 @@ import { Rng } from './rng';
  *   wave   enemies are coming
  *   draft  the wave is cleared, the player picks an augment
  *   over   lives ran out
- *   won    wave 30 cleared: the run is made
  */
-export type RunPhase = 'build' | 'wave' | 'draft' | 'over' | 'won';
+export type RunPhase = 'build' | 'wave' | 'draft' | 'over';
 
 /** How the run was started: a normal run, or the Iron mode (one life, doubled coins). */
 export type RunMode = 'play' | 'iron';
@@ -33,8 +32,6 @@ export class RunState {
   fourthCard = false;
   /** The wave being fought, or the last one fought (0 before the first). */
   wave = 0;
-  /** Which level of the run's three: the board re-grows at each level clear. */
-  level = 1;
   phase: RunPhase = 'build';
   /** Build time left before the next wave starts on its own. */
   buildLeftSec = 0;
@@ -56,9 +53,9 @@ export class RunState {
     this.rng = new Rng(seed);
   }
 
-  /** The run is over or won. (A getter, so a check after calls that may end the run isn't narrowed away.) */
+  /** The lives ran out. (A getter, so a check after calls that may end the run isn't narrowed away.) */
   get over(): boolean {
-    return this.phase === 'over' || this.phase === 'won';
+    return this.phase === 'over';
   }
 
   /** Waves fully cleared. */

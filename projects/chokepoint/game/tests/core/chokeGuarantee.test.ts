@@ -5,12 +5,12 @@ import { Rng } from '../../src/core/rng';
 
 /**
  * The bgen-2 guarantee (core/choke.ts): every generated board carries at least one choke cell,
- * so the `board.choke` invariant holds on every board a run ever grows — including the level
- * 2 and 3 re-grown ones, whose windiest target (1.5 and up) takes runs of one cell (T0260).
+ * so the `board.choke` invariant holds on every board a run plays — the plain road and the owned
+ * long road alike.
  */
 describe('every bgen-2 board carries a choke cell', () => {
-  it('across the orientations, bends and road-length targets the run uses', () => {
-    for (const mul of [1, 1.25, 1.5625]) {
+  it('across the orientations, bends and road lengths (plain and the owned long road)', () => {
+    for (const mul of [1, 1.25]) {
       for (const [cols, rows] of [
         [14, 8],
         [8, 14],

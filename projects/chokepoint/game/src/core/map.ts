@@ -47,9 +47,8 @@ export function generateMap(rng: Rng, cols: number, rows: number, rocks: number,
     path.push(toCell(along, across));
   }
   while (along < length - 1) {
-    // The long road (lengthMul > 1) takes runs of 1-2 cells, so it turns more often and is ~25%
-    // longer; the longest (1.5 and up, level 3's target) takes runs of 1, the windiest the grid allows.
-    const run = lengthMul >= 1.5 ? 1 : lengthMul > 1 ? rng.int(1, 2) : rng.int(2, 3);
+    // The long road (lengthMul > 1) takes runs of 1-2 cells, so it turns more often and is ~25% longer.
+    const run = lengthMul > 1 ? rng.int(1, 2) : rng.int(2, 3);
     for (let i = 0; i < run && along < length - 1; i++) {
       along++;
       path.push(toCell(along, across));

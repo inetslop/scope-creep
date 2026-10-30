@@ -2,10 +2,8 @@ import Phaser from 'phaser';
 import { MusicBed } from '../audio/music';
 import { GRID, HUD, ROCKS } from '../config';
 import { cssColor, PALETTE } from '../content/palette';
-import { boardSeedFor, levelLengthMul } from '../core/level';
 import { cellsBesidePath, generateMap } from '../core/map';
 import { loadProfile } from '../core/profile';
-import { Rng } from '../core/rng';
 import { RunState } from '../core/run';
 import type { SavedRun } from '../core/saveRun';
 import { boardBends, boardLengthMul, startBonuses } from '../core/tech';
@@ -49,12 +47,8 @@ export class GameScene extends Phaser.Scene {
   run!: RunState;
   /** The extra starting lives from owned life nodes (the run's invariants allow for them). */
   techLife = 0;
-  /** The road length multiplier this board was generated with (level N's total, base times levelLengthMul(N)). */
+  /** The road length multiplier this board was generated with (the save round-trips it; the board shape can't tell a long road from a plain one). */
   mapLengthMul = 1;
-  /** The road length the run's boards start from: the owned tech (or the save's own) — level N multiplies it by 1.25^(N-1). */
-  baseLengthMul = 1;
-  /** The road bend target this run's boards are generated with: the owned tech (or the save's board's own). */
-  mapBends = 0;
   board!: Board;
   building!: Building;
   ghost!: TowerGhost;
@@ -107,19 +101,14 @@ export class GameScene extends Phaser.Scene {
       this.run.fourthCard = draft.fourthCard;
     }
     // The board's tech nodes wind new runs' roads one turn further and lengthen them; a resumed
-    // run keeps its saved board (its own bends and base length, its level's board), and a ghost
-    // run replays the best board as generated (0 bends, length 1).
-    const level = saved ? saved.level : 1;
-    this.baseLengthMul = saved ? saved.lengthMul : ghost === undefined ? boardLengthMul(loadProfile(window.localStorage).purchased) : 1;
-    this.mapBends = saved ? saved.bends : ghost === undefined ? boardBends(loadProfile(window.localStorage).purchased) : 0;
+    // run keeps its saved board (its own bends and length), and a ghost run replays the best
+    // board as generated (0 bends, length 1).
+    const bends = saved ? saved.bends : ghost === undefined ? boardBends(loadProfile(window.localStorage).purchased) : 0;
+    const lengthMul = saved ? saved.lengthMul : ghost === undefined ? boardLengthMul(loadProfile(window.localStorage).purchased) : 1;
     const view = viewSize(this);
     const portrait = saved ? saved.rows > saved.cols : view.height > view.width;
-    // Level 1's board draws from the run's own rng (the draft offers continue its stream); every
-    // other board is a pure function of the run's seed and its level, so resumes replay it exactly.
-    const boardRng = level === 1 ? this.run.rng : new Rng(boardSeedFor(this.run.seed, level));
-    const boardMul = this.baseLengthMul * levelLengthMul(level);
-    const map = generateMap(boardRng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, this.mapBends, boardMul, this.run.bgen);
-    this.mapLengthMul = boardMul;
+    const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, bends, lengthMul, this.run.bgen);
+    this.mapLengthMul = lengthMul;
 
     this.board = new Board(this, map);
     this.fx = new FxSystem(this, sfx);
@@ -166,7 +155,7 @@ export class GameScene extends Phaser.Scene {
     registerRunChecks(this);
     // Only spots on screen between the HUD bars: zoomed in, some cells are out of view.
     hook.setBuildSpots(() =>
-      cellsBesidePath(this.board.map)
+      cellsBesidePath(map)
         .filter((c) => this.board.canBuild(c))
         .map((c) => this.board.toScreen(this.board.centerOf(c)))
         .filter((p) => p.x > 0 && p.x < viewSize(this).width && p.y > HUD.top && p.y < viewSize(this).height - HUD.bottom),
@@ -192,25 +181,9 @@ export class GameScene extends Phaser.Scene {
   }
 
   openPause(): void {
-    if (!this.scene.isActive() || this.run.over) return;
+    if (!this.scene.isActive() || this.run.phase === 'over') return;
     this.scene.launch(SCENES.pause);
     this.scene.pause();
-  }
-
-  /**
-   * The level cleared: the island re-grows from the run's seed and the level — a new road, a new
-   * choke, a quarter longer, no towers — while the gold and the lives carry on.
-   */
-  regrowBoard(level: number): void {
-    this.towers.clearTowers();
-    const mul = this.baseLengthMul * levelLengthMul(level);
-    const map = generateMap(new Rng(boardSeedFor(this.run.seed, level)), this.board.map.cols, this.board.map.rows, ROCKS, this.mapBends, mul, this.run.bgen);
-    this.mapLengthMul = mul;
-    this.board.setMap(map);
-    this.exitWarn.destroy();
-    this.exitWarn = new ExitWarning(this, this.board, this.enemies, getSfx(this));
-    this.leakCost = new LeakCost(this.run, this.fx, this.board);
-    this.building.clearForNewBoard();
   }
 
   /** PauseScene closed. */

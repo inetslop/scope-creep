@@ -33,10 +33,8 @@ export interface SavedRun {
   rows: number;
   /** The board's entrance jog: 1 when the road was generated with one extra bend, 0 in older saves. */
   bends: number;
-  /** The road length the run's boards start from: 1.25 when "The long way" was owned, 1 in older saves; level N multiplies it by 1.25^(N-1). */
+  /** The board's road length at generation: 1.25 when "The long way" was owned, 1 in older saves. */
   lengthMul: number;
-  /** Which of the run's three levels this save's board is: the board re-grows at each level clear (1 in older saves). */
-  level: number;
   /** The board's generation version: 2 when the board carries a guaranteed choke cell, 1 in older saves. */
   bgen: number;
   gold: number;
@@ -90,7 +88,6 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
   if (!inInt(p.cols, 1, 32) || !inInt(p.rows, 1, 32)) return undefined;
   if (p.bends !== undefined && p.bends !== 0 && p.bends !== 1) return undefined;
   if (p.lengthMul !== undefined && p.lengthMul !== 1 && p.lengthMul !== 1.25) return undefined;
-  if (p.level !== undefined && !inInt(p.level, 1, 3)) return undefined;
   if (p.bgen !== undefined && !inInt(p.bgen, 1, 8)) return undefined;
   if (!inRange(p.gold, 0, 1e6)) return undefined;
   if (!inInt(p.lives, 0, 1e6) || !inInt(p.kills, 0, 1e6) || !inInt(p.cleanWaves, 0, 1e6)) return undefined;
@@ -116,7 +113,6 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
     rows: p.rows,
     bends: p.bends === 1 ? 1 : 0,
     lengthMul: p.lengthMul === 1.25 ? 1.25 : 1,
-    level: inInt(p.level, 1, 3) ? p.level : 1,
     bgen: inInt(p.bgen, 1, 8) ? p.bgen : 1,
     gold: p.gold,
     lives: p.lives,

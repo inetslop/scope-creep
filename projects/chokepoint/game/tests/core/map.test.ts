@@ -227,24 +227,6 @@ describe('generateMap with the longer road', () => {
   it('is the same longer board for the same seed: a resumed run regenerates it exactly', () => {
     expect(generateMap(new Rng(42), 14, 8, 5, 1, 1.25)).toEqual(generateMap(new Rng(42), 14, 8, 5, 1, 1.25));
   });
-
-  it('winds the longest road (1.5625, level 3) longer than 1.25: the mean length over the seeds is strictly greater', () => {
-    const mean = (mul: number): number => {
-      const lens: number[] = [];
-      for (const [cols, rows] of [
-        [14, 8],
-        [8, 14],
-      ] as const) {
-        for (const seed of [1, 2, 3, 4, 5]) {
-          for (const bends of [0, 1]) {
-            lens.push(generateMap(new Rng(seed), cols, rows, 5, bends, mul).path.length);
-          }
-        }
-      }
-      return lens.reduce((a, b) => a + b, 0) / lens.length;
-    };
-    expect(mean(1.5625)).toBeGreaterThan(mean(1.25));
-  });
 });
 
 describe('cellsBesidePath', () => {

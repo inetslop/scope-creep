@@ -4,11 +4,12 @@ title: "Remove the levels: a run is one board again"
 size: M
 priority: 1
 assignee: tobias
-status: in-progress
+status: done
 depends_on: []
 attempts: 0
 created: 2026-10-30T10:50:50Z
 claimed_at: 2026-10-30T11:59:49Z
+finished_at: 2026-10-30T12:08:52Z
 ---
 
 ## Goal
@@ -125,3 +126,36 @@ No new files or functions. Everything below is deletion plus small comment fixes
 ## Claimed (by hand, 2026-10-30)
 
 Taken out of the pool: Tobias is doing this by hand, since the file locks kept every machine off it. Do not claim it.
+
+## Result (by hand, 2026-10-30)
+
+Reverted T0260 (`9604bff`) and T0262 (`32508a0`) with `git revert`, then by hand where later work had moved on: RunFlow keeps T0276's imports (`draftPool`, no `REROLL_COST`); `chokeGuarantee.test.ts` is kept and loops over the plain and long road only; the `clearWave` tests now show waves 10, 20 and 30 clear like any other wave (clean beat, then the draft, no game over). A run is one board until the lives run out: no `won` phase, no level-clear banner, no re-grow, no tower wipe, no "Made it" or level text on the game-over card or the wave card. `SavedRun` drops `level`; a level-era save loads with the field ignored (new test in `saveRun.test.ts`). The bosses at 10, 20 and 30 are wave rules and are untouched.
+
+- `npm run check`: pass (426 tests)
+- `npm run smoke`: desktop and mobile PASS
+- A seed-7 run driven on the dev server from wave 1 to 32: the same board and its tower throughout, no level text, no win, no errors or invariant failures
+
+```
+ src/core/level.ts                 | 43 ---------------------------------
+ src/core/map.ts                   |  5 ++--
+ src/core/run.ts                   |  9 +++----
+ src/core/saveRun.ts               |  6 +----
+ src/debug/runChecks.ts            |  2 --
+ src/scenes/GameOverScene.ts       | 11 ++-------
+ src/scenes/GameScene.ts           | 45 +++++++---------------------------
+ src/scenes/HudScene.ts            |  2 --
+ src/systems/Board.ts              | 28 +++++-----------------
+ src/systems/Building.ts           | 15 +++---------
+ src/systems/ExitWarning.ts        |  5 ----
+ src/systems/RunFlow.ts            | 30 ++---------------------
+ src/systems/RunSave.ts            |  8 +++----
+ src/systems/TowerSystem.ts        |  6 -----
+ src/ui/hud/LevelClearBanner.ts    | 32 -------------------------
+ src/ui/hud/WaveCard.ts            | 33 +++++++------------------
+ tests/core/chokeGuarantee.test.ts |  8 +++----
+ tests/core/level.test.ts          | 56 -------------------------------------------
+ tests/core/map.test.ts            | 18 --------------
+ tests/core/saveRun.test.ts        | 24 ++++++-------------
+ tests/systems/runFlow.test.ts     | 77 ++++++++++++++++++++---------------------------------------
+ 21 files changed, 77 insertions(+), 386 deletions(-)
+```

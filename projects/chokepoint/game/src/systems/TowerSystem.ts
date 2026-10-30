@@ -93,12 +93,6 @@ export class TowerSystem {
     return true;
   }
 
-  /** The level cleared: the old board's towers go with it (the run's gold doesn't). */
-  clearTowers(): void {
-    for (const t of this.towers) t.destroy();
-    this.towers.length = 0;
-  }
-
   update(dt: number): void {
     const enemies = this.enemies.all;
     const road = this.enemies.aliveCount > 0;
