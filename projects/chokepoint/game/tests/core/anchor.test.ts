@@ -24,16 +24,20 @@ describe('anchor (root)', () => {
     expect(spec('frost', 'anchor', 'anchor').root?.sec).toBeCloseTo(0.75);
   });
 
-  it('only rolls as an Epic card, and the Epic card has the base values', () => {
-    expect(anchor.tier).toBe('epic');
-    expect(towerSpec([copy('anchor', 'epic')]).root?.sec).toBeCloseTo(0.75);
-    expect(towerSpec([copy('anchor', 'epic'), copy('anchor', 'epic')]).root?.sec).toBeCloseTo(1);
-    expect(towerSpec([copy('bolt'), copy('anchor', 'epic')]).root?.sec).toBeCloseTo(0.5);
+  it('rolls from Rare up; the Rare is the base, the Epic roots 1s every 2.6s', () => {
+    expect(anchor.minTier).toBe('rare');
+    expect(anchor.tier).toBeUndefined();
+    expect(towerSpec([copy('anchor', 'rare')]).root?.sec).toBeCloseTo(0.75);
+    expect(towerSpec([copy('anchor', 'rare')]).rate).toBeCloseTo(1 / 3);
+    expect(towerSpec([copy('anchor', 'epic')]).root?.sec).toBeCloseTo(1);
+    expect(towerSpec([copy('anchor', 'epic')]).rate).toBeCloseTo(1 / 2.6);
+    expect(towerSpec([copy('anchor', 'epic'), copy('anchor', 'epic')]).root?.sec).toBeCloseTo(1.25);
+    expect(towerSpec([copy('bolt'), copy('anchor', 'epic')]).root?.sec).toBeCloseTo(0.75);
     let seen = 0;
     for (let seed = 1; seed <= 300; seed++) {
       for (const c of rollOffer(new Rng(seed), AUGMENTS, 3, 30)) {
         if (c.id !== 'anchor') continue;
-        expect(c.tier).toBe('epic');
+        expect(c.tier).not.toBe('common');
         seen += 1;
       }
     }
@@ -46,9 +50,11 @@ describe('anchor (root)', () => {
     expect(s.root?.sec).toBeCloseTo(0.5);
   });
 
-  it("the Epic card's lines are the base lines", () => {
-    expect(tierTowerLine(anchor, 'epic')).toBe('Roots everything within 2.5 cells for 0.75s, every 3s.');
-    expect(tierAddedLine(anchor, 'epic')).toBe('Hits root for 0.5s (+0.25s per extra Anchor).');
+  it("the card's lines state each tier's numbers", () => {
+    expect(tierTowerLine(anchor, 'rare')).toBe('Roots everything within 2.5 cells for 0.75s, every 3s.');
+    expect(tierAddedLine(anchor, 'rare')).toBe('Hits root for 0.5s (+0.25s per extra Anchor).');
+    expect(tierTowerLine(anchor, 'epic')).toBe('Roots everything within 2.5 cells for 1s, every 2.6s.');
+    expect(tierAddedLine(anchor, 'epic')).toBe('Hits root for 0.75s (+0.25s per extra Anchor).');
   });
 
   it('the tower line says what the combination does', () => {

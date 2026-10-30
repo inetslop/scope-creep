@@ -8,7 +8,7 @@ import { SPLASH_CAP } from '../content/augments/splash';
 import type { Bright } from '../content/palette';
 import type { AttackKind, AugmentCopy, AugmentDef, Burn } from '../content/types';
 import type { Rng } from './rng';
-import { rollTier, tierAdded, tierFirst } from './tiers';
+import { rollTier, tierAdded, tierFirst, tierIndex } from './tiers';
 
 /** What a tower does, worked out from its augments in order (see towerSpec). Distances in cells. */
 export interface TowerSpec {
@@ -388,7 +388,8 @@ export function draftPool(owned: readonly string[]): readonly AugmentDef[] {
 /**
  * The draft: `count` different augments. Each card rolls its tier first, then picks its augment
  * from the pool for that tier: an augment with a `tier` (Mark) is only in the pool for cards that
- * rolled that tier, so it can never exist as any other tier. The opening draft (`opening`) only
+ * rolled that tier, so it can never exist as any other tier, and an augment with a `minTier`
+ * (Anchor) is never in the pool for cards below that tier. The opening draft (`opening`) only
  * offers augments that deal damage as a tower's first, or that may open (`opening`), since the
  * first one has to hold wave 1 alone. Its first card is a Common Bolt, the game's default shot,
  * so the opening pick is never a dead end - except when the bolt is excluded (the opening reroll),
@@ -411,7 +412,7 @@ export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, 
   }
   for (let i = offers.length; i < count; i++) {
     const tier = rollTier(rng, wave);
-    const candidates = open.filter((a) => !taken.has(a.id) && !banned.has(a.id) && (a.tier === undefined || a.tier === tier));
+    const candidates = open.filter((a) => !taken.has(a.id) && !banned.has(a.id) && (a.tier === undefined || a.tier === tier) && (a.minTier === undefined || tierIndex(tier) >= tierIndex(a.minTier)));
     const picked = rng.pick(candidates);
     taken.add(picked.id);
     offers.push({ id: picked.id, tier });

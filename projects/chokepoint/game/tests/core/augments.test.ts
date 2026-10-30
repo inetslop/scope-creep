@@ -372,6 +372,23 @@ describe('rollOffer', () => {
     expect(seen).toBeGreaterThan(0);
   });
 
+  it('Anchor never rolls as Common, and Push only as Epic (never in the opening draft)', () => {
+    let anchors = 0;
+    let pushes = 0;
+    for (let seed = 1; seed <= 100; seed++) {
+      const rng = new Rng(seed);
+      for (const wave of [1, 5, 10, 20, 30]) {
+        for (const c of rollOffer(rng, AUGMENTS, 3, wave, false)) {
+          if (c.id === 'anchor') { anchors += 1; expect(c.tier).not.toBe('common'); }
+          if (c.id === 'push') { pushes += 1; expect(c.tier).toBe('epic'); }
+        }
+      }
+      expect(rollOffer(new Rng(seed), AUGMENTS, 3, 1, true).some((c) => c.id === 'push')).toBe(false);
+    }
+    expect(anchors).toBeGreaterThan(0);
+    expect(pushes).toBeGreaterThan(0);
+  });
+
   it('offers three different augments', () => {
     for (let seed = 1; seed <= 30; seed++) {
       const offer = rollOffer(new Rng(seed), AUGMENTS, 3, 1);

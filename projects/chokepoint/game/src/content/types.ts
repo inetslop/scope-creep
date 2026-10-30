@@ -222,6 +222,8 @@ export interface AugmentDef {
   added: AddedForm;
   /** This augment only ever appears as cards of this tier (undefined: any tier). */
   tier?: Tier;
+  /** This augment never appears as cards of a tier below this one (undefined: any tier). */
+  minTier?: Tier;
   /** The tech node id that must be in the profile's purchased list before it rolls (core/augments.ts). */
   tech?: string;
   /** May be offered in the opening draft despite dealing no damage as a tower's first. */

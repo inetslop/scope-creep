@@ -4,11 +4,12 @@ title: Anchor from Rare up, Push only as Epic
 assignee: cachyos-x8664
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T19:32:38Z
 claimed_at: 2026-10-30T22:37:46Z
+finished_at: 2026-10-30T22:58:12Z
 ---
 
 ## Goal
@@ -147,3 +148,22 @@ const candidates = open.filter((a) => !taken.has(a.id) && !banned.has(a.id) && (
 
 ### Tests
 - All edits in steps 5–8 are the unit tests: mark.test.ts (Epic-only list + `minTier: 'rare'`), tierStrength.test.ts (rollable-rarity added forms), anchor.test.ts (Rare = base, Epic = 1 s / 2.6 s / 0.75 s, card lines), augments.test.ts (seeded drafts: Anchor never Common, Push only Epic, never opening).
+
+## Result (attempt 1, cachyos-x8664)
+
+** `AugmentDef` gains `minTier?: Tier` (`src/content/types.ts`), and `rollOffer` in `src/core/augments.ts` now drops candidates whose tier falls below an augment's `minTier`. Anchor swaps `tier: 'epic'` for `minTier: 'rare'` and gives its Epic tier the stronger values (`rootSec: 1`, `cooldownMul: 2.6 / 3`, `addedRootSec: 0.75`) with matching card lines, so its Rare card keeps today's base values. Push swaps `opening: true` for `tier: 'epic'`, making it Epic-only and keeping it out of the opening draft. Tests updated: mark.test.ts Epic-only list and `minTier: 'rare'` check, tierStrength.test.ts rollable-rarity added-form check, anchor.test.ts Rare=Epic values + card lines, augments.test.ts seeded `rollOffer` test (Anchor never Common, Push only Epic, Push never in opening). `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 20.4 min
+
+```
+.../chokepoint/game/src/content/augments/anchor.ts | 10 ++++-----
+ .../chokepoint/game/src/content/augments/push.ts   |  2 +-
+ projects/chokepoint/game/src/content/types.ts      |  2 ++
+ projects/chokepoint/game/src/core/augments.ts      |  7 ++++---
+ projects/chokepoint/game/tests/core/anchor.test.ts | 24 ++++++++++++++--------
+ .../chokepoint/game/tests/core/augments.test.ts    | 17 +++++++++++++++
+ projects/chokepoint/game/tests/core/mark.test.ts   |  5 +++--
+ .../game/tests/core/tierStrength.test.ts           |  9 ++++----
+ 8 files changed, 52 insertions(+), 24 deletions(-)
+```

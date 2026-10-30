@@ -5,14 +5,15 @@ import { lance } from '../../src/content/augments/lance';
 import { push } from '../../src/content/augments/push';
 import { spray } from '../../src/content/augments/spray';
 import { towerSpec } from '../../src/core/augments';
-import { TIER_ORDER, tierAdded, tierAddedLine } from '../../src/core/tiers';
+import { TIER_ORDER, tierAdded, tierAddedLine, tierIndex } from '../../src/core/tiers';
 
 describe('rarity matters when added', () => {
-  it('every augment that can roll more than one rarity has a different added form at each', () => {
+  it('every augment has a different added form at each rarity it can roll', () => {
     for (const def of AUGMENTS) {
       if (def.tier !== undefined) continue; // the epic-only augments never roll another tier
-      const forms = TIER_ORDER.map((tier) => JSON.stringify(tierAdded(def, tier)));
-      expect(new Set(forms).size).toBe(TIER_ORDER.length);
+      const rollable = TIER_ORDER.filter((tier) => def.minTier === undefined || tierIndex(tier) >= tierIndex(def.minTier));
+      const forms = rollable.map((tier) => JSON.stringify(tierAdded(def, tier)));
+      expect(new Set(forms).size).toBe(rollable.length);
     }
   });
 
