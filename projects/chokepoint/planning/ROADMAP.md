@@ -92,7 +92,7 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 - T0243 (L) — the draft shows where the card lands (the re-file): each offered card shows the towers a pick would land on — done (2026-10-30)
 - T0276 (M) — endless rerolls: every reroll costs more — **done** (2026-10-30, desktop)
 - T0279 (S) — balance: Beam hits too softly — **done** (2026-10-30, desktop)
-- T0280 (M) — Beam added is a damage boost, not another beam — in the pool (todo)
+- T0280 (M) — Beam added is a damage boost, not another beam — in progress (cachyos-x8664)
 - T0281 (L) — Beam and burn deal damage in ticks — **done** (2026-10-30, asus)
 - T0282 (M) — Spray crits: the shotgun rolls for double damage — file lost from the pool; re-filed as T0299
 - T0298 (L) — Wildcard: the 4th card of the 4-card drafts becomes whatever you pick, always Rare or better — in the pool (todo)
@@ -171,7 +171,7 @@ Ideas that may become epics or tasks of one.
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
-- Music that follows the wave and the danger — **tasked as T0239 (L, non-epic)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
+- Music that follows the wave and the danger — **built as T0239 (L, non-epic, 2026-10-30, asus)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
 - Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**; the mid-run page is **tasked as T0306 (M, non-epic, in the pool)** — the pause's "Summary": the ledger's rows and the standing towers' kills and ≈N/s (the end card's and claim card's reads, re-used); damage per tower and leaks per wave still need the ledger's new terms
 - The board shows its corners: a notch on the bend cells — **built as T0140 (2026-10-29), removed as T0227 (2026-10-29)**
 - Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **built as T0217 (2026-10-30, asus)**
