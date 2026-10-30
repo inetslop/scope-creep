@@ -24,7 +24,7 @@ describe('content', () => {
       expect(e.fromWave).toBeGreaterThanOrEqual(1);
       expect(BRIGHTS).toContain(e.look.color);
       expect(e.look.size).toBeGreaterThan(0);
-      expect(e.look.size).toBeLessThanOrEqual(0.45);
+      expect(e.look.size).toBeLessThanOrEqual(0.5);
       if (e.speedRamp) {
         expect(e.speedRamp.perHit).toBeGreaterThan(0);
         expect(e.speedRamp.max).toBeGreaterThan(e.speed);
@@ -44,6 +44,12 @@ describe('content', () => {
         expect(e.outOfReach.phaseSec).toBeGreaterThan(0);
         expect(e.outOfReach.periodSec).toBeGreaterThan(0);
         expect(e.outOfReach.periodSec).toBeGreaterThan(e.outOfReach.telegraphSec + e.outOfReach.phaseSec); // a quiet beat between beats
+      }
+      const split = e.splitsAt;
+      if (split) {
+        expect(split.hpFrac).toBeGreaterThan(0);
+        expect(split.hpFrac).toBeLessThanOrEqual(1);
+        expect(ENEMIES.some((d) => d.id === split.into)).toBe(true);
       }
     }
   });

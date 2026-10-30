@@ -4,11 +4,12 @@ title: "The third boss: wave 30 sends the Orb, and the Orb splits in two at half
 assignee: inet-racing
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T07:33:51Z
 claimed_at: 2026-10-30T07:47:12Z
+finished_at: 2026-10-30T09:00:25Z
 epic: E5
 ---
 
@@ -165,3 +166,28 @@ Everything else is automatic and must stay untouched: name tags (the `nameTag` h
 - `tests/core/midSplit.test.ts`: `atSplitLine(orb, 3660, 7320)` true (exactly half), `(orb, 3659, 7320)` true, `(orb, 3661, 7320)` false, `(orb, 0, 7320)` false (a corpse is an ordinary kill); `splitChildHp(316.8)` = 158 (a hit from 60% to 44% of base 720 leaves two Shards at 22% each); `splitChildHp(2)` = 1 and `splitChildHp(0.4)` = 1 (the minimum); a def without `splitsAt` (dot) never fires it.
 - `tests/core/waves.test.ts`: the boss test becomes `expect(plan.spawns).toEqual([{ enemy: wave === 30 ? 'orb' : 'colossus', delaySec: 0 }])` for [10, 20, 30, 40]; add "non-boss waves never send the Orb or a Shard" (waves 1-40, skip multiples of 10); add the wave-30 orb plan to the rng-stream test (seeds 1, 7, 42).
 - `tests/content.test.ts`: `expect(e.look.size).toBeLessThanOrEqual(0.5)`; after the `outOfReach` block: `if (e.splitsAt) { expect(e.splitsAt.hpFrac).toBeGreaterThan(0); expect(e.splitsAt.hpFrac).toBeLessThanOrEqual(1); expect(ENEMIES.some((d) => d.id === e.splitsAt.into)).toBe(true); }`.
+
+## Result (attempt 1, inet-racing)
+
+Wave 30 now sends the Orb, a big cracked purple hexagon (720 base hp, threat 150 — the wave's whole budget) that, when a hit first drops it to half health, vanishes with no kill (no gold, combo, tag, Toll or count) leaving a soft white ring and two fast Shards at its road spot, each with half its remaining hp. A single hit from over half to zero is an ordinary boss kill; every other boss wave keeps its Colossus and all other waves are unchanged (pinned by existing tests, plus new ones asserting only wave 30 sends an Orb and no wave sends a Shard). The enemies reference now lists the Orb as "wave 30" and the Shard as "from the Orb"; the Shard pays 12 gold on an ordinary kill and each costs 1 life on a leak; an invariant guards against more than one Orb being alive. One minimal deviation from the design: the split hook captures the Orb's position and size before despawning and spawning the Shards, because a spawn can recycle the Orb's own pool slot and the design's code read the radius from the slot after the fact.
+
+- Self-review: APPROVE
+- Time: 73.2 min
+
+```
+projects/chokepoint/game/src/art/entities.ts       | 15 +++++++++++++
+ .../chokepoint/game/src/content/enemies/index.ts   |  4 ++++
+ .../chokepoint/game/src/content/enemies/orb.ts     | 17 ++++++++++++++
+ .../chokepoint/game/src/content/enemies/shard.ts   | 16 +++++++++++++
+ projects/chokepoint/game/src/content/types.ts      |  2 ++
+ projects/chokepoint/game/src/core/midSplit.ts      | 15 +++++++++++++
+ projects/chokepoint/game/src/core/waves.ts         | 10 +++++----
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ .../chokepoint/game/src/scenes/EnemiesScene.ts     |  4 ++--
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../game/src/systems/enemyHooks/midSplit.ts        | 26 ++++++++++++++++++++++
+ projects/chokepoint/game/tests/content.test.ts     |  8 ++++++-
+ .../chokepoint/game/tests/core/midSplit.test.ts    | 26 ++++++++++++++++++++++
+ projects/chokepoint/game/tests/core/waves.test.ts  | 11 +++++++--
+ 14 files changed, 148 insertions(+), 9 deletions(-)
+```

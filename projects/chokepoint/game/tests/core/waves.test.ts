@@ -141,10 +141,10 @@ describe('boss waves (every 10th)', () => {
   it('isBossWave: every 10th wave, not wave 0', () => {
     expect([0, 1, 9, 10, 11, 19, 20, 30, 40].map(isBossWave)).toEqual([false, false, false, true, false, false, true, true, true]);
   });
-  it('a boss wave is exactly one Colossus, nothing else: the boss tag, the wave-scaled hp', () => {
+  it('a boss wave is exactly one boss — the Colossus, the Orb on wave 30 — nothing else: the boss tag, the wave-scaled hp', () => {
     for (const wave of [10, 20, 30, 40]) {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
-      expect(plan.spawns).toEqual([{ enemy: 'colossus', delaySec: 0 }]);
+      expect(plan.spawns).toEqual([{ enemy: wave === 30 ? 'orb' : 'colossus', delaySec: 0 }]);
       expect(plan.tags).toEqual(['boss']);
       expect(plan.hpMul).toBe(waveHpMul(wave));
     }
@@ -155,9 +155,16 @@ describe('boss waves (every 10th)', () => {
       expect(planWave(wave, new Rng(wave), ENEMIES).spawns.some((s) => s.enemy === 'colossus')).toBe(false);
     }
   });
+  it('non-boss waves never send the Orb or a Shard (the Orb is the wave-30 boss; the Shard only splits from it)', () => {
+    for (let wave = 1; wave <= 40; wave++) {
+      if (wave % 10 === 0) continue;
+      expect(planWave(wave, new Rng(wave), ENEMIES).spawns.some((s) => s.enemy === 'orb' || s.enemy === 'shard')).toBe(false);
+    }
+  });
   it('the boss plan is the same on every rng stream (no draws of its own)', () => {
     for (const seed of [1, 7, 42]) {
       expect(planWave(10, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'colossus', delaySec: 0 }]);
+      expect(planWave(30, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'orb', delaySec: 0 }]);
     }
   });
 });

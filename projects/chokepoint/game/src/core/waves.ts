@@ -100,14 +100,15 @@ export function tightHalve(spawns: WaveSpawn[]): WaveSpawn[] {
   return spawns.map((s, i) => ({ enemy: s.enemy, delaySec: i === 0 ? 0 : s.delaySec / 2 }));
 }
 
-/** Every 10th wave is the boss wave: one Colossus, nothing else. */
+/** Every 10th wave is the boss wave: one Colossus (the Orb on wave 30), nothing else. */
 export function isBossWave(wave: number): boolean {
   return wave > 0 && wave % 10 === 0;
 }
 
 /**
- * Which enemies a wave sends, in order, and when. A boss wave is exactly one Colossus and nothing
- * else; every other wave spends the wave's budget on enemies that are unlocked (fromWave) and
+ * Which enemies a wave sends, in order, and when. A boss wave is exactly one boss — the Colossus,
+ * the Orb on wave 30 — and nothing else; every other wave spends the wave's budget on enemies
+ * that are unlocked (fromWave) and
  * affordable, groups of the same type come in quick succession, and ramping enemies are reserved
  * up front (a fixed count per wave), then interleaved evenly through it.
  */
@@ -115,7 +116,8 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
   if (isBossWave(wave)) {
     // Still draws its share of the run's rng, so the waves after it keep today's seeded plans.
     planNormalWave(wave, rng, enemies);
-    return { number: wave, spawns: [{ enemy: 'colossus', delaySec: 0 }], hpMul: waveHpMul(wave), tags: ['boss'] };
+    // Wave 30 is the Orb's wave: the boss wave's shape is its own (the Colossus on every other boss wave).
+    return { number: wave, spawns: [{ enemy: wave === 30 ? 'orb' : 'colossus', delaySec: 0 }], hpMul: waveHpMul(wave), tags: ['boss'] };
   }
   return planNormalWave(wave, rng, enemies);
 }

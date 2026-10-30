@@ -31,6 +31,8 @@ export interface EnemyDef {
   ignoresControl?: boolean;
   /** When it dies, it splits into two of this enemy: one 0.25 cells ahead of the kill, one behind (core/split.ts). */
   splitsInto?: string;
+  /** The mid-life split (the Orb): when its hp first drops to `hpFrac` of its max after a hit and it survives, it vanishes with no kill and leaves two of `into` at its road spot, 0.25 cells either side (core/split.ts), each with half its hp after the triggering hit (core/midSplit.ts). */
+  splitsAt?: { hpFrac: number; into: string };
   /** Multiplies damage from a directed shot that strikes its front (flying against its travel); the rear and flightless hits go whole (core/plate.ts). */
   plate?: number;
   /**

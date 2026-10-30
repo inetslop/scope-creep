@@ -10,6 +10,7 @@ import { muteJam } from './muteJam';
 import { nameTag } from './nameTag';
 import { crackTick } from './crackTick';
 import { split } from './split';
+import { midSplit } from './midSplit';
 import { killCoin } from './killCoin';
 import { waveClose } from './waveClose';
 
@@ -22,6 +23,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   comboBreak,
   leakEcho,
   split,
+  midSplit,
   nameTag,
   crackTick,
   killCoin,

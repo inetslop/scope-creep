@@ -43,6 +43,21 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
         ctx.arc(size / 2, size / 2 - depth / 2, r * 0.88, 0, Math.PI * 2);
         ctx.stroke();
       }
+      if (e.id === 'orb') {
+        // The Orb's crack: a thin jagged line down the middle of its face, in the muted ink (the
+        // Hauler's coin language). Painted in, never tweened: the standing telegraph that it splits.
+        const cx = size / 2, cy = size / 2 - depth / 2;
+        ctx.strokeStyle = rgba(PALETTE.muted, 1);
+        ctx.lineWidth = Math.max(1, r * 0.1);
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(cx, cy - r * 0.55);
+        ctx.lineTo(cx - r * 0.08, cy - r * 0.06);
+        ctx.lineTo(cx + r * 0.06, cy + r * 0.12);
+        ctx.lineTo(cx, cy + r * 0.5);
+        ctx.stroke();
+      }
     });
   }
   const plinth = CELL * 0.4;

@@ -45,6 +45,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['enemies.burn', (g) => g.enemies.brokenBurn()],
   ['enemies.push', (g) => g.enemies.brokenPush()],
   ['enemies.reach', (g) => g.enemies.brokenReach()],
+  ['enemies.orb', (g) => (g.enemies.all.filter((e) => e.active && e.def.id === 'orb').length <= 1 ? null : 'more than one Orb alive')],
   ['enemies.onRoad', (g) => (g.enemies.all.some((e) => e.active && (e.distance < 0 || e.distance > g.board.path.length + 1)) ? 'an enemy is off its road' : null)],
   ['exitWarn.valid', (g) => g.exitWarn.broken()],
   ['leakCost.valid', (g) => g.leakCost.broken()],

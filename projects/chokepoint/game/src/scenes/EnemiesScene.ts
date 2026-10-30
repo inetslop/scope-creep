@@ -73,8 +73,8 @@ export class EnemiesScene extends Phaser.Scene {
     // Pass 1: lay each row's texts out at (0,0) with their final wrap width to measure them.
     const rows = defs.map((def) => {
       const name = this.add.text(0, 0, def.name, titleStyle(14)).setOrigin(0, 0.5);
-      const from = def.spawnOnly ? ENEMIES.find((d) => d.splitsInto === def.id) : undefined;
-      const wave = this.add.text(0, 0, from ? `from a ${from.name}` : `wave ${def.fromWave}`, textStyle(12, PALETTE.muted)).setOrigin(1, 0.5);
+      const parent = def.spawnOnly ? ENEMIES.find((d) => d.splitsInto === def.id) ?? ENEMIES.find((d) => d.splitsAt?.into === def.id) : undefined;
+      const wave = this.add.text(0, 0, parent ? (parent.splitsInto === def.id ? `from a ${parent.name}` : `from the ${parent.name}`) : `wave ${def.fromWave}`, textStyle(12, PALETTE.muted)).setOrigin(1, 0.5);
       const desc = this.add.text(0, 0, def.description, textStyle(12, PALETTE.muted, { wordWrap: { width: textW } }));
       return { def, name, wave, desc, h: Math.max(MIN_ROW, name.height + 3 + desc.height) };
     });
