@@ -117,6 +117,7 @@ Progress: Haste (T0152), Toll (T0234) and the endless rerolls (T0276) landed 202
 - T0269 (M, priority 2, behind T0253) — the boss's escape: when the boss leaks, a distinct low note — the run's worst moment, heard — **done** (2026-10-30, baby-mama)
 - T0277 (M, priority 2) — the bosses reference: a pause row (with Enemies / Waves) that lists the boss encounters in wave order — token, name, wave, trick in the teach language — read from the boss defs so it grows as they do — **done** (2026-10-30, desktop)
 - T0284 (S, priority 2) — the boss's phase gets its note: a quiet tone the instant the out-of-reach boss (the Colossus, T0253) flashes white and goes out of reach — a 120 ms sine 220→180 Hz, vol 0.08 (T0091's shape reduced to one note) — once per beat, the return to targetable silent; a new enemy-hook file on the bossArrival pattern (T0268), silent with sound off, no HUD or board mark — in the pool (todo)
+- T0286 (M, priority 2) — the boss's phase wind-up: at half health or below, a thin purple ring under the Colossus's token sweeps 0°→360° over the 8 s between phases, completing as the telegraph flashes and resting dim through the out-of-reach beat (the Push wind-up's sweep, T0258, at the Mute ring's ground, T0219) — a new enemy-mark hook file — in the pool (todo)
 
 ### E6 — Iron run: one life, double coins (done; history in planning/archive/ROADMAP.md)
 
@@ -157,7 +158,7 @@ Progress: Haste (T0152), Toll (T0234) and the endless rerolls (T0276) landed 202
 - Choices are saved and preselected for the next run. The run's save records them, so a resumed run keeps its level augments and multiplier.
 
 **Breakdown (to task, in this order):**
-- the unlock and the menu choice: wave 30 unlocks the first slot (a slot count in the profile), the menu's level-augment picker capped at the slot count, the chosen set saved in the profile and the run save, the run multiplier shown before starting — no augments yet beyond one (Tough), so the slice is small and playable
+- the unlock and the menu choice: wave 30 unlocks the first slot (a slot count in the profile), the menu's level-augment picker capped at the slot count, the chosen set saved in the profile and the run save, the run multiplier shown before starting — no augments yet beyond one (Tough), so the slice is small and playable — **tasked as T0285 (L, in the pool)**
 - the payout: the run multiplier applied to score and coins (core coin and score formulas, pure, tested), the HUD chips, the claim card's recipe line, the leaderboard row's multiplier
 - the rest of the first set: Swift, Crowded, Lean, Short fuse, each a pure rule with tests and its own percentage
 - the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned
