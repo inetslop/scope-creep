@@ -115,7 +115,8 @@ Progress: Haste (T0152), Toll (T0234) and the endless rerolls (T0276) landed 202
 - T0266 (L, priority 2) — the third boss (wave 30): the Orb (a purple hexagon at 0.5 with the crack) splits into two faster Shards at half health, unless it dies to a single hit first; the "splits at half hp" later boss — **done** (2026-10-30, inet-racing)
 - T0268 (M, priority 2, behind T0253) — the boss's arrival: a deep horn and a pulse at the entrance gate the moment the boss walks in — **done** (2026-10-30, desktop)
 - T0269 (M, priority 2, behind T0253) — the boss's escape: when the boss leaks, a distinct low note — the run's worst moment, heard — **done** (2026-10-30, baby-mama)
-- T0277 (M, priority 2) — the bosses reference: a pause row (with Enemies / Waves) that lists the boss encounters in wave order — token, name, wave, trick in the teach language — read from the boss defs so it grows as they do — written 2026-10-30
+- T0277 (M, priority 2) — the bosses reference: a pause row (with Enemies / Waves) that lists the boss encounters in wave order — token, name, wave, trick in the teach language — read from the boss defs so it grows as they do — **done** (2026-10-30, desktop)
+- T0284 (S, priority 2) — the boss's phase gets its note: a quiet tone the instant the out-of-reach boss (the Colossus, T0253) flashes white and goes out of reach — a 120 ms sine 220→180 Hz, vol 0.08 (T0091's shape reduced to one note) — once per beat, the return to targetable silent; a new enemy-hook file on the bossArrival pattern (T0268), silent with sound off, no HUD or board mark — in the pool (todo)
 
 ### E6 — Iron run: one life, double coins (done; history in planning/archive/ROADMAP.md)
 
