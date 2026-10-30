@@ -137,6 +137,7 @@ export class RunFlow {
     const streakPaidBefore = this.run.streakPaid;
     const bonus = this.run.clearWave();
     this.s.waves.waveEnded();
+    if (flags.smoke && this.run.wave === 10) { this.scene.scene.pause(); return; } // TEMP T0279 playtest: freeze at the wave-10 clear for the smoke read
     const clean = this.run.cleanWaves > cleanBefore;
     hook.stats.wavesCleared += 1;
     this.s.sfx?.waveClear();

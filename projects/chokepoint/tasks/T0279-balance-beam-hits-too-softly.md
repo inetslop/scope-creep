@@ -4,11 +4,12 @@ title: "Balance: Beam hits too softly"
 assignee: desktop
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-10-30T10:37:56Z
 claimed_at: 2026-10-30T12:38:32Z
+finished_at: 2026-10-30T13:55:45Z
 epic: E4
 ---
 
@@ -106,4 +107,22 @@ C:\Users\InetMarknad\Documents\Repos\scope-creep\projects\chokepoint\game\playte
   8:3  error  'console' is not defined  no-undef
 
 ✖ 3 problems (3 errors, 0 warnings)
+```
+
+## Result (attempt 2, desktop)
+
+The Bolt playtest is running (~17 min). Meanwhile, my assessment of the Beam data so far: Beam-first (Rare, 20 dps) held wave 10 but leaked **11** — versus Bolt's **4** at wave 9 in progress. That gap could be real or placement noise from the harness's random taps (each run builds ~9-10 random towers), so the Bolt's wave-10 number and, if needed, a second Beam sample will decide whether a nudge is warranted. Waiting on the run.
+
+- Self-review: NO VERDICT
+- Time: 77.2 min
+- Self-review edits were discarded (checks failed at "check").
+
+```
+.../chokepoint/game/src/content/augments/beam.ts   |  8 +++---
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  1 +
+ .../chokepoint/game/tests/core/augments.test.ts    | 24 ++++++++---------
+ .../chokepoint/game/tests/core/beamShapes.test.ts  | 30 +++++++++++-----------
+ .../chokepoint/game/tests/core/towerDps.test.ts    | 18 ++++++-------
+ .../game/tests/core/zz-t0279-probe.test.ts         | 20 +++++++++++++++
+ 6 files changed, 61 insertions(+), 40 deletions(-)
 ```

@@ -199,15 +199,15 @@ describe('push (Push)', () => {
 describe('beam (Beam)', () => {
   it('a Beam tower is a sustained line: no damage of its own, the beam deals it', () => {
     const s = spec('beam');
-    expect(s).toMatchObject({ attacks: true, kind: 'beam', damage: 0, beamDps: 6, beamExtras: [] });
-    expect(s.range).toBeCloseTo(4.5);
+    expect(s).toMatchObject({ attacks: true, kind: 'beam', damage: 0, beamDps: 14, beamExtras: [] });
+    expect(s.range).toBeCloseTo(3.5);
     expect(s.rate).toBe(1); // nominal: the beam never fires on a cooldown
     expect(beam.opening).toBe(true);
   });
 
-  it('rare and epic beams deal 8 and 10 per second', () => {
-    expect(towerSpec([copy('beam', 'rare')]).beamDps).toBe(8);
-    expect(towerSpec([copy('beam', 'epic')]).beamDps).toBe(10);
+  it('rare and epic beams deal 20 and 28 per second', () => {
+    expect(towerSpec([copy('beam', 'rare')]).beamDps).toBe(20);
+    expect(towerSpec([copy('beam', 'epic')]).beamDps).toBe(28);
   });
 
   it('a Beam added to any tower is a second line at half the rate; copies stack', () => {
@@ -216,7 +216,7 @@ describe('beam (Beam)', () => {
   });
 
   it('a second Beam on a Beam tower adds a half-rate line', () => {
-    expect(spec('beam', 'beam')).toMatchObject({ kind: 'beam', beamDps: 6, beamExtras: [3] });
+    expect(spec('beam', 'beam')).toMatchObject({ kind: 'beam', beamDps: 14, beamExtras: [3] });
   });
 
   it('a tiered added Beam uses the tier rate', () => {
@@ -225,17 +225,17 @@ describe('beam (Beam)', () => {
   });
 
   it('the card shows the tier rate in both lines', () => {
-    expect(tierTowerLine(beam, 'common')).toBe('Beams the furthest enemy: 6 per second, range 4.5.');
-    expect(tierTowerLine(beam, 'rare')).toBe('Beams the furthest enemy: 8 per second, range 4.5.');
-    expect(tierTowerLine(beam, 'epic')).toBe('Beams the furthest enemy: 10 per second, range 4.5.');
+    expect(tierTowerLine(beam, 'common')).toBe('Beams the furthest enemy: 14 per second, range 3.5.');
+    expect(tierTowerLine(beam, 'rare')).toBe('Beams the furthest enemy: 20 per second, range 3.5.');
+    expect(tierTowerLine(beam, 'epic')).toBe('Beams the furthest enemy: 28 per second, range 3.5.');
     expect(tierAddedLine(beam, 'common')).toBe('A second beam on the nearest enemy: 3 per second.');
     expect(tierAddedLine(beam, 'rare')).toBe('A second beam on the nearest enemy: 4 per second.');
     expect(tierAddedLine(beam, 'epic')).toBe('A second beam on the nearest enemy: 5 per second.');
   });
 
   it('the tower line says what it beams, and the second beam when one is added', () => {
-    expect(describeSpec(spec('beam'))).toBe('Beams the furthest enemy: 6 per second.');
-    expect(describeSpec(towerSpec([copy('beam', 'epic')]))).toBe('Beams the furthest enemy: 10 per second.');
+    expect(describeSpec(spec('beam'))).toBe('Beams the furthest enemy: 14 per second.');
+    expect(describeSpec(towerSpec([copy('beam', 'epic')]))).toBe('Beams the furthest enemy: 28 per second.');
     expect(describeSpec(spec('beam', 'beam'))).toContain('a second beam at 3 per second');
     expect(describeSpec(spec('beam', 'beam', 'beam'))).toContain('2 beams at 3 per second on the nearest enemies');
     expect(describeSpec(spec('bolt', 'beam'))).not.toContain('beam at');
@@ -251,7 +251,7 @@ describe('beam (Beam)', () => {
   });
 
   it('the tower line says how many enemies it beams when a ray is added', () => {
-    expect(describeSpec(spec('beam', 'bolt'))).toBe('Beams 2 enemies: 6 per second each.');
+    expect(describeSpec(spec('beam', 'bolt'))).toBe('Beams 2 enemies: 14 per second each.');
   });
 });
 

@@ -7,14 +7,14 @@ import type { TargetCandidate } from '../../src/core/targeting';
 
 const e = (x: number, y: number, distance: number, active = true): TargetCandidate => ({ x, y, distance, active });
 const copy = (id: string, tier: Tier = 'common'): AugmentCopy => ({ id, tier });
-const R = 4.5 * CELL; // the beam's range: the tower sits at (0, 0)
+const R = 3.5 * CELL; // the beam's range: the tower sits at (0, 0)
 
 describe('beamPierceVictims (Lance in a beam-first tower)', () => {
   // The main target at (200, 0); the victims sit behind it in the corridor, all in range.
   const main = e(200, 0, 10);
-  const a = e(230, 0, 30);
-  const b = e(260, 0, 40);
-  const c = e(285, 0, 50);
+  const a = e(205, 0, 30);
+  const b = e(210, 0, 40);
+  const c = e(215, 0, 50);
 
   it('returns up to count enemies past the main target, nearest to the tower first', () => {
     expect(beamPierceVictims([main, a, b, c], 0, 0, R, main, 1)).toEqual([1]);
@@ -33,8 +33,8 @@ describe('beamPierceVictims (Lance in a beam-first tower)', () => {
   });
 
   it('excludes enemies outside the corridor (a bit wider than half the road)', () => {
-    expect(beamPierceVictims([main, e(230, 30, 30)], 0, 0, R, main, 3)).toEqual([]);
-    expect(beamPierceVictims([main, e(230, BEAM_PIERCE_HALF_WIDTH - 0.2, 30)], 0, 0, R, main, 3)).toEqual([1]);
+    expect(beamPierceVictims([main, e(205, 30, 30)], 0, 0, R, main, 3)).toEqual([]);
+    expect(beamPierceVictims([main, e(205, BEAM_PIERCE_HALF_WIDTH - 0.2, 30)], 0, 0, R, main, 3)).toEqual([1]);
   });
 
   it('excludes enemies out of the tower range, and inactive ones', () => {
@@ -56,15 +56,15 @@ describe('beamScorch (Splash in a beam-first tower)', () => {
   });
 
   it('is half the beam rate on the nearest SPLASH_CAP - 1 others, within the splash radius', () => {
-    expect(beamScorch(towerSpec([copy('beam'), copy('splash')]))).toEqual({ rate: 3, cap: 2, radius: CELL });
-    expect(beamScorch(towerSpec([copy('beam'), copy('splash'), copy('splash')]))).toEqual({ rate: 3, cap: 5, radius: 2 * CELL }); // splashes accumulate cells
+    expect(beamScorch(towerSpec([copy('beam'), copy('splash')]))).toEqual({ rate: 7, cap: 2, radius: CELL });
+    expect(beamScorch(towerSpec([copy('beam'), copy('splash'), copy('splash')]))).toEqual({ rate: 7, cap: 5, radius: 2 * CELL }); // splashes accumulate cells
   });
 
   it('the radius follows the Splash tier, the rate the Beam tier', () => {
     expect(beamScorch(towerSpec([copy('beam'), copy('splash', 'rare')]))!.radius).toBeCloseTo(1.5 * CELL);
     expect(beamScorch(towerSpec([copy('beam'), copy('splash', 'epic')]))!.radius).toBeCloseTo(2 * CELL);
-    expect(beamScorch(towerSpec([copy('beam', 'rare'), copy('splash')]))!.rate).toBe(4);
-    expect(beamScorch(towerSpec([copy('beam', 'epic'), copy('splash')]))!.rate).toBe(5);
+    expect(beamScorch(towerSpec([copy('beam', 'rare'), copy('splash')]))!.rate).toBe(10);
+    expect(beamScorch(towerSpec([copy('beam', 'epic'), copy('splash')]))!.rate).toBe(14);
   });
 });
 
@@ -82,19 +82,19 @@ describe('the shapes compose with tiers and the panel line', () => {
   });
 
   it('the beam keeps its tier rate under its shapes', () => {
-    for (const [tier, dps] of [['common', 6], ['rare', 8], ['epic', 10]] as const) {
+    for (const [tier, dps] of [['common', 14], ['rare', 20], ['epic', 28]] as const) {
       expect(towerSpec([copy('beam', tier), copy('lance'), copy('splash')]).beamDps).toBe(dps);
     }
   });
 
   it('the panel line gains one clause per shape', () => {
-    expect(describeSpec(towerSpec([copy('beam'), copy('lance')]))).toBe('Beams the furthest enemy: 6 per second, the beam pierces 1 more.');
+    expect(describeSpec(towerSpec([copy('beam'), copy('lance')]))).toBe('Beams the furthest enemy: 14 per second, the beam pierces 1 more.');
     expect(describeSpec(towerSpec([copy('beam'), copy('lance', 'epic')]))).toContain('pierces 3 more');
-    expect(describeSpec(towerSpec([copy('beam'), copy('splash')]))).toContain('and scorches 2 nearby at 3 per second');
-    expect(describeSpec(towerSpec([copy('beam', 'epic'), copy('splash', 'epic')]))).toContain('and scorches 2 nearby at 5 per second');
+    expect(describeSpec(towerSpec([copy('beam'), copy('splash')]))).toContain('and scorches 2 nearby at 7 per second');
+    expect(describeSpec(towerSpec([copy('beam', 'epic'), copy('splash', 'epic')]))).toContain('and scorches 2 nearby at 14 per second');
     expect(describeSpec(towerSpec([copy('beam'), copy('splash'), copy('splash')]))).toContain('scorches 5 nearby');
     expect(describeSpec(towerSpec([copy('beam'), copy('lance'), copy('splash')]))).toBe(
-      'Beams the furthest enemy: 6 per second, the beam pierces 1 more, and scorches 2 nearby at 3 per second.',
+      'Beams the furthest enemy: 14 per second, the beam pierces 1 more, and scorches 2 nearby at 7 per second.',
     );
   });
 });
