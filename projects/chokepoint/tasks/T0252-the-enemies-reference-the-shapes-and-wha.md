@@ -4,11 +4,12 @@ title: "The enemies reference: the shapes and what they do, off the pause"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T02:57:28Z
 claimed_at: 2026-10-30T03:24:08Z
+finished_at: 2026-10-30T04:19:51Z
 ---
 
 ## Goal
@@ -168,3 +169,18 @@ No new types. New scene: `export class EnemiesScene extends Phaser.Scene` with `
 
 ### Tests
 - none (UI-only; no core rule added)
+
+## Result (attempt 1, inet-racing)
+
+Added an "Enemies" button to the pause card (its own row, with a matching line in the controls list) that opens a new EnemiesScene — a dimmed-pause reference screen listing every enemy in fromWave order with its on-board token, name, content description and wave (the Splinter reads "from a Splitter"). The scene is data-driven off the enemy content, so future enemies (E5's bosses) appear with no changes; it has a Back button that returns to the pause card with the run still paused, and Escape/timer double-fire from the pause is guarded out. Verified with typecheck+lint+tests and the desktop/mobile smoke run, both passing.
+
+- Self-review: APPROVE
+- Time: 55.7 min
+
+```
+projects/chokepoint/game/src/main.ts               |  3 +-
+ .../chokepoint/game/src/scenes/EnemiesScene.ts     | 97 ++++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/PauseScene.ts  | 17 +++-
+ projects/chokepoint/game/src/scenes/keys.ts        |  1 +
+ 4 files changed, 113 insertions(+), 5 deletions(-)
+```
