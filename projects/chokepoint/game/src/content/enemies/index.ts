@@ -1,8 +1,10 @@
 import type { EnemyDef } from '../types';
 import { block } from './block';
 import { colossus } from './colossus';
+import { guard } from './guard';
 import { orb } from './orb';
 import { shard } from './shard';
+import { titan } from './titan';
 import { bulwark } from './bulwark';
 import { dasher } from './dasher';
 import { dot } from './dot';
@@ -18,6 +20,8 @@ export const ENEMIES: readonly EnemyDef[] = [
   dot,
   block,
   colossus,
+  guard,
+  titan,
   orb,
   shard,
   dasher,

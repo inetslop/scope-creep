@@ -4,11 +4,12 @@ title: "The second boss: wave 20 sends the Titan and its Guard, and the Guard ca
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0256]
 attempts: 1
 created: 2026-10-30T05:08:57Z
 claimed_at: 2026-10-30T12:06:38Z
+finished_at: 2026-10-30T14:01:41Z
 epic: E5
 ---
 
@@ -156,3 +157,31 @@ export const titanShield: MakeEnemyHook = ({ enemies }) => {
 - `tests/core/waves.test.ts`: wave-20 plan/boss/tags/isQuietWave assertions + Mute/Bulwark carves (guards against a later change silently re-mixing wave 20 or re-quieting it).
 - `tests/core/shield.test.ts`: the 0.5 rule and that unshielded enemies are untouched.
 - `tests/content.test.ts`: the Titan's 0.5 cap.
+
+## Result (attempt 1, asus)
+
+Wave 20 now sends the new spawnOnly Guard (red diamond 0.2, flat orange shield disc on its road-facing front) at 0 s and the new Titan (red square 0.5, hp 720 wave-scaled, `shieldCarrier: 'guard'`) 1.2 s behind, declared the plan's boss via `bossId(20)` with the every-10 'boss' tag; a new `core/shield.ts` 0.5 multiplier is applied last in `Enemy.hit()` so every damage source halves while the Guard lives, kept current by the `titanShield` enemy hook (kill-only — a Guard leak keeps the shield up), and wave 20 was carved out of `isQuietWave` so kills pay 20/8. The boss card and the boss-arrival hook now select the plan's declared boss (the card's notch renders only for a timed-phase boss), and tests cover the wave-20 plan, the shield rule, and a new `enemies.bossSlot` invariant. Two small deviations from the design: the wave-20 return sits inside the existing `isBossWave` branch (preserving the rng draw that keeps waves 21+ byte-identical), and the content-test size cap also allows the existing 0.5-sized Orb which the design's exact line would have rejected.
+
+- Self-review: APPROVE
+- Time: 115.1 min
+
+```
+projects/chokepoint/game/src/art/entities.ts       | 14 ++++++++-
+ projects/chokepoint/game/src/art/textures.ts       |  2 ++
+ .../chokepoint/game/src/content/enemies/guard.ts   | 16 ++++++++++
+ .../chokepoint/game/src/content/enemies/index.ts   |  4 +++
+ .../chokepoint/game/src/content/enemies/titan.ts   | 17 +++++++++++
+ projects/chokepoint/game/src/content/types.ts      |  2 ++
+ projects/chokepoint/game/src/core/shield.ts        |  9 ++++++
+ projects/chokepoint/game/src/core/waves.ts         | 13 +++++----
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/entities/Enemy.ts     | 25 +++++++++++++---
+ .../game/src/systems/enemyHooks/bossArrival.ts     |  7 +++--
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../game/src/systems/enemyHooks/titanShield.ts     | 22 ++++++++++++++
+ projects/chokepoint/game/src/ui/hud/BossCard.ts    | 28 +++++++++++-------
+ projects/chokepoint/game/tests/content.test.ts     |  2 +-
+ projects/chokepoint/game/tests/core/shield.test.ts | 19 ++++++++++++
+ projects/chokepoint/game/tests/core/waves.test.ts  | 34 +++++++++++++++++-----
+ 17 files changed, 184 insertions(+), 33 deletions(-)
+```

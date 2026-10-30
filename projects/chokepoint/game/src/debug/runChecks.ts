@@ -44,6 +44,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['enemies.mark', (g) => g.enemies.brokenMark()],
   ['enemies.burn', (g) => g.enemies.brokenBurn()],
   ['enemies.push', (g) => g.enemies.brokenPush()],
+  ['enemies.bossSlot', (g) => (g.run.wave === 20 || !g.enemies.all.some((e) => e.active && (e.def.id === 'titan' || e.def.id === 'guard')) ? null : 'a Titan or Guard alive off its wave 20')],
   ['enemies.reach', (g) => g.enemies.brokenReach()],
   ['enemies.orb', (g) => (g.enemies.all.filter((e) => e.active && e.def.id === 'orb').length <= 1 ? null : 'more than one Orb alive')],
   ['enemies.onRoad', (g) => (g.enemies.all.some((e) => e.active && (e.distance < 0 || e.distance > g.board.path.length + 1)) ? 'an enemy is off its road' : null)],

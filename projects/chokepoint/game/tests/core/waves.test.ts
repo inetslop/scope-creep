@@ -143,19 +143,36 @@ describe('boss waves (every 10th)', () => {
   });
   it('bossId: the boss the plan declares, undefined off the boss waves', () => {
     expect(bossId(10)).toBe('colossus');
+    expect(bossId(20)).toBe('titan');
     expect(bossId(30)).toBe('orb');
+    expect(bossId(40)).toBe('colossus');
     expect(bossId(1)).toBeUndefined();
     expect(bossId(9)).toBeUndefined();
-    for (const wave of [10, 20, 30, 40]) {
+    for (const wave of [10, 30, 40]) {
       expect(bossId(wave)).toBe(planWave(wave, new Rng(wave), ENEMIES).spawns[0]!.enemy); // the rule and the plan agree
     }
+    expect(planWave(20, new Rng(20), ENEMIES).spawns[1]!.enemy).toBe(bossId(20)); // wave 20's boss walks in behind its Guard
   });
-  it('a boss wave is exactly one boss — the Colossus, the Orb on wave 30 — nothing else: the boss tag, the wave-scaled hp', () => {
+  it('a boss wave is exactly its boss — the Colossus, the Guard and Titan on wave 20, the Orb on wave 30 — nothing else: the boss tag, the wave-scaled hp', () => {
     for (const wave of [10, 20, 30, 40]) {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
-      expect(plan.spawns).toEqual([{ enemy: wave === 30 ? 'orb' : 'colossus', delaySec: 0 }]);
+      expect(plan.spawns).toEqual(wave === 20 ? [{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }] : [{ enemy: wave === 30 ? 'orb' : 'colossus', delaySec: 0 }]);
       expect(plan.tags).toEqual(['boss']);
       expect(plan.hpMul).toBe(waveHpMul(wave));
+    }
+  });
+  it('wave 20 is not a quiet wave: no halving, single gold, the boss tag straight from the plan', () => {
+    expect(isQuietWave(20)).toBe(false);
+    expect(quietGoldMul(20)).toBe(1);
+    const plan = planWave(20, new Rng(20), ENEMIES);
+    expect(plan.tags).toEqual(['boss']);
+    expect(plan.spawns).toEqual([{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }]);
+    expect(bossId(20)).toBe('titan');
+  });
+  it('no wave but 20 sends a Titan or a Guard (10 and 40 send the Colossus, 30 the Orb)', () => {
+    for (let wave = 1; wave <= 40; wave++) {
+      if (wave === 20) continue;
+      expect(planWave(wave, new Rng(wave), ENEMIES).spawns.some((s) => s.enemy === 'titan' || s.enemy === 'guard')).toBe(false);
     }
   });
   it('non-boss waves never send a Colossus', () => {
@@ -173,17 +190,18 @@ describe('boss waves (every 10th)', () => {
   it('the boss plan is the same on every rng stream (no draws of its own)', () => {
     for (const seed of [1, 7, 42]) {
       expect(planWave(10, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'colossus', delaySec: 0 }]);
+      expect(planWave(20, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }]);
       expect(planWave(30, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'orb', delaySec: 0 }]);
     }
   });
 });
 
 describe('quiet waves (every 4th)', () => {
-  it('isQuietWave: every 4th wave, not wave 0', () => {
-    expect([0,1,2,3,4,5,8,12].map(isQuietWave)).toEqual([false,false,false,false,true,false,true,true]);
+  it('isQuietWave: every 4th wave, not wave 0, not wave 20 (the boss slot)', () => {
+    expect([0,1,2,3,4,5,8,12,20].map(isQuietWave)).toEqual([false,false,false,false,true,false,true,true,false]);
   });
-  it('quietGoldMul: double on quiet waves, 1 otherwise', () => {
-    expect([1,3,4,5,8,12].map(quietGoldMul)).toEqual([1,1,2,1,2,2]);
+  it('quietGoldMul: double on quiet waves, 1 otherwise (wave 20 pays single)', () => {
+    expect([1,3,4,5,8,12,20].map(quietGoldMul)).toEqual([1,1,2,1,2,2,1]);
   });
   it('quietCount: half rounded up, minimum 3', () => {
     expect([2,3,4,5,6,7,8,10].map(quietCount)).toEqual([3,3,3,3,3,4,4,5]);
@@ -211,7 +229,7 @@ describe('quiet waves (every 4th)', () => {
     }
   });
   it('non-quiet waves are not halved', () => {
-    for (const wave of [1, 2, 3, 5, 6, 7, 9, 10, 11, 13]) {
+    for (const wave of [1, 2, 3, 5, 6, 7, 9, 10, 11, 13, 20]) {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
       expect(plan.spawns.length).toBeGreaterThan(0);
       expect(plan.spawns.length).toBeLessThanOrEqual(waveBudget(wave)); // the whole budget is fair game

@@ -35,6 +35,8 @@ export interface EnemyDef {
   splitsAt?: { hpFrac: number; into: string };
   /** Multiplies damage from a directed shot that strikes its front (flying against its travel); the rear and flightless hits go whole (core/plate.ts). */
   plate?: number;
+  /** Its shield is carried by enemies of this id: until one is killed, every damage it takes lands at half, after every other modifier (core/shield.ts). */
+  shieldCarrier?: string;
   /**
    * The timed out-of-reach beat (the Colossus): when its hp first drops to `hpFrac` of its max,
    * a white flash of `telegraphSec` and then it is untargetable for `phaseSec`, repeating every

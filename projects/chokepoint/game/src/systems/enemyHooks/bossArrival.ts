@@ -1,4 +1,5 @@
 import type { WaveSystem } from '../WaveSystem';
+import { bossId } from '../../core/waves';
 import type { MakeEnemyHook } from './hook';
 import { gatePulse } from '../fx/gatePulse';
 
@@ -16,9 +17,9 @@ export const bossArrival: MakeEnemyHook = ({ scene, board, run, fx, sfx, enemies
       const plan = waves?.currentPlan;
       if (!plan || !plan.tags.includes('boss')) return;       // never on a non-boss wave
       if (announcedWave === run.wave) return;                // already sounded this wave
-      const bossId = plan.spawns[0]?.enemy;                  // the boss wave's single spawn
-      if (!bossId) return;
-      if (!enemies.all.some((e) => e.active && e.def.id === bossId)) return; // the boss's first frame on the board
+      const boss = bossId(run.wave);                          // the boss the plan declares (wave 20's walks in behind its Guard)
+      if (boss === undefined) return;
+      if (!enemies.all.some((e) => e.active && e.def.id === boss)) return; // the boss's first frame on the board
       announcedWave = run.wave;
       // The entrance gate: the midpoint of the two path points around the road's start (art/board.ts).
       const pts = board.path.points;

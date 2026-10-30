@@ -3,6 +3,7 @@ import { CELL, HUD } from '../../config';
 import { artScale, enemyTexture } from '../../art/textures';
 import type { Enemy } from '../../entities/Enemy';
 import { PALETTE } from '../../content/palette';
+import { bossId } from '../../core/waves';
 import type { GameScene } from '../../scenes/GameScene';
 import { makeCard } from '../card';
 import { textStyle } from '../text';
@@ -14,13 +15,15 @@ const PAD = 12;
 const H = 54;
 
 /**
- * Top center, pinned below where the banner rests: while the boss with an out-of-reach leg is alive (the run's
- * Colossus), its ~16 px token, its name in bold ink, and its live hp on a thin bar: its own color over a
- * ~20%-alpha muted-ink track, with one 2 px ink notch at def.outOfReach.hpFrac, where it first goes out
- * of reach. Pops in (~200 ms scale-in) the moment it spawns and fades out (~200 ms) the moment it dies or
- * leaks; no card on non-boss waves. Blocks nothing, takes no input; the wave banner still slides above it.
- * The token and bar dim to the board token's alpha (boss.alpha) for the untargetable leg, lockstep through
- * 2× fast-forward — never timed here; the name stays full alpha.
+ * Top center, pinned below where the banner rests: while the run's boss — the enemy its wave's plan
+ * declares (core/waves.ts): the Colossus, the Titan on wave 20, the Orb on wave 30 — is alive, its
+ * ~16 px token, its name in bold ink, and its live hp on a thin bar: its own color over a
+ * ~20%-alpha muted-ink track, with one 2 px ink notch at def.outOfReach.hpFrac, where it first goes
+ * out of reach (the Colossus only: the notch renders only for a boss with a timed phase). Pops in
+ * (~200 ms scale-in) the moment it spawns and fades out (~200 ms) the moment it dies or leaks; no
+ * card on non-boss waves. Blocks nothing, takes no input; the wave banner still slides above it.
+ * The token and bar dim to the board token's alpha (boss.alpha) for the untargetable leg, lockstep
+ * through 2× fast-forward — never timed here; the name stays full alpha.
  */
 export class BossCard implements HudPart {
   private readonly scene: Phaser.Scene;
@@ -40,7 +43,8 @@ export class BossCard implements HudPart {
   }
 
   update(game: GameScene): void {
-    const boss = game.enemies.all.find((e) => e.active && e.def.outOfReach !== undefined);
+    const bossDef = bossId(game.run.wave); // the enemy this wave's plan declares as its boss
+    const boss = bossDef !== undefined ? game.enemies.all.find((e) => e.active && e.def.id === bossDef) : undefined;
     if (!boss) {
       this.fadeOut();
       return;
@@ -75,9 +79,11 @@ export class BossCard implements HudPart {
       g.fillStyle(PALETTE[boss.def.look.color], 1);
       g.fillRoundedRect(-BAR_W / 2, -BAR_H / 2, BAR_W * frac, BAR_H, Math.min(BAR_H / 2, (BAR_W * frac) / 2)); // fill
     }
-    const off = boss.def.outOfReach!.hpFrac;
-    g.fillStyle(PALETTE.ink, 1);
-    g.fillRect(-BAR_W / 2 + BAR_W * off - 1, -4, 2, 8); // the notch where it first goes out of reach
+    if (boss.def.outOfReach !== undefined) {
+      const off = boss.def.outOfReach.hpFrac;
+      g.fillStyle(PALETTE.ink, 1);
+      g.fillRect(-BAR_W / 2 + BAR_W * off - 1, -4, 2, 8); // the notch where it first goes out of reach
+    }
     g.setAlpha(boss.alpha);
   }
 

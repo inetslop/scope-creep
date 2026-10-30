@@ -58,9 +58,9 @@ export function splitterCount(total: number): number {
   return Math.floor(total / 7);
 }
 
-/** Every 4th wave is a quiet breather wave (wave 0 is not). */
+/** Every 4th wave is a quiet breather wave (wave 0 is not; wave 20 is the boss's slot, not a breather). */
 export function isQuietWave(wave: number): boolean {
-  return wave > 0 && wave % 4 === 0;
+  return wave > 0 && wave !== 20 && wave % 4 === 0;
 }
 
 /** Every 8th wave from wave 6 is a tight bunched wave (6, 14, 22, 30, ...; never a quiet wave: none is a multiple of 4). */
@@ -100,7 +100,7 @@ export function tightHalve(spawns: WaveSpawn[]): WaveSpawn[] {
   return spawns.map((s, i) => ({ enemy: s.enemy, delaySec: i === 0 ? 0 : s.delaySec / 2 }));
 }
 
-/** Every 10th wave is the boss wave: one Colossus (the Orb on wave 30), nothing else. */
+/** Every 10th wave is the boss wave: one Colossus (the Guard and the Titan on wave 20, the Orb on wave 30), nothing else. */
 export function isBossWave(wave: number): boolean {
   return wave > 0 && wave % 10 === 0;
 }
@@ -108,12 +108,13 @@ export function isBossWave(wave: number): boolean {
 /** The enemy the plan declares as the boss of wave `wave`; undefined on non-boss waves. */
 export function bossId(wave: number): string | undefined {
   if (!isBossWave(wave)) return undefined;
-  return wave === 30 ? 'orb' : 'colossus';
+  return wave === 30 ? 'orb' : wave === 20 ? 'titan' : 'colossus';
 }
 
 /**
  * Which enemies a wave sends, in order, and when. A boss wave is exactly one boss — the Colossus,
- * the Orb on wave 30 — and nothing else; every other wave spends the wave's budget on enemies
+ * the Guard and the Titan on wave 20, the Orb on wave 30 — and nothing else; every other wave
+ * spends the wave's budget on enemies
  * that are unlocked (fromWave) and
  * affordable, groups of the same type come in quick succession, and ramping enemies are reserved
  * up front (a fixed count per wave), then interleaved evenly through it.
@@ -122,6 +123,8 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
   if (isBossWave(wave)) {
     // Still draws its share of the run's rng, so the waves after it keep today's seeded plans.
     planNormalWave(wave, rng, enemies);
+    // Wave 20 is the Titan's wave: the Guard walks in ahead of it, carrying the Titan's shield (core/shield.ts).
+    if (wave === 20) return { number: wave, spawns: [{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }], hpMul: waveHpMul(wave), tags: ['boss'] };
     // Wave 30 is the Orb's wave: the boss wave's shape is its own (the Colossus on every other boss wave).
     return { number: wave, spawns: [{ enemy: bossId(wave)!, delaySec: 0 }], hpMul: waveHpMul(wave), tags: ['boss'] };
   }

@@ -2,10 +2,11 @@ import Phaser from 'phaser';
 import { CELL, DEPTH } from '../config';
 import type { EnemyDef } from '../content/types';
 import type { PathLine } from '../core/path';
-import { ART_SCALE, PLATE_TEXTURE, enemyTexture } from '../art/textures';
+import { ART_SCALE, DISC_TEXTURE, PLATE_TEXTURE, enemyTexture } from '../art/textures';
 import { ignite } from '../core/burn';
 import { outOfReachLeg } from '../core/outOfReach';
 import { applyRoot, tickRoot } from '../core/root';
+import { shieldMul } from '../core/shield';
 import type { LiveBurn } from '../core/burn';
 import type { Tower } from './Tower';
 
@@ -54,6 +55,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   markPct = 0;
   /** Seconds since it was marked (the chevron's pop-in); 0 until marked. */
   markAge = 0;
+  /** Its shield is up: every hit lands at half until its carrier dies (core/shield.ts, systems/enemyHooks/titanShield.ts). */
+  shielded = false;
   /** Seconds since its out-of-reach beat started (the Colossus); -1 before its hp first dropped to half (core/outOfReach.ts). */
   reachClock = -1;
   /** The burn on it (Ember): its rate and the seconds left; left 0: not ablaze. */
@@ -66,6 +69,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   pauseAge = 0; // seconds into 'pause' (its telegraph is the first half)
   /** The front plate (the Bulwark): a flat image that turns to face its travel; undefined without one. */
   private plate?: Phaser.GameObjects.Image;
+  /** The shield disc (the Guard): a flat image that turns to face its travel; undefined without one. */
+  private disc?: Phaser.GameObjects.Image;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0, '__DEFAULT');
@@ -93,6 +98,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.pushLeft = 0;
     this.markPct = 0;
     this.markAge = 0;
+    this.shielded = false;
     this.burn.dps = 0;
     this.burn.left = 0;
     this.burnSource = undefined;
@@ -113,6 +119,12 @@ export class Enemy extends Phaser.GameObjects.Image {
       this.plate.setDepth(DEPTH.enemies);
     }
     this.plate?.setVisible(false); // hidden until advance() places it (no flash at the origin)
+    // Its shield disc (the Guard) rides on top: flat, so it may turn with the travel.
+    if (this.def.id === 'guard' && this.disc === undefined) {
+      this.disc = this.scene.add.image(0, 0, DISC_TEXTURE);
+      this.disc.setDepth(DEPTH.enemies);
+    }
+    this.disc?.setVisible(false); // hidden until advance() places it (no flash at the origin)
   }
 
   /** Walks for `dt` seconds. Returns true when it reached the end of the path (a leak). */
@@ -195,6 +207,9 @@ export class Enemy extends Phaser.GameObjects.Image {
     if (this.plate !== undefined && this.def.plate !== undefined) {
       this.plate.setPosition(this.x, this.y).setScale(ART_SCALE * pop).setRotation(Math.atan2(this.dirX, -this.dirY)).setVisible(true);
     }
+    if (this.disc !== undefined && this.def.id === 'guard') {
+      this.disc.setPosition(this.x, this.y).setScale(ART_SCALE * pop).setRotation(Math.atan2(this.dirX, -this.dirY)).setVisible(true);
+    }
     const tele = cycle !== undefined && this.dashLeg === 'pause' && this.pauseAge < cycle.pauseSec / 2;
     if (this.flash > 0) this.flash -= dt;
     const leg = reach !== undefined ? outOfReachLeg(reach, this.reachClock) : 'idle';
@@ -213,11 +228,12 @@ export class Enemy extends Phaser.GameObjects.Image {
     return reach !== undefined && outOfReachLeg(reach, this.reachClock) === 'out';
   }
 
-  /** Takes damage (a marked enemy takes `markPct` more, from everything); `flash` false for a
-   * burn tick, so it doesn't blink white on every tick. Returns true when this killed it. */
+  /** Takes damage (a marked enemy takes `markPct` more, from everything, and a shielded one lands
+   * at half after all of it); `flash` false for a burn tick, so it doesn't blink white on every
+   * tick. Returns true when this killed it. */
   hit(damage: number, flash = true): boolean {
     if (!this.active) return false;
-    this.hp -= damage * (1 + this.markPct);
+    this.hp -= damage * (1 + this.markPct) * shieldMul(this.def, this.shielded);
     if (flash) {
       this.flash = 0.06;
       this.setTintFill(0xffffff);
@@ -264,6 +280,7 @@ export class Enemy extends Phaser.GameObjects.Image {
   despawn(): void {
     this.clearTint();
     this.plate?.setVisible(false); // a recycled slot must not show a stale plate (e.g. on a dot)
+    this.disc?.setVisible(false); // a recycled slot must not show a stale disc (e.g. on a dot)
     this.setActive(false).setVisible(false);
   }
 }

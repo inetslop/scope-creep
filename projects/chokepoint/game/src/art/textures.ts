@@ -19,6 +19,8 @@ export const TOWER_BASE = 'tower:base';
 export const BOLT_TEXTURE = 'fx:bolt';
 /** The Bulwark's front plate: a flat arc, rotated to its travel by entities/Enemy.ts. */
 export const PLATE_TEXTURE = 'enemy:plate';
+/** The Guard's shield disc: a flat orange circle on its road-facing front, rotated to its travel by entities/Enemy.ts. */
+export const DISC_TEXTURE = 'enemy:disc';
 /** A thin straight tracer for a piercing shot (Lance): it keeps going after a hit. */
 export const TRACER_TEXTURE = 'fx:tracer';
 export const CHIP_TEXTURE = 'fx:chip';
