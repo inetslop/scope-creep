@@ -3,12 +3,10 @@ id: T0303
 title: Enemy hp grows a little faster in the late waves
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-30T19:48:31Z
-claimed_at: 2026-10-30T20:05:51Z
-designer: yoga
 ---
 
 ## Goal
@@ -27,3 +25,27 @@ The owner wants the late waves a little harder. Enemy hp is multiplied by `1 + 0
 ## Acceptance criteria
 - [ ] `waveHpMul(1)` is still 1, and `waveHpMul(31)` is 12.4.
 - [ ] `npm run check` passes.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/core/waves.ts` - in `waveHpMul` (line 36), change `0.004 * n * n` to `0.006 * n * n`. The doc comment (line 33) does not name the number, so it stays as is. Nothing else in the file changes.
+- edit `tests/core/waves.test.ts` - add one line right after line 136 (`expect(waveHpMul(1)).toBe(1);` inside `it('gets harder every wave', ...)`):
+```ts
+expect(waveHpMul(31)).toBe(1 + 0.2 * 30 + 0.006 * 900); // 12.4
+```
+
+### Interfaces
+No new or changed types or signatures; `waveHpMul(wave: number): number` is unchanged.
+
+### Steps
+1. In `src/core/waves.ts`, edit line 36: `return 1 + 0.2 * n + 0.004 * n * n;` becomes `return 1 + 0.2 * n + 0.006 * n * n;`.
+2. In `tests/core/waves.test.ts`, add the one line above after line 136, inside the same `it` block.
+3. Run `npm run check`; it must pass.
+
+### Pitfalls
+- Change only the squared coefficient: the `0.2 * n` term, the `Math.max(0, wave - 1)` clamp, `waveBudget`, `waveSpacing` and the boss waves all stay — bosses and quiet waves pick the new multiplier up automatically through `waveHpMul`, so no other edit is needed or allowed.
+- The test's right-hand side must be the formula `1 + 0.2 * 30 + 0.006 * 900`, not the literal `12.4`: it is bit-identical to the function's own computation, so it pins both coefficients without float-composition risk. Do not touch the existing `expect(waveHpMul(1)).toBe(1)` line — it still passes and covers the other acceptance criterion.
+
+### Tests
+- `tests/core/waves.test.ts`: the one line above (a rule in `src/core` changed; the test guards both coefficients).
