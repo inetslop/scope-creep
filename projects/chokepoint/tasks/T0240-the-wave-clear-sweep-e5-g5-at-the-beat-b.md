@@ -3,10 +3,12 @@ id: T0240
 title: "The wave-clear sweep: E5→G5 at the beat before the draft"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-29T23:53:23Z
+claimed_at: 2026-10-30T00:13:40Z
+designer: inet-racing
 ---
 
 ## Goal
