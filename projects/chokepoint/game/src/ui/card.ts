@@ -29,7 +29,14 @@ export function cardTexture(scene: Phaser.Scene, width: number, height: number, 
   return key;
 }
 
+/** Marks an image as a card of this size (for the layout check; the painted texture is bigger by the shadow pad). */
+export function markCard(img: Phaser.GameObjects.Image, width: number, height: number): void {
+  img.setData('card', true).setData('cardW', width).setData('cardH', height);
+}
+
 /** A card image centered on (x, y). */
 export function makeCard(scene: Phaser.Scene, x: number, y: number, width: number, height: number, radius = 16, fill: number = PALETTE.card): Phaser.GameObjects.Image {
-  return scene.add.image(x, y, cardTexture(scene, width, height, radius, fill)).setScale(1 / CARD_RES);
+  const img = scene.add.image(x, y, cardTexture(scene, width, height, radius, fill)).setScale(1 / CARD_RES);
+  markCard(img, width, height);
+  return img;
 }

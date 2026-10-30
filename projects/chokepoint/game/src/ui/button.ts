@@ -1,6 +1,6 @@
 import type Phaser from 'phaser';
 import { cssColor, PALETTE } from '../content/palette';
-import { CARD_RES, cardTexture } from './card';
+import { CARD_RES, cardTexture, markCard } from './card';
 import { textStyle } from './text';
 
 export interface ButtonOptions {
@@ -44,6 +44,7 @@ export function makeButton(scene: Phaser.Scene, x: number, y: number, text: stri
   let selected = false;
   let enabled = true;
   const card = scene.add.image(0, 0, cardTexture(scene, width, height, radius, fill)).setScale(1 / CARD_RES);
+  markCard(card, width, height);
   const ring = scene.add.graphics();
   const label = scene.add.text(0, 0, text, textStyle(opts.fontSize ?? 20, primary ? PALETTE.card : PALETTE.ink, { fontStyle: 'bold', align: 'center' })).setOrigin(0.5);
   const content = scene.add.container(0, 0, [label]);
