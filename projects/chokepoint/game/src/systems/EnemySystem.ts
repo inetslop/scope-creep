@@ -5,6 +5,7 @@ import type { Burn, EnemyDef } from '../content/types';
 import type { RunState } from '../core/run';
 import type { BeamFx } from '../core/beamEffects';
 import { killGold } from '../core/lastStand';
+import { leanBounty } from '../core/levels';
 import { mintGoldBonus } from '../core/mint';
 import { burnRate, burnStep } from '../core/burn';
 import { TICK_SEC } from '../config';
@@ -203,10 +204,10 @@ export class EnemySystem {
 
   /** The one kill: its gold (with the mints at the death spot), the chips, the chain, the sound. */
   private kill(e: Enemy, source: Tower | undefined): void {
-    // The kill's base gold is doubled on a quiet wave (core/waves.ts); on top, Mint towers (core/mint.ts)
-    // pay extra: the killer's own copies, plus every mint tower within its radius.
+    // The kill's base gold is thinned by Lean (core/levels.ts), then doubled on a quiet wave (core/waves.ts);
+    // on top, Mint towers (core/mint.ts) pay extra: the killer's own copies, plus every mint tower within its radius.
     // Last stand (core/lastStand.ts): at one life the enemy's own gold doubles; the mint bonus on top stays whole.
-    const baseGold = killGold(this.run, e.def.gold * quietGoldMul(this.run.wave));
+    const baseGold = killGold(this.run, leanBounty(e.def.gold, this.run.level) * quietGoldMul(this.run.wave));
     const paid = this.run.addKill(baseGold + (source ? mintGoldBonus(this.towers(), e, source) : 0));
     const mint = paid - baseGold; // one per Mint bonus, each pays exactly +1 (T0021)
     const milestone = this.fx.killCount(e.x, e.y);

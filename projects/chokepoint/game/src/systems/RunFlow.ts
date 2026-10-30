@@ -5,6 +5,7 @@ import type { AugmentCopy } from '../content/types';
 import { draftPool, rollOffer } from '../core/augments';
 import type { RunState } from '../core/run';
 import { draftCardsFor } from '../core/techEffects';
+import { levelBuildSeconds } from '../core/levels';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { SCENES } from '../scenes/keys';
@@ -124,7 +125,8 @@ export class RunFlow {
       this.s.building.cardAdded();
     }
     this.offer = [];
-    const seconds = this.run.wave === 0 ? BUILD_SEC.first : BUILD_SEC.between;
+    const base = this.run.wave === 0 ? BUILD_SEC.first : BUILD_SEC.between;
+    const seconds = levelBuildSeconds(base, this.run.level);
     this.buildTotalSec = seconds;
     this.run.startBuild(seconds);
     this.s.waves.planNext();

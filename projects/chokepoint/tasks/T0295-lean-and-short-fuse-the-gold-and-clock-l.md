@@ -4,11 +4,12 @@ title: "Lean and Short fuse: the gold and clock level augments"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T17:33:38Z
 claimed_at: 2026-10-30T21:50:08Z
+finished_at: 2026-10-30T22:20:00Z
 epic: E9
 ---
 
@@ -84,3 +85,23 @@ In `tests/core/levels.test.ts` (imports to add: `RunState` from `../../src/core/
 - ×2 ordering, mirroring `EnemySystem.kill` exactly: with `new RunState(1)`, `r.lives = 1`: `killGold(r, leanBounty(8, ['lean']) * quietGoldMul(4))` = 24 (not 32); `quietGoldMul(5)` with lean = 12; lean off on wave 4 = 32.
 - countdown: `levelBuildSeconds(BUILD_SEC.first, ['short-fuse'])=6`, `(BUILD_SEC.between, ['short-fuse'])=7`, `(..., ['lean','short-fuse'])=7`, both with `[]` return the input.
 - untouched paths: `RunState.waveBonus(3)=26` with `r.level=['lean','short-fuse']`; `r.startBuild(7); r.bankSend()=14`.
+
+## Result (attempt 1, asus)
+
+Added the last two level augments to the menu's pre-run picker: **Lean** (kills pay 25% less gold — bounty thinned to 75%, floored, min 1, before quiet/last-stand doubles; +25%) and **Short fuse** (build countdown runs 70% of its length, rounded; +30%), each in its own content file with pure rules in `core/levels.ts` (`leanBounty`, `levelBuildSeconds`), applied in `EnemySystem.kill`, `RunFlow.finishDraft` and `RunSave.restore`. The multiplier readout now shows two decimals (×1.25 / ×1.30 / ×1.55 / ×1.80), the picker row word-wraps the longer line, and unit tests cover the bounty table, ×2 ordering, countdown lengths and the untouched gold paths; check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 29.9 min
+
+```
+.../chokepoint/game/src/content/levels/index.ts    |  4 +-
+ .../chokepoint/game/src/content/levels/lean.ts     |  9 ++++
+ .../game/src/content/levels/shortFuse.ts           |  9 ++++
+ projects/chokepoint/game/src/core/levels.ts        | 14 ++++-
+ .../chokepoint/game/src/scenes/menu/LevelCard.ts   |  2 +-
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  7 +--
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  4 +-
+ projects/chokepoint/game/src/systems/RunSave.ts    |  3 +-
+ projects/chokepoint/game/tests/core/levels.test.ts | 61 ++++++++++++++++++----
+ 9 files changed, 94 insertions(+), 19 deletions(-)
+```

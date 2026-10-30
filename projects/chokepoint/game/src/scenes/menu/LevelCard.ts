@@ -51,7 +51,7 @@ export function buildLevelCard(scene: Phaser.Scene, slots: number, initial: stri
     const row = makeButton(scene, 0, 0, '', () => toggle(def), { width: CARD_W - 24, height: ROW_H, radius: 14 });
     row.label.setVisible(false);
     const name = scene.add.text(-84, -11, def.name, textStyle(15, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
-    const line = scene.add.text(-84, 11, def.line, textStyle(12, PALETTE.muted)).setOrigin(0, 0.5);
+    const line = scene.add.text(-84, 11, def.line, textStyle(12, PALETTE.muted, { wordWrap: { width: 132 }, lineSpacing: 2 })).setOrigin(0, 0.5);
     const state = scene.add.text(84, 0, '', textStyle(14, PALETTE.muted)).setOrigin(1, 0.5);
     row.content.add([name, line, state]);
     row.container.setY(-height / 2 + 12 + 20 + 10 + ROW_H / 2 + i * (ROW_H + ROW_GAP));

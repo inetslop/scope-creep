@@ -1,4 +1,5 @@
 import { BUILD_SEC } from '../config';
+import { levelBuildSeconds } from '../core/levels';
 import { mapExtraBends } from '../core/map';
 import type { RunPhase } from '../core/run';
 import { clearSavedRun, saveRun, type RunStore, type SavedRun } from '../core/saveRun';
@@ -83,7 +84,7 @@ export class RunSave {
       for (const a of t.augments) tower.addAugment(a);
     }
     if (saved.phase === 'build') {
-      const seconds = saved.wave === 0 ? BUILD_SEC.first : BUILD_SEC.between;
+      const seconds = levelBuildSeconds(saved.wave === 0 ? BUILD_SEC.first : BUILD_SEC.between, run.level);
       game.flow.buildTotalSec = seconds;
       run.startBuild(seconds);
       game.waves.planNext(); // the countdown leads into this wave (its plan feeds the preview and the waves.next check)

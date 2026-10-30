@@ -43,9 +43,19 @@ export function levelCountMul(ids: readonly string[]): number {
   return mul;
 }
 
-/** The multiplier as shown on the menu card: '×1.25' with Tough on, '×1.0' with none. */
+/** The multiplier as shown on the menu card: '×1.25' with Lean on, '×1.00' with none. */
 export function levelMultiplierLabel(ids: readonly string[]): string {
-  return `×${levelMultiplier(ids).toFixed(2).replace(/0$/, '')}`;
+  return `×${levelMultiplier(ids).toFixed(2)}`;
+}
+
+/** Lean's kill bounty: 75% of the enemy's own gold, floored down, minimum 1 gold (a 1-gold kill still pays 1). */
+export function leanBounty(base: number, levels: readonly string[]): number {
+  return levels.includes('lean') ? Math.max(1, Math.floor(base * 0.75)) : base;
+}
+
+/** The build countdown with the run's level augments: Short fuse runs 70% of `normal`, rounded to the nearest second. */
+export function levelBuildSeconds(normal: number, levels: readonly string[]): number {
+  return levels.includes('short-fuse') ? Math.round(normal * 0.7) : normal;
 }
 
 /** A stored run multiplier as the payout and the boards show it: '×1.25' at 1.25, '×1.5' at 1.5. */
