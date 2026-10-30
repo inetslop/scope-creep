@@ -29,6 +29,10 @@ describe('planWave', () => {
     expect(planWave(5, new Rng(5), ENEMIES).tags).toEqual([]);
   });
 
+  it('boss waves carry the boss tag', () => {
+    expect(planWave(10, new Rng(10), ENEMIES).tags).toEqual(['boss']);
+  });
+
   it('rampCount: none before wave 8, two from 8, +1 every four waves, capped at six', () => {
     expect([7, 8, 12, 16, 20, 24, 40].map((w) => rampCount(w))).toEqual([0, 2, 3, 4, 5, 6, 6]);
   });
@@ -137,11 +141,11 @@ describe('boss waves (every 10th)', () => {
   it('isBossWave: every 10th wave, not wave 0', () => {
     expect([0, 1, 9, 10, 11, 19, 20, 30, 40].map(isBossWave)).toEqual([false, false, false, true, false, false, true, true, true]);
   });
-  it('a boss wave is exactly one Colossus, nothing else: no tags, the wave-scaled hp', () => {
+  it('a boss wave is exactly one Colossus, nothing else: the boss tag, the wave-scaled hp', () => {
     for (const wave of [10, 20, 30, 40]) {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
       expect(plan.spawns).toEqual([{ enemy: 'colossus', delaySec: 0 }]);
-      expect(plan.tags).toEqual([]);
+      expect(plan.tags).toEqual(['boss']);
       expect(plan.hpMul).toBe(waveHpMul(wave));
     }
   });

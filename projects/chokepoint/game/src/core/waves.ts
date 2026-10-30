@@ -115,7 +115,7 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
   if (isBossWave(wave)) {
     // Still draws its share of the run's rng, so the waves after it keep today's seeded plans.
     planNormalWave(wave, rng, enemies);
-    return { number: wave, spawns: [{ enemy: 'colossus', delaySec: 0 }], hpMul: waveHpMul(wave), tags: [] };
+    return { number: wave, spawns: [{ enemy: 'colossus', delaySec: 0 }], hpMul: waveHpMul(wave), tags: ['boss'] };
   }
   return planNormalWave(wave, rng, enemies);
 }

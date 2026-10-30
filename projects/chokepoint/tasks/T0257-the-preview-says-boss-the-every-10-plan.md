@@ -4,11 +4,12 @@ title: "The preview says boss: the every-10 plan's tag, the preview chip, the te
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0253]
 attempts: 1
 created: 2026-10-30T05:08:57Z
 claimed_at: 2026-10-30T06:55:18Z
+finished_at: 2026-10-30T07:08:35Z
 epic: E5
 ---
 
@@ -84,3 +85,20 @@ none (no new types, functions or fields; only data literals and one color per ch
 
 ### Tests
 - `tests/core/waves.test.ts`: "boss waves carry the boss tag" as in step 6 (the tag is a core rule a later branch change could silently drop).
+
+## Result (attempt 1, yoga)
+
+the existing boss test's assertion "no tags" (the prior slice's state) had to be updated to `['boss']`, since it now asserts the old behavior.
+
+SUMMARY: Every 10th wave now carries the `boss` tag on its plan (`planWave`'s boss early-return in src/core/waves.ts), which flows into both surfaces: the build-phase preview (NextWavePreview) shows the boss's token row with a muted-purple "boss" chip beside it and teaches "boss: one big shape instead of a crowd" once, under wave 10's card, and the wave banner (topBanner, fed the tags by the unchanged WaveBanner) reads "Wave 10 · boss" with the chip beside the number. Non-boss previews/banners are byte-identical to before; wave 20/30 previews and resumed runs past wave 10 never show the teach line. Unit tests assert the boss tag (`tests/core/waves.test.ts`); check and smoke pass. Note: the design mentioned dropping a "no tag in this slice" remark in waves.ts that didn't exist in the code, and the old boss test asserting "no tags" was updated to expect `['boss']` since it pinned the prior slice's state.
+
+- Self-review: APPROVE
+- Time: 13.3 min
+
+```
+projects/chokepoint/game/src/core/waves.ts             |  2 +-
+ projects/chokepoint/game/src/ui/hud/NextWavePreview.ts | 13 +++++++------
+ projects/chokepoint/game/src/ui/hud/topBanner.ts       |  2 +-
+ projects/chokepoint/game/tests/core/waves.test.ts      |  8 ++++++--
+ 4 files changed, 15 insertions(+), 10 deletions(-)
+```
