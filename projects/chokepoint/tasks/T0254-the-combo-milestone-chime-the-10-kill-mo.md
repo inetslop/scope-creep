@@ -1,12 +1,14 @@
 ---
 id: T0254
 title: "The combo milestone chime: the ×10 kill moment, heard"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T04:48:47Z
+claimed_at: 2026-10-30T11:06:58Z
 epic: E4
 ---
 
