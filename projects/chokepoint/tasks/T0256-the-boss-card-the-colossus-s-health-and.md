@@ -3,11 +3,13 @@ id: T0256
 title: "The boss card: the Colossus's health and phase, pinned to the top edge"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0253]
 attempts: 0
 created: 2026-10-30T04:48:47Z
+claimed_at: 2026-10-30T05:08:47Z
 epic: E5
+designer: cachyos-x8664
 ---
 
 ## Goal
