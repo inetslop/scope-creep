@@ -3,11 +3,13 @@ id: T0279
 title: "Balance: Beam hits too softly"
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T10:37:56Z
+claimed_at: 2026-10-30T10:39:02Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
