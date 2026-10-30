@@ -18,14 +18,8 @@ The game grows through epics: bigger features that take several tasks. One or tw
 
 ### E2 — Tech tree (done; history in planning/archive/ROADMAP.md)
 
-### E3 — Levels: a run is a journey (active — opened 2026-10-30)
-**Goal:** a run has a shape: a few boards in a row, each harder, and a build that grows across them.
-**Groundwork (outside the epic):** T0015 (wave preview — done, 2026-10-28, narcissus) becomes the per-level wave preview once levels exist; T0014 (leak warning) teaches what a leak is before levels make leaking costlier; T0019 (fast-forward 2x) keeps runs in flow and pays off once a run spans several levels; the lives danger-pip idea was rejected as T0022 (the stats card has no room — see IDEAS) and is the one to revisit if levels make leaking costlier.
-**When done:** a run goes through levels, like the acts of a roguelite: each level is its own board with a set number of waves, ending in a tougher final wave. Clear it and the run moves on to the next level: a new, harder board (a longer or more winding road, tougher enemies) that starts empty. What you carry is your **pool**: the run starts with a small pool of augments that the drafts offer from, and every time you clear a level you pick one new augment to add to it, so each level offers more to combine. The HUD shows the level (the wave card's muted "level 2 · 3/10" line), the pick between levels is its own moment, and the game-over screen says how far you got. Clearing the last level (wave 30) wins the run.
-**Breakdown:**
-- T0260 (L, priority 1) — the level rule: three levels of ten waves (waves number continuously 1-30, the bosses end levels 1 and 2), the road re-grows longer and empty at each clear, gold and lives carry, the wave-30 win, the game-over "how far" line — **in progress on asus**
-- T0261 (M, priority 2, behind T0260) — the pool: the draft offers from six augments (Bolt, Rapid, Splash, Lance, Reach, Push), and the level clear's pick adds one (its own moment, the draft's pattern) — written 2026-10-30
-- T0262 (S, priority 2, behind T0260) — the wave card's muted "level N · w/10" line — written 2026-10-30
+### E3 — Levels: a run is a journey (dropped — 2026-10-30, by hand)
+The level rule (T0260) and its wave-card line (T0262) landed and played badly: re-growing the board empty every 10 waves throws away the build. Both are being removed (inbox: "Remove the levels: a run is one board again", priority 1), and T0261 (the pool) is dropped with them. Do not re-task levels, the level-clear pick or the level-clear sting. The difficulty-for-reward idea lives on as **E9**.
 
 ### E4 — Augment rarity (active — started 2026-10-28)
 **Goal:** the draft is exciting: sometimes a card is something special.
@@ -131,6 +125,31 @@ Progress: the pool's registrations are T0025, T0064, T0062, T0095, T0152 and T02
 **Breakdown:**
 - T0278 (M, priority 2) — the claim card's "Copy": one tap puts "Chokepoint · Wave N · Board SEED · +C coins" (· Iron) on the clipboard — written 2026-10-30
 - (parked) replay a shared seed: the ghost run (T0078) grows to take a pasted board seed, not only your own best — task it when the pool has room
+
+### E9 — Level augments: harder runs for a bigger payout (active — opened 2026-10-30, by hand)
+**Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
+**When done:**
+- **Unlock:** reaching wave 30 in any run, normal or Iron, unlocks level augments for good (saved in the profile). Before then the menu doesn't show them, apart from one muted "reach wave 30 to unlock" teaser line.
+- **The choice:** before a run, the menu offers a small set of level augments to switch on. Each one makes the run harder in one plain way and adds its own bonus.
+  - Examples: **Tough** (enemies have +25% health), **Swift** (enemies move 15% faster), **Crowded** (+20% enemies per wave), **Lean** (−25% kill gold), **Short fuse** (−30% build time).
+  - Each carries a number such as "+20%". The chosen augments' bonuses add up into one run multiplier, shown on the menu before starting.
+- **The payout:** the run multiplier scales the run's **score** and the **coins** it pays into the tech tree. It stacks multiplicatively with Iron's doubled coins.
+  - The HUD shows the active level augments as small chips.
+  - The claim card shows the multiplier in its recipe line ("×1.6 level augments").
+  - The leaderboard row shows the multiplier, so a boosted score reads as one.
+- **Deeper tech tree, steeper prices:** more coins flow in, so tech node prices grow with depth in a branch: more than linear but not exponential.
+  - For example, price = base × depth^1.5, rounded to 5 (10, 30, 50, 80, 110, …).
+  - The current branch discount (`branchPrice`: 5 or 10 off once nodes are owned) works against this and is replaced.
+  - New deeper nodes get added so the extra coins have something worth buying.
+- Choices are saved and preselected for the next run. The run's save records them, so a resumed run keeps its level augments and multiplier.
+
+**Breakdown (to task, in this order):**
+- the unlock and the menu choice: wave 30 unlocks it (profile flag), the menu's level-augment picker, the chosen set saved in the profile and the run save, the run multiplier shown before starting — no augments yet beyond one (Tough), so the slice is small and playable
+- the payout: the run multiplier applied to score and coins (core coin and score formulas, pure, tested), the HUD chips, the claim card's recipe line, the leaderboard row's multiplier
+- the rest of the first set: Swift, Crowded, Lean, Short fuse, each a pure rule with tests and its own percentage
+- the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned
+- deeper tech nodes: a third node in each branch priced on the new curve, so the bigger payout has a sink
+- (later) more level augments and ranks (Tough I/II/III), unlocked by reaching wave 30 with level augments on
 
 ### Enemy queue (non-epic)
 

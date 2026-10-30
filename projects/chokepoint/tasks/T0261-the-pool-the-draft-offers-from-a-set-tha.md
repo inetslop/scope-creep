@@ -3,7 +3,7 @@ id: T0261
 title: "The pool: the draft offers from a set that grows at each clear"
 size: M
 priority: 2
-status: todo
+status: failed
 depends_on: [T0260]
 attempts: 0
 created: 2026-10-30T05:49:22Z
@@ -65,3 +65,7 @@ The build grows across levels: the run's draft offers from a small pool of augme
 - `tests/core/run.test.ts` — the pool's starter set (`AUGMENTS` minus the `POOL_NODES`' `unlocks`), and `buyPoolNode`: spends run gold, adds the `unlocks`, is idempotent, and refuses an unknown node, a not-known-augment `unlocks`, or when the run is over.
 - The save's tests (wherever `SavedRun` is tested) — a `SavedRun` with `pool` round-trips; an old save without `pool` gets the starter set; a broken `pool` (an unknown id, a dupe, empty) is rejected.
 - The draft source: the draft offers only the pool's augments (a pool-node purchase makes its augment draftable).
+
+## Dropped (by hand, 2026-10-30)
+
+The levels epic (E3) is dropped: the player found the three-boards level rule (T0260) not fun, and it is being removed (see the inbox task "Remove the levels"). This task's level-clear pick has nothing to hang on, so it is dropped with the epic. Do not re-task it.
