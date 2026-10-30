@@ -1,12 +1,14 @@
 ---
 id: T0274
 title: "Sell: the panel's line that sells a misplaced tower back"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 1
+attempts: 2
 created: 2026-10-30T09:46:01Z
+claimed_at: 2026-10-30T19:48:34Z
 epic: E7
 design_attempts: 1
 ---
