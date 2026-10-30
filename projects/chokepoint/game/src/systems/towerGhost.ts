@@ -33,7 +33,7 @@ export class TowerGhost {
     this.clear(tower); // recreate: this is how a marker moves or changes
     const g = this.scene.add.graphics().setDepth(DEPTH.towers + 3).setPosition(p.x, p.y).setAlpha(0.5);
     g.fillStyle(pipColor(copy.tier), 1).fillCircle(0, 0, 4); // the pip, exactly where the real one will land
-    this.drawMarker(g, copy);
+    TowerGhost.drawMarker(g, copy);
     this.markers.set(tower, g);
   }
 
@@ -49,7 +49,7 @@ export class TowerGhost {
   }
 
   /** What `copy` would add: one compact shape of the same kind towerLook paints on the tower. */
-  private drawMarker(g: Phaser.GameObjects.Graphics, copy: AugmentCopy): void {
+  static drawMarker(g: Phaser.GameObjects.Graphics, copy: AugmentCopy): void {
     const def = getAugment(copy.id);
     const added = def.added;
     const color = PALETTE[def.look.color];

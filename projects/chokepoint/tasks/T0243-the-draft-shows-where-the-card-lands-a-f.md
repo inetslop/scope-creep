@@ -4,11 +4,12 @@ title: "The draft shows where the card lands: a fit row on every offered card (t
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T00:29:56Z
 claimed_at: 2026-10-30T01:50:22Z
+finished_at: 2026-10-30T02:09:59Z
 epic: E4
 ---
 
@@ -102,3 +103,17 @@ export function buildFitRow(scene: Phaser.Scene, k: number, copy: AugmentCopy, t
 
 ### Tests
 - none (display only)
+
+## Result (attempt 1, desktop)
+
+The draft now shows where each offered card would land: every card in a run with free tower slots wears a small fit row (first-augment token + the card's what-if marker, first 3 towers then "…"), drawn by the ghost's own marker painter (now `static` in `systems/towerGhost.ts`) at full alpha. New file `src/scenes/draftFitRow.ts` builds the row; `DraftScene` wires it into each card, grows the card to fit, and takes a 2-up portrait grid for the 3-card draft when the row is on (header and reroll placed against 2 rows). Pre-wave-1 drafts, the 4-card 2×2, landscape, odds, reroll and pick behavior are unchanged. `npm run check` and `npm run smoke` (desktop + phone) both pass.
+
+- Self-review: APPROVE
+- Time: 19.6 min
+
+```
+projects/chokepoint/game/src/scenes/DraftScene.ts  | 30 +++++++++-------
+ projects/chokepoint/game/src/scenes/draftFitRow.ts | 41 ++++++++++++++++++++++
+ projects/chokepoint/game/src/systems/towerGhost.ts |  4 +--
+ 3 files changed, 61 insertions(+), 14 deletions(-)
+```

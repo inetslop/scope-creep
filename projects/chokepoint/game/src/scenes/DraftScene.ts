@@ -11,6 +11,7 @@ import { makeButton } from '../ui/button';
 import { textStyle, titleStyle } from '../ui/text';
 import { tierGemColor, tierName } from '../ui/tierLook';
 import { uiCamera, viewSize } from '../ui/display';
+import { buildFitRow } from './draftFitRow';
 import { getGameScene, getSfx, onKey, onResize, SCENES } from './keys';
 
 const CARD_W = 220;
@@ -52,6 +53,8 @@ export class DraftScene extends Phaser.Scene {
     // Veils the board and swallows clicks, so nothing underneath reacts.
     const shade = this.add.rectangle(0, 0, 10, 10, PALETTE.ground, 0.78).setOrigin(0).setInteractive();
     const opening = game.run.wave === 0;
+    // The fit row: at least one run tower with a free slot — the draft's version of the ghost.
+    const hasRow = game.towers.towers.some((t) => t.freeSlots > 0);
     const title = this.add.text(0, 0, opening ? 'Choose your first augment' : `Wave ${game.run.wave} cleared`, titleStyle(30)).setOrigin(0.5);
     // The legend for the two glyphs on the cards.
     const legendText = (x: number, text: string): Phaser.GameObjects.Text => this.add.text(x, 0, text, textStyle(15, PALETTE.muted)).setOrigin(0, 0.5);
@@ -76,15 +79,16 @@ export class DraftScene extends Phaser.Scene {
     };
     // A four-card draft's card width: portrait puts four in a 2×2 grid (~55% of the card width),
     // landscape shares the three-card row's span across four.
-    const cardWidth = (w: number): number => !four ? CARD_W : w < 740 ? 121 : 165;
+    const cardWidth = (w: number): number => w >= 740 ? (four ? 165 : CARD_W) : four ? 121 : hasRow ? 178 : CARD_W;
     const cardSlot = (i: number, w: number, h: number, n: number): { x: number; y: number } => {
-      if (four) {
+      if (four || (w < 740 && hasRow)) {
         const cw = cardWidth(w);
-        if (w >= 740) return { x: w / 2 + (i - 1.5) * (cw + 16), y: h / 2 + 10 };
-        // The 2×2 grid takes the row's area: two rows where the card column was.
+        if (four && w >= 740) return { x: w / 2 + (i - 1.5) * (cw + 16), y: h / 2 + 10 };
+        // The grid takes the row's area: two rows where the card column was.
         const r = Math.floor(i / 2);
         const top = Math.max(70, (h - 2 * (H + 16) - 90) / 2);
-        return { x: w / 2 + (i % 2 === 0 ? -1 : 1) * (cw + 24) / 2, y: top + 84 + H / 2 + r * (H + 16) };
+        const x = i === 2 && !four ? w / 2 : w / 2 + (i % 2 === 0 ? -1 : 1) * (cw + (four ? 24 : 16)) / 2;
+        return { x, y: top + 84 + H / 2 + r * (H + 16) };
       }
       const p = portrait(h, n);
       return w < 740 ? { x: w / 2, y: p.top + p.header + H / 2 + i * (H + p.gap) } : { x: w / 2 + (i - 1) * (CARD_W + 24), y: h / 2 + 10 };
@@ -114,10 +118,10 @@ export class DraftScene extends Phaser.Scene {
         const b = getAugment(copy.id);
         const towerLine = this.add.text(0, 0, tierTowerLine(b, copy.tier), textStyle(four ? 12 : 14, PALETTE.ink, wrap)).setOrigin(0, 0);
         const addedLine = this.add.text(0, 0, tierAddedLine(b, copy.tier), textStyle(four ? 12 : 14, PALETTE.muted, wrap)).setOrigin(0, 0);
-        return { copy, b, tier: copy.tier, towerLine, addedLine };
+        return { copy, b, tier: copy.tier, towerLine, addedLine, fit: buildFitRow(this, k, copy, game.towers.towers) };
       });
-      H = Math.max(CARD_H, ...lines.map((l) => l.towerLine.height + 10 + l.addedLine.height + 117));
-      cards = lines.map(({ copy, b, towerLine, addedLine }, i) => {
+      H = Math.max(CARD_H, ...lines.map((l) => l.towerLine.height + 10 + l.addedLine.height + 117 + (l.fit ? 10 + l.fit.height : 0)));
+      cards = lines.map(({ copy, b, towerLine, addedLine, fit }, i) => {
         const t = -H / 2; // every y below is measured from the card's top edge
         const button = makeButton(this, 0, 0, '', () => pick(i), { width: cw, height: H, radius: Math.round(22 * k), accent: PALETTE[b.look.color] });
         const icon = artScale(this.add.image(0, t + 31, augmentTexture(b.id)), 1.3 * k);
@@ -140,11 +144,12 @@ export class DraftScene extends Phaser.Scene {
         for (let g = 0; g < gemCount; g++) gems.push(artScale(this.add.image((g - (gemCount - 1) / 2) * 12, t + 86, GEM_TEXTURE)).setTint(gemTint));
         towerLine.setPosition(textX, t + 101);
         addedLine.setPosition(textX, towerLine.y + towerLine.height + 10);
+        if (fit) fit.container.setPosition(0, addedLine.y + addedLine.height + 10 + fit.height / 2);
         const glyphs = this.add.graphics();
         drawTowerGlyph(glyphs, -cw / 2 + 26, towerLine.y + 9);
         drawPlusGlyph(glyphs, -cw / 2 + 26, addedLine.y + 9);
         const key = this.add.text(-cw / 2 + 14, t + 10, String(i + 1), textStyle(12, PALETTE.faint, { fontStyle: 'bold' }));
-        button.content.add([icon, name, ...(tierWord ? [tierWord] : []), ...gems, glyphs, towerLine, addedLine, key]);
+        button.content.add([icon, name, ...(tierWord ? [tierWord] : []), ...gems, glyphs, towerLine, addedLine, key, ...(fit ? [fit.container] : [])]);
         const held = ownedCount(copy.id);
         // The run already has this augment: a small dot in the top-right corner.
         if (held > 0) glyphs.fillStyle(PALETTE.muted, 1).fillCircle(cw / 2 - 14, t + 14, 4);
@@ -226,8 +231,9 @@ export class DraftScene extends Phaser.Scene {
       size = { width, height };
       shade.setSize(width, height);
       shade.input?.hitArea.setTo(0, 0, width, height);
-      // A four-card draft's portrait is a 2×2 grid, so the header places itself against two rows, not four.
-      const p = portrait(height, four && width < 740 ? 2 : cards.length);
+      // A portrait grid draft (four cards, or three with a fit row) places the header against two rows, not n.
+      const rows = width < 740 && (four || hasRow) ? 2 : cards.length;
+      const p = portrait(height, rows);
       if (width < 740) {
         title.setPosition(width / 2, p.top).setScale(Math.min(1, (width - 32) / (title.width || 1)));
         subtitle.setPosition(width / 2, p.top + 34);
@@ -242,7 +248,7 @@ export class DraftScene extends Phaser.Scene {
         c.button.container.setPosition(s.x, s.y);
         c.frame?.setPosition(s.x, s.y);
       });
-      const r = rerollSlot(width, height, cards.length);
+      const r = rerollSlot(width, height, rows);
       rerollButton.container.setPosition(r.x, r.y);
     };
     layout(viewSize(this).width, viewSize(this).height);
