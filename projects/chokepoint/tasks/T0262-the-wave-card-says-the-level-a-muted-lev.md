@@ -1,13 +1,15 @@
 ---
 id: T0262
-title: "The wave card says the level: a muted \\\"level N · w/10\\\" line"
+title: "The wave card says the level: a muted \\\\\\\"level N · w/10\\\\\\\" line"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0260]
 attempts: 0
 created: 2026-10-30T05:49:22Z
+claimed_at: 2026-10-30T05:50:21Z
 epic: E3
+designer: yoga
 ---
 
 ## Goal
