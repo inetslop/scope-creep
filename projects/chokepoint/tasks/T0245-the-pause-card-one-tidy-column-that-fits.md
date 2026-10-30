@@ -3,10 +3,12 @@ id: T0245
 title: "The pause card: one tidy column that fits, and a Sound row like the other buttons"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T00:51:08Z
+claimed_at: 2026-10-30T01:16:50Z
+designer: desktop-4070
 ---
 
 ## Goal
