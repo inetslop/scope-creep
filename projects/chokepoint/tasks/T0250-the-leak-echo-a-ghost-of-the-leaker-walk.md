@@ -3,10 +3,12 @@ id: T0250
 title: "The leak echo: a ghost of the leaker walks back up the road"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-30T01:33:38Z
+claimed_at: 2026-10-30T01:40:36Z
+designer: desktop
 ---
 
 ## Goal
