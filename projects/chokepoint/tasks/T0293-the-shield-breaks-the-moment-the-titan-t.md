@@ -1,12 +1,14 @@
 ---
 id: T0293
 title: "The shield breaks: the moment the Titan takes full damage"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T17:15:59Z
+claimed_at: 2026-10-30T17:28:45Z
 ---
 
 ## Goal
