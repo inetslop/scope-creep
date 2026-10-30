@@ -92,15 +92,15 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 - T0243 (L) — the draft shows where the card lands (the re-file): each offered card shows the towers a pick would land on — done (2026-10-30)
 - T0276 (M) — endless rerolls: every reroll costs more — **done** (2026-10-30, desktop)
 - T0279 (S) — balance: Beam hits too softly — **done** (2026-10-30, desktop)
-- T0280 (M) — Beam added is a damage boost, not another beam — in progress (cachyos-x8664)
+- T0280 (M) — Beam added is a damage boost, not another beam — failed 2026-10-30 (cachyos context overflow ×3); re-file pending for a strong machine
 - T0281 (L) — Beam and burn deal damage in ticks — **done** (2026-10-30, asus)
 - T0282 (M) — Spray crits: the shotgun rolls for double damage — file lost from the pool; re-filed as T0299
 - T0298 (L) — Wildcard: the 4th card of the 4-card drafts becomes whatever you pick, always Rare or better — in the pool (todo)
 - T0299 (M) — Spray crits (the T0282 re-file): 15% of pellets hit for double, a yellow chip at the impact — in the pool (todo)
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095), T0298 and T0299; T0280 is in progress (cachyos-x8664); T0150 rides behind T0025.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095), T0298 and T0299; T0280 failed 2026-10-30 (re-file pending); T0150 rides behind T0025.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0235, T0248, T0280 and T0299 land.**
+**E4 closes when T0025, T0062, T0064, T0095, T0235, T0248, T0299 and T0280's re-file land.**
 
 **16-cap (protocol):** the pool is 16 (Haste landed with no removal triggered); the five queued registrations (T0025, T0062, T0064, T0095, T0235) land exactly five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
 
@@ -114,7 +114,7 @@ Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
 ### E9 — Level augments: harder runs for a bigger payout (active, **top priority** — opened 2026-10-30, by hand)
-**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0291 (the payout) is in progress (asus); T0295 (the rest of the first set) and T0305 (the slot ladder) are in the pool; T0285, T0294 (Swift and Crowded), the reprice T0288 and the third node T0297 landed.
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0285, T0291 (the payout), T0294 (Swift and Crowded), T0295 (Lean and Short fuse), the reprice T0288, the third node T0297 and the slot ladder T0305 landed; T0310 (the switchback) is in the pool; the claim branch's second node (Flawless pays 10 coins) is unblocked by the payout — the next slice, priority 1.
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
 - **Unlock, a slot ladder:** level augments are picked into **slots**, and slots are earned one at a time.
@@ -138,11 +138,11 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 **Breakdown (to task, in this order):**
 - the unlock, the menu choice and Tough — **T0285 (L) — done** (2026-10-30, asus): wave 30 unlocks the first slot, the menu picker capped at the slot count, Tough (+25% enemy health, bonus +25%), the multiplier shown on the menu (×1.25) and the set saved in the profile and the run save
-- the payout made visible: the multiplier applied to score and coins (stacks with Iron), the claim card's line, the leaderboard row's tag, the HUD chips — **T0291 (L, priority 1) — in progress (asus)**
-- the rest of the first set, one task per side: Swift (+15% enemy speed) + Crowded (+20% enemies per wave) — **T0294 (M) — done** (2026-10-30, asus); Lean (−25% kill gold) + Short fuse (−30% build time) — **tasked as T0295 (M, in the pool)**; each a pure rule with tests, each one's multiplier bonus is its own number
+- the payout made visible: the multiplier applied to score and coins (stacks with Iron), the claim card's line, the leaderboard row's tag, the HUD chips — **T0291 (L, priority 1) — done** (2026-10-30, asus)
+- the rest of the first set, one task per side: Swift (+15% enemy speed) + Crowded (+20% enemies per wave) — **T0294 (M) — done** (2026-10-30, asus); Lean (−25% kill gold) + Short fuse (−30% build time) — **T0295 (M) — done** (2026-10-30, asus); each a pure rule with tests, each one's multiplier bonus is its own number
 - the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned — **done as T0288 (M, 2026-10-30, cachyos-x8664)**
-- deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **done as T0297 (M, 2026-10-30, desktop)**; the claim branch's second node (Flawless pays 10 coins, T0076's open door) waits on the payout's files (T0291's claim card, T0274's pause line); the board branch's fourth node (The switchback, the road's fold) — **tasked as T0310 (M, in the pool)**
-- the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line) — **tasked as T0305 (M, priority 1, in the pool)**
+- deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **done as T0297 (M, 2026-10-30, desktop)**; the claim branch's second node (Flawless pays 10 coins, T0076's open door) is unblocked by the payout (T0291 landed) — the next slice, priority 1; the board branch's fourth node (The switchback, the road's fold) — **T0310 (M) — in the pool**
+- the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line) — **T0305 (M, priority 1) — done** (2026-10-30, asus)
 - (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set
 
 ### Enemy queue (non-epic)
