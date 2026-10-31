@@ -5,6 +5,7 @@ import { chill } from './chill.ts';
 import { chew } from './chew.ts';
 import { chomp } from './chomp.ts';
 import { cling } from './cling.ts';
+import { fang } from './fang.ts';
 import { frenzy } from './frenzy.ts';
 import { fuse } from './fuse.ts';
 import { goo } from './goo.ts';
@@ -41,6 +42,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   reap,
   chomp,
   adrenaline,
+  fang,
   fuse,
   scatter,
   gush,

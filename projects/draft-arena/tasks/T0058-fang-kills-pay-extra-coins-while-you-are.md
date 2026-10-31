@@ -4,11 +4,12 @@ title: "Fang: kills pay extra coins while you are below half hp"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T11:14:52Z
 claimed_at: 2026-10-31T11:31:42Z
+finished_at: 2026-10-31T11:39:35Z
 epic: E15
 ---
 
@@ -93,3 +94,17 @@ No new types. Uses existing: `UpgradeDef.onKill(ctx, me, level, victim)` (engine
 
 ### Tests
 - none (content is tested automatically by engine/tests/: upgrade in a tree, talent needs/ranks, on-kill in a real match).
+
+## Result (attempt 1, yoga)
+
+Added the Fang on-kill upgrade — a coin branch under Nerve in the Frenzy tree. A new file `src/content/upgrades/fang.ts` (registered in `UPGRADES` right after `adrenaline`, import in alpha order) that pays 2 extra coins per rank via `ctx.giveCoins` plus a `coin` effect at the victim's position on any credited kill (monster or knockout, any weapon) while the killer is below half hp; stacks with the normal kill coins and Adrenaline. Its talent line sits after `adrenaline` in `src/content/talents/frenzy.ts` (max 2, needs Nerve 2), so the panel draws it as Nerve's coin fork. `npm run check` (95 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 7.9 min
+
+```
+projects/draft-arena/game/src/content/talents/frenzy.ts |  1 +
+ projects/draft-arena/game/src/content/upgrades/fang.ts  | 17 +++++++++++++++++
+ projects/draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ 3 files changed, 20 insertions(+)
+```
