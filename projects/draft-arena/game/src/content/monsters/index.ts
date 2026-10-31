@@ -6,6 +6,7 @@ import { brood } from './brood.ts';
 import { zippy } from './zippy.ts';
 import { sleeper } from './sleeper.ts';
 import { spitter } from './spitter.ts';
+import { toss } from './toss.ts';
 
 /** Every monster. One per line; the order is the wire order (keep new ones next to related ones). */
 export const MONSTERS: readonly MonsterDef[] = [
@@ -16,4 +17,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   zippy,
   sleeper,
   spitter,
+  toss,
 ];

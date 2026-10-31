@@ -5,6 +5,7 @@ import { prestigeStars } from './prestige-stars.ts';
 import { mark } from './mark.ts';
 import { wound } from './wound.ts';
 import { splash } from './splash.ts';
+import { plopSplash } from './plop-splash.ts';
 import { slushPuddle } from './slush-puddle.ts';
 import { splat } from './splat.ts';
 import { puddle } from './puddle.ts';
@@ -18,6 +19,7 @@ export const AREAS: readonly AreaDef[] = [
   mark,
   wound,
   splash,
+  plopSplash,
   slushPuddle,
   splat,
   puddle,

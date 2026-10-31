@@ -4,11 +4,12 @@ title: "Toss: a big slow melon that lobs a high-arcing blob that splashes where 
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0071]
 attempts: 1
 created: 2026-10-31T14:39:38Z
 claimed_at: 2026-10-31T15:43:52Z
+finished_at: 2026-10-31T16:38:17Z
 epic: E20
 ---
 
@@ -255,3 +256,21 @@ export const toss: MonsterDef = {
 
 ### Tests
 none (engine/tests auto-checks registration, pure paths, draws, each monster/projectile/area in a real match, and the 60-player budget).
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the Toss monster — a big slow peach melon (new `peach` palette color #ffc078, calm two-eyed smile) that holds a 220–420 band and, every 2.2 s, winds up 0.6 s (angry toothy face, purple blob inflating in its mouth, synced in slots) then lobs a zero-damage purple plop on a high arc (apex 140, 240 u/s). Where it lands, a one-strike purple ink-rimmed splash ring (`plop-splash`) blooms to radius 60 and hits everything in it for 12 — players and monsters alike, so a splash can pop its own neighbors. Files: new `src/content/monsters/toss.ts`, `src/content/projectiles/plop.ts`, `src/content/areas/plop-splash.ts`, one line in `palette.ts`, and one registry line each in the monsters/projectiles/areas indexes. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: NO VERDICT
+- Time: 54.4 min
+
+```
+.../draft-arena/game/src/content/areas/index.ts    |   2 +
+ .../game/src/content/areas/plop-splash.ts          |  38 +++++++
+ .../draft-arena/game/src/content/monsters/index.ts |   2 +
+ .../draft-arena/game/src/content/monsters/toss.ts  | 114 +++++++++++++++++++++
+ projects/draft-arena/game/src/content/palette.ts   |   1 +
+ .../game/src/content/projectiles/index.ts          |   2 +
+ .../game/src/content/projectiles/plop.ts           |  24 +++++
+ 7 files changed, 183 insertions(+)
+```

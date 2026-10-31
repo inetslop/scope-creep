@@ -11,6 +11,7 @@ export const PALETTE = {
 
   red: '#ff6b6b',
   orange: '#ffa94d',
+  peach: '#ffc078',
   purple: '#a78bfa',
   pink: '#f783ac',
   magenta: '#da77f2',
