@@ -3,11 +3,13 @@ id: T0016
 title: "Your color: a row of 10 dots on the start screen"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T03:51:35Z
+claimed_at: 2026-10-31T04:18:14Z
 epic: E5
+designer: cachyos-x8664
 ---
 
 ## Goal
