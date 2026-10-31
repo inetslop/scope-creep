@@ -4,11 +4,12 @@ title: "The Crown: the top scorer wears a yellow crown"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T03:34:39Z
 claimed_at: 2026-10-31T04:06:57Z
+finished_at: 2026-10-31T05:04:46Z
 epic: E4
 ---
 
@@ -147,3 +148,31 @@ Registry edits, each exactly one import plus one list line: in `areas/index.ts` 
 
 ### Tests
 - none (the director runs in the engine's 3-minute match test, the area is validated and drawn automatically, and there are no pure helpers).
+
+## Result (attempt 1, asus)
+
+**
+- `npm run check` — typecheck + lint + all 62 tests pass (includes the one-file-per-item/registry validation and the 3-minute match where the director runs).
+- `npm run smoke` — desktop and mobile both pass (6 players, kills generating scores, effects firing).
+
+**Acceptance criteria:**
+1. Top scorer wears the yellow 3-point crown 12 units above its head; `if (!leader) return` suppresses it while all scores are 0. ✓
+2. Moves only on a strict overtake (`score(leader) > score(wearer)`), playing the level-up ring; a tie never moves it (no ping-pong). ✓
+3. On knockout, `playerById(mem.crown)` returns `undefined` for the dead wearer, so `onKill`→`check` hands the crown to the next-highest scorer (and `tick` would too). ✓
+4. Bots are `type: 'player'` and can wear it; the crown is a separate area in the field layer, so it never touches the critter's face, size, or hitbox. ✓
+5. No `src/hud/` file touched — it's a field marker, not a HUD card. ✓
+
+**One deviation from the design** (minimal, noted for the record): the design's bare `p.score` can't typecheck, because the frozen `engine/api.ts` `Player` type does not expose `score` — only the engine's internal `SimPlayer` does. Since `engine/` is frozen, the director reads it through a small typed-cast helper `score(p)` (`p as Player & { score: number }`). The rest of the director is exactly as designed.
+
+SUMMARY: The match's top scorer now wears a small yellow 3-point crown floating above its head, and it visibly moves as scores change…
+
+- Self-review: APPROVE
+- Time: 57.8 min
+
+```
+.../draft-arena/game/src/content/areas/crown.ts    | 40 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/areas/index.ts    |  2 ++
+ .../game/src/content/directors/crown.ts            | 38 ++++++++++++++++++++
+ .../game/src/content/directors/index.ts            |  2 ++
+ 4 files changed, 82 insertions(+)
+```
