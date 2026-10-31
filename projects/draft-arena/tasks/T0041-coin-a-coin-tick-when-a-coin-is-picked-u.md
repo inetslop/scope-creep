@@ -1,14 +1,14 @@
 ---
 id: T0041
 title: "Coin: a coin tick when a coin is picked up or spent"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0039]
-attempts: 1
+attempts: 2
 created: 2026-10-31T07:44:39Z
-claimed_at: 2026-10-31T08:48:05Z
-finished_at: 2026-10-31T09:16:11Z
+claimed_at: 2026-10-31T09:16:43Z
 epic: E11
 ---
 
