@@ -3,11 +3,13 @@ id: T0032
 title: "Sleeper: a deep pink cushion that sleeps until you get close"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T06:30:37Z
+claimed_at: 2026-10-31T07:07:39Z
 epic: E9
+designer: desktop
 ---
 
 ## Goal
