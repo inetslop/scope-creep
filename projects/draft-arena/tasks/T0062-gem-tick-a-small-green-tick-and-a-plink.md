@@ -3,12 +3,13 @@ id: T0062
 title: "Gem tick: a small green tick and a plink where a gem is picked up"
 size: S
 priority: 3
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T11:40:36Z
 claimed_at: 2026-10-31T11:52:16Z
-designer: yoga
+finished_at: 2026-10-31T12:24:26Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -28,3 +29,7 @@ The farm loop is the quietest moment of a match: every gem you pick up ticks whe
 - [ ] Grabbing four or more gems at once (gem rain) rolls at most six plinks at 30 ms apart instead of a burst of them.
 - [ ] Bots picking up gems show the tick but play no sound.
 - [ ] A gem the player does not collect (it expires or another takes it) plays nothing.
+
+## Rejected by architect (yoga)
+
+the plink "only for your own pickups" has no per-player channel in the frozen engine to key on: effects carry no owner (WireEffect is just kind, ax, ay, bx, by, value, and effect draw() runs on every client that receives it, so a draw-based gemPlink(seed, age) sounds on bot/other players' pickups within EVENT_RADIUS too — failing "bots show the tick but play no sound" and "plink only for your own pickups"), there is no per-player pickup message in the protocol (S2C: welcome/snapshot/roster/scores/reject only), and no `view.me` field changes only when *you* collect a gem (xp also rises on the crown kill bounty, mark and gem-rush claims, and cannot carry the jackpot's lower/longer variant or the gem count needed for the 6-at-30 ms roll — unlike T0041's coin tick, which keys on `view.me.coins`, a per-player field that has no gem analogue); it needs an engine change: a per-player pickup event on the wire (or a per-player owner on effects).
