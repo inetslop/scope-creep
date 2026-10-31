@@ -4,11 +4,12 @@ title: "Monster colors: bright palette colors only, and no two monsters alike"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: [T0073]
 attempts: 2
 created: 2026-10-31T12:51:01Z
 claimed_at: 2026-10-31T14:02:54Z
+finished_at: 2026-10-31T14:43:46Z
 ---
 
 ## Goal
@@ -65,3 +66,18 @@ none (no pure helpers added; every content item is tested automatically by engin
 ## Attempt 1 interrupted (desktop-4070)
 
 The owner stopped desktop-4070 mid-task (it had made no changes yet). Requeued for any machine.
+
+## Result (attempt 2, asus)
+
+Per the design, added `magenta` (#da77f2) and `coral` (#ffa8a8) to PALETTE, moved the Sleeper from darkened pink to magenta and the Flee from red to coral (dropping the now-unused `shade` import in the Sleeper). One necessary deviation: the design's 6-monster roster missed the Brood, which T0066 merged in between the design being claimed and written and still carried a darkened-purple body that would fail the acceptance grep; I gave it a third new warm palette color, `violet` (#845ef7, a saturated bright violet that keeps its "purple sac" identity while reading apart from Puff's pale lilac pentagon). No registries, engine, or other colors touched.
+
+- Self-review: APPROVE
+- Time: 40.9 min
+
+```
+projects/draft-arena/game/src/content/monsters/brood.ts   | 4 ++--
+ projects/draft-arena/game/src/content/monsters/flee.ts    | 2 +-
+ projects/draft-arena/game/src/content/monsters/sleeper.ts | 6 +++---
+ projects/draft-arena/game/src/content/palette.ts          | 7 +++++--
+ 4 files changed, 11 insertions(+), 8 deletions(-)
+```

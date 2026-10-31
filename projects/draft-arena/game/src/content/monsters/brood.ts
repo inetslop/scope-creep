@@ -1,4 +1,4 @@
-import { chase, drawCritter, shade, type Face, type Look, type MonsterDef } from '../../../engine/api.ts';
+import { chase, drawCritter, type Face, type Look, type MonsterDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
 
 /** A player within 300 starts the cycle: telegraph 0.8 s, pop, three births 4 s apart, then 8 s rest. */
@@ -14,7 +14,7 @@ const POP_RADIUS = 12;
 const CALM: Face = { mood: 'calm', eyes: 3, mouth: 'o' };
 const TEETH: Face = { mood: 'calm', eyes: 3, mouth: 'teeth' };
 
-const look: Look = { shape: 'circle', color: shade(PALETTE.purple, -0.35), face: CALM };
+const look: Look = { shape: 'circle', color: PALETTE.violet, face: CALM };
 /** The biggest body in the field: three eyes in a row, a wide mouth that snaps to teeth before each birth. */
 look.draw = (g, e) => {
   const ph = e.slots[0] ?? 0; // 0 shuffling/resting, 1 telegraphing, 2 pop beat

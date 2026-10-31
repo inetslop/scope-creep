@@ -13,7 +13,7 @@ const WOBBLE = 25 * Math.PI / 180;
 const CALM: Face = { mood: 'calm', eyes: 2, mouth: 'o' };
 const PANIC_F: Face = { mood: 'scared', eyes: 2, mouth: 'o' };
 
-const look: Look = { shape: 'circle', color: PALETTE.red, face: CALM };
+const look: Look = { shape: 'circle', color: PALETTE.coral, face: CALM };
 look.draw = (g, e) => {
   const scared = e.slots[0] === 1;
   const face = scared ? PANIC_F : CALM;

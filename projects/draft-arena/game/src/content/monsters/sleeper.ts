@@ -1,4 +1,4 @@
-import { chase, drawCritter, shade, type Face, type Look, type MonsterDef } from '../../../engine/api.ts';
+import { chase, drawCritter, type Face, type Look, type MonsterDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
 
 /** A player within 350 wakes it; it sleeps again only after 10 s with every player beyond 500. */
@@ -10,8 +10,8 @@ const AWAY = 10;
 const CALM: Face = { mood: 'calm', eyes: 2, mouth: 'o' };
 const ANGRY: Face = { mood: 'angry', eyes: 2, mouth: 'frown' };
 
-const look: Look = { shape: 'square', color: shade(PALETTE.pink, -0.35), face: CALM };
-/** A deep pink squashed cushion; flatter with closed eyes while asleep, snarling with open eyes once woken. */
+const look: Look = { shape: 'square', color: PALETTE.magenta, face: CALM };
+/** A magenta squashed cushion; flatter with closed eyes while asleep, snarling with open eyes once woken. */
 look.draw = (g, e) => {
   const state = e.slots[0] ?? 0; // 0 sleeping, 1 waking, 2 awake
   g.save();

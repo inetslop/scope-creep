@@ -1,7 +1,7 @@
 /**
  * Every color the game uses, Critters style: bright candy colors with an ink outline on a mint
- * field. Monsters are warm (red, orange, purple, pink), player weapons cool (teal, blue, ice),
- * rewards yellow and green.
+ * field. Monsters are warm (red, orange, purple, pink, magenta, coral, violet), player weapons
+ * cool (teal, blue, ice), rewards yellow and green.
  */
 export const PALETTE = {
   ground: '#dff1e9',
@@ -13,6 +13,9 @@ export const PALETTE = {
   orange: '#ffa94d',
   purple: '#a78bfa',
   pink: '#f783ac',
+  magenta: '#da77f2',
+  coral: '#ffa8a8',
+  violet: '#845ef7',
 
   teal: '#38d9a9',
   blue: '#4dabf7',
