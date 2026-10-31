@@ -3,13 +3,11 @@ id: T0006
 title: "Chomp: a Body capstone, heal on kill"
 size: S
 priority: 3
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T02:20:47Z
-claimed_at: 2026-10-31T02:24:33Z
 epic: E1
-designer: yoga
 ---
 
 ## Goal
@@ -35,3 +33,49 @@ The Body tree gets its capstone behind a real commitment: the tank that stands i
 - [ ] With Chomp, killing a monster heals the player 5 hp (up to max): a player who would have been knocked out by the next touch of the crowd keeps fighting.
 - [ ] Knocking out a player heals the killer 25 hp, on top of the knockout's xp and score.
 - [ ] Without Chomp, kills heal nothing (only the player's own regen); the Body tree's other talents are unchanged.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/upgrades/chomp.ts` - `UpgradeDef` for the Body capstone, heals the killer on kill
+- edit `src/content/upgrades/index.ts` - import + one line in `UPGRADES`
+- edit `src/content/talents/body.ts` - one talent line after the `vigor` line
+
+### Interfaces
+None new. The file, exactly:
+
+```ts
+import type { UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** Body capstone: kills heal, so standing in the crowd pays. */
+export const chomp: UpgradeDef = {
+  id: 'chomp',
+  name: 'Chomp',
+  description: 'On kill: heal 5 hp. On a player knockout: heal 25.',
+  maxLevel: 1,
+  look: { shape: 'pentagon', color: PALETTE.green },
+  onKill(ctx, me, _level, victim) {
+    ctx.heal(me, victim.type === 'player' ? 25 : 5);
+  },
+};
+```
+
+`index.ts`: add `import { chomp } from './chomp.ts';` between the `bolt` and `haste` imports; add `  chomp,` on the line after `  ricochet,`.
+
+`body.ts`: after `    { id: 'vigor', upgrade: 'vigor', max: 3 },` add exactly:
+`    { id: 'chomp', upgrade: 'chomp', max: 1, needs: [['vigor', 3], ['swift', 3]] },`
+
+### Steps
+1. Create `src/content/upgrades/chomp.ts` with the code above (copy the shape of `src/content/upgrades/ricochet.ts`).
+2. Register it in `src/content/upgrades/index.ts` (import + list line).
+3. Add the talent line to `src/content/talents/body.ts`.
+4. `npm run check`.
+
+### Pitfalls
+- `needs` order is the panel's hang order: `vigor` first so Chomp draws under Vigor; don't add `points`.
+- `victim.type === 'player'` is the monster/killer split — the engine credits weapon AND area kills through this hook, so no extra code; `ctx.heal` already caps at maxHp.
+- Import only `UpgradeDef` (no `Unit`); name the unused param `_level`; no `Math.random`, no module state.
+- Fullest state: Body tab then has 5 rows; the Chomp row shows "Chomp" + 1 pip, its 47-char description (wraps to ~2 lines at 12px in the 360px card / phone bottom sheet, same as Ricochet's 50-char row) and, while locked, "Needs Vigor 3 and Swift 3" (auto-rendered by `missingFor`, joined "and" not commas — nothing to do). No HUD file changes.
+### Tests
+none
