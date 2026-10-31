@@ -4,11 +4,12 @@ title: "Snail: an orange hexagon that leaves sticky patches behind"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T02:37:00Z
 claimed_at: 2026-10-31T04:13:06Z
+finished_at: 2026-10-31T04:49:05Z
 epic: E2
 ---
 
@@ -134,3 +135,20 @@ export const snail: MonsterDef = {
 
 ### Tests
 none
+
+## Result (attempt 1, desktop-4070)
+
+Added the Snail monster (`src/content/monsters/snail.ts`) — an orange hexagon, 60 hp, 30 u/s, weight 3 from level 5 — that chases like a Dot and every 1.5 s sinks (squash + mouth to o) to lay a `sticky` patch (`src/content/areas/sticky.ts`, radius 45, 6 s life) that fades in over 0.3 s; the new `mired` status (`src/content/statuses/mired.ts`) gives everything standing in a patch 60% speed for 0.5 s, so the slow ends within 0.5 s of leaving and applies to players and monsters alike. All three items registered in their folder `index.ts` files; `npm run check` and `npm run smoke` both pass. Note for the product owner: patch slow and T0004's Chill multiply together (engine behavior) rather than the stronger one winning — single-slow numbers match the spec exactly.
+
+- Self-review: APPROVE
+- Time: 36.0 min
+
+```
+.../draft-arena/game/src/content/areas/index.ts    |  2 +
+ .../draft-arena/game/src/content/areas/sticky.ts   | 43 +++++++++++++++++++
+ .../draft-arena/game/src/content/monsters/index.ts |  2 +
+ .../draft-arena/game/src/content/monsters/snail.ts | 49 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/statuses/index.ts |  2 +
+ .../draft-arena/game/src/content/statuses/mired.ts | 10 +++++
+ 6 files changed, 108 insertions(+)
+```
