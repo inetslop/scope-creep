@@ -1,12 +1,14 @@
 ---
 id: T0103
 title: "Bloop: a low bloop when a Toss splash blooms"
+assignee: inet-racing
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T17:06:34Z
+claimed_at: 2026-10-31T17:41:07Z
 epic: E20
 ---
 
