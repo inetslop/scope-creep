@@ -3,11 +3,13 @@ id: T0022
 title: "The shop: a panel over the start screen that sells looks"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: [T0019, T0021]
 attempts: 0
 created: 2026-10-31T04:59:35Z
+claimed_at: 2026-10-31T05:24:09Z
 epic: E6
+designer: desktop
 ---
 
 ## Goal
