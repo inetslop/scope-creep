@@ -3,11 +3,13 @@ id: T0099
 title: "Jaw: a fat deep-red blob that stops and bites a locked cone in front of it"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T16:34:41Z
+claimed_at: 2026-10-31T16:34:45Z
 epic: E20
+designer: desktop
 ---
 
 ## Goal
