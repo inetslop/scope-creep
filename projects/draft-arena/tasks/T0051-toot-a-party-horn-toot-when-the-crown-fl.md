@@ -3,11 +3,13 @@ id: T0051
 title: "Toot: a party-horn toot when the crown flies off"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T10:32:35Z
+claimed_at: 2026-10-31T10:33:08Z
 epic: E11
+designer: yoga
 ---
 
 ## Goal
