@@ -4,11 +4,12 @@ title: "Hide: take less damage, a second fork under Vigor"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T02:37:00Z
 claimed_at: 2026-10-31T03:04:51Z
+finished_at: 2026-10-31T03:12:04Z
 epic: E1
 ---
 
@@ -76,3 +77,17 @@ What armor does numerically in this engine (`engine/sim/match.ts:967`, frozen): 
 
 ### Tests
 none (engine/tests checks every content item automatically: file registered, valid data, talent reachable, ranks ≤ maxLevel).
+
+## Result (attempt 1, yoga)
+
+Added the Hide upgrade (`src/content/upgrades/hide.ts`), a defensive stats mod giving +10 armor per rank (max 3, "Take 10% less damage, per rank.", green hexagon), registered it in `UPGRADES`, and added its talent line under Vigor in the Body tree (`needs: [['vigor', 1]]`) so the tank fork now offers Chill (slow the crowd) or Hide (thicker wall: armor flatly reduces damage taken from every source, applied after the pvp half-damage rule). No other files changed.
+
+- Self-review: APPROVE
+- Time: 7.2 min
+
+```
+projects/draft-arena/game/src/content/talents/body.ts   |  1 +
+ projects/draft-arena/game/src/content/upgrades/hide.ts  | 11 +++++++++++
+ projects/draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ 3 files changed, 14 insertions(+)
+```
