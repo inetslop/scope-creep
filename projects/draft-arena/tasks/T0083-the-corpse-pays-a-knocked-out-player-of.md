@@ -1,12 +1,14 @@
 ---
 id: T0083
 title: "The corpse pays: a knocked-out player of level 4 or higher drops a gem worth their level"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T14:05:22Z
+claimed_at: 2026-10-31T15:37:56Z
 epic: E19
 ---
 
