@@ -4,11 +4,12 @@ title: "Mustache: a 350-coin face accessory, a curly pink mustache over the mout
 assignee: desktop
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T17:06:34Z
 claimed_at: 2026-10-31T17:31:20Z
+finished_at: 2026-10-31T17:35:56Z
 epic: E22
 ---
 
@@ -85,3 +86,16 @@ export const mustache: AccessoryDef = {
 
 ### Tests
 - none (engine/tests/ covers registration, draw and budget automatically).
+
+## Result (attempt 1, desktop)
+
+Added the Mustache — a 350-coin face accessory buyable only after 1 prestige in all — as `src/content/accessories/mustache.ts`: two pink curls with an ink outline meeting over the mouth, tips hooked up, mouth and eyes left clear, with a tiny sway at speed. Registered it in `src/content/accessories/index.ts` right after heart-shades so the face row stays price-ascending (80, 80, 100, 150, 200, 350). Buying, wearing, persistence, bot dressing and the "Needs 1 prestige in all" gate all come from the generic accessory iteration; nothing in play changed. `npm run check` and `npm run smoke` (desktop + mobile) pass.
+
+- Self-review: APPROVE
+- Time: 4.6 min
+
+```
+.../game/src/content/accessories/index.ts          |  2 ++
+ .../game/src/content/accessories/mustache.ts       | 28 ++++++++++++++++++++++
+ 2 files changed, 30 insertions(+)
+```
