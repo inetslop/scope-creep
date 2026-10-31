@@ -3,11 +3,13 @@ id: T0058
 title: "Fang: kills pay extra coins while you are below half hp"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T11:14:52Z
+claimed_at: 2026-10-31T11:15:39Z
 epic: E15
+designer: yoga
 ---
 
 ## Goal
