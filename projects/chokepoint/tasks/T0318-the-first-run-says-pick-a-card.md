@@ -1,12 +1,14 @@
 ---
 id: T0318
 title: The first run says pick a card
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T01:13:09Z
+claimed_at: 2026-10-31T23:13:37Z
 epic: E11
 ---
 
