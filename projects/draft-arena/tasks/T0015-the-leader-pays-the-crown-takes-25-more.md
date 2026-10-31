@@ -3,11 +3,13 @@ id: T0015
 title: "The leader pays: the crown takes 25% more damage from players"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0013]
 attempts: 0
 created: 2026-10-31T03:34:39Z
+claimed_at: 2026-10-31T04:06:51Z
 epic: E4
+designer: desktop
 ---
 
 ## Goal
