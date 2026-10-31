@@ -3,13 +3,14 @@ id: T0109
 title: "Fizz: a Lobber capstone, the bubble's splash lingers and keeps striking"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:49:52Z
 claimed_at: 2026-10-31T17:53:04Z
+finished_at: 2026-10-31T19:09:05Z
 epic: E23
-designer: inet-racing
+design_attempts: 1
 ---
 
 ## Goal
@@ -56,3 +57,7 @@ The Lobber's zone capstone beside Fuse: the committed Lobber's base splash stops
 - [ ] Wide makes the fizz-field as much bigger as it makes the splash; other weapons are unaffected by Fizz.
 - [ ] The fizz-field reads as a popping ice patch (a small ice pop on each strike), distinct from the one-shot splash and from a Slush puddle.
 - [ ] A player without Fizz has the unchanged one-shot splash, and the game stays playable with a fresh nomad build.
+
+## Rejected by architect (inet-racing)
+
+The "Compared with what exists" table is missing rows — Fizz can only be built as an onHit upgrade (its one hook reacts to the splash's strikes, since no server hook can ask a player for their upgrades), so every onHit/onKill upgrade needs a row, but 11 are absent: chill, cling, gore, leech, mend, reap, snare, swarm, adrenaline, fang, nest; the task otherwise builds as written, so add those rows and resubmit.
