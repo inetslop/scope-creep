@@ -1,12 +1,14 @@
 ---
 id: T0071
 title: "Monster colors: bright palette colors only, and no two monsters alike"
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: [T0073]
-attempts: 1
+attempts: 2
 created: 2026-10-31T12:51:01Z
+claimed_at: 2026-10-31T14:02:54Z
 ---
 
 ## Goal
