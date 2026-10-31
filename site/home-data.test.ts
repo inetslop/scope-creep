@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
 import { parseTask, type Task } from '../loop/tasks.ts';
-import { lastFinished, machineView, poolCounts, projectTasks, sortMachines } from './home-data.ts';
+import { blurbOf, lastFinished, machineView, poolCounts, projectTasks, recentlyShipped, sortMachines } from './home-data.ts';
 
 const text = (id: string, front: string, body = '## Goal\nA thing.\n'): string => `---\nid: ${id}\ntitle: The ${id} thing\nsize: S\n${front}\n---\n\n${body}`;
 const task = (id: string, front: string, body?: string): Task => parseTask(text(id, front, body), path.join('tasks', `${id}-x.md`));
@@ -69,6 +69,24 @@ describe('poolCounts and lastFinished', () => {
     assert.deepEqual(poolCounts(tasks), { building: 1, ready: 2, designing: 0, design: 1, done: 2, failed: 1 });
     assert.equal(lastFinished(tasks), '2026-10-28T12:00:00Z');
     assert.equal(lastFinished([]), undefined);
+  });
+});
+
+describe('blurbOf', () => {
+  it("takes the first sentence of the intro's first two lines, skipping the note on who maintains the file", () => {
+    assert.equal(blurbOf('# Game\n\nAbstract roguelite. Phaser.\nYou are a circle. Shoot.\n\n## Rules\nNo.'), 'Abstract roguelite. You are a circle.');
+    assert.equal(blurbOf('# Critter Clash\n\nAn arena: crowds and players. TypeScript.\n\nThis file is maintained by humans. See README.\n\n## The one rule\n`engine/` is frozen.'), 'An arena: crowds and players.');
+  });
+});
+
+describe('recentlyShipped', () => {
+  it('lists finished tasks newest first, with who built them', () => {
+    const t = (id: string, status: string, finishedAt?: string, assignee = 'asus') => ({ id, title: `Task ${id}`, status, finishedAt, assignee }) as unknown as Parameters<typeof recentlyShipped>[0][number];
+    const tasks = [t('T1', 'done', '2026-10-31T10:00:00Z'), t('T2', 'failed', '2026-10-31T12:00:00Z'), t('T3', 'done', '2026-10-31T11:00:00Z', 'yoga'), t('T4', 'todo')];
+    assert.deepEqual(recentlyShipped(tasks, 5), [
+      { id: 'T3', title: 'Task T3', by: 'yoga', at: '2026-10-31T11:00:00Z' },
+      { id: 'T1', title: 'Task T1', by: 'asus', at: '2026-10-31T10:00:00Z' },
+    ]);
   });
 });
 

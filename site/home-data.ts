@@ -57,6 +57,39 @@ export function poolCounts(tasks: readonly Task[]): PoolCounts {
   return { building: n('in-progress'), ready: n('todo'), designing: n('designing'), design: n('design'), done: n('done'), failed: n('failed') };
 }
 
+/**
+ * The game's description: the first sentence of each of the first two lines of its CLAUDE.md
+ * intro (written by humans), before the first section heading. A note about who maintains the
+ * file is not part of it.
+ */
+export function blurbOf(claudeMd: string): string {
+  const intro: string[] = [];
+  for (const line of claudeMd.split(/\r?\n/)) {
+    if (line.startsWith('## ')) break;
+    if (line.trim() && !line.startsWith('#') && !/^This file is maintained/i.test(line.trim())) intro.push(line);
+  }
+  const first = (l: string | undefined): string => /^(.*?[.!?])(\s|$)/.exec(l ?? '')?.[1] ?? '';
+  return [first(intro[0]), first(intro[1])].filter(Boolean).join(' ');
+}
+
+/** A finished task, as the front page lists it. */
+export interface Shipped {
+  id: string;
+  title: string;
+  /** The machine that built it. */
+  by: string;
+  at: string;
+}
+
+/** The project's most recently finished tasks, newest first. */
+export function recentlyShipped(tasks: readonly Task[], n = 6): Shipped[] {
+  return tasks
+    .filter((t) => t.status === 'done' && t.finishedAt)
+    .sort((a, b) => b.finishedAt!.localeCompare(a.finishedAt!))
+    .slice(0, n)
+    .map((t) => ({ id: t.id, title: t.title, by: t.assignee, at: t.finishedAt! }));
+}
+
 /** When the project's last task was finished (ISO), if any. */
 export function lastFinished(tasks: readonly Task[]): string | undefined {
   return tasks
