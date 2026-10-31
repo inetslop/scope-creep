@@ -1,12 +1,14 @@
 ---
 id: T0314
 title: The first clean wave says what the streak pays
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T00:11:52Z
+claimed_at: 2026-10-31T00:32:31Z
 ---
 
 ## Goal
