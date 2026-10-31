@@ -1,12 +1,14 @@
 ---
 id: T0081
 title: "Leech: a fifth Hive talent, your hits heal you while the crowd is on you"
+assignee: inet-racing
 size: M
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T13:48:21Z
+claimed_at: 2026-10-31T17:15:47Z
 epic: E16
 ---
 
