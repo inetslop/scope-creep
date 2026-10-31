@@ -3,13 +3,11 @@ id: T0009
 title: "Hide: take less damage, a second fork under Vigor"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T02:37:00Z
-claimed_at: 2026-10-31T02:47:43Z
 epic: E1
-designer: yoga
 ---
 
 ## Goal
@@ -35,3 +33,44 @@ Body gets a second toughness fork: instead of slowing the crowd (Chill), thicken
 - [ ] A player with Hide 3 standing in one Dot takes visibly less damage per second than the same player without Hide (a full Dot touch of 12 per second lands for about 8 per second or less).
 - [ ] Hide reduces damage from every source, including a player's Bolt (after the half-damage rule) and, once T0005 builds, a Zippy's dash (22 per second lands for about 15 per second at rank 3).
 - [ ] Without Hide, damage taken is unchanged (a Dot still does 12 per second); the Body tree's other talents are unchanged.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/upgrades/hide.ts` - the Hide upgrade: stats mod, `armor +10` per rank, `maxLevel: 3`
+- edit `src/content/upgrades/index.ts` - import `hide`, one line in `UPGRADES`
+- edit `src/content/talents/body.ts` - one talent line under Vigor
+
+### Interfaces
+No new types — data only, against existing `UpgradeDef` / `TalentDef`.
+
+What armor does numerically in this engine (`engine/sim/match.ts:967`, frozen): for a hit of `d` on a player, damage taken is `max(d/4, d - armor)`, applied *after* the pvp halving (`rules.pvp.damageMul = 0.5`) — flat, not percentage. With `armor = 10` per rank: rank 1: 12→3, 22→12; rank 2: 12→3, 22→5.5; rank 3 (armor 30): 12→3 (75% less), 22→5.5 (75% less), a 100-hit→70 (30% less). So a Dot's 12/s touch lands for 3/s (task bar "about 8 or less" met), a Zippy's 22/s dash lands for 5.5/s — under the task's "about 15", i.e. a charge is even more survivable; a player's Bolt is halved first, then reduced. Talent text verbatim: "Take 10% less damage, per rank."
+
+### Steps
+1. Create `src/content/upgrades/hide.ts` exactly:
+   ```ts
+   import type { UpgradeDef } from '../../../engine/api.ts';
+   import { PALETTE } from '../palette.ts';
+
+   export const hide: UpgradeDef = {
+     id: 'hide',
+     name: 'Hide',
+     description: 'Take 10% less damage, per rank.',
+     maxLevel: 3,
+     look: { shape: 'hexagon', color: PALETTE.green },
+     stats: { armor: 10 },
+   };
+   ```
+2. `src/content/upgrades/index.ts`: add `import { hide } from './hide.ts';` after the `haste` import (alphabetical); add `hide,` in `UPGRADES` after the `vigor,` line (the stats section).
+3. `src/content/talents/body.ts`: insert exactly after the `{ id: 'vigor', upgrade: 'vigor', max: 3 },` line: `    { id: 'hide', upgrade: 'hide', max: 3, needs: [['vigor', 1]] },`
+4. Run `npm run check` and `npm run smoke`.
+
+### Pitfalls
+- No `points`, `start` or `prestige` on the talent — only `needs: [['vigor', 1]]`; "4 points for full Hide" falls out of Vigor 1 + Hide 3 spent.
+- The stat is exactly `stats: { armor: 10 }` — no maxHp/regen/speed; no other upgrade raises armor, and the engine's formula is not to be approximated by any hook.
+- Description exactly `'Take 10% less damage, per rank.'`; look exactly `{ shape: 'hexagon', color: PALETTE.green }` (green, not the tree's lime).
+- Export `hide`; one item per file; one registry line each. Do not touch the swift/might/vigor/magnet/chomp lines or reformat.
+- The engine draws the row from the data: hexagon icon (green), 3 rank pips and "Needs Vigor 1" come free; the description is the same length class as every existing line, so nothing changes at 412x915 — Body tab is its current lines plus Hide drawn under Vigor, beside Chill (T0004).
+
+### Tests
+none (engine/tests checks every content item automatically: file registered, valid data, talent reachable, ranks ≤ maxLevel).
