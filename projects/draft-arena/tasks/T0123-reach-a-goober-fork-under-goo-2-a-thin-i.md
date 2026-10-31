@@ -3,13 +3,11 @@ id: T0123
 title: "Reach: a Goober fork under Goo 2, a thin ice needle at the farthest enemy within 400"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T20:44:19Z
-claimed_at: 2026-10-31T20:44:23Z
 epic: E28
-designer: desktop
 ---
 
 ## Goal
@@ -60,3 +58,109 @@ What a Goober gets, and what it costs: a point at Goo 2, where it could buy Clin
 - [ ] A Toss holding 400 and a Spitter past 260 take the needle where the Goo never lands, and a needle at a player deals half damage like every other shot.
 - [ ] Haste shortens the needle's cadence, Quick speeds its flight, Might scales its damage, Split fans a third needle at the same farthest (all 12% weaker), and the Goo, the Gush puddle and the Scatter pop are unchanged — a needle kill lays no puddle and pops nothing.
 - [ ] The game is working and playable otherwise.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/projectiles/needle.ts` - the needle projectile (straight ice teardrop, radius 6, life 0.8 s, no path and no step: straight default, launch-computed like `bolt`/`jab`)
+- create `src/content/upgrades/reach.ts` - the Reach weapon (cooldown 4, fires needle at farthest within 400)
+- edit `src/content/projectiles/index.ts` - one import + one list line for `needle`
+- edit `src/content/upgrades/index.ts` - one import + one list line for `reach`
+- edit `src/content/talents/goober.ts` - one talent line for `reach`
+
+### Interfaces
+No new types. Exact code for the two new files:
+
+`src/content/projectiles/needle.ts`:
+```ts
+import { type Look, type ProjectileDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+const look: Look = { shape: 'triangle', color: PALETTE.ice };
+look.draw = (g, e) => {
+  const a = e.angle, u = e.radius / 6; // sized for radius 6
+  const px = (x: number, y: number) => ({ x: x * u * Math.cos(a) - y * u * Math.sin(a), y: x * u * Math.sin(a) + y * u * Math.cos(a) });
+  g.fillStyle = 'rgba(40, 30, 70, 0.13)'; // soft shadow, as drawCritter draws it
+  g.beginPath();
+  g.ellipse(0, 4.9 * u, 5.4 * u, 1.8 * u, 0, 0, Math.PI * 2);
+  g.fill();
+  // slim teardrop, ~14 long: point ahead at (7, 0), rounded back to (-6.5, 0), half-width 3.5
+  const tip = px(7, 0);
+  g.lineJoin = 'round';
+  g.beginPath();
+  g.moveTo(tip.x, tip.y);
+  const c1 = px(1.5, -3.4), t1 = px(0, -3.5);
+  g.quadraticCurveTo(c1.x, c1.y, t1.x, t1.y);
+  const c2 = px(-6.5, -3.5), b = px(-6.5, 0);
+  g.quadraticCurveTo(c2.x, c2.y, b.x, b.y);
+  const c3 = px(-6.5, 3.5), t2 = px(0, 3.5);
+  g.quadraticCurveTo(c3.x, c3.y, t2.x, t2.y);
+  const c4 = px(1.5, 3.4);
+  g.quadraticCurveTo(c4.x, c4.y, tip.x, tip.y);
+  g.closePath();
+  g.fillStyle = e.flash ? '#ffffff' : PALETTE.ice;
+  g.fill();
+  g.lineWidth = Math.max(1.5, Math.min(3, e.radius * 0.2));
+  g.strokeStyle = PALETTE.ink;
+  g.stroke();
+  const gl = px(-3, -1.2); // small white glint near the back
+  g.fillStyle = 'rgba(255, 255, 255, 0.75)';
+  g.beginPath();
+  g.ellipse(gl.x, gl.y, 1.4 * u, 0.8 * u, a - 0.6, 0, Math.PI * 2);
+  g.fill();
+};
+
+/** Reach's needle: a slim ice drop that flies straight at the farthest enemy; gone on hit or after 0.8 s. */
+export const needle: ProjectileDef = {
+  id: 'needle',
+  radius: 6,
+  life: 0.8,
+  look,
+};
+```
+
+`src/content/upgrades/reach.ts`:
+```ts
+import { v, type UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** Goober fork: the Goo's long arm — a thin ice needle at the farthest enemy within 400. */
+export const reach: UpgradeDef = {
+  id: 'reach',
+  name: 'Reach',
+  description:
+    'Every 4.0 s, a thin ice needle at the farthest enemy within 400. 24 damage. Rank 2: two needles at the two farthest, 20 each.',
+  maxLevel: 2,
+  look: { shape: 'triangle', color: PALETTE.ice },
+  cooldown: 4,
+  fire(ctx, me, level) {
+    const foes = ctx.enemiesNear(me, me.x, me.y, 400)
+      .map((u) => ({ u, d: (u.x - me.x) ** 2 + (u.y - me.y) ** 2 }))
+      .sort((a, b) => b.d - a.d); // farthest first, the opposite of every other weapon
+    const n = Math.min(level, foes.length); // rank 1: one needle, rank 2: two (or fewer)
+    for (let i = 0; i < n; i++) {
+      const t = foes[i]!.u;
+      ctx.fire(me, 'needle', { angle: v.angleTo(me, t), speed: 500, damage: level === 1 ? 24 : 20 });
+    }
+  },
+};
+```
+
+### Steps
+1. Create `src/content/projectiles/needle.ts` and `src/content/upgrades/reach.ts` exactly as above.
+2. `src/content/projectiles/index.ts`: add `import { needle } from './needle.ts';` after the `goolet` import (line 8); add `needle,` after `goolet,` in the list (line 25).
+3. `src/content/upgrades/index.ts`: add `import { reach } from './reach.ts';` after `import { reap } from './reap.ts';` (line 33, keeps imports alphabetical); add `reach,` after `goo,` in the `UPGRADES` list (line 54, beside its family).
+4. `src/content/talents/goober.ts`: add one line after the `cling` line (line 16): `    { id: 'reach', upgrade: 'reach', max: 2, needs: [['goo', 2]] },`
+5. Run `npm run check`, then `npm run smoke`. Do not touch any other file.
+
+### Pitfalls
+- The needle must have **no `onHit`**: `gush`/`chew`/`scatter` fire only when `victim.mem.gooAt` is fresh, and only the Goo's own `onHit` sets it. Do not copy `goo.ts`'s `onHit` into the needle, or a needle kill would lay puddles and pop.
+- Keep the projectile id `needle`: `cling`/`gore`/`mend`/`drift`/`ricochet`/`fizz`/`fuse` all guard on their own projectile ids, so they skip it automatically. Unguarded mods (Reap, Chill, Reckless, Swarm, Leech; Chomp, Fang, Adrenaline, Nest, Scavenge, Sting) run on it for free.
+- Haste/Quick/Might/Lance/Split need no code: they are player stats (`cooldown`, `projectileSpeed`, `damage`, `pierce`, `shots`) the engine applies to every `ctx.fire` and its fan; pvp half damage comes from `rules.pvp.damageMul`.
+- Do not add `path` or `step`: neither = straight flight computed from the launch (the `bolt`/`jab` idiom) — cheapest and never homes. 500 u/s × 0.8 s = 400 = exactly the target range; don't change either number.
+- `look.draw` is client-only: no `ctx`, no `Math.random`, no module state; everything derives from `g`/`e`. One closed path, one ink stroke (never a second outline crossing the body).
+- `PALETTE.ice` is exactly `#99e9f2` — do not invent a new color.
+
+### Tests
+none (content is tested automatically by `engine/tests/`; no pure helpers of our own).
+Panel note: the only new text is the Reach row in the Goober tab (name "Reach", 2 ranks, the description verbatim, ~100 chars, wraps in the row like every other talent row; tab's fullest state: 8 talents, 21 ranks). No HUD element is added or restyled.
