@@ -1,9 +1,11 @@
 import type { UpgradeDef } from '../../../engine/api.ts';
+import { adrenaline } from './adrenaline.ts';
 import { bolt } from './bolt.ts';
 import { chill } from './chill.ts';
 import { chew } from './chew.ts';
 import { chomp } from './chomp.ts';
 import { cling } from './cling.ts';
+import { frenzy } from './frenzy.ts';
 import { fuse } from './fuse.ts';
 import { goo } from './goo.ts';
 import { gush } from './gush.ts';
@@ -14,8 +16,10 @@ import { lob } from './lob.ts';
 import { magnet } from './magnet.ts';
 import { maw } from './maw.ts';
 import { might } from './might.ts';
+import { nerve } from './nerve.ts';
 import { quick } from './quick.ts';
 import { reap } from './reap.ts';
+import { reckless } from './reckless.ts';
 import { ricochet } from './ricochet.ts';
 import { scatter } from './scatter.ts';
 import { slush } from './slush.ts';
@@ -30,10 +34,13 @@ export const UPGRADES: readonly UpgradeDef[] = [
   maw,
   lob,
   goo,
+  nerve,
   ricochet,
+  reckless,
   chill,
   reap,
   chomp,
+  adrenaline,
   fuse,
   scatter,
   gush,
@@ -47,6 +54,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   wide,
   might,
   vigor,
+  frenzy,
   hide,
   haste,
   magnet,

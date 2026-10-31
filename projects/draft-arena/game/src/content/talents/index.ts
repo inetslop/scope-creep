@@ -1,5 +1,6 @@
 import type { TalentTreeDef } from '../../../engine/api.ts';
 import { body } from './body.ts';
+import { frenzy } from './frenzy.ts';
 import { gunner } from './gunner.ts';
 import { goober } from './goober.ts';
 import { lobber } from './lobber.ts';
@@ -10,4 +11,5 @@ export const TREES: readonly TalentTreeDef[] = [
   body,
   lobber,
   goober,
+  frenzy,
 ];

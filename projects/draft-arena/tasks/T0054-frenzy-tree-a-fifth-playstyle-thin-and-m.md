@@ -4,11 +4,12 @@ title: "Frenzy tree: a fifth playstyle, thin and mean, that hits harder the more
 assignee: desktop
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T10:47:58Z
 claimed_at: 2026-10-31T10:52:56Z
+finished_at: 2026-10-31T11:00:00Z
 epic: E13
 ---
 
@@ -164,3 +165,28 @@ Each file mirrors its closest sibling (see Steps). Exact bodies:
 
 ### Tests
 none (content is tested automatically by engine/tests/).
+
+## Result (attempt 1, desktop)
+
+Added the Frenzy tree — a fifth playstyle that trades max hp for damage and pays out while hurt. New files: `talents/frenzy.ts` (tab: red diamond), upgrades `frenzy` (−8 max hp / +12% damage per rank), `nerve` (a close jab every 0.8 s within 180 that gains +1 damage per 10 hp missing, via the new straight `jab` dart projectile), `adrenaline` (a kill below half hp grants the Wired speed status — 1.2× for 1.5 s or 1.3× for 2 s — with a small yellow `wired-pop` puff), and the `reckless` capstone (below half hp, every hit from every weapon deals its damage twice). Registered all five upgrades, the `jab` projectile, the two `wired` statuses, the effect, and the tree in their registries; `npm run check` and both desktop and mobile smoke runs pass.
+
+- Self-review: APPROVE
+- Time: 7.1 min
+
+```
+.../draft-arena/game/src/content/effects/index.ts  |  2 ++
+ .../game/src/content/effects/wired-pop.ts          | 23 ++++++++++++++++++++++
+ .../game/src/content/projectiles/index.ts          |  2 ++
+ .../game/src/content/projectiles/jab.ts            | 10 ++++++++++
+ .../draft-arena/game/src/content/statuses/index.ts |  4 ++++
+ .../game/src/content/statuses/wired-1.ts           | 10 ++++++++++
+ .../game/src/content/statuses/wired-2.ts           | 10 ++++++++++
+ .../draft-arena/game/src/content/talents/frenzy.ts | 16 +++++++++++++++
+ .../draft-arena/game/src/content/talents/index.ts  |  2 ++
+ .../game/src/content/upgrades/adrenaline.ts        | 17 ++++++++++++++++
+ .../game/src/content/upgrades/frenzy.ts            | 12 +++++++++++
+ .../draft-arena/game/src/content/upgrades/index.ts |  8 ++++++++
+ .../draft-arena/game/src/content/upgrades/nerve.ts | 18 +++++++++++++++++
+ .../game/src/content/upgrades/reckless.ts          | 15 ++++++++++++++
+ 14 files changed, 149 insertions(+)
+```
