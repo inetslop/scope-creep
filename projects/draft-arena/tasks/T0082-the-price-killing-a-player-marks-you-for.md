@@ -4,11 +4,12 @@ title: "The price: killing a player marks you for 15 s"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 3
 created: 2026-10-31T14:05:22Z
 claimed_at: 2026-10-31T15:53:03Z
+finished_at: 2026-10-31T17:33:23Z
 epic: E19
 ---
 
@@ -217,4 +218,19 @@ error: cannot lock ref 'refs/remotes/origin/main': is at 89ae00e79e7653f9ef5ff90
     at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:260:5)
     at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
     at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
+
+## Result (attempt 3, asus)
+
+Added "The price" — a permanent-rule director (`src/content/directors/price.ts`, registered right after `mark` in the directors index) that marks the killer of any player knockout with the existing `marked` status for 15 s: the same red target ring and +35% move speed as the event's mark, refreshed (never stacked) by further kills, and paying the usual 20 xp + 5 coins mark bonus with a coordinated hand-off so the mark and price directors never double-pay one knockout. Bots are marked and pay the same way. The `marked` status gained `maxStacks: 32` (behavior unchanged) so the price director can distinguish event marks from its own kill marks via stack counts.
+
+- Self-review: NO VERDICT
+- Time: 100.3 min
+- Self-review edits were discarded (checks failed at "check").
+
+```
+.../game/src/content/directors/index.ts            |   2 +
+ .../game/src/content/directors/price.ts            | 101 +++++++++++++++++++++
+ .../game/src/content/statuses/marked.ts            |   4 +-
+ 3 files changed, 105 insertions(+), 2 deletions(-)
 ```

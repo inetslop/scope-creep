@@ -6,6 +6,7 @@ import { gemGeyser } from './gem-geyser.ts';
 import { jackpot } from './jackpot.ts';
 import { crown } from './crown.ts';
 import { mark } from './mark.ts';
+import { price } from './price.ts';
 import { wound } from './wound.ts';
 import { prestigeCoins } from './prestige-coins.ts';
 import { swarmSurge } from './swarm-surge.ts';
@@ -25,6 +26,7 @@ export const DIRECTORS: readonly DirectorDef[] = [
   corpse,
   crown,
   mark,
+  price,
   wound,
   prestigeCoins,
   prestigePoints,
