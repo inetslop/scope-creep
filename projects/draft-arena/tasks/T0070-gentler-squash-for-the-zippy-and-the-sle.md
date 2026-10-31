@@ -3,10 +3,12 @@ id: T0070
 title: Gentler squash for the Zippy and the Sleeper
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T12:51:01Z
+claimed_at: 2026-10-31T13:26:14Z
+designer: desktop
 ---
 
 ## Goal
