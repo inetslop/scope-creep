@@ -3,11 +3,13 @@ id: T0092
 title: "Cosmetics: an item is picked by clicking it, not by hovering"
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T15:20:51Z
+claimed_at: 2026-10-31T15:28:26Z
 design_attempts: 1
+designer: yoga
 ---
 
 ## Goal
