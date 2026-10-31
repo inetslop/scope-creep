@@ -3,10 +3,12 @@ id: T0065
 title: "Heart Shades: a 200-coin face accessory, pink heart frames around the eyes"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T12:00:08Z
+claimed_at: 2026-10-31T12:24:29Z
+designer: yoga
 ---
 
 ## Goal
