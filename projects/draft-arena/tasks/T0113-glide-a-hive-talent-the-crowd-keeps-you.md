@@ -3,11 +3,13 @@ id: T0113
 title: "Glide: a Hive talent, the crowd keeps you moving"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T19:06:11Z
+claimed_at: 2026-10-31T19:06:13Z
 epic: E25
+designer: desktop
 ---
 
 ## Goal
