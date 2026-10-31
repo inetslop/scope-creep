@@ -4,11 +4,12 @@ title: "Monocle: a 150-coin face accessory, a gold lens over one eye"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T15:16:30Z
 claimed_at: 2026-10-31T15:49:21Z
+finished_at: 2026-10-31T15:58:40Z
 epic: E21
 ---
 
@@ -84,3 +85,16 @@ g.fill();
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+Added the Monocle — a 150-coin face accessory (one yellow lens ring over the right eye with a thin ink chain swaying down to a small ink dot on the cheek) — as a new file `src/content/accessories/monocle.ts` plus one import and one registry line in `src/content/accessories/index.ts`, placed between Beak (100) and Heart Shades (200) so the shop lists it as the face slot's middle step. The lens keeps the Round Glasses' eye position and ring weight with a clear center (eye stays visible), and nothing in play changes (draw-only). `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 9.3 min
+
+```
+.../game/src/content/accessories/index.ts          |  2 ++
+ .../game/src/content/accessories/monocle.ts        | 35 ++++++++++++++++++++++
+ 2 files changed, 37 insertions(+)
+```

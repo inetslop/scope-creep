@@ -8,6 +8,7 @@ import { cone } from './cone.ts';
 import { roundGlasses } from './round-glasses.ts';
 import { bowTie } from './bow-tie.ts';
 import { beak } from './beak.ts';
+import { monocle } from './monocle.ts';
 import { heartShades } from './heart-shades.ts';
 import { balloon } from './balloon.ts';
 import { partyBlower } from './party-blower.ts';
@@ -23,6 +24,7 @@ export const ACCESSORIES: readonly AccessoryDef[] = [
   roundGlasses,
   bowTie,
   beak,
+  monocle,
   heartShades,
   balloon,
   partyBlower,
