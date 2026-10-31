@@ -3,13 +3,14 @@ id: T0034
 title: "Bulwark: a deep red octagon whose bubble shield eats the first 15 hits"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T06:50:30Z
 claimed_at: 2026-10-31T07:12:03Z
+finished_at: 2026-10-31T07:17:11Z
 epic: E9
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -38,3 +39,7 @@ The crowd gains a wall: a big slow tank that soaks the first 15 hits of your wea
 - [ ] An ink crack appears on the bubble after 5 absorbed hits and a second one after 10.
 - [ ] After the pop it takes damage like any other monster; when it dies it pops into a big confetti and drops a gem worth 8 xp.
 - [ ] It never spawns around players below level 6, and it never spawns or shoots anything itself.
+
+## Rejected by architect (desktop)
+
+needs an engine change: monsters have no target-side hit hook — `MonsterDef` (engine/api.ts:292) exposes only `think` and `onDeath`, damage lands via the engine's internal strike/damage path which runs only owner-side `onHit` hooks, and there is no armor/shield field on `Unit`, so content can only observe per-tick hp deltas (20 tps) and cannot count individual weapon hits: the bubble's per-hit 15-absorb counter (one bolt, one splash, one Maw bite "each once", a 3-shot fan eating three at once) and "the shield pops before the tank can take damage or die" cannot be implemented exactly in src/ (a per-tick heal-back approximation would count a fan volley as one hit and could let a big burst kill it while the bubble is still intact).
