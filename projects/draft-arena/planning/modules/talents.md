@@ -57,5 +57,6 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - talents:
   - id swift, upgrade swift, max 5
   - id vigor, upgrade vigor, max 3
+  - id chomp, upgrade chomp, max 1, needs [["vigor",3],["swift",3]]
   - id might, upgrade might, max 5
   - id magnet, upgrade magnet, max 3
