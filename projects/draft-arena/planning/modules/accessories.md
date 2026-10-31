@@ -28,11 +28,11 @@ A missing row gets the task rejected by the architect.
 
 ## What exists now
 
-11 in the game, from game/src/content/accessories/ (the real values).
+12 in the game, from game/src/content/accessories/ (the real values).
 
 **By `slot`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
-- `back`: Candy Pack, Medal, Balloon
+- `back`: Candy Pack, Medal, Balloon, Party Blower
 - `face`: Round Glasses, Bow Tie, Beak, Heart Shades
 - `head`: Chef Hat, Cone, Beanie, Bloom
 
@@ -101,4 +101,10 @@ A missing row gets the task rejected by the architect.
 - description: "A small yellow balloon bobbing on the back."
 - slot: back
 - price: 120
+- draw: (code)
+
+### Party Blower (`party-blower`)
+- description: "A red party blower, rolled up on a stick, on the back."
+- slot: back
+- price: 180
 - draw: (code)

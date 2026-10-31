@@ -160,7 +160,7 @@ Breakdown:
 - T0063 M — Hive, first slice: Swarm (hits grow with the crowd) and Horn (a fast teal dart) — failed (the on-hit table missed the Mend row)
 - T0064 M — Hive, second slice: Nest (a kill-buff from crowd kills) and the Sting capstone — failed (a timed damage buff needs an engine change; Nest becomes a crowd-scaled kill heal)
 - T0075 L — Hive, first slice: the tree, Swarm (hits grow with the crowd) and Horn (a fast teal dart) — done
-- T0076 M — Hive, second slice: Nest (a kill heal that grows with the crowd) and the Sting capstone — design
+- T0076 M — Hive, second slice: Nest (a kill heal that grows with the crowd) and the Sting capstone — done
 - T0081 M — Leech: a fifth talent, a hit heal while 3+ enemies are within 80 of you, the sustain fork under Swarm — design
 Next: a Hive defense once Leech and the capstone prove out.
 
@@ -169,7 +169,7 @@ Goal: prestiging pays in the draft, not just in coins: each prestige this life b
 Done when: a prestige banks a point the player sees and spends, and a second tree has its own prestige-gated talent.
 Breakdown:
 - T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — done
-- T0067 M — Cover: a fan of bolts behind you, a Gunner talent open after a prestige this life — in-progress
+- T0067 M — Cover: a fan of bolts behind you, a Gunner talent open after a prestige this life — done
 - T0079 M — Gore: a Frenzy talent, the jab goes through enemies while below half hp, open after a prestige — design
 - T0080 M — Snare: a Goober talent, your Gush puddles sap whatever stands in them, open after a prestige — design
 Next: a third gated talent once the bank, Cover and the two gated talents prove out.
@@ -189,3 +189,11 @@ Breakdown:
 - T0083 M — The corpse pays: a knocked-out player of level 4+ drops a gem worth their level; the leader's gem folds in — design
 - T0084 S — A sting: a small sting when the mark lands on you — design
 Next: the escape pays — a marked player who survives all 15 s banks 5 coins — once the price and the corpse prove out.
+
+## E20 The menagerie grows back (active)
+Goal: the menagerie is 7 of 10 types after the cut; the crowd learns two new ways to threaten — a threat that comes in on an arc, and a kill that doesn't kill — each readable at a glance.
+Done when: the Toss (a lobbed splash) and the Twin (a split at half hp) are in the field, each with a behavior none of the other seven has.
+Breakdown:
+- T0085 M — Toss: a big slow melon that lobs an arc blob that splashes where it lands — design
+- T0086 M — Twin: a bean that splits into two smaller twins when it drops to half hp — design
+Next: the last slot (back to 10) — a way to threaten none of the nine has, picked from IDEAS once these two prove out.

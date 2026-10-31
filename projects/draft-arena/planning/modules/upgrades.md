@@ -37,7 +37,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-32 in the game, from game/src/content/upgrades/ (the real values).
+35 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -58,6 +58,13 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - maxLevel: 6
 - look: shape circle, color #ffd43b
 - cooldown: 0.75
+- fire: (code)
+
+### Cover (`cover`)
+- description: "Every 1.0 s, a fan of 3 bolts behind you, at whatever chases. 9 damage each. Per rank: +3 damage."
+- maxLevel: 3
+- look: shape star, color #ffd43b
+- cooldown: 1
 - fire: (code)
 
 ### Maw (`maw`)
@@ -179,6 +186,18 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - look: shape circle, color #99e9f2
 - cooldown: 1.6
 - fire: (code)
+
+### Nest (`nest`)
+- description: "On a kill: heal 2 hp per other critter within 100 of the corpse (up to 3). Per rank: +2 more per neighbor."
+- maxLevel: 3
+- look: shape hexagon, color #51cf66
+- onKill: (code)
+
+### Sting (`sting`)
+- description: "On a kill with 2 or more other critters within 80 of the corpse: the corpse bursts (radius 80) for 12 damage."
+- maxLevel: 1
+- look: shape star, color #a78bfa, scale 1.1
+- onKill: (code)
 
 ### Cling (`cling`)
 - description: "When your Goo hits, it splats on its target and clings for 2 s, dealing 5 damage every 0.5 s. Per rank: +5 damage per tick."

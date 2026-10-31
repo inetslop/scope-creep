@@ -50,6 +50,9 @@ The backlog: add freely, turn the best into epics and tasks.
 - The corpse pays (E19): a knocked-out player of level 4 or higher drops a green gem worth their level in xp where they fell — every midgame corpse is a pickup anyone can snipe, and the leader's gem (T0014) folds into it, so the crown keeps its double bounty and its fall. — T0083
 - A sting (E19): a small sting when the mark lands on you, by the event or by a kill — the mark is silent today; a player should hear the moment they become the target. — T0084
 
+- Toss (E20): a big slow melon that holds a 220–420 band and lobs a high-arcing purple blob that splashes (radius 60, 12 damage) where it lands — the dodge is moving during the ~1.25 s flight; it punishes the mid-range camper and pays for a close-in, since it stops lobbing inside 220. — E20: T0085
+- Twin (E20): a bean that chases like a Dot, but the first time it drops to half hp it shakes 0.4 s and splits into two smaller, faster twins that can never split again — a half-kill is a two-kill, so finishing a target before the threshold is a real choice. — E20: T0086
+
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.
 - An active ability on a button (dash, shield) with a touch control on phones.
