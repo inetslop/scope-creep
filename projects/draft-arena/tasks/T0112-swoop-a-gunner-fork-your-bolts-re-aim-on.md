@@ -1,14 +1,14 @@
 ---
 id: T0112
 title: "Swoop: a Gunner fork, your bolts re-aim once at 200 units and fly a second leg"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0111]
-attempts: 1
+attempts: 2
 created: 2026-10-31T18:10:25Z
-claimed_at: 2026-10-31T19:06:33Z
-finished_at: 2026-10-31T21:06:36Z
+claimed_at: 2026-10-31T21:06:38Z
 epic: E24
 ---
 
