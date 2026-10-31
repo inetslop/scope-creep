@@ -1,12 +1,14 @@
 ---
 id: T0087
 title: "Escape pays: a mark that runs out on a living player banks 5 coins"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T15:05:01Z
+claimed_at: 2026-10-31T18:01:10Z
 epic: E19
 ---
 
