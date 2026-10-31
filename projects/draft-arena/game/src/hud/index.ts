@@ -4,6 +4,7 @@ import { audio } from './audio.ts';
 import { chime } from './chime.ts';
 import { connection } from './connection.ts';
 import { knockedOut } from './knockedOut.ts';
+import { prestige } from './prestige.ts';
 import { scoreboard } from './scoreboard.ts';
 import { talentTree } from './talentTree.ts';
 import { xpBar } from './xpBar.ts';
@@ -16,5 +17,6 @@ export const HUD_PARTS: readonly MakeHudPart[] = [
   xpBar,
   scoreboard,
   knockedOut,
+  prestige,
   talentTree,
 ];

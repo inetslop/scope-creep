@@ -5,6 +5,7 @@ import { gemGeyser } from './gem-geyser.ts';
 import { jackpot } from './jackpot.ts';
 import { crown } from './crown.ts';
 import { mark } from './mark.ts';
+import { prestigeCoins } from './prestige-coins.ts';
 import { swarmSurge } from './swarm-surge.ts';
 import { gemRush } from './gem-rush.ts';
 import { killCoins } from './kill-coins.ts';
@@ -18,6 +19,7 @@ export const DIRECTORS: readonly DirectorDef[] = [
   killCoins,
   crown,
   mark,
+  prestigeCoins,
   swarmSurge,
   gemRush,
 ];

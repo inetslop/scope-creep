@@ -1,0 +1,18 @@
+/* prestige.ts: top centre, under the xp bar. */
+.hud-prestige {
+  position: absolute;
+  left: 50%;
+  top: calc(56px + env(safe-area-inset-top));
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 5px 12px;
+}
+
+/* Phones: the scoreboard sits under the xp bar on the right, so the card goes under it. */
+@media (max-width: 520px) {
+  .hud-prestige {
+    top: calc(182px + env(safe-area-inset-top));
+  }
+}
