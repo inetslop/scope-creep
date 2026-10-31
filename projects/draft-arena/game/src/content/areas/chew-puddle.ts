@@ -54,9 +54,16 @@ export const chewPuddle: AreaDef = {
     a.slots[0] = Math.min(100, Math.round((a.age / 0.3) * 100));
     const inIt = ctx.unitsNear(a.x, a.y, a.radius);
     if (inIt.length > 0) a.life = a.age + 3; // refreshed while something stands in it
+    const o = a.owner;
+    const saps = o.type === 'player' && (o.mem.snare ?? -1) === o.prestige; // Snare stamped this life
     for (const u of inIt) {
       ctx.addStatus(u, 'goo-slow', 1.5);
-      ctx.damage(u, a.damage, a.owner);
+      if (saps && ctx.statusOf(u, 'sapped') <= 0) {
+        u.mem.sapBorn = Math.round(ctx.time * 100);
+        ctx.area(o, 'sapped-drop', { x: u.x, y: u.y });
+      }
+      if (saps) ctx.addStatus(u, 'sapped', 1); // applied before the strike, so a fresh-sap tick already bites
+      ctx.strike(a, u); // the tick: credited to the Chewer, half vs players, and a hit (Snare applies)
     }
   },
 };

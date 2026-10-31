@@ -23,6 +23,15 @@ export const puddle: AreaDef = {
   },
   pulse(ctx, a) {
     a.slots[0] = Math.min(100, Math.round((a.age / 0.3) * 100));
-    for (const u of ctx.unitsNear(a.x, a.y, a.radius)) ctx.addStatus(u, 'goo-slow', 1.5);
+    const o = a.owner;
+    const saps = o.type === 'player' && (o.mem.snare ?? -1) === o.prestige; // Snare stamped this life
+    for (const u of ctx.unitsNear(a.x, a.y, a.radius)) {
+      ctx.addStatus(u, 'goo-slow', 1.5);
+      if (saps && ctx.statusOf(u, 'sapped') <= 0) {
+        u.mem.sapBorn = Math.round(ctx.time * 100);
+        ctx.area(o, 'sapped-drop', { x: u.x, y: u.y });
+      }
+      if (saps) ctx.addStatus(u, 'sapped', 1); // refreshed while it stands in
+    }
   },
 };

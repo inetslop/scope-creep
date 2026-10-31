@@ -4,11 +4,12 @@ title: "Snare: a Goober talent, your Gush puddles sap whatever stands in them"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T13:48:21Z
 claimed_at: 2026-10-31T16:12:32Z
+finished_at: 2026-10-31T16:57:55Z
 epic: E17
 ---
 
@@ -126,3 +127,23 @@ In `chew-puddle.ts` only, also replace `ctx.damage(u, a.damage, a.owner)` with `
 
 ### Tests
 `npm run check` and `npm run smoke` must pass (content tests: registries, data validity, Snare in a real match, talent reachable, prestige gate). No new pure helpers, so no new unit tests. In-play: before prestige the Snare panel row shows its needs; a monster in a puddle wears the drop, fades ~1 s after leaving, re-entry refreshes; rank 1: 18 unsapped vs ~21 sapped; Bolt and the Chew tick both scale a sapped target; a sapped player takes it and shows the drop; two overlapping puddles never double it; without Snare the puddle is slow-only with no drop.
+
+## Result (attempt 1, inet-racing)
+
+Added Snare, a prestige-gated fork under Gush in the Goober tree: a new on-hit upgrade (src/content/upgrades/snare.ts) whose rank scales +15/+25/+35% damage on sapped critters with any weapon, a no-slow Sapped status (src/content/statuses/sapped.ts, 1 s, one per critter, refreshed in the puddle), and a riding blue-drop area (src/content/areas/sapped-drop.ts) that follows sapped critters and dries up ~1 s after they leave. Both puddles (plain and Chew) now sap critters in them when their owner stamped Snare this life, and Chew's tick became a proper strike so it lands the bonus too; the puddle's slow/radius/Chew numbers are untouched. Two deviations from the design, forced by the engine: the drop's epoch guard records the target's own sapBorn on first pulse (a drop created mid-tick pulses next tick, so a time stamp would mismatch and kill it instantly), and the sapped status is refreshed on every puddle pulse instead of only re-added after expiry, matching the task's "refreshed while in it" (Slosh precedent).
+
+- Self-review: APPROVE
+- Time: 45.4 min
+
+```
+.../game/src/content/areas/chew-puddle.ts          |  9 ++-
+ .../draft-arena/game/src/content/areas/index.ts    |  2 +
+ .../draft-arena/game/src/content/areas/puddle.ts   | 11 +++-
+ .../game/src/content/areas/sapped-drop.ts          | 70 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/statuses/index.ts |  2 +
+ .../game/src/content/statuses/sapped.ts            |  5 ++
+ .../draft-arena/game/src/content/talents/goober.ts |  1 +
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 +
+ .../draft-arena/game/src/content/upgrades/snare.ts | 17 ++++++
+ 9 files changed, 117 insertions(+), 2 deletions(-)
+```
