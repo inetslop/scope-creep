@@ -12,6 +12,7 @@ import { horn } from './horn.ts';
 import { lashDart } from './lash-dart.ts';
 import { jab } from './jab.ts';
 import { slushBlob } from './slush-blob.ts';
+import { swoopBolt } from './swoop-bolt.ts';
 
 /** Every projectile. One per line. */
 export const PROJECTILES: readonly ProjectileDef[] = [
@@ -28,4 +29,5 @@ export const PROJECTILES: readonly ProjectileDef[] = [
   goolet,
   needle,
   slushBlob,
+  swoopBolt,
 ];

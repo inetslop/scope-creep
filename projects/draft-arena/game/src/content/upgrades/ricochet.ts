@@ -1,5 +1,6 @@
 import type { Unit, UpgradeDef } from '../../../engine/api.ts';
-import { driftRank } from './drift.ts';
+import { driftOf } from '../projectiles/swoop-bolt.ts';
+import { swoopDamage } from './swoop.ts';
 import { PALETTE } from '../palette.ts';
 
 /** Gunner capstone: bolts bounce on to a second enemy. */
@@ -12,7 +13,7 @@ export const ricochet: UpgradeDef = {
   onHit(ctx, me, _level, hit) {
     const shot = hit.projectile;
     // p1 = 1 marks a bounced bolt: it doesn't bounce again.
-    if (!shot || (shot.def.id !== 'bolt' && shot.def.id !== 'drift-bolt') || shot.launch.p1 === 1) return;
+    if (!shot || (shot.def.id !== 'bolt' && shot.def.id !== 'drift-bolt' && shot.def.id !== 'swoop-bolt') || shot.launch.p1 === 1) return;
     let next: Unit | undefined;
     let best = 260 * 260;
     for (const u of ctx.enemiesNear(me, hit.x, hit.y, 260)) {
@@ -23,14 +24,16 @@ export const ricochet: UpgradeDef = {
       }
     }
     if (!next) return;
+    const swooping = shot.def.id === 'swoop-bolt';
     const drifting = shot.def.id === 'drift-bolt';
+    const rank = driftOf(me);
     ctx.fire(me, shot.def.id, {
       x: hit.x, y: hit.y,
       angle: Math.atan2(next.y - hit.y, next.x - hit.x),
       speed: 620,
-      damage: 9,
+      damage: swooping ? swoopDamage(me) : 9,
       p1: 1,
-      life: drifting ? (driftRank(me) >= 2 ? 1.2 : 0.8) : undefined,
+      life: swooping ? (rank >= 2 ? 1.2 : rank === 1 ? 0.8 : undefined) : drifting ? (rank >= 2 ? 1.2 : 0.8) : undefined,
     });
   },
 };

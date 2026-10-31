@@ -44,6 +44,7 @@ import { snare } from './snare.ts';
 import { sting } from './sting.ts';
 import { swarm } from './swarm.ts';
 import { swift } from './swift.ts';
+import { swoop } from './swoop.ts';
 import { vigor } from './vigor.ts';
 import { wide } from './wide.ts';
 
@@ -51,6 +52,7 @@ import { wide } from './wide.ts';
 export const UPGRADES: readonly UpgradeDef[] = [
   bolt,
   cover,
+  swoop,
   maw,
   bellow,
   lob,
