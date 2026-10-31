@@ -3,11 +3,13 @@ id: T0122
 title: "Pinwheel: a 240-coin back accessory, a pink and white pinwheel on a stick"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T20:44:19Z
+claimed_at: 2026-10-31T20:45:03Z
 epic: E26
+designer: yoga
 ---
 
 ## Goal
