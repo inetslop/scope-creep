@@ -3,13 +3,11 @@ id: T0126
 title: "The streak's green tier: a third knockout in the chain turns the sash green and pays +2"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: [T0125]
 attempts: 0
 created: 2026-10-31T21:05:07Z
-claimed_at: 2026-10-31T21:07:11Z
 epic: E29
-designer: yoga
 ---
 
 ## Goal
@@ -47,3 +45,29 @@ A deeper streak reads deeper: a third player knockout in the chain turns the sas
 - [ ] A chain that ends at two knockouts stays a golden sash paying +1.
 - [ ] A broken chain that restarts with two fresh knockouts comes back golden; only a third in the new chain turns it green.
 - [ ] The sash's shape, position and timers are unchanged; only its color and its coin pay differ by tier.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/directors/streak.ts` - T0125's director: tier becomes 2 at a third counted knockout, capped at 2; the coin pay doubles to 2 while the sash is green
+- edit `src/content/areas/sash.ts` - the sash area's `look.draw`: band and chest star fill green when `e.slots[0] >= 2` (T0125's file: one area file named after its id; if T0125 named it otherwise, use that file — check `AREAS` in `src/content/areas/index.ts`)
+
+### Interfaces
+None — no new types or signatures. All changes are data/logic inside T0125's existing `DirectorDef` hooks and the sash's `AreaDef`/`look.draw(g, e)`.
+
+### Steps
+1. Read T0125's `src/content/directors/streak.ts` first. Find the `onKill` where a counted player knockout updates the chain (count, the 20 s window) and where the sash ('sash' area, 15 s life) is fired/refreshed and the +1 coin is paid (`ctx.giveCoins(killer, 1)` and the `ctx.effect('coin', …, 1)` line).
+2. Tier: at the sash fire/refresh, set the tier the sash carries to `const tier = count >= 3 ? 2 : 1;` (`count` = knockouts in the current chain; the sash only exists from `count >= 2`). Derive it from the count on every refresh — do not keep a separate tier that a broken chain could forget to reset. Store it wherever T0125 already puts it so the sash area's `slots[0]` gets it (a `pulse` reading the wearer is the codebase's pattern, `areas/bite.ts`); change the value, not the wiring.
+3. Pay: where the +1 is paid, `const pay = tier === 2 ? 2 : 1;` then `ctx.giveCoins(killer, pay)` and `ctx.effect('coin', spot, undefined, pay)` — same trigger, same bot guard as T0125; only the number moves.
+4. In the sash's `look.draw(g, e)`: `const green = (e.slots[0] ?? 0) >= 2;` and the band and chest star fills become `green ? PALETTE.green : <T0125's gold>` (check the file; expect `PALETTE.yellow`). Nothing else changes: same shape, same position, same ink outline.
+5. `npm run check`.
+
+### Pitfalls
+- Fourth and further knockouts must not raise the pay: `count >= 3 ? 2 : 1` (never `count - 1` or an increment); the tier has no value past 2.
+- A restarted chain (two fresh knockouts) must be tier 1: deriving the tier from the current count on every refresh gives this for free; if T0125 keeps a separate tier, reset it exactly where the count resets.
+- `slots[0]` is a whole number: 1 = gold, 2 = green; no fractions.
+- Colors only from `PALETTE`: green is `PALETTE.green` (the feast-gem green); keep T0125's gold untouched.
+- Color branch only — no geometry edits, so the sash's tests pass unchanged; the coin effect's `value` is the coin count (1..20), so 2 pops two coins.
+
+### Tests
+none — no new pure helpers; the streak director and the sash area are content items, auto-tested by `engine/tests/`.
