@@ -133,6 +133,29 @@ export function tootTick(seed: number, age: number): void {
 }
 
 /**
+ * One short, high plink the moment your critter collects a gem: a 1500 Hz sine over 0.1 s, peak
+ * 0.06 — higher and shorter than the coin clink, sitting under it and under the monster pop.
+ * The jackpot plays it an octave down (750 Hz) and twice as long (0.2 s), so the big gem reads
+ * deeper by ear. Called from the plink HUD part: only your own collections.
+ */
+export function plink(big: boolean): void {
+  if (!ctx || !master) return;
+  const life = big ? 0.2 : 0.1;
+  const t0 = ctx.currentTime;
+  const o = ctx.createOscillator();
+  o.type = 'sine';
+  o.frequency.value = big ? 750 : 1500;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(0.06, t0 + 0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + life);
+  o.connect(g);
+  g.connect(master);
+  o.start(t0);
+  o.stop(t0 + life + 0.02);
+}
+
+/**
  * One coin clink: the coin's own pitch, a dry triangle blip over in 0.08 s — above the low
  * monster pop, shorter and thinner than the level-up chime. Not gated on a match frame: the
  * shop plays it on the start screen, where the buy tap is the user gesture that starts the context.

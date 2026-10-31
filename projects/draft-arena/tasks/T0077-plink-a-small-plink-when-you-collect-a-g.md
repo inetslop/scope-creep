@@ -4,11 +4,12 @@ title: "Plink: a small plink when you collect a gem"
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T13:15:23Z
 claimed_at: 2026-10-31T14:34:59Z
+finished_at: 2026-10-31T15:13:15Z
 ---
 
 ## Goal
@@ -151,3 +152,18 @@ export function plink(big: boolean): void {
 
 ### Tests
 none.
+
+## Result (attempt 1, yoga)
+
+The gem farm loop now has an audible tick: a short high plink (1500 Hz, 0.1 s, peak 0.06) plays the moment you collect any gem, and the jackpot gem plays it an octave down and twice as long (750 Hz, 0.2 s). A small green star pops on you where the gem lands and fades over 0.3 s. Keyed off your own xp delta, only your pickups sound or show the star, the event-gem coin clink still plays alongside, and the plink stays under the clink and the monster pop. Added `src/hud/plink.ts` + `plink.css`, a `plink(big)` function in `src/audio/sfx.ts`, and one registry line in `src/hud/index.ts`.
+
+- Self-review: APPROVE
+- Time: 38.3 min
+
+```
+projects/draft-arena/game/src/audio/sfx.ts  | 23 +++++++++++++++++
+ projects/draft-arena/game/src/hud/index.ts  |  2 ++
+ projects/draft-arena/game/src/hud/plink.css | 27 ++++++++++++++++++++
+ projects/draft-arena/game/src/hud/plink.ts  | 38 +++++++++++++++++++++++++++++
+ 4 files changed, 90 insertions(+)
+```
