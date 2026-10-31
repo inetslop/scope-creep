@@ -3,11 +3,13 @@ id: T0026
 title: "Medal: a back accessory, buyable only after 2 prestiges in all"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0022]
 attempts: 0
 created: 2026-10-31T05:24:06Z
+claimed_at: 2026-10-31T06:05:44Z
 epic: E7
+designer: desktop
 ---
 
 ## Goal
