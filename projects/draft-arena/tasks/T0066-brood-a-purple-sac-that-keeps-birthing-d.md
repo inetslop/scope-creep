@@ -1,12 +1,14 @@
 ---
 id: T0066
 title: "Brood: a purple sac that keeps birthing Dots while it lives"
+assignee: inet-racing
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T12:44:22Z
+claimed_at: 2026-10-31T12:51:44Z
 epic: E18
 ---
 
