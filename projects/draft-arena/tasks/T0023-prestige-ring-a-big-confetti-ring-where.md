@@ -1,12 +1,14 @@
 ---
 id: T0023
 title: "Prestige ring: a big confetti ring where a player prestiges"
+assignee: yoga
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T04:59:35Z
+claimed_at: 2026-10-31T06:20:04Z
 epic: E7
 ---
 
