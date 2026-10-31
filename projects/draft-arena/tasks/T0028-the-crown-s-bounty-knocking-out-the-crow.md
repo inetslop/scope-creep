@@ -1,12 +1,14 @@
 ---
 id: T0028
 title: "The crown's bounty: knocking out the crowned player pays double the bounty xp"
+assignee: yoga
 size: S
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T05:50:41Z
+claimed_at: 2026-10-31T07:17:57Z
 epic: E4
 ---
 
