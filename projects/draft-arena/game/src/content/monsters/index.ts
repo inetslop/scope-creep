@@ -2,6 +2,7 @@ import type { MonsterDef } from '../../../engine/api.ts';
 import { dot } from './dot.ts';
 import { flee } from './flee.ts';
 import { puff } from './puff.ts';
+import { brood } from './brood.ts';
 import { snail } from './snail.ts';
 import { popper } from './popper.ts';
 import { zippy } from './zippy.ts';
@@ -13,6 +14,7 @@ import { spitter } from './spitter.ts';
 export const MONSTERS: readonly MonsterDef[] = [
   dot,
   puff,
+  brood,
   flee,
   zippy,
   boing,

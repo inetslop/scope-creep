@@ -4,11 +4,12 @@ title: "Brood: a purple sac that keeps birthing Dots while it lives"
 assignee: inet-racing
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T12:44:22Z
 claimed_at: 2026-10-31T12:51:44Z
+finished_at: 2026-10-31T13:19:41Z
 epic: E18
 ---
 
@@ -107,3 +108,16 @@ think(ctx, m, dt) {
 
 ### Tests
 none — engine/tests/ auto-tests every monster (registration, data, a live match, the 60-player budget); there are no pure helpers.
+
+## Result (attempt 1, inet-racing)
+
+Added the Brood, the menagerie's 10th monster type, in `src/content/monsters/brood.ts` and registered it next to `puff` in `src/content/monsters/index.ts`. It's a big (radius 24) slow (25 u/s) deep-purple sac — 70 hp, 8 dps touch, 6 xp — that chases like a Dot and, while a player is within 300, runs a birth cycle: 0.8 s telegraph (teeth face, belly bulge synced in slots), then a plain Dot pops from a random flank with a small pop effect; three births 4 s apart, then 8 s rest, repeating. Check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 28.0 min
+
+```
+.../draft-arena/game/src/content/monsters/brood.ts | 65 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/monsters/index.ts |  2 +
+ 2 files changed, 67 insertions(+)
+```
