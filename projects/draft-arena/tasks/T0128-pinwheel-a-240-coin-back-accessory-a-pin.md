@@ -1,12 +1,14 @@
 ---
 id: T0128
 title: "Pinwheel: a 240-coin back accessory, a pink and white pinwheel that turns on a stick"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T21:28:31Z
+claimed_at: 2026-10-31T21:59:44Z
 epic: E26
 ---
 
