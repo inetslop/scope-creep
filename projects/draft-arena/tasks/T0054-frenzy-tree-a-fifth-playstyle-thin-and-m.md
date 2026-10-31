@@ -3,13 +3,11 @@ id: T0054
 title: "Frenzy tree: a fifth playstyle, thin and mean, that hits harder the more hurt you are"
 size: L
 priority: 1
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T10:47:58Z
-claimed_at: 2026-10-31T10:48:02Z
 epic: E13
-designer: desktop
 ---
 
 ## Goal
@@ -87,3 +85,80 @@ Frenzy, against the same-stat upgrades:
 | --- | --- | --- |
 | Might | raises damage | Might only adds damage; Frenzy sells 8 max hp for it, so a Frenzy build deliberately keeps less cushion |
 | Vigor | raises max hp | Vigor buys a bigger cushion and regen; Frenzy sells cushion for damage — the two pull a build in opposite directions |
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/talents/frenzy.ts` - the Frenzy tree (fifth tab)
+- create `src/content/upgrades/frenzy.ts` - stat upgrade: sells max hp for damage
+- create `src/content/upgrades/nerve.ts` - weapon: close jab, damage grows with missing hp
+- create `src/content/projectiles/jab.ts` - the pale ice dart (straight, no path, no step)
+- create `src/content/upgrades/adrenaline.ts` - on-kill: Wired speed status on the killer
+- create `src/content/statuses/wired-1.ts`, `src/content/statuses/wired-2.ts` - the two Wired ranks
+- create `src/content/effects/wired-pop.ts` - small yellow puff when the speed lands
+- create `src/content/upgrades/reckless.ts` - capstone on-hit: double damage below half hp
+- edit `src/content/talents/index.ts` - import + one line: `frenzy` after `goober` in `TREES`
+- edit `src/content/upgrades/index.ts` - imports (alphabetical) + lines: `nerve` after `goo`, `reckless` after `ricochet`, `adrenaline` after `chomp`, `frenzy` after `vigor`
+- edit `src/content/projectiles/index.ts` - import + `jab` after `bolt`
+- edit `src/content/statuses/index.ts` - imports + `wired1`, `wired2` after `chill3`
+- edit `src/content/effects/index.ts` - import + `wiredPop` after `slowPop`
+
+### Interfaces
+Each file mirrors its closest sibling (see Steps). Exact bodies:
+- `jab.ts` (copy of `projectiles/bolt.ts`): `{ id: 'jab', radius: 5, life: 0.5, look: { shape: 'triangle', color: PALETTE.ice } }` — no `path`, no `step` (straight flight; Split's fanned copies launch at their own angles, exactly like Split bolts).
+- `frenzy.ts`: `look: { shape: 'pentagon', color: PALETTE.red }`, `maxLevel: 3`, `stats: { maxHp: -8, damage: 0.12 }`, description `Trade 8 max hp for 12% damage, per rank.`
+- `nerve.ts` (copy of `upgrades/bolt.ts`'s shape): `cooldown: 0.8`, `look: { shape: 'diamond', color: PALETTE.ice }`, `maxLevel: 3`, description `Every 0.8 s, a jab at the nearest enemy within 180. Hits harder the more hurt you are: +1 damage per 10 hp missing. Each rank: +2 damage.`, and
+  ```ts
+  fire(ctx, me, level) {
+    const target = ctx.nearestEnemy(me, 180);
+    if (!target) return;
+    const missing = me.maxHp - me.hp;
+    ctx.fire(me, 'jab', { angle: v.angleTo(me, target), speed: 360, damage: 5 + 2 * (level - 1) + Math.floor(missing / 10) });
+  }
+  ```
+  (import `v` from the engine like bolt.ts does). Damage passed pre-stat: Might/Frenzy/Split's `damage`, Haste via `cooldown` stat, Quick via `projectileSpeed`, Lance via `pierce` all apply automatically.
+- `adrenaline.ts` (shape of `upgrades/chomp.ts`): `look: { shape: 'star', color: PALETTE.red }`, `maxLevel: 2`, description `On a kill while below half your hp: +20% move speed for 1.5 s, refreshed on each kill. Rank 2: +30% for 2 s.`, and
+  ```ts
+  onKill(ctx, me, level, _victim) {
+    if (me.hp < me.maxHp * 0.5) {
+      ctx.addStatus(me, level === 2 ? 'wired-2' : 'wired-1', level === 2 ? 2 : 1.5);
+      ctx.effect('wired-pop', { x: me.x, y: me.y });
+    }
+  }
+  ```
+- `wired-1.ts` / `wired-2.ts` (copy `statuses/chill-1.ts`): `{ id: 'wired-1', name: 'Wired 1', color: PALETTE.yellow, speedMul: 1.2 }` and `wired-2` / `Wired 2` / `1.3`.
+- `wired-pop.ts` (copy `effects/slow-pop.ts`): `id: 'wired-pop'`, `duration: 0.3`, same fade-out puff but `PALETTE.yellow` and `const r = 7 + 5 * fx.t;` (keep the 3px ink stroke and the white shine dot).
+- `reckless.ts` (copy `upgrades/reap.ts`): `look: { shape: 'circle', color: PALETTE.red }`, `maxLevel: 1`, description `While below half your hp, your hits hit twice as hard.`, and
+  ```ts
+  onHit(ctx, me, _level, hit) {
+    if (hit.damage <= 0) return; // 0-damage touches (the goo bubble) are not hits
+    if (me.hp < me.maxHp * 0.5) ctx.damage(hit.target, hit.damage, me);
+  }
+  ```
+- `talents/frenzy.ts` (copy `talents/gunner.ts`): `id: 'frenzy'`, `name: 'Frenzy'`, `description: 'Thin and mean: the more hurt you are, the harder you hit.'`, `look: { shape: 'diamond', color: PALETTE.red }`,
+  ```ts
+  talents: [
+    { id: 'frenzy', upgrade: 'frenzy', max: 3 },
+    { id: 'nerve', upgrade: 'nerve', max: 3, needs: [['frenzy', 1]] },
+    { id: 'adrenaline', upgrade: 'adrenaline', max: 2, needs: [['nerve', 2]] },
+    { id: 'reckless', upgrade: 'reckless', max: 1, needs: [['nerve', 3], ['frenzy', 3]] },
+  ],
+  ```
+
+### Steps
+1. Create `jab.ts`, then the four upgrades, the two statuses, the effect, and the tree file (exact bodies above).
+2. Add the five registry lines (one per file, at the named positions).
+3. Run `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- `needs` order is the layout: the panel hangs a talent under the *first* need it lists (`talentTree.ts` `parentOf`), so Reckless must list `['nerve', 3]` first to sit under Nerve beside Adrenaline.
+- Reckless must use `ctx.damage` (plain damage, no on-hit hooks) with the `hit.damage <= 0` guard — copying Reap verbatim avoids an infinite double-hit loop and the goo bubble's 0-damage touches.
+- Nerve's missing hp uses `me.maxHp`, the stat-adjusted value (100 → 76 at Frenzy 3); floor the `missing / 10`.
+- `maxHp: -8` is fine: the engine clamps (`s.maxHp = Math.max(1, …)`, `p.hp = Math.min(p.hp, p.maxHp)`); `damage: 0.12` is additive on the base of 1 (Split's `-0.12` is the precedent).
+- No `path`/`step` on the jab (cheapest flight, and the only legal kind at this fire rate); no slots needed — the Wired ring is drawn by the engine from the status.
+- Colors: red tree/tab/capstone look (warm is fine for tree identity), ice dart (cool weapon), yellow Wired status and puff.
+- Panel fullest state: the Frenzy tab shows all four rows at once; longest text is Nerve's two-sentence description (wraps in the existing card), locked Reckless adds `Needs Nerve 3 and Frenzy 3`; the 5th tab wraps to a second tab row via the existing CSS, and 4 rows is shorter than Gunner's 5 — no layout change.
+- Bots/knockout need no code: they run over `TREES` and the engine's prestige reset generically.
+
+### Tests
+none (content is tested automatically by engine/tests/).
