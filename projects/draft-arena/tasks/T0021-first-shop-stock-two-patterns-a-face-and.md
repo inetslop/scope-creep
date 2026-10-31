@@ -4,11 +4,12 @@ title: "First shop stock: two patterns, a face and a back accessory"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T04:17:26Z
 claimed_at: 2026-10-31T05:33:02Z
+finished_at: 2026-10-31T05:40:12Z
 epic: E6
 ---
 
@@ -184,3 +185,20 @@ export const ACCESSORIES: readonly AccessoryDef[] = [
 
 ### Tests
 - none (engine/tests/ automatically checks file/registry layout, shop data, and runs each draw; no pure helpers are added here).
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the first shop stock: two patterns (`src/content/patterns/spots.ts`, 5 dark dots, 30 coins; `src/content/patterns/bands.ts`, 2 light bands, 30 coins) and two accessories (`src/content/accessories/round-glasses.ts`, face slot, 80 coins; `src/content/accessories/candy-pack.ts`, back slot, 100 coins), each registered in its folder's `index.ts`. Patterns shade the player's own color so they read on all 10 colors and the engine draws them clipped to the body under the face; the glasses ring the eye circles (r 0.32r around the 0.26r whites, drawn after the face so they sit over the eyes without covering them) and the pack bobs via `w.time`/`w.speed`/`w.seed` below the centre. Bots dress at random per slot, so items appear on the field the moment they land; nothing in play changes (draw-only).
+
+- Self-review: APPROVE
+- Time: 7.2 min
+
+```
+.../game/src/content/accessories/candy-pack.ts     | 26 ++++++++++++++++++++++
+ .../game/src/content/accessories/index.ts          |  7 +++++-
+ .../game/src/content/accessories/round-glasses.ts  | 25 +++++++++++++++++++++
+ .../draft-arena/game/src/content/patterns/bands.ts | 14 ++++++++++++
+ .../draft-arena/game/src/content/patterns/index.ts |  7 +++++-
+ .../draft-arena/game/src/content/patterns/spots.ts | 17 ++++++++++++++
+ 6 files changed, 94 insertions(+), 2 deletions(-)
+```
