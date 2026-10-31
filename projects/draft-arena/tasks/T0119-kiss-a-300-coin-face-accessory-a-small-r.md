@@ -1,12 +1,14 @@
 ---
 id: T0119
 title: "Kiss: a 300-coin face accessory, a small red kiss mark on the cheek"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T20:09:56Z
+claimed_at: 2026-10-31T20:33:50Z
 epic: E26
 ---
 
