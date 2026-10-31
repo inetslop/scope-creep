@@ -4,6 +4,9 @@
  *
  *   npm run soak -- --url ws://localhost:8790 --clients 60 --seconds 60
  *
+ * --ramp 30 spreads the joins over the first 30 seconds, the way players arrive (a tunnel such as
+ * Tailscale Funnel turns away a burst of new connections from one address).
+ *
  * For checking a home server and its upload before a busy night. (The headless budget test that
  * runs in `npm run check` is engine/tests/load.test.ts.)
  */
@@ -21,11 +24,13 @@ const { values } = parseArgs({
     url: { type: 'string', default: 'ws://localhost:8790' },
     clients: { type: 'string', default: '60' },
     seconds: { type: 'string', default: '30' },
+    ramp: { type: 'string', default: '0' },
   },
 });
 const url = values.url!;
 const count = Math.max(1, Number(values.clients) || 60);
 const seconds = Math.max(5, Number(values.seconds) || 30);
+const ramp = Math.max(0, Number(values.ramp) || 0);
 const registry = buildRegistry(CONTENT);
 
 interface Bot {
@@ -39,7 +44,7 @@ interface Bot {
 }
 
 const bots: Bot[] = [];
-for (let i = 0; i < count; i++) {
+const connect = (i: number): void => {
   const ws = new WebSocket(url);
   ws.binaryType = 'arraybuffer';
   const bot: Bot = { ws, bytes: 0, snapshots: 0, seq: 0, angle: Math.random() * Math.PI * 2, joined: false, closed: false };
@@ -70,7 +75,8 @@ for (let i = 0; i < count; i++) {
   });
   ws.on('close', () => (bot.closed = true));
   ws.on('error', (err) => console.log(`client ${i + 1}: ${err.message}`));
-}
+};
+for (let i = 0; i < count; i++) setTimeout(() => connect(i), (i * ramp * 1000) / count);
 
 const w = new Writer(256);
 const inputs = setInterval(() => {
