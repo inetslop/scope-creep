@@ -3,13 +3,11 @@ id: T0066
 title: "Brood: a purple sac that keeps birthing Dots while it lives"
 size: L
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T12:44:22Z
-claimed_at: 2026-10-31T12:44:25Z
 epic: E18
-designer: desktop
 ---
 
 ## Goal
@@ -41,3 +39,69 @@ The menagerie's 10th and final monster type: a big slow sac that keeps birthing 
 - [ ] The Dots it births are plain Dots (same look, same chase, same 12 touch damage) and drop their own gem when killed.
 - [ ] It drops a gem worth 6 xp when killed, and its touch damage is 8 per second.
 - [ ] It reads in a crowd: three eyes, the biggest body, a mouth that changes before it acts.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/monsters/brood.ts` — the `brood` monster: a slow deep-purple sac that birthing-cycles plain Dots while a player is within 300
+- edit `src/content/monsters/index.ts` — one import and one array line, both next to `puff` (the registry comment: "the order is the wire order (keep new ones next to related ones)")
+
+### Interfaces
+No new types — one `MonsterDef`, id `'brood'`. Sync protocol (the only new contract):
+- `slots[0]` = phase: `0` shuffling/resting, `1` telegraphing, `2` pop beat
+- `slots[1]` = belly fill `0..100` (only nonzero during phase 1, ramped by the server each tick)
+- `mem` keys: `ph` (phase), `tm` (seconds left in phase), `bi` (births this cycle)
+- constants: `NEAR = 300`, `TELE = 0.8`, `BEAT = 0.3`, `GAP = 2.9`, `REST = 8`, `BIRTHS = 3`, `POP_OFFSET = 42`, `POP_RADIUS = 12`
+
+### Steps
+1. Create `src/content/monsters/brood.ts`. Imports: `chase, drawCritter, shade` + types `Face, Look, MonsterDef` from `engine/api.ts`; `PALETTE` from `../palette.ts`. Faces: `CALM = { mood: 'calm', eyes: 3, mouth: 'o' }`, `TEETH = { mood: 'calm', eyes: 3, mouth: 'teeth' }`. Look: `{ shape: 'circle', color: shade(PALETTE.purple, -0.35), face: CALM }` with:
+```ts
+look.draw = (g, e) => {
+  const ph = e.slots[0] ?? 0;
+  g.save();
+  if (ph === 1) { const fill = (e.slots[1] ?? 0) / 100; g.scale(1 + 0.1 * fill, 1 + 0.1 * fill); } // belly fills over the 0.8 s telegraph
+  else if (ph === 2) g.scale(1.1, 0.88); // squashed flat for the beat as the Dot pops out
+  drawCritter(g, look, e, { ink: PALETTE.ink, face: ph === 0 ? CALM : TEETH });
+  g.restore();
+};
+```
+Def fields: `id: 'brood'`, `name: 'Brood'`, `description: 'Keeps birthing Dots while you stay close.'`, `hp: 70`, `speed: 25`, `radius: 24`, `damage: 8`, `xp: 6`, `weight: 3`, `fromLevel: 6`, `look`, and:
+```ts
+think(ctx, m, dt) {
+  const mem = m.mem;
+  let ph = mem.ph ?? 0, tm = (mem.tm ?? 0) - dt;
+  if (!ctx.nearestEnemy(m, NEAR)) { // nobody within 300: the cycle resets, it just shuffles
+    ph = 0; tm = 0; mem.bi = 0; m.slots[0] = 0; m.slots[1] = 0;
+    chase(m); mem.ph = ph; mem.tm = tm; return;
+  }
+  if (ph === 0 && tm <= 0) { ph = 1; tm = TELE; m.slots[1] = 0; } // rest/gap over: start the telegraph
+  else if (ph === 1) {
+    if (tm <= 0) { // pop: a plain Dot from a random flank
+      const a = ctx.rng.next() * Math.PI * 2;
+      const x = m.x + Math.cos(a) * POP_OFFSET, y = m.y + Math.sin(a) * POP_OFFSET;
+      ctx.spawnMonster('dot', x, y);
+      ctx.effect('pop', { x, y }, undefined, POP_RADIUS);
+      mem.bi = (mem.bi ?? 0) + 1; ph = 2; tm = BEAT; m.slots[1] = 0;
+    } else m.slots[1] = Math.min(100, Math.round((1 - tm / TELE) * 100));
+  } else if (ph === 2 && tm <= 0) { // beat over: next birth in 4 s, or 8 s rest after the third
+    ph = 0; m.slots[1] = 0;
+    if ((mem.bi ?? 0) >= BIRTHS) { mem.bi = 0; tm = REST; } else tm = GAP;
+  }
+  m.slots[0] = ph; mem.ph = ph; mem.tm = tm;
+  chase(m); // it keeps shuffling through every phase
+}
+```
+2. Edit `src/content/monsters/index.ts`: add `import { brood } from './brood.ts';` after the `puff` import, and `brood,` after `puff,` in `MONSTERS`.
+3. Run `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- Timing identity: pop-to-pop must be exactly 4 s = `TELE + BEAT + GAP`, so `GAP = 2.9`, not 3.2; the 8 s rest starts after the beat.
+- `think` must set velocity on every path — the reset branch calls `chase(m)` before returning, or the sac keeps drifting on stale velocity.
+- Max 3 Dots: `bi` only increments at pop and only resets at the 8 s rest or a full cycle reset; never spawn in phase 0.
+- Draw reads slots only (no client state), save/restore around the scales, face inside the transform (the boing/sleeper/snail idiom); scales stay within 0.8..1.2.
+- `ctx.rng` only, no `Math.random`; `spawnMonster` may return `undefined` (field full) — ignore the result.
+- Inserting mid-registry is the documented practice (wire order is per-build); do not append at the end.
+- 10 monster types total is the cap, this is the 10th — nothing is removed.
+
+### Tests
+none — engine/tests/ auto-tests every monster (registration, data, a live match, the 60-player budget); there are no pure helpers.
