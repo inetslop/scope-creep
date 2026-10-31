@@ -1,12 +1,14 @@
 ---
 id: T0022
 title: "The shop: a panel over the start screen that sells looks"
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: [T0019, T0021]
-attempts: 0
+attempts: 1
 created: 2026-10-31T04:59:35Z
+claimed_at: 2026-10-31T06:59:19Z
 epic: E6
 ---
 
