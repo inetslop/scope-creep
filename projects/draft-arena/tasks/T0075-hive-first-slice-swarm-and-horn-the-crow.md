@@ -3,11 +3,13 @@ id: T0075
 title: "Hive, first slice: Swarm and Horn, the crowd makes every hit harder"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T12:59:09Z
+claimed_at: 2026-10-31T12:59:12Z
 epic: E16
+designer: desktop
 ---
 
 ## Goal
