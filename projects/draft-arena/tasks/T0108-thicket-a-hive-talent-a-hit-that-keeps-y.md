@@ -3,13 +3,14 @@ id: T0108
 title: "Thicket: a Hive talent, a hit that keeps you shielded while the crowd is on you"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:49:52Z
 claimed_at: 2026-10-31T17:50:46Z
+finished_at: 2026-10-31T17:54:06Z
 epic: E23
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -55,3 +56,7 @@ The Hive's third fork under Swarm: a shield that only works while the swarm is o
 - [ ] The small purple hex shows on the player's upper back while the shield is up and is gone when it wears off.
 - [ ] It works with every weapon the player owns (test with Bolt alone, and with Horn in a Hive build).
 - [ ] A player without Thicket is completely unaffected, and the game stays playable with a fresh nomad build.
+
+## Rejected by architect (desktop)
+
+needs an engine change: a content-gated damage-reduction for players (e.g. a damage-reduction field on StatusDef or a dynamic armor stat) — the frozen engine's only mitigation is the static always-on flat armor stat, and monster contact damage (the Dot-swarm test case) has no content hook, so "take 12% less damage while Hived" cannot be built.
