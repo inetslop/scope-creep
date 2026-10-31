@@ -3,13 +3,11 @@ id: T0313
 title: "The claim branch's second node: Flawless pays 10 coins"
 size: M
 priority: 1
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T00:11:52Z
-claimed_at: 2026-10-31T00:11:56Z
 epic: E9
-designer: desktop
 ---
 
 ## Goal
@@ -31,3 +29,63 @@ The tech tree's claim branch grows a deeper node — "Flawless": a flawless run 
 - [ ] The node's price is computed by the depth rule (T0288), not hardcoded: 85 for the claim branch's depth 2.
 - [ ] A resumed run behaves the same: the node comes from the profile, the flawless state from the run save, no new save field written.
 - [ ] The node card and the full recipe line fit at 412x915 and 1280x720.
+
+## Design (architect, desktop)
+
+### Files
+- edit `src/content/tech/claim.ts` — add `flawless: number` and `requires: string | null` to `ClaimNode`, add the second node, add `flawlessPay(owned)` next to `cleanWavePay`
+- edit `src/core/tech.ts` — `buyClaimNode` refuses a node whose `requires` is not owned; fix its doc comment (it currently claims "no prerequisites")
+- edit `src/core/profile.ts` — `coinsForRun` gains the flawless term (5th param); `recordRun` passes it
+- edit `src/ui/hud/StatsCard.ts` — read the node once (like `cleanPay`) and pass it to `coinsForRun` in `update()`
+- edit `src/scenes/PauseScene.ts` — worth line (line 67) passes the 5th arg
+- edit `src/scenes/RewardsScene.ts` — claim coins (line 78) and the coin recipe (line 124) get the "flawless +N" term
+- edit `src/scenes/TechScene.ts` — claim row maps `requires: n.requires` instead of `null` (line 82)
+- edit `tests/core/tech.test.ts`, `tests/core/profile.test.ts` — pin the node, the 85 price, the gated buy and the formula term
+
+### Interfaces
+```ts
+// content/tech/claim.ts — ClaimNode gains two fields; new function:
+flawless: number;               // coins a flawless run pays while this node is owned
+requires: string | null;
+export function flawlessPay(owned: readonly string[]): number; // 10 when 'flawless' owned, else 0
+
+// core/profile.ts — exact new body:
+export function coinsForRun(result: RunResult, cleanPay = 1, mul = 1, levelMul = 1, flawlessPay = 0): number {
+  const flawless = result.waves > 0 && result.clean === result.waves ? flawlessPay : 0;
+  return Math.floor((result.waves + Math.floor(result.stopped / 10) + result.clean * cleanPay + flawless) * mul * levelMul);
+}
+```
+The term sits **inside** the multiplied sum, next to the clean term (node terms are doubled by Iron and scaled by `levelMul`, same as `cleanPay`). Flawlessness is `waves > 0 && clean === waves` — the run's ledger fields (`wavesCleared` = fully cleared waves, `cleanWaves` = cleared without a leak), so a resumed run needs no new save state.
+
+### Steps
+1. `src/content/tech/claim.ts` — replace the file's interface/list and append:
+```ts
+{ id: 'clean2', name: 'Clean ×2', line: 'each clean wave pays 2 coins instead of 1', price: 30, pay: 2, flawless: 0, requires: null },
+{ id: 'flawless', name: 'Flawless', line: 'a flawless run pays 10 coins', price: 30, pay: 0, flawless: 10, requires: 'clean2' },
+```
+The second node's stored `price` is the branch base (30), like `BOARD_NODES`; the shown and charged price is always `nodeCost(CLAIM_NODES, 'flawless')` = `nodePrice(30, 2)` = **85**. `flawlessPay` mirrors `cleanWavePay`: `const node = CLAIM_NODES.find((n) => owned.includes(n.id)); return node ? node.flawless : 0;`
+2. `src/core/tech.ts` — in `buyClaimNode`, after the already-owned check, add `if (node.requires !== null && !profile.purchased.includes(node.requires)) return false;` and update the doc comment (drop "no prerequisites").
+3. `src/core/profile.ts` — import `flawlessPay` from `../content/tech/claim`; new `coinsForRun` body as above (update its docstring: "…one per clean wave (two with the claim node), ten for a flawless run (with the Flawless node)…"); in `recordRun` pass `flawlessPay(old.purchased)` as the 5th argument.
+4. `src/ui/hud/StatsCard.ts` — import `flawlessPay`; add `private readonly flawlessPay: number;`; in the constructor replace the single `cleanPay` line with `const purchased = loadProfile(window.localStorage).purchased; this.cleanPay = cleanWavePay(purchased); this.flawlessPay = flawlessPay(purchased);` (bare `flawlessPay(...)` is the import; `this.flawlessPay` is the field — same pattern as `cleanPay`); in `update()` append `this.flawlessPay` to the `coinsForRun` call.
+5. `src/scenes/PauseScene.ts` — import `flawlessPay`; append `flawlessPay(profile.purchased)` to the `coinsForRun` call at line 67.
+6. `src/scenes/RewardsScene.ts` — import `flawlessPay`; after `const cleanPay = …` add `const flawlessCoins = flawlessPay(profile.purchased);`; append `flawlessCoins` to the fallback `coinsForRun` call (line 78); replace line 124 with:
+```ts
+const coinRecipeParts = [`waves +${this.waves * mul}`, `stopped +${Math.floor(this.stopped / 10) * mul}`, `clean +${this.clean * cleanPay * mul}`];
+if (flawless && flawlessCoins > 0) coinRecipeParts.push(`flawless +${flawlessCoins * mul}`);
+const coinRecipe = recipe(coinRecipeParts.join(' · '));
+```
+(`flawless` already exists at line 83; the term shows only when it applies; the existing `recipe()` shrink-to-fit keeps it inside the 360 px card — no new layout code.)
+7. `src/scenes/TechScene.ts` — line 82: `requires: null` → `requires: n.requires`. Lock display ("needs the previous", dimmed, disabled button), owned mark (yellow border, "owned"), price and the 2-card narrow grid are all generic — no other scene changes.
+8. Tests: `tests/core/tech.test.ts` — replace the "claim row is one node" it (line 129) with `expect(CLAIM_NODES.map((n) => [n.id, n.name, n.price, n.pay, n.flawless, n.requires])).toEqual([['clean2','Clean ×2',30,2,0,null], ['flawless','Flawless',30,0,10,'clean2']])`; add a `flawlessPay` it (`[]`→0, `['clean2']`→0, `['flawless']`→10) next to the `cleanWavePay` it; extend the claim-buy its with `expect(buyClaimNode(withCoins(85), 'flawless')).toBe(false)` (Clean ×2 not owned), `buyClaimNode(withCoins(84, ['clean2']), 'flawless')` → false, and `buyClaimNode(withCoins(85, ['clean2']), 'flawless')` → true with coins 0 and purchased `['clean2','flawless']`; add `expect(nodeCost(CLAIM_NODES, 'flawless')).toBe(85)` to the nodeCost it. `tests/core/profile.test.ts` — add: `coinsForRun({waves:3,stopped:0,clean:3,seed:1,bgen:2}, 1,1,1,10)` → 16; same with `clean:2` → 5 (term drops off); `waves:0` → 0; `coinsForRun({waves:3,stopped:0,clean:3,…}, 2,2,1,10)` → 40 (term doubles like the clean term); and a `recordRun` pair with `purchased: ['flawless']` → 16 vs 6 without.
+
+### Pitfalls
+- The `coinsForRun` param and the imported `flawlessPay` share a name — legal (param shadows only inside the function), but in `recordRun` the call `flawlessPay(old.purchased)` must use the import. Don't rename either.
+- Do not touch the Flawless star lines (Rewards/Summary/GameOver) — the star stays; only the coin formula and the coin recipe line change.
+- Don't hardcode 85 anywhere; price display and charging go through `nodeCost`. Don't grow `TechScene` — one word at line 82.
+- Mid-run semantics come free from the ledger: while a leaked wave is still in progress the term can still show; it drops off permanently when that wave ends (clean < waves forever after). This matches "held" = completed.
+- StatsCard is fixed-size and PauseScene's worth line already shrinks to fit — the +10 needs no layout work; the recipe line uses the existing `recipe()` shrink (min 13 px), which keeps it within the card at 412x915.
+- `tests/core/tech.test.ts` line 130 asserts the exact node list — it will fail until updated in step 8.
+
+### Tests
+- `tests/core/tech.test.ts`: node list (id/name/price/pay/flawless/requires), `flawlessPay` ownership, `nodeCost(CLAIM_NODES,'flawless')` = 85, `buyClaimNode` gating (no clean2 / 84 coins refuse, 85 buys).
+- `tests/core/profile.test.ts`: the term's presence/drop-off/zero-waves, Iron doubling of the term, and `recordRun` reading the node from the profile (16 with, 6 without).
