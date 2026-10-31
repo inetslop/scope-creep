@@ -1,12 +1,14 @@
 ---
 id: T0057
 title: "The wound: a red collar arc around any critter below half hp"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T11:14:52Z
+claimed_at: 2026-10-31T11:48:37Z
 epic: E15
 ---
 
