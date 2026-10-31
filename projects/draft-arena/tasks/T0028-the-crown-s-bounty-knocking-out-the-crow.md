@@ -3,13 +3,11 @@ id: T0028
 title: "The crown's bounty: knocking out the crowned player pays double the bounty xp"
 size: S
 priority: 1
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T05:50:41Z
-claimed_at: 2026-10-31T06:00:12Z
 epic: E4
-designer: yoga
 ---
 
 ## Goal
@@ -37,3 +35,36 @@ The crown becomes worth hunting: the player who knocks out the top scorer gets d
 - [ ] A monster kills the crowned player: no extra xp to anyone.
 - [ ] A bot that knocks out the crowned player also gets the bounty xp.
 - [ ] The crown still moves on a strict overtake; this task only adds xp to the killer.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/directors/crown.ts` — `onKill` pays the crowned player's killer a bounty on top of the engine's normal pvp bounty; nothing else changes.
+
+### Interfaces
+No new types. Uses, all existing: `DirectorDef.onKill(ctx, mem, killer: Player | undefined, victim: Unit)`; `ctx.giveXp(player: Player, amount: number)` (engine/api.ts:282); `RULES.pvp.bountyXpPerLevel` (rules.ts:28, = 4); `mem.crown` = the wearer's player id (crown.ts:30-33); `victim.level` (Player, engine/api.ts:119).
+
+### Steps
+1. In `crown.ts`'s `onKill` (line 16-18), rename `_killer` to `killer` and make it exactly:
+
+```ts
+onKill(ctx, mem, killer, victim) {
+  if (victim.type !== 'player') return;
+  if (killer && mem.crown === victim.id) ctx.giveXp(killer, RULES.pvp.bountyXpPerLevel * victim.level);
+  check(ctx, mem);
+},
+```
+
+2. Stop. `RULES` is already imported (crown.ts:2). No registry, rules.ts, or other file changes; no screen text.
+3. If T0014's gem-drop line has already landed in this same `onKill`, leave it untouched and keep the two new lines above the existing `check(ctx, mem);` call.
+
+Why it meets the criteria: the engine still applies the normal pvp bounty (4/level) to a player killer; the new `giveXp` adds the same amount again, so a crowned victim at level L pays the killer 4L + 4L = 8L (level 15 → 120), through the engine's xp path so the xp bar and level-up ring show it. `killer` is undefined for a monster kill (DirectorDef: "killer is the player credited, if any") → no extra xp. A bot killer is a `Player`, so `giveXp` works on it. Non-crowned victims fail `mem.crown === victim.id` → normal bounty only. The guard runs before `check`, so it reads the pre-death wearer; `check` itself is untouched, so the crown still moves on strict overtake.
+
+### Pitfalls
+- Pay after the crown moved: `mem.crown === victim.id` must be tested before `check(ctx, mem)` (the snippet does).
+- Do not touch the engine's normal bounty or `RULES.pvp.bountyXpPerLevel` — the extra is a separate `giveXp`.
+- `victim` is `Unit`; narrow with `victim.type === 'player'` before using `victim.level`.
+- Do not add an announcement/feed — none is required, and it needs the engine.
+
+### Tests
+none (the engine tests run every director's `onKill` in a real match and the smoke test plays it).
