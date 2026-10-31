@@ -4,11 +4,12 @@ title: "Your color: a row of 10 dots on the start screen"
 assignee: desktop-4070
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T03:51:35Z
 claimed_at: 2026-10-31T05:10:30Z
+finished_at: 2026-10-31T05:41:00Z
 epic: E5
 ---
 
@@ -146,3 +147,17 @@ export const color: MakeMenuPart = (slot) => new ColorPart(slot);
 
 ### Tests
 none (DOM part; the store it uses is already covered by `engine/tests/profile.test.ts`).
+
+## Result (attempt 1, desktop-4070)
+
+Added the "Color" start-screen panel (src/menu/color.ts + color.css, registered in src/menu/index.ts): a sticker card above Play shows your pick as a dot or "Random"; tapping it opens a panel with your critter preview and 10 color dots plus Random — tapping saves the pick to the profile (survives reload, fresh browser is Random) and updates the preview instantly. The pick flows through the existing frozen join/respawn pipeline, so in the match your critter is that color for everyone, every life, with no in-match HUD change. `npm run check` and `npm run smoke` (desktop + mobile) both pass; the only deviation from the design code was expanding the constructor parameter property into an explicit field, required by the project's `erasableSyntaxOnly` tsconfig setting.
+
+- Self-review: APPROVE
+- Time: 30.5 min
+
+```
+projects/draft-arena/game/src/menu/color.css | 11 +++++
+ projects/draft-arena/game/src/menu/color.ts  | 70 ++++++++++++++++++++++++++++
+ projects/draft-arena/game/src/menu/index.ts  |  3 +-
+ 3 files changed, 83 insertions(+), 1 deletion(-)
+```
