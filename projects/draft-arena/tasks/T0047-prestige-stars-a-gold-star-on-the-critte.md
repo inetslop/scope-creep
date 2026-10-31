@@ -1,12 +1,14 @@
 ---
 id: T0047
 title: "Prestige stars: a gold star on the critter per prestige this life, up to 3"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T08:32:32Z
+claimed_at: 2026-10-31T09:16:15Z
 epic: E7
 ---
 
