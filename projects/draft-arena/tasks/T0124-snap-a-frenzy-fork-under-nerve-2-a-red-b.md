@@ -3,13 +3,11 @@ id: T0124
 title: "Snap: a Frenzy fork under Nerve 2, a red burst on a player knockout while below half"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T20:44:19Z
-claimed_at: 2026-10-31T20:50:18Z
 epic: E28
-designer: desktop
 ---
 
 ## Goal
@@ -59,3 +57,97 @@ What a Frenzy gets, and what it costs: a point at Nerve 2, where it could buy Ad
 - [ ] A Frenzy below half hp that knocks out a player sees a red ring with an ink rim bloom out to 110 with red confetti at the corpse, and everything inside takes 15 damage (rank 2: 25), the killer unaffected; a player inside takes half (7/12).
 - [ ] A monster kill never bursts and a knockout while at half hp or above never bursts; the burst is not scaled by Might or Reap (a rank-1 burst still deals 15 on a half-dead target).
 - [ ] The game is working and playable otherwise.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/upgrades/snap.ts` - the on-kill upgrade `snap` (Frenzy fork: player knockout while below half hp bursts the corpse)
+- create `src/content/effects/snap-burst.ts` - the `snap-burst` effect (red ring with ink rim blooming to 110, red confetti)
+- edit `src/content/talents/frenzy.ts` - one new talent line, after the `gore` line
+- edit `src/content/upgrades/index.ts` - one import + one list line
+- edit `src/content/effects/index.ts` - one import + one list line
+
+### Interfaces
+No new types. Two content defs, exact code for the weak assignee:
+
+`src/content/upgrades/snap.ts`:
+```ts
+import type { UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** Frenzy fork: a player knockout while below half hp snaps the spot red - the crowd around the corpse pays. */
+export const snap: UpgradeDef = {
+  id: 'snap',
+  name: 'Snap',
+  description: 'On a player knockout while below half your hp: a burst (radius 110) for 15 damage. Rank 2: 25.',
+  maxLevel: 2,
+  look: { shape: 'star', color: PALETTE.red },
+  onKill(ctx, me, level, victim) {
+    if (victim.type !== 'player' || me.hp >= me.maxHp * 0.5) return;
+    const dmg = level === 2 ? 25 : 15;
+    for (const u of ctx.unitsNear(victim.x, victim.y, 110))
+      if (u.alive && u !== me) ctx.damage(u, dmg, me);
+    ctx.effect('snap-burst', { x: victim.x, y: victim.y }, undefined, 110);
+  },
+};
+```
+`PALETTE.red` is exactly `#ff6b6b` (src/content/palette.ts:12).
+
+`src/content/effects/snap-burst.ts` (copy of `sting-burst.ts` with three changes: `id: 'snap-burst'`, `duration: 0.4`, teal → red, 7 → 20 confetti; export name `snapBurst`, same doc style):
+```ts
+import { noise, type EffectDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+import { whump } from '../../audio/sfx.ts';
+
+/** Snap: a knockout made while hurt - a red ring with an ink rim blooms out to `value`, red confetti with it. */
+export const snapBurst: EffectDef = {
+  id: 'snap-burst',
+  duration: 0.4,
+  draw(g, fx) {
+    whump(fx.seed, fx.age);
+    g.globalAlpha = 1 - fx.t;
+    const r = fx.value * fx.t;
+    g.lineWidth = 9;
+    g.strokeStyle = PALETTE.ink;
+    g.beginPath();
+    g.arc(fx.ax, fx.ay, r, 0, Math.PI * 2);
+    g.stroke();
+    g.lineWidth = 5;
+    g.strokeStyle = PALETTE.red;
+    g.stroke();
+    for (let i = 0; i < 20; i++) {
+      const a = (i / 20) * Math.PI * 2 + noise(fx.seed, i) * 0.6;
+      const d = r * (0.6 + 0.4 * noise(fx.seed, i + 20));
+      g.fillStyle = PALETTE.red;
+      g.beginPath();
+      g.arc(fx.ax + Math.cos(a) * d, fx.ay + Math.sin(a) * d, 4 * (1 - fx.t) + 1.5, 0, Math.PI * 2);
+      g.fill();
+      g.lineWidth = 2;
+      g.strokeStyle = PALETTE.ink;
+      g.stroke();
+    }
+  },
+};
+```
+
+### Steps
+1. Create `src/content/upgrades/snap.ts` with the code above, exactly.
+2. Create `src/content/effects/snap-burst.ts` with the code above, exactly.
+3. In `src/content/talents/frenzy.ts`, add one line after the `gore` line (line 16):
+   `{ id: 'snap', upgrade: 'snap', max: 2, needs: [['nerve', 2]] },`
+4. In `src/content/upgrades/index.ts`: add `import { snap } from './snap.ts';` directly above the `snare` import (line 40), and add `snap,` directly after `gore,` in the `UPGRADES` list (line 68).
+5. In `src/content/effects/index.ts`: add `import { snapBurst } from './snap-burst.ts';` after the `stingBurst` import (line 15), and add `snapBurst,` after `stingBurst,` in the `EFFECTS` list (line 28).
+6. Run `npm run check`.
+
+### Pitfalls
+- Do not halve player damage yourself: `ctx.damage(u, dmg, me)` applies the engine's pvp half (`rules.pvp.damageMul` 0.5) plus armor to players only, because `by` is a player — that is how every other strike on a player works (15→7, 25→12 as shown). Monsters in the circle take the full 15/25.
+- `ctx.damage` is plain damage: it is not scaled by `me.stats.damage`, so Might/Reap never touch the burst (same as Sting). Never multiply by a stat.
+- The killer must be excluded with `u !== me` (Sting does not exclude; Snap must). `u.alive` filters the fresh corpse and other dead units (the `glide.ts:16` idiom).
+- Trigger guards, in order: `victim.type !== 'player'` first (a monster kill never bursts; both humans and bots are `Player`), then `me.hp >= me.maxHp * 0.5` (strictly below half, as in `adrenaline.ts:12`).
+- If the burst kills a player while `me` is still below half, `onKill` re-fires (kill credit via `by`) and a second burst can chain — intended ("trade one knockout for a second"); do not add a guard.
+- Effect draw is client-only: no `ctx`, no `Math.random` (variation from `noise(fx.seed, i)` only); the ring ends exactly at `fx.value` (110) at `t = 1`; keep the `g.globalAlpha` handling identical to `sting-burst.ts` (the engine resets state between effects).
+- Do not touch `src/hud/talentTree.ts`/`.css`: the Frenzy tab draws from tree data. Fullest state is 8 rows; the longest text is Gore's description (~110 chars) which already fits the row layout at 412x915 and 1280x720, and Snap's row (~95 chars) is shorter; when locked it shows "Needs Nerve 2" like the other Nerve-2 forks.
+- Registry edits are single-line insertions: do not reorder the existing `mend` line or any other line.
+
+### Tests
+none — no pure helpers; both defs are tested automatically by `engine/tests/` (on-kill upgrade in a real match, effect draw, talent reachability, registry/file-name rules).
