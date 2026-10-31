@@ -1,12 +1,14 @@
 ---
 id: T0096
 title: "Twin: a bean that shudders at half hp, births a fast twin, and keeps living"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T15:53:22Z
+claimed_at: 2026-10-31T16:59:45Z
 epic: E20
 ---
 
