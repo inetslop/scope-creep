@@ -36,7 +36,9 @@ The backlog: add freely, turn the best into epics and tasks.
 - Popper (a later menagerie epic): a fat red critter that pops a damaging puff (radius 40, 10 damage) when it dies — killing it up close is a choice, not a free hit. — E14: T0055
 - Diagonal pattern: two diagonal light stripes across the body, 60 coins — the next pattern price step. — T0056
 - Wound (E15): a thin red collar arc around any critter below half hp, shrinking to nothing as it dies — the hurt state that Frenzy, Reap and every fight pay out on, readable in a crowd without a number. — E15: T0057
-- Plink (a later sound pass): a small plink when you collect a gem, a touch lower and longer for the big jackpot gem — the farm loop is the quietest moment in the match.
+- Hive tree (E16): a sixth playstyle, the crowd is the weapon — Swarm: hits deal +2 per other enemy within 80 of the target (up to 3), per rank; Horn: a fast teal dart at the nearest enemy within 240, every 0.8 s, 9 damage +3/rank; Nest: a kill amid enemies banks a timed damage buff (+6% per other enemy within 100, up to 3, 10 s, +1 max stack per rank); the Sting capstone: a kill with 2+ neighbors within 80 bursts (radius 80, 12 damage, monsters and players). A Hive life runs into the swarm instead of kiting it. — E16: T0060
+- Prestige banks a point (E17): each prestige this life banks +1 talent point — the second life pays in the draft currency itself, shown on the 2 s prestige card next to the coins. — E17: T0061
+- Plink (a later sound pass): a small plink when you collect a gem, a touch lower and longer for the big jackpot gem — the farm loop is the quietest moment in the match. — T0062 (with a small green tick where the gem is picked up)
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.

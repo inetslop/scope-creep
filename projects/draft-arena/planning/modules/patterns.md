@@ -24,7 +24,7 @@ Each is one file in src/content/patterns/: `name` (at most 18 characters), `desc
 
 ## What exists now
 
-5 in the game, from game/src/content/patterns/ (the real values).
+6 in the game, from game/src/content/patterns/ (the real values).
 
 ### Bands (`bands`)
 - description: Two light bands across the body.
@@ -49,4 +49,9 @@ Each is one file in src/content/patterns/: `name` (at most 18 characters), `desc
 ### Halves (`halves`)
 - description: "The top half of the body, lighter, like a two-tone critter."
 - price: 50
+- draw: (code)
+
+### Diagonal (`diagonal`)
+- description: "Two light diagonal stripes across the body."
+- price: 60
 - draw: (code)

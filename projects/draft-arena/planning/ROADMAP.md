@@ -151,3 +151,17 @@ Breakdown:
 - T0058 S — Fang: kills pay extra coins while below half hp — design
 - T0059 S — Mend: a Nerve hit heals the more hurt you are — design
 Next: done once T0057–T0059 build: the Frenzy state reads at a glance, and the tree forks — run, feed or heal while hurt.
+
+## E16 The Hive tree (active)
+Goal: a sixth playstyle (the cap): a build that hits harder the more crowded the fight is — a hit scales with the enemies around its target, so a Hive life runs into the swarm instead of kiting it, where Gunner kites, Goober zones and Frenzy bleeds.
+Done when: the Hive tree is in the panel with its crowd mod, its dart weapon, its kill buff and its kill-burst capstone, each readable in a crowd.
+Breakdown:
+- T0060 L — Hive tree: Swarm, Horn, Nest, the Sting capstone — design
+Next: a fifth talent that forks the tree (a Hive sustain or a Hive defense) once it proves out.
+
+## E17 A deeper second life (active)
+Goal: prestiging pays in the draft, not just in coins: each prestige this life banks a talent point, and a prestige-gated talent later opens in a second tree, the Slush way (planning/modules/prestige.md).
+Done when: a prestige banks a point the player sees and spends, and a second tree has its own prestige-gated talent.
+Breakdown:
+- T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — design
+Next: a prestige-gated talent in a second tree (Gunner or Body) once the point bank proves out.
