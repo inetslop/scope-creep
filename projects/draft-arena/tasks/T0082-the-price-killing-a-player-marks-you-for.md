@@ -1,14 +1,14 @@
 ---
 id: T0082
 title: "The price: killing a player marks you for 15 s"
-assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: todo
 depends_on: []
 attempts: 2
 created: 2026-10-31T14:05:22Z
 claimed_at: 2026-10-31T15:25:28Z
+finished_at: 2026-10-31T15:52:59Z
 epic: E19
 ---
 
@@ -194,6 +194,23 @@ error: cannot lock ref 'refs/remotes/origin/main': is at d0cd6eca8b09d23c5835326
 ```
 Error: git fetch --quiet --prune origin failed (exit 1):
 error: cannot lock ref 'refs/remotes/origin/main': is at d0cd6eca8b09d23c58353266a37aa51da4dee392 but expected c0160ab61636f96c5bb556e51d365741aeee9552
+
+    at Git.fetch (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/git.ts:134:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:260:5)
+    at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
+    at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
+
+## Attempt 2 failed (asus)
+
+Runner error: git fetch --quiet --prune origin failed (exit 1):
+error: cannot lock ref 'refs/remotes/origin/main': is at 89ae00e79e7653f9ef5ff90303795ef31d9818b4 but expected 8b8650c6f1b05c4d66df59594ab79847affecdc6
+
+
+```
+Error: git fetch --quiet --prune origin failed (exit 1):
+error: cannot lock ref 'refs/remotes/origin/main': is at 89ae00e79e7653f9ef5ff90303795ef31d9818b4 but expected 8b8650c6f1b05c4d66df59594ab79847affecdc6
 
     at Git.fetch (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/git.ts:134:29)
     at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
