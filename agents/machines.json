@@ -32,6 +32,8 @@
       "notes": "Heavily quantized and small context. Only small, precisely specified tasks: tuning numbers, one small juice or polish touch (a sound, a flash, a text), small player-facing improvements to things that already exist (clearer feedback, readability, UI), tiny single-function changes; a new content file only when it passes the content bar. Always name the exact file and the closest example."
     },
     "desktop-4070": {
+      "paused": true,
+      "pausedAt": "2026-10-31T13:53:42Z",
       "label": "Ryzen 7 5800X + RTX 4070 SUPER (12 GB)",
       "model": "Qwen 3.8 27B UD-IQ3_XXS",
       "roles": ["dev", "architect"],
