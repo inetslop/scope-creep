@@ -7,6 +7,7 @@ import { jackpot } from './jackpot.ts';
 import { crown } from './crown.ts';
 import { mark } from './mark.ts';
 import { price } from './price.ts';
+import { grudge } from './grudge.ts';
 import { streak } from './streak.ts';
 import { growth } from './growth.ts';
 import { prestigeCoins } from './prestige-coins.ts';
@@ -29,6 +30,7 @@ export const DIRECTORS: readonly DirectorDef[] = [
   crown,
   mark,
   price,
+  grudge,
   streak,
   growth,
   prestigeCoins,

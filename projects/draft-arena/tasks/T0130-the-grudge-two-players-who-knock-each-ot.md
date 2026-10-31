@@ -4,11 +4,12 @@ title: "The grudge: two players who knock each other out wear a knot, and the en
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T21:28:31Z
 claimed_at: 2026-10-31T22:22:46Z
+finished_at: 2026-10-31T23:03:40Z
 epic: E30
 ---
 
@@ -182,3 +183,19 @@ function setGrudge(mem: Record<string, number>, id: number, partner: number) {
 
 ### Tests
 - none (content is tested automatically by engine/tests/; no exported pure helpers).
+
+## Result (attempt 1, asus)
+
+Added the grudge feud rule: a new status `src/content/statuses/grudge-knot.ts` (a small red ribbon knot at the top-left of the critter, mirroring the prestige stars' top-right, one shared ink outline) and a new director `src/content/directors/grudge.ts` that remembers each pair's last knockout, forms a grudge when two players knock each other out a second time, keeps the knot on both via a 0.2 s status refresh (surviving monster deaths and respawns), drops any older grudge when a new one forms, and pays the killer +15 xp and +5 coins (no coins to bots) when the next knockout between the pair ends the feud. Registered both in their `index.ts` registries next to `marked` and `price` as the design specified. Note: the task body mentioned an areas path, but I followed the design's (and CLAUDE.md's) approach of a status, since a mark on a creature must move with it — an area would trail behind.
+
+- Self-review: APPROVE
+- Time: 40.9 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../game/src/content/directors/grudge.ts           | 65 ++++++++++++++++++++++
+ .../game/src/content/directors/index.ts            |  2 +
+ .../game/src/content/statuses/grudge-knot.ts       | 33 +++++++++++
+ .../draft-arena/game/src/content/statuses/index.ts |  2 +
+ 4 files changed, 102 insertions(+)
+```
