@@ -31,7 +31,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-14 in the game, from game/src/content/directors/ (the real values).
+15 in the game, from game/src/content/directors/ (the real values).
 
 ### Gem rain (`gem-rain`)
 - description: "Every 75 s, 24 gems land in a ring around a random player."
@@ -68,6 +68,11 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ### The mark (`mark`)
 - description: "Every 90 s, a random player is marked for 15 s: +35% speed, and a bonus for who knocks them out."
+- tick: (code)
+- onKill: (code)
+
+### The price (`price`)
+- description: "Whoever knocks out a player wears the mark for 15 s; the mark pays out as usual."
 - tick: (code)
 - onKill: (code)
 

@@ -152,7 +152,7 @@ Breakdown:
 - T0059 S — Mend: a Nerve hit heals the more hurt you are — done
 Done: the wound reads the hurt state in a crowd, and Nerve forks — a coin branch, a heal branch, and the die-with-it capstone.
 
-## E16 The Hive tree (active)
+## E16 The Hive tree (done)
 Goal: a sixth playstyle (the cap): a build that hits harder the more crowded the fight is — a hit scales with the enemies around its target, so a Hive life runs into the swarm instead of kiting it, where Gunner kites, Goober zones and Frenzy bleeds.
 Done when: the Hive tree is in the panel with its crowd mod, its dart weapon, its crowd kill heal and its kill-burst capstone, each readable in a crowd.
 Breakdown:
@@ -161,9 +161,9 @@ Breakdown:
 - T0064 M — Hive, second slice: Nest (a kill-buff from crowd kills) and the Sting capstone — failed (a timed damage buff needs an engine change; Nest becomes a crowd-scaled kill heal)
 - T0075 L — Hive, first slice: the tree, Swarm (hits grow with the crowd) and Horn (a fast teal dart) — done
 - T0076 M — Hive, second slice: Nest (a kill heal that grows with the crowd) and the Sting capstone — done
-- T0081 M — Leech: a fifth talent, a hit heal while 3+ enemies are within 80 of you, the sustain fork under Swarm — in progress
+- T0081 M — Leech: a fifth talent, a hit heal while 3+ enemies are within 80 of you, the sustain fork under Swarm — done
 - T0100 S — Burst: a small whump when a crowded corpse bursts (the Sting moment) — done
-Next: a Hive defense once Leech and the capstone prove out.
+Done: the tree is in the panel — crowd mod, dart, kill heal, burst capstone and the sustain fork; the Hive grows further in E23.
 
 ## E17 A deeper second life (done)
 Goal: prestiging pays in the draft, not just in coins: each prestige this life banks a talent point, and a prestige-gated talent later opens in a second tree, the Slush way (planning/modules/prestige.md).
@@ -187,7 +187,7 @@ Done: the 10th monster is in — a Brood that keeps birthing Dots while it lives
 Goal: a player kill isn't free: the killer wears the mark for 15 s (revenge), and a level-4+ corpse drops a gem worth the life — every knockout starts a short hunt on the killer and a pickup fight over the corpse, so the scoreboard swings on both.
 Done when: a player who knocks out another is marked for 15 s and pays the mark bonus if knocked out in that window; a knocked-out player of level 4+ drops a gem worth their level (the leader's gem folded in); a mark that runs out on a living player banks 5 coins.
 Breakdown:
-- T0082 M — The price: killing a player marks you for 15 s, the mark pays out as usual — in progress
+- T0082 M — The price: killing a player marks you for 15 s, the mark pays out as usual — done
 - T0083 M — The corpse pays: a knocked-out player of level 4+ drops a gem worth their level; the leader's gem folds in — done
 - T0084 S — A sting: a small sting when the mark lands on you — failed (the client cannot tell the local player is marked; needs the engine, see IDEAS)
 - T0087 S — Escape pays: a mark that runs out on a living player banks 5 coins — todo
@@ -220,7 +220,15 @@ Goal: the tops of the ladders: each slot gets a top item that needs prestiges in
 Done when: each slot's top item costs 350 or more and needs prestiges in all, and the pattern shelf has 10.
 Breakdown:
 - T0101 S — Cherry: a 450-coin head, a red cherry with a green stem, 1 prestige in all — the head's top — todo
-- T0102 S — Mustache: a 350-coin face, a curly pink mustache, 1 prestige in all — the face's top — designing
+- T0102 S — Mustache: a 350-coin face, a curly pink mustache, 1 prestige in all — the face's top — done
 - T0104 S — Lollipop: a 500-coin back, a big green lollipop with a white swirl, 2 prestiges in all — the back's top, the shop's longest goal — design
 - T0105 S — Cheeks: a 120-coin pattern, two light dots on the cheeks — the pattern shelf to 9 — design
-Next: the pattern shelf's last step (a 150-coin Ring, a light ring around the middle) brings the shelf to 10 and E22 to done.
+- T0107 S — Ring: a 150-coin pattern, a light ring around the middle of the body — the pattern shelf to 10 — design
+Next: the Ring (T0107) brings the pattern shelf to 10 and E22 to done.
+
+## E23 The thin trees grow (active)
+Goal: the two thinnest trees (Hive 5 talents, Lobber 5) each gain a fork that changes how the playstyle plays, not its numbers: the Hive gets a shield from the crowd it runs into, the Lobber gets a splash that lingers.
+Done when: both forks are in the panel and playable: a Hive life can stand in the middle of a swarm without dying for it, and a committed Lobber life leaves a zone with every shot.
+Breakdown:
+- T0108 M — Thicket: a Hive talent, a hit that shields you while 3+ enemies are within 80 of you — the shield fork under Swarm — design
+- T0109 M — Fizz: a Lobber capstone, the bubble's splash lingers and strikes every 0.5 s — the zone capstone beside Fuse — design

@@ -39,7 +39,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-38 in the game, from game/src/content/upgrades/ (the real values).
+39 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -139,6 +139,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - description: "Your hits deal +2 damage per other enemy within 80 of the target (up to 3). Per rank: +1 more per neighbor."
 - maxLevel: 3
 - look: shape hexagon, color #a78bfa
+- onHit: (code)
+
+### Leech (`leech`)
+- description: "While 3+ enemies are within 80 of you, your hits heal 1 hp. Per rank: +1 hp."
+- maxLevel: 3
+- look: shape diamond, color #a78bfa
 - onHit: (code)
 
 ### Mend (`mend`)

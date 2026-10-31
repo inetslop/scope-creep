@@ -67,6 +67,10 @@ The backlog: add freely, turn the best into epics and tasks.
 - Bloop (E20): a low bloop (160→70 Hz, 0.12 s, peak 0.08, one per 150 ms) when a Toss splash blooms — the arc threat lands by ear, under the pop. — T0103
 - Cheeks (E22): a 120-coin pattern — two light dots on the cheeks, one on each side of the mouth, the pattern shelf's step past Star's 100, the shelf to 9. — T0105
 - The feast (prestige): when a player prestiges, 8 gems worth 4 xp each land in an even ring (radius 120) around them and last 20 s — the match's biggest moment lays a field event at the prestiger's feet: the fresh level-1 critter is the feast and every nearby player is a guest; a permanent rule like the crown, not one of the 6 field events. — T0106
+- Thicket (E23): a Hive talent, the shield fork under Swarm — while 3+ enemies are within 80 of you, your hits keep you Hived: take 12% less damage for 1.5 s, refreshed on each hit, +4% per rank (one Hived status, per rank, the way Sapped is one) — the swarm that chases you is what keeps you alive, so the Hive stands in the middle of it instead of running around it. — T0108
+- Fizz (E23): a Lobber capstone beside Fuse — your bubble's splash lingers 2.5 s and strikes everything inside every 0.5 s for 3 damage (the field is as big as the splash, so Wide makes it bigger; no slow, that is Slush) — the committed Lobber's splash stops being a one-shot and kiting leaves a trail of popping ice. — T0109
+
+- A Gunner depth (a later tree epic): the Gunner is the next thinnest tree (6 of 10 talents); a fork that changes how the kite plays (a bolt that slows along its flight, or a bolt that re-aims at the end of its path), decided once E23's forks prove out.
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.
