@@ -3,11 +3,13 @@ id: T0027
 title: "Coins from events: every gem an event drops pays 1 coin"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0019, T0011, T0012]
 attempts: 0
 created: 2026-10-31T05:24:06Z
+claimed_at: 2026-10-31T06:06:08Z
 epic: E6
+designer: yoga
 ---
 
 ## Goal
