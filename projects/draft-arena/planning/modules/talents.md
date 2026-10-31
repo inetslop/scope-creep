@@ -15,7 +15,7 @@ Each tree is one file in src/content/talents/, listed in TREES:
 - **A talent belongs to its tree's playstyle,** and its text says why a player of that tree wants it.
 - **Choices inside a tree:** prefer forks (two talents that pull the tree different ways, which a player can't both have early) over another plain rank of the same thing.
 - **A capstone** (an upgrade with `maxLevel: 1`) asks for real commitment, most of its tree's points, and changes how the tree plays, not just its numbers.
-- **It fits the panel:** 4 to 10 talents in a tree (more is two playstyles: split it), and at most 6 trees. Past that, the same task (or one before it) removes or merges one and says which.
+- **It fits the panel:** 4 to 10 talents in a tree (more is two playstyles: split it), and at most 12 trees (the panel's tabs wrap onto more rows). Past that, the same task (or one before it) removes or merges one and says which.
 - **The tests enforce:** needs point at talents of the same tree, every talent can be reached, every upgrade is in a tree, and an upgrade's talents add up to no more ranks than its `maxLevel`.
 
 ## A task that adds or changes a tree
@@ -36,7 +36,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - A choice at level 1: everyone starts the same, as a nomad.
 - A hex talent map shared by every build: the owner preferred trees that each have their own shape.
 - Tiers or groups that every tree shares (a row of mods, then a weapon, then a capstone): each tree has its own structure.
-- A tree of plain stats (Body: faster, tougher, stronger, gems from further away): a tree is a playstyle. Stats live inside playstyle trees, where they serve that playstyle.
+- A tree of plain stats (Body: faster, tougher, stronger, gems from further away): a tree is a playstyle. Stats live inside playstyle trees, where they serve that playstyle. The Body tree still in the game is being retired: never add talents to it.
 
 ## What exists now
 
@@ -75,6 +75,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
   - id quick, upgrade quick, max 3
   - id lob, upgrade lob, max 5, needs [["quick",1]]
   - id wide, upgrade wide, max 3, needs [["lob",2]]
+  - id bop, upgrade bop, max 3, needs [["lob",3]]
   - id fuse, upgrade fuse, max 1, needs [["lob",4]]
   - id fizz, upgrade fizz, max 1, needs [["lob",4]]
   - id slush, upgrade slush, max 3, needs [["lob",1]], points 2, prestige 1
@@ -102,6 +103,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
   - id mend, upgrade mend, max 3, needs [["nerve",3]]
   - id fang, upgrade fang, max 2, needs [["nerve",2]]
   - id gore, upgrade gore, max 2, needs [["nerve",2]], points 3, prestige 1
+  - id snap, upgrade snap, max 2, needs [["nerve",2]]
   - id reckless, upgrade reckless, max 1, needs [["nerve",3],["frenzy",3]]
 
 ### Hive (`hive`)

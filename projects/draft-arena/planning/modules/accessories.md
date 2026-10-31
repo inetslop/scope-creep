@@ -28,11 +28,11 @@ A missing row gets the task rejected by the architect.
 
 ## What exists now
 
-20 in the game, from game/src/content/accessories/ (the real values).
+21 in the game, from game/src/content/accessories/ (the real values).
 
 **By `slot`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
-- `back`: Candy Pack, Balloon, Party Blower, Candy Cane, Medal, Lollipop
+- `back`: Candy Pack, Balloon, Party Blower, Pinwheel, Candy Cane, Medal, Lollipop
 - `face`: Round Glasses, Bow Tie, Beak, Monocle, Heart Shades, Kiss, Mustache
 - `head`: Cone, Beanie, Feather, Bloom, Candy, Chef Hat, Cherry
 
@@ -138,6 +138,12 @@ A missing row gets the task rejected by the architect.
 - description: "A red party blower, rolled up on a stick, on the back."
 - slot: back
 - price: 180
+- draw: (code)
+
+### Pinwheel (`pinwheel`)
+- description: "A pink and white pinwheel that turns on a stick, on the back."
+- slot: back
+- price: 240
 - draw: (code)
 
 ### Candy Cane (`candy-cane`)

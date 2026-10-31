@@ -32,7 +32,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-16 in the game, from game/src/content/directors/ (the real values).
+17 in the game, from game/src/content/directors/ (the real values).
 
 ### Gem rain (`gem-rain`)
 - description: "Every 75 s, 24 gems land in a ring around a random player."
@@ -76,6 +76,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - description: "Whoever knocks out a player wears the mark for 15 s; the mark pays out as usual."
 - tick: (code)
 - onKill: (code)
+
+### The streak (`streak`)
+- description: "Two player knockouts within 20 s wear a golden sash for 15 s; every kill while it shows pays +1 coin."
+- tick: (code)
+- onKill: (code)
+- onPrestige: (code)
 
 ### Growth (`growth`)
 - description: "Players grow with their level: twice as wide at the top, smoothed over half a second."

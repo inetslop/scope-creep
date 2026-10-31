@@ -39,11 +39,11 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-45 in the game, from game/src/content/upgrades/ (the real values).
+47 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
-- `(none)`: Drift
+- `(none)`: Drift, Bop
 - `area`: Wide
 - `armor`: Hide
 - `cooldown`: Haste
@@ -191,6 +191,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - look: shape star, color #ff6b6b
 - onHit: (code)
 
+### Snap (`snap`)
+- description: "On a player knockout while below half your hp: a burst (radius 110) for 15 damage. Rank 2: 25."
+- maxLevel: 2
+- look: shape star, color #ff6b6b
+- onKill: (code)
+
 ### Fuse (`fuse`)
 - description: "When your bubble kills something, it pops into a ring (radius 50) that deals 10 damage."
 - maxLevel: 1
@@ -274,6 +280,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - description: "After 120 units, your bolts fly at 40% speed and keep going until 0.8 s after launch. Rank 2: until 1.2 s."
 - maxLevel: 2
 - look: shape triangle, color #99e9f2
+- stats: 
+
+### Bop (`bop`)
+- description: "Your bubble pops on the critter it touches: a burst (radius 35) for 14 damage where it hits, no splash there. Per rank: +5 damage, +5 radius. A bubble that touches nothing splashes where it lands."
+- maxLevel: 3
+- look: shape circle, color #99e9f2
 - stats: 
 
 ### Lance (`lance`)

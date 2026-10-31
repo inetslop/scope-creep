@@ -22,7 +22,7 @@ The owner doesn't want the Body tree: it is a pile of plain stats with a few goo
   - Chill (hits slow) -> Lobber: holding the crowd where the bubbles land.
 - Delete Swift, Vigor, Might and Magnet: their upgrade files and lines in UPGRADES (the tests require every upgrade to be in a tree). Check that no other content uses their ids first.
 - Each moved talent's text still says what it does; if a description names Body, fix it.
-- Frenzy ends at 9 talents, Hive at 9, Lobber at 6 (the cap is 10).
+- Frenzy and Hive end at 10 talents (the cap), Lobber at 8.
 
 ## Acceptance criteria
 - [ ] There is no Body tab in the talents panel.

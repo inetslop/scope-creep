@@ -88,30 +88,38 @@ Breakdown:
 - T0115 S — Smile: a 180-coin pattern, a light smile across the lower body — the pattern shelf to 11 — done
 - T0119 S — Kiss: a 300-coin face, a small red kiss mark on the cheek — the face's 7th, the 200→350 gap — done
 - T0120 S — Heart: a 200-coin pattern, a light heart on the middle of the body — the pattern shelf to 12, the cap — done
-- T0128 S — Pinwheel: a 240-coin back, a pink and white pinwheel that turns at a constant spin — the back's 7th, the 180→300 gap — design
+- T0128 S — Pinwheel: a 240-coin back, a pink and white pinwheel that turns at a constant spin — the back's 7th, the 180→300 gap — done
 
 ## E27 The Lobber finds a second aim (fully tasked)
 Goal: the bubble grows a second, then a third, aim: a bubble that pops on the critter it touches (a kill-shot on the target instead of a zone), and a bubble that comes back and splashes behind you (a kiting loop that leaves a ring of ice you run through).
 Breakdown:
-- T0118 M — Bop: a Lobber fork, the bubble pops on the critter it touches: a burst at the hit point, no splash there — designing
-- T0121 M — Echo: a Lobber fork, the bubble splashes, comes back and splashes behind you — the kiting fork under Lob 3 — design
+- T0118 M — Bop: a Lobber fork, the bubble pops on the critter it touches: a burst at the hit point, no splash there — done
+- T0121 M — Echo: a Lobber fork, the bubble splashes, comes back and splashes behind you — the kiting fork under Lob 3 — in progress
 
-## E28 The Goober and the Frenzy grow (fully tasked)
+## E28 The Goober and the Frenzy grow (done)
 Goal: the two trees that still lack their moment grow one fork each: the Goober's Goo grows a long arm (a needle that reaches the enemy that holds its distance), and the Frenzy's player kill grows a moment (a red burst when a hurt Frenzy takes a player) — each changes how the playstyle plays, not its numbers.
 Breakdown:
 - T0123 M — Reach: a Goober fork under Goo 2, a thin ice needle at the farthest enemy within 400 — done
-- T0124 M — Snap: a Frenzy fork under Nerve 2, a red burst (radius 110) on a player knockout while below half — design
+- T0124 M — Snap: a Frenzy fork under Nerve 2, a red burst (radius 110) on a player knockout while below half — done
 
-## E29 The streak (active)
+## E29 The streak (fully tasked)
 Goal: momentum pays — two player knockouts within 20 s wear a golden sash that pays +1 coin per kill for 15 s, a third in the chain deepens it to a green sash (+2), and the sash's arrival is a star ring and a chime: winning a duel in a row is a visible, audible, paid moment.
 Breakdown:
-- T0125 M — The streak: a permanent rule, a golden sash for two player knockouts in 20 s, +1 coin per kill for 15 s — todo
-- T0126 S — Tier 2: a third in the chain turns the sash green and pays +2 — designing, waits on T0125
-- T0127 S — The sash moment: a star ring and a two-note chime when the sash appears — design, waits on T0126
+- T0125 M — The streak: a permanent rule, a golden sash for two player knockouts in 20 s, +1 coin per kill for 15 s — done
+- T0126 S — Tier 2: a third in the chain turns the sash green and pays +2 — todo
+- T0127 S — The sash moment: a star ring and a two-note chime when the sash appears — todo, waits on T0126
 
-## E30 The grudge (active)
+## E30 The grudge (fully tasked)
 Goal: a personal feud inside the big field — two players who knock each other out again bear a red knot the field can see, and the knockout that ends the feud pays its killer.
 Breakdown:
-- T0130 M — The grudge: a permanent rule, the red knot on both feuding players, the end of the feud pays +15 xp and +5 coins — design
-- T0131 S — The knot's moment: a small red ring and a soft pop where the feud starts — design, waits on T0130
-- T0132 M — The double knot: a second feud between the same pair wears a second, smaller knot, and the end pays double — design, waits on T0130
+- T0130 M — The grudge: a permanent rule, the red knot on both feuding players, the end of the feud pays +15 xp and +5 coins — in progress
+- T0131 S — The knot's moment: a small red ring and a soft pop where the feud starts — designing, waits on T0130
+- T0132 M — The double knot: a second feud between the same pair wears a second, smaller knot, and the end pays double — todo, waits on T0130
+
+## E31 The Miner tree (active)
+Goal: a seventh playstyle — your Mine: every 2.5 s a candy mine drops where you stand, arms 0.5 s later, and whatever steps on it pops; the path becomes the weapon — a trail of traps through the swarm, a ring of mines you kite through, a toll on the road to the geyser.
+Done when: the tree is in the panel end to end — Last and Crop as roots, Mine, the Shrapnel and Sticky forks, the Quake capstone — and a player can spend a whole life into it.
+Breakdown:
+- T0135 M — The Miner tree: Last (your lingering zones and marks last 25% longer per rank) and the Mine weapon (a 14-damage, 60-radius pop on contact, 8 s life) — design, waits on T0134
+- T0136 M — Shrapnel: a Mine 2 fork, a detonation flings 3-4 ice shards at the 3-4 nearest enemies within 120-150 — design, waits on T0135
+- T0137 S — The mine's voice: a tick when your mine arms, a low boom when a mine pops — design, waits on T0135
