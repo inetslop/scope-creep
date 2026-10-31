@@ -3,13 +3,11 @@ id: T0135
 title: "The Miner tree: a mine drops where you stand, and whatever steps on it pops"
 size: M
 priority: 1
-status: designing
+status: todo
 depends_on: [T0134]
 attempts: 0
 created: 2026-10-31T23:01:32Z
-claimed_at: 2026-10-31T23:03:58Z
 epic: E31
-designer: desktop
 ---
 
 ## Goal
@@ -93,3 +91,152 @@ Last, one row per upgrade that lengthens a zone or mark:
 - [ ] Last's ranks visibly extend the mine's life and other trees' lingering zones and marks; Split fans the drop, Wide grows the blast, Haste speeds the drop, and the blast's kills pay the normal gem, coin and on-kill upgrades.
 - [ ] The mine reads in a crowd: a small still teal ball with a pulsing star, an ink-rimmed ice ring and confetti on the pop; no glow anywhere.
 - [ ] `npm run check` and `npm run smoke` pass.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/upgrades/last.ts` — Last upgrade def + `lastRank`/`lastMul` helpers
+- create `src/content/upgrades/mine.ts` — Mine weapon def + `mineRank`/`mineFan` helpers
+- create `src/content/areas/mine.ts` — the mine area: fuse, contact pop, empty pop, look
+- create `src/content/effects/mine-pop.ts` — ink-rimmed ice ring blooming to the blast radius + teal/pink confetti
+- create `src/content/effects/mine-puff.ts` — small pale confetti puff, no ring
+- create `src/content/talents/miner.ts` — the Miner tree
+- edit `src/content/palette.ts` — one line: add `cyan: '#3bc9db',` after `teal` (the task's teal is not in PALETTE; `teal` is already `#38d9a9`)
+- edit `src/content/upgrades/index.ts` — register `last`, `mine`
+- edit `src/content/areas/index.ts` — register `mine`
+- edit `src/content/effects/index.ts` — register `minePop`, `minePuff`
+- edit `src/content/talents/index.ts` — register `miner`
+- edit `src/content/projectiles/slush-blob.ts` — Slush puddle life × Last
+- edit `src/content/upgrades/gush.ts` — Gush puddle life × Last
+- edit `src/content/upgrades/chew.ts` — Chew puddle life × Last
+- edit `src/content/upgrades/fizz.ts` — Fizz puddle life × Last
+- edit `src/content/upgrades/chill.ts` — Chill slow duration × Last
+- edit `src/content/upgrades/cling.ts` — Cling mark deadline × Last
+- edit `src/content/areas/puddle.ts` — Sapped mark duration × Last
+- edit `src/content/areas/chew-puddle.ts` — puddle refresh window + Sapped mark × Last
+
+### Interfaces
+```ts
+// palette.ts:  cyan: '#3bc9db',
+// upgrades/last.ts (stats: {} like bop.ts — the content test wants stats|fire|onHit|onKill)
+export const last: UpgradeDef;                // id 'last', name 'Last', maxLevel 3, look { shape: 'diamond', color: PALETTE.cyan }
+export function lastRank(me: Player): number; // the bopRank pattern (bop.ts:16): read the engine-held rank, 0 if not held, never throws
+export function lastMul(me: Player): number;  // Math.pow(1.25, lastRank(me))
+// upgrades/mine.ts
+export const mine: UpgradeDef;                // id 'mine', name 'Mine', maxLevel 5, cooldown 2.5, look { shape: 'circle', color: PALETTE.cyan }
+export function mineRank(me: Player): number; // bopRank pattern, for the mine def
+export function mineFan(split: number): readonly number[]; // offsets around the facing of Split's extra mines: 0→[], 1→[0], 2→[-π/6, +π/6]
+// areas/mine.ts
+export const mine: AreaDef;                   // id 'mine', radius 12, life 8 (fire sets the real life), interval 0.1, look with draw
+// effects/mine-pop.ts: export const minePop: EffectDef;   // id 'mine-pop', duration 0.5
+// effects/mine-puff.ts: export const minePuff: EffectDef; // id 'mine-puff', duration 0.4
+// talents/miner.ts
+export const miner: TalentTreeDef;            // id 'miner', name 'Miner', look { shape: 'pentagon', color: PALETTE.cyan }
+```
+
+### Steps
+1. `palette.ts`: add `cyan: '#3bc9db',` after the `teal` line. Do this first; every look below references `PALETTE.cyan`.
+2. `upgrades/last.ts`: def with `description: 'Your lingering zones and marks last 25% longer, per rank.'`, `stats: {}` (copy bop.ts's comment about why), and:
+```ts
+export function lastRank(me: Player): number {
+  const held = (me as Player & { upgrades?: ReadonlyMap<UpgradeDef, { level: number }> }).upgrades?.get(last);
+  return held ? held.level : 0;
+}
+export function lastMul(me: Player): number { return Math.pow(1.25, lastRank(me)); }
+```
+3. `upgrades/mine.ts`: def with `cooldown: 2.5`, `description: 'Every 2.5 s, drops a candy mine where you stand. 0.5 s after it lands it arms, and whatever steps on it pops: a 60-radius blast, 14 damage, monsters and players alike, never you. An untouched mine pops empty after 8 s. Per rank: +5 damage, +10 blast radius.'`, `mineRank` (bopRank pattern), and:
+```ts
+export function mineFan(split: number): readonly number[] {
+  if (split <= 1) return split === 1 ? [0] : [];
+  const out: number[] = [];
+  for (let i = 0; i < split; i++) out.push(-Math.PI / 6 + (Math.PI / 3) * (i / (split - 1)));
+  return out;
+}
+fire(ctx, me, level) {
+  const drop = (x: number, y: number) =>
+    ctx.area(me, 'mine', { x, y, radius: 12 / me.stats.area, damage: 14 + 5 * (level - 1), life: 8 * lastMul(me) });
+  drop(me.x, me.y);
+  for (const offset of mineFan(me.stats.shots)) // Split ranks: one more mine per rank, 40 units out
+    drop(me.x + Math.cos(me.angle + offset) * 40, me.y + Math.sin(me.angle + offset) * 40);
+},
+```
+4. `areas/mine.ts` (import `{ traceShape, noise, shade, type AreaDef }` from api, PALETTE, `{ mineRank }` from `../upgrades/mine.ts`):
+```ts
+const ARM = 0.5, TOUCH = 12;
+export const mine: AreaDef = {
+  id: 'mine', radius: 12, life: 8, interval: 0.1,
+  look: {
+    shape: 'circle', color: PALETTE.cyan,
+    draw(g, e) {
+      const armed = e.slots[0] > 0;
+      g.save();
+      g.beginPath(); g.arc(0, 0, TOUCH, 0, Math.PI * 2);
+      g.fillStyle = armed ? PALETTE.cyan : shade(PALETTE.cyan, -0.2);
+      g.fill(); g.lineWidth = 2.5; g.strokeStyle = PALETTE.ink; g.stroke();
+      g.beginPath(); g.arc(-4, -4.5, 3, 0, Math.PI * 2); g.fillStyle = PALETTE.white; g.fill(); // shine
+      g.beginPath(); g.moveTo(8.5, -8.5); g.lineTo(13, -13); g.lineWidth = 2; g.lineCap = 'round'; g.stroke(); // fuse, from the ball's edge
+      const beat = ((e.time + 0.4 * noise(e.seed, 0)) % 0.4) / 0.4;
+      const sr = armed ? 3 + 2 * (0.5 + 0.5 * Math.sin(beat * Math.PI * 2)) : 3.5; // 0.4 s beat
+      g.translate(13, -13);
+      g.beginPath(); traceShape(g, 'star', sr, 0);
+      g.fillStyle = armed ? PALETTE.pink : PALETTE.muted;
+      g.fill(); g.lineWidth = 1.5; g.lineJoin = 'round'; g.stroke();
+      g.restore();
+    },
+  },
+  pulse(ctx, a) {
+    if (a.age >= ARM) a.slots[0] = 1; // the fuse has burned: tell every client
+    if (a.age < ARM) return;          // disarmed: it strikes nothing
+    const o = a.owner;
+    if (o.type !== 'player') return;
+    const rank = Math.min(5, Math.max(1, mineRank(o)));
+    const blast = (60 + 10 * (rank - 1)) * o.stats.area; // Wide grows the blast
+    if (ctx.enemiesNear(o, a.x, a.y, TOUCH).length > 0) {
+      for (const u of ctx.enemiesNear(o, a.x, a.y, blast)) ctx.strike(a, u); // never the owner; players half
+      ctx.effect('mine-pop', { x: a.x, y: a.y }, undefined, Math.round(blast));
+      a.life = a.age; // the mine is gone after the strike
+    } else if (a.life <= 0.15) {
+      ctx.effect('mine-puff', { x: a.x, y: a.y }); // pops empty as it wears off
+      a.life = a.age;
+    }
+  },
+};
+```
+5. `effects/mine-pop.ts` (import `{ noise, type EffectDef }`): `duration: 0.5`; draw = the ring from `splash-ring.ts` (ink 3px stroke at `fx.value * fx.t`, ice 2px at `r - 2` when `r > 4`, `globalAlpha = 1 - fx.t`) plus the confetti loop from `bop-confetti.ts` (10 dots, `COLORS = [PALETTE.cyan, PALETTE.pink, PALETTE.ice]`, spread `fx.value * (0.15 + 0.55 * fx.t)`). No glow, strokes and flat fills only.
+6. `effects/mine-puff.ts`: `duration: 0.4`; 6 small dots like bop-confetti but radius `3 * (1 - fx.t) + 1`, spread `18 * (0.2 + 0.6 * fx.t)`, `COLORS = [PALETTE.white, PALETTE.ice, PALETTE.cyan]`, no ring, no ink stroke on the dots.
+7. `talents/miner.ts`:
+```ts
+export const miner: TalentTreeDef = {
+  id: 'miner',
+  name: 'Miner',
+  description: 'Your Mine: it drops where you stand, and whatever steps on it pops.',
+  look: { shape: 'pentagon', color: PALETTE.cyan },
+  talents: [
+    { id: 'last', upgrade: 'last', max: 3 },
+    { id: 'mine', upgrade: 'mine', max: 5, needs: [['last', 1]] },
+  ],
+};
+```
+8. Registries, one line each, next to related entries: `upgrades/index.ts` — imports `last` between `lance`/`leech`, `mine` between `mend`/`might`; in UPGRADES add `mine,` after `horn,` (weapon block) and `last,` after `haste,` (mod block). `areas/index.ts` — import after `fizzPuddle`; add `mine,` after `fizzPuddle,`. `effects/index.ts` — imports after `splashRing`; add `minePop,` and `minePuff,` after `bopConfetti,`. `talents/index.ts` — import after `lobber`; add `miner,` after `gunner,` in TREES (second tab, the slot Body vacates).
+9. Last's multiplier at every listed zone/mark site — add `import { lastMul } from './last.ts';` (or `'../upgrades/last.ts'`) and change exactly these lines:
+   - `slush-blob.ts:27`: `life: 2.5 + 0.5 * rank,` → `life: (2.5 + 0.5 * rank) * lastMul(p.owner),`
+   - `gush.ts:14`: add `life: 3 * lastMul(me)` to the `ctx.area(me, 'puddle', …)` options
+   - `chew.ts:13`: add `life: 3 * lastMul(me)` to the `ctx.area(me, 'chew-puddle', …)` options
+   - `fizz.ts:21`: add `life: 2.5 * lastMul(me)` to the `ctx.area(me, 'fizz-puddle', …)` options
+   - `chill.ts:11`: `onHit(ctx, _me, level, hit)` → `onHit(ctx, me, level, hit)`; line 14: `0.5 + level * 0.5` → `(0.5 + level * 0.5) * lastMul(me)`
+   - `cling.ts:17`: `2` → `2 * lastMul(me)`; line 18: `+ 200` → `+ Math.round(200 * lastMul(me))`
+   - `puddle.ts:34`: `ctx.addStatus(u, 'sapped', 1)` → `ctx.addStatus(u, 'sapped', lastMul(o))` (`saps` already implies `o` is a player)
+   - `chew-puddle.ts:56`: `a.life = a.age + 3` → `a.life = a.age + 3 * (a.owner.type === 'player' ? lastMul(a.owner) : 1)`; line 65: same sapped change as puddle.ts
+
+### Pitfalls
+- `a.life` is REMAINING seconds (countdown), not the total: the empty-pop check is `a.life <= 0.15`, never `a.age >= a.life`. `a.life = a.age` is the codebase way to end an area early (splat.ts:45) — the engine has no removeArea.
+- `Area.damage` and `Area.radius` are multiplied by the owner's damage/area stats AT CREATION (engine/sim/match.ts:1106-1105). So pass `14 + 5*(level-1)` as base (Split's −12%/rank and Might come free via the damage stat — do NOT multiply by 0.12 in code) and pass `12 / me.stats.area` so the touch radius stays exactly 12 while the blast uses `o.stats.area` at pop time (fizz.ts:21 precedent).
+- Read `mineRank` at pop time, clamped 1..5 (bop.ts/bop-bubble.ts precedent): a player who prestiges loses the upgrade, and an unclamped rank 0 would give a 50-radius blast.
+- The arming state MUST go in `a.slots[0]`: the client's `DrawView` has no area age, so the client cannot derive the 0.5 s fuse from its own clock.
+- No `Math.random`/`Date`/`performance` anywhere in `src/content/`; variation in draws from `noise(e.seed, i)` only. No glow/gradient/blur in the two effects. The mine is candy, not a critter: its draw does not start with `drawCritter()`.
+- Do NOT extend single-strike fields (`splash`, `bite`, `bellow-ring`) or monster-owned zones — only the eight edit sites in step 9. Haste (cooldown stat), Split (shots stat) and Wide (area stat) are automatic engine behavior; the mine's code only reads `me.stats.shots` for the fan.
+- If the 60-player load test (engine/tests/load.test.ts) fails on bytes/tick time because of the mines, raise the area's `interval` from 0.1 to 0.2 (coarser contact check, still fine).
+- Talents panel (`src/hud/talentTree.ts`) is fully data-driven: the 7th tab chip wraps by existing CSS, and the Mine description (the longest in the panel) flows in the existing `.hud-talent-desc` — do not touch the panel or its CSS.
+
+### Tests
+- `tests/miner.test.ts` for the new pure helper `mineFan`: `mineFan(0)` → `[]`; `mineFan(1)` → `[0]`; `mineFan(2)` → `[-Math.PI/6, Math.PI/6]` (toBeCloseTo). Everything else (one-file-per-id, registry, data, each upgrade in a real match — the mine's fire/area/strike path, talent reachability, the 60-player budget) is covered by `engine/tests/`.
