@@ -3,11 +3,13 @@ id: T0081
 title: "Leech: a fifth Hive talent, your hits heal you while the crowd is on you"
 size: M
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T13:48:21Z
+claimed_at: 2026-10-31T14:25:34Z
 epic: E16
+designer: desktop
 ---
 
 ## Goal
