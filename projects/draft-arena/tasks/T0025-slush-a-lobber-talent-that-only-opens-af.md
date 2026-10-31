@@ -1,12 +1,14 @@
 ---
 id: T0025
 title: "Slush: a Lobber talent that only opens after a prestige this life"
+assignee: cachyos-x8664
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T05:24:06Z
+claimed_at: 2026-10-31T07:30:33Z
 epic: E7
 ---
 
