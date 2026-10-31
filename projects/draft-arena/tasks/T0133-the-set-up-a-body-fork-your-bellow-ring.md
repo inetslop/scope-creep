@@ -3,12 +3,13 @@ id: T0133
 title: "The set-up: a Body fork, your Bellow ring arms your next Maw bite"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T22:29:04Z
 claimed_at: 2026-10-31T22:34:52Z
-designer: desktop
+finished_at: 2026-10-31T22:41:02Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -45,3 +46,7 @@ Body's two weapons — the front bite (Maw) and the all-around ring (Bellow) —
 - [ ] When a Body player's Bellow ring hits a critter, their next Maw bite deals +30% damage (rank 2: +60%) on top of the normal bite (and half damage on a player, as usual); without a prior Bellow strike the bite is unchanged.
 - [ ] The set-up re-arms on each Bellow strike that hits, lasts just past one Maw bite, and adds no visible mark to the critter.
 - [ ] A Body build without Bellow (or whose Bellow never hits) gets no set-up bonus; the talent cannot be taken before Bellow 1.
+
+## Rejected by architect (desktop)
+
+The "Compared with what exists" table is missing a row for Glide (src/content/upgrades/glide.ts) — an on-hit that arms yourself with a self status under a condition, the closest existing relative of this self-arming on-hit; every on-hit upgrade must have a row.
