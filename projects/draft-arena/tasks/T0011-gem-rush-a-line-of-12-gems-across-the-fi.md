@@ -1,12 +1,14 @@
 ---
 id: T0011
 title: "Gem rush: a line of 12 gems across the field, first touch takes all"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T03:16:43Z
+claimed_at: 2026-10-31T04:11:10Z
 epic: E3
 ---
 
