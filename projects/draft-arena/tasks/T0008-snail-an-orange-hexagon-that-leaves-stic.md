@@ -3,13 +3,11 @@ id: T0008
 title: "Snail: an orange hexagon that leaves sticky patches behind"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T02:37:00Z
-claimed_at: 2026-10-31T03:06:37Z
 epic: E2
-designer: cachyos-x8664
 ---
 
 ## Goal
@@ -37,3 +35,100 @@ A monster that changes the field it walks on: it leaves sticky patches that slow
 - [ ] A player inside a patch moves at 60% speed (126 u/s instead of 210) and a Dot inside crawls at 51 u/s instead of 85; the slow fades within 0.5 s of leaving the patch.
 - [ ] A Snail's death drops its gem (worth 5 xp) and adds nothing to the crowd; the per-player cap of 60 still holds.
 - [ ] A Snail touching a player does 10 per second like any monster; Dot and Puff (and Zippy once T0005 builds) are unchanged; the game starts and plays normally.
+
+## Design (architect, cachyos-x8664)
+
+### Files
+- create `src/content/statuses/mired.ts` — the `mired` status (`speedMul: 0.6`): the only way to slow a critter (no direct-slow API); slows players AND monsters alike.
+- create `src/content/areas/sticky.ts` — the `sticky` patch (radius 45, life 6, interval 0.1, `follow: false`): its `pulse` mires units in it (`ctx.unitsNear` + `ctx.addStatus('mired', 0.5)`) and sets `a.slots[0]` (0..100) from `a.age` for the fade-in; a dark-orange `look.draw` (ink rim + a dashed snail-print ring at 0.45r) that fades in via `e.slots[0]` and out via `e.hp`.
+- create `src/content/monsters/snail.ts` — the Snail (orange hexagon, calm/2 eyes/smile): `think` = `chase` + a 1.5s timer laying `ctx.area(m,'sticky',{x,y})` and a 0.3s sink (squash + mouth→'o') driven by `m.slots[0]`; a `look.draw` that squashes + mouth 'o' while sinking.
+- edit `src/content/monsters/index.ts` — add `snail` to `MONSTERS` (one import + one line, appended after zippy).
+- edit `src/content/areas/index.ts` — add `sticky` to `AREAS` (one import + one line; registry is currently empty).
+- edit `src/content/statuses/index.ts` — add `mired` to `STATUSES` (one import + one line; registry is currently empty).
+
+### Interfaces
+mired.ts:
+```ts
+import type { StatusDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+export const mired: StatusDef = { id: 'mired', name: 'Mired', color: PALETTE.orange, speedMul: 0.6 };
+```
+sticky.ts:
+```ts
+import type { AreaDef } from '../../../engine/api.ts';
+import { shade } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+export const sticky: AreaDef = {
+  id: 'sticky', radius: 45, life: 6, interval: 0.1, follow: false,
+  look: {
+    shape: 'circle', color: shade(PALETTE.orange, -0.3),
+    draw(g, e) {
+      const a = (e.slots[0] ?? 100) / 100 * Math.min(1, e.hp * 5); // fade in, then out
+      if (a <= 0) return;
+      g.save(); g.globalAlpha = a;
+      g.fillStyle = shade(PALETTE.orange, -0.3);
+      g.beginPath(); g.arc(0, 0, e.radius, 0, Math.PI * 2); g.fill();
+      g.lineWidth = 3; g.lineCap = 'round'; g.strokeStyle = PALETTE.ink; g.stroke();
+      g.beginPath(); g.arc(0, 0, e.radius * 0.45, 0, Math.PI * 2);
+      g.setLineDash([4, 6]); g.lineWidth = 1.5; g.stroke();
+      g.restore();
+    },
+  },
+  pulse(ctx, a) {
+    a.slots[0] = Math.min(100, Math.round((a.age / 0.3) * 100));
+    for (const u of ctx.unitsNear(a.x, a.y, a.radius)) ctx.addStatus(u, 'mired', 0.5);
+  },
+};
+```
+snail.ts:
+```ts
+import { chase, drawCritter, type Face, type Look, type MonsterDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+const SINK = 0.3; const LAY = 1.5;
+const SLEEPY: Face = { mood: 'calm', eyes: 2, mouth: 'smile' };
+const SETTLING: Face = { mood: 'calm', eyes: 2, mouth: 'o' };
+const look: Look = { shape: 'hexagon', color: PALETTE.orange, face: SLEEPY };
+look.draw = (g, e) => {
+  const sink = e.slots[0] ?? 0;
+  g.save();
+  if (sink > 0) g.scale(1.3, 0.6);
+  drawCritter(g, look, e, { ink: PALETTE.ink, face: sink > 0 ? SETTLING : SLEEPY });
+  g.restore();
+};
+export const snail: MonsterDef = {
+  id: 'snail', name: 'Snail',
+  description: 'Leaves sticky patches behind; the muck slows whatever crosses it.',
+  hp: 60, speed: 30, radius: 18, damage: 10, xp: 5, weight: 3, fromLevel: 5,
+  look,
+  think(ctx, m, dt) {
+    const mem = m.mem;
+    chase(m);
+    const since = (mem.snT ?? 0) + dt;
+    let sink = (mem.snS ?? 0) - dt;
+    if (since >= LAY) { mem.snT = since - LAY; sink = SINK; ctx.area(m, 'sticky', { x: m.x, y: m.y }); }
+    else mem.snT = since;
+    mem.snS = Math.max(0, sink);
+    m.slots[0] = Math.round(Math.max(0, Math.min(1, sink / SINK)) * 100);
+  },
+};
+```
+
+### Steps
+1. Create `src/content/statuses/mired.ts` (the status, as above).
+2. Create `src/content/areas/sticky.ts` (the area, as above).
+3. Create `src/content/monsters/snail.ts` (the monster, as above).
+4. Add `snail` to `MONSTERS` in `src/content/monsters/index.ts` (one import + one line, appended after zippy).
+5. Add `sticky` to `AREAS` in `src/content/areas/index.ts` (one import + one line; registry currently empty).
+6. Add `mired` to `STATUSES` in `src/content/statuses/index.ts` (one import + one line; registry currently empty).
+7. Run `npm run check` (typecheck + lint + tests); fix any errors.
+8. Run `npm run smoke` (build + play in a browser); fix any errors.
+
+### Pitfalls
+- 'Do not multiply with Chill' is not how the engine behaves: `speedMul` MULTIPLIES status speedMuls (`match.ts:380`). A critter with BOTH the patch slow (0.6) and T0004's Chill slow is slowed multiplicatively, not 'the stronger one.' The acceptance (60% = 210→126 / 85→51; fade 0.5s) holds for the single-slow case; flag the multiply to the product owner.
+- The fade-IN is driven by `a.slots[0]` set in the `pulse` (the `DrawView` has no age of its own); the pulse runs every 0.1s, so the fade-in is a little stepped — keep it cheap.
+- `interval` (0.1s) must be < the status duration (0.5s) or the slow flickers on/off between pulses. The 0.5s status duration is what makes the slow fade within 0.5s of leaving.
+- Sink + patch-laying are timers in `m.mem` (`snS` = 0.3s sink, `snT` = 1.5s between patches); server-only (never sent). The sink is driven by `m.slots[0]` (read in `look.draw`).
+- `mired` is a SEPARATE status from any other slow (e.g. T0004's Chill); they multiply (see above).
+
+### Tests
+none
