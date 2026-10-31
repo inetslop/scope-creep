@@ -3,10 +3,12 @@ id: T0072
 title: "Looks made of two shapes get one shared outline: the Goo and the Flee"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T12:51:01Z
+claimed_at: 2026-10-31T12:51:48Z
+designer: yoga
 ---
 
 ## Goal
