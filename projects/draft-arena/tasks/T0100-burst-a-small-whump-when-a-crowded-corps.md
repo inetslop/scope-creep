@@ -3,13 +3,11 @@ id: T0100
 title: "Burst: a small whump when a crowded corpse bursts (Sting)"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T16:34:41Z
-claimed_at: 2026-10-31T16:35:08Z
 epic: E16
-designer: yoga
 ---
 
 ## Goal
@@ -27,3 +25,46 @@ The Hive capstone's moment gets its own ear: when a crowded kill bursts (the Sti
 - [ ] A normal kill (no burst) plays only the pop — no whump.
 - [ ] On a field with several Hive capstone kills at once, at most one whump plays per 200 ms.
 - [ ] `npm run check` and `npm run smoke` (desktop and mobile) pass.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/audio/sfx.ts` - add a `lastWhump` module var and a `whump(seed, age)` function: same shape as `bonk` (lines 91-105), but 200 ms global throttle and the whump blip.
+- edit `src/content/effects/sting-burst.ts` - import `whump` and call it as the first line of `draw(g, fx)`, exactly like `src/content/effects/burst.ts` calls `bonk(fx.seed, fx.age)`.
+
+### Interfaces
+In `src/audio/sfx.ts`, next to `let lastBonk = 0;` (line 14):
+```ts
+let lastWhump = 0; // performance.now() of the last whump
+```
+After the `bonk` function:
+```ts
+export function whump(seed: number, age: number): void {
+  if (!ctx) return;
+  if (age > 0.25) return; // the effect's first frames only
+  const now = performance.now();
+  if (now - lastHud > 1000) return; // no match on screen
+  const until = heard.get(seed);
+  if (until !== undefined && until > now) return;
+  heard.set(seed, now + 700);
+  if (heard.size > 96) for (const [s, u] of heard) if (u <= now) heard.delete(s);
+  if (now - lastWhump < 200) return; // one whump per 200 ms
+  lastWhump = now;
+  if (active >= 6) return;
+  active += 1;
+  blip(200, 0.05, 0.1, 130); // 200 -> 130 Hz over 0.1 s, peak 0.05: the dull low squeeze
+}
+```
+In `src/content/effects/sting-burst.ts`: add `import { whump } from '../../audio/sfx.ts';` with the other imports, and make `draw(g, fx)` start with `whump(fx.seed, fx.age);`.
+
+### Steps
+1. Add `lastWhump` in `sfx.ts` after `lastBonk`; add `whump` after the `bonk` function (copy `bonk`, swap the 500 ms `lastBonk` throttle for the 200 ms `lastWhump` throttle, swap `blip(130, 0.1, 0.18, 60)` for `blip(200, 0.05, 0.1, 130)`).
+2. In `sting-burst.ts`, add the import and the `whump(fx.seed, fx.age);` first line of `draw`.
+
+### Pitfalls
+- The effect's `fx.seed`/`fx.age` exist on `EffectView` (`engine/api.ts`); never pass `fx.t` or radius — the seed is the dedupe key.
+- Throttle before the `active += 1` so a skipped whump doesn't leak an `active` voice (mirror `bonk`'s order).
+- No server code changes: the effect only plays from `sting.onKill`, so the whump only sounds on real bursts.
+
+### Tests
+none
