@@ -1,12 +1,14 @@
 ---
 id: T0006
 title: "Chomp: a Body capstone, heal on kill"
+assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T02:20:47Z
+claimed_at: 2026-10-31T02:35:36Z
 epic: E1
 ---
 
