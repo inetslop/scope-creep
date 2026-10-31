@@ -3,11 +3,13 @@ id: T0096
 title: "Twin: a bean that shudders at half hp, births a fast twin, and keeps living"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T15:53:22Z
+claimed_at: 2026-10-31T15:53:26Z
 epic: E20
+designer: desktop
 ---
 
 ## Goal
