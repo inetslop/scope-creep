@@ -3,11 +3,13 @@ id: T0030
 title: "Goober tree: a homing Goo that finds the nearest enemy for you"
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T05:50:41Z
+claimed_at: 2026-10-31T05:50:45Z
 epic: E8
+designer: desktop
 ---
 
 ## Goal
