@@ -1,12 +1,14 @@
 ---
 id: T0076
 title: "Hive, second slice: Nest (a kill heal that grows with the crowd) and the Sting capstone"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0075]
-attempts: 0
+attempts: 1
 created: 2026-10-31T13:15:23Z
+claimed_at: 2026-10-31T13:56:45Z
 epic: E16
 ---
 
