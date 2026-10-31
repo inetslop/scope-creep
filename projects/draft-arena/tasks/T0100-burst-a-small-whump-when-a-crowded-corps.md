@@ -1,12 +1,14 @@
 ---
 id: T0100
 title: "Burst: a small whump when a crowded corpse bursts (Sting)"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T16:34:41Z
+claimed_at: 2026-10-31T16:40:14Z
 epic: E16
 ---
 
