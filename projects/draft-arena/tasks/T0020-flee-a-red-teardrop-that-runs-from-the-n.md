@@ -1,12 +1,14 @@
 ---
 id: T0020
 title: "Flee: a red teardrop that runs from the nearest player"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T04:17:26Z
+claimed_at: 2026-10-31T07:27:15Z
 epic: E2
 ---
 
