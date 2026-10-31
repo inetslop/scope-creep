@@ -4,11 +4,12 @@ title: "The surge warns: a dust ring and a low rumble where the swarm line walks
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T21:28:31Z
 claimed_at: 2026-10-31T22:24:24Z
+finished_at: 2026-10-31T22:39:00Z
 ---
 
 ## Goal
@@ -100,3 +101,18 @@ export const surgeDust: EffectDef = {
 
 ### Tests
 - none (content is tested automatically by engine/tests/: the effect must be in `EFFECTS` or the test fails).
+
+## Result (attempt 1, yoga)
+
+Swarm surge lines now announce themselves: when a line of Dots walks in from an edge, the swarm-surge director plays one `surge-dust` effect at the middle of the entry line — a coral dust ring with an ink rim that blooms to radius 45 over 0.6 s with 6 coral confetti — and the effect's draw plays a new low rumble sound (110→55 Hz sine over 0.5 s, peak 0.08) on every client, so a player off to the side hears and sees where the threat comes from long before it arrives. One ring and one rumble per spawned line (guarded so a line that fails to spawn warns nothing); the sound follows the existing bloop's gating (gesture unlock, match-on-screen, first-frames-only, per-seed dedupe, 150 ms throttle, 6-voice cap).
+
+- Self-review: APPROVE
+- Time: 14.6 min
+
+```
+projects/draft-arena/game/src/audio/sfx.ts         | 24 +++++++++++++++++
+ .../game/src/content/directors/swarm-surge.ts      |  8 ++++++
+ .../draft-arena/game/src/content/effects/index.ts  |  2 ++
+ .../game/src/content/effects/surge-dust.ts         | 30 ++++++++++++++++++++++
+ 4 files changed, 64 insertions(+)
+```

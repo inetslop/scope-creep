@@ -12,6 +12,7 @@ import { lashTick } from './lash-tick.ts';
 import { bellowMouth } from './bellow-mouth.ts';
 import { bopConfetti } from './bop-confetti.ts';
 import { geyserBubble } from './geyser-bubble.ts';
+import { surgeDust } from './surge-dust.ts';
 import { splashRing } from './splash-ring.ts';
 import { stingBurst } from './sting-burst.ts';
 import { snapBurst } from './snap-burst.ts';
@@ -25,6 +26,7 @@ export const EFFECTS: readonly EffectDef[] = [
   prestigeRing,
   crownFall,
   geyserBubble,
+  surgeDust,
   splashRing,
   bopConfetti,
   burst,

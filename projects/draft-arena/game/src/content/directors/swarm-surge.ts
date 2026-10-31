@@ -37,6 +37,7 @@ export const swarmSurge: DirectorDef = {
     }
     const long = edge === 0 || edge === 2 ? width : height;
     const a0 = Math.min(Math.max(at - SPAN / 2, 30), long - 30 - SPAN);
+    let born = 0;
     for (let i = 0; i < COUNT; i++) {
       const along = a0 + i * GAP;
       const x = edge === 0 ? 30 : edge === 2 ? width - 30 : along;
@@ -45,6 +46,13 @@ export const swarmSurge: DirectorDef = {
       if (!m) continue;
       m.mem.surge = 1;
       m.slots[1] = 1;
+      born++;
+    }
+    if (born > 0) {
+      // The middle of the line's spawn edge: along = a0 + SPAN/2, at the edge.
+      const mx = edge === 0 ? 30 : edge === 2 ? width - 30 : a0 + SPAN / 2;
+      const my = edge === 1 ? 30 : edge === 3 ? height - 30 : a0 + SPAN / 2;
+      ctx.effect('surge-dust', { x: mx, y: my });
     }
   },
 };

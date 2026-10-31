@@ -14,6 +14,7 @@ let lastFanfare = 0; // performance.now() of the last prestige fanfare
 let lastBonk = 0; // performance.now() of the last bonk
 let lastWhump = 0; // performance.now() of the last whump
 let lastBloop = 0; // performance.now() of the last bloop
+let lastRumble = 0; // performance.now() of the last rumble
 const tootTicks = new Map<number, number>(); // crown-fall seed -> until when its toot tick has played
 
 function wake(): void {
@@ -151,6 +152,29 @@ export function bloop(seed: number, age: number): void {
   if (active >= 6) return;
   active += 1;
   blip(160, 0.08, 0.12, 70); // 160 -> 70 Hz over 0.12 s, peak 0.08
+}
+
+/**
+ * One low rumble when a swarm-surge dust ring blooms at the edge: a 110 Hz sine falling to
+ * 55 Hz over 0.5 s, peak 0.08 — lower and longer than the bloop, so the incoming line is
+ * heard before it walks in. Called from the surge-dust effect's draw() on every client: at
+ * most once per ring (its seed), at most one rumble per 150 ms, under the same 6-voice cap
+ * as the pops.
+ */
+export function rumble(seed: number, age: number): void {
+  if (!ctx) return;
+  if (age > 0.25) return; // the effect's first frames only
+  const now = performance.now();
+  if (now - lastHud > 1000) return; // no match on screen
+  const until = heard.get(seed);
+  if (until !== undefined && until > now) return;
+  heard.set(seed, now + 700);
+  if (heard.size > 96) for (const [s, u] of heard) if (u <= now) heard.delete(s);
+  if (now - lastRumble < 150) return; // one rumble per 150 ms
+  lastRumble = now;
+  if (active >= 6) return;
+  active += 1;
+  blip(110, 0.08, 0.5, 55); // 110 -> 55 Hz over 0.5 s, peak 0.08
 }
 
 export function toot(seed: number, age: number): void {
