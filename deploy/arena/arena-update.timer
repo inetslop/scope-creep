@@ -1,6 +1,6 @@
-# Checks GitHub for a new Draft Arena every 5 minutes.
+# Checks GitHub for a new Critter Clash every 5 minutes.
 [Unit]
-Description=Check for a new Draft Arena every 5 minutes
+Description=Check for a new Critter Clash every 5 minutes
 
 [Timer]
 OnBootSec=1min

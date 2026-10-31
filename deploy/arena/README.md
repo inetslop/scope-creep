@@ -1,6 +1,6 @@
-# The Draft Arena box
+# The Critter Clash box
 
-The live Draft Arena: one small Debian container at home that serves the game page and the match from one build of one commit, and updates itself from GitHub. Humans only: no agent may read or change `deploy/` (`loop/sandbox.ts`), because what is here runs as root.
+The live Critter Clash: one small Debian container at home that serves the game page and the match from one build of one commit, and updates itself from GitHub. Humans only: no agent may read or change `deploy/` (`loop/sandbox.ts`), because what is here runs as root.
 
 ## What runs where
 

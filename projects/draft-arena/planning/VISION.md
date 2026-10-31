@@ -1,4 +1,4 @@
-# Vision — Draft Arena
+# Vision — Critter Clash
 
 _The game's owner writes this file. Agents plan from it and never edit it._
 

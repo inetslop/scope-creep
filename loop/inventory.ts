@@ -94,7 +94,7 @@ export function buildInventory(gameDir: string): string {
     for (const folder of fs.readdirSync(contentDir).sort()) {
       const dir = path.join(contentDir, folder);
       if (!fs.statSync(dir).isDirectory()) continue;
-      // Things the player picks or builds show their one-line description (Draft Arena's monsters,
+      // Things the player picks or builds show their one-line description (Critter Clash's monsters,
       // trees and events too); Chokepoint's enemies show their behavior.
       const items = contentList(dir, ['upgrades', 'weapons', 'towers', 'boons', 'augments', 'monsters', 'talents', 'directors', 'accessories', 'patterns'].includes(folder));
       if (items.length) lines.push(`- **${folder[0]!.toUpperCase()}${folder.slice(1)}** (${items.length}): ${items.join(', ')}`);
@@ -104,11 +104,11 @@ export function buildInventory(gameDir: string): string {
   const scenes = tsFiles(path.join(src, 'scenes')).filter((f) => f.endsWith('Scene.ts'));
   if (scenes.length) lines.push(`- **Scenes**: ${scenes.map((f) => strip(f, 'Scene')).join(', ')}`);
   // What the player already sees, element by element, so a new readout never repeats one.
-  // Chokepoint keeps its HUD parts in ui/hud/, Draft Arena in hud/.
+  // Chokepoint keeps its HUD parts in ui/hud/, Critter Clash in hud/.
   const hudDir = [path.join(src, 'ui', 'hud'), path.join(src, 'hud')].find((d) => fs.existsSync(d)) ?? path.join(src, 'ui', 'hud');
   const hud = describedFiles(hudDir, ['hud.ts']);
   if (hud.length) lines.push(`- **On screen** (the HUD, each element and what it shows; a new one must show something none of these does):`, ...hud);
-  // Draft Arena's start-screen panels (src/menu/): the wardrobe, the shop...
+  // Critter Clash's start-screen panels (src/menu/): the wardrobe, the shop...
   const menu = describedFiles(path.join(src, 'menu'));
   if (menu.length) lines.push(`- **On the start screen** (the game's panels above Play, and what each shows):`, ...menu);
   const systems = describedFiles(path.join(src, 'systems'), [], 200);

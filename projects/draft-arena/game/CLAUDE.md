@@ -1,8 +1,8 @@
-# Draft Arena — developer guide
+# Critter Clash — developer guide
 
 A multiplayer .io arena for desktop and mobile browsers: up to 60 players share one big field, weapons fire by themselves, every level you spend a point in a talent tree, monsters come in crowds, and the other players are the real threat. TypeScript + Canvas 2D + Vite, a Node WebSocket server, no framework.
 
-This file is maintained by humans. The engine's own notes: `engine/README.md`.
+This file is maintained by humans. The engine's own notes: `engine/README.md`. The game used to be called Draft Arena: its folders, ids and saved-data keys still say `draft-arena`. Leave them as they are.
 
 ## The one rule: the engine is frozen
 

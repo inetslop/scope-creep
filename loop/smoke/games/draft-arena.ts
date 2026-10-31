@@ -1,5 +1,5 @@
 /**
- * Smoke play for Draft Arena (multiplayer .io arena). With ?smoke the game runs its own server in
+ * Smoke play for Critter Clash (multiplayer .io arena). With ?smoke the game runs its own server in
  * the page (the match against bots that a page without a server plays), so every byte still goes
  * through the real protocol.
  * Desktop: random WASD and the mouse moving; now and then a click on what the game reports through

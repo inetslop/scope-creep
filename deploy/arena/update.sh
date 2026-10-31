@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Draft Arena's self-update, installed as /usr/local/sbin/arena-update by setup.sh and run by
+# Critter Clash's self-update, installed as /usr/local/sbin/arena-update by setup.sh and run by
 # arena-update.timer every 5 minutes (as root; the build runs as the arena user).
 #
 #   1. Fetch main. Nothing to do when projects/draft-arena/game is the same tree as the live one.

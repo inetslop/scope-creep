@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Sets up the Draft Arena box: a fresh, unprivileged Debian 12/13 LXC (DNS set to a public resolver
+# Sets up the Critter Clash box: a fresh, unprivileged Debian 12/13 LXC (DNS set to a public resolver
 # such as 1.1.1.1). Run as root from a checkout of this repo:
 #
 #   bash deploy/arena/setup.sh
@@ -75,7 +75,7 @@ echo "repo: $(runuser -u arena -- git -C "$ROOT/repo" remote get-url origin)"
 say "Firewall: the internet yes, the LAN no"
 cat >/etc/nftables.conf <<'EOF'
 #!/usr/sbin/nft -f
-# The Draft Arena box (deploy/arena/setup.sh). It runs code the agents wrote, so it may reach the
+# The Critter Clash box (deploy/arena/setup.sh). It runs code the agents wrote, so it may reach the
 # internet (GitHub, npm, Tailscale) but nothing on the LAN. Replies to connections from the LAN
 # (SSH) still go out: they are "established".
 flush ruleset

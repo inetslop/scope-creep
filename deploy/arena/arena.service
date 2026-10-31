@@ -1,7 +1,7 @@
-# The Draft Arena game server: the page and the match from the live release (/srv/arena/current,
+# The Critter Clash game server: the page and the match from the live release (/srv/arena/current,
 # switched by arena-update). Installed by setup.sh. Tailscale Funnel forwards https to port 8790.
 [Unit]
-Description=Draft Arena game server
+Description=Critter Clash game server
 After=network-online.target
 Wants=network-online.target
 # Nothing to run until the first release is built.

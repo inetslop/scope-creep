@@ -39,7 +39,7 @@ export class Menu {
     this.store = store;
     root.innerHTML = `
       <div class="menu-card">
-        <h1>Draft Arena</h1>
+        <h1>Critter Clash</h1>
         <p class="menu-tag">Your weapons fire by themselves. Every level gives a talent point: grow your own playstyle. Monsters come in crowds, and the other players are the real threat.</p>
         <input class="menu-name" maxlength="16" placeholder="Your name" autocomplete="off" spellcheck="false" />
         <div class="menu-parts"></div>

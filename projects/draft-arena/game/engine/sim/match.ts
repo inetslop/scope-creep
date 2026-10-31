@@ -197,7 +197,7 @@ export class Match {
     p.input.buttons = buttons;
   }
 
-  /** Gives a player an upgrade at a level, as if drafted that many times (tests use it). */
+  /** Gives a player an upgrade at a level, as if taken that many times (tests use it). */
   grant(p: SimPlayer, def: UpgradeDef, level: number): void {
     p.upgrades.set(def, { level: Math.max(1, Math.min(level, def.maxLevel)), timer: 0 });
     this.recomputeStats(p);

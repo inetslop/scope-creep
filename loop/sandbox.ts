@@ -23,7 +23,7 @@ export const WRITABLE: Record<Profile, readonly string[]> = {
 
 /**
  * Inside writable areas, but still human-owned. The vision (pitch and pillars) is the game owner's.
- * A game's engine/ folder is too: a game that has one (Draft Arena: netcode, server, simulation)
+ * A game's engine/ folder is too: a game that has one (Critter Clash: netcode, server, simulation)
  * keeps it frozen, and its agents build on engine/api.ts instead of changing what is under it.
  */
 export const PROTECTED: Record<Profile, readonly string[]> = {
@@ -49,14 +49,14 @@ export async function enforceWritable(git: Git, profile: Profile): Promise<strin
 const rule = (tool: string, absPath: string, glob = '/**'): string => `${tool}(${permissionPath(absPath)}${glob})`;
 
 /**
- * The project's owner/ folder: what the owner keeps out of the agents' sight (Draft Arena: content
+ * The project's owner/ folder: what the owner keeps out of the agents' sight (Critter Clash: content
  * taken out of the game to see what the fleet invents without it). No role may read or search it.
  */
 export const OWNER_DIR = path.join(PROJECT_DIR, 'owner');
 
 /**
  * Root-level loop folders/files no agent may touch. deploy/ holds the scripts the live game server
- * runs as root (Draft Arena's box): an agent must never read or change them.
+ * runs as root (Critter Clash's box): an agent must never read or change them.
  */
 const LOOP_AREAS = [path.join(REPO, 'loop'), path.join(REPO, 'setup'), path.join(REPO, 'site'), path.join(REPO, 'leaderboard'), path.join(REPO, 'deploy'), AGENTS_DIR, AGENT_DIR, path.join(REPO, '.github'), path.join(REPO, 'node_modules')];
 const ROOT_FILES = ['package.json', 'package-lock.json', 'tsconfig.json', '.gitignore', 'README.md'].map((f) => path.join(REPO, f));

@@ -1,7 +1,7 @@
-# Builds the newest Draft Arena from GitHub and switches to it when nobody is playing
+# Builds the newest Critter Clash from GitHub and switches to it when nobody is playing
 # (/usr/local/sbin/arena-update, from deploy/arena/update.sh). Started by arena-update.timer.
 [Unit]
-Description=Draft Arena: build and deploy the newest game from GitHub
+Description=Critter Clash: build and deploy the newest game from GitHub
 After=network-online.target
 Wants=network-online.target
 
