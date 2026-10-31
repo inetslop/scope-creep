@@ -14,6 +14,7 @@ export const frenzy: TalentTreeDef = {
     { id: 'mend', upgrade: 'mend', max: 3, needs: [['nerve', 3]] },
     { id: 'fang', upgrade: 'fang', max: 2, needs: [['nerve', 2]] },
     { id: 'gore', upgrade: 'gore', max: 2, needs: [['nerve', 2]], points: 3, prestige: 1 },
+    { id: 'snap', upgrade: 'snap', max: 2, needs: [['nerve', 2]] },
     { id: 'reckless', upgrade: 'reckless', max: 1, needs: [['nerve', 3], ['frenzy', 3]] },
   ],
 };

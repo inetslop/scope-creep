@@ -38,6 +38,7 @@ import { scatter } from './scatter.ts';
 import { scavenge } from './scavenge.ts';
 import { slush } from './slush.ts';
 import { split } from './split.ts';
+import { snap } from './snap.ts';
 import { snare } from './snare.ts';
 import { sting } from './sting.ts';
 import { swarm } from './swarm.ts';
@@ -68,6 +69,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   adrenaline,
   fang,
   gore,
+  snap,
   fuse,
   fizz,
   scatter,

@@ -4,11 +4,12 @@ title: "Snap: a Frenzy fork under Nerve 2, a red burst on a player knockout whil
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T20:44:19Z
 claimed_at: 2026-10-31T22:08:56Z
+finished_at: 2026-10-31T22:22:07Z
 epic: E28
 ---
 
@@ -153,3 +154,19 @@ export const snapBurst: EffectDef = {
 
 ### Tests
 none — no pure helpers; both defs are tested automatically by `engine/tests/` (on-kill upgrade in a real match, effect draw, talent reachability, registry/file-name rules).
+
+## Result (attempt 1, asus)
+
+Added Snap, a third kill-while-hurt fork under Nerve 2 in the Frenzy tree: a player knockout while below half max hp bursts the corpse spot red for 15/25 (25 rank 2, half to players via the engine's pvp half) in a radius-110 circle, striking monsters and players alike except the killer. Created the on-kill upgrade `src/content/upgrades/snap.ts` (plain `ctx.damage`, unscaled by Might/Reap; monster kills and at-or-above-half knockouts never fire) and the `snap-burst` effect (`src/content/effects/snap-burst.ts`: ink-rimmed red ring out to 110 over 0.4 s with 20 red confetti, a red copy of `sting-burst`), one talent line in `src/content/talents/frenzy.ts`, and one-line registry entries in the upgrades and effects indexes. Typecheck, lint, all 134 tests, and the desktop + mobile smoke test all pass.
+
+- Self-review: APPROVE
+- Time: 13.2 min
+
+```
+.../draft-arena/game/src/content/effects/index.ts  |  2 ++
+ .../game/src/content/effects/snap-burst.ts         | 33 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/talents/frenzy.ts |  1 +
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ .../draft-arena/game/src/content/upgrades/snap.ts  | 18 ++++++++++++
+ 5 files changed, 56 insertions(+)
+```
