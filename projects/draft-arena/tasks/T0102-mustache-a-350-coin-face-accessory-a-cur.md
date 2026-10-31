@@ -1,12 +1,14 @@
 ---
 id: T0102
 title: "Mustache: a 350-coin face accessory, a curly pink mustache over the mouth"
+assignee: desktop
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T17:06:34Z
+claimed_at: 2026-10-31T17:31:20Z
 epic: E22
 ---
 
