@@ -1,12 +1,14 @@
 ---
 id: T0012
 title: "Gem geyser: a spot that bubbles gems, a position to hold"
+assignee: cachyos-x8664
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T03:16:43Z
+claimed_at: 2026-10-31T05:40:15Z
 epic: E3
 ---
 
