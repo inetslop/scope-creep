@@ -1,4 +1,4 @@
-import { drawCritter, type Face, type Look, type MonsterDef } from '../../../engine/api.ts';
+import { drawCritter, drawFace, type Face, type Look, type MonsterDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
 
 /** Wanders in short hops; within 300 of a player it notices, then sprints directly away. */
@@ -16,26 +16,36 @@ const PANIC_F: Face = { mood: 'scared', eyes: 2, mouth: 'o' };
 const look: Look = { shape: 'circle', color: PALETTE.red, face: CALM };
 look.draw = (g, e) => {
   const scared = e.slots[0] === 1;
+  const face = scared ? PANIC_F : CALM;
+  const r = e.radius;
   g.save();
   if (scared) {
-    const j = e.radius * 0.15;
+    const j = r * 0.15;
     g.translate(Math.sin(e.time * 24 + e.seed * 3.1) * j, Math.cos(e.time * 31 + e.seed) * j);
   }
-  drawCritter(g, look, e, { ink: PALETTE.ink, face: scared ? PANIC_F : CALM });
   g.save();
   g.rotate(e.angle);
-  g.beginPath();
-  g.moveTo(0.6 * e.radius, -0.55 * e.radius);
-  g.lineTo(1.7 * e.radius, 0);
-  g.lineTo(0.6 * e.radius, 0.55 * e.radius);
-  g.closePath();
-  g.fillStyle = look.color;
-  g.fill();
+  const nose = () => {
+    g.beginPath();
+    g.moveTo(0.6 * r, -0.55 * r);
+    g.lineTo(1.7 * r, 0);
+    g.lineTo(0.6 * r, 0.55 * r);
+    g.closePath();
+  };
+  nose();
   g.lineJoin = 'round';
-  g.lineWidth = Math.max(1.5, Math.min(3, e.radius * 0.2));
+  g.lineWidth = Math.max(1.5, Math.min(3, r * 0.2)) * 2;
   g.strokeStyle = PALETTE.ink;
   g.stroke();
   g.restore();
+  drawCritter(g, look, e, { ink: PALETTE.ink, face });
+  g.save();
+  g.rotate(e.angle);
+  nose();
+  g.fillStyle = e.flash ? '#ffffff' : look.color;
+  g.fill();
+  g.restore();
+  drawFace(g, face, r, e.angle, PALETTE.ink); // the nose fill can cover the near eye; face on top
   g.restore();
 };
 

@@ -4,11 +4,12 @@ title: "Looks made of two shapes get one shared outline: the Goo and the Flee"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T12:51:01Z
 claimed_at: 2026-10-31T12:59:58Z
+finished_at: 2026-10-31T13:09:45Z
 ---
 
 ## Goal
@@ -109,3 +110,16 @@ look.draw = (g, e) => {
 
 ### Tests
 - none (content is tested automatically by engine/tests/: pure draw functions, every look in a real match).
+
+## Result (attempt 1, yoga)
+
+The Goo's tail and the Flee's nose now get one shared sticker outline: each look strokes the extra part in ink at twice the body's outline width, draws the body with `drawCritter()`, then fills the extra part in the body's own color (white while flashing) with no stroke, so the inner half of the part's outline and the body's outline inside the overlap are covered — one continuous outline around both shapes, at every angle, as thick as every other critter's. The Flee's face is drawn again after the nose fill (always, since the nose can cover the near eye), using the engine's `drawFace`. Edits are limited to `src/content/projectiles/goo.ts` and `src/content/monsters/flee.ts` (plus `drawFace` in the import); colors, sizes, jitter math and the `slots[0]` read are unchanged.
+
+- Self-review: APPROVE
+- Time: 9.8 min
+
+```
+.../draft-arena/game/src/content/monsters/flee.ts  | 32 ++++++++++++++--------
+ .../game/src/content/projectiles/goo.ts            | 24 ++++++++++------
+ 2 files changed, 37 insertions(+), 19 deletions(-)
+```
