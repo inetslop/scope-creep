@@ -1,12 +1,14 @@
 ---
 id: T0093
 title: "Frenzy's Nerve gets an attack of its own, not Gunner's straight shot"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T15:20:51Z
+claimed_at: 2026-10-31T16:50:49Z
 ---
 
 ## Goal
