@@ -1,12 +1,14 @@
 ---
 id: T0018
 title: "Spitter: an orange diamond that spits from a distance"
+assignee: cachyos-x8664
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T03:51:35Z
+claimed_at: 2026-10-31T05:20:58Z
 epic: E2
 ---
 
