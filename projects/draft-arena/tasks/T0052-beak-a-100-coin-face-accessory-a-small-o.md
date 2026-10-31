@@ -1,14 +1,14 @@
 ---
 id: T0052
 title: "Beak: a 100-coin face accessory, a small orange beak below the eyes"
-assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-31T10:32:35Z
 claimed_at: 2026-10-31T10:53:57Z
+finished_at: 2026-10-31T11:12:05Z
 ---
 
 ## Goal
@@ -81,3 +81,20 @@ Shop, hats card, bot wearing (`botWear` dresses bots at random from `ACCESSORIES
 
 ### Tests
 - none (content is tested automatically by `engine/tests/`: it draws every accessory and checks the registry/one-per-file rule).
+
+## Attempt 1 failed (asus)
+
+Runner error: git fetch --quiet --prune origin failed (exit 1):
+error: cannot lock ref 'refs/remotes/origin/main': is at 2e828cdd9ded203493331d5e83bb581ffaaac79c but expected 139415477ecb4f3e5cde581132174604b6ba6044
+
+
+```
+Error: git fetch --quiet --prune origin failed (exit 1):
+error: cannot lock ref 'refs/remotes/origin/main': is at 2e828cdd9ded203493331d5e83bb581ffaaac79c but expected 139415477ecb4f3e5cde581132174604b6ba6044
+
+    at Git.fetch (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/git.ts:134:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:260:5)
+    at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
+    at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
