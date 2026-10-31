@@ -13,8 +13,10 @@ export const crown: DirectorDef = {
   tick(ctx, mem) {
     check(ctx, mem);
   },
-  onKill(ctx, mem, _killer, victim) {
-    if (victim.type === 'player') check(ctx, mem);
+  onKill(ctx, mem, killer, victim) {
+    if (victim.type !== 'player') return;
+    if (killer && mem.crown === victim.id) ctx.giveXp(killer, RULES.pvp.bountyXpPerLevel * victim.level);
+    check(ctx, mem);
   },
 };
 

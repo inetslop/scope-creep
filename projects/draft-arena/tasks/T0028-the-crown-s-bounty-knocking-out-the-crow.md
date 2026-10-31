@@ -4,11 +4,12 @@ title: "The crown's bounty: knocking out the crowned player pays double the boun
 assignee: yoga
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T05:50:41Z
 claimed_at: 2026-10-31T07:17:57Z
+finished_at: 2026-10-31T07:25:25Z
 epic: E4
 ---
 
@@ -70,3 +71,15 @@ Why it meets the criteria: the engine still applies the normal pvp bounty (4/lev
 
 ### Tests
 none (the engine tests run every director's `onKill` in a real match and the smoke test plays it).
+
+## Result (attempt 1, yoga)
+
+T0028 done — the crown director's `onKill` (src/content/directors/crown.ts) now pays the killer of the crowned player an extra bounty of `RULES.pvp.bountyXpPerLevel * victim.level` via `ctx.giveXp`, on top of the engine's normal pvp bounty: knocking out the crown pays double (8 xp per victim level, 120 for a level-15 crown). The guard runs before `check`, so monster kills (no killer) and non-crowned victims get nothing extra, and the crown still moves on a strict overtake. No other files, registries, or screen changes.
+
+- Self-review: APPROVE
+- Time: 7.5 min
+
+```
+projects/draft-arena/game/src/content/directors/crown.ts | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+```
