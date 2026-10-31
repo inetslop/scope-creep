@@ -30,6 +30,7 @@ import { might } from './might.ts';
 import { nest } from './nest.ts';
 import { nerve } from './nerve.ts';
 import { quick } from './quick.ts';
+import { reach } from './reach.ts';
 import { reap } from './reap.ts';
 import { reckless } from './reckless.ts';
 import { ricochet } from './ricochet.ts';
@@ -52,6 +53,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   bellow,
   lob,
   goo,
+  reach,
   nerve,
   horn,
   ricochet,

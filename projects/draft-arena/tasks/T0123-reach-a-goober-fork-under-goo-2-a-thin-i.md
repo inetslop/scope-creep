@@ -4,11 +4,12 @@ title: "Reach: a Goober fork under Goo 2, a thin ice needle at the farthest enem
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T20:44:19Z
 claimed_at: 2026-10-31T21:04:30Z
+finished_at: 2026-10-31T21:33:47Z
 epic: E28
 ---
 
@@ -166,3 +167,19 @@ export const reach: UpgradeDef = {
 ### Tests
 none (content is tested automatically by `engine/tests/`; no pure helpers of our own).
 Panel note: the only new text is the Reach row in the Goober tab (name "Reach", 2 ranks, the description verbatim, ~100 chars, wraps in the row like every other talent row; tab's fullest state: 8 talents, 21 ranks). No HUD element is added or restyled.
+
+## Result (attempt 1, asus)
+
+Added the Goober's Reach weapon — a new `needle` projectile (thin ice teardrop, `src/content/projectiles/needle.ts`) and the `reach` upgrade (`src/content/upgrades/reach.ts`) that fires every 4.0 s at the farthest enemy within 400 (24 damage; rank 2: two needles at the two farthest, 20 each). Registered both in their index files and added the one-line talent under Goo 2 beside Cling in `src/content/talents/goober.ts`. The Goo, puddles and pops are unchanged: the needle carries no `onHit`, so Gush/Chew/Scatter never trigger on it. Check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 29.3 min
+
+```
+.../game/src/content/projectiles/index.ts          |  2 +
+ .../game/src/content/projectiles/needle.ts         | 44 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/talents/goober.ts |  1 +
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 +
+ .../draft-arena/game/src/content/upgrades/reach.ts | 23 +++++++++++
+ 5 files changed, 72 insertions(+)
+```
