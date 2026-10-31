@@ -4,11 +4,12 @@ title: "Jackpot: one big gem in the middle of the field, worth 25 xp"
 assignee: desktop-4070
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T06:30:37Z
 claimed_at: 2026-10-31T08:08:31Z
+finished_at: 2026-10-31T08:32:42Z
 epic: E10
 ---
 
@@ -138,3 +139,18 @@ export const jackpot: DirectorDef = {
 
 ### Tests
 none (content is tested automatically by `engine/tests/`).
+
+## Result (attempt 1, desktop-4070)
+
+Added the "Jackpot" field event — a 5th director (`src/content/directors/jackpot.ts`) that at 45 s and every 150 s after the last one lands drops a single big yellow gem (radius 21, 3× the normal gem) worth 25 xp into the central 1000×1000, with a ring + confetti on landing and a confetti pop when it expires at 20 s. The gem is a new pickup (`src/content/pickups/jackpot.ts`, id `jackpot`) drawn as the gem's look three times over with a small white star sparkle at a corner; it's collected like a gem and flies to you in range. At most one jackpot gem exists at a time, and it adds no monsters, fields, or HUD. Both items are registered in their folder's `index.ts`.
+
+- Self-review: APPROVE
+- Time: 24.2 min
+
+```
+.../game/src/content/directors/index.ts            |  2 ++
+ .../game/src/content/directors/jackpot.ts          | 36 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/pickups/index.ts  |  2 ++
+ .../game/src/content/pickups/jackpot.ts            | 28 +++++++++++++++++
+ 4 files changed, 68 insertions(+)
+```
