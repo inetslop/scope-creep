@@ -11,6 +11,7 @@ import { bellowMouth } from './bellow-mouth.ts';
 import { geyserBubble } from './geyser-bubble.ts';
 import { splashRing } from './splash-ring.ts';
 import { stingBurst } from './sting-burst.ts';
+import { xpStar } from './xp-star.ts';
 
 /** Every one-shot visual. One per line. */
 export const EFFECTS: readonly EffectDef[] = [
@@ -23,6 +24,7 @@ export const EFFECTS: readonly EffectDef[] = [
   splashRing,
   burst,
   stingBurst,
+  xpStar,
   slowPop,
   wiredPop,
   bellowMouth,

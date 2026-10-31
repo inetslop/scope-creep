@@ -4,11 +4,12 @@ title: "Scavenge: a Hive talent, a monster kill is worth xp per enemy around the
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T18:10:25Z
 claimed_at: 2026-10-31T18:30:58Z
+finished_at: 2026-10-31T18:48:14Z
 epic: E23
 ---
 
@@ -144,3 +145,19 @@ export const xpStar: EffectDef = {
 
 ### Tests
 - none (no pure helpers; content is tested automatically by engine/tests/).
+
+## Result (attempt 1, asus)
+
+Added the Scavenge on-kill upgrade (`src/content/upgrades/scavenge.ts`) to the Hive tree: a monster kill pays 1 xp per other living critter within 80 of the corpse (capped at 3 neighbors), scaled by rank, via `ctx.giveXp`, with a small yellow star effect (`src/content/effects/xp-star.ts`) rising off the corpse for each xp. Player knockouts pay nothing; it works with every weapon. Registered both in their folder `index.ts` files (two lines each) and added the `scavenge` talent line (max 3, needs Swarm 1) beside Leech in `src/content/talents/hive.ts`. Check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 17.3 min
+
+```
+.../draft-arena/game/src/content/effects/index.ts  |  2 ++
+ .../game/src/content/effects/xp-star.ts            | 32 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/talents/hive.ts   |  1 +
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ .../game/src/content/upgrades/scavenge.ts          | 19 +++++++++++++
+ 5 files changed, 56 insertions(+)
+```

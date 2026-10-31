@@ -30,6 +30,7 @@ import { reap } from './reap.ts';
 import { reckless } from './reckless.ts';
 import { ricochet } from './ricochet.ts';
 import { scatter } from './scatter.ts';
+import { scavenge } from './scavenge.ts';
 import { slush } from './slush.ts';
 import { split } from './split.ts';
 import { snare } from './snare.ts';
@@ -67,6 +68,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   slush,
   nest,
   sting,
+  scavenge,
   cling,
   snare,
   split,
