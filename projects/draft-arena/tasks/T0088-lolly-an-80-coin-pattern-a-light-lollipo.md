@@ -3,13 +3,11 @@ id: T0088
 title: "Lolly: an 80-coin pattern, a light lollipop swirl across the body"
 size: S
 priority: 3
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T15:05:01Z
-claimed_at: 2026-10-31T15:32:40Z
 epic: E21
-designer: yoga
 ---
 
 ## Goal
@@ -37,3 +35,52 @@ The pattern shelf stops at 60 coins (Diagonal) and the price ladder has a next s
 - [ ] Wearing Lolly paints one light lollipop-swirl spiral across the body that reads on any of the 10 player colors, with the outline and face on top and easy to see.
 - [ ] Buying it spends 80 coins, it is kept for the next visit, and bots wear it at random like the other patterns.
 - [ ] The pattern shelf's price ladder now reads 30, 30, 40, 40, 50, 60, 80.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/patterns/lolly.ts` - the `lolly` PatternDef, export `lolly`
+- edit `src/content/patterns/index.ts` - add `import { lolly } from './lolly.ts';` after the `diagonal` import, and one line `lolly,` after `diagonal,` in `PATTERNS` (this keeps the shelf's price order 30, 30, 40, 40, 50, 60, 80 — the shop lists `view.patterns` in registry order)
+
+### Interfaces
+No new types. `PatternDef` fields for the item:
+```ts
+export const lolly: PatternDef = {
+  id: 'lolly',
+  name: 'Lolly',
+  description: 'A light lollipop swirl across the body.',
+  price: 80,
+  draw(g, w) {
+    const r = w.radius;
+    g.strokeStyle = shade(w.color, 0.35);
+    g.lineWidth = 0.18 * r;
+    g.lineCap = 'round';
+    g.lineJoin = 'round';
+    g.beginPath();
+    const max = 1.5 * Math.PI * 2; // 1 and a half turns
+    for (let i = 0; i <= 40; i++) {
+      const th = (i / 40) * max;
+      const rad = (th / max) * r;
+      const x = Math.cos(th) * rad;
+      const y = Math.sin(th) * rad;
+      if (i === 0) g.moveTo(x, y);
+      else g.lineTo(x, y);
+    }
+    g.stroke();
+  },
+};
+```
+
+### Steps
+1. Create `src/content/patterns/lolly.ts` exactly as above (copy the import line from `diagonal.ts`: `import { shade, type PatternDef } from '../../../engine/api.ts';`).
+2. Edit `src/content/patterns/index.ts`: add the import line and the `lolly,` registry line, each after the `diagonal` line. Nothing else.
+
+### Pitfalls
+- It is a stroke, not a fill: end with `g.stroke()`, never `g.fill()` — a filled spiral reads as a blob (the Belly problem).
+- Use `0.35` exactly (the same light shade as Bands, Belly, Party, Halves, Diagonal); `shade` already returns a valid color for all 10 player colors. No `Math.random` and no `w.seed` (no existing pattern varies per player; keep it deterministic).
+- Do not touch `w.ink`/the face: the engine draws the outline and face on top of the pattern (see `PatternDef` comment), so the inner turn passing under the face is correct and stays readable.
+- No `g.save()/g.restore()` needed (no transforms), and none may be left unbalanced.
+- No other files: the Cosmetics panel, preview, buying (80 coins) and bots wearing it at random all flow from the registry automatically.
+
+### Tests
+none (content is tested automatically by `engine/tests/`: name 1-18 chars, description ≤ 70 chars, whole price ≥ 0, `draw()` must not throw — it won't).
