@@ -29,7 +29,7 @@ It goes into the shared pool: any machine that takes size {{TASK_SIZE}} tasks ma
    - a weapon that fires many projectiles per second with a `step()` projectile (it must be a `path()`);
    - a HUD element that shows what the screen already shows (check src/hud/ first: the level is on the xp bar, scores on the scoreboard, banked points on the Talents button), something that stays on screen when the task doesn't say what it replaces or why there is room, or a second control for an action one already does;
    - a new rule that mirrors or inverts one that exists, or whose stakes are a few xp or a few seconds;
-   - art, names or text that aren't Critters (fantasy, sci-fi, grim or realistic dressing, glow, dark panels);
+   - art, names or text that aren't Critters (fantasy, sci-fi, grim or realistic dressing, glow, dark panels, a darkened palette color on a creature, two outlines crossing inside one look, a squash past 20% or in one frame);
    - a HUD element without its layout for 412x915 and 1280x720.
 8. When a task adds or changes text on a card, the talents panel or a HUD element, your design names its fullest state: every line that can show at once, with the longest names (players' are up to 16 letters) and the biggest numbers, at 412x915 and 1280x720. HUD cards are HTML: lay the card out from its lines (they flow in the card, the card's size comes from its content, text that could get too wide wraps), and say where the card sits so it covers neither the other cards nor the middle of the screen. Never place a line at a hand-picked pixel offset.
 

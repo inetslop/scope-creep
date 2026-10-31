@@ -23,4 +23,6 @@ The only thing kept between visits is the player's **profile, in their own brows
 - For prices: every item's price next to what a match earns.
 
 ## Not in this game
-(nothing removed yet)
+The owner removed these. Don't propose them again, or anything that works the same way.
+- A coin count on the start card that opened the shop when tapped: nobody could tell there was a shop. A button named Cosmetics opens it.
+- A Hats card on the start screen beside the shop: everything players wear is bought and worn in one place, Cosmetics.
