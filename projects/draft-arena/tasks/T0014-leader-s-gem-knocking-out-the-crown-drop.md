@@ -4,11 +4,12 @@ title: "Leader's gem: knocking out the crown drops a gem worth its level"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0013]
 attempts: 1
 created: 2026-10-31T03:34:39Z
 claimed_at: 2026-10-31T07:25:30Z
+finished_at: 2026-10-31T07:45:21Z
 epic: E4
 ---
 
@@ -60,3 +61,15 @@ If the key T0013 writes is not `crown`, use that key in the `mem.` check. `ctx.r
 
 ### Tests
 none (no pure helpers; the content is covered automatically by engine/tests/).
+
+## Result (attempt 1, yoga)
+
+T0014 — the crowned player's death by another player now drops a green gem worth the leader's level in xp (e.g. a level-12 crown drops a 12-xp gem) at the death spot, on top of the normal bounty and score. It's the identical standard `rules.gem` pickup, so it obeys all normal pickup rules (flies to a player within pickup range, Magnet reaches it, 30 s life) and any player — including humans racing a bot killer — can take it. Crown deaths to monsters or self-kills drop nothing, and the crown still moves at the death moment. One minimal deviation from the design: its snippet adds a whole `onKill` "right after tick", but the def already had an `onKill` (T0028's double bounty, in the file since commit 762d86a1) — a second `onKill` key isn't possible and replacing it would break T0028 and drop the `check(ctx, mem)` call that moves the crown, so I merged the gem line (`ctx.dropPickup(ctx.rules.gem, victim.x, victim.y, victim.level)`) into the existing hook's crown check, keeping its guard semantics exactly (no killer / not a player / `mem.crown !== victim.id` → nothing). No other file changed; no new pickup, no engine change.
+
+- Self-review: APPROVE
+- Time: 19.9 min
+
+```
+projects/draft-arena/game/src/content/directors/crown.ts | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+```
