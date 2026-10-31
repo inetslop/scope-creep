@@ -1,12 +1,14 @@
 ---
 id: T0017
 title: "Two starter hats: a Hats card on the start screen"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T03:51:35Z
+claimed_at: 2026-10-31T05:41:34Z
 epic: E5
 ---
 
