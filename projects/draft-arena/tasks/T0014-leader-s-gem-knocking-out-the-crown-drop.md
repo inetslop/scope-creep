@@ -1,12 +1,14 @@
 ---
 id: T0014
 title: "Leader's gem: knocking out the crown drops a gem worth its level"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0013]
-attempts: 0
+attempts: 1
 created: 2026-10-31T03:34:39Z
+claimed_at: 2026-10-31T07:25:30Z
 epic: E4
 ---
 
