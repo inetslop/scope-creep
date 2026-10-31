@@ -3,11 +3,13 @@ id: T0035
 title: "Chef Hat: a 300-coin head accessory, the top of the shop"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T06:50:30Z
+claimed_at: 2026-10-31T06:55:01Z
 epic: E6
+designer: yoga
 ---
 
 ## Goal
