@@ -4,11 +4,12 @@ title: "Cosmetics: an item is picked by clicking it, not by hovering"
 assignee: yoga
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T15:20:51Z
 claimed_at: 2026-10-31T15:38:45Z
+finished_at: 2026-10-31T15:48:42Z
 design_attempts: 1
 ---
 
@@ -65,3 +66,15 @@ Do not touch `select` (its `.selected` class toggle is the existing ring mark), 
 
 ### Tests
 - none (menu part, no pure helpers; smoke must pass).
+
+## Result (attempt 1, yoga)
+
+On the Cosmetics panel, items are now selected only by click/tap, not by hovering. A new `hoverId` state tracks the swatch under the pointer and is painted on the preview critter (`hoverId ?? selectedId`), while the footer, the Buy/Wear button, and the selected ring stay driven by `selectedId` alone — so moving the mouse across items to the Buy button can no longer buy the wrong thing. The swatch listeners were split into enter/leave/click (leave guarded against A/B enter ordering), the empty-state text now reads "Pick a swatch to try it on.", and `hoverId` resets with `selectedId` when the shop opens. All in `src/menu/shop.ts`; `check` and `smoke` pass.
+
+- Self-review: APPROVE
+- Time: 10.0 min
+
+```
+projects/draft-arena/game/src/menu/shop.ts | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
+```

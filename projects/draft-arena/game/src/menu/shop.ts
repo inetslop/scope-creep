@@ -12,6 +12,7 @@ export const shop: MakeMenuPart = (root): MenuPart => {
   let view: MenuView;
   let open = false;
   let selectedId: string | null = null;
+  let hoverId: string | null = null;
 
   // The skeleton, built once. The overlay lives on document.body: it covers the whole viewport,
   // the start card only listens on root (.menu-parts) for the open event.
@@ -64,14 +65,15 @@ export const shop: MakeMenuPart = (root): MenuPart => {
   const slotOf = (id: string): AccessorySlot | 'pattern' => findDef(id).slot ?? 'pattern';
 
   const paintPreview = (): void => {
-    // The player's own look, with the selected item tried on in its slot.
-    const wearing: Wearing | undefined = selectedId ? { ...view.profile.wearing, [slotOf(selectedId)]: selectedId } : undefined;
+    // The player's own look, with the swatch under the pointer (or the selected one) tried on.
+    const id = hoverId ?? selectedId;
+    const wearing: Wearing | undefined = id ? { ...view.profile.wearing, [slotOf(id)]: id } : undefined;
     view.preview(previewCanvas, wearing);
   };
 
   const renderFooter = (): void => {
     if (!selectedId) {
-      nameLine.textContent = 'Point at a swatch to try it on.';
+      nameLine.textContent = 'Pick a swatch to try it on.';
       descLine.textContent = '';
       stateLine.textContent = '';
       buyBtn.hidden = true;
@@ -149,10 +151,10 @@ export const shop: MakeMenuPart = (root): MenuPart => {
         swatch.append(price);
       }
       view.preview(c, { [slot]: def.id });
-      // Hover selects on a desktop, a tap on a phone.
-      const tryOn = () => select(def.id);
-      swatch.addEventListener('pointerenter', tryOn);
-      swatch.addEventListener('click', tryOn);
+      // A click (or a tap) selects; hovering only shows the item on the preview while the pointer is on it.
+      swatch.addEventListener('pointerenter', () => { hoverId = def.id; paintPreview(); });
+      swatch.addEventListener('pointerleave', () => { if (hoverId === def.id) { hoverId = null; paintPreview(); } });
+      swatch.addEventListener('click', () => select(def.id));
       swatches.append(swatch);
     }
     row.append(heading, swatches);
@@ -211,6 +213,7 @@ export const shop: MakeMenuPart = (root): MenuPart => {
   const openShop = (): void => {
     open = true;
     selectedId = null;
+    hoverId = null;
     renderAll();
     overlay.hidden = false;
     window.addEventListener('keydown', onKey);
