@@ -47,3 +47,21 @@ ls -lt /srv/arena/releases; readlink /srv/arena/current
 - **Roll back:** `touch /srv/arena/state/hold` (stops the updates), then `ln -sfn /srv/arena/releases/<commit> /srv/arena/current && systemctl restart arena`. Remove `hold` to resume: the next run deploys the newest game again.
 - **Build a failed game again:** remove its line from `/srv/arena/state/failed`.
 - **After changing `deploy/arena/`:** copy it over and run `setup.sh` again. The box never runs these scripts from `main` by itself. Re-running restarts the server.
+
+## The leaderboard
+
+The start screen's Today and All time boards live on the Cloudflare Worker in `leaderboard/` (its `/cc/` routes). This server posts every life that ends with a score, authenticated with a secret that only the Worker and this box know, and passes the boards to the page at `/leaderboard`. To set it up, or to change the secret:
+
+```sh
+token=$(openssl rand -hex 24)
+# on the PC with wrangler logged in (leaderboard/README.md):
+printf '%s' "$token" | npx wrangler@4 secret put CC_SUBMIT_TOKEN
+# on the box, as root:
+install -d -m 0755 /etc/arena
+printf 'LEADERBOARD_URL=https://chokepoint-leaderboard.scope-creep.workers.dev\nLEADERBOARD_TOKEN=%s\n' "$token" > /etc/arena/leaderboard.env
+chmod 600 /etc/arena/leaderboard.env
+systemctl restart arena          # kicks whoever is playing
+```
+
+Without that file the game runs without boards (the card stays hidden). `curl -s 127.0.0.1:8790/leaderboard?b=today` shows what the page gets.
+

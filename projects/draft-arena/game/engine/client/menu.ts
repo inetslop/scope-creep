@@ -4,6 +4,7 @@
  */
 import { drawPlayerCritter, type MakeMenuPart, type MenuPart, type MenuView, type Wearing } from '../api.ts';
 import type { Registry } from '../registry.ts';
+import { LeaderboardCard } from './leaderboard.ts';
 import { wornFrom, type ProfileStore } from './profile.ts';
 import './menu.css';
 
@@ -32,8 +33,10 @@ export class Menu {
   private readonly parts: { part: MenuPart; failed: boolean; name: string }[];
   private readonly store: ProfileStore;
   private readonly registry: Registry;
+  private readonly board: LeaderboardCard | undefined;
 
-  constructor(root: HTMLElement, onPlay: (name: string) => void, registry: Registry, store: ProfileStore, makers: readonly MakeMenuPart[]) {
+  /** `boardsBase`: the game server's address (http/https) for /leaderboard; none in a match in this tab. */
+  constructor(root: HTMLElement, onPlay: (name: string) => void, registry: Registry, store: ProfileStore, makers: readonly MakeMenuPart[], boardsBase?: string) {
     this.root = root;
     this.registry = registry;
     this.store = store;
@@ -48,6 +51,7 @@ export class Menu {
         <p class="menu-help">Move: WASD or arrows, or drag on a phone · Talents: T or the button · Leave: Esc</p>
       </div>`;
     this.message = root.querySelector('.menu-message')!;
+    this.board = boardsBase ? new LeaderboardCard(root, boardsBase) : undefined;
     this.name = root.querySelector('.menu-name')!;
     this.name.value = storedName();
     const play = (): void => {
@@ -136,6 +140,7 @@ export class Menu {
     this.message.textContent = message;
     this.root.hidden = false;
     this.refresh();
+    this.board?.show(this.name.value);
   }
 
   hide(): void {

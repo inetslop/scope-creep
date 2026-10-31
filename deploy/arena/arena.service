@@ -12,6 +12,8 @@ User=arena
 Group=arena
 WorkingDirectory=/srv/arena/current/projects/draft-arena/game
 EnvironmentFile=/srv/arena/current/arena.env
+# The leaderboard's address and the secret this server posts with (README: "The leaderboard"); optional.
+EnvironmentFile=-/etc/arena/leaderboard.env
 Environment=PORT=8790 HOST=127.0.0.1 STATIC_DIR=dist NODE_ENV=production
 ExecStart=/opt/node/bin/node engine/server/main.ts
 Restart=always

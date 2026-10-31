@@ -47,7 +47,9 @@ const renderer = new Renderer(canvas, registry);
 const input = new Input(canvas);
 const hud = new HudHost(document.getElementById('hud')!, HUD_PARTS);
 const profile = new ProfileStore(registry);
-const menu = new Menu(document.getElementById('menu')!, (name) => start(serverUrl ? 'online' : 'offline', name), registry, profile, MENU_PARTS);
+// The leaderboard comes from the game server itself (ws -> http, wss -> https).
+const boardsBase = serverUrl?.replace(/^ws(s?):\/\//, 'http$1://');
+const menu = new Menu(document.getElementById('menu')!, (name) => start(serverUrl ? 'online' : 'offline', name), registry, profile, MENU_PARTS, boardsBase);
 let session: Session | undefined;
 
 /**

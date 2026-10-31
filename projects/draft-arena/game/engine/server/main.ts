@@ -22,6 +22,7 @@ import { CONTENT } from '../../src/content/index.ts';
 import { DEFAULT_PORT } from '../config.ts';
 import { buildRegistry } from '../registry.ts';
 import { Room } from '../sim/room.ts';
+import { leaderboardFromEnv } from './leaderboard.ts';
 import { resolveStatic } from './static.ts';
 
 const port = Number(process.env.PORT) || DEFAULT_PORT;
@@ -30,9 +31,25 @@ const host = process.env.HOST || '0.0.0.0';
 const staticDir = process.env.STATIC_DIR ? path.resolve(process.env.STATIC_DIR) : undefined;
 const registry = buildRegistry(CONTENT, process.env.BUILD_ID ?? '');
 const room = new Room(registry, Date.now() & 0x7fffffff);
+const leaderboard = leaderboardFromEnv();
+room.onLifeEnd = (life) => leaderboard?.submit(life);
 
 const server = http.createServer((req, res) => {
   const url = req.url ?? '/';
+  if (url === '/leaderboard' || url.startsWith('/leaderboard?')) {
+    // Public data; '*' so a dev page on another port can read it too.
+    const headers = { 'content-type': 'application/json', 'access-control-allow-origin': '*', 'cache-control': 'no-store' };
+    if (!leaderboard) {
+      res.writeHead(404, headers);
+      res.end(JSON.stringify({ error: 'no leaderboard' }));
+      return;
+    }
+    void leaderboard.board(new URL(url, 'http://local').searchParams).then((r) => {
+      res.writeHead(r.status, headers);
+      res.end(r.body);
+    });
+    return;
+  }
   if (!staticDir || url === '/status' || url.startsWith('/status?')) {
     res.writeHead(200, { 'content-type': 'application/json', 'access-control-allow-origin': '*', 'cache-control': 'no-store' });
     res.end(JSON.stringify({ ...room.status(), build: process.env.BUILD_ID ?? '' }));
@@ -85,7 +102,7 @@ wss.on('connection', (ws) => {
 });
 
 server.listen(port, host, () => {
-  console.log(`draft-arena server on ${host}:${port} (content ${registry.hash.toString(16)}${process.env.BUILD_ID ? `, build ${process.env.BUILD_ID}` : ''}${staticDir ? `, page from ${staticDir}` : ''})`);
+  console.log(`draft-arena server on ${host}:${port} (content ${registry.hash.toString(16)}${process.env.BUILD_ID ? `, build ${process.env.BUILD_ID}` : ''}${staticDir ? `, page from ${staticDir}` : ''}${leaderboard ? ', leaderboard on' : ''})`);
 });
 room.start();
 

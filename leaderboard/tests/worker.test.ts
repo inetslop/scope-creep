@@ -92,3 +92,38 @@ describe('the Worker', () => {
     assert.equal((await post(e, run, NOW + 3_700_000, '9.9.9.9')).status, 200, 'an hour later again');
   });
 });
+
+describe("Critter Clash's boards", () => {
+  const TOKEN = 'secret-token';
+  const ccEnv = (): Env => ({ DB: sqliteD1(), ALLOWED_ORIGINS: ORIGIN, IP_SALT: 'test', CC_SUBMIT_TOKEN: TOKEN });
+  const life = (e: Env, body: unknown, at = NOW, token = TOKEN): Promise<Response> =>
+    handle(new Request('https://lb.example/cc/submit', { method: 'POST', body: JSON.stringify(body), headers: { Authorization: `Bearer ${token}` } }), e, at);
+  const ccGet = async (e: Env, query: string, at = NOW): Promise<Record<string, unknown>> =>
+    (await (await handle(new Request(`https://lb.example/cc/board?${query}`), e, at)).json()) as Record<string, unknown>;
+
+  it('only the game server (with the token) can post', async () => {
+    const e = ccEnv();
+    assert.equal((await life(e, { name: 'Ada', score: 50, kills: 40, prestige: 0 }, NOW, 'wrong')).status, 401);
+    assert.equal((await life({ ...e, CC_SUBMIT_TOKEN: undefined }, { name: 'Ada', score: 50, kills: 40, prestige: 0 })).status, 401);
+    assert.equal((await life(e, { name: 'Ada', score: 50, kills: 40, prestige: 0 })).status, 200);
+  });
+
+  it('keeps each name best: today for 24 hours, forever for good', async () => {
+    const e = ccEnv();
+    await life(e, { name: 'Ada', score: 50, kills: 40, prestige: 0 }, NOW - 2 * TODAY_MS);
+    await life(e, { name: 'Bix', score: 30, kills: 20, prestige: 0 });
+    await life(e, { name: 'Ada', score: 20, kills: 10, prestige: 0 });
+    const today = await ccGet(e, 'b=today&me=Ada');
+    assert.deepEqual(today.entries, [{ rank: 1, name: 'Bix', score: 30 }, { rank: 2, name: 'Ada', score: 20 }]);
+    assert.deepEqual(today.me, { rank: 2, name: 'Ada', score: 20 });
+    const forever = await ccGet(e, 'b=forever');
+    assert.deepEqual(forever.entries, [{ rank: 1, name: 'Ada', score: 50 }, { rank: 2, name: 'Bix', score: 30 }]);
+    assert.equal(forever.total, 2);
+  });
+
+  it('refuses names that cannot go on a public board', async () => {
+    const e = ccEnv();
+    for (const name of ['', 'Player', 'a'.repeat(17), 'xxSHITxx']) assert.equal((await life(e, { name, score: 5, kills: 1, prestige: 0 })).status, 400, name);
+    assert.equal((await life(e, { name: 'Ada', score: 0, kills: 0, prestige: 0 })).status, 400, 'a score of 0');
+  });
+});

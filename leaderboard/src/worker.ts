@@ -10,7 +10,10 @@
  * a few rows (D1's free plan counts rows read). Today is read from the run log (`runs`, kept two
  * days for the rate limit too), so it costs about one row per run of the last day.
  * See leaderboard/README.md for the setup, and migrations/ for the tables.
+ *
+ * Critter Clash's boards live under /cc/ (src/critter.ts): posted by its game server only.
  */
+import { ccGetBoard, ccSubmit } from './critter.ts';
 import { checkSubmission, type Run } from './rules.ts';
 
 /** The part of D1's API this uses (also what sqlite.ts gives over bun:sqlite). */
@@ -29,6 +32,16 @@ export interface Env {
   ALLOWED_ORIGINS?: string;
   /** Salt for hashing addresses (the rate limit never stores one in the clear). */
   IP_SALT?: string;
+  /** The secret Critter Clash's game server posts with (a Worker secret: wrangler secret put). */
+  CC_SUBMIT_TOKEN?: string;
+}
+
+/** The same length and every byte equal, in time that doesn't depend on where they differ. */
+function sameSecret(a: string, b: string): boolean {
+  if (!a || !b || a.length !== b.length) return false;
+  let diff = 0;
+  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  return diff === 0;
 }
 
 /** Submissions one address may make per hour. */
@@ -172,6 +185,22 @@ export async function handle(request: Request, env: Env, nowMs = Date.now()): Pr
   try {
     if (request.method === 'GET' && url.pathname === '/board') return await getBoard(url, env, nowMs, headers);
     if (request.method === 'POST' && url.pathname === '/submit') return await submit(request, env, nowMs, headers);
+    if (request.method === 'GET' && url.pathname === '/cc/board') {
+      const r = await ccGetBoard(env.DB, url, nowMs);
+      return json(r.body, r.status, { ...headers, 'Cache-Control': 'max-age=15' });
+    }
+    if (request.method === 'POST' && url.pathname === '/cc/submit') {
+      const auth = request.headers.get('Authorization') ?? '';
+      if (!sameSecret(auth.replace(/^Bearer /, ''), env.CC_SUBMIT_TOKEN ?? '')) return json({ error: 'auth' }, 401, headers);
+      let body: unknown;
+      try {
+        body = JSON.parse(await request.text());
+      } catch {
+        return json({ error: 'bad body' }, 400, headers);
+      }
+      const r = await ccSubmit(env.DB, body, nowMs);
+      return json(r.body, r.status, headers);
+    }
     return json({ error: 'not found' }, 404, headers);
   } catch (err) {
     console.error(err);

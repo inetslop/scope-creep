@@ -116,6 +116,16 @@ describe('match rules', () => {
     expect(dressed.every((w) => w.face === 0), 'no bot wears what does not exist').toBe(true);
   });
 
+  it('a player that content grows is found by lookups that touch its edge', () => {
+    const m = new Match(registry, 9);
+    const p = m.addPlayer('p', false, 't');
+    p.radius = CONTENT.rules.player.radius * 2;
+    m.step();
+    // A point just inside the grown edge, further than any def's radius reaches.
+    const near = m.ctx.unitsNear(p.x + p.radius + 4, p.y, 6);
+    expect(near).toContain(p);
+  });
+
   it('everyone starts with the free start ranks', () => {
     const m = new Match(registry, 1);
     const p = m.addPlayer('p', false, 't');
@@ -196,6 +206,17 @@ describe('room', () => {
     expect(p.input.buttons, 'a button pressed in a caught-up input still counts').toBe(1);
     room.step();
     expect(p.x - x0, 'nothing waiting: no extra step').toBeCloseTo(4 * step, 5);
+  });
+
+  it('a human knocked out ends a life for the leaderboard; bots never do', () => {
+    const { room, p } = oneHuman();
+    const lives: { name: string; score: number }[] = [];
+    room.onLifeEnd = (life) => lives.push(life);
+    p.score = 42;
+    for (const bot of room.match.players.values()) if (bot.bot) bot.hp = -1;
+    p.hp = -1;
+    room.step();
+    expect(lives).toEqual([{ name: 'p', score: 42, kills: p.kills, prestige: 0 }]);
   });
 
   it('sending more inputs never moves a player faster than time allows', () => {

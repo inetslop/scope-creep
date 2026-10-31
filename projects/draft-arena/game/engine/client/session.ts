@@ -136,6 +136,7 @@ export class Session {
   private readonly look: { color: number | undefined; wear: WireWear };
   /** Coins and prestiges the server reported that the profile hasn't been given yet (takeEarnings()). */
   private coinsSeen = 0;
+  private myRadius: number;
   private prestigeSeen = 0;
   private earned = { coins: 0, prestiges: 0 };
 
@@ -151,6 +152,7 @@ export class Session {
     this.connect = connect;
     this.name = name;
     this.look = look;
+    this.myRadius = registry.content.rules.player.radius;
     this.mode = mode;
     this.spectating = spectate;
     this.open();
@@ -277,6 +279,9 @@ export class Session {
 
     if (this.self?.alive && !s.self.alive) this.stats.deaths++;
     this.self = s.self;
+    // The player's own size (content can grow it): the prediction stops at the walls where the server does.
+    const mine = this.welcome ? s.entities.find((e) => e.id === this.welcome!.playerId) : undefined;
+    if (mine) this.myRadius = mine.radius;
     if (!this.spectating) {
       if (s.self.coins > this.coinsSeen) this.earned.coins += s.self.coins - this.coinsSeen;
       this.coinsSeen = Math.max(this.coinsSeen, s.self.coins);
@@ -301,7 +306,7 @@ export class Session {
       mx /= len;
       my /= len;
     }
-    const r = this.registry.content.rules.player.radius;
+    const r = this.myRadius;
     const w = this.registry.content.rules.world;
     return { x: Math.min(w.width - r, Math.max(r, x + mx * distance)), y: Math.min(w.height - r, Math.max(r, y + my * distance)) };
   }

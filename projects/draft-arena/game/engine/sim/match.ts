@@ -16,6 +16,16 @@ import { makeBrain, thinkBot } from './bots.ts';
 import { NO_WEAR, type SimArea, type SimMonster, type SimPickup, type SimPlayer, type SimProjectile, type SimUnit, type SimVisible, type WearIndexes } from './entities.ts';
 import { Grid } from './grid.ts';
 
+/** One life of a player, as the leaderboard keeps it. */
+export interface LifeEnd {
+  name: string;
+  score: number;
+  kills: number;
+  prestige: number;
+}
+
+export const lifeOf = (p: SimPlayer): LifeEnd => ({ name: p.name, score: p.score, kills: p.kills, prestige: p.prestige });
+
 export interface EffectEvent {
   kind: number;
   ax: number;
@@ -81,13 +91,17 @@ export class Match {
   /** Everything a snapshot may contain, rebuilt at the end of every tick. */
   readonly visible = new Grid<SimVisible>(256);
   readonly events: TickEvents = { launches: [], removes: [], effects: [] };
+  /** Lives that ended this tick (a knockout), for the leaderboard: the room reads and clears it. */
+  readonly lifeEnds: LifeEnd[] = [];
   /** Content hook failures, "<id>: <message>". Each failing item is disabled for the rest of the match. */
   readonly errors: string[] = [];
   readonly counters = { monstersSpawned: 0, monstersKilled: 0, playersKilled: 0, projectilesFired: 0, damageDealt: 0 };
   readonly ctx: Ctx;
   private readonly disabled = new Set<object>();
   private readonly ids = new IdPool();
+  /** The biggest radius a unit has now: grid lookups reach this far (players can grow: see step()). */
   private maxUnitRadius: number;
+  private readonly defMaxRadius: number;
   private spawnTimer = 0;
   /** Monsters within spawn.maxDistance of each player, counted at the last spawn pass. */
   private readonly crowd = new Map<SimPlayer, number>();
@@ -97,7 +111,8 @@ export class Match {
     this.registry = registry;
     this.rules = registry.content.rules;
     this.rng = createRng(seed);
-    this.maxUnitRadius = Math.max(this.rules.player.radius, ...registry.content.monsters.map((m) => m.radius));
+    this.defMaxRadius = Math.max(this.rules.player.radius, ...registry.content.monsters.map((m) => m.radius));
+    this.maxUnitRadius = this.defMaxRadius;
     this.directors = registry.content.directors.map((def) => ({ def, mem: {} }));
     this.ctx = this.makeCtx();
   }
@@ -353,6 +368,11 @@ export class Match {
     this.tick++;
     this.time = this.tick * TICK_DT;
     const dt = TICK_DT;
+    // Content may change a unit's radius (players that grow): lookups must reach the biggest.
+    let maxRadius = this.defMaxRadius;
+    for (const p of this.players.values()) if (p.radius > maxRadius) maxRadius = p.radius;
+    for (const m of this.monsters) if (m.radius > maxRadius) maxRadius = m.radius;
+    this.maxUnitRadius = maxRadius;
     this.events.launches.length = 0;
     this.events.removes.length = 0;
     this.events.effects.length = 0;
@@ -769,6 +789,7 @@ export class Match {
       if (!p.alive || p.hp > 0) continue;
       const killer = this.creditFor(p);
       p.alive = false;
+      if (!p.bot) this.lifeEnds.push(lifeOf(p));
       p.respawnAt = this.time + this.rules.respawnSeconds;
       p.pendingPicks = 0;
       p.statuses.length = 0;

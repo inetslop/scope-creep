@@ -8,7 +8,7 @@
 export const NAME_RE = /^[A-Z]{4}$/;
 
 /** Names refused on a public page. Short on purpose: the obvious ones only. */
-const BLOCKED = new Set(['ANAL', 'ANUS', 'ARSE', 'CLIT', 'COCK', 'CUNT', 'DICK', 'DYKE', 'FUCK', 'FUKK', 'GOOK', 'HOMO', 'JIZZ', 'KIKE', 'NAZI', 'PISS', 'PORN', 'SHIT', 'SLUT', 'SPIC', 'TITS', 'TWAT', 'WANK']);
+export const BLOCKED = new Set(['ANAL', 'ANUS', 'ARSE', 'CLIT', 'COCK', 'CUNT', 'DICK', 'DYKE', 'FUCK', 'FUKK', 'GOOK', 'HOMO', 'JIZZ', 'KIKE', 'NAZI', 'PISS', 'PORN', 'SHIT', 'SLUT', 'SPIC', 'TITS', 'TWAT', 'WANK']);
 
 export const MAX_WAVES = 1000;
 

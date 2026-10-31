@@ -1,4 +1,6 @@
-# Chokepoint leaderboard
+# The leaderboards
+
+The Worker serves two games' boards: Chokepoint's (below) and Critter Clash's (further down).
 
 Two boards for Chokepoint: **Today** (the last 24 hours, rolling) and **Forever**. Players post as four letters; each board shows every name's best run.
 
@@ -40,3 +42,16 @@ VITE_BOARDS_URL=http://localhost:8787 bun --bun run dev # the game, with its boa
 ```
 
 Tests: `bun test ./leaderboard/`.
+
+## Critter Clash
+
+Under `/cc/` (`src/critter.ts`, tables in `migrations/0003_critter_clash.sql`): **Today** (each name's best life of the last 24 hours) and **All time**. A run is one life of one player, posted by the game server only (`projects/draft-arena/game/engine/server/leaderboard.ts`), with `Authorization: Bearer <CC_SUBMIT_TOKEN>` (a Worker secret: `wrangler secret put CC_SUBMIT_TOKEN`; the box's side is in `deploy/arena/README.md`). The match runs on the server, so its scores can be trusted; no browser posts. Names are the game's (1 to 16 characters); the default "Player" and names with a blocked word in them never go on a board. The page reads the boards through the game server (`GET /leaderboard`), so the Worker needs no CORS for it.
+
+```sh
+GET  /cc/board?b=today&me=Ada&limit=10
+GET  /cc/board?b=forever&me=Ada
+POST /cc/submit   {name, score, kills, prestige}     (server only)
+```
+
+Locally: `bun leaderboard/dev.ts` accepts the token `dev`; run the game server with `LEADERBOARD_URL=http://localhost:8787 LEADERBOARD_TOKEN=dev`.
+

@@ -8,7 +8,7 @@ import type { Registry } from '../registry.ts';
 import { Reader, Writer } from '../shared/codec.ts';
 import { C2S, readInput, readJoin, writeReject, writeRoster, writeScores, writeWelcome, type InputMsg, type JoinMsg } from '../shared/protocol.ts';
 import type { SimPlayer } from './entities.ts';
-import { Match } from './match.ts';
+import { lifeOf, Match, type LifeEnd } from './match.ts';
 import { writeSnapshot } from './snapshot.ts';
 
 /** One connection, as the room sees it. */
@@ -83,6 +83,8 @@ export function cleanName(name: string): string {
 
 export class Room {
   readonly match: Match;
+  /** Called when a human's life ends (a knockout, or leaving for good): the server posts it to the leaderboard. */
+  onLifeEnd: ((life: LifeEnd) => void) | undefined;
   private readonly clients = new Set<Client>();
   private readonly writer = new Writer(64 * 1024);
   private rosterDirty = true;
@@ -235,6 +237,8 @@ export class Room {
   private dropGhosts(): void {
     for (const p of this.humans()) {
       if (!p.connected && this.match.time - p.leftAt > RECONNECT_GRACE_S) {
+        // Gone for good: the life they were on counts too.
+        if (p.alive) this.onLifeEnd?.(lifeOf(p));
         this.match.removePlayer(p.id);
         this.rosterDirty = true;
         this.fillBots();
@@ -281,6 +285,8 @@ export class Room {
     }
     const t0 = now();
     this.match.step();
+    for (const life of this.match.lifeEnds) this.onLifeEnd?.(life);
+    this.match.lifeEnds.length = 0;
     if (this.match.tick % TICK_RATE === 0) this.dropGhosts();
     const ms = now() - t0;
     this.tickMs = this.tickMs ? this.tickMs * 0.95 + ms * 0.05 : ms;
