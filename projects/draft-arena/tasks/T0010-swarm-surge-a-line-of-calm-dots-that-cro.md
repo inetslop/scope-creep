@@ -4,11 +4,12 @@ title: "Swarm surge: a line of calm Dots that crosses the field"
 assignee: desktop-4070
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T03:16:43Z
 claimed_at: 2026-10-31T04:49:08Z
+finished_at: 2026-10-31T05:09:57Z
 epic: E3
 design_attempts: 1
 ---
@@ -156,3 +157,23 @@ export const swarmSurge: DirectorDef = {
 
 ### Tests
 - none (content is tested automatically by `engine/tests/`; no pure helpers added).
+
+## Result (attempt 1, desktop-4070)
+
+Added the "Swarm surge" threat event: new director `src/content/directors/swarm-surge.ts` spawns twelve red Dots in a single file 30 units apart along the edge nearest a player at 60 s and every 90 s after (capped at 24 marching at once), each flagged via `mem.surge`/`slots[1]`; the Dot (`src/content/monsters/dot.ts`) gained a march branch in `think` — walking straight at the field's centre at its normal 85 u/s, turning into a normal chasing Dot when a player is within 60 or it reaches within 40 of the centre — and a calm one-eyed face (`slots[1]`, priority over the chilled face) while marching so players can read "walking, not hunting" at a glance; `gem-rain` and all other content unchanged, check and smoke pass.
+
+- Self-review: APPROVE
+- Time: 20.8 min
+
+```
+.../game/src/content/directors/index.ts            |  2 +
+ .../game/src/content/directors/swarm-surge.ts      | 50 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/monsters/dot.ts   | 27 ++++++++++--
+ 3 files changed, 76 insertions(+), 3 deletions(-)
+```
+
+## Merge (attempt 1, desktop-4070)
+
+- Conflicts in: projects/draft-arena/game/src/content/directors/index.ts
+- Auto-resolved 2 spot(s) where both sides only added lines (clean: projects/draft-arena/game/src/content/directors/index.ts).
+- Resolved without the conflict agent.
