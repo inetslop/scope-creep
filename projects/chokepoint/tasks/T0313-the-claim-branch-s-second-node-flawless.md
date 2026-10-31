@@ -3,11 +3,13 @@ id: T0313
 title: "The claim branch's second node: Flawless pays 10 coins"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T00:11:52Z
+claimed_at: 2026-10-31T00:11:56Z
 epic: E9
+designer: desktop
 ---
 
 ## Goal
