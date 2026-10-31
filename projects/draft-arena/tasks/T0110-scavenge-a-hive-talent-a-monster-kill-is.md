@@ -1,12 +1,14 @@
 ---
 id: T0110
 title: "Scavenge: a Hive talent, a monster kill is worth xp per enemy around the corpse"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T18:10:25Z
+claimed_at: 2026-10-31T18:30:58Z
 epic: E23
 ---
 
