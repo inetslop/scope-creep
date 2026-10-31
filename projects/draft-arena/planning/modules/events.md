@@ -31,7 +31,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-9 in the game, from game/src/content/directors/ (the real values).
+10 in the game, from game/src/content/directors/ (the real values).
 
 ### Gem rain (`gem-rain`)
 - description: "Every 75 s, 24 gems land in a ring around a random player."
@@ -62,6 +62,11 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - description: "Every 90 s, a random player is marked for 15 s: +35% speed, and a bonus for who knocks them out."
 - tick: (code)
 - onKill: (code)
+
+### Prestige pays (`prestige-coins`)
+- description: "Each prestige this life pays 25 coins times its number: 25, 50, 75, and on."
+- onPrestige: (code)
+- tick: (code)
 
 ### Swarm surge (`swarm-surge`)
 - description: "A line of twelve Dots walks from an edge toward the centre."
