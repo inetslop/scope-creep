@@ -4,11 +4,12 @@ title: "Fizz: a Lobber capstone, the bubble's splash lingers and strikes every 0
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T19:30:37Z
 claimed_at: 2026-10-31T19:51:27Z
+finished_at: 2026-10-31T20:21:51Z
 epic: E23
 ---
 
@@ -207,3 +208,21 @@ export const fizz: UpgradeDef = {
 
 ### Tests
 none (no pure helpers in src/; engine/tests/ covers the new upgrade, area, effect and talent automatically).
+
+## Result (attempt 1, asus)
+
+Added Fizz, the Lobber capstone beside Fuse: a bubble's splash now leaves a fizz-puddle (new area `src/content/areas/fizz-puddle.ts`) that lingers 2.5 s and strikes everything inside every 0.5 s for 3 damage (players half, no slow), as big as the splash, with a small white pop effect (`src/content/effects/fizz-tick.ts`) on each strike. The on-hit upgrade (`src/content/upgrades/fizz.ts`) lays exactly one puddle per splash — the puddle's own strikes can't re-trigger it — so Split's fanned bubbles each leave their own. Registered all three items in their index files and added the 1-rank `fizz` talent (needs Lob 4) to the Lobber tree; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 30.4 min
+
+```
+.../game/src/content/areas/fizz-puddle.ts          | 53 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/areas/index.ts    |  2 +
+ .../game/src/content/effects/fizz-tick.ts          | 19 ++++++++
+ .../draft-arena/game/src/content/effects/index.ts  |  2 +
+ .../draft-arena/game/src/content/talents/lobber.ts |  1 +
+ .../draft-arena/game/src/content/upgrades/fizz.ts  | 23 ++++++++++
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 +
+ 7 files changed, 102 insertions(+)
+```

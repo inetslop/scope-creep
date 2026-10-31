@@ -10,6 +10,7 @@ import { cover } from './cover.ts';
 import { drift } from './drift.ts';
 import { fang } from './fang.ts';
 import { frenzy } from './frenzy.ts';
+import { fizz } from './fizz.ts';
 import { fuse } from './fuse.ts';
 import { goo } from './goo.ts';
 import { gore } from './gore.ts';
@@ -64,6 +65,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   fang,
   gore,
   fuse,
+  fizz,
   scatter,
   gush,
   chew,
