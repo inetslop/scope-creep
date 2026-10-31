@@ -3,11 +3,13 @@ id: T0050
 title: "Fanfare: a rising three-note fanfare when a player prestiges"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T09:20:00Z
+claimed_at: 2026-10-31T09:42:09Z
 epic: E11
+designer: yoga
 ---
 
 ## Goal
