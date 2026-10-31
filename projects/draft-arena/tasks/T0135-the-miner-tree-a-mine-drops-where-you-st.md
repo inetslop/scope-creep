@@ -3,11 +3,13 @@ id: T0135
 title: "The Miner tree: a mine drops where you stand, and whatever steps on it pops"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: [T0134]
 attempts: 0
 created: 2026-10-31T23:01:32Z
+claimed_at: 2026-10-31T23:03:58Z
 epic: E31
+designer: desktop
 ---
 
 ## Goal
