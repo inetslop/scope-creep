@@ -3,13 +3,14 @@ id: T0063
 title: "Hive tree, first slice: Swarm and Horn, the more crowded the fight the harder you hit"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T12:00:08Z
 claimed_at: 2026-10-31T12:20:30Z
+finished_at: 2026-10-31T12:36:26Z
 epic: E16
-designer: inet-racing
+design_attempts: 1
 ---
 
 ## Goal
@@ -88,3 +89,7 @@ Swarm vs the other on-hit and on-kill effects:
 - [ ] Swarm works with Horn: a horn hit on a critter with 2 other enemies within 80 of it deals +2 per rank extra at Swarm 1.
 - [ ] A fresh life starts as a nomad with Bolt only, with no Hive ranks.
 - [ ] The Hive tab and its talent texts fit at 412x915 and 1280x720 with nothing cut off.
+
+## Rejected by architect (inet-racing)
+
+Swarm's comparison table is missing a row for Mend (src/content/upgrades/mend.ts), an onHit upgrade — every on-hit/on-kill upgrade needs a row (e.g. "an on-hit effect | heals the attacker on Nerve hits only; Swarm adds damage to every hit, any weapon").
