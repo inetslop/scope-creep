@@ -4,11 +4,12 @@ title: "Candy: a 240-coin head accessory, a striped candy on the side of the hea
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T19:06:11Z
 claimed_at: 2026-10-31T19:20:47Z
+finished_at: 2026-10-31T19:32:44Z
 epic: E26
 ---
 
@@ -122,3 +123,17 @@ export const candy: AccessoryDef = {
 
 ### Tests
 - `tests/candy.test.ts` as above; the engine tests cover registration, one-item-per-file and the draw automatically.
+
+## Result (attempt 1, yoga)
+
+Added the Candy, a 240-coin head accessory that fills the head shelf's missing middle step between Bloom (150) and Chef Hat (300): a striped orange-and-white ellipse resting on the side of the head at ear height, with two white wrapper twists, an ink outline, a white shine and a gentle bob — slower and smaller than the Balloon's. It is registered in price order in `src/content/accessories/index.ts`, so the Cosmetics panel lists and sells it, the preview critter and any bot that owns it wear it, and it persists across visits. It is draw-only (no stat, size or hitbox change), and a new test in `tests/candy.test.ts` locks in the head slot, 240-coin price and absence of a prestige lock. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 12.0 min
+
+```
+.../game/src/content/accessories/candy.ts          | 54 ++++++++++++++++++++++
+ .../game/src/content/accessories/index.ts          |  2 +
+ projects/draft-arena/game/tests/candy.test.ts      | 15 ++++++
+ 3 files changed, 71 insertions(+)
+```
