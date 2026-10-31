@@ -159,7 +159,9 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Breakdown:**
 - T0318 (M) — the first hint: "Pick a card" on the pre-wave-1 draft — in the pool
 - T0319 (S) — the second hint: "Build beside the road" beside the first buildable cell — in the pool
-- (to task) the third hint: "Hold the road" under the wave 1 banner
+- T0320 (M) — the third hint: "Hold the road" under the wave 1 banner — in the pool
+
+**All three E11 hints are now written (T0318, T0319, T0320) — it counts as finished while they land.**
 
 ### Enemy queue (non-epic)
 
