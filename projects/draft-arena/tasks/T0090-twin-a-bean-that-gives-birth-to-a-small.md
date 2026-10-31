@@ -3,11 +3,13 @@ id: T0090
 title: "Twin: a bean that gives birth to a small fast twin the first time it drops to half hp"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T15:16:30Z
+claimed_at: 2026-10-31T15:16:33Z
 epic: E20
+designer: desktop
 ---
 
 ## Goal
