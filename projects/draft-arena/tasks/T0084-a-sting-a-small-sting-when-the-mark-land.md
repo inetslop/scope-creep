@@ -3,11 +3,13 @@ id: T0084
 title: "A sting: a small sting when the mark lands on you"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T14:05:22Z
+claimed_at: 2026-10-31T14:06:25Z
 epic: E19
+designer: yoga
 ---
 
 ## Goal
