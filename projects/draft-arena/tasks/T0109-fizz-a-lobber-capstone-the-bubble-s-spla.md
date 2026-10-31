@@ -3,11 +3,13 @@ id: T0109
 title: "Fizz: a Lobber capstone, the bubble's splash lingers and keeps striking"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:49:52Z
+claimed_at: 2026-10-31T17:53:04Z
 epic: E23
+designer: inet-racing
 ---
 
 ## Goal
