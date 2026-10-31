@@ -6,16 +6,19 @@ Epics are the main work: one or two active at a time, each broken into playable 
 Goal: more playstyles. Today: Gunner (your Bolt) and Body (plain stats).
 Done when: there are several trees, each a playstyle with its own weapon, its own shape, mods that help any weapon first, and a capstone behind a real commitment.
 Breakdown:
-- T0001 S — Lance: piercing bolts, a base fork in Gunner — design
-- T0003 L — Lobber tree: a bubble that arcs in, a splash that marks the ground — design
-Next: Chill, a hit that slows the target (any weapon, M); a second new tree with its own weapon (L).
+- T0001 S — Lance: piercing bolts, a base fork in Gunner — todo
+- T0003 L — Lobber tree: a bubble that arcs in, a splash that marks the ground — todo
+- T0004 M — Chill: a hit that slows the target, a mod for any weapon — design
+- T0006 S — Chomp: a Body capstone, heal on kill — design
+Next: a weapon for Body (L) — the tree that eats.
 
 ## E2 Monster behaviors (active)
 Goal: crowds that make you move differently. Today: Dot only (it chases you).
 Done when: there are several monsters with behaviors of their own, each readable at a glance.
 Breakdown:
-- T0002 S — Puff: a purple pentagon that pops into three Dots on death — design
-Next: Zippy, a pink triangle that winds up and dashes (M).
+- T0002 S — Puff: a purple pentagon that pops into three Dots on death — designing
+- T0005 M — Zippy: a pink triangle that winds up and dashes — design
+Next: a monster that plays off the crowd (Snail: sticky patches — IDEAS).
 
 ## E3 Field events
 Goal: reasons to go somewhere on the field. Today: Gem rain. More events, built as directors (planning/modules/events.md).
