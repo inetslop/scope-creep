@@ -3,13 +3,11 @@ id: T0081
 title: "Leech: a fifth Hive talent, your hits heal you while the crowd is on you"
 size: M
 priority: 3
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T13:48:21Z
-claimed_at: 2026-10-31T14:25:34Z
 epic: E16
-designer: desktop
 ---
 
 ## Goal
@@ -53,3 +51,57 @@ The sustain fork under Swarm in the Hive tree: Leech — while the crowd is on y
 | Mend | an on-hit that heals you | Mend heals on a Nerve hit per missing hp; Leech heals on any hit while 3+ are within 80 of you |
 | Cling | an on-hit tied to a weapon's hits | Cling makes a Goo splat on and ride its target; Leech is your own sustain in a crowd |
 | Chomp | a heal on a kill | Chomp heals a fixed 5 hp (25 on a player) per kill; Leech heals per hit while the crowd is on you, with any weapon |
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/upgrades/leech.ts` - the Leech on-hit upgrade (heal while the crowd is on you)
+- edit `src/content/upgrades/index.ts` - one import line + one list line
+- edit `src/content/talents/hive.ts` - one talent line
+
+### Interfaces
+No new types. Reuse, all verified in `engine/api.ts`:
+- `onHit(ctx, me, level, hit)` on `UpgradeDef` (line 366); `hit: { target: Unit; damage: number; x; y; projectile?; area? }` (`Hit`, line 243).
+- `ctx.unitsNear(x, y, radius): Unit[]` (line 263) — returns every unit, including `me`; each has `.alive`.
+- `ctx.heal(target, amount)` (line 270) — already caps at `maxHp` and no-ops on dead targets (`engine/sim/match.ts:1128`), so no manual clamp.
+- `Shape` values: `'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'star'`.
+
+### Steps
+1. Create `src/content/upgrades/leech.ts` (copy `swarm.ts`'s shape exactly):
+```ts
+import type { UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** Hive mod, works with every weapon: while the crowd is on you, every hit you land heals you. */
+export const leech: UpgradeDef = {
+  id: 'leech',
+  name: 'Leech',
+  description: 'While 3+ enemies are within 80 of you, your hits heal 1 hp. Per rank: +1 hp.',
+  maxLevel: 3,
+  look: { shape: 'diamond', color: PALETTE.purple },
+  onHit(ctx, me, level, hit) {
+    if (hit.damage <= 0) return; // 0-damage touches (the goo bubble in flight) are not hits
+    let crowd = 0;
+    for (const u of ctx.unitsNear(me.x, me.y, 80))
+      if (u.alive && u !== me) crowd++;
+    if (crowd >= 3) ctx.heal(me, level);
+  },
+};
+```
+2. In `src/content/upgrades/index.ts`: add `import { leech } from './leech.ts';` between the `lance` and `lob` imports (alphabetical). In `UPGRADES`, add `leech,` on its own line right after `swarm,` (the Hive on-hits sit together).
+3. In `src/content/talents/hive.ts`: add exactly this line after the `horn` line (so the panel draws Leech under Swarm, next to Horn):
+```ts
+    { id: 'leech', upgrade: 'leech', max: 3, needs: [['swarm', 1]] },
+```
+
+### Pitfalls
+- `ctx.unitsNear` returns `me` too — the `u !== me` check is required, or you always count one phantom neighbor (Swarm's idiom, centered on `me` instead of `hit.target`).
+- Count is recomputed inside `onHit` at each hit — no `mem`, no `slots`, no per-tick work; "walk out, next hit heals nothing" falls out for free. Do not add any state.
+- `ctx.heal` caps at maxHp internally; do not add a `me.maxHp` clamp (Chomp doesn't either).
+- The `hit.damage <= 0` guard matches Swarm: the Goo bubble's in-flight touch must not heal.
+- The task says "before T0076's Nest and Sting land" — they are already in `hive.ts` (lines 13–14). Do not touch or reorder them; just insert the leech line. No dependency on T0076.
+- `look.shape` must stay `'diamond'` (Swarm=hexagon, Horn=triangle, Mend=star, Chomp=pentagon are all taken in/near this tree).
+- No `ctx.rng`, no `Math.random`, no client code — this is a server-only on-hit; nothing changes on screen (acceptance says the heal just reads as hp returning).
+
+### Tests
+- None (no pure helpers; the engine tests run the upgrade in a real match and check the talent line automatically).
