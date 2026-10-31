@@ -154,11 +154,13 @@ Done: the wound reads the hurt state in a crowd, and Nerve forks — a coin bran
 
 ## E16 The Hive tree (active)
 Goal: a sixth playstyle (the cap): a build that hits harder the more crowded the fight is — a hit scales with the enemies around its target, so a Hive life runs into the swarm instead of kiting it, where Gunner kites, Goober zones and Frenzy bleeds.
-Done when: the Hive tree is in the panel with its crowd mod, its dart weapon, its kill buff and its kill-burst capstone, each readable in a crowd.
+Done when: the Hive tree is in the panel with its crowd mod, its dart weapon, its crowd kill heal and its kill-burst capstone, each readable in a crowd.
 Breakdown:
 - T0060 L — Hive tree: Swarm, Horn, Nest, the Sting capstone — failed (the on-kill tables missed the Fang row)
-- T0063 M — Hive, first slice: Swarm (hits grow with the crowd) and Horn (a fast teal dart) — design
-- T0064 M — Hive, second slice: Nest (a kill-buff from crowd kills) and the Sting capstone — design (waits on T0063)
+- T0063 M — Hive, first slice: Swarm (hits grow with the crowd) and Horn (a fast teal dart) — failed (the on-hit table missed the Mend row)
+- T0064 M — Hive, second slice: Nest (a kill-buff from crowd kills) and the Sting capstone — failed (a timed damage buff needs an engine change; Nest becomes a crowd-scaled kill heal)
+- T0075 L — Hive, first slice: the tree, Swarm (hits grow with the crowd) and Horn (a fast teal dart) — design
+- T0076 M — Hive, second slice: Nest (a kill heal that grows with the crowd) and the Sting capstone — design (waits on T0075)
 Next: a fifth talent that forks the tree (a Hive sustain or a Hive defense) once it proves out.
 
 ## E17 A deeper second life (active)

@@ -36,6 +36,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - A choice at level 1: everyone starts the same, as a nomad.
 - A hex talent map shared by every build: the owner preferred trees that each have their own shape.
 - Tiers or groups that every tree shares (a row of mods, then a weapon, then a capstone): each tree has its own structure.
+- A tree of plain stats (Body: faster, tougher, stronger, gems from further away): a tree is a playstyle. Stats live inside playstyle trees, where they serve that playstyle.
 
 ## What exists now
 
