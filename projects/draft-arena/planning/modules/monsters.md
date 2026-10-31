@@ -32,7 +32,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-5 in the game, from game/src/content/monsters/ (the real values).
+6 in the game, from game/src/content/monsters/ (the real values).
 
 ### Dot (`dot`)
 - description: Heads straight for the nearest player.
@@ -68,6 +68,18 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - weight: 6
 - fromLevel: 4
 - look: shape triangle, color #f783ac, face {mood calm, eyes 2, mouth smile}, draw (code)
+- think: (code)
+
+### Sleeper (`sleeper`)
+- description: "Sleeps until you get close, then chases faster than a Dot."
+- hp: 20
+- speed: 100
+- radius: 15
+- damage: 10
+- xp: 3
+- weight: 5
+- fromLevel: 4
+- look: shape square, color #a15570, face {mood calm, eyes 2, mouth o}, draw (code)
 - think: (code)
 
 ### Spitter (`spitter`)

@@ -22,7 +22,7 @@ Breakdown:
 - T0005 M — Zippy: a pink triangle that winds up and dashes — done
 - T0008 M — Snail: an orange hexagon that leaves sticky patches — done
 - T0018 M — Spitter: an orange diamond that spits from a distance — done
-- T0020 M — Flee: a red teardrop that runs from the nearest player — todo
+- T0020 M — Flee: a red teardrop that runs from the nearest player — building
 Next: done once T0020 builds: every monster has its own way to move.
 
 ## E3 Field events (done)
@@ -41,18 +41,18 @@ Breakdown:
 - T0013 M — The Crown: the top scorer wears a yellow crown, moves only on a strict overtake — done
 - T0014 S — Leader's gem: a knocked-out crown drops a gem worth its level — todo
 - T0015 S — The leader pays: the crown takes 25% more damage from players — failed (the engine's pvp damage is frozen)
-- T0028 S — The crown's bounty: the killer of the crown gets double the bounty xp — todo
+- T0028 S — The crown's bounty: the killer of the crown gets double the bounty xp — done
 - T0036 S — Crown fall: the crown flies off and pops where the leader is knocked out — todo
-Next: done once T0014, T0028 and T0036 build: the leader's gem makes the knockout a race, the bounty makes it pay, and the crown falling is a moment everyone sees.
+Next: done once T0014 and T0036 build: the leader's gem makes the knockout a race, the bounty makes it pay, and the crown falling is a moment everyone sees.
 
-## E5 Your own critter (tasked)
+## E5 Your own critter (done)
 Goal: players make their critter theirs: they pick its color and put on a hat, and everyone in the match sees it.
 Done when: before playing, a player can choose a color and a hat (a couple of each to start); the choice is kept for their next visit and shows on their critter for everyone.
 Ready: the engine has what players wear (accessories, patterns), the color pick, the profile in the browser, and start-screen panels (src/menu/).
 Breakdown:
 - T0016 M — Your color: a card of the 10 colors, kept for the next visit — done
-- T0017 M — Two starter hats: a Hats card, wear and take off — building
-Next: done once T0016 and T0017 build: a color and a hat, picked on the start screen, kept between visits, seen by everyone in the match.
+- T0017 M — Two starter hats: a Hats card, wear and take off — done
+Done: a color and a hat, picked on the start screen, kept between visits, seen by everyone in the match.
 
 ## E6 Shop and coins (active)
 Goal: something to play for across matches: players earn coins in the match and spend them in a shop on color patterns and accessories (hats and more).
@@ -63,9 +63,9 @@ Breakdown:
 - T0021 M — First shop stock: two patterns, a face and a back accessory, priced — done
 - T0022 M — The shop: a panel over the start screen that sells the stock, with a preview critter — building
 - T0027 S — Coins from events: every gem an event drops pays 1 coin — todo
-- T0031 M — The shop's second stock: two patterns, a face and a back accessory, priced — design
+- T0031 M — The shop's second stock: two patterns, a face and a back accessory, priced — done
 - T0035 S — Chef Hat: a 300-coin head accessory, the shop's long goal — todo
-Next: done once T0022, T0027, T0031 and T0035 build: kills and events pay coins, the shop sells two stocks, and the Chef Hat is the goal to save for.
+Next: done once T0022, T0027 and T0035 build: kills and events pay coins, the shop sells two stocks, and the Chef Hat is the goal to save for.
 
 ## E7 Prestige (tasked)
 Goal: nobody stays overpowered forever: a player who reaches level 18 prestiges back to level 1, and prestiging is worth it.
@@ -90,10 +90,10 @@ Done: the tree is playable end to end; the 5th and 6th talents wait in IDEAS for
 Goal: the crowd grows a 6th, then a 7th, way to move; each new monster readable at a glance.
 Done when: the 6th monster is in the field with a behavior no other has.
 Breakdown:
-- T0032 M — Sleeper: a deep pink cushion that sleeps until you get close — design
+- T0032 M — Sleeper: a deep pink cushion that sleeps until you get close — done
 - T0034 M — Bulwark: a deep red octagon whose bubble shield eats the first 15 hits — failed (monsters have no target-side hit hook)
 - T0037 M — Boing: a deep red heart that crouches and leaps at where you are going — design
-Next: done once T0032 and T0037 build: the crowd gains two new ways to move and to be (it sleeps, it leaps).
+Next: done once T0037 builds: the crowd gains two new ways to move and to be (it sleeps, it leaps).
 
 ## E10 More reasons to move (active)
 Goal: a 5th, then a 6th, field event, so the field always has a new place to be (the cap is 6 events).
@@ -102,3 +102,12 @@ Breakdown:
 - T0033 S — Jackpot: one big gem in the middle of the field, worth 25 xp — design
 - T0038 M — The mark: a random player wears a red target for 15 s, the kill pays 20 xp and 5 coins — design
 Next: done once T0033 and T0038 build: six events, the cap.
+
+## E11 Sound (active)
+Goal: the field is silent; every big moment gets a short candy sound, so a fight is readable by ear and the pops sound like the things that pop.
+Done when: a monster pop, a level-up and a coin each have a sound, on desktop and mobile, quiet enough to sit under the action.
+Breakdown:
+- T0039 M — Pop: the first sound, the game's audio, a pop when a monster dies, pitched by its size — design
+- T0040 S — Chime: a level-up chime — design
+- T0041 S — Coin: a coin tick when a coin is picked up or spent — design
+Next: more sounds per moment (a player knockout, a prestige, the crown falling) as the epic proves out.

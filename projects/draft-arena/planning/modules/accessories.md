@@ -28,12 +28,13 @@ A missing row gets the task rejected by the architect.
 
 ## What exists now
 
-2 in the game, from game/src/content/accessories/ (the real values).
+6 in the game, from game/src/content/accessories/ (the real values).
 
 **By `slot`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
-- `back`: Candy Pack
-- `face`: Round Glasses
+- `back`: Candy Pack, Balloon
+- `face`: Round Glasses, Bow Tie
+- `head`: Cone, Beanie
 
 ### Candy Pack (`candy-pack`)
 - description: A little green pack on the back.
@@ -41,8 +42,32 @@ A missing row gets the task rejected by the architect.
 - price: 100
 - draw: (code)
 
+### Cone (`cone`)
+- description: A yellow party cone with a red tip.
+- slot: head
+- price: 0
+- draw: (code)
+
+### Beanie (`beanie`)
+- description: A purple beanie with a pink pom.
+- slot: head
+- price: 0
+- draw: (code)
+
 ### Round Glasses (`round-glasses`)
 - description: Round ink frames around the eyes.
 - slot: face
 - price: 80
+- draw: (code)
+
+### Bow Tie (`bow-tie`)
+- description: A red bow tie at the mouth.
+- slot: face
+- price: 80
+- draw: (code)
+
+### Balloon (`balloon`)
+- description: "A small yellow balloon bobbing on the back."
+- slot: back
+- price: 120
 - draw: (code)
