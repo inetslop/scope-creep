@@ -3,11 +3,13 @@ id: T0006
 title: "Chomp: a Body capstone, heal on kill"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T02:20:47Z
+claimed_at: 2026-10-31T02:24:33Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
