@@ -3,13 +3,11 @@ id: T0059
 title: "Mend: a Nerve hit heals the more hurt you are"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T11:14:52Z
-claimed_at: 2026-10-31T11:25:09Z
 epic: E15
-designer: yoga
 ---
 
 ## Goal
@@ -47,3 +45,45 @@ The Frenzy tree's second fork under Nerve: a sustain branch, so a hurt Frenzy li
 - [ ] The same player at half of 100 max hp: each Nerve jab hit heals 5 hp (Mend 1), 10 (Mend 2), 15 (Mend 3).
 - [ ] Split's extra jabs each heal; Reckless does not change the heal.
 - [ ] Mend never heals above max hp.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/upgrades/mend.ts` — the "Mend" on-hit upgrade (jab-only heal for the attacker)
+- edit `src/content/upgrades/index.ts` — one import (between `maw` and `might`) + one `mend,` line after `reap,` (line 41, the on-hit group)
+- edit `src/content/talents/frenzy.ts` — one talent line after the `adrenaline` line (line 13)
+
+### Interfaces
+No new types. Uses existing `UpgradeDef` (`onHit(ctx, me, level, hit)`), `Ctx.heal(target, amount)` (engine clamps to maxHp — verified `engine/sim/match.ts:1128-1131`), projectile id `'jab'` (`src/content/projectiles/jab.ts`), `PALETTE.green` (= `#51cf66`).
+
+### Steps
+1. Create `src/content/upgrades/mend.ts` (copy `cling.ts`'s structure):
+```ts
+import type { UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** A hurt Frenzy life buys back hp: every Nerve jab hit heals the attacker, the more hurt, the more. */
+export const mend: UpgradeDef = {
+  id: 'mend',
+  name: 'Mend',
+  description: 'On a Nerve hit: heal 1 hp per 10 hp missing. Per rank: +1 per 10 hp missing.',
+  maxLevel: 3,
+  look: { shape: 'star', color: PALETTE.green },
+  onHit(ctx, me, level, hit) {
+    if (!hit.projectile || hit.projectile.def.id !== 'jab') return; // Nerve jabs only (Bolt, Maw, Lob, Goo, Slush: nothing)
+    const missing = me.maxHp - me.hp;
+    if (missing > 0) ctx.heal(me, Math.floor(missing / 10) * level);
+  },
+};
+```
+2. Register: import line in `index.ts` between `maw` and `might`; list line `mend,` after `reap,`.
+3. `src/content/talents/frenzy.ts`: add exactly `{ id: 'mend', upgrade: 'mend', max: 3, needs: [['nerve', 3]] },` after the `adrenaline` line (before `reckless`), so the panel draws Mend under Nerve with 3 ranks needing Nerve 3 (auto-drawn like Adrenaline; no panel code needed).
+
+### Pitfalls
+- Guard on projectile id `'jab'` only — never on damage: Split's weaker extra jabs each heal the same, Reckless doubles jab damage but not the heal.
+- `ctx.heal` clamps at maxHp and no-ops on amount 0; a killing jab still fires onHit, which is fine (the attacker is alive and full-hp players get missing = 0 → no heal).
+- `Math.floor` on missing (54 missing → 5 per rank), heal per rank `* level`.
+- No effect, slot or visual: the hp climb is the readout; T0057's wound arc reverts from it automatically.
+
+### Tests
+none (content is auto-tested by engine/tests/).
