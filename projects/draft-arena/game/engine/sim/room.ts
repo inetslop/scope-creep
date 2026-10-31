@@ -42,8 +42,8 @@ interface Client {
 /** A spectator stays on one player this long before checking who leads now. */
 const FOLLOW_SECONDS = 20;
 
-/** A client that got ahead (a burst after a stall) is trimmed to this many waiting inputs. */
-const MAX_QUEUED_INPUTS = 4;
+/** Inputs kept between ticks, at most (only the newest is used: see step()). */
+const MAX_WAITING_INPUTS = 32;
 
 export interface RoomStatus {
   humans: number;
@@ -110,7 +110,7 @@ export class Room {
       if (!p) return;
       if (type === C2S.input) {
         c.inputs.push(readInput(r));
-        if (c.inputs.length > MAX_QUEUED_INPUTS * 2) c.inputs.splice(0, c.inputs.length - MAX_QUEUED_INPUTS);
+        if (c.inputs.length > MAX_WAITING_INPUTS) c.inputs.shift();
       } else if (type === C2S.pick) {
         this.match.pick(p, r.u16());
       } else {
@@ -237,10 +237,18 @@ export class Room {
   step(): void {
     for (const c of this.clients) {
       if (!c.player) continue;
-      if (c.inputs.length > MAX_QUEUED_INPUTS) c.inputs.splice(0, c.inputs.length - MAX_QUEUED_INPUTS);
-      // None waiting: the last input stays in effect.
-      const m = c.inputs.shift();
-      if (m) this.match.setInput(c.player, m.seq, m.moveX, m.moveY, m.aim, m.buttons);
+      // An input is the state of the controls, so the newest one says it all: a burst that arrives
+      // after a network stall is applied at once instead of queuing up and delaying every move
+      // after it (the stall's ticks already ran on the last input). A button pressed in any of them
+      // still counts. None waiting: the last input stays in effect.
+      const waiting = c.inputs;
+      const m = waiting[waiting.length - 1];
+      if (m) {
+        let buttons = 0;
+        for (const q of waiting) buttons |= q.buttons;
+        waiting.length = 0;
+        this.match.setInput(c.player, m.seq, m.moveX, m.moveY, m.aim, buttons);
+      }
     }
     const t0 = now();
     this.match.step();

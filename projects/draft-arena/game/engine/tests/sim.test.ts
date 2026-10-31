@@ -5,7 +5,7 @@ import { buildRegistry } from '../registry.ts';
 import { Match } from '../sim/match.ts';
 import { PROTOCOL_VERSION } from '../config.ts';
 import { Reader, Writer } from '../shared/codec.ts';
-import { readWelcome, S2C, writeSpectate } from '../shared/protocol.ts';
+import { readWelcome, S2C, writeInput, writeJoin, writeSpectate } from '../shared/protocol.ts';
 import { Room } from '../sim/room.ts';
 
 const registry = buildRegistry(CONTENT);
@@ -163,6 +163,29 @@ describe('room', () => {
     expect(types.filter((t) => t === S2C.snapshot).length, 'a spectator gets snapshots').toBeGreaterThanOrEqual(9);
     expect(room.status().humans, 'a spectator is not a player').toBe(0);
     expect(room.status().bots).toBe(CONTENT.rules.bots.fillTo);
+  });
+
+  it('inputs that arrive together never queue up: the newest is applied at the next tick', () => {
+    const room = new Room(registry, 6);
+    const got: Uint8Array[] = [];
+    const conn = room.connect({ send: (d) => got.push(d), close: () => {}, backlog: 0 });
+    let w = new Writer();
+    writeJoin(w, { protocol: PROTOCOL_VERSION, name: 'p', token: '', color: undefined, wear: { head: 0, face: 0, back: 0, pattern: 0 } });
+    conn.receive(w.finish());
+    const playerId = readWelcome(new Reader(got[0]!.subarray(1))).playerId;
+    const p = room.match.players.get(playerId)!;
+    // A burst after a network stall: four inputs at once, a button held only in the second.
+    for (let seq = 1; seq <= 4; seq++) {
+      w = new Writer();
+      writeInput(w, { seq, moveX: seq === 4 ? -1 : 1, moveY: 0, aim: 0, buttons: seq === 2 ? 1 : 0 });
+      conn.receive(w.finish());
+    }
+    room.step();
+    expect(p.ackSeq, 'the newest input is the one applied').toBe(4);
+    expect(p.input.moveX).toBe(-1);
+    expect(p.input.buttons, 'a button pressed in a skipped input still counts').toBe(1);
+    room.step();
+    expect(p.ackSeq, 'nothing left waiting for later ticks').toBe(4);
   });
 
   it('fills with bots and keeps running', () => {
