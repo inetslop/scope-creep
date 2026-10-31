@@ -37,7 +37,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-8 in the game, from game/src/content/upgrades/ (the real values).
+9 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -46,6 +46,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - `damage`: Might
 - `maxHp + regen`: Vigor
 - `pickup`: Magnet
+- `pierce`: Lance
 - `speed`: Swift
 
 ### Bolt (`bolt`)
@@ -66,6 +67,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - maxLevel: 2
 - look: shape triangle, color #ffd43b
 - stats: shots 1, damage -0.12
+
+### Lance (`lance`)
+- description: Bolts go through 1 more enemy, per rank.
+- maxLevel: 2
+- look: shape diamond, color #4dabf7
+- stats: pierce 1
 
 ### Swift (`swift`)
 - description: +20 move speed per rank.

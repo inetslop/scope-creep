@@ -32,7 +32,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-1 in the game, from game/src/content/monsters/ (the real values).
+2 in the game, from game/src/content/monsters/ (the real values).
 
 ### Dot (`dot`)
 - description: Heads straight for the nearest player.
@@ -44,3 +44,15 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - weight: 10
 - fromLevel: 1
 - look: shape circle, color #ff6b6b, face {mood angry}
+
+### Puff (`puff`)
+- description: Pops into three Dots when it dies.
+- hp: 45
+- speed: 50
+- radius: 22
+- damage: 14
+- xp: 4
+- weight: 4
+- fromLevel: 3
+- look: shape pentagon, color #a78bfa, face {mood calm, eyes 1, mouth o}
+- onDeath: (code)

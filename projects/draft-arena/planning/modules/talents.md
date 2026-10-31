@@ -46,6 +46,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - look: shape star, color #ffd43b
 - talents:
   - id haste, upgrade haste, max 3
+  - id lance, upgrade lance, max 2
   - id bolt, upgrade bolt, max 5, start 1, needs [["haste",1]]
   - id split, upgrade split, max 2, needs [["bolt",2]]
   - id ricochet, upgrade ricochet, max 1, needs [["bolt",4]]

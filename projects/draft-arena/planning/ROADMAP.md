@@ -6,19 +6,22 @@ Epics are the main work: one or two active at a time, each broken into playable 
 Goal: more playstyles. Today: Gunner (your Bolt) and Body (plain stats).
 Done when: there are several trees, each a playstyle with its own weapon, its own shape, mods that help any weapon first, and a capstone behind a real commitment.
 Breakdown:
-- T0001 S — Lance: piercing bolts, a base fork in Gunner — todo
-- T0003 L — Lobber tree: a bubble that arcs in, a splash that marks the ground — todo
-- T0004 M — Chill: a hit that slows the target, a mod for any weapon — design
-- T0006 S — Chomp: a Body capstone, heal on kill — design
-Next: a weapon for Body (L) — the tree that eats.
+- T0001 S — Lance: piercing bolts, a base fork in Gunner — done
+- T0003 L — Lobber tree: a bubble that arcs in, a splash that marks the ground — in progress
+- T0004 M — Chill: a hit that slows the target, a mod for any weapon — designing
+- T0006 S — Chomp: a Body capstone, heal on kill — designing
+- T0007 L — Maw: a bite that eats everything in front, the weapon for Body — design
+- T0009 S — Hide: take less damage, a second fork under Vigor — design
+Next: done once T0003-T0009 build: three trees, each with its own weapon and a capstone.
 
 ## E2 Monster behaviors (active)
-Goal: crowds that make you move differently. Today: Dot only (it chases you).
+Goal: crowds that make you move differently. Today: Dot (it chases you) and Puff (it pops into Dots).
 Done when: there are several monsters with behaviors of their own, each readable at a glance.
 Breakdown:
-- T0002 S — Puff: a purple pentagon that pops into three Dots on death — designing
+- T0002 S — Puff: a purple pentagon that pops into three Dots on death — done
 - T0005 M — Zippy: a pink triangle that winds up and dashes — design
-Next: a monster that plays off the crowd (Snail: sticky patches — IDEAS).
+- T0008 M — Snail: an orange hexagon that leaves sticky patches — design
+Next: done once T0005 and T0008 build: every monster has its own way to move.
 
 ## E3 Field events
 Goal: reasons to go somewhere on the field. Today: Gem rain. More events, built as directors (planning/modules/events.md).
