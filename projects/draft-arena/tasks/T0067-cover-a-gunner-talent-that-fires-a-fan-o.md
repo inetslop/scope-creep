@@ -3,13 +3,11 @@ id: T0067
 title: "Cover: a Gunner talent that fires a fan of bolts behind you, open after a prestige"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: [T0061]
 attempts: 0
 created: 2026-10-31T12:44:22Z
-claimed_at: 2026-10-31T13:22:12Z
 epic: E17
-designer: desktop
 ---
 
 ## Goal
@@ -48,3 +46,66 @@ A second-life build for the Gunner: Cover fires a fan of bolts behind you while 
 - [ ] Ranks 2 and 3 deal 12 and 15 damage per bolt; Haste, Quick, Split, Lance, Ricochet, Chill and Reap all work on the bolts exactly as they do on a Bolt.
 - [ ] A Cover bolt into a player deals half damage, and knocking an enemy out with one pays the usual on-kill mods (Chomp heals, Fang coins, Adrenaline sprints while hurt).
 - [ ] A player without a prestige this life sees the talent but cannot buy it, the same way Slush is gated today.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/upgrades/cover.ts` — the Cover weapon: a `UpgradeDef` whose `fire()` throws a 70° fan of 3 bolts behind the player, reusing the existing `bolt` projectile (no new projectile file — its star look is exactly what the task wants)
+- edit `src/content/upgrades/index.ts` — one import + one registry line
+- edit `src/content/talents/gunner.ts` — one talent line
+
+### Interfaces
+No new types. New item:
+```ts
+export const cover: UpgradeDef; // src/content/upgrades/cover.ts, id 'cover', maxLevel 3, cooldown 1.0
+```
+Talent line (Gunner): `{ id: 'cover', upgrade: 'cover', max: 3, needs: [['bolt', 2]], points: 3, prestige: 1 }`
+
+### Steps
+1. Create `src/content/upgrades/cover.ts` with exactly:
+```ts
+import { v, type UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/**
+ * Cover: the hunted player's answer. Every 1.0 s a 70-deg fan of 3 bolts straight behind the
+ * player, opposite its movement (its last movement when it stands still). They are Bolt's bolts:
+ * Haste, Quick, Split, Lance, Ricochet and the on-hit/on-kill mods all reach them through the
+ * player's stats, so they are never coded here.
+ */
+export const cover: UpgradeDef = {
+  id: 'cover',
+  name: 'Cover',
+  description: 'Every 1.0 s, a fan of 3 bolts behind you, at whatever chases. 9 damage each. Per rank: +3 damage.',
+  maxLevel: 3,
+  look: { shape: 'star', color: PALETTE.yellow },
+  cooldown: 1.0,
+  fire(ctx, me, level) {
+    const moving = v.len({ x: me.vx, y: me.vy }) > 20;
+    const dir = moving ? Math.atan2(me.vy, me.vx) : me.mem['coverDir'] ?? me.angle;
+    if (moving) me.mem['coverDir'] = dir;
+    const back = dir + Math.PI;
+    const half = (70 * Math.PI) / 180 / 2; // outer bolts at +/-35 deg: the fan is 70 deg wide in total
+    const damage = 9 + 3 * (level - 1);
+    for (let i = -1; i <= 1; i++) {
+      ctx.fire(me, 'bolt', { angle: back + i * half, speed: 160, damage, life: 0.6 });
+    }
+  },
+};
+```
+2. In `src/content/upgrades/index.ts`: add `import { cover } from './cover.ts';` between the `cling` and `fang` imports (alphabetical), and `cover,` as the next line after `bolt,` in `UPGRADES`.
+3. In `src/content/talents/gunner.ts`: append after the `ricochet` line: `{ id: 'cover', upgrade: 'cover', max: 3, needs: [['bolt', 2]], points: 3, prestige: 1 },`
+4. Run `npm run check` and `npm run smoke`. Nothing else: no HUD, menu, director, projectile, or effect files — the panel already renders `def.prestige` gating (the engine puts `"Prestige 1"` in `HudTalent.missing`, exactly as it does for Slush in the Lobber tree today).
+
+### Pitfalls
+- Do not create a new projectile. `ctx.fire(me, 'bolt', …)` with `speed: 160` and `life: 0.6` overrides the def's defaults; the straight flight (no `path`/`step`) is cheap, same class as Bolt.
+- Fan math: the 70° is the total width, so offsets are ±35° (`i * half`, `i` in −1..1). Using 70° per step would make a 140° spray.
+- Track the last movement in `me.mem['coverDir']` (per-player, server only — no module variables). It is the first content to use a player's `mem`; the key is collision-free today. Fallback `me.angle` covers a fresh spawn that never moved.
+- Judge movement from `me.vx`/`me.vy` (a slowed player still counts as moving), never from `me.input`.
+- Do not divide `life` by `me.stats.projectileSpeed` (Slush does, to land its puddle at the aim point); Cover's lane should simply grow with Quick, like Bolt's does.
+- No randomness, so no `ctx.rng`; `Math.random` is lint-forbidden anyway.
+- Do not edit `src/hud/talentTree.ts` or its css — T0061 owns that file. Full panel state is one extra row in the Gunner tab: "Cover" + 3 pips + the description +, while locked, "Needs Bolt 2 and 3 pts in Gunner and Prestige 1" — the existing row layout already wraps this (Slush's row shows the same shape today); no style change at 412x915 or 1280x720.
+- All mod behavior is automatic: stats upgrades (haste/quick/lance/split), onHit (ricochet/chill/reap) and onKill (chomp/adrenaline/fang) run on every projectile the player fires; Fuse does not, since it keys on the splash mark. Do not re-implement any of it.
+
+### Tests
+- none (content is tested automatically by engine/tests/, which will take a rank of Cover in a real match and check the tree, the registry and the data)
