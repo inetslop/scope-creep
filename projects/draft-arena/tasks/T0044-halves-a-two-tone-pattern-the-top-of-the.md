@@ -3,13 +3,11 @@ id: T0044
 title: "Halves: a two-tone pattern, the top of the body lighter"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T08:05:11Z
-claimed_at: 2026-10-31T08:32:17Z
 epic: E6
-designer: yoga
 ---
 
 ## Goal
@@ -37,3 +35,44 @@ A third price step in the shop's patterns: a two-tone critter that reads at a gl
 | Spots | shapes in the player's own color | five separate dots; Halves is one continuous half, not dots |
 | Belly | a light patch on the body | a small round patch on the lower body; Halves is the whole top half, a straight cut, the opposite placement |
 | Party | light shapes near the top | a zigzag line across the top; Halves is a solid filled half, not a line |
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/patterns/halves.ts` - the new pattern `halves`, drawn like `src/content/patterns/belly.ts` (the closest example: a light shape on the body)
+- edit `src/content/patterns/index.ts` - one import line + one registry line for `halves`
+
+### Interfaces
+None new; `PatternDef` is unchanged. The shop (`src/menu/shop.ts`), bot wearing and profile persistence all read the `PATTERNS` registry through the content bundle (`patterns: PATTERNS` in `src/content/index.ts:27`) — no shop/menu/engine edits needed.
+
+### Steps
+1. Create `src/content/patterns/halves.ts` exactly:
+```ts
+import { shade, type PatternDef } from '../../../engine/api.ts';
+
+export const halves: PatternDef = {
+  id: 'halves',
+  name: 'Halves',
+  description: 'The top half of the body, lighter, like a two-tone critter.',
+  price: 50,
+  draw(g, w) {
+    const r = w.radius;
+    g.fillStyle = shade(w.color, 0.35);
+    g.beginPath();
+    g.arc(0, 0, r, Math.PI, 0);
+    g.closePath();
+    g.fill();
+  },
+};
+```
+2. Edit `src/content/patterns/index.ts`: add `import { halves } from './halves.ts';` after the `party` import, and add `halves,` as the last line of the `PATTERNS` array (after `party,`). Do not reorder the existing lines.
+
+### Pitfalls
+- Arc direction: canvas y is down; `g.arc(0, 0, r, Math.PI, 0)` sweeps through the top (π → 3π/2 → 2π) and `closePath()` closes with the straight cut along y = 0. Writing the angles in the other order paints the bottom half.
+- No `drawCritter()`, no outline, no face — the pattern paints only over the body; the engine draws the ink outline and the face on top (as with `belly`/`party`).
+- Color is `shade(w.color, 0.35)` (the same light shade the other light patterns use), never a PALETTE entry and never the raw color — it must read on all 10 player colors.
+- No `prestige` field (50 coins, ungated). One file, one item, named after the id; nothing else in it.
+- Do not touch `belly.ts`, `party.ts`, the shop or `base.css`.
+
+### Tests
+none (engine/tests/ checks the pattern is registered, draws, and the 12-pattern cap automatically; this makes it 5 of 12).
