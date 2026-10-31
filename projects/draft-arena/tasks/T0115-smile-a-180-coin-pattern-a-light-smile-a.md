@@ -3,13 +3,11 @@ id: T0115
 title: "Smile: a 180-coin pattern, a light smile across the lower body"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T19:06:11Z
-claimed_at: 2026-10-31T19:16:01Z
 epic: E26
-designer: yoga
 ---
 
 ## Goal
@@ -43,3 +41,43 @@ The pattern shelf's 11th, the step past the 150-coin Ring: a light smile across 
 - [ ] Worn, it shows the light turned-up arc across the lower body in the player's own lightened color, clearly below the mouth, readable on all 10 player colors with the face easy to see.
 - [ ] The preview critter wears it in the panel, and bots that own it show it in the match.
 - [ ] Nothing in play changes: no stat, no size, no hitbox difference for a critter wearing it.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/patterns/smile.ts` — pattern **Smile** (`id: 'smile'`), 180 coins, no prestige
+- edit `src/content/patterns/index.ts` — one import line and one registry line, both right after the ring lines
+
+### Interfaces
+```ts
+export const smile: PatternDef = {
+  id: 'smile',
+  name: 'Smile',
+  description: 'A light smile across the lower body.',
+  price: 180,
+  draw(g, w) {
+    const r = w.radius;
+    g.strokeStyle = shade(w.color, 0.35);
+    g.lineWidth = 0.15 * r;
+    g.lineCap = 'round';
+    g.beginPath();
+    g.moveTo(-0.6 * r, 0.35 * r);
+    g.quadraticCurveTo(0, 0.75 * r, 0.6 * r, 0.35 * r);
+    g.stroke();
+  },
+};
+```
+
+### Steps
+1. Create `src/content/patterns/smile.ts` with exactly the object above (import `{ shade, type PatternDef }` from `'../../../engine/api.ts'`, like `ring.ts`).
+2. In `src/content/patterns/index.ts`: add `import { smile } from './smile.ts';` directly after the `ring` import (line 11), and add `smile,` directly after `ring,` in `PATTERNS` (line 24). No other lines change.
+
+### Pitfalls
+- The arc is one quadratic Bézier, not a sampled loop: midpoint lands at y = 0.55r (`(0.35 + 2·0.75 + 0.35)/4 = 0.55`), ends at ±0.6r raised 0.2r — that is the turned-up smile, about 1.2r wide, clearly below the mouth.
+- `lineWidth = 0.15 * r` (radius units, like ring's `0.18 * r`); NOT a fraction of `w.ink` — the arc must stay bold.
+- `strokeStyle = shade(w.color, 0.35)` — the player's own lightened color, matching every light pattern; it stays readable on all 10 colors because it is derived from `w.color`.
+- Do not add clipping or a background: the engine clips pattern draws to the body and draws the face on top (see `PatternDef` comment; `ring.ts` clips nothing).
+- Do not touch any other pattern, the Cosmetics panel, or `base.css` — the shelf panel lists `PATTERNS` automatically.
+
+### Tests
+- none (engine/tests/ covers the shelf's name, price, description and the draw automatically, like `ring.ts` has no test file)
