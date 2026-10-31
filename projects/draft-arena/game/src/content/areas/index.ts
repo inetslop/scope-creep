@@ -8,6 +8,7 @@ import { slushPuddle } from './slush-puddle.ts';
 import { splat } from './splat.ts';
 import { puddle } from './puddle.ts';
 import { sticky } from './sticky.ts';
+import { chewPuddle } from './chew-puddle.ts';
 
 /** Every area (fields, auras, puddles). One per line. */
 export const AREAS: readonly AreaDef[] = [
@@ -20,4 +21,5 @@ export const AREAS: readonly AreaDef[] = [
   splat,
   sticky,
   puddle,
+  chewPuddle,
 ];

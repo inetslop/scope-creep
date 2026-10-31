@@ -4,11 +4,12 @@ title: "Chew: your Gush puddle deals damage to whatever stands in it"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T08:05:11Z
 claimed_at: 2026-10-31T10:06:11Z
+finished_at: 2026-10-31T10:59:18Z
 epic: E12
 ---
 
@@ -158,3 +159,19 @@ Talent line in `goober.ts`, between the `gush` and `scatter` lines:
 - none (no pure helpers added; content items are tested automatically by engine/tests/).
 
 Panel fullest state (auto-rendered, no layout change): Goober tab rows Reap (indent 0) / Goo (24 px, "Needs Reap 1") / Gush (48 px, "Needs Goo 1") / Chew (72 px, "Needs Gush 3") / Scatter (24 px, "Needs Goo 3"). Fullest Chew row: icon + "Chew" + 3 pips + "Whatever stands in your Gush puddle takes 6 damage every 0.5 s. Per rank: +6 damage." wrapping to ~3 lines + "Needs Gush 3"; on 412x915 the card sits in the lower half (top ≤ 50 % − 90 px, ends below the critter) and scrolls internally (`overflow-y: auto`), so the extra row scrolls out of reach of the screen middle; desktop 1280x720: right column 360 px wide, same scroll.
+
+## Result (attempt 1, desktop-4070)
+
+Added the Chew upgrade and its chewing Gush puddle area to the Goober tree, registered both in their registries, and hung the new talent off Gush 3 exactly as designed — no engine changes were needed, and gush.ts, puddle.ts, goo-slow.ts and all HUD files are untouched. A Goo kill now lays a biting puddle (on top of the plain slow one) whose bubbles squish once per 0.5 s tick, dealing 6/12/18 damage per tick by rank: full to monsters, half to players, with life refreshed while occupied and none laid on Bolt/Maw/Lob kills. `npm run check` and `npm run smoke` both pass; `git diff` could not be run because the command requires an approval this session doesn't have.
+
+- Self-review: APPROVE
+- Time: 53.1 min
+
+```
+.../game/src/content/areas/chew-puddle.ts          | 62 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/areas/index.ts    |  2 +
+ .../draft-arena/game/src/content/talents/goober.ts |  1 +
+ .../draft-arena/game/src/content/upgrades/chew.ts  | 15 ++++++
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 +
+ 5 files changed, 82 insertions(+)
+```

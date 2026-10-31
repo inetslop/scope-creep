@@ -1,6 +1,7 @@
 import type { UpgradeDef } from '../../../engine/api.ts';
 import { bolt } from './bolt.ts';
 import { chill } from './chill.ts';
+import { chew } from './chew.ts';
 import { chomp } from './chomp.ts';
 import { cling } from './cling.ts';
 import { fuse } from './fuse.ts';
@@ -36,6 +37,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   fuse,
   scatter,
   gush,
+  chew,
   slush,
   cling,
   split,
