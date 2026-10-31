@@ -3,13 +3,11 @@ id: T0130
 title: "The grudge: two players who knock each other out wear a knot, and the end of the feud pays"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T21:28:31Z
-claimed_at: 2026-10-31T21:46:35Z
 epic: E30
-designer: desktop
 ---
 
 ## Goal
@@ -54,3 +52,131 @@ A personal feud inside the big field: two players who knock each other out wear 
 - [ ] A player who forms a new grudge wears only the newest knot; the older one comes off and pays nothing.
 - [ ] Bots take part: a knot can sit on a bot's critter, and a human who ends a feud with a bot gets the +15 xp and no coins land in the bot's profile.
 - [ ] The knot never covers the eyes, the crown, the prestige stars or the player's name, and it reads at a glance on a critter in a crowd.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/statuses/grudge-knot.ts` - the knot, a `StatusDef` with its own `draw()`. **Not an area**: the task says `src/content/areas/grudge-knot.ts`, but a mark on a creature must be a status (an area trails behind — CLAUDE.md, and the model `prestige-stars.ts` is a director that keeps *statuses* `prestige-1..3`; that parenthetical is what we build).
+- create `src/content/directors/grudge.ts` - the feud: per-pair memory, the payoff, and the `tick` that keeps the knot on.
+- edit `src/content/statuses/index.ts` - one import + one line in `STATUSES`.
+- edit `src/content/directors/index.ts` - one import + one line in `DIRECTORS`, right after `price`.
+
+### Interfaces
+No new types. Two exports, both using existing engine types:
+```ts
+// src/content/statuses/grudge-knot.ts
+import type { StatusDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** The grudge knot (directors/grudge.ts keeps it on both players of a feud): a small red ribbon knot at the
+ * top-left of the critter, mirroring the prestige stars' top-right. One shared outline: two triangular bow
+ * tips around a square tie. Clear of the eyes, the crown and the name. */
+export const grudgeKnot: StatusDef = {
+  id: 'grudge-knot',
+  name: 'Grudge',
+  color: PALETTE.red,
+  above: 8,
+  draw(g, v) {
+    const s = 0.175 * v.radius; // half the knot's width (0.35r across)
+    const q = 0.1 * v.radius; // half the square tie
+    g.save();
+    g.translate(-(v.radius + 6), -(v.radius + 5)); // mirror of the first prestige star
+    g.beginPath();
+    g.moveTo(-s, 0);
+    g.lineTo(-q, -q);
+    g.lineTo(q, -q);
+    g.lineTo(s, 0);
+    g.lineTo(q, q);
+    g.lineTo(-q, q);
+    g.closePath();
+    g.fillStyle = PALETTE.red;
+    g.fill();
+    g.lineJoin = 'round';
+    g.lineWidth = 2;
+    g.strokeStyle = v.ink;
+    g.stroke();
+    g.restore();
+  },
+};
+```
+```ts
+// src/content/directors/grudge.ts
+import type { DirectorDef } from '../../../engine/api.ts';
+
+const XP = 15; // xp on top of the normal knockout bounty
+const COINS = 5; // coins on top of the kill's coins (kill-coins); a bot killer gets none
+const RING = 26; // the burst where the feud ended (the mark's size, as in price.ts)
+
+/**
+ * The grudge: two players who knock each other out again bear a red knot (statuses/grudge-knot.ts, kept on by
+ * my tick) until the next knockout between the two, which pays its killer on top of the normal bounty. The
+ * memory lasts the whole match: a monster knockout clears nothing and a feuding player comes back still
+ * wearing the knot. A player bears at most one grudge: a new one drops the old (no pay, the old knot comes
+ * off). mem: 'myg:<id>' is a player's grudge partner; 'last:<a>:<b>' (a < b) is who knocked out the other
+ * last in that pair.
+ */
+export const grudge: DirectorDef = {
+  id: 'grudge',
+  name: 'The grudge',
+  description: 'Two players who knock each other out again bear a red knot; whoever ends the feud pays.',
+  tick(ctx, mem) {
+    for (const p of ctx.players()) {
+      if (mem[`myg:${p.id}`]) ctx.addStatus(p, 'grudge-knot', 0.2);
+    }
+  },
+  onKill(ctx, mem, killer, victim) {
+    if (victim.type !== 'player' || !killer || killer.id === victim.id) return; // only a player on a player
+    const key = `last:${Math.min(killer.id, victim.id)}:${Math.max(killer.id, victim.id)}`;
+    if (mem[`myg:${killer.id}`] === victim.id) {
+      // The pair bears a grudge: this knockout ends the feud and pays.
+      ctx.giveXp(killer, XP);
+      ctx.effect('burst', { x: victim.x, y: victim.y }, undefined, RING);
+      if (!killer.bot) {
+        ctx.giveCoins(killer, COINS);
+        ctx.effect('coin', { x: victim.x, y: victim.y }, undefined, COINS);
+      }
+      dropGrudge(mem, killer.id);
+      dropGrudge(mem, victim.id);
+    } else if ((mem[key] ?? 0) === victim.id) {
+      // The victim knocked the killer out last this match: the feud forms.
+      setGrudge(mem, killer.id, victim.id);
+      setGrudge(mem, victim.id, killer.id);
+    }
+    mem[key] = killer.id; // the killer knocked the victim out last now
+  },
+};
+
+/** End or drop one side of a feud; the knot comes off within a tick (no remove call: stop refreshing). */
+function dropGrudge(mem: Record<string, number>, id: number) {
+  const other = mem[`myg:${id}`];
+  if (!other) return;
+  delete mem[`myg:${id}`];
+  if (mem[`myg:${other}`] === id) delete mem[`myg:${other}`];
+}
+
+/** A player bears at most one grudge: a new one drops any other they are in. */
+function setGrudge(mem: Record<string, number>, id: number, partner: number) {
+  const old = mem[`myg:${id}`];
+  if (old && old !== partner && mem[`myg:${old}`] === id) delete mem[`myg:${old}`];
+  mem[`myg:${id}`] = partner;
+}
+```
+
+### Steps
+1. Create `src/content/statuses/grudge-knot.ts` exactly as above.
+2. Create `src/content/directors/grudge.ts` exactly as above.
+3. In `src/content/statuses/index.ts`: add `import { grudgeKnot } from './grudge-knot.ts';` right after the `marked` import (line 12), and add `grudgeKnot,` right after `marked,` in `STATUSES` (line 25).
+4. In `src/content/directors/index.ts`: add `import { grudge } from './grudge.ts';` right after the `price` import (line 9), and add `grudge,` right after `price,` in `DIRECTORS` (line 30).
+5. Run `npm run check`.
+
+### Pitfalls
+- Do NOT create `src/content/areas/grudge-knot.ts` and do NOT register a status in the areas registry — the engine tests fail on a file that doesn't hold an item of its name in its own registry, and a following area trails behind the critter.
+- `mem` is `Record<string, number>` only: no objects, no ids packed into one number — use the string keys exactly as shown.
+- Never `addStatus` the victim directly at feud formation: the victim is dead, and `ctx.players()` lists only living players; the `tick` puts the knot on it automatically when it respawns (and re-puts it after any monster knockout). The knot coming off is just stopping the 0.2 s refresh — there is no removal call.
+- The grudge check reads only the killer's side (`myg:killer === victim.id`); that is valid because `setGrudge`/`dropGrudge` always keep both sides in lockstep. Keep it that way.
+- No `Math.random`/`Date`/`performance` anywhere (lint); this design needs none.
+- The two registry files are also edited by T0125 (streak): add only your two lines in each; the runner serializes same-file edits, but keep your lines next to `marked`/`price` as specified.
+- The knot must stay a single closed path (one outline): do not stroke the square tie separately.
+
+### Tests
+- none (content is tested automatically by engine/tests/; no exported pure helpers).
