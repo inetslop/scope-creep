@@ -3,13 +3,11 @@ id: T0111
 title: "Drift: a Gunner fork, your bolts drop to 40% speed after 120 units and linger"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T18:10:25Z
-claimed_at: 2026-10-31T18:12:24Z
 epic: E24
-designer: desktop
 ---
 
 ## Goal
@@ -53,3 +51,135 @@ What a Gunner gets, and what it costs: a point at Bolt 2 (Bolt 1 is free), where
 - [ ] A rank-1 Gunner's bolt flies at full speed, slows to 40% after 120 units (3 ice streaks trailing), and pops into a small ice ring (radius 30) at 0.8 s after launch; rank 2 lingers until 1.2 s. Without the talent, the bolt is unchanged.
 - [ ] Every bolt source drifts the same way (Bolt's volleys, Split's fan, after a Ricochet bounce, Cover's back fan), and the Goo, the bubble, the jabs, the darts, the bite and the ring are unchanged.
 - [ ] A drifting bolt hits players at half damage like a normal bolt, and the game is working and playable otherwise.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/upgrades/drift.ts` - Drift upgrade def + `driftRank()` helper (the single place content reads a player's held rank)
+- create `src/content/projectiles/drift-bolt.ts` - the two-phase bolt: `path()` (fast 120 u, then 40%), look (yellow star + 3 ice streaks), `onEnd()` pops the ice ring
+- create `tests/drift.test.ts` - unit tests for the pure flight math and `driftRank`
+- edit `src/content/upgrades/bolt.ts` - fire `drift-bolt` with `life` when the player holds Drift
+- edit `src/content/upgrades/cover.ts` - same; update its docstring's mod list
+- edit `src/content/upgrades/ricochet.ts` - let drift-bolts bounce too, refiring with their linger life
+- edit `src/content/talents/gunner.ts` - one talent line after `split`
+- edit `src/content/upgrades/index.ts` - import + one line after `split`
+- edit `src/content/projectiles/index.ts` - import + one line after `bolt`
+
+### Interfaces
+```ts
+// drift.ts (exported; bolt.ts / cover.ts / ricochet.ts import it)
+export function driftRank(me: Player): number; // 0 when unheld
+```
+No engine types change. Haste (`cooldown`), Quick (`projectileSpeed`), Split (`shots`), Lance (`pierce`) apply to drift-bolts automatically through the engine's stats — no code for them.
+
+### Steps
+1. Create `drift.ts`:
+```ts
+import type { Player, UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+export const drift: UpgradeDef = {
+  id: 'drift',
+  name: 'Drift',
+  description: 'After 120 units, your bolts fly at 40% speed and keep going until 0.8 s after launch. Rank 2: until 1.2 s.',
+  maxLevel: 2,
+  look: { shape: 'triangle', color: PALETTE.ice },
+  stats: {}, // the content test rejects an upgrade with no stats/fire/onHit/onKill; the work is in drift-bolt
+};
+
+/** Their upgrades live engine-side; this is the one place content reads them. Defensive: 0, never throws. */
+export function driftRank(me: Player): number {
+  const held = (me as Player & { upgrades?: ReadonlyMap<UpgradeDef, { level: number }> }).upgrades?.get(drift);
+  return held ? held.level : 0;
+}
+```
+2. Create `drift-bolt.ts`:
+```ts
+import { along, drawCritter, type ProjectileDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+const DRIFT_AT = 120;
+const SLOW = 0.4;
+
+export const driftBolt: ProjectileDef = {
+  id: 'drift-bolt',
+  radius: 6,
+  life: 0.8, // every firing site overrides: 0.8 (Drift 1) or 1.2 (Drift 2) after launch
+  look: {
+    shape: 'star',
+    color: PALETTE.yellow,
+    draw(g, e) {
+      drawCritter(g, this, e, { ink: PALETTE.ink });
+      g.save();
+      g.rotate(e.angle);
+      g.strokeStyle = PALETTE.ice;
+      g.lineWidth = 3;
+      g.lineCap = 'round';
+      for (let i = 0; i < 3; i++) {
+        const y = (i - 1) * 4;
+        g.beginPath();
+        g.moveTo(-8 - i * 2, y);
+        g.lineTo(-15 - i * 2, y * 1.5);
+        g.stroke();
+      }
+      g.restore();
+    },
+  },
+  path(s, t) {
+    if (t * s.speed <= DRIFT_AT) return along(s, t);
+    const d = DRIFT_AT + SLOW * s.speed * (t - DRIFT_AT / s.speed);
+    return { x: s.x + Math.cos(s.angle) * d, y: s.y + Math.sin(s.angle) * d };
+  },
+  onEnd(ctx, p) {
+    ctx.effect('splash-ring', { x: p.x, y: p.y }, undefined, 30); // small ice ring, ink rim, to radius 30
+  },
+};
+```
+3. Registries: in `upgrades/index.ts` add `import { drift } from './drift.ts';` after the `cover` import and `  drift,` right after `  split,` (line 72). In `projectiles/index.ts` add `import { driftBolt } from './drift-bolt.ts';` after the `bolt` import and `  driftBolt,` right after `  bolt,`.
+4. `talents/gunner.ts`: insert after the `split` line: `    { id: 'drift', upgrade: 'drift', max: 2, needs: [['bolt', 2]] },`
+5. `bolt.ts`: add `import { driftRank } from './drift.ts';` and replace the loop in `fire` with:
+```ts
+    const rank = driftRank(me);
+    const life = rank >= 2 ? 1.2 : rank === 1 ? 0.8 : undefined;
+    for (let i = 0; i < count; i++) {
+      ctx.fire(me, rank ? 'drift-bolt' : 'bolt', { angle: aim + (i - (count - 1) / 2) * 0.18, speed: 560, damage: 8 + 4 * (level - 1), life });
+    }
+```
+6. `cover.ts`: same import; in `fire` replace `const damage = ...` through the loop with:
+```ts
+    const damage = 9 + 3 * (level - 1);
+    const rank = driftRank(me);
+    const life = rank >= 2 ? 1.2 : rank === 1 ? 0.8 : 0.6;
+    for (let i = -1; i <= 1; i++) {
+      ctx.fire(me, rank ? 'drift-bolt' : 'bolt', { angle: back + i * half, speed: 160, damage, life });
+    }
+```
+and change its docstring's second sentence to: `They are Bolt's bolts: Haste, Quick, Split and Lance reach them through the player's stats; Drift and Ricochet code their own flight, so they are coded here.`
+7. `ricochet.ts`: add the import; change the guard to `if (!shot || (shot.def.id !== 'bolt' && shot.def.id !== 'drift-bolt') || shot.launch.p1 === 1) return;` and the refire to:
+```ts
+    const drifting = shot.def.id === 'drift-bolt';
+    ctx.fire(me, shot.def.id, {
+      x: hit.x, y: hit.y,
+      angle: Math.atan2(next.y - hit.y, next.x - hit.x),
+      speed: 620,
+      damage: 9,
+      p1: 1,
+      life: drifting ? (driftRank(me) >= 2 ? 1.2 : 0.8) : undefined,
+    });
+```
+8. Create `tests/drift.test.ts`: with `const launch: Launch = { x: 0, y: 0, angle: 0, speed: 560, seed: 1, p1: 0, p2: 0 }` and `at = (t) => driftBolt.path!(launch, t, { x: 0, y: 0 })`, assert (a) for t up to `120/560`, `at(t).x` equals `560*t`; (b) for t in `{120/560 + 0.05, 0.8, 1.2}`, `Math.hypot(p.x, p.y)` equals `120 + 0.4*560*(t - 120/560)` and `p.y === 0`; (c) `driftRank({ upgrades: new Map([[drift, { level: 2, timer: 0 }]]) } as unknown as Player)` is 2 and `driftRank({} as Player)` is 0.
+
+### Pitfalls
+- `stats: {}` in `drift.ts` is required: the content test fails an upgrade with none of fire/stats/onHit/onKill. An empty object is a no-op in the engine.
+- `path()` is pure: only `s` and `t`. The engine's test calls it with speed 400, p1=250, p2=60 — the math must stay finite and rank-free (rank lives in `life`, set by each fire site).
+- Keep the rank cast inside `driftRank` only (one file, defensive `?.` → 0). No `any` (lint), and `fire`/`onHit` are server-only, so it never runs on a client.
+- Never set `p1` for drift: ricochet uses `p1 === 1` as its "already bounced" marker. Drift uses no launch channel at all.
+- Pass `life` at every drift fire site (bolt, cover, ricochet bounce) — a missed site leaves the def default 0.8 and rank 2 lingers too short.
+- Cover bolts fly 160 u/s, so they reach 120 units at 0.75 s: at rank 1 the drift phase is ~0.05 s. That is the spec ("trim or extend the flight to that total") — do not give cover a longer life.
+- `onEnd` fires only when life runs out, not when pierce runs out: a Lance bolt that went through does not pop — correct per spec.
+- Streaks draw runs on every client every frame: no `Math.random`/`Date` (lint), no state, `e.angle` only.
+- Don't touch `goo`, `bubble`, `jab`, `horn`, `glob`, `goolet`, `slush-blob` or their weapons — their motion is their own.
+- Run `npm run check` last; a throwing hook disables the item for the match and fails the tests.
+
+### Tests
+- `tests/drift.test.ts` as above (pure flight + `driftRank`). Everything else (registry, data, path purity, looks, talent reachability, every upgrade in a match) is covered automatically by `engine/tests/`.
