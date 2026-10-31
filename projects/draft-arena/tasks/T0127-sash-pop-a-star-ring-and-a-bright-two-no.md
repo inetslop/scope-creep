@@ -3,11 +3,13 @@ id: T0127
 title: "Sash pop: a star ring and a bright two-note chime when the streak sash appears"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0126]
 attempts: 0
 created: 2026-10-31T21:05:07Z
+claimed_at: 2026-10-31T21:28:35Z
 epic: E29
+designer: desktop
 ---
 
 ## Goal
