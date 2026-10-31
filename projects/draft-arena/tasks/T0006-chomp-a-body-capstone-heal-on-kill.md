@@ -4,11 +4,12 @@ title: "Chomp: a Body capstone, heal on kill"
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T02:20:47Z
 claimed_at: 2026-10-31T02:35:36Z
+finished_at: 2026-10-31T02:47:37Z
 epic: E1
 ---
 
@@ -81,3 +82,17 @@ export const chomp: UpgradeDef = {
 - Fullest state: Body tab then has 5 rows; the Chomp row shows "Chomp" + 1 pip, its 47-char description (wraps to ~2 lines at 12px in the 360px card / phone bottom sheet, same as Ricochet's 50-char row) and, while locked, "Needs Vigor 3 and Swift 3" (auto-rendered by `missingFor`, joined "and" not commas — nothing to do). No HUD file changes.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The Body tree gets its capstone, Chomp: killing a monster heals the killer 5 hp (up to max) and knocking out a player heals 25, on top of the knockout's xp and score, so a tank that stands in the crowd eats its way back. It's a max-1 talent needing Vigor 3 and Swift 3 (7 Body points in one fixed shape), shown in the talents panel as a green pentagon with the description "On kill: heal 5 hp. On a player knockout: heal 25.". Files: new src/content/upgrades/chomp.ts, one import + one list line in src/content/upgrades/index.ts, one talent line in src/content/talents/body.ts.
+
+- Self-review: APPROVE
+- Time: 12.0 min
+
+```
+projects/draft-arena/game/src/content/talents/body.ts   |  1 +
+ projects/draft-arena/game/src/content/upgrades/chomp.ts | 14 ++++++++++++++
+ projects/draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ 3 files changed, 17 insertions(+)
+```
