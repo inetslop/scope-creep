@@ -1,12 +1,14 @@
 ---
 id: T0046
 title: "Bloom: a 150-coin head accessory, a pink flower with a yellow center"
+assignee: cachyos-x8664
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T08:32:32Z
+claimed_at: 2026-10-31T09:54:43Z
 epic: E6
 ---
 
