@@ -3,10 +3,12 @@ id: T0078
 title: "Party Blower: a 180-coin back accessory, a red blower rolled on a stick"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T13:15:23Z
+claimed_at: 2026-10-31T13:48:24Z
+designer: desktop
 ---
 
 ## Goal
