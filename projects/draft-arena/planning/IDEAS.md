@@ -4,7 +4,8 @@ The backlog: add freely, turn the best into epics and tasks.
 
 ## Content
 - Gem rush field event (E3): a line of 12 gems crosses the field over 6 s; whoever touches one collects the rest, so players chase the line across each other. — T0011
-- Leader pressure (E4): the top score wears a crown mark on its critter; knocking the leader out drops a gem worth the leader's level.
+- Leader pressure (E4): the top score wears a crown mark on its critter; knocking the leader out drops a gem worth the leader's level. — T0013, T0014, T0015
+- Leader bounty x2 (E4): knocking out the crowned player gives double the bounty xp (8 per their level instead of 4) — a follow-up if the crown needs more teeth.
 - Snail (E2): a slow orange blob that leaves sticky patches behind (small fields that slow what walks over them for 2 s); a crowd turns the floor into a maze.
 - Prestige medal (E5): a small medal accessory, buyable only after 2 prestiges in all — the wearable that marks the long goal.
 - Swarm surge (E3): every 90 s, a ring of 12 Dots marches in from the field's edge toward its centre over 8 s — stand still in the middle and it closes on you, stay on the edge and it walks past. A reason to keep moving on a quiet field. — T0010 (built as a single-file line crossing to the centre instead, so it stays dodgable)

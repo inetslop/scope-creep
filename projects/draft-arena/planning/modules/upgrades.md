@@ -37,10 +37,11 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-10 in the game, from game/src/content/upgrades/ (the real values).
+12 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
+- `armor`: Hide
 - `cooldown`: Haste
 - `damage + shots`: Split
 - `damage`: Might
@@ -54,6 +55,13 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - maxLevel: 6
 - look: shape circle, color #ffd43b
 - cooldown: 0.75
+- fire: (code)
+
+### Maw (`maw`)
+- description: "Every 0.9 s, if an enemy is close, bites everything in front. Each rank: +6 bite damage."
+- maxLevel: 5
+- look: shape hexagon, color #99e9f2
+- cooldown: 0.9
 - fire: (code)
 
 ### Ricochet (`ricochet`)
@@ -97,6 +105,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - maxLevel: 5
 - look: shape circle, color #51cf66
 - stats: maxHp 25, regen 0.8
+
+### Hide (`hide`)
+- description: Take 10% less damage, per rank.
+- maxLevel: 3
+- look: shape hexagon, color #51cf66
+- stats: armor 10
 
 ### Haste (`haste`)
 - description: Every weapon fires 8% sooner, per rank.

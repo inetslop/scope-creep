@@ -32,7 +32,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-2 in the game, from game/src/content/monsters/ (the real values).
+3 in the game, from game/src/content/monsters/ (the real values).
 
 ### Dot (`dot`)
 - description: Heads straight for the nearest player.
@@ -56,3 +56,15 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - fromLevel: 3
 - look: shape pentagon, color #a78bfa, face {mood calm, eyes 1, mouth o}
 - onDeath: (code)
+
+### Zippy (`zippy`)
+- description: "Winds up, then dashes straight along its lane."
+- hp: 18
+- speed: 60
+- radius: 12
+- damage: 22
+- xp: 2
+- weight: 6
+- fromLevel: 4
+- look: shape triangle, color #f783ac, face {mood calm, eyes 2, mouth smile}, draw (code)
+- think: (code)

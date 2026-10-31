@@ -10,8 +10,8 @@ Breakdown:
 - T0003 L — Lobber tree: a bubble that arcs in, a splash that marks the ground — in progress
 - T0004 M — Chill: a hit that slows the target, a mod for any weapon — designing
 - T0006 S — Chomp: a Body capstone, heal on kill — done
-- T0007 L — Maw: a bite that eats everything in front, the weapon for Body — todo
-- T0009 S — Hide: take less damage, a second fork under Vigor — designing
+- T0007 L — Maw: a bite that eats everything in front, the weapon for Body — done
+- T0009 S — Hide: take less damage, a second fork under Vigor — done
 Next: done once T0003-T0009 build: three trees, each with its own weapon and a capstone.
 
 ## E2 Monster behaviors (active)
@@ -19,9 +19,9 @@ Goal: crowds that make you move differently. Today: Dot (it chases you) and Puff
 Done when: there are several monsters with behaviors of their own, each readable at a glance.
 Breakdown:
 - T0002 S — Puff: a purple pentagon that pops into three Dots on death — done
-- T0005 M — Zippy: a pink triangle that winds up and dashes — design
+- T0005 M — Zippy: a pink triangle that winds up and dashes — done
 - T0008 M — Snail: an orange hexagon that leaves sticky patches — design
-Next: done once T0005 and T0008 build: every monster has its own way to move.
+Next: done once T0008 builds: every monster has its own way to move.
 
 ## E3 Field events (active)
 Goal: reasons to go somewhere on the field. Today: Gem rain. More events, built as directors (planning/modules/events.md).
@@ -31,8 +31,14 @@ Breakdown:
 - T0012 S — Gem geyser: a spot that bubbles 8 gems, a position to hold — design
 Next: done once T0010-T0012 build: four events, four reasons to move (a windfall, a threat, a race, a position).
 
-## E4 Pressure on the leader
+## E4 Pressure on the leader (active)
 Goal: the top player is a target, and knocking them out pays. Built from events and the match's rules (planning/modules/events.md, match.md).
+Done when: the leader is readable on the field, and knocking the crown out is the most rewarding moment of a life.
+Ready: a director sees every player's score each tick and gets onKill after each player death (planning/modules/events.md); the pvp damage and bounty are one line in rules.ts (planning/modules/match.md).
+Breakdown:
+- T0013 M — The Crown: the top scorer wears a yellow crown, moves only on a strict overtake — design
+- T0014 S — Leader's gem: a knocked-out crown drops a gem worth its level — design
+- T0015 S — The leader pays: the crown takes 25% more damage from players — design
 
 ## E5 Your own critter
 Goal: players make their critter theirs: they pick its color and put on a hat, and everyone in the match sees it.
