@@ -3,11 +3,13 @@ id: T0098
 title: "Star: a 100-coin pattern, one light star on the middle of the body"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T16:11:39Z
+claimed_at: 2026-10-31T16:12:13Z
 epic: E21
+designer: yoga
 ---
 
 ## Goal
