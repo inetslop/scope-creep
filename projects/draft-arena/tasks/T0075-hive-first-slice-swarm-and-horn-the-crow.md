@@ -4,11 +4,12 @@ title: "Hive, first slice: Swarm and Horn, the crowd makes every hit harder"
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T12:59:09Z
 claimed_at: 2026-10-31T13:05:03Z
+finished_at: 2026-10-31T13:24:59Z
 epic: E16
 ---
 
@@ -171,3 +172,21 @@ id: 'horn', radius: 7, life: 0.6, look: { shape: 'triangle', color: PALETTE.teal
 
 ### Tests
 none (content is auto-tested by engine/tests/: one-item-per-file, registration, data validity, a real-match run of Swarm's onHit and Horn's fire, talent reachability, 60-player budget).
+
+## Result (attempt 1, asus)
+
+Added the sixth talent tree Hive (purple hexagon tab) in `src/content/talents/hive.ts` with Swarm (3) and Horn (3, needs Swarm 1); the Swarm crowd on-hit (`src/content/upgrades/swarm.ts`) adds +2/+3/+4 per other living critter within 80 of the target (cap 3) to every weapon's hits; Horn (`src/content/upgrades/horn.ts` + `src/content/projectiles/horn.ts`) is a committed close-range dart — a fat teal triangle at 400 u/s, 9/12/15 damage, gone on hit or after 0.6 s. All registered in their three index files with one line each; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 19.9 min
+
+```
+.../draft-arena/game/src/content/projectiles/horn.ts | 10 ++++++++++
+ .../game/src/content/projectiles/index.ts            |  2 ++
+ .../draft-arena/game/src/content/talents/hive.ts     | 14 ++++++++++++++
+ .../draft-arena/game/src/content/talents/index.ts    |  2 ++
+ .../draft-arena/game/src/content/upgrades/horn.ts    | 18 ++++++++++++++++++
+ .../draft-arena/game/src/content/upgrades/index.ts   |  4 ++++
+ .../draft-arena/game/src/content/upgrades/swarm.ts   | 20 ++++++++++++++++++++
+ 7 files changed, 70 insertions(+)
+```

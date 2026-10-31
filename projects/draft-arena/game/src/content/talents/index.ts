@@ -3,6 +3,7 @@ import { body } from './body.ts';
 import { frenzy } from './frenzy.ts';
 import { gunner } from './gunner.ts';
 import { goober } from './goober.ts';
+import { hive } from './hive.ts';
 import { lobber } from './lobber.ts';
 
 /** Every talent tree, in tab order. One per line; each tree lives in its own file. */
@@ -12,4 +13,5 @@ export const TREES: readonly TalentTreeDef[] = [
   lobber,
   goober,
   frenzy,
+  hive,
 ];

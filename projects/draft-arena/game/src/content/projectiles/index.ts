@@ -4,6 +4,7 @@ import { bubble } from './bubble.ts';
 import { glob } from './glob.ts';
 import { goo } from './goo.ts';
 import { goolet } from './goolet.ts';
+import { horn } from './horn.ts';
 import { jab } from './jab.ts';
 import { slushBlob } from './slush-blob.ts';
 
@@ -11,6 +12,7 @@ import { slushBlob } from './slush-blob.ts';
 export const PROJECTILES: readonly ProjectileDef[] = [
   bolt,
   jab,
+  horn,
   bubble,
   glob,
   goo,

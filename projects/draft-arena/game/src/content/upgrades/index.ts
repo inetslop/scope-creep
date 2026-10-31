@@ -12,6 +12,7 @@ import { goo } from './goo.ts';
 import { gush } from './gush.ts';
 import { haste } from './haste.ts';
 import { hide } from './hide.ts';
+import { horn } from './horn.ts';
 import { lance } from './lance.ts';
 import { lob } from './lob.ts';
 import { magnet } from './magnet.ts';
@@ -26,6 +27,7 @@ import { ricochet } from './ricochet.ts';
 import { scatter } from './scatter.ts';
 import { slush } from './slush.ts';
 import { split } from './split.ts';
+import { swarm } from './swarm.ts';
 import { swift } from './swift.ts';
 import { vigor } from './vigor.ts';
 import { wide } from './wide.ts';
@@ -37,10 +39,12 @@ export const UPGRADES: readonly UpgradeDef[] = [
   lob,
   goo,
   nerve,
+  horn,
   ricochet,
   reckless,
   chill,
   reap,
+  swarm,
   mend,
   chomp,
   adrenaline,
