@@ -5,7 +5,6 @@ import { chill3 } from './chill-3.ts';
 import { cling } from './cling.ts';
 import { gooSlow } from './goo-slow.ts';
 import { marked } from './marked.ts';
-import { mired } from './mired.ts';
 import { slushed } from './slushed.ts';
 import { wired1 } from './wired-1.ts';
 import { wired2 } from './wired-2.ts';
@@ -17,7 +16,6 @@ export const STATUSES: readonly StatusDef[] = [
   chill3,
   wired1,
   wired2,
-  mired,
   marked,
   gooSlow,
   slushed,

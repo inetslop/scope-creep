@@ -4,11 +4,12 @@ title: Remove the Snail, the Popper and the Boing
 assignee: desktop-4070
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T12:51:01Z
 claimed_at: 2026-10-31T13:35:10Z
+finished_at: 2026-10-31T13:47:13Z
 ---
 
 ## Goal
@@ -80,3 +81,43 @@ export const MONSTERS: readonly MonsterDef[] = [
 
 ### Tests
 None — pure deletion; engine/tests/ re-validates the surviving content automatically.
+
+## Result (attempt 1, desktop-4070)
+
+**
+- Grep of `src/` for `snail|popper|boing|sticky|pop-puff|puff-burst|mired` (plus camelCase `popPuff`/`puffBurst`): only the 7 doomed files themselves still mention their ids; nothing in `engine/tests/` does either.
+- `npm run check`: typecheck and lint clean, 93/97 tests pass — the only 4 failures are the file↔registry consistency assertions on the 7 files that still sit on disk unregistered (they go away the moment the runner deletes them; both directions of that test already hold).
+- `npm run smoke`: **PASS** desktop and mobile (the orphaned files are imported by nothing, so the built roster is already dot, puff, brood, flee, zippy, sleeper, spitter — 7 monsters, kills and effects playing normally).
+
+
+
+
+
+
+
+SUMMARY: Removed the Snail, Popper and Boing monsters and everything only they used: the `sticky` area (Snail's muck patch), the `pop-puff` death area and `puff-burst` effect (Popper), and — as the design noted the task list had missed — the `mired` status that only the sticky area applied. Each is just its file plus its registry lines in `src/content/{monsters,areas,effects,statuses}/index.ts`; grep confirms no surviving content references any of the six ids, and near-misses (`puff`, `slow-pop`, `puddle`, `goo-slow`, `brood`) are untouched. The roster is now dot, puff, brood, flee, zippy, sleeper, spitter; smoke plays clean on desktop and mobile, and the only check failures are the expected file-exists-but-unregistered assertions that the deletion resolves.
+
+- Self-review: APPROVE
+- Time: 12.1 min
+- Deleted src/content/monsters/snail.ts, as the agent asked.
+- Deleted src/content/monsters/popper.ts, as the agent asked.
+- Deleted src/content/monsters/boing.ts, as the agent asked.
+- Deleted src/content/areas/sticky.ts, as the agent asked.
+- Deleted src/content/areas/pop-puff.ts, as the agent asked.
+- Deleted src/content/effects/puff-burst.ts, as the agent asked.
+- Deleted src/content/statuses/mired.ts, as the agent asked.
+
+```
+.../draft-arena/game/src/content/areas/index.ts    |  4 -
+ .../draft-arena/game/src/content/areas/pop-puff.ts | 31 --------
+ .../draft-arena/game/src/content/areas/sticky.ts   | 43 -----------
+ .../draft-arena/game/src/content/effects/index.ts  |  2 -
+ .../game/src/content/effects/puff-burst.ts         | 29 -------
+ .../draft-arena/game/src/content/monsters/boing.ts | 89 ----------------------
+ .../draft-arena/game/src/content/monsters/index.ts |  6 --
+ .../game/src/content/monsters/popper.ts            | 34 ---------
+ .../draft-arena/game/src/content/monsters/snail.ts | 49 ------------
+ .../draft-arena/game/src/content/statuses/index.ts |  2 -
+ .../draft-arena/game/src/content/statuses/mired.ts | 10 ---
+ 11 files changed, 299 deletions(-)
+```
