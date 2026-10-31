@@ -3,11 +3,13 @@ id: T0101
 title: "Cherry: a 450-coin head accessory, a red cherry with a green stem"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:06:34Z
+claimed_at: 2026-10-31T17:06:57Z
 epic: E22
+designer: yoga
 ---
 
 ## Goal
