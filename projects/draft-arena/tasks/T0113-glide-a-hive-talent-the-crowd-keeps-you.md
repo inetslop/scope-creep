@@ -1,12 +1,14 @@
 ---
 id: T0113
 title: "Glide: a Hive talent, the crowd keeps you moving"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T19:06:11Z
+claimed_at: 2026-10-31T19:26:26Z
 epic: E25
 ---
 
