@@ -3,13 +3,14 @@ id: T0064
 title: "Hive tree, second slice: Nest and the Sting capstone"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: [T0063]
 attempts: 0
 created: 2026-10-31T12:00:08Z
 claimed_at: 2026-10-31T12:21:00Z
+finished_at: 2026-10-31T12:33:57Z
 epic: E16
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
@@ -85,3 +86,7 @@ Sting vs the other on-hit and on-kill effects:
 - [ ] At Sting, killing any enemy (monster or player) with 2 or more other enemies within 80 of it lays the teal ring (radius 80, 12 damage to everything inside, one strike) and plays the blooming teal ring with 12 small confetti.
 - [ ] Nest triggers on any weapon's kill, including a plain Bolt kill.
 - [ ] A fresh life starts as a nomad with Bolt only, with no Hive ranks.
+
+## Rejected by architect (cachyos-x8664)
+
+Nest's "timed damage status" (a status that multiplies the killer's damage for 10 s, via six status files each granting a fixed +N% damage) is not expressible with the frozen engine — `StatusDef` only has `speedMul` and a `tick` (damage-over-time to the holder), with no field for a damage multiplier, and damage is only the player's permanent `stats.damage` applied at fire time (`match.ts:1035/1070`); the only timed-damage pattern in the engine is an on-hit hook (`Reap`/`Reckless`), which the task's comparison table explicitly distinguishes Nest from. Needs an engine change: a damage field on `StatusDef` (like `speedMul`) the engine consumes so a timed status can grant a damage buff.
