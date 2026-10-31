@@ -4,15 +4,15 @@
  * Every look is drawn with drawCritter() (an outlined, squishy body; a face on creatures) unless it
  * draws itself. The camera shows about VIEW_AREA world units at any screen shape.
  */
-import { drawCritter, shade, type DrawView, type Face, type Look } from '../api.ts';
+import { drawCritter, drawPlayerCritter, shade, type DrawView, type Face, type Look, type Worn } from '../api.ts';
 import { VIEW_AREA } from '../config.ts';
 import type { KindEntry, Registry } from '../registry.ts';
 import type { RosterEntry } from '../shared/protocol.ts';
+import { wornFrom } from './profile.ts';
 import type { Frame, FrameEntity } from './session.ts';
 
 const ORDER = { area: 0, pickup: 1, monster: 2, player: 3, projectile: 4 } as const;
 const MONSTER_FACE: Face = { mood: 'angry' };
-const PLAYER_FACE: Face = { mood: 'happy' };
 const FONT = 'Fredoka, system-ui, sans-serif';
 const DOT_STEP = 40;
 
@@ -140,7 +140,7 @@ export class Renderer {
     for (const e of visible) {
       const k = kinds[e.kind]!;
       if (k.type === 'area') this.drawArea(e, k.look, frame.time);
-      else if (k.type === 'player') this.drawPlayer(e, colors[(roster.get(e.id)?.color ?? 0) % colors.length]!, frame.time);
+      else if (k.type === 'player') this.drawPlayer(e, colors[(roster.get(e.id)?.color ?? 0) % colors.length]!, this.worn(roster.get(e.id)), frame.time);
       else this.drawThing(e, k, frame.time);
     }
     for (const s of frame.shots) {
@@ -209,7 +209,14 @@ export class Renderer {
     g.restore();
   }
 
-  private drawPlayer(e: FrameEntity, color: string, time: number): void {
+  /** What a player wears, without anything whose draw() has failed. */
+  private worn(entry: RosterEntry | undefined): Worn {
+    const w = wornFrom(this.registry, entry?.wear);
+    const ok = <T extends object>(d: T | undefined): T | undefined => (d && !this.failed.has(d) ? d : undefined);
+    return { head: ok(w.head), face: ok(w.face), back: ok(w.back), pattern: ok(w.pattern) };
+  }
+
+  private drawPlayer(e: FrameEntity, color: string, worn: Worn, time: number): void {
     const g = this.g;
     const look: Look = { shape: 'circle', color };
     if (e.me) {
@@ -219,7 +226,10 @@ export class Renderer {
       g.arc(e.x, e.y + e.radius * 0.2, e.radius + 10, 0, Math.PI * 2);
       g.fill();
     }
-    this.drawLook(look, this.view(e, look, time), look, PLAYER_FACE, false);
+    g.save();
+    g.translate(e.x, e.y);
+    drawPlayerCritter(g, this.view(e, look, time), color, worn, this.ink, (def, err) => this.report(def, 'draw', err));
+    g.restore();
     if (e.statuses.length) this.drawStatuses(e);
   }
 
@@ -251,8 +261,10 @@ export class Renderer {
     for (const e of visible) {
       const type = kinds[e.kind]!.type;
       if (type === 'player') {
-        const name = roster.get(e.id)?.name ?? '';
-        const y = e.y - e.radius - 10 * px;
+        const entry = roster.get(e.id);
+        const name = entry?.name ?? '';
+        // A hat may reach a radius above the head: the name goes above it.
+        const y = e.y - e.radius * (entry?.wear.head ? 2 : 1) - 10 * px;
         g.strokeStyle = 'rgba(255, 255, 255, 0.85)';
         g.lineWidth = 4 * px;
         g.strokeText(name, e.x, y);

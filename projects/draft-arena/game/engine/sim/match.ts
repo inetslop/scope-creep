@@ -13,7 +13,7 @@ import { decodeAngle16, decodePos, encodeAngle16, encodePos } from '../shared/pr
 import { createRng, type Rng } from '../shared/rng.ts';
 import { canTake, takeable } from '../talents.ts';
 import { makeBrain, thinkBot } from './bots.ts';
-import type { SimArea, SimMonster, SimPickup, SimPlayer, SimProjectile, SimUnit, SimVisible } from './entities.ts';
+import { NO_WEAR, type SimArea, type SimMonster, type SimPickup, type SimPlayer, type SimProjectile, type SimUnit, type SimVisible, type WearIndexes } from './entities.ts';
 import { Grid } from './grid.ts';
 
 export interface EffectEvent {
@@ -105,8 +105,13 @@ export class Match {
   // -------------------------------------------------------------------------------------------
   // Players
 
-  addPlayer(name: string, bot: boolean, token: string): SimPlayer {
+  /**
+   * A new player. `color` is their pick from rules.playerColors (else the least used one), `wear`
+   * what they wear (indexes, checked here); bots dress at random.
+   */
+  addPlayer(name: string, bot: boolean, token: string, color?: number, wear?: WearIndexes): SimPlayer {
     const id = this.ids.take();
+    const colors = this.rules.playerColors.length;
     const p: SimPlayer = {
       cat: 'player',
       type: 'player',
@@ -116,7 +121,8 @@ export class Match {
       name,
       bot,
       token,
-      color: this.freeColor(),
+      color: color !== undefined && Number.isInteger(color) && color >= 0 && color < colors ? color : this.freeColor(),
+      wear: bot ? this.botWear() : this.checkWear(wear ?? NO_WEAR),
       x: this.rules.world.width / 2,
       y: this.rules.world.height / 2,
       vx: 0,
@@ -134,6 +140,8 @@ export class Match {
       lastHitAt: -99,
       flashUntil: 0,
       level: 1,
+      prestige: 0,
+      coins: 0,
       xp: 0,
       xpNext: this.rules.xp.first,
       kills: 0,
@@ -152,6 +160,28 @@ export class Match {
     this.players.set(id, p);
     this.respawn(p);
     return p;
+  }
+
+  /** Only what exists and fits its slot. */
+  private checkWear(w: WearIndexes): WearIndexes {
+    const { accessories, patterns } = this.registry.content;
+    const slot = (i: number, want: string): number => (Number.isInteger(i) && i > 0 && accessories[i - 1]?.slot === want ? i : 0);
+    return {
+      head: slot(w.head, 'head'),
+      face: slot(w.face, 'face'),
+      back: slot(w.back, 'back'),
+      pattern: Number.isInteger(w.pattern) && w.pattern > 0 && w.pattern <= patterns.length ? w.pattern : 0,
+    };
+  }
+
+  /** Bots show off the wardrobe: each slot filled now and then, at random. */
+  private botWear(): WearIndexes {
+    const { accessories, patterns } = this.registry.content;
+    const pick = (slot: string): number => {
+      const options = accessories.flatMap((a, i) => (a.slot === slot ? [i + 1] : []));
+      return options.length && this.rng.chance(0.4) ? this.rng.pick(options) : 0;
+    };
+    return { head: pick('head'), face: pick('face'), back: pick('back'), pattern: patterns.length && this.rng.chance(0.3) ? 1 + this.rng.int(patterns.length) : 0 };
   }
 
   removePlayer(id: number): void {
@@ -175,14 +205,14 @@ export class Match {
 
   /** The talents a player could take a rank of now. */
   takeableTalents(p: SimPlayer): TalentDef[] {
-    return takeable(this.registry, (t) => p.talents.get(t) ?? 0, (u) => p.upgrades.get(u)?.level ?? 0);
+    return takeable(this.registry, (t) => p.talents.get(t) ?? 0, (u) => p.upgrades.get(u)?.level ?? 0, p.prestige);
   }
 
   /** Spends a banked point on talent `index` (registry order), if its needs are met. */
   pick(p: SimPlayer, index: number): void {
     if (!p.alive || p.pendingPicks <= 0) return;
     const t = this.registry.talentList[index];
-    if (!t || !canTake(this.registry, t, (x) => p.talents.get(x) ?? 0, (u) => p.upgrades.get(u)?.level ?? 0)) return;
+    if (!t || !canTake(this.registry, t, (x) => p.talents.get(x) ?? 0, (u) => p.upgrades.get(u)?.level ?? 0, p.prestige)) return;
     this.takeTalent(p, t);
     p.pendingPicks--;
   }
@@ -212,6 +242,7 @@ export class Match {
   }
 
   private respawn(p: SimPlayer): void {
+    p.prestige = 0;
     p.level = 1;
     p.xp = 0;
     p.xpNext = this.rules.xp.first;
@@ -276,10 +307,43 @@ export class Match {
       p.level++;
       p.xpNext = Math.ceil(p.xpNext * this.rules.xp.growth);
       p.pendingPicks++;
+      if (p.level >= this.rules.prestige.level) {
+        this.prestige(p);
+        return;
+      }
       this.addEffect(this.rules.effects.levelUp, p, p, p.level);
     }
     // Points bank; only when nothing at all can be taken any more are they dropped.
     if (p.pendingPicks > 0 && this.takeableTalents(p).length === 0) p.pendingPicks = 0;
+  }
+
+  /** Back to level 1, keeping score, kills and hp (up to the new max); then the directors' rewards. */
+  private prestige(p: SimPlayer): void {
+    p.prestige++;
+    p.level = 1;
+    p.xp = 0;
+    p.xpNext = this.rules.xp.first;
+    p.upgrades.clear();
+    p.talents.clear();
+    p.pendingPicks = 0;
+    for (const t of this.registry.talentList) for (let i = 0; i < (t.start ?? 0); i++) this.takeTalent(p, t);
+    this.recomputeStats(p);
+    this.addEffect(this.rules.effects.prestige ?? this.rules.effects.levelUp, p, p, p.prestige);
+    for (const d of this.directors) {
+      if (!d.def.onPrestige || this.disabled.has(d.def)) continue;
+      try {
+        d.def.onPrestige(this.ctx, d.mem, p, p.prestige);
+      } catch (err) {
+        this.fail(d.def, err);
+      }
+    }
+  }
+
+  givePoints(p: SimPlayer, amount: number): void {
+    const n = Math.floor(amount);
+    if (!p.alive || !(n > 0)) return;
+    p.pendingPicks = Math.min(255, p.pendingPicks + n);
+    if (this.takeableTalents(p).length === 0) p.pendingPicks = 0;
   }
 
   // -------------------------------------------------------------------------------------------
@@ -1094,6 +1158,12 @@ export class Match {
       },
       dropPickup: (pickupId, x, y, value) => this.addPickup(pickupId, x, y, value),
       giveXp: (player, amount) => this.giveXp(player as SimPlayer, amount),
+      giveCoins: (player, amount) => {
+        const p = player as SimPlayer;
+        const n = Math.floor(amount);
+        if (!p.bot && n > 0) p.coins = Math.min(0xffffffff, p.coins + n);
+      },
+      givePoints: (player, amount) => this.givePoints(player as SimPlayer, amount),
     };
   }
 }

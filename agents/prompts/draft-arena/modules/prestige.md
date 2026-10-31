@@ -1,0 +1,28 @@
+---
+summary: prestige (reaching level 18 sends a player back to level 1; what a prestige gives). Read before writing or editing any task about prestige or its rewards.
+---
+# Prestige
+
+A player who reaches level 18 (`rules.prestige.level`) prestiges: back to level 1, every talent and upgrade gone except the free rank of Bolt, banked points gone; score, kills and hp kept. The owner wants it so that nobody stays overpowered for the rest of a match. It is counted twice: prestiges this life (a knockout resets them; the HUD and the scoreboard know them) and prestiges in all, in the player's profile (planning/modules/shop.md).
+
+What a prestige gives is yours to design. The engine gives you:
+- a director's `onPrestige` (planning/modules/events.md), right after the prestige, with the player and their prestiges this life: it can give coins, talent points, xp, statuses and effects;
+- talents with `prestige: n` in any tree (planning/modules/talents.md): only players with n prestiges this life can take them;
+- accessories and patterns with `prestige: n`: bought only after n prestiges in all;
+- the prestige count, for the HUD and the scoreboard.
+
+Today a prestige gives nothing, and only the level-up ring shows it.
+
+## The bar
+- **Worth it, without making them overpowered again.** Right after a prestige the player is weaker than at level 17: a reward never hands back the power the reset took.
+- **Seen:** the player and the players around them see a prestige happen, and the player sees what they got.
+- **Fair to the others:** a prestiged player is a target worth hunting, never untouchable.
+- **The level stays 18** unless a task argues for another, with numbers.
+
+## A task about prestige
+- The reward, with exact numbers for the 1st, 2nd and 3rd prestige of a life.
+- How strong a prestiged player is right after, compared with a new player and with one at level 17.
+- How it shows, to the player and to the players around them.
+
+## Not in this game
+(nothing removed yet)

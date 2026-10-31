@@ -2,7 +2,7 @@
 
 # Field events
 
-An event is a director: code that runs the whole match rather than one item, on the server, every tick (`tick`) and after every death, monster or player (`onKill`). It can see every player (where they are, their level, their hp) and spawn monsters, drop pickups, lay fields on the ground (areas), play effects, put statuses on units and give xp. Each is one file in src/content/directors/ with a `name` and a `description` (for planning: players never read them). Its state goes in its `mem` (a new match starts fresh).
+An event is a director: code that runs the whole match rather than one item, on the server, every tick (`tick`), after every death, monster or player (`onKill`), and after every prestige (`onPrestige`, planning/modules/prestige.md). It can see every player (where they are, their level, their prestiges, their hp) and spawn monsters, drop pickups, lay fields on the ground (areas), play effects, put statuses on units, and give xp, talent points and coins. Each is one file in src/content/directors/ with a `name` and a `description` (for planning: players never read them). Its state goes in its `mem` (a new match starts fresh).
 
 Players only see an event through what it puts on the field: monsters, pickups, fields, effects, statuses. Nothing on the HUD announces it (an announcement or a kill feed needs the engine), so an event shows itself where it happens.
 

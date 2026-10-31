@@ -8,7 +8,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { CONTENT } from '../../src/content/index.ts';
-import { MOODS, MOUTHS, SHAPES, type DrawView, type Launch, type Look, type Stats } from '../api.ts';
+import { ACCESSORY_SLOTS, MOODS, MOUTHS, SHAPES, type DrawView, type Launch, type Look, type Stats, type WearView } from '../api.ts';
 import { buildRegistry } from '../registry.ts';
 import { Match } from '../sim/match.ts';
 import { missingFor } from '../talents.ts';
@@ -38,7 +38,7 @@ function checkLook(look: Look, where: string): void {
 }
 
 function allIds(): { category: string; id: string }[] {
-  const lists = { monsters: CONTENT.monsters, projectiles: CONTENT.projectiles, areas: CONTENT.areas, upgrades: CONTENT.upgrades, statuses: CONTENT.statuses, pickups: CONTENT.pickups, effects: CONTENT.effects, directors: CONTENT.directors, trees: CONTENT.trees, talents: CONTENT.trees.flatMap((t) => t.talents) };
+  const lists = { monsters: CONTENT.monsters, projectiles: CONTENT.projectiles, areas: CONTENT.areas, upgrades: CONTENT.upgrades, statuses: CONTENT.statuses, pickups: CONTENT.pickups, effects: CONTENT.effects, directors: CONTENT.directors, trees: CONTENT.trees, talents: CONTENT.trees.flatMap((t) => t.talents), accessories: CONTENT.accessories, patterns: CONTENT.patterns };
   return Object.entries(lists).flatMap(([category, list]) => list.map((d) => ({ category, id: d.id })));
 }
 
@@ -55,6 +55,8 @@ describe('content files', () => {
     effects: CONTENT.effects,
     directors: CONTENT.directors,
     talents: CONTENT.trees,
+    accessories: CONTENT.accessories,
+    patterns: CONTENT.patterns,
   };
   const contentDir = fileURLToPath(new URL('../../src/content/', import.meta.url));
   for (const [folder, items] of Object.entries(lists)) {
@@ -150,6 +152,7 @@ describe('content data', () => {
         const up = registry.upgrades.get(t.upgrade)!;
         expect(Number.isInteger(t.max) && t.max >= 1 && t.max <= up.maxLevel, `talent ${t.id}: max must be 1-${up.maxLevel} (the maxLevel of ${up.id})`).toBe(true);
         expect((t.start ?? 0) <= t.max, `talent ${t.id}: start is above max`).toBe(true);
+        if (t.prestige !== undefined) expect(Number.isInteger(t.prestige) && t.prestige >= 1, `talent ${t.id}: prestige must be a whole number, 1 or more`).toBe(true);
         for (const [id, rank] of t.needs ?? []) {
           const other = tree.talents.find((x) => x.id === id);
           expect(other, `talent ${t.id} needs "${id}", which is not in tree ${tree.id}`).toBeDefined();
@@ -161,7 +164,8 @@ describe('content data', () => {
       for (let changed = true; changed; ) {
         changed = false;
         for (const t of tree.talents) {
-          if (ranks.get(t)! >= t.max || missingFor(registry, t, (x) => ranks.get(x) ?? 0).length) continue;
+          // Prestige talents count as reachable: a player who prestiges enough gets there.
+          if (ranks.get(t)! >= t.max || missingFor(registry, t, (x) => ranks.get(x) ?? 0, 99).length) continue;
           ranks.set(t, t.max);
           changed = true;
         }
@@ -176,6 +180,21 @@ describe('content data', () => {
     }
   });
 
+  it('accessories and patterns: shop data, and draw() runs', () => {
+    const wearables = [...CONTENT.accessories.map((a) => ({ def: a, where: `accessory ${a.id}` })), ...CONTENT.patterns.map((p) => ({ def: p, where: `pattern ${p.id}` }))];
+    for (const { def, where } of wearables) {
+      expect(def.name.length >= 1 && def.name.length <= 18, `${where}: name must be 1-18 characters (it shows on a shop card at 412x915)`).toBe(true);
+      expect(def.description.length >= 1 && def.description.length <= 70, `${where}: description must be 1-70 characters`).toBe(true);
+      expect(Number.isInteger(def.price) && def.price >= 0, `${where}: price must be a whole number of coins, 0 or more`).toBe(true);
+      if (def.prestige !== undefined) expect(Number.isInteger(def.prestige) && def.prestige >= 1, `${where}: prestige must be a whole number, 1 or more`).toBe(true);
+      for (const time of [0, 2.7]) {
+        const w: WearView = { radius: 18, color: '#4dabf7', ink: '#3b3355', time, seed: 3, angle: 1, speed: time ? 200 : 0 };
+        expect(() => def.draw(stubContext, w), `${where}: draw threw`).not.toThrow();
+      }
+    }
+    for (const a of CONTENT.accessories) expect(ACCESSORY_SLOTS, `accessory ${a.id}: slot`).toContain(a.slot);
+  });
+
   it('rules name content that exists', () => {
     const r = CONTENT.rules;
     expect(registry.pickups.has(r.gem), `rules.gem "${r.gem}"`).toBe(true);
@@ -185,6 +204,7 @@ describe('content data', () => {
     expect(r.ink).toMatch(HEX);
     expect(r.world.width).toBeLessThanOrEqual(16000);
     expect(r.world.height).toBeLessThanOrEqual(16000);
+    expect(Number.isInteger(r.prestige.level) && r.prestige.level >= 2, 'rules.prestige.level must be a whole number, 2 or more').toBe(true);
   });
 });
 
@@ -220,6 +240,17 @@ describe('every upgrade in a match', () => {
 describe('directors in a long match', () => {
   it('run three minutes without errors', () => {
     expectHealthy(runMatch(180, (match) => match.addPlayer('test', true, '')), 'directors');
+  });
+});
+
+describe('prestige in a match', () => {
+  it('every onPrestige runs without errors, and the match goes on', () => {
+    const m = runMatch(5, (match) => {
+      const p = match.addPlayer('test', true, '');
+      for (let i = 0; i < 3; i++) for (let guard = 0; guard < 200 && p.prestige <= i; guard++) match.giveXp(p, p.xpNext - p.xp);
+    });
+    for (let t = 0; t < 100; t++) m.step();
+    expectHealthy(m, 'prestige');
   });
 });
 

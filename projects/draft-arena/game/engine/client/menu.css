@@ -13,7 +13,17 @@
   font-weight: 500;
   color: var(--ink);
 }
-#menu[hidden] {
+#menu[hidden],
+#menu [hidden] {
+  display: none !important;
+}
+/* The game's panels (src/menu/): a column in the card, above Play. */
+.menu-parts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.menu-parts:empty {
   display: none;
 }
 /* The match plays in the middle of the screen: keep the card beside it (wide screens) or below it (phones). */

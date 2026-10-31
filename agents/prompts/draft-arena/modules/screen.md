@@ -1,11 +1,11 @@
 ---
-summary: the screen (the HUD's cards and buttons, the talents panel, and what the start screen shows). Read before writing or editing any task that adds, changes or removes something on screen.
+summary: the screen (the HUD's cards and buttons, the talents panel, and the start screen with the game's panels). Read before writing or editing any task that adds, changes or removes something on screen.
 ---
 # The screen
 
-Everything over the field is HTML. The start screen is the engine's (a name field, one Play button, the match playing behind it): tasks can't change it. The HUD is the game's: one element per file in src/hud/ with its own .css, listed in HUD_PARTS. "On screen" in the inventory says what each element shows and where.
+Everything over the field is HTML. The start screen is the engine's card (the title, a name field and Play, with the match playing behind it), and in it, above Play, the game's own panels: one per file in src/menu/ with its own .css, listed in MENU_PARTS (planning/modules/shop.md says what they can do). The HUD is the game's: one element per file in src/hud/ with its own .css, listed in HUD_PARTS. "On screen" and "On the start screen" in the inventory say what each element shows and where.
 
-What a HUD element can know: you (hp, level, xp, kills, score, banked talent points, every tree and talent with its rank and whether you can take it), the scoreboard (name, score, level, kills, bot or not), the player count, online or in this tab, the connection, and whether the device is touch. It knows nothing else: not where monsters, players or events are, nor what anyone else has taken. Those show on the field, through looks and effects.
+What a HUD element can know: you (hp, level, xp, kills, score, prestiges this life, coins, banked talent points, every tree and talent with its rank and whether you can take it), the scoreboard (name, score, level, kills, prestiges, bot or not), the player count, online or in this tab, the connection, and whether the device is touch. It knows nothing else: not where monsters, players or events are, nor what anyone else has taken. Those show on the field, through looks and effects.
 
 The layout today: the connection card top left, your level and xp top centre, the scoreboard top right, the Talents button bottom centre (its panel a column at the right on a desktop, above the button on a phone), and the knockout card in the centre while you are down. The middle of the screen is your critter; a phone's thumb drags anywhere to move.
 

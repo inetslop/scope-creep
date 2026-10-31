@@ -51,6 +51,8 @@ export function writeSnapshot(w: Writer, m: Match, p: SimPlayer): void {
     score: p.score,
     respawnIn: p.alive ? 0 : Math.max(0, p.respawnAt - m.time),
     pendingPicks: p.pendingPicks,
+    prestige: p.prestige,
+    coins: p.coins,
     talents: [...p.talents].map(([t, rank]) => ({ index: reg.talentIndex.get(t)!, rank })),
     upgrades: [...p.upgrades].map(([d, held]) => ({ index: reg.upgradeIndex.get(d)!, level: held.level })),
   });

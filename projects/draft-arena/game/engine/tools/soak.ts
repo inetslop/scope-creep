@@ -51,7 +51,7 @@ const connect = (i: number): void => {
   bots.push(bot);
   const w = new Writer(256);
   ws.on('open', () => {
-    writeJoin(w.reset(), { protocol: PROTOCOL_VERSION, name: `soak ${i + 1}`, token: '' });
+    writeJoin(w.reset(), { protocol: PROTOCOL_VERSION, name: `soak ${i + 1}`, token: '', color: undefined, wear: { head: 0, face: 0, back: 0, pattern: 0 } });
     ws.send(w.finish());
   });
   ws.on('message', (data: ArrayBuffer) => {
@@ -66,7 +66,7 @@ const connect = (i: number): void => {
     if (s.self.pendingPicks > 0 && Math.random() < 0.1) {
       const ranks = new Map(s.self.talents.map((t) => [registry.talentList[t.index]!, t.rank]));
       const levels = new Map(s.self.upgrades.map((u) => [CONTENT.upgrades[u.index]!, u.level]));
-      const options = takeable(registry, (t) => ranks.get(t) ?? 0, (u) => levels.get(u) ?? 0);
+      const options = takeable(registry, (t) => ranks.get(t) ?? 0, (u) => levels.get(u) ?? 0, s.self.prestige);
       if (options.length) {
         writePick(w.reset(), registry.talentIndex.get(options[Math.floor(Math.random() * options.length)]!)!);
         ws.send(w.finish());

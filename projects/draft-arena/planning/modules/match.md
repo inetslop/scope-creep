@@ -13,6 +13,7 @@ Every number is in src/content/rules.ts (listed below with its real value):
 - **pvp:** players deal `damageMul` of their damage to players; knocking a player out gives `bountyXpPerLevel` xp per level of theirs.
 - **score:** points per monster kill and per player knockout.
 - **bots:** how many players bots fill the match to, and their names.
+- **prestige:** the level at which a player goes back to level 1 (planning/modules/prestige.md).
 
 ## The bar for a rule or a tuning
 - **A real choice.** A new rule is not the mirror or the inverse of one that exists, has stakes bigger than a few xp or a few seconds, and is something a player would miss if it were gone.
@@ -45,5 +46,6 @@ From game/src/content/rules.ts (the real values).
 - effects: death pop, levelUp ring, playerDeath burst
 - score: monsterKill 1, playerKill 25
 - pvp: damageMul 0.5, bountyXpPerLevel 4
+- prestige: level 18
 - bots: fillTo 6, names ["Ada","Bix","Cato","Dee","Eli","Fen","Gus","Hal","Ivy","Jo"]
 - playerColors: ["#4dabf7","#38d9a9","#ffd43b","#69db7c","#748ffc","#3bc9db","#a9e34b","#ffc078","#e599f7","#faa2c1"]

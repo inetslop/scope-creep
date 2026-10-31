@@ -27,6 +27,7 @@ import {
   type RosterEntry,
   type ScoreEntry,
   type WelcomeMsg,
+  type WireWear,
   type WireEntity,
   type WireLaunch,
   type WireSelf,
@@ -131,10 +132,25 @@ export class Session {
   /** Watching, not playing: no inputs, and the camera follows the player the server shows (the leader). */
   readonly spectating: boolean;
 
-  constructor(registry: Registry, connect: () => ClientSocket, name: string, mode: 'online' | 'offline', spectate = false) {
+  /** What this player looks like: sent when joining. */
+  private readonly look: { color: number | undefined; wear: WireWear };
+  /** Coins and prestiges the server reported that the profile hasn't been given yet (takeEarnings()). */
+  private coinsSeen = 0;
+  private prestigeSeen = 0;
+  private earned = { coins: 0, prestiges: 0 };
+
+  constructor(
+    registry: Registry,
+    connect: () => ClientSocket,
+    name: string,
+    mode: 'online' | 'offline',
+    spectate = false,
+    look: { color: number | undefined; wear: WireWear } = { color: undefined, wear: { head: 0, face: 0, back: 0, pattern: 0 } },
+  ) {
     this.registry = registry;
     this.connect = connect;
     this.name = name;
+    this.look = look;
     this.mode = mode;
     this.spectating = spectate;
     this.open();
@@ -145,7 +161,7 @@ export class Session {
     this.socket = s;
     s.onopen = () => {
       if (this.spectating) writeSpectate(this.writer.reset(), PROTOCOL_VERSION);
-      else writeJoin(this.writer.reset(), { protocol: PROTOCOL_VERSION, name: this.name, token: this.token });
+      else writeJoin(this.writer.reset(), { protocol: PROTOCOL_VERSION, name: this.name, token: this.token, color: this.look.color, wear: this.look.wear });
       s.send(this.writer.finish());
     };
     s.onmessage = (data) => this.receive(data);
@@ -201,12 +217,21 @@ export class Session {
     }
   }
 
+  /** Coins and prestiges earned since the last call: the caller adds them to the profile. */
+  takeEarnings(): { coins: number; prestiges: number } {
+    const out = this.earned;
+    this.earned = { coins: 0, prestiges: 0 };
+    return out;
+  }
+
   private onWelcome(w: WelcomeMsg): void {
     if (w.contentHash !== this.registry.hash) {
       this.outdated = true;
       this.close('This page is out of date: reload it to play.');
       return;
     }
+    // A new player (the old one was gone too long): its counters start again.
+    if (this.welcome && this.welcome.playerId !== w.playerId) this.coinsSeen = this.prestigeSeen = 0;
     this.welcome = w;
     this.token = w.token;
     this.state = 'playing';
@@ -252,6 +277,13 @@ export class Session {
 
     if (this.self?.alive && !s.self.alive) this.stats.deaths++;
     this.self = s.self;
+    if (!this.spectating) {
+      if (s.self.coins > this.coinsSeen) this.earned.coins += s.self.coins - this.coinsSeen;
+      this.coinsSeen = Math.max(this.coinsSeen, s.self.coins);
+      // Prestiges count up during a life and drop to 0 on a knockout.
+      if (s.self.prestige > this.prestigeSeen) this.earned.prestiges += s.self.prestige - this.prestigeSeen;
+      this.prestigeSeen = s.self.prestige;
+    }
     this.history = this.history.filter((h) => seqNewer(h.seq, s.self.ackSeq));
     this.stats.snapshots++;
     this.stats.launches += s.launches.length;

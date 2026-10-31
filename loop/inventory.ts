@@ -96,7 +96,7 @@ export function buildInventory(gameDir: string): string {
       if (!fs.statSync(dir).isDirectory()) continue;
       // Things the player picks or builds show their one-line description (Draft Arena's monsters,
       // trees and events too); Chokepoint's enemies show their behavior.
-      const items = contentList(dir, ['upgrades', 'weapons', 'towers', 'boons', 'augments', 'monsters', 'talents', 'directors'].includes(folder));
+      const items = contentList(dir, ['upgrades', 'weapons', 'towers', 'boons', 'augments', 'monsters', 'talents', 'directors', 'accessories', 'patterns'].includes(folder));
       if (items.length) lines.push(`- **${folder[0]!.toUpperCase()}${folder.slice(1)}** (${items.length}): ${items.join(', ')}`);
     }
   }
@@ -108,9 +108,12 @@ export function buildInventory(gameDir: string): string {
   const hudDir = [path.join(src, 'ui', 'hud'), path.join(src, 'hud')].find((d) => fs.existsSync(d)) ?? path.join(src, 'ui', 'hud');
   const hud = describedFiles(hudDir, ['hud.ts']);
   if (hud.length) lines.push(`- **On screen** (the HUD, each element and what it shows; a new one must show something none of these does):`, ...hud);
+  // Draft Arena's start-screen panels (src/menu/): the wardrobe, the shop...
+  const menu = describedFiles(path.join(src, 'menu'));
+  if (menu.length) lines.push(`- **On the start screen** (the game's panels above Play, and what each shows):`, ...menu);
   const systems = describedFiles(path.join(src, 'systems'), [], 200);
   if (systems.length) lines.push(`- **Systems** (each and what it does; the board readouts live here too):`, ...systems);
-  const known = new Set(['content', 'scenes', 'systems', 'hud']);
+  const known = new Set(['content', 'scenes', 'systems', 'hud', 'menu']);
   const other = fs.existsSync(src)
     ? fs
         .readdirSync(src)

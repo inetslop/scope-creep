@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CONTENT } from '../../src/content/index.ts';
-import type { TalentTreeDef } from '../api.ts';
+import type { AccessoryDef, DirectorDef, PatternDef, TalentTreeDef } from '../api.ts';
 import { buildRegistry } from '../registry.ts';
 import { Match } from '../sim/match.ts';
 import { PROTOCOL_VERSION } from '../config.ts';
@@ -47,6 +47,73 @@ describe('match rules', () => {
     m.pick(p, reg.talentIndex.get(b)!);
     expect(p.talents.get(b)).toBe(1);
     expect(p.upgrades.get(second!)?.level).toBe(1);
+  });
+
+  it('reaching rules.prestige.level is a prestige: level 1, start ranks only, score kept, then onPrestige', () => {
+    const calls: number[] = [];
+    const reward: DirectorDef = {
+      id: 'test-reward',
+      name: 'Test',
+      description: 'For the test.',
+      onPrestige: (ctx, _mem, player, count) => {
+        calls.push(count);
+        ctx.giveCoins(player, 10);
+        ctx.givePoints(player, 2);
+      },
+    };
+    const reg = buildRegistry({ ...CONTENT, directors: [...CONTENT.directors, reward] });
+    const m = new Match(reg, 3);
+    const p = m.addPlayer('p', false, 't');
+    p.score = 77;
+    while (p.level < CONTENT.rules.prestige.level - 1) m.giveXp(p, p.xpNext - p.xp);
+    expect(p.pendingPicks).toBeGreaterThan(0);
+    m.giveXp(p, p.xpNext - p.xp);
+    expect(p.level).toBe(1);
+    expect(p.prestige).toBe(1);
+    expect(calls).toEqual([1]);
+    expect(p.score, 'score is kept').toBe(77);
+    for (const t of reg.talentList) expect(p.talents.get(t) ?? 0, `${t.id} after a prestige`).toBe(t.start ?? 0);
+    expect(p.coins).toBe(10);
+    expect(p.pendingPicks, 'the points onPrestige gave').toBe(2);
+    // A knockout ends the life: its prestiges go, the coins stay given.
+    p.hp = -1;
+    for (let t = 0; t < 20 * (CONTENT.rules.respawnSeconds + 1); t++) m.step();
+    expect(p.prestige).toBe(0);
+    expect(p.coins).toBe(10);
+  });
+
+  it('bots get no coins; a prestige talent waits for its prestige', () => {
+    const [up] = CONTENT.upgrades.filter((u) => !u.fire && u.maxLevel >= 1 && !CONTENT.trees.some((t) => t.talents.some((x) => x.upgrade === u.id && x.start)));
+    const tree: TalentTreeDef = { id: 'test-tree', name: 'Test', description: 'For the test.', look: { shape: 'circle', color: '#ffffff' }, talents: [{ id: 'test-p', upgrade: up!.id, max: 1, prestige: 1 }] };
+    const reg = buildRegistry({ ...CONTENT, trees: [...CONTENT.trees.map((t) => ({ ...t, talents: t.talents.filter((x) => x.upgrade !== up!.id) })), tree] });
+    const m = new Match(reg, 4);
+    const bot = m.addPlayer('b', true, '');
+    m.ctx.giveCoins(bot, 50);
+    expect(bot.coins).toBe(0);
+    const p = m.addPlayer('p', false, 't');
+    const talent = reg.talents.get('test-p')!;
+    expect(m.takeableTalents(p)).not.toContain(talent);
+    while (p.prestige < 1) m.giveXp(p, p.xpNext - p.xp);
+    m.giveXp(p, p.xpNext - p.xp);
+    expect(m.takeableTalents(p)).toContain(talent);
+  });
+
+  it('what a player wears is checked: it must exist and fit its slot; bots dress at random', () => {
+    const draw = (): void => undefined;
+    const hat: AccessoryDef = { id: 'test-hat', name: 'Hat', description: 'A hat.', slot: 'head', price: 0, draw };
+    const cape: AccessoryDef = { id: 'test-cape', name: 'Cape', description: 'A cape.', slot: 'back', price: 5, draw };
+    const dots: PatternDef = { id: 'test-dots', name: 'Dots', description: 'Dots.', price: 5, draw };
+    const reg = buildRegistry({ ...CONTENT, accessories: [hat, cape], patterns: [dots] });
+    const m = new Match(reg, 5);
+    const p = m.addPlayer('p', false, 't', 2, { head: 1, face: 2, back: 9, pattern: 1 });
+    expect(p.wear).toEqual({ head: 1, face: 0, back: 0, pattern: 1 });
+    expect(p.color).toBe(2);
+    const q = m.addPlayer('q', false, 't2', 999, { head: 0, face: 0, back: 2, pattern: 0 });
+    expect(q.wear.back).toBe(2);
+    expect(q.color).toBeLessThan(CONTENT.rules.playerColors.length);
+    const dressed = Array.from({ length: 40 }, (_, i) => m.addPlayer(`b${i}`, true, '').wear);
+    expect(dressed.some((w) => w.head === 1), 'some bot wears the hat').toBe(true);
+    expect(dressed.every((w) => w.face === 0), 'no bot wears what does not exist').toBe(true);
   });
 
   it('everyone starts with the free start ranks', () => {

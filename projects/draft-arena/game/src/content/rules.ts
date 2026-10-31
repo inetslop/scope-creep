@@ -26,6 +26,7 @@ export const RULES: Rules = {
   effects: { death: 'pop', levelUp: 'ring', playerDeath: 'burst' },
   score: { monsterKill: 1, playerKill: 25 },
   pvp: { damageMul: 0.5, bountyXpPerLevel: 4 },
+  prestige: { level: 18 },
   bots: { fillTo: 6, names: ['Ada', 'Bix', 'Cato', 'Dee', 'Eli', 'Fen', 'Gus', 'Hal', 'Ivy', 'Jo'] },
   playerColors: PLAYER_COLORS,
 };

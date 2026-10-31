@@ -8,9 +8,20 @@ This file is maintained by humans. The engine's own notes: `engine/README.md`.
 
 `engine/` is the owner's: netcode, the server, the simulation loop, the renderer, input. You cannot change it (edits are reverted). Everything you build goes in `src/` and talks to the engine **only through `engine/api.ts`** (lint enforced). That file is long: find what you need with Grep (`interface MonsterDef`, `interface Ctx`, `interface Stats`...) and read just that part. The engine owns what goes over the network; content owns behavior. So almost anything can be content:
 
-- a new monster, weapon, projectile motion, field, status, pickup, visual effect, field event or HUD element is a new file in `src/` plus one line in its registry;
+- a new monster, weapon, projectile motion, field, status, pickup, visual effect, field event, HUD element, hat (or other accessory), pattern or start-screen panel is a new file in `src/` plus one line in its registry;
 - state the players should see (a charge, a shield, stacks) goes in an entity's `slots` (4 whole numbers sent to every client) and is drawn by a `look.draw()`;
-- the numbers of the match (spawning, xp, pvp, respawn) are in `src/content/rules.ts`.
+- the numbers of the match (spawning, xp, pvp, respawn, the prestige level) are in `src/content/rules.ts`.
+
+## Between visits: the profile
+
+The only thing kept between visits is the player's **profile, in their own browser**: their coins, the accessories and patterns they bought, what they wear, their color and their prestiges over every match. Nothing is kept on the server. Content changes it only through the engine:
+- **coins:** `ctx.giveCoins(player, n)` from any server hook (bots get none); the coins land in the player's profile at once.
+- **buying and wearing:** start-screen panels (`src/menu/`) get a `MenuView` with `buy(id)`, `wear(slot, id)` and `setColor(i)`, and `cantBuy(id)` says why something can't be bought yet.
+- **prestiges:** counted by the engine (below).
+
+## Prestige
+
+A player who reaches `rules.prestige.level` (18) goes back to level 1: talents and upgrades gone except the free start ranks, banked points gone; score, kills and hp kept. `player.prestige` counts their prestiges this life (a knockout resets it), and the profile counts them forever. What a prestige gives is content: a director's `onPrestige(ctx, mem, player, count)` runs right after it (give coins, talent points with `ctx.givePoints`, xp, a status...); a talent with `prestige: 1` can only be taken by a player who has prestiged this life; an accessory or pattern with `prestige: 2` can only be bought after 2 prestiges in all.
 
 If a feature truly needs the engine changed (a new kind of input, more slots, a new network field, rounds), it can't be built here: say so with `STATUS: BLOCKED`.
 
@@ -41,7 +52,8 @@ Every level gives a talent point. Points bank: players spend them when they like
 | `fire`, `onHit`, `onKill`, `think`, `step`, `pulse`, `collect`, `tick`, `onDeath`, `onEnd`, directors | the server only | Anything goes through `ctx`. Randomness from `ctx.rng`. State in `mem` and `slots`, never in module variables. |
 | projectile `path(s, t, owner)` | the server AND every client | **Pure**: only its arguments, no `ctx`, no state, no `Math.random`. Same input, same point. |
 | `look.draw(g, e)`, effect `draw(g, fx)` | every client, every frame | Drawing only. Variation from `noise(e.seed, i)`. |
-| `src/hud/` parts | the client | DOM. Only touch it when what you show changed. |
+| `src/hud/` parts, `src/menu/` parts | the client | DOM. Only touch it when what you show changed. |
+| accessory and pattern `draw(g, w)` | every client, every frame | Drawing only, around the critter's centre. |
 
 A hook that throws disables its item for the rest of the match and is logged; the content tests and the smoke test fail on it.
 
@@ -62,9 +74,12 @@ A hook that throws disables its item for the rest of the match and is logged; th
 | `src/content/statuses/` | What stays on a unit for a while (`StatusDef`) + `STATUSES` |
 | `src/content/pickups/` | Gems and other things to collect (`PickupDef`) + `PICKUPS` |
 | `src/content/effects/` | One-shot visuals (`EffectDef`) + `EFFECTS` |
-| `src/content/directors/` | What runs the whole match: events and match-wide rules (`DirectorDef`) + `DIRECTORS` |
+| `src/content/directors/` | What runs the whole match: events, match-wide rules and prestige rewards (`DirectorDef`) + `DIRECTORS` |
+| `src/content/accessories/` | What players wear on their head, face or back, with a price (`AccessoryDef`) + `ACCESSORIES` |
+| `src/content/patterns/` | Color patterns painted over a player's body, with a price (`PatternDef`) + `PATTERNS` |
 | `src/content/rules.ts`, `palette.ts`, `index.ts` | The match's numbers, every color, the content bundle |
 | `src/hud/` | One file per HUD element (`MakeHudPart`) with its own `.css` beside it, `base.css` (the shared card and colors), `index.ts` (`HUD_PARTS`) |
+| `src/menu/` | The game's panels on the start screen, above Play (`MakeMenuPart`), each with its own `.css`; `index.ts` (`MENU_PARTS`) |
 | `engine/` | Frozen. Read `engine/api.ts` for everything you can use. |
 
 ## Working alongside other developers
@@ -72,7 +87,7 @@ A hook that throws disables its item for the rest of the match and is logged; th
 Several developers change this game at the same time, each on their own task. Two changes to the same lines become a merge conflict, so the game is laid out for everyone to work in their own files:
 - **One item per file, named after its id.** `src/content/monsters/dot.ts` holds the monster `id: 'dot'` and nothing else; its export is the id in camelCase (`gem-rain.ts` exports `gemRain`). The tests fail on a file that holds no item of its name or isn't in its registry.
 - **Registries are lists, one item per line.** A new item is a new file plus one import and one line in its folder's `index.ts`. Add your line next to related ones. Lines only added to a registry merge by themselves.
-- **A HUD element is its own `.ts` and `.css`.** Never restyle another element's file or `base.css` for yours.
+- **A HUD element or start-screen panel is its own `.ts` and `.css`.** Never restyle another element's file or `base.css` for yours.
 - **Shared files** (`rules.ts`, `palette.ts`, a tree's file): change only the lines your task is about.
 - No drive-by renames, reformatting or moving code you don't need to change.
 
@@ -118,6 +133,16 @@ Several developers change this game at the same time, each on their own task. Tw
 **Add an effect** — copy `effects/pop.ts`; play it with `ctx.effect(id, a, b?, value?)` from any server hook.
 
 **Add a field event or match-wide rule** — a director (copy `directors/gem-rain.ts`): `tick(ctx, mem, dt)` every tick, `onKill(ctx, mem, killer, victim)` after every death. `mem` is its memory for the match; `ctx.players()` lists the living players. Add it to `DIRECTORS`.
+
+**Add a hat or other accessory** — `src/content/accessories/<id>.ts` exporting an `AccessoryDef`: `id`, `name` (at most 18 characters), a one-line `description`, `slot` (`head`, `face` or `back`), `price` in coins (0: everyone has it), and `draw(g, w)`, which draws it around the critter's centre: the body is a circle of `w.radius`, the top of the head at `y = -w.radius`, the eyes a little above the middle. Stay within two radii of the centre. Ink outlines (`w.ink`, about 2.5 px), candy colors from `PALETTE`, no glow. Add it to `ACCESSORIES`.
+
+**Add a pattern** — `src/content/patterns/<id>.ts` exporting a `PatternDef` (`id`, `name`, `description`, `price`, `draw`). Its `draw(g, w)` paints over the body and is clipped to it: fill shapes across the whole circle of `w.radius` (stripes, spots), lighter or darker than `w.color`, which is the player's own color. Add it to `PATTERNS`.
+
+**Add a start-screen panel** (what you wear, the shop) — `src/menu/<name>.ts` exporting a `MakeMenuPart` and `src/menu/<name>.css` beside it. It mounts in the start card above Play; `update(view)` runs when the start screen shows and after every buy, wear or color change: rebuild from `view.profile` there. `view.preview(canvas, wearing?, color?)` paints a critter wearing something (to try before buying). A bigger panel opens over the start screen as its own sticker card (`hud-card`), with a close button. Buttons use the `menu-button` class (the Play button's look; add `primary` only to Play). Add one line to `MENU_PARTS`.
+
+**Give coins** — `ctx.giveCoins(player, n)` from any server hook: an upgrade's `onKill`, a director's `onKill` or `onPrestige`, a pickup's `collect`. Whole coins; bots get none.
+
+**Reward a prestige** — a director with `onPrestige(ctx, mem, player, count)` (copy `directors/gem-rain.ts`); a talent with `prestige: 1` for prestiged players only; an accessory or pattern with `prestige: n`.
 
 **Add a HUD element** — write `src/hud/<name>.ts` exporting a `MakeHudPart` and `src/hud/<name>.css` for its styles, imported at the top of the part (copy `xpBar.ts` and `xpBar.css`): build the DOM once, update it only when what it shows changed. Use the `hud-card` class for the card itself. Add one line to `HUD_PARTS`. Interactive elements set `pointer-events: auto` and are at least 44 px.
 

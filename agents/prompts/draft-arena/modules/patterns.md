@@ -1,0 +1,25 @@
+---
+summary: patterns (color patterns painted over a player's body, each with a price). Read before writing or editing any task that adds, changes or removes a pattern.
+content: patterns
+---
+# Patterns
+
+A pattern is painted over a player's body in their own color, clipped to it; the outline and the face go on top. A player wears one pattern at most, picked on the start screen (planning/modules/shop.md). Everyone sees it, and bots wear patterns at random.
+
+Each is one file in src/content/patterns/: `name` (at most 18 characters), `description` (one line for the shop), `price` in coins (0: everyone has it), `prestige` (optional: prestiges in all before it can be bought), and how it is drawn.
+
+## The bar for a new pattern
+- **It works on every player color:** it is drawn lighter or darker than the player's own color, so it reads on all 10 of them, and the face stays easy to see.
+- **It reads at a player's size** (36 units across): a few bold shapes, not fine detail.
+- **Not a copy:** a different arrangement from every pattern that exists, not the same one at another size or spacing.
+- **At most 12 patterns.** Past that, the same task (or one before it) removes or merges one and says which.
+
+## A task that adds or changes a pattern
+- Its name, description, price (and prestige), and how it looks: the shapes, how many, lighter or darker.
+- **## Compared with what exists:** a table with one row for every pattern:
+
+| Existing | What it shares | How the new one looks different |
+| --- | --- | --- |
+
+## Not in this game
+(nothing removed yet)

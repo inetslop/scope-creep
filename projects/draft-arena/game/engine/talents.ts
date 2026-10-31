@@ -14,8 +14,11 @@ export function spentIn(tree: TalentTreeDef, rankOf: RankOf): number {
   return n;
 }
 
-/** What a talent still needs, as text for the panel ("Bolt 2", "4 pts in Gunner"). Empty when its needs are met. */
-export function missingFor(reg: Registry, t: TalentDef, rankOf: RankOf): string[] {
+/**
+ * What a talent still needs, as text for the panel ("Bolt 2", "4 pts in Gunner", "Prestige 1").
+ * Empty when its needs are met. `prestige`: the player's prestiges this life.
+ */
+export function missingFor(reg: Registry, t: TalentDef, rankOf: RankOf, prestige = 0): string[] {
   const out: string[] = [];
   for (const [id, rank] of t.needs ?? []) {
     const other = reg.talents.get(id);
@@ -23,17 +26,18 @@ export function missingFor(reg: Registry, t: TalentDef, rankOf: RankOf): string[
   }
   const tree = reg.treeOf.get(t)!;
   if (t.points && spentIn(tree, rankOf) < t.points) out.push(`${t.points} pts in ${tree.name}`);
+  if (t.prestige && prestige < t.prestige) out.push(`Prestige ${t.prestige}`);
   return out;
 }
 
 /** A rank of `t` can be taken: below its max, its upgrade below max level, and its needs met. */
-export function canTake(reg: Registry, t: TalentDef, rankOf: RankOf, levelOf: (u: UpgradeDef) => number): boolean {
+export function canTake(reg: Registry, t: TalentDef, rankOf: RankOf, levelOf: (u: UpgradeDef) => number, prestige = 0): boolean {
   const up = reg.upgrades.get(t.upgrade);
   if (!up || rankOf(t) >= t.max || levelOf(up) >= up.maxLevel) return false;
-  return missingFor(reg, t, rankOf).length === 0;
+  return missingFor(reg, t, rankOf, prestige).length === 0;
 }
 
 /** Every talent a player could take a rank of now, in registry order. */
-export function takeable(reg: Registry, rankOf: RankOf, levelOf: (u: UpgradeDef) => number): TalentDef[] {
-  return reg.talentList.filter((t) => canTake(reg, t, rankOf, levelOf));
+export function takeable(reg: Registry, rankOf: RankOf, levelOf: (u: UpgradeDef) => number, prestige = 0): TalentDef[] {
+  return reg.talentList.filter((t) => canTake(reg, t, rankOf, levelOf, prestige));
 }

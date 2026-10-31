@@ -150,7 +150,7 @@ export class Room {
         this.reject(c, `The arena is full (${MAX_PLAYERS} players). Try again in a minute.`);
         return;
       }
-      p = this.match.addPlayer(cleanName(msg.name), false, newToken());
+      p = this.match.addPlayer(cleanName(msg.name), false, newToken(), msg.color, msg.wear);
     }
     p.connected = true;
     c.player = p;
@@ -253,7 +253,7 @@ export class Room {
       this.rosterDirty = false;
       writeRoster(
         this.writer.reset(),
-        [...this.match.players.values()].map((p) => ({ id: p.id, name: p.name, color: p.color, bot: p.bot })),
+        [...this.match.players.values()].map((p) => ({ id: p.id, name: p.name, color: p.color, bot: p.bot, wear: p.wear })),
       );
       const roster = this.writer.finish();
       for (const c of joined) this.send(c, roster);
@@ -261,7 +261,7 @@ export class Room {
     if (this.match.tick % TICK_RATE === 0) {
       writeScores(
         this.writer.reset(),
-        [...this.match.players.values()].map((p) => ({ id: p.id, score: p.score, level: p.level, kills: p.kills })),
+        [...this.match.players.values()].map((p) => ({ id: p.id, score: p.score, level: p.level, kills: p.kills, prestige: p.prestige })),
       );
       const scores = this.writer.finish();
       for (const c of joined) this.send(c, scores);

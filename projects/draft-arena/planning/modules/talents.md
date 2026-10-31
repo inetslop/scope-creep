@@ -6,7 +6,7 @@ Every level gives a talent point. Points bank, and a player spends them when the
 
 Each tree is one file in src/content/talents/, listed in TREES:
 - **The tree:** `name`, `description` (one line under its name in the panel: the playstyle) and `look` (its tab's icon).
-- **A talent** is one line: `id`, `upgrade` (what each rank gives a level of; the talent shows its name, look and text), `max` (ranks), `needs` (other talents of the same tree at a rank: `[['haste', 1]]`), `points` (points spent in this tree first) and `start` (free ranks everyone has: only Bolt).
+- **A talent** is one line: `id`, `upgrade` (what each rank gives a level of; the talent shows its name, look and text), `max` (ranks), `needs` (other talents of the same tree at a rank: `[['haste', 1]]`), `points` (points spent in this tree first), `start` (free ranks everyone has: only Bolt) and `prestige` (prestiges this life before it can be taken: planning/modules/prestige.md).
 - **A tree's shape comes only from its talents' needs.** The panel draws each talent under the first talent it needs, joined by a line, and writes what it still needs on it. There are no shared tiers: every tree branches, merges or stays flat its own way, and is balanced on its own.
 - **Mods first, weapons deeper.** Talents that need nothing are cheap mods that help any weapon; a tree's weapon and capstone ask for commitment first.
 

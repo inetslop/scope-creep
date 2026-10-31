@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CONTENT } from '../../src/content/index.ts';
 import { buildRegistry, kindRadius } from '../registry.ts';
 import { Reader, Writer } from '../shared/codec.ts';
-import { readInput, readSnapshot, S2C, writeInput } from '../shared/protocol.ts';
+import { C2S, readInput, readJoin, readRoster, readScores, readSnapshot, S2C, writeInput, writeJoin, writeRoster, writeScores } from '../shared/protocol.ts';
 import { Match } from '../sim/match.ts';
 import { writeSnapshot } from '../sim/snapshot.ts';
 
@@ -22,6 +22,8 @@ describe('protocol', () => {
     expect(r.remaining).toBe(0);
     expect(s.tick).toBe(m.tick);
     expect(s.self.level).toBe(me.level);
+    expect(s.self.prestige).toBe(me.prestige);
+    expect(s.self.coins).toBe(me.coins);
     expect(s.self.x).toBeCloseTo(me.x, 0);
     const mine = s.entities.find((e) => e.id === me.id);
     if (me.alive) {
@@ -33,6 +35,30 @@ describe('protocol', () => {
       expect(k, `kind ${e.kind}`).toBeDefined();
       expect(e.radius).toBeGreaterThan(0);
     }
+  });
+
+  it('join, roster and scores carry color, what is worn and prestige', () => {
+    const wear = { head: 3, face: 0, back: 1, pattern: 2 };
+    let w = new Writer();
+    writeJoin(w, { protocol: 9, name: 'Ada', token: 'abc', color: 4, wear });
+    let r = new Reader(w.finish());
+    expect(r.u8()).toBe(C2S.join);
+    expect(readJoin(r)).toEqual({ protocol: 9, name: 'Ada', token: 'abc', color: 4, wear });
+    w = new Writer();
+    writeJoin(w, { protocol: 9, name: 'Bo', token: '', color: undefined, wear: { head: 0, face: 0, back: 0, pattern: 0 } });
+    r = new Reader(w.finish());
+    r.u8();
+    expect(readJoin(r).color, 'no color: the server picks').toBeUndefined();
+    w = new Writer();
+    writeRoster(w, [{ id: 7, name: 'Ada', color: 4, bot: false, wear }]);
+    r = new Reader(w.finish());
+    expect(r.u8()).toBe(S2C.roster);
+    expect(readRoster(r)).toEqual([{ id: 7, name: 'Ada', color: 4, bot: false, wear }]);
+    w = new Writer();
+    writeScores(w, [{ id: 7, score: 12, level: 3, kills: 2, prestige: 2 }]);
+    r = new Reader(w.finish());
+    r.u8();
+    expect(readScores(r)).toEqual([{ id: 7, score: 12, level: 3, kills: 2, prestige: 2 }]);
   });
 
   it('inputs read back quantized', () => {

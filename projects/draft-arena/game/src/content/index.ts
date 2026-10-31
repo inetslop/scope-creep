@@ -1,8 +1,10 @@
 import type { Content } from '../../engine/api.ts';
+import { ACCESSORIES } from './accessories/index.ts';
 import { AREAS } from './areas/index.ts';
 import { DIRECTORS } from './directors/index.ts';
 import { EFFECTS } from './effects/index.ts';
 import { MONSTERS } from './monsters/index.ts';
+import { PATTERNS } from './patterns/index.ts';
 import { PICKUPS } from './pickups/index.ts';
 import { PROJECTILES } from './projectiles/index.ts';
 import { RULES } from './rules.ts';
@@ -21,5 +23,7 @@ export const CONTENT: Content = {
   effects: EFFECTS,
   directors: DIRECTORS,
   trees: TREES,
+  accessories: ACCESSORIES,
+  patterns: PATTERNS,
   rules: RULES,
 };

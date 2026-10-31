@@ -122,7 +122,8 @@
       ],
       "draft-arena": [
         "src/content/*/index.ts",
-        "src/hud/index.ts"
+        "src/hud/index.ts",
+        "src/menu/index.ts"
       ]
     },
     "smokeSeconds": 24,

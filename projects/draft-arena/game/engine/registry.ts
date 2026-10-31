@@ -4,7 +4,7 @@
  * and client build this from the same content code, so the numbers match; the hash of every id in
  * order (and the build id) catches a client built from other content.
  */
-import type { AreaDef, Content, DirectorDef, EffectDef, Look, MonsterDef, PickupDef, ProjectileDef, StatusDef, TalentDef, TalentTreeDef, UpgradeDef } from './api.ts';
+import type { AccessoryDef, AreaDef, Content, DirectorDef, EffectDef, Look, MonsterDef, PatternDef, PickupDef, ProjectileDef, StatusDef, TalentDef, TalentTreeDef, UpgradeDef } from './api.ts';
 import { hashString } from './shared/rng.ts';
 
 export type KindEntry =
@@ -35,6 +35,9 @@ export interface Registry {
   upgradeIndex: Map<UpgradeDef, number>;
   statusIndex: Map<StatusDef, number>;
   effectIndex: Map<EffectDef, number>;
+  /** What players wear travels as its index + 1 in content.accessories / content.patterns (0: nothing). */
+  accessories: Map<string, AccessoryDef>;
+  patterns: Map<string, PatternDef>;
   hash: number;
 }
 
@@ -74,6 +77,8 @@ export function buildRegistry(content: Content, build = ''): Registry {
   // A kind travels as one byte.
   if (kinds.length > 255) throw new Error('content: more than 255 monsters, projectiles, areas and pickups together');
   if (content.statuses.length > 255) throw new Error('content: more than 255 statuses');
+  if (content.accessories.length > 254) throw new Error('content: more than 254 accessories');
+  if (content.patterns.length > 254) throw new Error('content: more than 254 patterns');
   const upgrades = byId('upgrades', content.upgrades);
   const talentList = content.trees.flatMap((tree) => tree.talents);
   const treeOf = new Map<TalentDef, TalentTreeDef>();
@@ -84,7 +89,7 @@ export function buildRegistry(content: Content, build = ''): Registry {
     }
   }
   const talents = byId('talents', talentList);
-  const ids = [content.monsters, content.projectiles, content.areas, content.pickups, content.upgrades, content.statuses, content.effects, content.trees, talentList].map((list) => list.map((d) => d.id).join(','));
+  const ids = [content.monsters, content.projectiles, content.areas, content.pickups, content.upgrades, content.statuses, content.effects, content.trees, talentList, content.accessories, content.patterns].map((list) => list.map((d) => d.id).join(','));
   return {
     content,
     kinds,
@@ -105,6 +110,8 @@ export function buildRegistry(content: Content, build = ''): Registry {
     upgradeIndex: new Map(content.upgrades.map((d, i) => [d, i])),
     statusIndex: new Map(content.statuses.map((d, i) => [d, i])),
     effectIndex: new Map(content.effects.map((d, i) => [d, i])),
+    accessories: byId('accessories', content.accessories),
+    patterns: byId('patterns', content.patterns),
     hash: hashString(build ? `${ids.join('|')}#${build}` : ids.join('|')),
   };
 }

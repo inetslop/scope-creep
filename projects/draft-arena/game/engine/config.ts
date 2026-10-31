@@ -4,7 +4,7 @@
  */
 
 /** Bumped whenever the binary format changes: a client and server with different versions refuse each other. */
-export const PROTOCOL_VERSION = 4;
+export const PROTOCOL_VERSION = 5;
 
 /** Simulation steps (and snapshots) per second. */
 export const TICK_RATE = 20;

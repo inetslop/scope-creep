@@ -117,6 +117,8 @@ export interface Player extends UnitBase {
   readonly name: string;
   readonly bot: boolean;
   readonly level: number;
+  /** Prestiges this life: times the player reached rules.prestige.level and went back to level 1. A knockout resets it. */
+  readonly prestige: number;
   readonly stats: Readonly<Stats>;
   readonly input: Readonly<PlayerInput>;
 }
@@ -278,6 +280,10 @@ export interface Ctx {
   spawnMonster(monsterId: string, x: number, y: number): Monster | undefined;
   dropPickup(pickupId: string, x: number, y: number, value: number): void;
   giveXp(player: Player, amount: number): void;
+  /** Coins for a human player: added to the profile in their browser (bots get none). Whole coins. */
+  giveCoins(player: Player, amount: number): void;
+  /** Talent points, banked like the one a level gives. */
+  givePoints(player: Player, amount: number): void;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -413,6 +419,8 @@ export interface TalentDef {
   points?: number;
   /** Ranks every player starts with, free (the nomad's Bolt). */
   start?: number;
+  /** Prestiges this life before it can be taken (see rules.prestige): a talent only prestiged players get. */
+  prestige?: number;
 }
 
 /**
@@ -428,6 +436,11 @@ export interface DirectorDef {
   tick?: (ctx: Ctx, mem: Record<string, number>, dt: number) => void;
   /** After every death, monster or player. `killer` is the player credited, if any. */
   onKill?: (ctx: Ctx, mem: Record<string, number>, killer: Player | undefined, victim: Unit) => void;
+  /**
+   * Right after a player prestiges: they are back at level 1 with only the free start ranks, and
+   * `count` is their prestiges this life (player.prestige). What a prestige gives is decided here.
+   */
+  onPrestige?: (ctx: Ctx, mem: Record<string, number>, player: Player, count: number) => void;
 }
 
 /** A one-shot visual. Client only. */
@@ -486,9 +499,14 @@ export interface Rules {
   /** Pickup dropped by monsters, worth their xp. */
   gem: string;
   maxPickups: number;
-  effects: { death: string; levelUp: string; playerDeath: string };
+  effects: { death: string; levelUp: string; playerDeath: string; prestige?: string };
   score: { monsterKill: number; playerKill: number };
   pvp: { damageMul: number; bountyXpPerLevel: number };
+  /**
+   * Reaching `level` sends a player back to level 1: talents and upgrades gone except the free
+   * start ranks, banked points gone; score, kills and hp kept. Directors' onPrestige gives the reward.
+   */
+  prestige: { level: number };
   bots: { fillTo: number; names: readonly string[] };
   playerColors: readonly string[];
 }
@@ -504,7 +522,65 @@ export interface Content {
   directors: readonly DirectorDef[];
   /** The talent trees, one per line (each in its own file). */
   trees: readonly TalentTreeDef[];
+  /** What players can wear: hats and other accessories, one per slot. */
+  accessories: readonly AccessoryDef[];
+  /** Color patterns painted over a player's body. */
+  patterns: readonly PatternDef[];
   rules: Rules;
+}
+
+// ---------------------------------------------------------------------------------------------
+// What players wear (content, drawn on every client; chosen on the start screen)
+
+/** Where an accessory sits. `back` is drawn behind the body, `face` and `head` on top. */
+export type AccessorySlot = 'head' | 'face' | 'back';
+export const ACCESSORY_SLOTS: readonly AccessorySlot[] = ['head', 'face', 'back'];
+
+/** What a player wears, by id. Missing: nothing in that slot (the plain body color for pattern). */
+export type Wearing = Partial<Record<AccessorySlot | 'pattern', string>>;
+
+/** What a wearable's draw() knows. The origin is the critter's centre; the body is a circle of `radius`. */
+export interface WearView {
+  radius: number;
+  /** The player's body color. */
+  color: string;
+  ink: string;
+  /** Seconds, for animation. */
+  time: number;
+  /** Differs per player: for small variations. */
+  seed: number;
+  /** Where the player is heading (radians; the face is not turned, the eyes look this way). */
+  angle: number;
+  /** Units per second now. */
+  speed: number;
+}
+
+export interface AccessoryDef {
+  id: string;
+  name: string;
+  /** One short line for the shop. */
+  description: string;
+  slot: AccessorySlot;
+  /** Coins to buy it; 0: everyone has it. */
+  price: number;
+  /** Prestiges (over all the player's matches, kept in their browser) before it can be bought. */
+  prestige?: number;
+  /**
+   * Draws it, in world units around the critter's centre (the top of the head is at y = -radius).
+   * Keep within two radii of the centre: a head item may reach a radius above the head, and the
+   * player's name moves up above it.
+   */
+  draw: (g: CanvasRenderingContext2D, w: WearView) => void;
+}
+
+export interface PatternDef {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  prestige?: number;
+  /** Paints over the body, clipped to it; the outline and the face are drawn on top. */
+  draw: (g: CanvasRenderingContext2D, w: WearView) => void;
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -524,6 +600,10 @@ export interface HudMe {
   respawnIn: number;
   /** Talent points banked: one per level gained, spent whenever you like. */
   pendingPicks: number;
+  /** Prestiges this life. */
+  prestige: number;
+  /** Coins in your profile (in this browser), coins earned in this match included. */
+  coins: number;
   /** Every tree, and where you stand with each talent in it. */
   trees: readonly HudTree[];
   upgrades: readonly { def: UpgradeDef; level: number }[];
@@ -542,7 +622,7 @@ export interface HudTalent {
   rank: number;
   /** can: you can take a rank now. open: needs met, but no point to spend. maxed. locked: see missing. */
   state: 'can' | 'open' | 'maxed' | 'locked';
-  /** What it still needs, ready to show: "Bolt 2", "4 pts in Gunner". */
+  /** What it still needs, ready to show: "Bolt 2", "4 pts in Gunner", "Prestige 1". */
   missing: readonly string[];
 }
 
@@ -552,6 +632,8 @@ export interface HudScore {
   score: number;
   level: number;
   kills: number;
+  /** Prestiges this life. */
+  prestige: number;
   me: boolean;
   bot: boolean;
 }
@@ -577,6 +659,50 @@ export interface HudPart {
 }
 
 export type MakeHudPart = (root: HTMLElement) => HudPart;
+
+// ---------------------------------------------------------------------------------------------
+// The start screen (client side): src/menu/ parts get this view
+
+/** What this browser remembers about the player between visits. */
+export interface Profile {
+  coins: number;
+  /** Ids of the accessories and patterns bought (free ones are always owned). */
+  owned: readonly string[];
+  wearing: Wearing;
+  /** Index into rules.playerColors; undefined: the game picks one. */
+  color: number | undefined;
+  /** Prestiges over every match played in this browser. */
+  prestiges: number;
+}
+
+export interface MenuView {
+  profile: Readonly<Profile>;
+  /** rules.playerColors: every player may pick any of them. */
+  colors: readonly string[];
+  accessories: readonly AccessoryDef[];
+  patterns: readonly PatternDef[];
+  /** Free, or bought. */
+  owns(id: string): boolean;
+  /** Why it can't be bought now ('' when it can): "Costs 120 coins", "Needs 2 prestiges", "Owned". */
+  cantBuy(id: string): string;
+  /** Buys an accessory or pattern: takes its price from the coins. False when cantBuy() says why not. */
+  buy(id: string): boolean;
+  /** Puts on something owned (it replaces what is in its slot); undefined takes the slot off. */
+  wear(slot: AccessorySlot | 'pattern', id: string | undefined): void;
+  setColor(index: number | undefined): void;
+  /** Paints a critter in the player's color wearing `wearing` (default: what they wear now), centred in the canvas. */
+  preview(canvas: HTMLCanvasElement, wearing?: Wearing, color?: number): void;
+}
+
+/**
+ * One element of the start screen (a button, a panel), mounted in the card above Play. update()
+ * runs when the start screen shows and after every buy, wear or color change.
+ */
+export interface MenuPart {
+  update(view: MenuView): void;
+}
+
+export type MakeMenuPart = (root: HTMLElement) => MenuPart;
 
 // ---------------------------------------------------------------------------------------------
 // Helpers
@@ -671,6 +797,8 @@ export interface CritterOptions {
   face?: Face;
   /** A small white shine (candy, gems). */
   glint?: boolean;
+  /** Paints over the body after its fill, clipped to it, before the outline (a player's pattern). */
+  paint?: (g: CanvasRenderingContext2D) => void;
 }
 
 /**
@@ -693,6 +821,18 @@ export function drawCritter(g: CanvasRenderingContext2D, look: Look, e: DrawView
   traceShape(g, look.shape, r, turn);
   g.fillStyle = e.flash ? '#ffffff' : look.color;
   g.fill();
+  if (opts.paint && !e.flash) {
+    g.save();
+    g.clip();
+    try {
+      opts.paint(g);
+    } finally {
+      g.restore();
+    }
+    // The paint drew paths of its own: trace the body again for the outline.
+    g.beginPath();
+    traceShape(g, look.shape, r, turn);
+  }
   g.lineJoin = 'round';
   g.lineWidth = Math.max(1.5, Math.min(3, r * 0.2));
   g.strokeStyle = opts.ink;
@@ -791,6 +931,37 @@ export function drawFace(g: CanvasRenderingContext2D, face: Face, r: number, ang
 }
 
 /** Paints a look into a small canvas (an upgrade icon on a card), Critters-style. */
+/** What a player wears, resolved to defs (the renderer and the start screen's preview draw it). */
+export interface Worn {
+  pattern?: PatternDef;
+  head?: AccessoryDef;
+  face?: AccessoryDef;
+  back?: AccessoryDef;
+}
+
+/**
+ * A player: a round critter in `color` with a happy face, wearing `worn`, drawn around 0,0. A
+ * wearable whose draw() throws is passed to `onError` and skipped.
+ */
+export function drawPlayerCritter(g: CanvasRenderingContext2D, e: DrawView, color: string, worn: Worn, ink: string, onError?: (def: object, err: unknown) => void): void {
+  const w: WearView = { radius: e.radius, color, ink, time: e.time, seed: e.seed, angle: e.angle, speed: e.speed };
+  const wear = (def: AccessoryDef | PatternDef | undefined): void => {
+    if (!def) return;
+    g.save();
+    try {
+      def.draw(g, w);
+    } catch (err) {
+      onError?.(def, err);
+    }
+    g.restore();
+  };
+  wear(worn.back);
+  const look: Look = { shape: 'circle', color };
+  drawCritter(g, look, e, { ink, face: { mood: 'happy' }, paint: worn.pattern ? () => wear(worn.pattern) : undefined });
+  wear(worn.face);
+  wear(worn.head);
+}
+
 export function paintIcon(canvas: HTMLCanvasElement, look: Look, ink: string): void {
   const g = canvas.getContext('2d');
   if (!g) return;

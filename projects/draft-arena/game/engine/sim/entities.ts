@@ -4,6 +4,15 @@
  */
 import type { Area, AreaDef, Launch, Monster, MonsterDef, PickupDef, Player, PlayerInput, Projectile, ProjectileDef, Stats, StatusDef, TalentDef, UpgradeDef } from '../api.ts';
 
+export interface WearIndexes {
+  head: number;
+  face: number;
+  back: number;
+  pattern: number;
+}
+
+export const NO_WEAR: Readonly<WearIndexes> = { head: 0, face: 0, back: 0, pattern: 0 };
+
 export interface StatusState {
   def: StatusDef;
   index: number;
@@ -44,8 +53,14 @@ export interface SimPlayer extends Player, UnitBookkeeping {
   bot: boolean;
   /** Index into rules.playerColors. */
   color: number;
+  /** What the player wears: index + 1 in content.accessories per slot and in content.patterns; 0: nothing. */
+  wear: WearIndexes;
   token: string;
   level: number;
+  /** Prestiges this life. */
+  prestige: number;
+  /** Coins given since the player joined (ctx.giveCoins): the client adds the difference to its profile. */
+  coins: number;
   xp: number;
   xpNext: number;
   kills: number;

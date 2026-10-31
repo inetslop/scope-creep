@@ -20,9 +20,11 @@ import type { WireSelf } from '../shared/protocol.ts';
 import { canTake, missingFor, spentIn } from '../talents.ts';
 import { CONTENT } from '../../src/content/index.ts';
 import { HUD_PARTS } from '../../src/hud/index.ts';
+import { MENU_PARTS } from '../../src/menu/index.ts';
 import { HudHost } from './hud.ts';
 import { Input } from './input.ts';
 import { Menu } from './menu.ts';
+import { ProfileStore } from './profile.ts';
 import { Renderer } from './render.ts';
 import { Session, type Frame } from './session.ts';
 import { localServer, webSocket } from './socket.ts';
@@ -44,7 +46,8 @@ const canvas = document.getElementById('world') as HTMLCanvasElement;
 const renderer = new Renderer(canvas, registry);
 const input = new Input(canvas);
 const hud = new HudHost(document.getElementById('hud')!, HUD_PARTS);
-const menu = new Menu(document.getElementById('menu')!, (name) => start(serverUrl ? 'online' : 'offline', name));
+const profile = new ProfileStore(registry);
+const menu = new Menu(document.getElementById('menu')!, (name) => start(serverUrl ? 'online' : 'offline', name), registry, profile, MENU_PARTS);
 let session: Session | undefined;
 
 /**
@@ -97,16 +100,19 @@ function reloadOnce(): boolean {
   return true;
 }
 
+/** What you look like, from the profile: sent when joining. */
+const look = (): { color: number | undefined; wear: ReturnType<ProfileStore['wire']> } => ({ color: profile.profile.color, wear: profile.wire() });
+
 function start(mode: 'online' | 'offline', name: string): void {
   menu.hide();
   background?.close();
   background = undefined;
   if (mode === 'online' && serverUrl) {
-    session = new Session(registry, () => webSocket(serverUrl), name, 'online');
+    session = new Session(registry, () => webSocket(serverUrl), name, 'online', false, look());
   } else {
     const seed = Number(params.get('seed')) || (Date.now() & 0x7fffffff);
     const local = localServer(registry, seed, Number(params.get('lag')) || 0);
-    session = new Session(registry, () => local.connect(), name, 'offline');
+    session = new Session(registry, () => local.connect(), name, 'offline', false, look());
   }
 }
 
@@ -131,9 +137,9 @@ function treesOf(self: WireSelf): HudTree[] {
     spent: spentIn(def, rankOf),
     talents: def.talents.map((t) => {
       const upgrade = registry.upgrades.get(t.upgrade)!;
-      const missing = missingFor(registry, t, rankOf);
+      const missing = missingFor(registry, t, rankOf, self.prestige);
       const rank = rankOf(t);
-      const state = missing.length ? 'locked' : rank >= t.max || levelOf(upgrade) >= upgrade.maxLevel ? 'maxed' : self.alive && self.pendingPicks > 0 && canTake(registry, t, rankOf, levelOf) ? 'can' : 'open';
+      const state = missing.length ? 'locked' : rank >= t.max || levelOf(upgrade) >= upgrade.maxLevel ? 'maxed' : self.alive && self.pendingPicks > 0 && canTake(registry, t, rankOf, levelOf, self.prestige) ? 'can' : 'open';
       return { def: t, upgrade, rank, state, missing };
     }),
   }));
@@ -163,12 +169,14 @@ function hudView(s: Session): HudView {
           score: self.score,
           respawnIn: self.respawnIn,
           pendingPicks: self.pendingPicks,
+          prestige: self.prestige,
+          coins: profile.profile.coins,
           trees: treesOf(self),
           upgrades: self.upgrades.flatMap((u) => (upgradeDefs[u.index] ? [{ def: upgradeDefs[u.index]!, level: u.level }] : [])),
         }
       : undefined;
   const scores: HudScore[] = s.scores
-    .map((sc) => ({ name: s.roster.get(sc.id)?.name ?? '?', color: colorOf(sc.id), score: sc.score, level: sc.level, kills: sc.kills, me: sc.id === myId, bot: s.roster.get(sc.id)?.bot ?? false }))
+    .map((sc) => ({ name: s.roster.get(sc.id)?.name ?? '?', color: colorOf(sc.id), score: sc.score, level: sc.level, kills: sc.kills, prestige: sc.prestige, me: sc.id === myId, bot: s.roster.get(sc.id)?.bot ?? false }))
     .sort((a, b) => b.score - a.score);
   const status = s.state === 'connecting' ? 'Connecting…' : s.state === 'reconnecting' ? 'Reconnecting…' : '';
   return {
@@ -197,6 +205,8 @@ function frame(now: number): void {
   if (session) {
     const inp = input.sample({ x: canvas.clientWidth / 2, y: canvas.clientHeight / 2 });
     f = session.update(dt, inp, performance.now());
+    // Coins and prestiges the server gave you go into the profile at once.
+    profile.addEarnings(session.takeEarnings());
     if (session.state === 'closed') {
       const reason = session.reason;
       session = undefined;

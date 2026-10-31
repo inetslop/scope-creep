@@ -11,6 +11,23 @@
 import { MAX_STATUSES_SENT, MAX_WORLD, POS_SCALE, SLOT_COUNT } from '../config.ts';
 import type { Reader, Writer } from './codec.ts';
 
+/** What a player wears: index + 1 in content.accessories per slot and in content.patterns; 0: nothing. */
+export interface WireWear {
+  head: number;
+  face: number;
+  back: number;
+  pattern: number;
+}
+
+const clampByte = (v: number): number => (Number.isInteger(v) && v >= 0 && v <= 255 ? v : 0);
+const writeWear = (w: Writer, x: WireWear): void => {
+  w.u8(clampByte(x.head));
+  w.u8(clampByte(x.face));
+  w.u8(clampByte(x.back));
+  w.u8(clampByte(x.pattern));
+};
+const readWear = (r: Reader): WireWear => ({ head: r.u8(), face: r.u8(), back: r.u8(), pattern: r.u8() });
+
 /** Client to server. */
 export const C2S = { join: 1, input: 2, pick: 3, spectate: 4 } as const;
 /** Server to client. */
@@ -34,6 +51,9 @@ export interface JoinMsg {
   name: string;
   /** From an earlier WELCOME: rejoin as the same player after a dropped connection. Empty for a new player. */
   token: string;
+  /** Index into rules.playerColors, or undefined: the server picks. */
+  color: number | undefined;
+  wear: WireWear;
 }
 
 export interface InputMsg {
@@ -52,6 +72,8 @@ export function writeJoin(w: Writer, m: JoinMsg): void {
   w.u8(m.protocol);
   w.str(m.name);
   w.str(m.token);
+  w.u8(m.color === undefined ? 255 : clampByte(m.color));
+  writeWear(w, m.wear);
 }
 
 export function writeInput(w: Writer, m: InputMsg): void {
@@ -76,7 +98,11 @@ export function writePick(w: Writer, index: number): void {
 }
 
 export function readJoin(r: Reader): JoinMsg {
-  return { protocol: r.u8(), name: r.str(), token: r.str() };
+  const protocol = r.u8();
+  const name = r.str();
+  const token = r.str();
+  const color = r.u8();
+  return { protocol, name, token, color: color === 255 ? undefined : color, wear: readWear(r) };
 }
 
 export function readInput(r: Reader): InputMsg {
@@ -118,6 +144,7 @@ export interface RosterEntry {
   /** Index into rules.playerColors. */
   color: number;
   bot: boolean;
+  wear: WireWear;
 }
 
 export function writeRoster(w: Writer, players: readonly RosterEntry[]): void {
@@ -128,13 +155,14 @@ export function writeRoster(w: Writer, players: readonly RosterEntry[]): void {
     w.str(p.name);
     w.u8(p.color);
     w.u8(p.bot ? 1 : 0);
+    writeWear(w, p.wear);
   }
 }
 
 export function readRoster(r: Reader): RosterEntry[] {
   const n = r.u8();
   const out: RosterEntry[] = [];
-  for (let i = 0; i < n; i++) out.push({ id: r.u16(), name: r.str(), color: r.u8(), bot: r.u8() === 1 });
+  for (let i = 0; i < n; i++) out.push({ id: r.u16(), name: r.str(), color: r.u8(), bot: r.u8() === 1, wear: readWear(r) });
   return out;
 }
 
@@ -143,6 +171,8 @@ export interface ScoreEntry {
   score: number;
   level: number;
   kills: number;
+  /** Prestiges this life. */
+  prestige: number;
 }
 
 export function writeScores(w: Writer, scores: readonly ScoreEntry[]): void {
@@ -153,13 +183,14 @@ export function writeScores(w: Writer, scores: readonly ScoreEntry[]): void {
     w.u32(clampInt(s.score, 0, 0xffffffff));
     w.u8(clampInt(s.level, 0, 255));
     w.u16(clampInt(s.kills, 0, 0xffff));
+    w.u8(clampInt(s.prestige, 0, 255));
   }
 }
 
 export function readScores(r: Reader): ScoreEntry[] {
   const n = r.u8();
   const out: ScoreEntry[] = [];
-  for (let i = 0; i < n; i++) out.push({ id: r.u16(), score: r.u32(), level: r.u8(), kills: r.u16() });
+  for (let i = 0; i < n; i++) out.push({ id: r.u16(), score: r.u32(), level: r.u8(), kills: r.u16(), prestige: r.u8() });
   return out;
 }
 
@@ -189,6 +220,10 @@ export interface WireSelf {
   /** Seconds until respawn while dead. */
   respawnIn: number;
   pendingPicks: number;
+  /** Prestiges this life. */
+  prestige: number;
+  /** Coins given since joining: the client adds what is new to its profile. */
+  coins: number;
   /** Ranks held, by talent index (registry order); talents with no rank are left out. */
   talents: { index: number; rank: number }[];
   upgrades: { index: number; level: number }[];
@@ -264,6 +299,8 @@ export function writeSnapshotHead(w: Writer, tick: number, s: WireSelf): void {
   w.u32(clampInt(s.score, 0, 0xffffffff));
   w.u8(clampInt(s.respawnIn * 10, 0, 255));
   w.u8(clampInt(s.pendingPicks, 0, 255));
+  w.u8(clampInt(s.prestige, 0, 255));
+  w.u32(clampInt(s.coins, 0, 0xffffffff));
   w.u8(Math.min(255, s.talents.length));
   for (const t of s.talents.slice(0, 255)) {
     w.u16(t.index);
@@ -357,6 +394,8 @@ export function readSnapshot(r: Reader, radiusOf: (kind: number) => number): Wir
     score: r.u32(),
     respawnIn: r.u8() / 10,
     pendingPicks: r.u8(),
+    prestige: r.u8(),
+    coins: r.u32(),
     talents: [],
     upgrades: [],
   };
