@@ -3,13 +3,11 @@ id: T0075
 title: "Hive, first slice: Swarm and Horn, the crowd makes every hit harder"
 size: L
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T12:59:09Z
-claimed_at: 2026-10-31T12:59:12Z
 epic: E16
-designer: desktop
 ---
 
 ## Goal
@@ -96,3 +94,78 @@ The sixth tree (the cap) starts: a Hive playstyle that hits harder the more crow
 - [ ] The dart reads at a glance in a crowd as a fat teal triangle, apart from the pale ice jab and the spinning yellow bolt star; with Split it fans one more dart, 12% weaker.
 - [ ] Might, Haste, Quick, Split, Lance, Reap, Reckless, Chill, Chomp, Adrenaline, Fang and Swarm all work with the dart; Wide, Cling, Mend, Fuse, Scatter, Gush and Chew do not.
 - [ ] Swarm's and Horn's texts fit their rows in the panel at 412x915 and 1280x720 in one or two lines.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/talents/hive.ts` - the Hive tree (Swarm + Horn talents)
+- create `src/content/upgrades/swarm.ts` - Swarm, the crowd on-hit
+- create `src/content/upgrades/horn.ts` - Horn, the dart weapon
+- create `src/content/projectiles/horn.ts` - the Horn dart projectile
+- edit `src/content/talents/index.ts` - import + register `hive` in `TREES`
+- edit `src/content/upgrades/index.ts` - import + register `horn`, `swarm` in `UPGRADES`
+- edit `src/content/projectiles/index.ts` - import + register `horn` in `PROJECTILES`
+
+### Interfaces
+No new types. Three defs, all following existing shapes:
+
+`src/content/talents/hive.ts` (export `hive: TalentTreeDef`):
+```
+id: 'hive', name: 'Hive',
+description: 'The crowd is your weapon: the more around, the harder you hit.',
+look: { shape: 'hexagon', color: PALETTE.purple },
+talents: [
+  { id: 'swarm', upgrade: 'swarm', max: 3 },
+  { id: 'horn',  upgrade: 'horn',  max: 3, needs: [['swarm', 1]] },
+]
+```
+
+`src/content/upgrades/swarm.ts` (export `swarm: UpgradeDef`): `id 'swarm'`, `name 'Swarm'`, `description: 'Your hits deal +2 damage per other enemy within 80 of the target (up to 3). Per rank: +1 more per neighbor.'`, `maxLevel: 3`, `look: { shape: 'hexagon', color: PALETTE.purple }`, and:
+```
+onHit(ctx, me, level, hit) {
+  if (hit.damage <= 0) return; // 0-damage touches (the goo bubble in flight) are not hits
+  const per = level + 1; // rank 1: +2, rank 2: +3, rank 3: +4 per neighbor
+  let neighbors = 0;
+  for (const u of ctx.unitsNear(hit.target.x, hit.target.y, 80))
+    if (u.alive && u !== hit.target) neighbors++;
+  const bonus = per * Math.min(neighbors, 3);
+  if (bonus > 0) ctx.damage(hit.target, bonus, me);
+}
+```
+
+`src/content/upgrades/horn.ts` (export `horn: UpgradeDef`): `id 'horn'`, `name 'Horn'`, `description: 'Every 0.8 s, a fast dart at the nearest enemy within 240. 9 damage. Per rank: +3 damage.'`, `maxLevel: 3`, `look: { shape: 'triangle', color: PALETTE.teal }`, `cooldown: 0.8`, and:
+```
+fire(ctx, me, level) {
+  const target = ctx.nearestEnemy(me, 240);
+  if (!target) return;
+  const aim = v.angleTo(me, target);
+  ctx.fire(me, 'horn', { angle: aim, speed: 400, damage: 9 + 3 * (level - 1) });
+}
+```
+(import `{ v, type UpgradeDef }` like `bolt.ts`.)
+
+`src/content/projectiles/horn.ts` (export `horn: ProjectileDef`):
+```
+id: 'horn', radius: 7, life: 0.6, look: { shape: 'triangle', color: PALETTE.teal }
+```
+(No `path`, no `step`, no `onHit`/`onEnd` — straight flight, gone on hit or after 0.6 s. Radius 7 vs the ice jab's 5 reads as a "fat" dart.)
+
+### Steps
+1. Create `projectiles/horn.ts` exactly as above.
+2. Create `upgrades/horn.ts` exactly as above.
+3. Create `upgrades/swarm.ts` exactly as above (import only `type UpgradeDef` + `PALETTE`).
+4. Create `talents/hive.ts` exactly as above.
+5. `projectiles/index.ts`: add `import { horn } from './horn.ts';` between the `goolet` and `jab` imports; add `horn,` right after the `jab,` line in `PROJECTILES`.
+6. `upgrades/index.ts`: add `import { horn } from './horn.ts';` between `hide` and `lance`; add `import { swarm } from './swarm.ts';` between `split` and `swift`; add `horn,` after the `nerve,` line (weapons group) and `swarm,` after the `reap,` line (on-hit group) in `UPGRADES`.
+7. `talents/index.ts`: add `import { hive } from './hive.ts';` between `goober` and `lobber`; add `hive,` as the last line of `TREES` (after `frenzy,`).
+8. Run `npm run check` and `npm run smoke`.
+
+### Pitfalls
+- Swarm must use `ctx.unitsNear` (all units, both teams), NOT `enemiesNear` — the spec counts "monster or player". Exclude only `hit.target` and require `u.alive`.
+- Swarm's bonus uses `ctx.damage` (plain) so it stacks additively with Reap/Reckless/Chill and never re-triggers on-hit hooks (no recursion). Keep the `hit.damage <= 0` guard so Goo's in-flight 0-damage touch doesn't count.
+- Do NOT loop/fan in Horn's `fire()`: the engine applies the `shots` stat (Split) and fans copies around the angle itself, and applies `pierce` (Lance), `damage` (Might), `cooldown` (Haste), `projectileSpeed` (Quick), and PVP `damageMul 0.5` automatically. A single `ctx.fire` is correct.
+- Wide does nothing to Horn (no `area`/splash) — correct, leave it.
+- Both `upgrades/horn.ts` and `projectiles/horn.ts` export `horn` — fine, different folders; register each in its own index only.
+
+### Tests
+none (content is auto-tested by engine/tests/: one-item-per-file, registration, data validity, a real-match run of Swarm's onHit and Horn's fire, talent reachability, 60-player budget).
