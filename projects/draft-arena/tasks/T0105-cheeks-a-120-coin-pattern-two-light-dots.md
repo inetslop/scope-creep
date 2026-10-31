@@ -1,12 +1,14 @@
 ---
 id: T0105
 title: "Cheeks: a 120-coin pattern, two light dots on the cheeks"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T17:29:12Z
+claimed_at: 2026-10-31T18:11:15Z
 epic: E22
 ---
 
