@@ -1,12 +1,14 @@
 ---
 id: T0073
 title: Remove the Snail, the Popper and the Boing
+assignee: desktop-4070
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T12:51:01Z
+claimed_at: 2026-10-31T13:35:10Z
 ---
 
 ## Goal
