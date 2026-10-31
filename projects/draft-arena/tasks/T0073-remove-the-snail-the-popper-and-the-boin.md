@@ -3,10 +3,12 @@ id: T0073
 title: Remove the Snail, the Popper and the Boing
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T12:51:01Z
+claimed_at: 2026-10-31T13:20:28Z
+designer: inet-racing
 ---
 
 ## Goal
