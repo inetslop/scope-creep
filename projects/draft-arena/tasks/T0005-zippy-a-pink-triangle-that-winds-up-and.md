@@ -1,12 +1,14 @@
 ---
 id: T0005
 title: "Zippy: a pink triangle that winds up and dashes"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T02:20:47Z
+claimed_at: 2026-10-31T02:51:41Z
 epic: E2
 ---
 
