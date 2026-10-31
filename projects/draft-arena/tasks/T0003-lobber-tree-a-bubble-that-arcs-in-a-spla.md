@@ -4,11 +4,12 @@ title: "Lobber tree: a bubble that arcs in, a splash that marks the ground"
 assignee: asus
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T01:44:04Z
 claimed_at: 2026-10-31T02:03:17Z
+finished_at: 2026-10-31T04:04:12Z
 epic: E1
 ---
 
@@ -142,3 +143,33 @@ onKill(ctx: Ctx, me: Player, _level: number, victim: Unit) {
 
 ### Tests
 - none — engine/tests/ auto-covers every new item (data checks, path purity and finiteness, effect draw at t 0/0.5/1, each upgrade at max level in a 20 s match, tree reachability, 60-player budget).
+
+## Result (attempt 1, asus)
+
+Added the Lobber tree — a third playstyle in `src/content/talents/lobber.ts` (Quick → Lob → Wide/Fuse) — plus its four upgrades (`quick`, `lob`, `wide`, `fuse`), the arcing `bubble` projectile that never hits in flight, the `splash` ground area (4 strikes, half damage to players), and the `splash-ring` effect, each in its own file and one line in its registry. The bubble throws at the nearest enemy and splashes where it was; Quick lands it sooner, Wide grows the splash, and the Fuse capstone pops a ring on splash kills that chains through a crowd. Gunner and Body are untouched; `npm run check` and `npm run smoke` both pass. The only numeric deviation is Wide's radii (70/84/98/112) following the frozen additive stat model rather than the task's compounded figures, as the design anticipated.
+
+- Self-review: NO VERDICT
+- Time: 120.9 min
+
+```
+.../draft-arena/game/src/content/areas/index.ts    |  5 ++-
+ .../draft-arena/game/src/content/areas/splash.ts   | 21 ++++++++++++
+ .../draft-arena/game/src/content/effects/index.ts  |  2 ++
+ .../game/src/content/effects/splash-ring.ts        | 28 ++++++++++++++++
+ .../game/src/content/projectiles/bubble.ts         | 39 ++++++++++++++++++++++
+ .../game/src/content/projectiles/index.ts          |  2 ++
+ .../draft-arena/game/src/content/talents/index.ts  |  2 ++
+ .../draft-arena/game/src/content/talents/lobber.ts | 16 +++++++++
+ .../draft-arena/game/src/content/upgrades/fuse.ts  | 21 ++++++++++++
+ .../draft-arena/game/src/content/upgrades/index.ts |  8 +++++
+ .../draft-arena/game/src/content/upgrades/lob.ts   | 27 +++++++++++++++
+ .../draft-arena/game/src/content/upgrades/quick.ts | 11 ++++++
+ .../draft-arena/game/src/content/upgrades/wide.ts  | 11 ++++++
+ 13 files changed, 192 insertions(+), 1 deletion(-)
+```
+
+## Merge (attempt 1, asus)
+
+- Conflicts in: projects/draft-arena/game/src/content/areas/index.ts, projects/draft-arena/game/src/content/effects/index.ts, projects/draft-arena/game/src/content/upgrades/index.ts
+- Auto-resolved 6 spot(s) where both sides only added lines (clean: projects/draft-arena/game/src/content/effects/index.ts, projects/draft-arena/game/src/content/upgrades/index.ts).
+- The conflict agent resolved them.
