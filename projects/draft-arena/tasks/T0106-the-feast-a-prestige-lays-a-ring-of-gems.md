@@ -4,11 +4,12 @@ title: "The feast: a prestige lays a ring of gems where the player prestiges"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T17:29:12Z
 claimed_at: 2026-10-31T17:54:09Z
+finished_at: 2026-10-31T17:57:38Z
 ---
 
 ## Goal
@@ -114,3 +115,18 @@ Registry lines, exactly: in `pickups/index.ts` add `import { feastGem } from './
 
 ### Tests
 - none (no pure helpers in `src/`; engine/tests/ checks both new content items automatically: one item per file, registry lines, valid data, director hook in a real match, 60-player budget).
+
+## Result (attempt 1, desktop)
+
+Added the prestige feast: a new green star pickup `feast-gem` (src/content/pickups/feast-gem.ts) worth its xp plus 1 coin for humans, lasting 20 s, and a new permanent director `prestige-feast` (src/content/directors/prestige-feast.ts) that lays 8 of them worth 4 xp each in an even ring of radius 120 wherever any player — human or bot — prestiges, on top of the unchanged ring, fanfare, coins and banked point. Both are registered in their registries next to `eventGem` and `prestigePoints`. All checks pass: `npm run check` (115 tests) and `npm run smoke` (desktop + mobile).
+
+- Self-review: APPROVE
+- Time: 3.5 min
+
+```
+.../draft-arena/game/src/content/directors/index.ts    |  2 ++
+ .../game/src/content/directors/prestige-feast.ts       | 18 ++++++++++++++++++
+ .../draft-arena/game/src/content/pickups/feast-gem.ts  | 17 +++++++++++++++++
+ projects/draft-arena/game/src/content/pickups/index.ts |  2 ++
+ 4 files changed, 39 insertions(+)
+```
