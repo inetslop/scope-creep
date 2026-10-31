@@ -1,12 +1,14 @@
 ---
 id: T0124
 title: "Snap: a Frenzy fork under Nerve 2, a red burst on a player knockout while below half"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T20:44:19Z
+claimed_at: 2026-10-31T22:08:56Z
 epic: E28
 ---
 
