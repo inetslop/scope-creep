@@ -3,11 +3,13 @@ id: T0124
 title: "Snap: a Frenzy fork under Nerve 2, a red burst on a player knockout while below half"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T20:44:19Z
+claimed_at: 2026-10-31T20:50:18Z
 epic: E28
+designer: desktop
 ---
 
 ## Goal
