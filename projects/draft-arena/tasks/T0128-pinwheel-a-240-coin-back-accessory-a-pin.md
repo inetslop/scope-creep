@@ -3,11 +3,13 @@ id: T0128
 title: "Pinwheel: a 240-coin back accessory, a pink and white pinwheel that turns on a stick"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T21:28:31Z
+claimed_at: 2026-10-31T21:52:00Z
 epic: E26
+designer: desktop
 ---
 
 ## Goal
