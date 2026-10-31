@@ -3,11 +3,13 @@ id: T0067
 title: "Cover: a Gunner talent that fires a fan of bolts behind you, open after a prestige"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0061]
 attempts: 0
 created: 2026-10-31T12:44:22Z
+claimed_at: 2026-10-31T13:22:12Z
 epic: E17
+designer: desktop
 ---
 
 ## Goal
