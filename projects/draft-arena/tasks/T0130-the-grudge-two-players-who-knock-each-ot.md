@@ -1,12 +1,14 @@
 ---
 id: T0130
 title: "The grudge: two players who knock each other out wear a knot, and the end of the feud pays"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T21:28:31Z
+claimed_at: 2026-10-31T22:22:46Z
 epic: E30
 ---
 
