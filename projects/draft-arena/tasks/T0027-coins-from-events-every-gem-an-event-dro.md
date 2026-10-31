@@ -1,12 +1,14 @@
 ---
 id: T0027
 title: "Coins from events: every gem an event drops pays 1 coin"
+assignee: desktop
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0019, T0011, T0012]
-attempts: 0
+attempts: 1
 created: 2026-10-31T05:24:06Z
+claimed_at: 2026-10-31T07:46:45Z
 epic: E6
 ---
 
