@@ -1,12 +1,14 @@
 ---
 id: T0065
 title: "Heart Shades: a 200-coin face accessory, pink heart frames around the eyes"
+assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T12:00:08Z
+claimed_at: 2026-10-31T12:35:16Z
 ---
 
 ## Goal
