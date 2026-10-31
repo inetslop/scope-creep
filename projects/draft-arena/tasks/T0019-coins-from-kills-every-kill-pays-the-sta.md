@@ -1,12 +1,14 @@
 ---
 id: T0019
 title: "Coins from kills: every kill pays, the start card shows the balance"
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T04:17:26Z
+claimed_at: 2026-10-31T05:05:24Z
 epic: E6
 ---
 
