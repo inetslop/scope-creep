@@ -3,13 +3,11 @@ id: T0025
 title: "Slush: a Lobber talent that only opens after a prestige this life"
 size: M
 priority: 1
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T05:24:06Z
-claimed_at: 2026-10-31T05:47:34Z
 epic: E7
-designer: cachyos-x8664
 ---
 
 ## Goal
@@ -64,3 +62,145 @@ Prestiging is worth it within a life: after a player's first prestige this life,
 - [ ] Haste, Quick, Split, Might, Chill and Chomp all work with Slush as listed; Wide, Lance, Ricochet and Fuse do not.
 - [ ] Knock out a Slush player: in the new life the talent is locked on the prestige again.
 - [ ] No new HUD element: Slush shows only in the existing talents panel.
+
+## Design (architect, cachyos-x8664)
+
+Add a prestige-gated **Slush** weapon to the Lobber tree: a short-range lobber that throws a straight-flying slush blob where it was aimed; where it lands it leaves a `slush-puddle` area that strikes and slows anything in it. The weapon is a normal `UpgradeDef` (so it can't be had without a talent) and the only thing that gates it is a `prestige: 1` talent in the existing Lobber tree — so **no HUD change** (the existing `src/hud/talentTree.ts` already renders `HudTalent.missing` — e.g. "Prestige 1" — and disables locked rows).
+
+### Files
+
+Create / edit, one file per item plus one line in its registry:
+
+1. **`src/content/statuses/slushed.ts`** (NEW) — the 20% slow the puddle applies:
+```ts
+import type { StatusDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** Slowed in the slush puddle: 80% speed, players and monsters alike. */
+export const slushed: StatusDef = {
+  id: 'slushed',
+  name: 'Slush',
+  color: PALETTE.ice,
+  speedMul: 0.8,
+};
+```
+
+2. **`src/content/projectiles/slush-blob.ts`** (NEW) — the blob: a straight `path` (no `step`), so every client computes the flight from the launch alone. `onEnd` (server only) makes the puddle where the blob landed; the rank rides on `p1`:
+```ts
+import type { ProjectileDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+export const SLUSH_FLIGHT = 1.2;
+export const SLUSH_SPEED = 200;
+
+export const slushBlob: ProjectileDef = {
+  id: 'slush-blob',
+  radius: 8,
+  life: SLUSH_FLIGHT,
+  look: { shape: 'circle', color: PALETTE.ice },
+  path(s, t) {
+    return { x: s.x + Math.cos(s.angle) * s.speed * t, y: s.y + Math.sin(s.angle) * s.speed * t };
+  },
+  onEnd(ctx, p) {
+    if (p.owner.type !== 'player') return;
+    const rank = p.launch.p1;
+    ctx.area(p.owner, 'slush-puddle', {
+      x: p.x,
+      y: p.y,
+      life: 2.5 + 0.5 * rank,
+      damage: 4 + 2 * rank,
+    });
+  },
+};
+```
+
+3. **`src/content/areas/slush-puddle.ts`** (NEW) — the puddle: radius 40, base life 2.5, strikes every 0.5 s and re-applies the slow:
+```ts
+import type { AreaDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+const INTERVAL = 0.5;
+
+export const slushPuddle: AreaDef = {
+  id: 'slush-puddle',
+  radius: 40,
+  life: 2.5,
+  interval: INTERVAL,
+  look: { shape: 'circle', color: PALETTE.ice },
+  pulse(ctx, a) {
+    for (const u of ctx.unitsNear(a.x, a.y, a.radius)) {
+      ctx.strike(a, u);
+      ctx.addStatus(u, 'slushed', INTERVAL);
+    }
+  },
+};
+```
+
+4. **`src/content/upgrades/slush.ts`** (NEW) — the weapon (the one thing the talent grants):
+```ts
+import { v, type UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+import { SLUSH_FLIGHT, SLUSH_SPEED } from '../projectiles/slush-blob.ts';
+
+export const slush: UpgradeDef = {
+  id: 'slush',
+  name: 'Slush',
+  description: 'Every 1.6 s, if an enemy is within 240, throws a slush blob that lands and leaves a puddle (radius 40, 2.5 s). Anything in it is slowed 20% and struck for 4 every 0.5 s. Per rank: +2 strike damage, +0.5 s puddle life.',
+  maxLevel: 3,
+  look: { shape: 'circle', color: PALETTE.ice },
+  cooldown: 1.6,
+  fire(ctx, me, level) {
+    const target = ctx.nearestEnemy(me, 240);
+    if (!target) return;
+    ctx.fire(me, 'slush-blob', {
+      angle: v.angleTo(me, target),
+      speed: SLUSH_SPEED,
+      damage: 0,
+      life: SLUSH_FLIGHT / me.stats.projectileSpeed,
+      p1: level - 1,
+      p2: 0,
+    });
+  },
+};
+```
+
+5. **`src/content/talents/lobber.ts`** (EDIT) — add one line after the `lob` talent:
+```ts
+{ id: 'slush', upgrade: 'slush', max: 3, needs: [['lob', 1]], points: 2, prestige: 1 },
+```
+
+6. **`src/content/statuses/index.ts`** (EDIT) — `import { slushed } from './slushed.ts';` and `slushed,` in `STATUSES`.
+7. **`src/content/projectiles/index.ts`** (EDIT) — `import { slushBlob } from './slush-blob.ts';` and `slushBlob,` in `PROJECTILES`.
+8. **`src/content/areas/index.ts`** (EDIT) — `import { slushPuddle } from './slush-puddle.ts';` and `slushPuddle,` in `AREAS`.
+9. **`src/content/upgrades/index.ts`** (EDIT) — `import { slush } from './slush.ts';` and `slush,` in `UPGRADES` (weapons group, next to `lob`).
+
+### Interfaces (from the frozen `engine/api.ts`)
+
+- `Launch = { x, y, angle, speed, seed, p1, p2 }` — **no `life`**. So the blob's flight is a straight run along `s.angle` at `s.speed` for `t` seconds; it does not read `s.life`.
+- `LaunchOptions = { x?, y?, angle, speed?, damage, pierce?, life?, p1?, p2? }` — `angle` and `damage` are **required**; `p1`/`p2` are the only two free whole numbers a launch carries. The engine scales the launch's `speed` by the owner's `projectileSpeed` and the `life` is used as-is, so passing `life: SLUSH_FLIGHT / me.stats.projectileSpeed` makes Quick land the puddle sooner.
+- `path(s, t, owner)` is pure (no `ctx`, no state, no `Math.random`); `onEnd(ctx, p)` runs server-only when `life` runs out, with `p.launch` still readable (so `rank = p.launch.p1`).
+- `AreaDef.pulse(ctx, a)` where the live `Area` is `{ def, owner, team, damage, age, life, x, y, angle, radius, slots, mem }` — **no `units` field and no `interval` field**. So the puddle finds its own contents with `ctx.unitsNear(a.x, a.y, a.radius)` (the `a.radius` already times the owner's `area` stat), strikes with `ctx.strike(a, u)` (deals `a.damage`), and re-applies the slow with `ctx.addStatus(u, 'slushed', INTERVAL)`.
+- `AreaOptions = { x?, y?, radius?, life?, damage?, follow? }` — `radius` defaults to the def's 40 and is **times the owner's area stat** (so omit it and Wide grows the puddle; do NOT pass `40 / stats.area`); `damage` is before the owner's `damage` stat (so pass the base `4 + 2 * rank` and Might scales it).
+- `Stats` has `projectileSpeed`, `area`, `damage`, `shots`; the engine applies those to every projectile/area the owner fires, so Split's `shots` fans extra blobs and Haste shortens the flight for free.
+- `TalentDef = { id, upgrade, max, needs?, points?, prestige? }` — `prestige: 1` is the gate; the engine computes `HudTalent.missing` (includes `"Prestige 1"`) and `state: 'locked'`, and `src/hud/talentTree.ts` already renders `missing` and disables `state !== 'can'` rows.
+
+### Steps
+
+1. Create the four content files exactly as above (status, projectile, area, upgrade), copying the house style (import `PALETTE` from `../palette.ts`, ice color, one-line doc comments).
+2. Add each new item to its registry with one import line and one list line (statuses, projectiles, areas, upgrades).
+3. Add the single slush talent line to the Lobber tree (`src/content/talents/lobber.ts`) directly after the `lob` line it hangs from.
+4. Do **not** touch `src/hud/` — verify the locked-row rendering is already there (see Tests).
+
+### Pitfalls
+
+- **Do not pass `radius` in `onEnd`** — the `AreaOptions.radius` is already times the owner's `area` stat, so passing `40 / stats.area` would cancel Wide; omit it and use the def's 40.
+- **Do not read `a.units` or `a.interval` in the puddle's `pulse`** — the live `Area` has neither field; use `ctx.unitsNear(a.x, a.y, a.radius)` and the local `INTERVAL` const.
+- **Do not read `s.life` in the blob's `path`** — `Launch` has no `life`; the flight is a straight run along `s.angle` at `s.speed` for `t` seconds.
+- **Carry the rank in `p1`, not a packed target** — the aim is defined by the flight (`angle` to the target, `SLUSH_SPEED` for `SLUSH_FLIGHT / projectileSpeed` seconds), so `p1: level - 1` and `p2: 0` keep the launch clean and `onEnd` reads `p.launch.p1`.
+- **Do not add a HUD element** — the acceptance criteria are met by the existing talents panel (`src/hud/talentTree.ts` renders `HudTalent.missing`, which includes "Prestige 1", and disables locked rows); a first-life player sees the prestige requirement and cannot take the talent, and a prestiged player sees "needs Lob 1 / 2 points in the tree" until met.
+- **Do not touch `engine/`** — all behavior goes through `engine/api.ts`.
+
+### Tests
+
+- `npm run check` (typecheck + lint + content tests): the four items are each in their registry and file, the puddle's `pulse` and the blob's `path` type-check against the frozen signatures, the slush talent is reachable in the Lobber tree with its `prestige: 1` gate, and the 60-player budget passes.
+- `npm run smoke` (build + play in a real browser, offline against bots): a first-life player opens Talents and sees the Slush row locked with "Prestige 1" (and cannot take it); a player with ≥1 prestige this life sees "needs Lob 1 / 2 points in the tree" until met, then can take it, and the weapon fires a straight blob that lands and leaves a puddle that strikes and slows bots.
