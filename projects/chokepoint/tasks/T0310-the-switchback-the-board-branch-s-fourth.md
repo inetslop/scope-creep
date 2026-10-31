@@ -1,14 +1,14 @@
 ---
 id: T0310
 title: "The switchback: the board branch's fourth node, a fold in the road"
-assignee: inet-racing
 size: M
 priority: 1
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-30T22:00:22Z
 claimed_at: 2026-10-30T23:09:27Z
+finished_at: 2026-10-31T01:09:32Z
 epic: E9
 ---
 
@@ -74,3 +74,7 @@ export function switchbackFold(map: GameMap): SwitchbackFold | null;
 - `fold` must be saved in the run or a resumed run regenerates its board without the fold (copy the `chokes` handling in `saveRun.ts`/`RunSave.ts`).
 ### Tests
 - `tests/core/switchback.test.ts`: for 14x8 and 8x14, seeds 1..50 (and a bends×lengthMul sweep like `twoChokes.test.ts`): `folded = generateMap(seed,…,2,1,true)` is a valid path (`expectValidPath`, copied from twoChokes.test.ts), `switchbackFold(folded)` is non-null with `gap` 1-2 and both runs 3-5; deterministic (`folded` equals a second identical call); `plain = generateMap(seed,…,2,1,false)` equals `generateMap(seed,…,2,1)` (byte-identical, no fold param effect). Plus: `boardFold([])` false, `boardFold(['switchback'])` true, `nodeCost(BOARD_NODES,'switchback')` is 80, and `buyBoardNode` at 80 coins spends/persists.
+
+## Attempt 1 failed (inet-racing)
+
+The agent made no changes to the game (timeout).
