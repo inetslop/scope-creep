@@ -3,11 +3,13 @@ id: T0002
 title: "Puff: a purple pentagon that pops into three Dots"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T01:44:04Z
+claimed_at: 2026-10-31T01:57:50Z
 epic: E2
+designer: yoga
 ---
 
 ## Goal
