@@ -4,11 +4,12 @@ title: "Maw: a bite that eats everything in front of you"
 assignee: desktop
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T02:37:00Z
 claimed_at: 2026-10-31T03:16:47Z
+finished_at: 2026-10-31T03:26:42Z
 epic: E1
 ---
 
@@ -142,3 +143,19 @@ export const bite: AreaDef = {
 
 ### Tests
 - none (engine/tests cover the defs, registries, both items in a real match, talent reachability, and the 60-player budget).
+
+## Result (attempt 1, desktop)
+
+The Body tree gets its weapon Maw: a new `maw` weapon upgrade (hexagon/ice, 0.9 s cooldown, 5 ranks, needs Might 2) that lays a new `bite` ground area (75-unit ice crescent, 0.2 s, single strike) 55 units in front of the player, aimed at the nearest enemy within 130 — it bites everything in the zone at once (25 damage at rank 1, +6 per rank, half vs players, Chill slow and Haste/Wide/Might mods apply via the engine). Created `src/content/upgrades/maw.ts` and `src/content/areas/bite.ts`, registered both in their `index.ts` registries, and added one talent line after `might` in `src/content/talents/body.ts`. No deviations from the design; Gunner and the rest of the game are untouched, and all checks and the smoke test pass.
+
+- Self-review: APPROVE
+- Time: 9.9 min
+
+```
+.../draft-arena/game/src/content/areas/bite.ts     | 38 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/areas/index.ts    |  5 ++-
+ .../draft-arena/game/src/content/talents/body.ts   |  1 +
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ .../draft-arena/game/src/content/upgrades/maw.ts   | 18 ++++++++++
+ 5 files changed, 63 insertions(+), 1 deletion(-)
+```

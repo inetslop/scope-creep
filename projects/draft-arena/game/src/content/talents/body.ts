@@ -13,6 +13,7 @@ export const body: TalentTreeDef = {
     { id: 'hide', upgrade: 'hide', max: 3, needs: [['vigor', 1]] },
     { id: 'chomp', upgrade: 'chomp', max: 1, needs: [['vigor', 3], ['swift', 3]] },
     { id: 'might', upgrade: 'might', max: 5 },
+    { id: 'maw', upgrade: 'maw', max: 5, needs: [['might', 2]] },
     { id: 'magnet', upgrade: 'magnet', max: 3 },
   ],
 };
