@@ -3,11 +3,13 @@ id: T0041
 title: "Coin: a coin tick when a coin is picked up or spent"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0039]
 attempts: 0
 created: 2026-10-31T07:44:39Z
+claimed_at: 2026-10-31T08:03:54Z
 epic: E11
+designer: yoga
 ---
 
 ## Goal
