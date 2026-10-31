@@ -3,10 +3,12 @@ id: T0106
 title: "The feast: a prestige lays a ring of gems where the player prestiges"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:29:12Z
+claimed_at: 2026-10-31T17:29:15Z
+designer: desktop
 ---
 
 ## Goal
