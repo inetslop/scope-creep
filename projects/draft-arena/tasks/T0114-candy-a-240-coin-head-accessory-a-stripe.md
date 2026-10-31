@@ -3,13 +3,11 @@ id: T0114
 title: "Candy: a 240-coin head accessory, a striped candy on the side of the head"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T19:06:11Z
-claimed_at: 2026-10-31T19:06:39Z
 epic: E26
-designer: yoga
 ---
 
 ## Goal
@@ -39,3 +37,86 @@ The head shelf's missing middle step between the 150-coin Bloom and the 300-coin
 - [ ] Worn, it shows the striped orange-and-white ellipse with its two white wrapper twists on the side of the head, ink outlined, bobbing gently; the eyes stay clear and nothing rises above the top of the head.
 - [ ] The preview critter wears it in the panel, and bots that own it show it in the match.
 - [ ] Nothing in play changes: no stat, no size, no hitbox difference for a critter wearing it.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/accessories/candy.ts` - the Candy `AccessoryDef`
+- edit `src/content/accessories/index.ts` - one import line + one registry line, both between `bloom` and `chefHat`
+- create `tests/candy.test.ts` - mirrors `tests/lollipop.test.ts`
+
+### Interfaces
+None new; `candy: AccessoryDef` with `draw(g: CanvasRenderingContext2D, w: WearView): void`.
+
+### Steps
+1. `src/content/accessories/candy.ts` — exactly:
+
+```ts
+import type { AccessoryDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** A striped orange and white candy on the side of the head, with two white wrapper twists. */
+export const candy: AccessoryDef = {
+  id: 'candy',
+  name: 'Candy',
+  description: 'A striped orange and white candy on the side of the head.',
+  slot: 'head',
+  price: 240,
+  draw(g, w) {
+    const r = w.radius;
+    const by = Math.sin(w.time * 2 + w.seed * 6.283) * 0.05 * r;
+    const cx = 0.92 * r;
+    const cy = -0.35 * r + by;
+    const ex = cx - 0.35 * r; // the left end of the body
+    g.lineJoin = 'round';
+    g.lineCap = 'round';
+    g.lineWidth = 0.12 * r;
+    // The two white wrapper twists at the left end, behind the body: fill then ink stroke.
+    for (const m of [-1, 1]) {
+      g.beginPath();
+      g.moveTo(ex - 0.18 * r, cy + 0.06 * r * m);
+      g.lineTo(ex, cy + 0.12 * r * m);
+      g.lineTo(ex, cy);
+      g.closePath();
+      g.fillStyle = PALETTE.white;
+      g.fill();
+      g.strokeStyle = w.ink;
+      g.stroke();
+    }
+    // The orange body with its ink outline, over the twists' bases: one shared outline.
+    g.beginPath();
+    g.ellipse(cx, cy, 0.35 * r, 0.225 * r, 0, 0, Math.PI * 2);
+    g.fillStyle = PALETTE.orange;
+    g.fill();
+    g.stroke();
+    // The three white vertical stripes, clipped to the body.
+    g.save();
+    g.clip();
+    for (const dx of [-0.16, 0, 0.16]) {
+      g.beginPath();
+      g.rect(cx + (dx - 0.05) * r, cy - 0.225 * r, 0.1 * r, 0.45 * r);
+      g.fillStyle = PALETTE.white;
+      g.fill();
+    }
+    g.restore();
+    // One small white shine, in the orange gap left of the first stripe.
+    g.beginPath();
+    g.arc(cx - 0.24 * r, cy - 0.1 * r, 0.05 * r, 0, Math.PI * 2);
+    g.fillStyle = PALETTE.white;
+    g.fill();
+  },
+};
+```
+
+2. `src/content/accessories/index.ts` — add `import { candy } from './candy.ts';` on the line after the `bloom` import, and `candy,` in `ACCESSORIES` on the line after `bloom,` (before `chefHat,`), keeping the shelf's price order 150 → 240 → 300.
+3. `tests/candy.test.ts` — copy `tests/lollipop.test.ts`, change: comment "the head shelf's middle step"; describe `'candy accessory'`; find id `'candy'`; message `'the candy is registered'`; `slot` `'head'`; `price` `240`; `expect(candy!.prestige).toBeUndefined();`; keep the name-length and exact-description assertions with the description string from step 1.
+
+### Pitfalls
+- Draw order is the trick: twists first, then the body fill+stroke — the body covers the twists' base strokes so the visible ink is one shared outline (no crossing lines); never stroke the twists after the body.
+- `g.clip()` uses the current path, so it must follow the ellipse `beginPath` (which it does, straight after `fill`/`stroke`).
+- The shine sits between the body's left edge and stripe 1; if moved onto a stripe it is white-on-white and invisible.
+- Keep the description byte-identical to the test's.
+- All geometry ≤ 1.27 r from centre (within the two-radii limit), top at −0.575 r + 0.05 r bob: never above the head, clear of the eyes (x ≥ 0.39 r).
+
+### Tests
+- `tests/candy.test.ts` as above; the engine tests cover registration, one-item-per-file and the draw automatically.
