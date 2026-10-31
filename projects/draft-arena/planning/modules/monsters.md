@@ -36,7 +36,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-10 in the game, from game/src/content/monsters/ (the real values).
+7 in the game, from game/src/content/monsters/ (the real values).
 
 ### Dot (`dot`)
 - description: Heads straight for the nearest player.
@@ -99,18 +99,6 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - look: shape triangle, color #f783ac, face {mood calm, eyes 2, mouth smile}, draw (code)
 - think: (code)
 
-### Boing (`boing`)
-- description: "Crouches, then leaps to where you're going."
-- hp: 24
-- speed: 40
-- radius: 14
-- damage: 14
-- xp: 3
-- weight: 5
-- fromLevel: 5
-- look: shape circle, color #8c3b3b, face {mood angry, eyes 2, mouth frown}, draw (code)
-- think: (code)
-
 ### Sleeper (`sleeper`)
 - description: "Sleeps until you get close, then chases faster than a Dot."
 - hp: 20
@@ -134,28 +122,3 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - fromLevel: 5
 - look: shape diamond, color #ffa94d, face {mood calm, eyes 2, mouth o}, draw (code)
 - think: (code)
-
-### Snail (`snail`)
-- description: "Leaves sticky patches behind; the muck slows whatever crosses it."
-- hp: 60
-- speed: 30
-- radius: 18
-- damage: 10
-- xp: 5
-- weight: 3
-- fromLevel: 5
-- look: shape hexagon, color #ffa94d, face {mood calm, eyes 2, mouth smile}, draw (code)
-- think: (code)
-
-### Popper (`popper`)
-- description: Standing on it as it dies costs 10.
-- hp: 50
-- speed: 35
-- radius: 20
-- damage: 10
-- xp: 4
-- weight: 4
-- fromLevel: 3
-- look: shape circle, color #ff6b6b, draw (code)
-- think: (code)
-- onDeath: (code)

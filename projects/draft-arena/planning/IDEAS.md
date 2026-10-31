@@ -46,6 +46,9 @@ The backlog: add freely, turn the best into epics and tasks.
 - Gore (E17): a Frenzy prestige-gated talent — after 1 prestige this life, while below half hp the Nerve jab goes through 1 more enemy per rank — the hurt state becomes how the jab moves, the third fork under Nerve. — T0079
 - Snare (E17): a Goober prestige-gated talent — after 1 prestige this life, your Gush puddles sap whatever stands in them (a small blue drop on the back): a sapped critter takes 15% more damage from you, +10% per rank — the zone feeds every weapon, the second fork under Gush. — T0080
 - Leech (E16): a fifth Hive talent, the sustain fork under Swarm — while 3+ enemies are within 80 of you, your hits heal 1 hp, per rank +1 — the swarm that chases you feeds you. — T0081
+- The price (E19): a player who knocks out another player wears the mark for 15 s — the mark's +35% speed and the 20 xp + 5 coin bonus now fall on the killer: the real threat has a cost, and escaping after a kill is a decision (a permanent rule in the crown/kill-coins class, not one of the 6 field events). — T0082
+- The corpse pays (E19): a knocked-out player of level 4 or higher drops a green gem worth their level in xp where they fell — every midgame corpse is a pickup anyone can snipe, and the leader's gem (T0014) folds into it, so the crown keeps its double bounty and its fall. — T0083
+- A sting (E19): a small sting when the mark lands on you, by the event or by a kill — the mark is silent today; a player should hear the moment they become the target. — T0084
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.

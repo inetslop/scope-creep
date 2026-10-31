@@ -169,7 +169,7 @@ Goal: prestiging pays in the draft, not just in coins: each prestige this life b
 Done when: a prestige banks a point the player sees and spends, and a second tree has its own prestige-gated talent.
 Breakdown:
 - T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — done
-- T0067 M — Cover: a fan of bolts behind you, a Gunner talent open after a prestige this life — todo
+- T0067 M — Cover: a fan of bolts behind you, a Gunner talent open after a prestige this life — in-progress
 - T0079 M — Gore: a Frenzy talent, the jab goes through enemies while below half hp, open after a prestige — design
 - T0080 M — Snare: a Goober talent, your Gush puddles sap whatever stands in them, open after a prestige — design
 Next: a third gated talent once the bank, Cover and the two gated talents prove out.
@@ -180,3 +180,12 @@ Done when: the 10th monster is in the field with a behavior no other has, readab
 Breakdown:
 - T0066 L — Brood: a purple sac that keeps birthing Dots while it lives — done
 Done: the 10th monster is in — a Brood that keeps birthing Dots while it lives; the menagerie is full, and the crowd deepens through the trees that learn to fight it.
+
+## E19 The price of a kill (active)
+Goal: a player kill isn't free: the killer wears the mark for 15 s (revenge), and a level-4+ corpse drops a gem worth the life — every knockout starts a short hunt on the killer and a pickup fight over the corpse, so the scoreboard swings on both.
+Done when: a player who knocks out another is marked for 15 s and pays the mark bonus if knocked out in that window; a knocked-out player of level 4+ drops a gem worth their level (the leader's gem folded in); a player hears the moment they are marked.
+Breakdown:
+- T0082 M — The price: killing a player marks you for 15 s, the mark pays out as usual — design
+- T0083 M — The corpse pays: a knocked-out player of level 4+ drops a gem worth their level; the leader's gem folds in — design
+- T0084 S — A sting: a small sting when the mark lands on you — design
+Next: the escape pays — a marked player who survives all 15 s banks 5 coins — once the price and the corpse prove out.
