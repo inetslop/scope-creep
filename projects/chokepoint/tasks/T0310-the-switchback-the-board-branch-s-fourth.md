@@ -1,14 +1,14 @@
 ---
 id: T0310
 title: "The switchback: the board branch's fourth node, a fold in the road"
-assignee: inet-racing
 size: M
 priority: 1
-status: in-progress
+status: todo
 depends_on: []
 attempts: 2
 created: 2026-10-30T22:00:22Z
 claimed_at: 2026-10-31T01:09:38Z
+finished_at: 2026-10-31T07:09:58Z
 epic: E9
 ---
 
@@ -78,3 +78,30 @@ export function switchbackFold(map: GameMap): SwitchbackFold | null;
 ## Attempt 1 failed (inet-racing)
 
 The agent made no changes to the game (timeout).
+
+## Attempt 2 failed (inet-racing)
+
+Checks still failing at "check" after 2 fix round(s).
+- Gate failed at "check"; fix round 1.
+- Gate failed at "check"; fix round 2.
+
+```
+> chokepoint-game@0.1.0 check
+> npm run typecheck && npm run lint && npm run test
+
+
+> chokepoint-game@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json
+
+src/core/switchback.ts(80,57): error TS2345: Argument of type 'number' is not assignable to parameter of type '1 | -1'.
+src/core/switchback.ts(91,9): error TS6133: 'A' is declared but its value is never read.
+src/core/switchback.ts(92,9): error TS6133: 'B' is declared but its value is never read.
+src/scenes/GameScene.ts(120,161): error TS2345: Argument of type 'number | boolean' is not assignable to parameter of type 'boolean | undefined'.
+  Type 'number' is not assignable to type 'boolean | undefined'.
+src/scenes/GameScene.ts(123,5): error TS2322: Type 'number | boolean' is not assignable to type 'number'.
+  Type 'boolean' is not assignable to type 'number'.
+tests/core/saveRun.test.ts(9,61): error TS2322: Type '{ v: 1; seed: number; cols: number; rows: number; bends: number; lengthMul: number; chokes: number; fold?: number | undefined; bgen: number; gold: number; lives: number; mode: RunMode; ... 9 more ...; towers: SavedTower[]; }' is not assignable to type 'SavedRun'.
+  Types of property 'fold' are incompatible.
+    Type 'number | undefined' is not assignable to type 'number'.
+      Type 'undefined' is not assignable to type 'number'.
+```
