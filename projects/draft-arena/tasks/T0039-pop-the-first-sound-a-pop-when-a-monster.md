@@ -1,12 +1,14 @@
 ---
 id: T0039
 title: "Pop: the first sound, a pop when a monster dies, pitched by its size"
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T07:44:39Z
+claimed_at: 2026-10-31T08:22:11Z
 epic: E11
 ---
 
