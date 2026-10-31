@@ -3,13 +3,11 @@ id: T0043
 title: "Chew: your Gush puddle deals damage to whatever stands in it"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T08:05:11Z
-claimed_at: 2026-10-31T08:54:27Z
 epic: E12
-designer: desktop
 ---
 
 ## Goal
@@ -50,3 +48,111 @@ The Goober tree gets its 6th talent, under Gush: a Goo kill lays a puddle that b
 | Fuse | an on-kill that pops the kill into something | pops the kill into one ring that strikes once; Chew's puddle keeps striking everything that stands in it, refreshed while occupied |
 | Scatter | an on-kill on a Goo | spawns shots at other enemies; Chew leaves the ground behind the kill hostile |
 | Gush | a Goo kill lays a slow puddle | the puddle only slows; Chew makes that same puddle deal damage on a timer |
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/upgrades/chew.ts` — the `chew` on-kill upgrade: a Goo kill lays the biting puddle
+- create `src/content/areas/chew-puddle.ts` — the `chew-puddle` area: Gush puddle + damage tick + squishy bubbles
+- edit `src/content/upgrades/index.ts` — import `chew` (between `chill` and `chomp` imports) and one line `chew,` after `gush,`
+- edit `src/content/areas/index.ts` — import `chewPuddle` (after the `puddle` import) and one line `chewPuddle,` after `puddle,`
+- edit `src/content/talents/goober.ts` — one talent line after the `gush` line
+
+Do NOT touch `gush.ts`, `puddle.ts`, `goo-slow.ts` or any HUD file: without Chew the puddle must slow exactly as before, and the talents panel renders new talent rows automatically from the tree.
+
+### Interfaces
+No new types. Two new defs using existing interfaces (`UpgradeDef`, `AreaDef` in `engine/api.ts`):
+
+`src/content/upgrades/chew.ts`:
+```ts
+import type { UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** A Goo kill by a Chewer: the Gush puddle it lays bites whatever stands in it. */
+export const chew: UpgradeDef = {
+  id: 'chew',
+  name: 'Chew',
+  description: 'Whatever stands in your Gush puddle takes 6 damage every 0.5 s. Per rank: +6 damage.',
+  maxLevel: 3,
+  look: { shape: 'diamond', color: PALETTE.teal },
+  onKill(ctx, me, level, victim) {
+    if (ctx.time - (victim.mem.gooAt ?? -99) > 0.4) return; // only kills a Goo just struck
+    ctx.area(me, 'chew-puddle', { x: victim.x, y: victim.y, damage: 6 * level });
+  },
+};
+```
+
+`src/content/areas/chew-puddle.ts` (copy `puddle.ts`'s look body, add bubbles, extend `pulse`):
+```ts
+import { noise, shade, type AreaDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/**
+ * The Gush puddle of a Chewer, laid at the same spot as the plain one: same slow, and every 0.5 s
+ * whatever stands in it takes a tick (monsters full, players half, like the player's other weapons).
+ * Standing in it keeps it alive. Drawn over the plain puddle: the squishing bubbles say it hurts.
+ */
+export const chewPuddle: AreaDef = {
+  id: 'chew-puddle', radius: 60, life: 3, interval: 0.5, follow: false,
+  look: {
+    shape: 'circle', color: shade(PALETTE.teal, -0.2),
+    draw(g, e) {
+      const a = (e.slots[0] ?? 100) / 100 * Math.min(1, e.hp * 4); // fade in, then out
+      if (a <= 0) return;
+      g.save(); g.globalAlpha = a;
+      g.fillStyle = shade(PALETTE.teal, -0.2);
+      g.beginPath(); g.arc(0, 0, e.radius, 0, Math.PI * 2); g.fill();
+      g.lineWidth = 3; g.lineCap = 'round'; g.strokeStyle = PALETTE.ink; g.stroke();
+      g.beginPath(); g.arc(0, 0, e.radius * 0.5, 0, Math.PI * 2);
+      g.setLineDash([4, 6]); g.lineWidth = 1.5; g.stroke();
+      const s = Math.sin(((e.time % 0.5) / 0.5) * Math.PI); // 0->1->0: one squish per 0.5 s tick
+      g.setLineDash([]);
+      for (let i = 0; i < 3; i++) {
+        const ang = noise(e.seed, i) * Math.PI * 2;
+        const d = (0.2 + 0.45 * noise(e.seed, i + 3)) * e.radius;
+        const r = e.radius * (0.08 + 0.05 * noise(e.seed, i + 6));
+        g.beginPath();
+        g.ellipse(Math.cos(ang) * d, Math.sin(ang) * d, r * (1 + 0.6 * s), r * (1 - 0.45 * s), 0, 0, Math.PI * 2);
+        g.fillStyle = shade(PALETTE.teal, 0.35); g.fill();
+        g.lineWidth = 1.5; g.strokeStyle = PALETTE.ink; g.stroke();
+      }
+      g.restore();
+    },
+  },
+  pulse(ctx, a) {
+    a.slots[0] = Math.min(100, Math.round((a.age / 0.3) * 100));
+    const inIt = ctx.unitsNear(a.x, a.y, a.radius);
+    if (inIt.length > 0) a.life = a.age + 3; // refreshed while something stands in it
+    for (const u of inIt) {
+      ctx.addStatus(u, 'goo-slow', 1.5);
+      ctx.damage(u, a.damage, a.owner);
+    }
+  },
+};
+```
+
+Talent line in `goober.ts`, between the `gush` and `scatter` lines:
+```ts
+    { id: 'chew', upgrade: 'chew', max: 3, needs: [['gush', 3]] },
+```
+
+### Steps
+1. Create `src/content/upgrades/chew.ts` exactly as above.
+2. Create `src/content/areas/chew-puddle.ts` exactly as above.
+3. Add the two lines to `src/content/upgrades/index.ts` (import after the `chill` import; `chew,` after `gush,`).
+4. Add the two lines to `src/content/areas/index.ts` (import after the `puddle` import; `chewPuddle,` after `puddle,`).
+5. Add the talent line in `src/content/talents/goober.ts` after the `gush` line.
+6. Run `npm run check` and `npm run smoke`.
+
+### Pitfalls
+- Use `ctx.damage`, never `ctx.strike`, for the tick: `strike` fires on-hit hooks (Reap would double-dip); the task's table says Chew is a zone tick, not a hit. `ctx.damage(u, a.damage, a.owner)` already gives monsters full and players half (`rules.pvp.damageMul` 0.5) plus armor.
+- `radius: 60` in the def is Gush rank 3's puddle radius (`40 + 10 * (3 - 1)` in `gush.ts`); Chew requires Gush 3, so it always matches the slow puddle under it. The engine scales both radii by the player's `area` stat, so they stay matched.
+- A Chewer's Goo kill lays two areas at one spot (gush's plain puddle + this one). The chew-puddle is always spawned second (Gush's upgrade is always held before Chew's, and `onKillHooks` iterates the upgrades map in order), so it is always drawn on top and its bubbles stay visible. The duplicated slow is a harmless refresh of the same status.
+- `a.life` is writable (not `readonly` on `Area`): that is what implements "refreshed while occupied". Do not reset `a.age`.
+- The draw must stay pure of server state: positions from `noise(e.seed, i)`, the squish phase from `e.time` only. No `Math.random`. Reset `g.setLineDash([])` before stroking the bubbles, or they come out dashed.
+- Description text must be verbatim; the talents panel shows it on the row, and the panel's "Needs Gush 3" line comes from the engine off `needs` — no HUD work.
+
+### Tests
+- none (no pure helpers added; content items are tested automatically by engine/tests/).
+
+Panel fullest state (auto-rendered, no layout change): Goober tab rows Reap (indent 0) / Goo (24 px, "Needs Reap 1") / Gush (48 px, "Needs Goo 1") / Chew (72 px, "Needs Gush 3") / Scatter (24 px, "Needs Goo 3"). Fullest Chew row: icon + "Chew" + 3 pips + "Whatever stands in your Gush puddle takes 6 damage every 0.5 s. Per rank: +6 damage." wrapping to ~3 lines + "Needs Gush 3"; on 412x915 the card sits in the lower half (top ≤ 50 % − 90 px, ends below the critter) and scrolls internally (`overflow-y: auto`), so the extra row scrolls out of reach of the screen middle; desktop 1280x720: right column 360 px wide, same scroll.
