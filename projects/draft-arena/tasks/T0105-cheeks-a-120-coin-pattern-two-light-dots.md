@@ -4,11 +4,12 @@ title: "Cheeks: a 120-coin pattern, two light dots on the cheeks"
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T17:29:12Z
 claimed_at: 2026-10-31T18:11:15Z
+finished_at: 2026-10-31T18:17:48Z
 epic: E22
 ---
 
@@ -80,3 +81,16 @@ export const cheeks: PatternDef = {
 
 ### Tests
 none (content is tested automatically by engine/tests/: registered, valid data, draws, wearable).
+
+## Result (attempt 1, asus)
+
+Added the "Cheeks" pattern (120 coins, no prestige) as a new file `src/content/patterns/cheeks.ts` — two mirrored light dots (`shade(w.color, 0.35)`, radius 0.25r at ±0.45r, 0.55r) on the lower body, one on each side of the mouth, like happy blushes — and registered it in `src/content/patterns/index.ts` after Star. It wears like the other patterns and appears in the Cosmetics panel at 120 coins; nothing in play or any existing pattern changed.
+
+- Self-review: APPROVE
+- Time: 6.6 min
+
+```
+.../draft-arena/game/src/content/patterns/cheeks.ts     | 17 +++++++++++++++++
+ projects/draft-arena/game/src/content/patterns/index.ts |  2 ++
+ 2 files changed, 19 insertions(+)
+```
