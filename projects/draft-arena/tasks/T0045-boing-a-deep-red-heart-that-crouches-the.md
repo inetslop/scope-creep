@@ -3,13 +3,14 @@ id: T0045
 title: "Boing: a deep red heart that crouches, then leaps to where you're going"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T08:32:32Z
 claimed_at: 2026-10-31T09:02:39Z
+finished_at: 2026-10-31T09:05:34Z
 epic: E9
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -40,3 +41,7 @@ The crowd gains a 7th monster with a move no other has: a melee critter that lea
 - [ ] Running in a straight line at constant speed lets a Boing land on you; a hard direction change during its 0.6 s crouch makes it leap past your old line.
 - [ ] It deals 14 damage per second while touching a player, and after each leap it sits 0.9 s before it can leap again.
 - [ ] It adds only itself to the crowd (no spawns, no projectiles) and drops a gem worth 3 xp when it dies.
+
+## Rejected by architect (desktop)
+
+"## Compared with what exists" is missing rows for Puff (chases the nearest player with touch damage, same way Dot moves and attacks) and Flee (touch damage) — every monster that moves or attacks the same way needs a row.
