@@ -10,6 +10,7 @@ import { star } from './star.ts';
 import { cheeks } from './cheeks.ts';
 import { ring } from './ring.ts';
 import { smile } from './smile.ts';
+import { heart } from './heart.ts';
 
 /** Color patterns painted over a player's body. One per line. */
 export const PATTERNS: readonly PatternDef[] = [
@@ -24,4 +25,5 @@ export const PATTERNS: readonly PatternDef[] = [
   cheeks,
   ring,
   smile,
+  heart,
 ];

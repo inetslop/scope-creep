@@ -4,11 +4,12 @@ title: "Heart: a 200-coin pattern, a light heart on the middle of the body"
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T20:09:56Z
 claimed_at: 2026-10-31T20:45:42Z
+finished_at: 2026-10-31T20:55:15Z
 epic: E26
 ---
 
@@ -91,3 +92,16 @@ The heart: two round lobes (circles radius 0.18r centred ±0.14r, 0.1r above mid
 
 ### Tests
 - none (engine/tests/ validates the pattern file, its registry line, its draw, and the 12-pattern cap automatically).
+
+## Result (attempt 1, asus)
+
+Added the 12th and final pattern shelf item, Heart (200 coins): a new `src/content/patterns/heart.ts` drawing one light heart (the player's own color lightened 35%) on the middle of the body, registered in `src/content/patterns/index.ts` in price order after Smile. The shop and Cosmetics panel pick it up automatically; buying, previewing, wearing and persistence need no other changes. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 9.6 min
+
+```
+.../draft-arena/game/src/content/patterns/heart.ts   | 20 ++++++++++++++++++++
+ .../draft-arena/game/src/content/patterns/index.ts   |  2 ++
+ 2 files changed, 22 insertions(+)
+```
