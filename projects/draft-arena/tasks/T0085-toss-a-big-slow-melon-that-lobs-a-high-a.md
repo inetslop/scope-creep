@@ -1,12 +1,14 @@
 ---
 id: T0085
 title: "Toss: a big slow melon that lobs a high-arcing blob that splashes where it lands"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0071]
-attempts: 0
+attempts: 1
 created: 2026-10-31T14:39:38Z
+claimed_at: 2026-10-31T15:43:52Z
 epic: E20
 ---
 
