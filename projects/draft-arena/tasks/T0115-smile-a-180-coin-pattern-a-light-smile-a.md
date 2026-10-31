@@ -1,12 +1,14 @@
 ---
 id: T0115
 title: "Smile: a 180-coin pattern, a light smile across the lower body"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T19:06:11Z
+claimed_at: 2026-10-31T19:26:35Z
 epic: E26
 ---
 
