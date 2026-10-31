@@ -3,13 +3,11 @@ id: T0083
 title: "The corpse pays: a knocked-out player of level 4 or higher drops a gem worth their level"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T14:05:22Z
-claimed_at: 2026-10-31T14:23:11Z
 epic: E19
-designer: desktop
 ---
 
 ## Goal
@@ -45,3 +43,54 @@ A corpse is a pickup: a knocked-out player of level 4 or higher drops a gem wort
 | Prestige point | both grant something after an event | prestige banks a talent point; the corpse drops a field pickup |
 | Swarm surge | both put more on the field | the surge adds Dots to dodge; the corpse adds a gem to contest |
 | Gem rush | both start a race for gems | the race is for a line of twelve; the corpse is one gem worth a life, dropped by the fight itself |
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/directors/corpse.ts` — permanent-rule director "The corpse pays": on any player knockout at level 4+, drop one standard `gem` worth the victim's level in xp at the death spot
+- edit `src/content/directors/index.ts` — import `corpse` and add it to `DIRECTORS`, both next to `killCoins`
+- edit `src/content/directors/crown.ts` — delete the one line `ctx.dropPickup('event-gem', victim.x, victim.y, victim.level);` (line 21) so the corpse rule covers the leader's gem too
+
+### Interfaces
+No new types. The new file exports:
+
+```ts
+import type { DirectorDef } from '../../../engine/api.ts';
+
+const MIN_LEVEL = 4;
+
+/**
+ * The corpse pays: a knocked-out player of level 4 or higher (human or bot) drops the standard
+ * gem (pickups/gem.ts) worth their level in xp where they fell - a pickup fight anyone can join;
+ * a level 1-3 corpse drops nothing. Pays xp only: kill coins already pay the killer the
+ * victim's level in coins.
+ */
+export const corpse: DirectorDef = {
+  id: 'corpse',
+  name: 'The corpse pays',
+  description: 'A knocked-out player of level 4 or higher drops a gem worth their level where they fell.',
+  onKill(ctx, _mem, _killer, victim) {
+    if (victim.type !== 'player' || victim.level < MIN_LEVEL) return;
+    ctx.dropPickup('gem', victim.x, victim.y, victim.level);
+  },
+};
+```
+
+That is the complete file, exactly as written.
+
+### Steps
+1. Create `src/content/directors/corpse.ts` with exactly the code above.
+2. In `src/content/directors/index.ts`: add `import { corpse } from './corpse.ts';` directly after the `import { killCoins } ...` line, and add `corpse,` directly after `killCoins,` in the `DIRECTORS` array.
+3. In `src/content/directors/crown.ts`: delete only the `ctx.dropPickup('event-gem', victim.x, victim.y, victim.level);` line inside `onKill`. Keep the `crown-fall` effect, the `RULES.pvp.bountyXpPerLevel * victim.level` bounty, and the `check(ctx, mem)` call. Do not change the doc comment, `name` or `description`.
+4. Run `npm run check`.
+
+### Pitfalls
+- Do NOT add a `victim.bot` check. kill-coins skips bot victims only because coins land in a profile and "bots get none"; this gem is xp for whoever collects it, and the task says "any player knockout (killed by a player or by the crowd)" — bots included (the task even expects "the killer or a nearby bot" to take it).
+- Use the pickup id `'gem'`, never `'event-gem'`: event-gem is the yellow star that also pays 1 coin; the task requires the standard green xp-only gem (same look, lifetime, pickup range come for free from `pickups/gem.ts`).
+- Keep the `victim.type !== 'player'` guard — `onKill` also fires for monster deaths (`Unit` victim); `victim.level` only exists on `Player` (narrowing works, as in crown.ts).
+- Unused parameters take the `_` prefix (`_mem`, `_killer`) exactly like kill-coins; import only `DirectorDef` (not `Ctx`) or lint flags the unused import.
+- In crown.ts, remove exactly one line — the double bounty and crown-fall must remain unchanged; `victim.level` is still used by the bounty so no import goes unused.
+- No new effect, HUD or menu: the dropped pickup is the visible gem; the death burst already plays from `rules.effects.playerDeath`.
+
+### Tests
+- none (no pure helpers; engine/tests/ validates the director and exercises it in matches)
