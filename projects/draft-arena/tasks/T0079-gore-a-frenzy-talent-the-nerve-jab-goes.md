@@ -3,11 +3,13 @@ id: T0079
 title: "Gore: a Frenzy talent, the Nerve jab goes through enemies while you are below half hp"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T13:48:21Z
+claimed_at: 2026-10-31T13:56:32Z
 epic: E17
+designer: cachyos-x8664
 ---
 
 ## Goal
