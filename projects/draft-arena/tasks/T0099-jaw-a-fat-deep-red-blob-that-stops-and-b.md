@@ -1,12 +1,14 @@
 ---
 id: T0099
 title: "Jaw: a fat deep-red blob that stops and bites a locked cone in front of it"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T16:34:41Z
+claimed_at: 2026-10-31T17:09:38Z
 epic: E20
 ---
 
