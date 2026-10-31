@@ -3,11 +3,13 @@ id: T0080
 title: "Snare: a Goober talent, your Gush puddles sap whatever stands in them"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T13:48:21Z
+claimed_at: 2026-10-31T14:15:24Z
 epic: E17
+designer: inet-racing
 ---
 
 ## Goal
