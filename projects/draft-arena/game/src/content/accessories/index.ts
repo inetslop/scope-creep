@@ -5,6 +5,7 @@ import { feather } from './feather.ts';
 import { candyPack } from './candy-pack.ts';
 import { candyCane } from './candy-cane.ts';
 import { chefHat } from './chef-hat.ts';
+import { cherry } from './cherry.ts';
 import { medal } from './medal.ts';
 import { cone } from './cone.ts';
 import { roundGlasses } from './round-glasses.ts';
@@ -24,6 +25,7 @@ export const ACCESSORIES: readonly AccessoryDef[] = [
   feather,
   bloom,
   chefHat,
+  cherry,
   roundGlasses,
   bowTie,
   beak,

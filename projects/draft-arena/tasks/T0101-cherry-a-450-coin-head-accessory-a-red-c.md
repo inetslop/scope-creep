@@ -4,11 +4,12 @@ title: "Cherry: a 450-coin head accessory, a red cherry with a green stem"
 assignee: inet-racing
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T17:06:34Z
 claimed_at: 2026-10-31T17:27:23Z
+finished_at: 2026-10-31T17:40:26Z
 epic: E22
 ---
 
@@ -102,3 +103,16 @@ export const cherry: AccessoryDef = {
 
 ### Tests
 none
+
+## Result (attempt 1, inet-racing)
+
+Added the Cherry head accessory (`src/content/accessories/cherry.ts`): a small red ball with a white shine resting on top of the head, a green stem curving up out of the top (ink-outlined, tip at −1.87r so the name above stays clear), gentle 5% bounce from `w.time`/`w.seed`. Head slot, 450 coins, `prestige: 1` so the shop stamps "Needs 1 prestige in all" until then — the shop's first head item past the 300-coin Chef Hat. Registered after the chef-hat line in `src/content/accessories/index.ts` so the head row reads 0, 0, 120, 150, 300, 450. No gameplay, HUD or stat changes; buying/wearing/persistence come from the generic accessories iteration. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 13.1 min
+
+```
+.../game/src/content/accessories/cherry.ts         | 42 ++++++++++++++++++++++
+ .../game/src/content/accessories/index.ts          |  2 ++
+ 2 files changed, 44 insertions(+)
+```
