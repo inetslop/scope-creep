@@ -3,11 +3,13 @@ id: T0091
 title: "Monocle: a 150-coin face accessory, a gold lens over one eye"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T15:16:30Z
+claimed_at: 2026-10-31T15:19:59Z
 epic: E21
+designer: yoga
 ---
 
 ## Goal
