@@ -3,11 +3,13 @@ id: T0119
 title: "Kiss: a 300-coin face accessory, a small red kiss mark on the cheek"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T20:09:56Z
+claimed_at: 2026-10-31T20:10:37Z
 epic: E26
+designer: yoga
 ---
 
 ## Goal
