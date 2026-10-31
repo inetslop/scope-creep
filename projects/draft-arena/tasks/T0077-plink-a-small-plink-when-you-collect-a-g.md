@@ -1,12 +1,14 @@
 ---
 id: T0077
 title: "Plink: a small plink when you collect a gem"
+assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T13:15:23Z
+claimed_at: 2026-10-31T14:34:59Z
 ---
 
 ## Goal
