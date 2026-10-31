@@ -4,11 +4,12 @@ title: "Echo: a Lobber fork, the bubble splashes, comes back and splashes behind
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0118]
 attempts: 1
 created: 2026-10-31T20:09:56Z
 claimed_at: 2026-10-31T22:24:04Z
+finished_at: 2026-11-01T00:09:14Z
 epic: E27
 ---
 
@@ -116,3 +117,23 @@ export const echoBubble: ProjectileDef; // id 'echo-bubble', radius 8, life 2 (f
 
 ### Tests
 - `tests/echo.test.ts` as in step 7 (out-leg parity with `bubble.path`, return-splash fraction 0.5/0.75/1.0, `echoRank` defensive read). The engine tests cover registration, looks, talent reachability and the 60-player budget; note the per-upgrade match test grants Echo alone (no Lob), so the unit tests are the only CI coverage of the flight.
+
+## Result (attempt 1, inet-racing)
+
+Built Echo (T0121) as a 3-rank Lobber fork under Lob: `src/content/upgrades/echo.ts` (def + defensive `echoRank`), `src/content/projectiles/echo-bubble.ts` (a `step` bubble whose out leg reuses the Lob bubble's exact arc via the exported `echoOutLeg`, splashes where it lands, turns 0.2 s in place, then homes back at 100 u/s for 1 s and splashes again at 50/75/100% radius), `src/content/effects/echo-tick.ts`, and `tests/echo.test.ts` pinning out-leg parity against `bubble.path`, the radius fractions, and the rank reader; `lob.ts` fires `echo-bubble` when Echo is held (Quick scales both legs off `launch.speed`, Bop pops it on contact with no return, a KO owner gets one slow-pop), and it is registered in the three registries plus one talent line in `lobber.ts`. Two minimal deviations from the design: the `ECHO_TURN`/`ECHO_RETURN` import in `lob.ts` comes from `../projectiles/echo-bubble.ts` (the design's `./` path doesn't exist from `upgrades/`), and the step snaps the bubble to the arc's exact endpoint before laying the out splash so it lands where the aim was, as today's bubble does. With Bop, the fired bubble carries the pop damage as a named const in `lob.ts` and `onHit` plays Bop's burst as designed, so contact damage comes from both the strike and the burst. The engine's per-upgrade match test grants Echo without Lob, so the flight itself is exercised by the smoke test; the unit tests cover the parity and fractions. STATUS: DONE
+
+- Self-review: APPROVE
+- Time: 105.2 min
+
+```
+.../game/src/content/effects/echo-tick.ts          |  25 +++++
+ .../draft-arena/game/src/content/effects/index.ts  |   2 +
+ .../game/src/content/projectiles/echo-bubble.ts    | 116 +++++++++++++++++++++
+ .../game/src/content/projectiles/index.ts          |   2 +
+ .../draft-arena/game/src/content/talents/lobber.ts |   1 +
+ .../draft-arena/game/src/content/upgrades/echo.ts  |  19 ++++
+ .../draft-arena/game/src/content/upgrades/index.ts |   2 +
+ .../draft-arena/game/src/content/upgrades/lob.ts   |  19 ++++
+ projects/draft-arena/game/tests/echo.test.ts       |  36 +++++++
+ 9 files changed, 222 insertions(+)
+```

@@ -14,6 +14,7 @@ import { bopConfetti } from './bop-confetti.ts';
 import { geyserBubble } from './geyser-bubble.ts';
 import { surgeDust } from './surge-dust.ts';
 import { splashRing } from './splash-ring.ts';
+import { echoTick } from './echo-tick.ts';
 import { stingBurst } from './sting-burst.ts';
 import { snapBurst } from './snap-burst.ts';
 import { xpStar } from './xp-star.ts';
@@ -28,6 +29,7 @@ export const EFFECTS: readonly EffectDef[] = [
   geyserBubble,
   surgeDust,
   splashRing,
+  echoTick,
   bopConfetti,
   burst,
   stingBurst,

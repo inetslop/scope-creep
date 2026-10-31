@@ -9,6 +9,7 @@ import { chomp } from './chomp.ts';
 import { cling } from './cling.ts';
 import { cover } from './cover.ts';
 import { drift } from './drift.ts';
+import { echo } from './echo.ts';
 import { fang } from './fang.ts';
 import { frenzy } from './frenzy.ts';
 import { fizz } from './fizz.ts';
@@ -87,6 +88,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   snare,
   split,
   drift,
+  echo,
   bop,
   lance,
   swift,

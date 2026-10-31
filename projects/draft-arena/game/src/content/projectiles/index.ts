@@ -2,6 +2,7 @@ import type { ProjectileDef } from '../../../engine/api.ts';
 import { bolt } from './bolt.ts';
 import { driftBolt } from './drift-bolt.ts';
 import { bubble } from './bubble.ts';
+import { echoBubble } from './echo-bubble.ts';
 import { bopBubble } from './bop-bubble.ts';
 import { glob } from './glob.ts';
 import { plop } from './plop.ts';
@@ -22,6 +23,7 @@ export const PROJECTILES: readonly ProjectileDef[] = [
   horn,
   lashDart,
   bubble,
+  echoBubble,
   bopBubble,
   glob,
   plop,
