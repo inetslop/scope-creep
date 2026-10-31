@@ -57,10 +57,11 @@ Goal: something to play for across matches: players earn coins in the match and 
 Done when: coins are earned in play (how many, for what, is yours to design), kept between visits, shown where they are spent; the shop sells patterns and accessories with prices, and what a player buys is theirs to wear (E5).
 Ready: coins in the profile, ctx.giveCoins for content, prices and buying, and the start-screen panels. Nothing gives coins yet and there is no shop panel (planning/modules/shop.md).
 Breakdown:
-- T0019 M — Coins from kills: one coin per monster, the victim's level per knockout, a coin pop, the balance on the start card — design
-- T0021 M — First shop stock: two patterns, a face and a back accessory, priced — design
+- T0019 M — Coins from kills: one coin per monster, the victim's level per knockout, a coin pop, the balance on the start card — building
+- T0021 M — First shop stock: two patterns, a face and a back accessory, priced — todo
 - T0022 M — The shop: a panel over the start screen that sells the stock, with a preview critter — design
-Next: the shop panel (T0022), then coins from events.
+- T0027 S — Coins from events: every gem an event drops pays 1 coin — design
+Next: done once all four build: kills and events pay coins, and the shop sells the stock.
 
 ## E7 Prestige (active)
 Goal: nobody stays overpowered forever: a player who reaches level 18 prestiges back to level 1, and prestiging is worth it.
@@ -69,4 +70,6 @@ Ready: the reset at level 18 works; the reward is content (a director's onPresti
 Breakdown:
 - T0023 S — Prestige ring: a big yellow ring and confetti where a player prestiges — design
 - T0024 M — The prestige pays: the Nth prestige in all pays 25 x N coins, a card shows what you got — design
-Next: once the shop is built, the medal (needs 2 prestiges in all) and a prestige-gated talent.
+- T0025 M — Slush: a Lobber talent that only opens after a prestige this life — design
+- T0026 S — Medal: a back accessory, buyable only after 2 prestiges in all — design
+Next: done once all four build: the ring shows it, the coin pays, Slush opens a second-life build, and the Medal marks 2 prestiges in all.

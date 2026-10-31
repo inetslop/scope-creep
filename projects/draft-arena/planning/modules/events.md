@@ -31,8 +31,13 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-1 in the game, from game/src/content/directors/ (the real values).
+2 in the game, from game/src/content/directors/ (the real values).
 
 ### Gem rain (`gem-rain`)
 - description: "Every 75 s, 24 gems land in a ring around a random player."
 - tick: (code)
+
+### The crown (`crown`)
+- description: "The top scorer wears a yellow crown; it moves on a strict overtake."
+- tick: (code)
+- onKill: (code)

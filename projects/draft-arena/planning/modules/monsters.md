@@ -32,7 +32,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-3 in the game, from game/src/content/monsters/ (the real values).
+4 in the game, from game/src/content/monsters/ (the real values).
 
 ### Dot (`dot`)
 - description: Heads straight for the nearest player.
@@ -68,4 +68,16 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - weight: 6
 - fromLevel: 4
 - look: shape triangle, color #f783ac, face {mood calm, eyes 2, mouth smile}, draw (code)
+- think: (code)
+
+### Snail (`snail`)
+- description: "Leaves sticky patches behind; the muck slows whatever crosses it."
+- hp: 60
+- speed: 30
+- radius: 18
+- damage: 10
+- xp: 5
+- weight: 3
+- fromLevel: 5
+- look: shape hexagon, color #ffa94d, face {mood calm, eyes 2, mouth smile}, draw (code)
 - think: (code)
