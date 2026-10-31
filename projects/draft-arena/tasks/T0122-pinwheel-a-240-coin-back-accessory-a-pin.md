@@ -3,13 +3,14 @@ id: T0122
 title: "Pinwheel: a 240-coin back accessory, a pink and white pinwheel on a stick"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T20:44:19Z
 claimed_at: 2026-10-31T20:45:03Z
+finished_at: 2026-10-31T21:07:08Z
 epic: E26
-designer: yoga
+design_attempts: 1
 ---
 
 ## Goal
@@ -40,3 +41,7 @@ One row for every accessory in the back slot:
 - [ ] A Pinwheel-wearing critter shows four triangular blades (two pink, two white) around a yellow center on a thin stick behind the body, ink-outlined, spinning slowly when still and faster while moving, readable at a player's 36-unit size.
 - [ ] It never covers the eyes, changes nothing in play (no stat, size or hitbox change), and bots can wear it and it shows on the in-match crowd.
 - [ ] A new test `tests/pinwheel.test.ts` (the closest example: `tests/candy.test.ts`) locks the back slot, the 240-coin price and the absence of a prestige lock.
+
+## Rejected by architect (yoga)
+
+"spin faster while moving" is a speed-dependent spin rate that must integrate speed over time, but the accessory hook is stateless `draw(g,w)` (only `time`/`seed`/`angle`/instantaneous `speed`, no `dt`, no per-player spin); the speed×time formulas jump proportionally to match time on start/stop, so a correct speed-dependent spin needs an engine change (a `dt` or accumulated spin in `WearView`).
