@@ -3,13 +3,11 @@ id: T0050
 title: "Fanfare: a rising three-note fanfare when a player prestiges"
 size: S
 priority: 3
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T09:20:00Z
-claimed_at: 2026-10-31T09:42:09Z
 epic: E11
-designer: yoga
 ---
 
 ## Goal
@@ -28,3 +26,66 @@ A prestige is the rarest moment of a life — the big ring and confetti where th
 - [ ] The fanfare is clearly longer and lower than the level-up chime, so the two moments don't blend into one sound.
 - [ ] Two prestiges in the same second: only one fanfare plays.
 - [ ] On a phone it plays with no extra tap and does not block the controls.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/audio/sfx.ts` - add one module state line and the exported `fanfare(seed, age)` function (no other changes)
+- edit `src/content/effects/prestige-ring.ts` - import `fanfare` and call it as the first line of `draw()` (exactly like `pop.ts:12`)
+
+### Interfaces
+```ts
+// in src/audio/sfx.ts
+let lastFanfare = 0; // performance.now() of the last fanfare (next to `let active`/`const heard`, lines 11-12)
+
+export function fanfare(seed: number, age: number): void // at end of file, after playChime
+```
+
+### Steps
+1. In `src/audio/sfx.ts`, after `const heard = ...` (line 12) add: `let lastFanfare = 0; // performance.now() of the last prestige fanfare`
+2. At the end of `src/audio/sfx.ts` add, copy of `playChime` structure (its loop, gain, stop pattern) with these exact differences:
+
+```ts
+/**
+ * Prestige: a bright rising arpeggio C5→E5→G5 ("da-da-DA"), lower and longer than the
+ * level-up chime so a prestige reads bigger. Called from the prestige-ring effect's
+ * draw() on every client: the frames the ring blooms (its seed) and at most one
+ * fanfare every 2 s, so a player and a bot prestiging at once sound as one.
+ */
+export function fanfare(seed: number, age: number): void {
+  if (!ctx || !master) return; // not unlocked by a gesture yet
+  if (age < 0.2 || age > 0.35) return; // only as the ring blooms
+  const now = performance.now();
+  if (now - lastHud > 1000) return; // no match on screen
+  const until = heard.get(seed);
+  if (until !== undefined && until > now) return;
+  heard.set(seed, now + 700);
+  if (heard.size > 96) for (const [s, u] of heard) if (u <= now) heard.delete(s);
+  if (now - lastFanfare < 2000) return; // one fanfare per 2 s
+  lastFanfare = now;
+  const t0 = ctx.currentTime;
+  for (const [f, d] of [[523.25, 0], [659.25, 0.1], [784, 0.2]] as const) {
+    const o = ctx.createOscillator();
+    o.type = 'sine';
+    o.frequency.value = f;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.09, t0 + d);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + d + 0.12);
+    o.connect(g);
+    g.connect(master);
+    o.start(t0 + d);
+    o.stop(t0 + d + 0.14);
+  }
+}
+```
+3. In `src/content/effects/prestige-ring.ts`: add `import { fanfare } from '../../audio/sfx.ts';` after the PALETTE import (line 2), and make the first line of `draw(g, fx)` be `fanfare(fx.seed, fx.age);` (before `if (fx.t < 0.2) return;`).
+
+### Pitfalls
+- `age < 0.2` gate is required: without it the fanfare starts 0.2 s before the ring becomes visible; the gate sits in `sfx.ts`, not in `draw` (the call stays unconditional, like `pop.ts:12`).
+- The 2 s gate is its own `lastFanfare` var; do not touch pop's `active` counter (that caps pops at 6) and do not remove the per-seed `heard` mark.
+- Do not call `fanfare` from the director's `onPrestige` (server-only): sound is client-side, the effect's `draw()` is the client hook.
+- `ctx` may be undefined (no gesture yet) or the start screen may be up: both are early-returns, exactly as `pop` does.
+- `T0049` (Bonk) also edits `sfx.ts`; the runner serializes same-file edits — add nothing of its, no `DEPENDS_ON`.
+
+### Tests
+- none
