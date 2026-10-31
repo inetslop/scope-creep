@@ -43,7 +43,8 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - xp: 1
 - weight: 10
 - fromLevel: 1
-- look: shape circle, color #ff6b6b, face {mood angry}
+- look: shape circle, color #ff6b6b, draw (code)
+- think: (code)
 
 ### Puff (`puff`)
 - description: Pops into three Dots when it dies.

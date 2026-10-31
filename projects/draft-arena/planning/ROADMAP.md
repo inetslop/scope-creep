@@ -2,7 +2,7 @@
 
 Epics are the main work: one or two active at a time, each broken into playable slices (task ids once written). Content-only: anything that needs the engine changed goes to IDEAS.md under "Needs the engine".
 
-## E1 New talent trees (active)
+## E1 New talent trees (tasked)
 Goal: more playstyles. Today: Gunner (your Bolt) and Body (plain stats).
 Done when: there are several trees, each a playstyle with its own weapon, its own shape, mods that help any weapon first, and a capstone behind a real commitment.
 Breakdown:
@@ -21,9 +21,10 @@ Breakdown:
 - T0002 S — Puff: a purple pentagon that pops into three Dots on death — done
 - T0005 M — Zippy: a pink triangle that winds up and dashes — done
 - T0008 M — Snail: an orange hexagon that leaves sticky patches — design
-Next: done once T0008 builds: every monster has its own way to move.
+- T0018 M — Spitter: an orange diamond that spits from a distance — design
+Next: done once T0008 and T0018 build: every monster has its own way to move.
 
-## E3 Field events (active)
+## E3 Field events (tasked)
 Goal: reasons to go somewhere on the field. Today: Gem rain. More events, built as directors (planning/modules/events.md).
 Breakdown:
 - T0010 M — Swarm surge: a line of calm Dots that crosses the field — design
@@ -31,7 +32,7 @@ Breakdown:
 - T0012 S — Gem geyser: a spot that bubbles 8 gems, a position to hold — design
 Next: done once T0010-T0012 build: four events, four reasons to move (a windfall, a threat, a race, a position).
 
-## E4 Pressure on the leader (active)
+## E4 Pressure on the leader (tasked)
 Goal: the top player is a target, and knocking them out pays. Built from events and the match's rules (planning/modules/events.md, match.md).
 Done when: the leader is readable on the field, and knocking the crown out is the most rewarding moment of a life.
 Ready: a director sees every player's score each tick and gets onKill after each player death (planning/modules/events.md); the pvp damage and bounty are one line in rules.ts (planning/modules/match.md).
@@ -40,10 +41,14 @@ Breakdown:
 - T0014 S — Leader's gem: a knocked-out crown drops a gem worth its level — design
 - T0015 S — The leader pays: the crown takes 25% more damage from players — design
 
-## E5 Your own critter
+## E5 Your own critter (active)
 Goal: players make their critter theirs: they pick its color and put on a hat, and everyone in the match sees it.
 Done when: before playing, a player can choose a color and a hat (a couple of each to start); the choice is kept for their next visit and shows on their critter for everyone.
 Ready: the engine has what players wear (accessories in src/content/accessories/, patterns), the color pick, the profile in the browser, and start-screen panels (src/menu/). Nothing is built on it yet: no accessories, no patterns, no panels (planning/modules/accessories.md, patterns.md, shop.md).
+Breakdown:
+- T0016 M — Your color: a card of the 10 colors, kept for the next visit — design
+- T0017 M — Two starter hats: a Hats card, wear and take off — design
+Next: done once T0016 and T0017 build: a color and a hat, picked on the start screen, kept between visits, seen by everyone in the match.
 
 ## E6 Shop and coins
 Goal: something to play for across matches: players earn coins in the match and spend them in a shop on color patterns and accessories (hats and more).

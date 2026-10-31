@@ -12,6 +12,8 @@ The backlog: add freely, turn the best into epics and tasks.
 - Prestige coin (E7): each prestige a player has in all adds +10% to the coins their gems are worth — a long-game coin engine that rewards players who reset early and often (pairs with the shop, E6).
 - Gem geyser (E3): every 120 s a spot marks itself with a 2 s bubble-up, then drops a Puff-worth gem (4 xp) every 1 s for 8 s — the only event that gives a place to hold and defend, not a prize to grab. — T0012
 - Knockout coins (E6): a player knockout gives coins equal to the victim's level — coins come from the real threat, so the shop is paid for in fights, not just in monsters.
+- Flee (E2): a small fast critter that runs from the nearest player; catch it for its gem — a crowd you chase, and it punishes a build that cannot close in.
+- Knockout card: after you knock out a player, a small sticker card under the xp bar for 2 s: their name and the score and xp you got — a kill you can see (a kill feed needs the engine).
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.

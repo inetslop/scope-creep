@@ -37,7 +37,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-12 in the game, from game/src/content/upgrades/ (the real values).
+13 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -68,6 +68,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - description: "Bolts that hit bounce on to another enemy nearby."
 - maxLevel: 1
 - look: shape star, color #ffd43b, scale 1.1
+- onHit: (code)
+
+### Chill (`chill`)
+- description: "Hits slow the target by 30% for 1 s. Per rank: +10% slower, +0.5 s."
+- maxLevel: 3
+- look: shape hexagon, color #99e9f2
 - onHit: (code)
 
 ### Chomp (`chomp`)
