@@ -1,14 +1,14 @@
 ---
 id: T0041
 title: "Coin: a coin tick when a coin is picked up or spent"
-assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: todo
 depends_on: [T0039]
 attempts: 1
 created: 2026-10-31T07:44:39Z
 claimed_at: 2026-10-31T08:48:05Z
+finished_at: 2026-10-31T09:16:11Z
 epic: E11
 ---
 
@@ -83,3 +83,19 @@ export const coin: MakeHudPart = () => {
 
 ### Tests
 - none
+
+## Attempt 1 failed (asus)
+
+Runner error: UNKNOWN: unknown error, open 'C:\Users\InetSpark\Documents\Repos\scope-creep\projects\draft-arena\game\src\audio\sfx.ts'
+- Conflicts in: projects/draft-arena/game/src/audio/sfx.ts, projects/draft-arena/game/src/hud/index.ts
+
+```
+Error: UNKNOWN: unknown error, open 'C:\Users\InetSpark\Documents\Repos\scope-creep\projects\draft-arena\game\src\audio\sfx.ts'
+    at Object.writeFileSync (node:fs:2482:20)
+    at autoResolve (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:391:8)
+    at resolveConflicts (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:339:21)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:266:28)
+    at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
+    at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
