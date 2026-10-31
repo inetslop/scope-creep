@@ -11,6 +11,7 @@ export const goober: TalentTreeDef = {
     { id: 'reap', upgrade: 'reap', max: 3 },
     { id: 'goo', upgrade: 'goo', max: 3, needs: [['reap', 1]] },
     { id: 'gush', upgrade: 'gush', max: 3, needs: [['goo', 1]] },
+    { id: 'cling', upgrade: 'cling', max: 3, needs: [['goo', 2]] },
     { id: 'scatter', upgrade: 'scatter', max: 1, needs: [['goo', 3]] },
   ],
 };

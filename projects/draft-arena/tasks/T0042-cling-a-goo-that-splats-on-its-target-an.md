@@ -4,11 +4,12 @@ title: "Cling: a Goo that splats on its target and rides it"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T08:05:11Z
 claimed_at: 2026-10-31T09:05:03Z
+finished_at: 2026-10-31T10:05:05Z
 epic: E12
 ---
 
@@ -185,3 +186,27 @@ export const splat: AreaDef = {
 none — engine/tests cover it: one-item-per-file + registries, the upgrade in a real match, the talent reachable (Goo 2 exists, ranks 3 ≤ maxLevel 3), panel data, and the 60-player budget.
 
 Panel fullest state (no HUD file changes): Goober tab shows 5 rows — Reap (3 pips) at left; under Goo (3 pips, under Reap) in order: Gush (3), Cling (3), Scatter (1). Cling's description is 116 chars; Goo's (~170) stays the longest wrapping line, so the existing card layout (right column at 1280x720, above the Talents button at 412x915) holds. Before Goo rank 2, the Cling row shows the panel's standard "Needs Goo 2".
+
+## Result (attempt 1, desktop-4070)
+
+Added the Goober tree's Cling talent as three new files — a marker status `cling`, the on-hit upgrade `cling` that splats only a direct Goo hit (5/10/15 damage per tick by rank for a fixed 2 s), and the riding area `splat`, a small blue ink-rimmed drop that squishes once per tick on the mark's back and follows it even when fleeing — each registered in its folder, with the talent line placed under Goo gated on Goo 2. Splat bites go through `ctx.strike`, so they deal half damage vs players and trigger Reap, while a born-epoch and deadline gate guarantee at most one splat per target that dries up on refresh. `npm run check` (typecheck, lint, 83 tests) and both desktop/mobile `npm run smoke` runs pass; the final `git diff` review was permission-blocked in this session, so verification was done by re-reading the written files.
+
+- Self-review: APPROVE
+- Time: 60.0 min
+
+```
+.../draft-arena/game/src/content/areas/index.ts    |  2 +
+ .../draft-arena/game/src/content/areas/splat.ts    | 57 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/statuses/cling.ts |  5 ++
+ .../draft-arena/game/src/content/statuses/index.ts |  2 +
+ .../draft-arena/game/src/content/talents/goober.ts |  1 +
+ .../draft-arena/game/src/content/upgrades/cling.ts | 24 +++++++++
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 +
+ 7 files changed, 93 insertions(+)
+```
+
+## Merge (attempt 1, desktop-4070)
+
+- Conflicts in: projects/draft-arena/game/src/content/areas/index.ts, projects/draft-arena/game/src/content/statuses/index.ts, projects/draft-arena/game/src/content/upgrades/index.ts
+- Auto-resolved 4 spot(s) where both sides only added lines (clean: projects/draft-arena/game/src/content/areas/index.ts, projects/draft-arena/game/src/content/statuses/index.ts, projects/draft-arena/game/src/content/upgrades/index.ts).
+- Resolved without the conflict agent.

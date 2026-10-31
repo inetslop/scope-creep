@@ -4,6 +4,7 @@ import { crown } from './crown.ts';
 import { mark } from './mark.ts';
 import { splash } from './splash.ts';
 import { slushPuddle } from './slush-puddle.ts';
+import { splat } from './splat.ts';
 import { puddle } from './puddle.ts';
 import { sticky } from './sticky.ts';
 
@@ -14,6 +15,7 @@ export const AREAS: readonly AreaDef[] = [
   mark,
   splash,
   slushPuddle,
+  splat,
   sticky,
   puddle,
 ];
