@@ -3,11 +3,13 @@ id: T0005
 title: "Zippy: a pink triangle that winds up and dashes"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T02:20:47Z
+claimed_at: 2026-10-31T02:42:43Z
 epic: E2
+designer: desktop
 ---
 
 ## Goal
