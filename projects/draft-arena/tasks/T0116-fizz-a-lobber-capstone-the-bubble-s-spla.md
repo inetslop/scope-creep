@@ -3,11 +3,13 @@ id: T0116
 title: "Fizz: a Lobber capstone, the bubble's splash lingers and strikes every 0.5 s"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T19:30:37Z
+claimed_at: 2026-10-31T19:30:41Z
 epic: E23
+designer: desktop
 ---
 
 ## Goal
