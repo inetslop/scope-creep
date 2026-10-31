@@ -3,11 +3,13 @@ id: T0055
 title: "Popper: a fat grinning red blob that pops a damaging puff when it dies"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T10:47:58Z
+claimed_at: 2026-10-31T11:00:23Z
 epic: E14
+designer: desktop-4070
 ---
 
 ## Goal
