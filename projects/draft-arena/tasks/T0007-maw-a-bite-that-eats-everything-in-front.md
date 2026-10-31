@@ -1,12 +1,14 @@
 ---
 id: T0007
 title: "Maw: a bite that eats everything in front of you"
+assignee: desktop
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T02:37:00Z
+claimed_at: 2026-10-31T03:16:47Z
 epic: E1
 ---
 
