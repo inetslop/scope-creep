@@ -1,12 +1,14 @@
 ---
 id: T0070
 title: Gentler squash for the Zippy and the Sleeper
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T12:51:01Z
+claimed_at: 2026-10-31T15:06:05Z
 ---
 
 ## Goal
