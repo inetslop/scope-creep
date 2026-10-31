@@ -1,12 +1,14 @@
 ---
 id: T0041
 title: "Coin: a coin tick when a coin is picked up or spent"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0039]
-attempts: 0
+attempts: 1
 created: 2026-10-31T07:44:39Z
+claimed_at: 2026-10-31T08:48:05Z
 epic: E11
 ---
 
