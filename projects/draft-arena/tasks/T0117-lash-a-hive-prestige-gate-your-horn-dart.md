@@ -4,11 +4,12 @@ title: "Lash: a Hive prestige gate, your horn darts split on hit"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T19:30:37Z
 claimed_at: 2026-10-31T20:21:56Z
+finished_at: 2026-10-31T20:36:26Z
 epic: E25
 ---
 
@@ -149,3 +150,21 @@ Registry lines: `import { lashDart } from './lash-dart.ts';` + `lashDart,`; `imp
 
 ### Tests
 - none (no pure helpers; the engine tests cover the def, the guarded on-hit in a real match, talent reachability, and the 60-player budget).
+
+## Result (attempt 1, asus)
+
+Added Lash, the Hive tree's missing prestige gate: a horn dart that hits a critter now splits into up to 3 small purple hexagon shards (`lash-dart`) aimed at the nearest other enemies within 100 of the hit — 3 damage, 400 u/s, 0.4 s, never splitting themselves — with a purple tick puff (`lash-tick`) where the split fires. New files `src/content/upgrades/lash.ts`, `src/content/projectiles/lash-dart.ts`, `src/content/effects/lash-tick.ts`, plus one registry line in each of the three `index.ts` files and one talent line in `src/content/talents/hive.ts` (needs Horn 2, 2 ranks, 3 tree points, 1 prestige this life). Shards credit their owner for hits and kills, so Swarm, Chomp, Nest, Sting, Scavenge, Adrenaline and Fang all work on them untouched, and the guard on the horn dart id keeps Lash away from every other weapon. Typecheck, lint, tests and the browser smoke test all pass.
+
+- Self-review: APPROVE
+- Time: 14.5 min
+
+```
+.../draft-arena/game/src/content/effects/index.ts  |  2 ++
+ .../game/src/content/effects/lash-tick.ts          | 23 +++++++++++++++++++++
+ .../game/src/content/projectiles/index.ts          |  2 ++
+ .../game/src/content/projectiles/lash-dart.ts      | 13 ++++++++++++
+ .../draft-arena/game/src/content/talents/hive.ts   |  1 +
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ .../draft-arena/game/src/content/upgrades/lash.ts  | 24 ++++++++++++++++++++++
+ 7 files changed, 67 insertions(+)
+```

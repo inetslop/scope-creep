@@ -7,6 +7,7 @@ import { plop } from './plop.ts';
 import { goo } from './goo.ts';
 import { goolet } from './goolet.ts';
 import { horn } from './horn.ts';
+import { lashDart } from './lash-dart.ts';
 import { jab } from './jab.ts';
 import { slushBlob } from './slush-blob.ts';
 
@@ -16,6 +17,7 @@ export const PROJECTILES: readonly ProjectileDef[] = [
   driftBolt,
   jab,
   horn,
+  lashDart,
   bubble,
   glob,
   plop,

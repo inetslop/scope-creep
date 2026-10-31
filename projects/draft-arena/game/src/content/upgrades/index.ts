@@ -20,6 +20,7 @@ import { haste } from './haste.ts';
 import { hide } from './hide.ts';
 import { horn } from './horn.ts';
 import { lance } from './lance.ts';
+import { lash } from './lash.ts';
 import { leech } from './leech.ts';
 import { lob } from './lob.ts';
 import { magnet } from './magnet.ts';
@@ -60,6 +61,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   swarm,
   leech,
   mend,
+  lash,
   chomp,
   adrenaline,
   fang,
