@@ -4,11 +4,12 @@ title: "Boing: a deep red heart that crouches, then leaps to where you're going"
 assignee: inet-racing
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T09:20:00Z
 claimed_at: 2026-10-31T10:14:03Z
+finished_at: 2026-10-31T10:28:02Z
 epic: E9
 ---
 
@@ -162,3 +163,16 @@ export const boing: MonsterDef = {
 
 ### Tests
 - none (no pure helpers; engine/tests covers registry, data, the draw function, and the monster in a real match).
+
+## Result (attempt 1, inet-racing)
+
+Added the 7th monster Boing (`src/content/monsters/boing.ts`): a deep red heart that shuffles in at 40 u/s, telegraphs a 0.6 s flat crouch with a teeth face, then leaps straight at 320 u/s for up to 0.5 s to the player's predicted position (position + heading × 0.4 s, locked at crouch so jinking beats it), and sits 0.9 s after each leap; 24 hp, 14 dps touch damage, 3 xp, spawns from level 5. Registered it in `src/content/monsters/index.ts` after zippy. All checks and smoke tests pass.
+
+- Self-review: APPROVE
+- Time: 14.0 min
+
+```
+.../draft-arena/game/src/content/monsters/boing.ts | 89 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/monsters/index.ts |  2 +
+ 2 files changed, 91 insertions(+)
+```
