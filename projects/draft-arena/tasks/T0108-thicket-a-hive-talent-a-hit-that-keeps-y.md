@@ -3,11 +3,13 @@ id: T0108
 title: "Thicket: a Hive talent, a hit that keeps you shielded while the crowd is on you"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:49:52Z
+claimed_at: 2026-10-31T17:50:46Z
 epic: E23
+designer: desktop
 ---
 
 ## Goal
