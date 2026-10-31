@@ -3,11 +3,13 @@ id: T0023
 title: "Prestige ring: a big confetti ring where a player prestiges"
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T04:59:35Z
+claimed_at: 2026-10-31T05:29:00Z
 epic: E7
+designer: yoga
 ---
 
 ## Goal
