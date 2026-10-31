@@ -4,11 +4,12 @@ title: "Puff: a purple pentagon that pops into three Dots"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T01:44:04Z
 claimed_at: 2026-10-31T02:13:20Z
+finished_at: 2026-10-31T02:24:27Z
 epic: E2
 ---
 
@@ -83,3 +84,16 @@ export const puff: MonsterDef = {
 
 ### Tests
 none (content is tested automatically by engine/tests/).
+
+## Result (attempt 1, yoga)
+
+Added the Puff monster (src/content/monsters/puff.ts): a slow (50 u/s), tanky (hp 45) purple pentagon with a calm one-eyed face that spawns from player level 3 (weight 4 vs the Dot's 10) and pops into three Dots on death via one onDeath; registered it in src/content/monsters/index.ts. No effect or pickup code was added — the engine already plays the pop confetti (which reads purple from the Puff's own color) and drops the xp-worth gem on every monster death. Typecheck, lint, all 53 tests, and the desktop + mobile smoke pass.
+
+- Self-review: APPROVE
+- Time: 11.1 min
+
+```
+.../draft-arena/game/src/content/monsters/index.ts |  2 ++
+ .../draft-arena/game/src/content/monsters/puff.ts  | 23 ++++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
+```
