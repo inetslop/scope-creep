@@ -3,13 +3,11 @@ id: T0113
 title: "Glide: a Hive talent, the crowd keeps you moving"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T19:06:11Z
-claimed_at: 2026-10-31T19:06:13Z
 epic: E25
-designer: desktop
 ---
 
 ## Goal
@@ -56,3 +54,56 @@ A Hive life runs into the swarm to fight and still gets out: while the crowd is 
 - [ ] Glide 2 moves 30% faster and holds for 2 s.
 - [ ] The Hive tab shows Glide under Swarm (needs Swarm 1, 2 ranks) with the crowd, the speed, the refresh and both ranks' numbers in its text.
 - [ ] No other tree lists Glide; Adrenaline, the Wired statuses and every other weapon keep their existing numbers; bots are unaffected.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/upgrades/glide.ts` — the Glide on-hit upgrade (crowd → own speed), exporting `glide: UpgradeDef`
+- edit `src/content/upgrades/index.ts` — one import line + one registry line
+- edit `src/content/talents/hive.ts` — one talent line after `scavenge`
+
+### Interfaces
+No new types. The new def, exact:
+
+```ts
+import type { UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** Hive mod, works with every weapon: while the crowd is on you, your hits keep you fast. */
+export const glide: UpgradeDef = {
+  id: 'glide',
+  name: 'Glide',
+  description:
+    'While 3+ enemies are within 80 of you, you move 20% faster, refreshed on each of your hits, 1.5 s. Rank 2: 30% for 2 s.',
+  maxLevel: 2,
+  look: { shape: 'triangle', color: PALETTE.yellow },
+  onHit(ctx, me, level, hit) {
+    if (hit.damage <= 0) return; // 0-damage touches (the goo bubble in flight) are not hits
+    let crowd = 0;
+    for (const u of ctx.unitsNear(me.x, me.y, 80))
+      if (u.alive && u !== me) crowd++;
+    if (crowd < 3) return;
+    const id = level === 2 ? 'wired-2' : 'wired-1';
+    if (ctx.statusOf(me, id) <= 0) ctx.effect('wired-pop', { x: me.x, y: me.y });
+    ctx.addStatus(me, id, level === 2 ? 2 : 1.5);
+  },
+};
+```
+
+### Steps
+1. Create `src/content/upgrades/glide.ts` with the exact def above (copy of the file, do not deviate).
+2. In `src/content/upgrades/index.ts`: add `import { glide } from './glide.ts';` between the `gush` (line 15) and `haste` (line 16) imports; add `glide,` as a new list entry directly after `scavenge,` (line 71), inside the Hive cluster.
+3. In `src/content/talents/hive.ts`: add one line directly after `{ id: 'scavenge', upgrade: 'scavenge', max: 3, needs: [['swarm', 1]] },` (line 14):
+   `{ id: 'glide', upgrade: 'glide', max: 2, needs: [['swarm', 1]] },`
+4. Run `npm run check`.
+
+### Pitfalls
+- Do NOT create any status file — `wired-1`/`wired-2` already exist in `STATUSES` (statuses/wired-1.ts, wired-2.ts) with +20%/+30% and the yellow ring; reuse them. `wired-pop` already exists in EFFECTS.
+- The puff must play only when the status is not already up: check `ctx.statusOf(me, id) <= 0` BEFORE `ctx.addStatus` (the same `fresh` pattern `cling.ts` uses), but always call `addStatus` afterwards — that is what refreshes the duration on each hit.
+- Keep the `hit.damage <= 0` guard: without it, 0-damage goo touches would refresh the speed (same guard leech/swarm use).
+- Crowd counting must be `ctx.unitsNear(me.x, me.y, 80)` filtered `u.alive && u !== me`, exactly like `leech.ts` — this is the tree's established "crowd" so Glide triggers in the same moments Leech heals. Do not use `enemiesNear` (different radius semantics for the target-based mechanics).
+- File name and export must be `glide` (one item per file, named after its id); the talent id, upgrade id and file all match.
+- No changes to `rules.ts`, `palette.ts`, `base.css`, or any other task's files; no new deps; no `Math.random`.
+
+### Tests
+- none — engine/tests/ already verifies registration, the talent reaching Swarm 1, maxLevel 2 vs the talent's max, and plays the upgrade in a real match.
