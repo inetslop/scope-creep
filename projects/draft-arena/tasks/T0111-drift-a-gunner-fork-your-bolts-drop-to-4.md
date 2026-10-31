@@ -3,11 +3,13 @@ id: T0111
 title: "Drift: a Gunner fork, your bolts drop to 40% speed after 120 units and linger"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T18:10:25Z
+claimed_at: 2026-10-31T18:12:24Z
 epic: E24
+designer: desktop
 ---
 
 ## Goal
