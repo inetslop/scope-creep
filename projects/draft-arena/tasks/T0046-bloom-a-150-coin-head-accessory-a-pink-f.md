@@ -4,11 +4,12 @@ title: "Bloom: a 150-coin head accessory, a pink flower with a yellow center"
 assignee: cachyos-x8664
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T08:32:32Z
 claimed_at: 2026-10-31T09:54:43Z
+finished_at: 2026-10-31T10:03:25Z
 epic: E6
 ---
 
@@ -58,3 +59,16 @@ No new types. `bloom: AccessoryDef` exactly per `engine/api.ts`: `id: 'bloom'`, 
 
 ### Tests
 none (content is tested automatically by engine/tests/).
+
+## Result (attempt 1, cachyos-x8664)
+
+Added `src/content/accessories/bloom.ts` — a head accessory `id: 'bloom'` (name "Bloom", 150 coins, description "A pink flower with a yellow center on the head.") that draws five rounded pink petals around a yellow center on the top of the head with a slight bounce from `w.time`/`w.seed`, inked per the Critters style, and registered it in `src/content/accessories/index.ts` (one import + one `ACCESSORIES` line, next to `beanie`). No other files touched — the Hats card and shop pick it up from the registry automatically, and it changes nothing in play.
+
+- Self-review: APPROVE
+- Time: 8.7 min
+
+```
+.../game/src/content/accessories/bloom.ts          | 35 ++++++++++++++++++++++
+ .../game/src/content/accessories/index.ts          |  2 ++
+ 2 files changed, 37 insertions(+)
+```

@@ -1,5 +1,6 @@
 import type { AccessoryDef } from '../../../engine/api.ts';
 import { beanie } from './beanie.ts';
+import { bloom } from './bloom.ts';
 import { candyPack } from './candy-pack.ts';
 import { chefHat } from './chef-hat.ts';
 import { medal } from './medal.ts';
@@ -15,6 +16,7 @@ export const ACCESSORIES: readonly AccessoryDef[] = [
   medal,
   cone,
   beanie,
+  bloom,
   roundGlasses,
   bowTie,
   balloon,
