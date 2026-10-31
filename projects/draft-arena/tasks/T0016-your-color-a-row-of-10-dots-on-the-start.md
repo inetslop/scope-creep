@@ -1,12 +1,14 @@
 ---
 id: T0016
 title: "Your color: a row of 10 dots on the start screen"
+assignee: desktop-4070
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T03:51:35Z
+claimed_at: 2026-10-31T05:10:30Z
 epic: E5
 ---
 
