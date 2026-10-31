@@ -3,11 +3,13 @@ id: T0059
 title: "Mend: a Nerve hit heals the more hurt you are"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T11:14:52Z
+claimed_at: 2026-10-31T11:25:09Z
 epic: E15
+designer: yoga
 ---
 
 ## Goal
