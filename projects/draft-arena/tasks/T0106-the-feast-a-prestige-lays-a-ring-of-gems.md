@@ -1,12 +1,14 @@
 ---
 id: T0106
 title: "The feast: a prestige lays a ring of gems where the player prestiges"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T17:29:12Z
+claimed_at: 2026-10-31T17:54:09Z
 ---
 
 ## Goal
