@@ -3,11 +3,13 @@ id: T0019
 title: "Coins from kills: every kill pays, the start card shows the balance"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T04:17:26Z
+claimed_at: 2026-10-31T04:40:57Z
 epic: E6
+designer: desktop
 ---
 
 ## Goal
