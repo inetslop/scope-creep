@@ -14,7 +14,7 @@ Breakdown:
 - T0009 S — Hide: take less damage, a second fork under Vigor — done
 Done: three trees (Gunner, Body, Lobber), each with its own weapon and a capstone.
 
-## E2 Monster behaviors (tasked)
+## E2 Monster behaviors (done)
 Goal: crowds that make you move differently. Today: Dot (it chases you) and Puff (it pops into Dots).
 Done when: there are several monsters with behaviors of their own, each readable at a glance.
 Breakdown:
@@ -22,8 +22,8 @@ Breakdown:
 - T0005 M — Zippy: a pink triangle that winds up and dashes — done
 - T0008 M — Snail: an orange hexagon that leaves sticky patches — done
 - T0018 M — Spitter: an orange diamond that spits from a distance — done
-- T0020 M — Flee: a red teardrop that runs from the nearest player — building
-Next: done once T0020 builds: every monster has its own way to move.
+- T0020 M — Flee: a red teardrop that runs from the nearest player — done
+Done: seven monsters, every one with its own way to move.
 
 ## E3 Field events (done)
 Goal: reasons to go somewhere on the field. Today: Gem rain. More events, built as directors (planning/modules/events.md).
@@ -39,11 +39,11 @@ Done when: the leader is readable on the field, and knocking the crown out is th
 Ready: a director sees every player's score each tick and gets onKill after each player death (planning/modules/events.md); the pvp damage and bounty numbers are frozen in rules.ts — content adds its own drops and xp on top (T0015 proved there is no hook to change pvp damage).
 Breakdown:
 - T0013 M — The Crown: the top scorer wears a yellow crown, moves only on a strict overtake — done
-- T0014 S — Leader's gem: a knocked-out crown drops a gem worth its level — todo
+- T0014 S — Leader's gem: a knocked-out crown drops a gem worth its level — done
 - T0015 S — The leader pays: the crown takes 25% more damage from players — failed (the engine's pvp damage is frozen)
 - T0028 S — The crown's bounty: the killer of the crown gets double the bounty xp — done
 - T0036 S — Crown fall: the crown flies off and pops where the leader is knocked out — todo
-Next: done once T0014 and T0036 build: the leader's gem makes the knockout a race, the bounty makes it pay, and the crown falling is a moment everyone sees.
+Next: done once T0036 builds: the crown falling is a moment the whole field sees.
 
 ## E5 Your own critter (done)
 Goal: players make their critter theirs: they pick its color and put on a hat, and everyone in the match sees it.
@@ -61,11 +61,12 @@ Ready: coins in the profile, ctx.giveCoins for content, prices and buying, and t
 Breakdown:
 - T0019 M — Coins from kills: one coin per monster, the victim's level per knockout, a coin pop, the balance on the start card — done
 - T0021 M — First shop stock: two patterns, a face and a back accessory, priced — done
-- T0022 M — The shop: a panel over the start screen that sells the stock, with a preview critter — building
-- T0027 S — Coins from events: every gem an event drops pays 1 coin — todo
+- T0022 M — The shop: a panel over the start screen that sells the stock, with a preview critter — done
+- T0027 S — Coins from events: every gem an event drops pays 1 coin — done
+- T0044 S — Halves: a two-tone pattern, 50 coins, the third pattern price step — design
 - T0031 M — The shop's second stock: two patterns, a face and a back accessory, priced — done
 - T0035 S — Chef Hat: a 300-coin head accessory, the shop's long goal — todo
-Next: done once T0022, T0027 and T0035 build: kills and events pay coins, the shop sells two stocks, and the Chef Hat is the goal to save for.
+Next: done once T0035 and T0044 build: kills and events pay coins, the shop sells its stock, and the Chef Hat is the goal to save for.
 
 ## E7 Prestige (tasked)
 Goal: nobody stays overpowered forever: a player who reaches level 18 prestiges back to level 1, and prestiging is worth it.
@@ -74,9 +75,9 @@ Ready: the reset at level 18 works; the reward is content (a director's onPresti
 Breakdown:
 - T0023 S — Prestige ring: a big yellow ring and confetti where a player prestiges — done
 - T0024 M — The prestige pays (in all): the Nth prestige in all pays 25 x N coins — failed (the in-all count is client-only; see IDEAS)
-- T0029 M — The prestige pays: the Nth prestige this life pays 25 x N coins, a 2 s card under the xp bar — design
-- T0025 M — Slush: a Lobber talent that only opens after a prestige this life — designing
-- T0026 S — Medal: a back accessory, buyable only after 2 prestiges in all — todo (waits on T0022)
+- T0029 M — The prestige pays: the Nth prestige this life pays 25 x N coins, a 2 s card under the xp bar — in progress
+- T0025 M — Slush: a Lobber talent that only opens after a prestige this life — in progress
+- T0026 S — Medal: a back accessory, buyable only after 2 prestiges in all — in progress
 Next: done once T0025, T0026 and T0029 build: the coin pays, Slush opens a second-life build, and the Medal marks 2 prestiges in all.
 
 ## E8 The Goober tree (done)
@@ -111,3 +112,11 @@ Breakdown:
 - T0040 S — Chime: a level-up chime — design
 - T0041 S — Coin: a coin tick when a coin is picked up or spent — design
 Next: more sounds per moment (a player knockout, a prestige, the crown falling) as the epic proves out.
+
+## E12 The Goober grows (active)
+Goal: the fourth tree deepens: under Goo it forks three ways — a Goo that sticks to its target, a Gush puddle that bites, and the scatter that exists — so a Goober life picks a direction instead of buying the same four talents.
+Done when: the tree has six talents with a real fork under Goo, each readable in a crowd.
+Breakdown:
+- T0042 M — Cling: a Goo that splats on its target and rides it, damage every 0.5 s — design
+- T0043 M — Chew: your Gush puddle deals damage to whatever stands in it — design
+Next: done once T0042 and T0043 build: the Goober fork is real — sticky, zone or scatter.
