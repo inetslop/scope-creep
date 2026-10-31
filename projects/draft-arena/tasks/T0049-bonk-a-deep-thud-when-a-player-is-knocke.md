@@ -1,12 +1,14 @@
 ---
 id: T0049
 title: "Bonk: a deep thud when a player is knocked out"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T09:20:00Z
+claimed_at: 2026-10-31T09:51:21Z
 epic: E11
 ---
 
