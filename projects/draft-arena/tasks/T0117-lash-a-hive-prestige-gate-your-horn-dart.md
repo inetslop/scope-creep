@@ -1,12 +1,14 @@
 ---
 id: T0117
 title: "Lash: a Hive prestige gate, your horn darts split on hit"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T19:30:37Z
+claimed_at: 2026-10-31T20:21:56Z
 epic: E25
 ---
 
