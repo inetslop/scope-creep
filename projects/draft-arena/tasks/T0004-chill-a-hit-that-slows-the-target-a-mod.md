@@ -4,11 +4,12 @@ title: "Chill: a hit that slows the target, a mod for any weapon"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T02:20:47Z
 claimed_at: 2026-10-31T03:34:42Z
+finished_at: 2026-10-31T03:40:34Z
 epic: E1
 ---
 
@@ -73,3 +74,24 @@ Edit (5): `src/content/statuses/index.ts`, `src/content/effects/index.ts`, `src/
 
 ### Tests
 No pure helpers added → no new unit tests. `npm run check` covers it: every status/upgrade/effect validated, chill and Dot played in a real match, talent reachable (needs vigor 1), sums ≤ maxLevel. Then `npm run smoke`.
+
+## Result (attempt 1, desktop)
+
+Added Chill, the Body tree's crowd-control mod: a new on-hit upgrade (`src/content/upgrades/chill.ts`) that slows whatever it hits — one status per rank (`statuses/chill-1..3.ts`, 30/40/50% slow for 1.0/1.5/2.0 s, refresh-only), a `slow-pop` ice-bubble effect on first application only, the `chill` talent under Vigor in `talents/body.ts`, and Dot now shows a scared face while slowed via slot 0 set in its `think` (chase still runs). Registered in the three registries and verified with `npm run check` and `npm run smoke`; the only deviation from the design is inlining its `const id` into the two template literals in `onHit`, which is behavior-identical.
+
+- Self-review: APPROVE
+- Time: 5.9 min
+
+```
+.../draft-arena/game/src/content/effects/index.ts  |  2 ++
+ .../game/src/content/effects/slow-pop.ts           | 23 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/monsters/dot.ts   | 16 ++++++++++++---
+ .../game/src/content/statuses/chill-1.ts           | 10 ++++++++++
+ .../game/src/content/statuses/chill-2.ts           | 10 ++++++++++
+ .../game/src/content/statuses/chill-3.ts           | 10 ++++++++++
+ .../draft-arena/game/src/content/statuses/index.ts |  9 ++++++++-
+ .../draft-arena/game/src/content/talents/body.ts   |  1 +
+ .../draft-arena/game/src/content/upgrades/chill.ts | 17 ++++++++++++++++
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ 10 files changed, 96 insertions(+), 4 deletions(-)
+```
