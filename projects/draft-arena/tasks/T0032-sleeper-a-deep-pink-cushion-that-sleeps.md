@@ -3,13 +3,11 @@ id: T0032
 title: "Sleeper: a deep pink cushion that sleeps until you get close"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T06:30:37Z
-claimed_at: 2026-10-31T07:07:39Z
 epic: E9
-designer: desktop
 ---
 
 ## Goal
@@ -38,3 +36,114 @@ The closest example is the Zippy monster (a behavior with a synced warning state
 - [ ] An awake Sleeper chases the nearest player at 100 u/s and deals 10 damage per second on touch; it closes its eyes and stops again only after 10 s with no player within 500.
 - [ ] It spawns from player level 4 (weight 5), drops a 3 xp gem, and deals no damage at all while it sleeps.
 - [ ] In a crowd of the other monsters, the Sleeper reads at a glance: a deep pink rounded square, asleep or not.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/monsters/sleeper.ts` - the 6th monster: `sleeper` `MonsterDef` (sleeping / waking / awake state machine in `think`, cushion look in `look.draw`)
+- edit `src/content/monsters/index.ts` - add the import line and one `sleeper,` line in `MONSTERS`
+
+### Interfaces
+No new types. Uses existing `MonsterDef`, `Look`, `Face` from `engine/api.ts`, plus `chase`, `drawCritter`, `shade` (all exported). Synced state: `m.slots[0]` = 0 sleeping, 1 waking, 2 awake. Timers live in `m.mem` (`sl` state, `wt` wake timer, `at` away timer). `m.target` is the engine's nearest living player (re-chosen twice a second); `m.damage` is a live field the engine reads for touch damage.
+
+### Steps
+1. Create `src/content/monsters/sleeper.ts` with exactly this content:
+
+```ts
+import { chase, drawCritter, shade, type Face, type Look, type MonsterDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** A player within 350 wakes it; it sleeps again only after 10 s with every player beyond 500. */
+const WAKE = 350;
+const SLEEP = 500;
+const WINDUP = 0.5;
+const AWAY = 10;
+
+const SLEEP: Face = { mood: 'calm', eyes: 2, mouth: 'o' };
+const AWAKE: Face = { mood: 'angry', eyes: 2, mouth: 'frown' };
+
+const look: Look = { shape: 'square', color: shade(PALETTE.pink, -0.35), face: SLEEP };
+/** A deep pink squashed cushion; flatter with closed eyes while asleep, snarling with open eyes once woken. */
+look.draw = (g, e) => {
+  const state = e.slots[0] ?? 0; // 0 sleeping, 1 waking, 2 awake
+  g.save();
+  g.scale(state === 0 ? 1.15 : 1.05, state === 0 ? 0.85 : 0.95); // the cushion, flatter while it sleeps
+  drawCritter(g, look, e, { ink: PALETTE.ink, face: state === 0 ? SLEEP : AWAKE });
+  if (state === 0) {
+    // Closed eyes: paint over the open ones, then a small arc under each (drawFace puts two eyes at ±0.34r, -0.12r, radius 0.26r).
+    const eyeR = e.radius * 0.26;
+    g.strokeStyle = PALETTE.ink;
+    g.lineWidth = Math.max(1.5, e.radius * 0.1);
+    g.lineCap = 'round';
+    for (const s of [-1, 1]) {
+      const ex = s * e.radius * 0.34;
+      const ey = -e.radius * 0.12;
+      g.fillStyle = e.flash ? '#ffffff' : look.color;
+      g.beginPath();
+      g.arc(ex, ey, eyeR, 0, Math.PI * 2);
+      g.fill();
+      g.beginPath();
+      g.arc(ex, ey, eyeR * 0.6, 0.25 * Math.PI, 0.75 * Math.PI);
+      g.stroke();
+    }
+  }
+  g.restore();
+};
+
+/** Sleeps where it fell; what wakes is faster than a Dot and stops being safe to walk through. */
+export const sleeper: MonsterDef = {
+  id: 'sleeper',
+  name: 'Sleeper',
+  description: 'Sleeps until you get close, then chases faster than a Dot.',
+  hp: 20,
+  speed: 100,
+  radius: 15,
+  damage: 10,
+  xp: 3,
+  weight: 5,
+  fromLevel: 4,
+  look,
+  think(_ctx, m, dt) {
+    const mem = m.mem;
+    const t = m.target;
+    const near = t ? Math.hypot(t.x - m.x, t.y - m.y) : Infinity;
+    let state = mem.sl ?? 0; // 0 sleeping, 1 waking, 2 awake
+    if (state === 0) {
+      m.vx = 0;
+      m.vy = 0;
+      if (near <= WAKE) {
+        state = 1;
+        mem.wt = WINDUP;
+      }
+    } else if (state === 1) {
+      m.vx = 0; // eyes open, still: the 0.5 s warning
+      m.vy = 0;
+      mem.wt = (mem.wt ?? WINDUP) - dt;
+      if (mem.wt <= 0) state = 2;
+    } else {
+      chase(m);
+      mem.at = near > SLEEP ? (mem.at ?? 0) + dt : 0; // seconds with every player beyond 500
+      if (mem.at >= AWAY) {
+        state = 0;
+        mem.at = 0;
+      }
+    }
+    mem.sl = state;
+    m.slots[0] = state;
+    m.damage = state === 2 ? m.def.damage : 0; // touch damage while awake only
+  },
+};
+```
+
+2. Edit `src/content/monsters/index.ts`: add `import { sleeper } from './sleeper.ts';` after the `zippy` import, and insert `sleeper,` as the line after `zippy,` in `MONSTERS` (next to its closest relative; do not move any other line).
+
+### Pitfalls
+- Touch damage while sleeping is controlled by setting `m.damage` to 0 every tick (the live `Monster.damage` field); do not rely on the def value only.
+- `m.target` can be `undefined` (no living players) — treat it as `Infinity` as written; the sleeper then finishes waking and re-sleeps after 10 s.
+- The closed-eye overdraw must keep the exact `drawFace` eye positions (±0.34r, −0.12r, radius 0.26r, with r = `e.radius` since there is no `look.scale`) and must run inside the same `g.save()/g.scale()/g.restore()` block as the `drawCritter` call.
+- No `Math.random`/`Date` anywhere; no module-level mutable state; all timers in `m.mem`; `look.draw` reads only `e` and draws.
+- `shade(PALETTE.pink, -0.35)` is the sanctioned way to get the deeper pink (same pattern as `areas/sticky.ts`); do not invent a hex literal for the body.
+- The gem drop is automatic from `xp: 3` — do not write an `onDeath`.
+
+### Tests
+- None (every content item is tested automatically by `engine/tests/`; there are no pure helpers here).
