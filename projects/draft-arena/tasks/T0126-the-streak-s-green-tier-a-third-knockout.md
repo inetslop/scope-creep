@@ -4,11 +4,12 @@ title: "The streak's green tier: a third knockout in the chain turns the sash gr
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0125]
 attempts: 1
 created: 2026-10-31T21:05:07Z
 claimed_at: 2026-10-31T22:46:52Z
+finished_at: 2026-10-31T23:42:41Z
 epic: E29
 ---
 
@@ -73,3 +74,18 @@ None — no new types or signatures. All changes are data/logic inside T0125's e
 
 ### Tests
 none — no new pure helpers; the streak director and the sash area are content items, auto-tested by `engine/tests/`.
+
+## Result (attempt 1, yoga)
+
+Added the streak's green tier. New status `src/content/statuses/streak-green.ts` (registered in `STATUSES`) draws the sash exactly like the gold one but with the band and chest star in `PALETTE.green`; `directors/streak.ts` now picks the status from the chain count each tick (green from a third knockout, `n >= 3`) and pays `n >= 3 ? 2 : 1` coins with the same trigger and bot guard, so 4th+ knockouts cap at +2 and a broken-and-restarted chain comes back golden. Deviations from the design: T0125's sash is a status, not an area (`areas/sash.ts` doesn't exist; I checked `AREAS`), and the gold status's own docstring says the tier is the status id — so I made tier 2 the second status instead of editing an area's `slots[0]`; the design's `ctx.effect('coin', …)` line does not exist in T0125's file (the coin chip/tick HUD reacts to `giveCoins` automatically), so I changed only the existing `giveCoins` number and restructured `onKill` minimally so the pay is derived from the post-update count.
+
+- Self-review: APPROVE
+- Time: 55.8 min
+
+```
+.../game/src/content/directors/streak.ts           | 36 +++++++++++++---------
+ .../draft-arena/game/src/content/statuses/index.ts |  2 ++
+ .../game/src/content/statuses/streak-gold.ts       |  4 +--
+ .../game/src/content/statuses/streak-green.ts      | 36 ++++++++++++++++++++++
+ 4 files changed, 62 insertions(+), 16 deletions(-)
+```

@@ -12,6 +12,7 @@ import { prestige3 } from './prestige-3.ts';
 import { marked } from './marked.ts';
 import { grudgeKnot } from './grudge-knot.ts';
 import { streakGold } from './streak-gold.ts';
+import { streakGreen } from './streak-green.ts';
 import { slushed } from './slushed.ts';
 import { wired1 } from './wired-1.ts';
 import { wired2 } from './wired-2.ts';
@@ -26,6 +27,7 @@ export const STATUSES: readonly StatusDef[] = [
   marked,
   grudgeKnot,
   streakGold,
+  streakGreen,
   crowned,
   prestige1,
   prestige2,

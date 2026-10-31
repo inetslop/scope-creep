@@ -3,8 +3,8 @@ import { PALETTE } from '../palette.ts';
 
 /**
  * The golden sash (tier 1 of The streak, directors/streak.ts): a diagonal gold band from the left
- * shoulder to the right hip, ink-rimmed, with a small pulsing chest star. A later tier (tier 2)
- * will be its own status, streak-green; the tier is the status id, the body stays clean.
+ * shoulder to the right hip, ink-rimmed, with a small pulsing chest star. The tier is the status
+ * id - this at two knockouts, streak-green from a third - the body stays clean.
  */
 export const streakGold: StatusDef = {
   id: 'streak-gold',
