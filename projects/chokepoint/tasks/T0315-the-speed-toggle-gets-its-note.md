@@ -3,10 +3,12 @@ id: T0315
 title: The speed toggle gets its note
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T00:11:52Z
+claimed_at: 2026-10-31T00:31:08Z
+designer: yoga
 ---
 
 ## Goal
