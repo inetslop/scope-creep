@@ -3,10 +3,12 @@ id: T0062
 title: "Gem tick: a small green tick and a plink where a gem is picked up"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T11:40:36Z
+claimed_at: 2026-10-31T11:52:16Z
+designer: yoga
 ---
 
 ## Goal
