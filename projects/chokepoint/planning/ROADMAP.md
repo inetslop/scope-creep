@@ -98,9 +98,9 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 - T0298 (L) — Wildcard: the 4th card of the 4-card drafts becomes whatever you pick, always Rare or better — in the pool (todo)
 - T0299 (M) — Spray crits (the T0282 re-file): 15% of pellets hit for double, a yellow chip at the impact — **done** (2026-10-31, asus)
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095), T0298 and T0316 (T0280's re-file); T0150 rides behind T0025.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095) and T0298; T0316 (T0280's re-file) landed 2026-10-31 (asus); T0150 rides behind T0025.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0235, T0248 and T0316 (T0280's re-file) land — every E4 task is now written; it counts as finished while the pool lands.**
+**E4 closes when T0025, T0062, T0064, T0095, T0235 and T0248 land (T0316 landed 2026-10-31) — every E4 task is now written; it counts as finished while the pool lands.**
 
 **16-cap (protocol):** the pool is 16 (Haste landed with no removal triggered); the five queued registrations (T0025, T0062, T0064, T0095, T0235) land exactly five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
 
@@ -172,11 +172,11 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Splitter (T0068, M) — **done** (2026-10-28, desktop-4070): breaks into two fast splinters at its spot.
 - Hauler (T0057, M) — **done** (2026-10-28, cachyos-x8664): a big slow hexagon — worth 10 gold, a leak costs a life plus 5 gold.
 - Mute (T0074, M) — **done** (2026-10-29, desktop-4070): silences every tower within 2 cells. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
-- Feeder (IDEAS) — **T0309 (M, in progress — cachyos-x8664)**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring (the queue lands one enemy at a time; the Wall stays parked behind it).
+- Feeder (IDEAS) — **T0309 failed 2026-10-31 (cachyos, no changes landed); to re-file**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring (the queue lands one enemy at a time; the Wall stays parked behind it).
 - The Hive (IDEAS) — **tasked as T0292 (L, in the pool)**: the wave-40 boss, the next peak after the Orb — the first boss that grows the group (a Dot every 6 s, up to 5); `spawnOnly`, so the 10-regular cap is untouched (the Feeder fills it).
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
-Queue order: the Bulwark (T0102), the Ward (T0111) and the Dart's removal (T0237) are done; the Feeder is **T0309 (M, in progress)** — it brings the regular-enemy cap (10, the bar in modules/enemies.md) to 10 of 10; the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
+Queue order: the Bulwark (T0102), the Ward (T0111) and the Dart's removal (T0237) are done; the Feeder is **next (T0309 failed, to re-file)** — it brings the regular-enemy cap (10, the bar in modules/enemies.md) to 10 of 10; the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
 
 ## Later
 

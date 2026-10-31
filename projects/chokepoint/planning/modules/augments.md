@@ -31,6 +31,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - Lead: shots that aim ahead of the enemy. Shots home in and never miss, so it only added a way to miss.
 - Pulse (T0089): Splash without its cap, plus Reach's added form.
 - Ricochet (T0038): shots bouncing off the board's rocks. Hard to read, and Chain already leaps between enemies.
+- An added Spray that adds pellets, or a beam kill's needles per added Spray (T0242): the owner made an added Spray crit chance on every damage tower (T0321).
 
 ## What exists now
 
@@ -193,14 +194,14 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - tiers: rare {burnDps 4, asAdded Hits set ablaze: 4 per second for 3 s.}, epic {burnDps 5, asAdded Hits set ablaze: 5 per second for 3 s.}
 
 ### Beam (`beam`)
-- description: "A continuous beam on the furthest enemy. Added: a second beam on the nearest."
+- description: "A continuous beam on the furthest enemy. Added: the beam deals 5 more per second."
 - asTower: "Beams the furthest enemy: 14 per second, range 3.5."
-- asAdded: "A second beam on the nearest enemy: 3 per second."
+- asAdded: The beam deals 5 more per second.
 - look: shape chevron, color green, size 0.22
 - first: kind beam, damage 0, range 3.5, rate 1, beam {dps 14}
-- added: beam {dps 3}
+- added: beam {dps 5}
 - opening: true
-- tiers: rare {beamDps 20, addedBeamDps 4}, epic {beamDps 28, addedBeamDps 5}
+- tiers: rare {beamDps 20, addedBeamDps 7, asAdded The beam deals 7 more per second.}, epic {beamDps 28, addedBeamDps 9, asAdded The beam deals 9 more per second.}
 
 ### Rapid (`rapid`)
 - description: "Shoots fast, light needles. Added: attacks 50% faster, hits 25% lighter."
