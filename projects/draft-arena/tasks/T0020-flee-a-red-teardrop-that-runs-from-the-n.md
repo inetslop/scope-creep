@@ -4,11 +4,12 @@ title: "Flee: a red teardrop that runs from the nearest player"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T04:17:26Z
 claimed_at: 2026-10-31T07:27:15Z
+finished_at: 2026-10-31T07:42:20Z
 epic: E2
 ---
 
@@ -161,3 +162,16 @@ export const flee: MonsterDef = {
 
 ### Tests
 none (every content item is exercised automatically by `engine/tests/`, including each monster in a real match and the 60-player budget; there is no pure helper to unit-test).
+
+## Result (attempt 1, desktop-4070)
+
+Added the Flee monster (`src/content/monsters/flee.ts`) and registered it in `src/content/monsters/index.ts` (import + one registry line after puff). It is a small red teardrop (circle body plus an ink-outlined tip pointed along its movement) that wanders at 80 u/s; when a player comes within 300 it shows a scared face (wide eyes, o mouth, slight jitter) for 0.18 s, then sprints directly away at 160 u/s with a ±25° wobble re-picked every 0.3 s so crowds scatter. hp 10 / radius 11 / 8 dmg/s on contact / xp 2 / weight 5 / fromLevel 3; on death it pops into confetti and drops its 2-xp gem (engine-dropped). `npm run check` (typecheck + lint + 78 tests) and `npm run smoke` (desktop + mobile browser play) both pass.
+
+- Self-review: APPROVE
+- Time: 15.1 min
+
+```
+.../draft-arena/game/src/content/monsters/flee.ts  | 87 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/monsters/index.ts |  2 +
+ 2 files changed, 89 insertions(+)
+```
