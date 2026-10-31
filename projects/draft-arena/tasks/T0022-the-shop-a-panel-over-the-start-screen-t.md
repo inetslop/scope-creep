@@ -4,11 +4,12 @@ title: "The shop: a panel over the start screen that sells looks"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: [T0019, T0021]
 attempts: 1
 created: 2026-10-31T04:59:35Z
 claimed_at: 2026-10-31T06:59:19Z
+finished_at: 2026-10-31T07:47:29Z
 epic: E6
 ---
 
@@ -127,3 +128,26 @@ Fullest state (12 patterns, 10 Face, 10 Back, 10 Hat, 9999 coins, 18-character n
 
 ### Tests
 - none (no pure helpers; the engine's content tests and the browser smoke test, which shows the start screen on desktop and phone, cover it)
+
+## Result (attempt 1, asus)
+
+Added the shop panel (src/menu/shop.ts + shop.css): a sticker card over the start screen opened by tapping the coin line, with a coin-balance header, a live preview critter, wrap rows of mini-critter swatches for patterns and per-slot accessories (unowned ones show their price, worn ones a green dot), hover/tap try-on with name/description/state in the footer, and a single footer button that buys (with a confetti pop), wears, takes off, or shows the disabled "Costs N coins" / "Needs N prestiges" reason. The coin line (src/menu/coins.ts/.css) is now a tappable button dispatching the open event, and shop is registered in src/menu/index.ts.
+
+- Self-review: APPROVE
+- Time: 48.2 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/draft-arena/game/src/menu/coins.css |  16 +-
+ projects/draft-arena/game/src/menu/coins.ts  |   5 +-
+ projects/draft-arena/game/src/menu/index.ts  |   2 +
+ projects/draft-arena/game/src/menu/shop.css  | 161 +++++++++++++++++++
+ projects/draft-arena/game/src/menu/shop.ts   | 232 +++++++++++++++++++++++++++
+ 5 files changed, 414 insertions(+), 2 deletions(-)
+```
+
+## Merge (attempt 1, asus)
+
+- Conflicts in: projects/draft-arena/game/src/menu/index.ts
+- Auto-resolved 2 spot(s) where both sides only added lines (clean: projects/draft-arena/game/src/menu/index.ts).
+- Resolved without the conflict agent.
