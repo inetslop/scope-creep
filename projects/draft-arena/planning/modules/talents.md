@@ -39,7 +39,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-2 in the game, from game/src/content/talents/ (the real values).
+3 in the game, from game/src/content/talents/ (the real values).
 
 ### Gunner (`gunner`)
 - description: Your Bolt, faster and in volleys.
@@ -63,3 +63,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
   - id might, upgrade might, max 5
   - id maw, upgrade maw, max 5, needs [["might",2]]
   - id magnet, upgrade magnet, max 3
+
+### Lobber (`lobber`)
+- description: "Your bubble: it arcs in and splashes on the ground."
+- look: shape circle, color #38d9a9
+- talents:
+  - id quick, upgrade quick, max 3
+  - id lob, upgrade lob, max 5, needs [["quick",1]]
+  - id wide, upgrade wide, max 3, needs [["lob",2]]
+  - id fuse, upgrade fuse, max 1, needs [["lob",4]]

@@ -11,8 +11,9 @@ The backlog: add freely, turn the best into epics and tasks.
 - Swarm surge (E3): every 90 s, a ring of 12 Dots marches in from the field's edge toward its centre over 8 s — stand still in the middle and it closes on you, stay on the edge and it walks past. A reason to keep moving on a quiet field. — T0010 (built as a single-file line crossing to the centre instead, so it stays dodgable)
 - Prestige coin (E7): each prestige a player has in all adds +10% to the coins their gems are worth — a long-game coin engine that rewards players who reset early and often (pairs with the shop, E6).
 - Gem geyser (E3): every 120 s a spot marks itself with a 2 s bubble-up, then drops a Puff-worth gem (4 xp) every 1 s for 8 s — the only event that gives a place to hold and defend, not a prize to grab. — T0012
-- Knockout coins (E6): a player knockout gives coins equal to the victim's level — coins come from the real threat, so the shop is paid for in fights, not just in monsters.
-- Flee (E2): a small fast critter that runs from the nearest player; catch it for its gem — a crowd you chase, and it punishes a build that cannot close in.
+- Knockout coins (E6): a player knockout gives coins equal to the victim's level — coins come from the real threat, so the shop is paid for in fights, not just in monsters. — T0019
+- Shop card (E6): the start card's coin line opens the shop: patterns on top, accessories in rows by slot, the preview critter wears what you point at, Buy spends coins, and an out-of-reach item is stamped with its price.
+- Flee (E2): a small fast critter that runs from the nearest player; catch it for its gem — a crowd you chase, and it punishes a build that cannot close in. — T0020
 - Knockout card: after you knock out a player, a small sticker card under the xp bar for 2 s: their name and the score and xp you got — a kill you can see (a kill feed needs the engine).
 
 ## Needs the engine (for the owner, not tasks)

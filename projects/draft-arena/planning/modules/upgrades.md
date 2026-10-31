@@ -37,10 +37,11 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-13 in the game, from game/src/content/upgrades/ (the real values).
+17 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
+- `area`: Wide
 - `armor`: Hide
 - `cooldown`: Haste
 - `damage + shots`: Split
@@ -48,6 +49,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - `maxHp + regen`: Vigor
 - `pickup`: Magnet
 - `pierce`: Lance
+- `projectileSpeed`: Quick
 - `speed`: Swift
 
 ### Bolt (`bolt`)
@@ -62,6 +64,13 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - maxLevel: 5
 - look: shape hexagon, color #99e9f2
 - cooldown: 0.9
+- fire: (code)
+
+### Lob (`lob`)
+- description: "Every 1.1 s, throws a bubble at the nearest enemy. It splashes where it lands. Each rank: +2 splash damage."
+- maxLevel: 5
+- look: shape circle, color #38d9a9
+- cooldown: 1.1
 - fire: (code)
 
 ### Ricochet (`ricochet`)
@@ -82,6 +91,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - look: shape pentagon, color #51cf66
 - onKill: (code)
 
+### Fuse (`fuse`)
+- description: "When your bubble kills something, it pops into a ring (radius 50) that deals 10 damage."
+- maxLevel: 1
+- look: shape star, color #99e9f2
+- onKill: (code)
+
 ### Split (`split`)
 - description: "Every weapon fires 1 more shot, fanned out; all shots 12% weaker. Per rank."
 - maxLevel: 2
@@ -99,6 +114,18 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - maxLevel: 5
 - look: shape triangle, color #51cf66
 - stats: speed 20
+
+### Quick (`quick`)
+- description: Shots fly 15% faster, per rank.
+- maxLevel: 3
+- look: shape diamond, color #4dabf7
+- stats: projectileSpeed 0.15
+
+### Wide (`wide`)
+- description: The splash is 20% bigger, per rank.
+- maxLevel: 3
+- look: shape hexagon, color #38d9a9
+- stats: area 0.2
 
 ### Might (`might`)
 - description: +12% damage per rank.
