@@ -1,12 +1,14 @@
 ---
 id: T0125
 title: "The streak: two player knockouts in a row wear a golden sash that pays +1 coin per kill"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T21:05:07Z
+claimed_at: 2026-10-31T21:33:53Z
 epic: E29
 ---
 
