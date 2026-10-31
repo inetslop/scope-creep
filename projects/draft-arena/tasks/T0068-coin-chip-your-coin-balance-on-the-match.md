@@ -3,10 +3,12 @@ id: T0068
 title: "Coin chip: your coin balance on the match HUD"
 size: M
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T12:44:22Z
+claimed_at: 2026-10-31T13:30:56Z
+designer: inet-racing
 ---
 
 ## Goal
