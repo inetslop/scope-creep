@@ -3,7 +3,7 @@ import { CONTENT } from '../../src/content/index.ts';
 import type { AccessoryDef, DirectorDef, PatternDef, TalentTreeDef } from '../api.ts';
 import { buildRegistry } from '../registry.ts';
 import { Match } from '../sim/match.ts';
-import { PROTOCOL_VERSION } from '../config.ts';
+import { PROTOCOL_VERSION, TICK_DT } from '../config.ts';
 import { Reader, Writer } from '../shared/codec.ts';
 import { readWelcome, S2C, writeInput, writeJoin, writeSpectate } from '../shared/protocol.ts';
 import { Room } from '../sim/room.ts';
@@ -165,27 +165,49 @@ describe('room', () => {
     expect(room.status().bots).toBe(CONTENT.rules.bots.fillTo);
   });
 
-  it('inputs that arrive together never queue up: the newest is applied at the next tick', () => {
+  /** A room with one human; returns the player and a way to send it inputs. */
+  function oneHuman(): { room: Room; p: ReturnType<Room['match']['players']['get']> & object; send: (seq: number, moveX: number, buttons?: number) => void } {
     const room = new Room(registry, 6);
     const got: Uint8Array[] = [];
     const conn = room.connect({ send: (d) => got.push(d), close: () => {}, backlog: 0 });
     let w = new Writer();
     writeJoin(w, { protocol: PROTOCOL_VERSION, name: 'p', token: '', color: undefined, wear: { head: 0, face: 0, back: 0, pattern: 0 } });
     conn.receive(w.finish());
-    const playerId = readWelcome(new Reader(got[0]!.subarray(1))).playerId;
-    const p = room.match.players.get(playerId)!;
-    // A burst after a network stall: four inputs at once, a button held only in the second.
-    for (let seq = 1; seq <= 4; seq++) {
+    const p = room.match.players.get(readWelcome(new Reader(got[0]!.subarray(1))).playerId)!;
+    const send = (seq: number, moveX: number, buttons = 0): void => {
       w = new Writer();
-      writeInput(w, { seq, moveX: seq === 4 ? -1 : 1, moveY: 0, aim: 0, buttons: seq === 2 ? 1 : 0 });
+      writeInput(w, { seq, moveX, moveY: 0, aim: 0, buttons });
       conn.receive(w.finish());
+    };
+    return { room, p, send };
+  }
+
+  it('every input moves the player exactly once: a stall stands still, the late inputs catch up', () => {
+    const { room, p, send } = oneHuman();
+    const step = p.stats.speed * TICK_DT;
+    const x0 = p.x;
+    for (let t = 0; t < 5; t++) room.step();
+    expect(p.x, 'no input yet: no guessing, the player stands still').toBe(x0);
+    // The stall ends: four inputs at once, a button held only in the second.
+    for (let seq = 1; seq <= 4; seq++) send(seq, 1, seq === 2 ? 1 : 0);
+    room.step();
+    expect(p.ackSeq).toBe(4);
+    expect(p.x - x0, 'four inputs, four steps, in one tick').toBeCloseTo(4 * step, 5);
+    expect(p.input.buttons, 'a button pressed in a caught-up input still counts').toBe(1);
+    room.step();
+    expect(p.x - x0, 'nothing waiting: no extra step').toBeCloseTo(4 * step, 5);
+  });
+
+  it('sending more inputs never moves a player faster than time allows', () => {
+    const { room, p, send } = oneHuman();
+    const step = p.stats.speed * TICK_DT;
+    const x0 = p.x;
+    let seq = 0;
+    for (let t = 0; t < 40; t++) {
+      for (let i = 0; i < 3; i++) send(++seq, 1);
+      room.step();
     }
-    room.step();
-    expect(p.ackSeq, 'the newest input is the one applied').toBe(4);
-    expect(p.input.moveX).toBe(-1);
-    expect(p.input.buttons, 'a button pressed in a skipped input still counts').toBe(1);
-    room.step();
-    expect(p.ackSeq, 'nothing left waiting for later ticks').toBe(4);
+    expect(p.x - x0).toBeLessThanOrEqual(41 * step + 1e-6);
   });
 
   it('fills with bots and keeps running', () => {

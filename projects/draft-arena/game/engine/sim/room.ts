@@ -29,10 +29,13 @@ interface Client {
   link: Link;
   player: SimPlayer | undefined;
   /**
-   * Clients send one input per tick; the room applies one per tick, in order, so the client can
-   * replay exactly the inputs the server hasn't applied yet (its ackSeq) on top of the server's position.
+   * Clients send one input per tick, and every input moves the player exactly once, in order, so
+   * the client can replay exactly the inputs the server hasn't applied yet (its ackSeq) on top of
+   * the server's position and land where the server will.
    */
   inputs: InputMsg[];
+  /** Ticks this client may still move for (one per tick, banked up to MAX_INPUT_CREDIT). */
+  credit: number;
   /** Watching, not playing (the start screen): gets the snapshots of `follow`, the leader. */
   spectator: boolean;
   follow: SimPlayer | undefined;
@@ -42,8 +45,14 @@ interface Client {
 /** A spectator stays on one player this long before checking who leads now. */
 const FOLLOW_SECONDS = 20;
 
-/** Inputs kept between ticks, at most (only the newest is used: see step()). */
-const MAX_WAITING_INPUTS = 32;
+/** Inputs kept waiting, at most (a client far ahead loses its oldest). */
+const MAX_WAITING_INPUTS = 40;
+/** Inputs applied in one tick, at most: a burst after a stall catches up over a few ticks. */
+const MAX_INPUTS_PER_TICK = 4;
+/** Ticks of credit a client can bank while its inputs are held up (1 s): never more moves than time. */
+const MAX_INPUT_CREDIT = 20;
+/** Waiting inputs beyond this, with no credit left, are a client running fast: the oldest is skipped. */
+const MAX_BACKLOG = 6;
 
 export interface RoomStatus {
   humans: number;
@@ -89,7 +98,7 @@ export class Room {
   }
 
   connect(link: Link): Connection {
-    const c: Client = { link, player: undefined, inputs: [], spectator: false, follow: undefined, followUntil: 0 };
+    const c: Client = { link, player: undefined, inputs: [], credit: 0, spectator: false, follow: undefined, followUntil: 0 };
     this.clients.add(c);
     return { receive: (data) => this.receive(c, data), closed: () => this.drop(c) };
   }
@@ -237,18 +246,38 @@ export class Room {
   step(): void {
     for (const c of this.clients) {
       if (!c.player) continue;
-      // An input is the state of the controls, so the newest one says it all: a burst that arrives
-      // after a network stall is applied at once instead of queuing up and delaying every move
-      // after it (the stall's ticks already ran on the last input). A button pressed in any of them
-      // still counts. None waiting: the last input stays in effect.
+      // Every input moves the player exactly once, in order: the client predicts that, so the
+      // server lands where the client already shows the player (no rubber-banding). The network
+      // delivers inputs unevenly (a relay holds some back, then sends a bunch): with none waiting
+      // the player stands still this tick instead of guessing, and a bunch catches up over the
+      // next ticks, a few at a time. Credit (one per tick, banked up to 1 s) keeps a client from
+      // ever moving more than time allows.
+      const p = c.player;
       const waiting = c.inputs;
-      const m = waiting[waiting.length - 1];
-      if (m) {
-        let buttons = 0;
-        for (const q of waiting) buttons |= q.buttons;
+      if (!p.alive) {
+        // Knocked out: nothing moves, and nothing waits to push the player around after respawning.
+        const last = waiting[waiting.length - 1];
+        if (last) this.match.setInput(p, last.seq, 0, 0, last.aim, 0);
         waiting.length = 0;
-        this.match.setInput(c.player, m.seq, m.moveX, m.moveY, m.aim, buttons);
+        c.credit = 0;
+        continue;
       }
+      c.credit = Math.min(MAX_INPUT_CREDIT, c.credit + 1);
+      // A client steadily sending faster than the tick (no credit, a growing backlog) is trimmed.
+      if (c.credit <= 1 && waiting.length > MAX_BACKLOG) waiting.splice(0, waiting.length - MAX_BACKLOG);
+      const n = Math.min(waiting.length, c.credit, MAX_INPUTS_PER_TICK);
+      if (n === 0) {
+        this.match.setInput(p, p.ackSeq, 0, 0, p.input.aim, p.input.buttons);
+        continue;
+      }
+      const batch = waiting.splice(0, n);
+      c.credit -= n;
+      let buttons = 0;
+      for (const q of batch) buttons |= q.buttons;
+      // All but the last move now; the last is this tick's own move (and the seq the client sees acked).
+      for (const q of batch.slice(0, -1)) this.match.catchUp(p, q.moveX, q.moveY, q.aim);
+      const m = batch[batch.length - 1]!;
+      this.match.setInput(p, m.seq, m.moveX, m.moveY, m.aim, buttons);
     }
     const t0 = now();
     this.match.step();

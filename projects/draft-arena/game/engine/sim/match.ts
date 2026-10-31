@@ -387,8 +387,14 @@ export class Match {
       return;
     }
     if (p.brain) thinkBot(this, p, dt);
-    let mx = p.input.moveX;
-    let my = p.input.moveY;
+    this.moveBy(p, p.input.moveX, p.input.moveY, p.input.aim, dt);
+    if (p.stats.regen > 0) p.hp = Math.min(p.maxHp, p.hp + p.stats.regen * dt);
+  }
+
+  /** One movement step: the same rule the client predicts with (session.ts move()). */
+  private moveBy(p: SimPlayer, moveX: number, moveY: number, aim: number, dt: number): void {
+    let mx = moveX;
+    let my = moveY;
     const len = Math.hypot(mx, my);
     if (len > 1) {
       mx /= len;
@@ -399,8 +405,17 @@ export class Match {
     p.vy = my * speed;
     p.x = clamp(p.x + p.vx * dt, p.radius, this.rules.world.width - p.radius);
     p.y = clamp(p.y + p.vy * dt, p.radius, this.rules.world.height - p.radius);
-    p.angle = p.input.aim;
-    if (p.stats.regen > 0) p.hp = Math.min(p.maxHp, p.hp + p.stats.regen * dt);
+    p.angle = aim;
+  }
+
+  /**
+   * An input that arrived late, applied now as its own movement step before this tick's (the
+   * room's catch-up after a network stall): every input moves the player exactly once, so the
+   * server ends where the client predicted.
+   */
+  catchUp(p: SimPlayer, moveX: number, moveY: number, aim: number): void {
+    if (!p.alive) return;
+    this.moveBy(p, clamp(moveX, -1, 1), clamp(moveY, -1, 1), aim, TICK_DT);
   }
 
   private nearestPlayer(x: number, y: number): [SimPlayer | undefined, number] {
