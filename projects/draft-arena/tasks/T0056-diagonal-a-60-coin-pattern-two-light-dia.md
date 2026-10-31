@@ -1,12 +1,14 @@
 ---
 id: T0056
 title: "Diagonal: a 60-coin pattern, two light diagonal stripes across the body"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T10:47:58Z
+claimed_at: 2026-10-31T11:00:29Z
 ---
 
 ## Goal
