@@ -8,6 +8,7 @@ import { diagonal } from './diagonal.ts';
 import { lolly } from './lolly.ts';
 import { star } from './star.ts';
 import { cheeks } from './cheeks.ts';
+import { ring } from './ring.ts';
 
 /** Color patterns painted over a player's body. One per line. */
 export const PATTERNS: readonly PatternDef[] = [
@@ -20,4 +21,5 @@ export const PATTERNS: readonly PatternDef[] = [
   lolly,
   star,
   cheeks,
+  ring,
 ];

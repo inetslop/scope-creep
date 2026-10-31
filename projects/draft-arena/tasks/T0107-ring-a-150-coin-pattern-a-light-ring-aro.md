@@ -4,11 +4,12 @@ title: "Ring: a 150-coin pattern, a light ring around the middle of the body"
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T17:49:52Z
 claimed_at: 2026-10-31T18:17:53Z
+finished_at: 2026-10-31T18:26:13Z
 epic: E22
 ---
 
@@ -82,3 +83,16 @@ export const ring: PatternDef = {
 
 ### Tests
 none (no pure helpers; content is tested automatically by engine/tests/).
+
+## Result (attempt 1, asus)
+
+Added the Ring pattern (`src/content/patterns/ring.ts`), a 150-coin light pattern that strokes a single hollow ring (radius `r/3`, width `0.18*r`) around the middle of the body in the player's own color lightened with `shade(w.color, 0.35)`, matching the star/lolly idioms. Registered it as the last entry in `src/content/patterns/index.ts` (after Cheeks, the 120-coin step), completing the pattern shelf's price ladder with its top step. Buying, wearing, persistence, bot dressing and preview all come from the generic pattern iteration; nothing in play changes. `npm run check` (typecheck + lint + 120 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 8.3 min
+
+```
+projects/draft-arena/game/src/content/patterns/index.ts |  2 ++
+ projects/draft-arena/game/src/content/patterns/ring.ts  | 16 ++++++++++++++++
+ 2 files changed, 18 insertions(+)
+```
