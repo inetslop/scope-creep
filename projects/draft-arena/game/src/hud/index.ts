@@ -1,5 +1,6 @@
 import type { MakeHudPart } from '../../engine/api.ts';
 import './base.css';
+import { audio } from './audio.ts';
 import { connection } from './connection.ts';
 import { knockedOut } from './knockedOut.ts';
 import { scoreboard } from './scoreboard.ts';
@@ -8,6 +9,7 @@ import { xpBar } from './xpBar.ts';
 
 /** Every HUD element, in the order they are built. One per line. */
 export const HUD_PARTS: readonly MakeHudPart[] = [
+  audio,
   connection,
   xpBar,
   scoreboard,

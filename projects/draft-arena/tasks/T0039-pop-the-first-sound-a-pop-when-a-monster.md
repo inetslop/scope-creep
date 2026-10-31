@@ -4,11 +4,12 @@ title: "Pop: the first sound, a pop when a monster dies, pitched by its size"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T07:44:39Z
 claimed_at: 2026-10-31T08:22:11Z
+finished_at: 2026-10-31T08:37:32Z
 epic: E11
 ---
 
@@ -181,3 +182,19 @@ describe('sfx: the pop pitch', () => {
 
 ### Tests
 `tests/sfx.test.ts` as above (the `pitchFor` helper is pure; a later retune of the pitch curve would be caught). Everything else (effect fires per death, draw throws nothing) is covered by `engine/tests/`.
+
+## Result (attempt 1, asus)
+
+Added the game's first sound — a short, quiet, candy pop (0.12 s sine blip, pitched by the dead monster's radius) in a new WebAudio layer `src/audio/sfx.ts` with gesture unlock, a match-on-screen gate, once-per-effect seed dedup and a 6-voice cap. It hooks the existing death `pop` effect via one call in `src/content/effects/pop.ts`, and a DOM-less HUD part `src/hud/audio.ts` (registered first in `HUD_PARTS`) arms the gesture listeners and feeds the gate each frame. A pure `pitchFor` radius→pitch mapping is unit-tested in `tests/sfx.test.ts`; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 15.4 min
+
+```
+projects/draft-arena/game/src/audio/sfx.ts         | 80 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/effects/pop.ts    |  2 +
+ projects/draft-arena/game/src/hud/audio.ts         |  8 +++
+ projects/draft-arena/game/src/hud/index.ts         |  2 +
+ projects/draft-arena/game/tests/sfx.test.ts        | 16 +++++
+ 5 files changed, 108 insertions(+)
+```

@@ -1,5 +1,6 @@
 import { noise, type EffectDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
+import { pop as popSound } from '../../audio/sfx.ts';
 
 const COLORS = [PALETTE.red, PALETTE.yellow, PALETTE.teal, PALETTE.pink, PALETTE.blue];
 
@@ -8,6 +9,7 @@ export const pop: EffectDef = {
   id: 'pop',
   duration: 0.45,
   draw(g, fx) {
+    popSound(fx.seed, fx.value, fx.age);
     g.globalAlpha = 1 - fx.t;
     for (let i = 0; i < 9; i++) {
       const a = (i / 9) * Math.PI * 2 + noise(fx.seed, i) * 0.6;
