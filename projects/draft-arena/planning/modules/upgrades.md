@@ -39,7 +39,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-44 in the game, from game/src/content/upgrades/ (the real values).
+45 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -96,6 +96,13 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - maxLevel: 3
 - look: shape circle, color #4dabf7
 - cooldown: 1.6
+- fire: (code)
+
+### Reach (`reach`)
+- description: "Every 4.0 s, a thin ice needle at the farthest enemy within 400. 24 damage. Rank 2: two needles at the two farthest, 20 each."
+- maxLevel: 2
+- look: shape triangle, color #99e9f2
+- cooldown: 4
 - fire: (code)
 
 ### Nerve (`nerve`)

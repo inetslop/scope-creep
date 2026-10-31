@@ -99,7 +99,7 @@ Breakdown:
 ## E28 The Goober and the Frenzy grow (fully tasked)
 Goal: the two trees that still lack their moment grow one fork each: the Goober's Goo grows a long arm (a needle that reaches the enemy that holds its distance), and the Frenzy's player kill grows a moment (a red burst when a hurt Frenzy takes a player) — each changes how the playstyle plays, not its numbers.
 Breakdown:
-- T0123 M — Reach: a Goober fork under Goo 2, a thin ice needle at the farthest enemy within 400 — design
+- T0123 M — Reach: a Goober fork under Goo 2, a thin ice needle at the farthest enemy within 400 — done
 - T0124 M — Snap: a Frenzy fork under Nerve 2, a red burst (radius 110) on a player knockout while below half — design
 
 ## E29 The streak (active)
@@ -113,5 +113,5 @@ Breakdown:
 Goal: a personal feud inside the big field — two players who knock each other out again bear a red knot the field can see, and the knockout that ends the feud pays its killer.
 Breakdown:
 - T0130 M — The grudge: a permanent rule, the red knot on both feuding players, the end of the feud pays +15 xp and +5 coins — design
-- the knot's moment (S): a small ring and a soft pop when a grudge forms — to be tasked, waits on T0130
-- the double knot (M): the same pair feuding a second time in a match wears a second, smaller knot, and the end pays double — to be tasked, waits on T0130
+- T0131 S — The knot's moment: a small red ring and a soft pop where the feud starts — design, waits on T0130
+- T0132 M — The double knot: a second feud between the same pair wears a second, smaller knot, and the end pays double — design, waits on T0130
