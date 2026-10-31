@@ -1,5 +1,6 @@
 import { noise, type EffectDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
+import { bonk } from '../../audio/sfx.ts';
 
 const COLORS = [PALETTE.yellow, PALETTE.pink, PALETTE.blue, PALETTE.teal, PALETTE.white];
 
@@ -8,6 +9,7 @@ export const burst: EffectDef = {
   id: 'burst',
   duration: 0.8,
   draw(g, fx) {
+    bonk(fx.seed, fx.age);
     g.globalAlpha = 1 - fx.t;
     g.strokeStyle = PALETTE.ink;
     g.lineWidth = 3;

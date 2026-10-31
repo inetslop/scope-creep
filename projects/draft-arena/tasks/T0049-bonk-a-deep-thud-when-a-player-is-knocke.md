@@ -4,11 +4,12 @@ title: "Bonk: a deep thud when a player is knocked out"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T09:20:00Z
 claimed_at: 2026-10-31T09:51:21Z
+finished_at: 2026-10-31T10:04:50Z
 epic: E11
 ---
 
@@ -81,3 +82,16 @@ export function bonk(seed: number, age: number): void {
 
 ### Tests
 none (content is tested automatically by engine/tests/; no pure helpers added)
+
+## Result (attempt 1, yoga)
+
+Added a deep "bonk" thud for player knockouts in the audio layer: `src/audio/sfx.ts` gains a `lastBonk` state var, an exported `bonk(seed, age)` (130 → 60 Hz, peak 0.1, 0.18 s, deduped per effect seed, throttled to one every 0.5 s, under the same 6-voice cap as pops), and an optional `end` parameter on the private `blip()` defaulting to the old `f0 * 0.55` so pops stay byte-identical. `src/content/effects/burst.ts` now calls `bonk(fx.seed, fx.age)` as the first line of its `draw()`, exactly mirroring how the pop effect hooks its sound — so a knocked-out player's confetti burst plays the deep thud on every client at the same instant, desktop and phone.
+
+- Self-review: APPROVE
+- Time: 13.5 min
+
+```
+projects/draft-arena/game/src/audio/sfx.ts         | 27 ++++++++++++++++++++--
+ .../draft-arena/game/src/content/effects/burst.ts  |  2 ++
+ 2 files changed, 27 insertions(+), 2 deletions(-)
+```

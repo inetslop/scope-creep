@@ -10,6 +10,7 @@ let armed = false;
 let lastHud = 0; // performance.now() of the last match frame
 let active = 0; // pops still sounding
 const heard = new Map<number, number>(); // effect seed -> until when its pop has played
+let lastBonk = 0; // performance.now() of the last bonk
 
 function wake(): void {
   if (!ctx) {
@@ -40,13 +41,13 @@ export function pitchFor(radius: number): number {
   return Math.min(900, Math.max(180, 900 - (radius - 8) * 40));
 }
 
-function blip(f0: number, peak: number, life: number): void {
+function blip(f0: number, peak: number, life: number, end = f0 * 0.55): void {
   if (!ctx || !master) return;
   const t0 = ctx.currentTime;
   const osc = ctx.createOscillator();
   osc.type = 'sine';
   osc.frequency.setValueAtTime(f0, t0);
-  osc.frequency.exponentialRampToValueAtTime(f0 * 0.55, t0 + life);
+  osc.frequency.exponentialRampToValueAtTime(end, t0 + life);
   const gain = ctx.createGain();
   gain.gain.setValueAtTime(0.0001, t0);
   gain.gain.exponentialRampToValueAtTime(peak, t0 + 0.008);
@@ -77,6 +78,28 @@ export function pop(seed: number, radius: number, age: number): void {
   if (active >= 6) return;
   active += 1;
   blip(pitchFor(radius), 0.12, 0.12);
+}
+
+/**
+ * One deep bonk when a player is knocked out: 130 Hz falling to 60 Hz, under 0.2 s and a touch
+ * quieter than a pop, so a player falling reads as "someone fell", not "something popped".
+ * Called from the burst effect's draw() on every client: at most once per effect (its seed),
+ * at most one bonk every 0.5 s, and under the same 6-voice cap as the pops.
+ */
+export function bonk(seed: number, age: number): void {
+  if (!ctx) return;
+  if (age > 0.25) return;
+  const now = performance.now();
+  if (now - lastHud > 1000) return;
+  const until = heard.get(seed);
+  if (until !== undefined && until > now) return;
+  heard.set(seed, now + 700);
+  if (heard.size > 96) for (const [s, u] of heard) if (u <= now) heard.delete(s);
+  if (now - lastBonk < 500) return;
+  lastBonk = now;
+  if (active >= 6) return;
+  active += 1;
+  blip(130, 0.1, 0.18, 60);
 }
 
 /**
