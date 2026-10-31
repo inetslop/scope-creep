@@ -4,11 +4,12 @@ title: "Lolly: an 80-coin pattern, a light lollipop swirl across the body"
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T15:05:01Z
 claimed_at: 2026-10-31T15:58:46Z
+finished_at: 2026-10-31T16:06:00Z
 epic: E21
 ---
 
@@ -86,3 +87,16 @@ export const lolly: PatternDef = {
 
 ### Tests
 none (content is tested automatically by `engine/tests/`: name 1-18 chars, description ≤ 70 chars, whole price ≥ 0, `draw()` must not throw — it won't).
+
+## Result (attempt 1, yoga)
+
+Added the Lolly pattern — a new `src/content/patterns/lolly.ts` (80 coins, "A light lollipop swirl across the body.") that strokes a single light spiral (`shade(w.color, 0.35)`, 1.5 turns, round-capped line at 0.18× the body radius) from the body's centre out to the edge, plus its import and registry line in `src/content/patterns/index.ts` right after `diagonal`. That makes the shelf's price ladder read 30, 30, 40, 40, 50, 60, 80, and the Cosmetics panel preview, 80-coin purchase, profile persistence and bots wearing it at random all flow from the registry automatically. `npm run check` (109 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 7.2 min
+
+```
+.../draft-arena/game/src/content/patterns/index.ts |  2 ++
+ .../draft-arena/game/src/content/patterns/lolly.ts | 26 ++++++++++++++++++++++
+ 2 files changed, 28 insertions(+)
+```
