@@ -3,13 +3,11 @@ id: T0110
 title: "Scavenge: a Hive talent, a monster kill is worth xp per enemy around the corpse"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T18:10:25Z
-claimed_at: 2026-10-31T18:10:28Z
 epic: E23
-designer: desktop
 ---
 
 ## Goal
@@ -55,3 +53,92 @@ What a Hive player gets, and what it costs: 1–3 points under Swarm 1 (Swarm 1 
 - [ ] Killing a monster with 0, 2 and 4 other critters within 80 of the corpse pays 0, 2 and 3 xp at rank 1, and 0, 6 and 9 at rank 3.
 - [ ] The kill counts once per death with any weapon (Horn darts included), the pay shows as a small yellow star at the corpse, and a player knockout pays no Scavenge xp.
 - [ ] The rest of the tree, the mark, the crown and the corpse gem behave as before, and the game is working and playable.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/upgrades/scavenge.ts` - the on-kill upgrade `scavenge` (xp per living critter near the corpse)
+- create `src/content/effects/xp-star.ts` - the one-shot `xp-star` visual: small yellow stars rising off the corpse, one per xp paid
+- edit `src/content/upgrades/index.ts` - one import line + one array line
+- edit `src/content/effects/index.ts` - one import line + one array line
+- edit `src/content/talents/hive.ts` - one talent line
+
+### Interfaces
+No new types. `scavenge` is an `UpgradeDef`, `xpStar` is an `EffectDef` (both from `engine/api.ts`, shapes `star` and helpers `traceShape`/`noise` exist).
+
+`src/content/upgrades/scavenge.ts` (whole file):
+```ts
+import type { UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** Scavenge: a monster kill pays xp per other living critter within 80 of the corpse (up to 3). */
+export const scavenge: UpgradeDef = {
+  id: 'scavenge',
+  name: 'Scavenge',
+  description: 'A monster kill is worth +1 xp per other living critter within 80 of the corpse (up to 3). Per rank: +1 more per neighbor.',
+  maxLevel: 3,
+  look: { shape: 'star', color: PALETTE.yellow },
+  onKill(ctx, me, level, victim) {
+    if (victim.type !== 'monster') return;
+    const n = Math.min(3, ctx.unitsNear(victim.x, victim.y, 80).length);
+    if (n > 0) {
+      ctx.giveXp(me, level * n);
+      ctx.effect('xp-star', { x: victim.x, y: victim.y }, undefined, level * n);
+    }
+  },
+};
+```
+`src/content/effects/xp-star.ts` (whole file; copy of the coin effect's rhythm):
+```ts
+import { noise, traceShape, type EffectDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+const LIFE = 0.6;
+
+/** Scavenge: one small yellow star rises off the corpse for every xp the kill paid. value: xp paid. */
+export const xpStar: EffectDef = {
+  id: 'xp-star',
+  duration: 1,
+  draw(g, fx) {
+    const n = Math.max(1, Math.min(9, Math.round(fx.value) || 1));
+    for (let i = 0; i < n; i++) {
+      const a = fx.age - i * 0.04;
+      if (a <= 0 || a >= LIFE) continue;
+      const t = a / LIFE;
+      const x = fx.ax + (noise(fx.seed, i) - 0.5) * 24;
+      const y = fx.ay - 28 * t;
+      g.globalAlpha = 1 - t;
+      g.save();
+      g.translate(x, y);
+      g.beginPath();
+      traceShape(g, 'star', 6, t * 3);
+      g.fillStyle = PALETTE.yellow;
+      g.fill();
+      g.lineWidth = 2;
+      g.strokeStyle = PALETTE.ink;
+      g.stroke();
+      g.restore();
+    }
+    g.globalAlpha = 1;
+  },
+};
+```
+
+### Steps
+1. Create `src/content/upgrades/scavenge.ts` exactly as above.
+2. Create `src/content/effects/xp-star.ts` exactly as above.
+3. `src/content/upgrades/index.ts`: add `import { scavenge } from './scavenge.ts';` after the `scatter` import (line 32, keeps the list alphabetical); add `scavenge,` as a new array line after `sting,` (line 69, with the other Hive upgrades).
+4. `src/content/effects/index.ts`: add `import { xpStar } from './xp-star.ts';` after the `stingBurst` import (line 13); add `xpStar,` as a new array line after `stingBurst,` (line 25).
+5. `src/content/talents/hive.ts`: add `{ id: 'scavenge', upgrade: 'scavenge', max: 3, needs: [['swarm', 1]] },` as a new line right after the `leech` line (line 13). No `points`, no `prestige`. Do not touch any other line.
+6. Run `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- The `victim.type !== 'monster'` guard is required: `onKill` fires on player knockouts too, and those must pay nothing (the mark, crown and corpse gem stay as they are).
+- Cap the neighbors first, then multiply: `level * Math.min(3, count)` — rank 3 with 4 neighbors pays 9, not 12.
+- `ctx.unitsNear` counts living critters (monsters and players) like `nest.ts` does; do not filter it further and do not use `Math.random`/`Date` anywhere (lint).
+- Effect `duration` must cover the last staggered star: 9 stars × 0.04 s stagger + 0.6 s life = 0.92 s < 1 s — don't shorten it.
+- Keep each registry edit to exactly the two lines named; other machines are adding items to the same registries — lines added next to related entries merge by themselves.
+- The talent panel shows the upgrade's `description` verbatim; keep it exactly as given (same length class as Nest's, fits both layouts).
+
+### Tests
+- none (no pure helpers; content is tested automatically by engine/tests/).
