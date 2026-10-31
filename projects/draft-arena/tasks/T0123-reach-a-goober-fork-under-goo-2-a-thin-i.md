@@ -1,12 +1,14 @@
 ---
 id: T0123
 title: "Reach: a Goober fork under Goo 2, a thin ice needle at the farthest enemy within 400"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T20:44:19Z
+claimed_at: 2026-10-31T21:04:30Z
 epic: E28
 ---
 
