@@ -5,6 +5,7 @@ import { chill3 } from './chill-3.ts';
 import { gooSlow } from './goo-slow.ts';
 import { marked } from './marked.ts';
 import { mired } from './mired.ts';
+import { slushed } from './slushed.ts';
 
 /** Every status (slows, burns...). One per line. */
 export const STATUSES: readonly StatusDef[] = [
@@ -14,4 +15,5 @@ export const STATUSES: readonly StatusDef[] = [
   mired,
   marked,
   gooSlow,
+  slushed,
 ];

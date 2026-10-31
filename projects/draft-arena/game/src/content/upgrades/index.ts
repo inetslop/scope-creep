@@ -16,6 +16,7 @@ import { quick } from './quick.ts';
 import { reap } from './reap.ts';
 import { ricochet } from './ricochet.ts';
 import { scatter } from './scatter.ts';
+import { slush } from './slush.ts';
 import { split } from './split.ts';
 import { swift } from './swift.ts';
 import { vigor } from './vigor.ts';
@@ -34,6 +35,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   fuse,
   scatter,
   gush,
+  slush,
   split,
   lance,
   swift,

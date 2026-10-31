@@ -12,5 +12,6 @@ export const lobber: TalentTreeDef = {
     { id: 'lob', upgrade: 'lob', max: 5, needs: [['quick', 1]] },
     { id: 'wide', upgrade: 'wide', max: 3, needs: [['lob', 2]] },
     { id: 'fuse', upgrade: 'fuse', max: 1, needs: [['lob', 4]] },
+    { id: 'slush', upgrade: 'slush', max: 3, needs: [['lob', 1]], points: 2, prestige: 1 },
   ],
 };

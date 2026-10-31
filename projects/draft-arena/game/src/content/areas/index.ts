@@ -3,6 +3,7 @@ import { bite } from './bite.ts';
 import { crown } from './crown.ts';
 import { mark } from './mark.ts';
 import { splash } from './splash.ts';
+import { slushPuddle } from './slush-puddle.ts';
 import { puddle } from './puddle.ts';
 import { sticky } from './sticky.ts';
 
@@ -12,6 +13,7 @@ export const AREAS: readonly AreaDef[] = [
   crown,
   mark,
   splash,
+  slushPuddle,
   sticky,
   puddle,
 ];

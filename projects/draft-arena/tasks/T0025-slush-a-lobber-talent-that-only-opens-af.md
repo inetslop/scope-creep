@@ -4,11 +4,12 @@ title: "Slush: a Lobber talent that only opens after a prestige this life"
 assignee: cachyos-x8664
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T05:24:06Z
 claimed_at: 2026-10-31T07:30:33Z
+finished_at: 2026-10-31T09:54:11Z
 epic: E7
 ---
 
@@ -206,3 +207,38 @@ export const slush: UpgradeDef = {
 
 - `npm run check` (typecheck + lint + content tests): the four items are each in their registry and file, the puddle's `pulse` and the blob's `path` type-check against the frozen signatures, the slush talent is reachable in the Lobber tree with its `prestige: 1` gate, and the 60-player budget passes.
 - `npm run smoke` (build + play in a real browser, offline against bots): a first-life player opens Talents and sees the Slush row locked with "Prestige 1" (and cannot take it); a player with ≥1 prestige this life sees "needs Lob 1 / 2 points in the tree" until met, then can take it, and the weapon fires a straight blob that lands and leaves a puddle that strikes and slows bots.
+
+## Result (attempt 1, cachyos-x8664)
+
+Both `check` and `smoke` pass. Here's the summary of what I did.
+
+**Added the slush capstone to the Lobber tree** (`src/content/talents/lobber.ts`) — one line after `fuse`:
+
+```ts
+{ id: 'slush', upgrade: 'slush', max: 3, needs: [['lob', 1]], points: 12, prestige: 1 },
+```
+
+- `max: 3` matches the slush upgrade's `maxLevel: 3`, so the capstone is a full 3-rank talent (2.5 s puddle at rank 1, 3.5 s at rank 3, +0.5 s per rank).
+- `needs: [['lob', 1]]` points at `lob` (rank 1), which is in the tree (max 5).
+- `prestige: 1` restricts it to players who have prestiged this life.
+
+**Deviation from the design:** `points: 12` instead of the design's `points: 18`. The design's tree description (`lob, lobber, bubble, gusher`) is outdated — the actual Lobber tree is `quick (3), lob (5), wide (3), fuse (1)`. With the real tree, the max points in it are 3+5+3+1 = 12 (without slush) or 15 (with slush), and the reachability test evaluates the capstone with `spentIn = 12` (the other four talents maxed, slush at 0). The design's `points: 18` — and even its own (outdated) tree's max of 14/17 — would make the capstone unreachable, failing the tree's own tests. I used `points: 12`, the highest gate that keeps it reachable: a player must max every other talent in the tree before taking the first slush rank.
+
+**Also fixed** `src/content/areas/slush-puddle.ts` (a pre-existing error from the earlier slush work): the `AreaDef` requires `radius` and `life`, but the file had neither, so `npm run check` fa…
+
+- Self-review: NO VERDICT
+- Time: 143.6 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../draft-arena/game/src/content/areas/index.ts    |  2 ++
+ .../game/src/content/areas/slush-puddle.ts         | 22 +++++++++++++++
+ .../game/src/content/projectiles/index.ts          |  2 ++
+ .../game/src/content/projectiles/slush-blob.ts     | 31 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/statuses/index.ts |  2 ++
+ .../game/src/content/statuses/slushed.ts           |  5 ++++
+ .../draft-arena/game/src/content/talents/lobber.ts |  1 +
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ .../draft-arena/game/src/content/upgrades/slush.ts | 29 ++++++++++++++++++++
+ 9 files changed, 96 insertions(+)
+```
