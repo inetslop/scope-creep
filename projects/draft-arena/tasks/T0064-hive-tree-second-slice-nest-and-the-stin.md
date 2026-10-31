@@ -3,11 +3,13 @@ id: T0064
 title: "Hive tree, second slice: Nest and the Sting capstone"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0063]
 attempts: 0
 created: 2026-10-31T12:00:08Z
+claimed_at: 2026-10-31T12:21:00Z
 epic: E16
+designer: cachyos-x8664
 ---
 
 ## Goal
