@@ -1,12 +1,14 @@
 ---
 id: T0010
 title: "Swarm surge: a line of calm Dots that crosses the field"
+assignee: desktop-4070
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T03:16:43Z
+claimed_at: 2026-10-31T04:49:08Z
 epic: E3
 design_attempts: 1
 ---
