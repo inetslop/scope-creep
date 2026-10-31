@@ -1,11 +1,13 @@
 import { noise, type EffectDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
+import { whump } from '../../audio/sfx.ts';
 
 /** Sting: a crowded corpse bursts - a teal ring with an ink rim blooms out to `value`, teal confetti with it. */
 export const stingBurst: EffectDef = {
   id: 'sting-burst',
   duration: 0.3,
   draw(g, fx) {
+    whump(fx.seed, fx.age);
     g.globalAlpha = 1 - fx.t;
     const r = fx.value * fx.t;
     g.lineWidth = 9;

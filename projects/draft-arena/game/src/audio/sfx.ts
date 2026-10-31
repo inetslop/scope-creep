@@ -12,6 +12,7 @@ let active = 0; // pops still sounding
 const heard = new Map<number, number>(); // effect seed -> until when its pop has played
 let lastFanfare = 0; // performance.now() of the last prestige fanfare
 let lastBonk = 0; // performance.now() of the last bonk
+let lastWhump = 0; // performance.now() of the last whump
 const tootTicks = new Map<number, number>(); // crown-fall seed -> until when its toot tick has played
 
 function wake(): void {
@@ -102,6 +103,30 @@ export function bonk(seed: number, age: number): void {
   if (active >= 6) return;
   active += 1;
   blip(130, 0.1, 0.18, 60);
+}
+
+/**
+ * One soft low whump under the normal pop when a crowded corpse bursts (a sting ring blooms):
+ * a 200 Hz sine falling to 130 Hz over 0.1 s, peak 0.05 - clearly softer and lower than the pop's
+ * bright blip, and higher and shorter than the bonk's deep thud. Called from the sting-burst
+ * effect's draw() on every client: at most once per effect (its seed) and at most one whump
+ * every 0.2 s, under the same 6-voice cap as the pops, so a field full of Hive capstone kills
+ * doesn't stack them.
+ */
+export function whump(seed: number, age: number): void {
+  if (!ctx) return;
+  if (age > 0.25) return; // the effect's first frames only
+  const now = performance.now();
+  if (now - lastHud > 1000) return; // no match on screen
+  const until = heard.get(seed);
+  if (until !== undefined && until > now) return;
+  heard.set(seed, now + 700);
+  if (heard.size > 96) for (const [s, u] of heard) if (u <= now) heard.delete(s);
+  if (now - lastWhump < 200) return; // one whump per 200 ms
+  lastWhump = now;
+  if (active >= 6) return;
+  active += 1;
+  blip(200, 0.05, 0.1, 130); // 200 -> 130 Hz over 0.1 s, peak 0.05: the dull low squeeze
 }
 
 export function toot(seed: number, age: number): void {

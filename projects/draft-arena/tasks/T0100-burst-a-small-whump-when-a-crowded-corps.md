@@ -4,11 +4,12 @@ title: "Burst: a small whump when a crowded corpse bursts (Sting)"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T16:34:41Z
 claimed_at: 2026-10-31T16:40:14Z
+finished_at: 2026-10-31T16:53:00Z
 epic: E16
 ---
 
@@ -70,3 +71,16 @@ In `src/content/effects/sting-burst.ts`: add `import { whump } from '../../audio
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Added the Hive burst whump: a new `whump(seed, age)` in `src/audio/sfx.ts` — a short soft low squeeze (200 → 130 Hz sine over 0.1 s, peak 0.05) that sits under the pop, deduped once per effect seed and globally throttled to one per 200 ms with the same 6-voice cap as pops — and wired it in as the first line of the `sting-burst` effect's `draw()` in `src/content/effects/sting-burst.ts`, so every client who sees the teal ring bloom on a crowded Sting kill hears it. `npm run check` and `npm run smoke` (desktop + mobile) pass.
+
+- Self-review: APPROVE
+- Time: 12.8 min
+
+```
+projects/draft-arena/game/src/audio/sfx.ts         | 25 ++++++++++++++++++++++
+ .../game/src/content/effects/sting-burst.ts        |  2 ++
+ 2 files changed, 27 insertions(+)
+```
