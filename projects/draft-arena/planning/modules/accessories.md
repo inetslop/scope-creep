@@ -28,11 +28,11 @@ A missing row gets the task rejected by the architect.
 
 ## What exists now
 
-17 in the game, from game/src/content/accessories/ (the real values).
+18 in the game, from game/src/content/accessories/ (the real values).
 
 **By `slot`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
-- `back`: Candy Pack, Balloon, Party Blower, Candy Cane, Medal
+- `back`: Candy Pack, Balloon, Party Blower, Candy Cane, Medal, Lollipop
 - `face`: Round Glasses, Bow Tie, Beak, Monocle, Heart Shades, Mustache
 - `head`: Cone, Beanie, Feather, Bloom, Chef Hat, Cherry
 
@@ -138,5 +138,12 @@ A missing row gets the task rejected by the architect.
 - description: "A yellow medal with a red ribbon. Needs 2 prestiges in all."
 - slot: back
 - price: 400
+- prestige: 2
+- draw: (code)
+
+### Lollipop (`lollipop`)
+- description: "A big green lollipop with a white swirl. Needs 2 prestiges in all."
+- slot: back
+- price: 500
 - prestige: 2
 - draw: (code)

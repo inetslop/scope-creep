@@ -39,7 +39,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-39 in the game, from game/src/content/upgrades/ (the real values).
+40 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -218,6 +218,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - description: "On a kill with 2 or more other critters within 80 of the corpse: the corpse bursts (radius 80) for 12 damage."
 - maxLevel: 1
 - look: shape star, color #a78bfa, scale 1.1
+- onKill: (code)
+
+### Scavenge (`scavenge`)
+- description: "A monster kill is worth +1 xp per other living critter within 80 of the corpse (up to 3). Per rank: +1 more per neighbor."
+- maxLevel: 3
+- look: shape star, color #ffd43b
 - onKill: (code)
 
 ### Cling (`cling`)

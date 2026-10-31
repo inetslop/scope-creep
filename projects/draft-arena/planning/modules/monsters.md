@@ -36,7 +36,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-10 in the game, from game/src/content/monsters/ (the real values).
+11 in the game, from game/src/content/monsters/ (the real values).
 
 ### Dot (`dot`)
 - description: Heads straight for the nearest player.
@@ -120,6 +120,18 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - weight: 6
 - fromLevel: 4
 - look: shape triangle, color #f783ac, face {mood calm, eyes 2, mouth smile}, draw (code)
+- think: (code)
+
+### Jaw (`jaw`)
+- description: "Stops, opens its giant mouth, then bites everything in front."
+- hp: 50
+- speed: 55
+- radius: 26
+- damage: 6
+- xp: 5
+- weight: 3
+- fromLevel: 4
+- look: shape circle, color #fa5252, face false, draw (code)
 - think: (code)
 
 ### Sleeper (`sleeper`)

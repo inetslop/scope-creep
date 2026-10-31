@@ -183,17 +183,17 @@ Breakdown:
 - T0066 L — Brood: a purple sac that keeps birthing Dots while it lives — done
 Done: the 10th monster is in — a Brood that keeps birthing Dots while it lives; the menagerie is full, and the crowd deepens through the trees that learn to fight it.
 
-## E19 The price of a kill (active)
+## E19 The price of a kill (done)
 Goal: a player kill isn't free: the killer wears the mark for 15 s (revenge), and a level-4+ corpse drops a gem worth the life — every knockout starts a short hunt on the killer and a pickup fight over the corpse, so the scoreboard swings on both.
 Done when: a player who knocks out another is marked for 15 s and pays the mark bonus if knocked out in that window; a knocked-out player of level 4+ drops a gem worth their level (the leader's gem folded in); a mark that runs out on a living player banks 5 coins.
 Breakdown:
 - T0082 M — The price: killing a player marks you for 15 s, the mark pays out as usual — done
 - T0083 M — The corpse pays: a knocked-out player of level 4+ drops a gem worth their level; the leader's gem folds in — done
 - T0084 S — A sting: a small sting when the mark lands on you — failed (the client cannot tell the local player is marked; needs the engine, see IDEAS)
-- T0087 S — Escape pays: a mark that runs out on a living player banks 5 coins — todo
-Next: fully tasked — the mark's two fates (killed, escaped) both pay out once the three tasks land.
+- T0087 S — Escape pays: a mark that runs out on a living player banks 5 coins — done
+Done: the mark's two fates both pay — a kill marks the killer, an escape banks the coin.
 
-## E20 The menagerie grows back (active)
+## E20 The menagerie grows back (done)
 Goal: the menagerie is 7 of 10 types after the cut; the crowd learns three new ways to threaten — a threat that comes in on an arc, a kill that doesn't kill, and a bite that punishes standing still — each readable at a glance.
 Done when: the Toss (a lobbed splash), the Twin (a birth at half hp) and the Jaw (a bite from a stop) are in the field, each with a behavior none of the others has — the menagerie back to 10.
 Breakdown:
@@ -201,9 +201,9 @@ Breakdown:
 - T0086 M — Twin: a bean that splits into two smaller twins when it drops to half hp — failed (a split must remove the parent, and the only removal is a death, which always drops a gem)
 - T0090 M — Twin: a bean that gives birth to a small fast twin the first time it drops to half hp, and keeps living — failed (the comparison table missed the Sleeper row)
 - T0096 M — Twin: a bean that shudders at half hp, births a fast twin and keeps living — done
-- T0099 M — Jaw: a fat deep-red blob that stops and bites a locked cone in front of it, the last slot — in progress
+- T0099 M — Jaw: a fat deep-red blob that stops and bites a locked cone in front of it, the last slot — done
 - T0103 S — Bloop: a low bloop when a Toss splash blooms — done
-Next: the menagerie is back to 10 once the Jaw lands; the arc threat and the birth at half hp are in.
+Done: the menagerie is back to 10 — the arc threat, the birth at half hp and the bite from a stop.
 
 ## E21 The shop fills out (done)
 Goal: after the Chef Hat and the Medal, the shelves go quiet: each slot and the pattern shelf get middle steps toward their caps (10 per slot, 12 patterns), so a player with a few lives always has a next save.
@@ -215,29 +215,44 @@ Breakdown:
 - T0098 S — Star: a 100-coin pattern, one light star on the middle of the body — done
 Done: every slot has 5 items, the pattern shelf has 8, and no ladder between 80 and 400 has a gap bigger than 150 — the tops wait in E22.
 
-## E22 The shop's long goals (active)
+## E22 The shop's long goals (done)
 Goal: the tops of the ladders: each slot gets a top item that needs prestiges in all (the shop's first looks a new player can't have — a prestige and a stack of coins), and the pattern shelf reaches 10 — the longest goal in the game is a look, not a power.
 Done when: each slot's top item costs 350 or more and needs prestiges in all, and the pattern shelf has 10.
 Breakdown:
-- T0101 S — Cherry: a 450-coin head, a red cherry with a green stem, 1 prestige in all — the head's top — todo
+- T0101 S — Cherry: a 450-coin head, a red cherry with a green stem, 1 prestige in all — the head's top — done
 - T0102 S — Mustache: a 350-coin face, a curly pink mustache, 1 prestige in all — the face's top — done
-- T0104 S — Lollipop: a 500-coin back, a big green lollipop with a white swirl, 2 prestiges in all — the back's top, the shop's longest goal — design
-- T0105 S — Cheeks: a 120-coin pattern, two light dots on the cheeks — the pattern shelf to 9 — design
-- T0107 S — Ring: a 150-coin pattern, a light ring around the middle of the body — the pattern shelf to 10 — design
-Next: the Ring (T0107) brings the pattern shelf to 10 and E22 to done.
+- T0104 S — Lollipop: a 500-coin back, a big green lollipop with a white swirl, 2 prestiges in all — the back's top, the shop's longest goal — done
+- T0105 S — Cheeks: a 120-coin pattern, two light dots on the cheeks — the pattern shelf to 9 — done
+- T0107 S — Ring: a 150-coin pattern, a light ring around the middle of the body — the pattern shelf to 10 — done
+Done: the tops are in — the prestige head, face and back, and the pattern shelf at 10.
 
 ## E23 The thin trees grow (active)
 Goal: the two thinnest trees (Hive 5 talents, Lobber 5) each gain a fork that changes how the playstyle plays, not its numbers: the Hive's crowd pays in the draft, the Lobber's splash lingers.
 Done when: both forks are in the panel and playable: a Hive life banks talent points from the kills in the swarm it runs into, and a committed Lobber life leaves a zone with every shot.
 Breakdown:
 - T0108 M — Thicket: a Hive talent, a hit that shields you while the crowd is on you — failed (no content hook for damage reduction, see Needs the engine)
-- T0110 M — Scavenge: a Hive talent, a monster kill is worth xp per enemy around the corpse — the crowd fork under Swarm — design
+- T0110 M — Scavenge: a Hive talent, a monster kill is worth xp per enemy around the corpse — the crowd fork under Swarm — done
 - T0109 M — Fizz: a Lobber capstone, the bubble's splash lingers and strikes every 0.5 s — the zone capstone beside Fuse — designing
-Next: the zone capstone is designed; the Hive fork is rebuilt as Scavenge.
+Next: the Fizz capstone (T0109) is being designed; the Scavenge fork has landed, and the Hive grows further in E25.
 
 ## E24 The Gunner grows (active)
 Goal: the Gunner (6 talents) grows two forks under Bolt that change how the kite plays — a bolt that lingers in flight, so the straight line becomes a hazard on the ground, and a bolt that re-aims once, so a miss still finds the target that moved.
 Done when: the tree has 8 talents, and a committed Gunner's bolts leave a drifting line and swoop back on a moving target, each readable in a crowd.
 Breakdown:
-- T0111 M — Drift: a Gunner fork, bolts drop to 40% speed after 120 units and linger 0.8–1.2 s — the line fork under Bolt 2 — design
-- T0112 M — Swoop: a Gunner fork, bolts re-aim once at 200 units and fly a second leg of 160–240 units — the re-aim fork under Bolt 2 — design
+- T0111 M — Drift: a Gunner fork, bolts drop to 40% speed after 120 units and linger 0.8–1.2 s — the line fork under Bolt 2 — in progress
+- T0112 M — Swoop: a Gunner fork, bolts re-aim once at 200 units and fly a second leg of 160–240 units — the re-aim fork under Bolt 2 — todo (waits on T0111)
+
+## E25 The Hive deepens (active)
+Goal: the Hive grows past its base shape and fills the last two holes in every tree's shape: a movement talent, so a Hive life can run into the swarm and come back out, and the prestige-gated talent — the Hive is the only tree without one.
+Done when: the Hive tab has 8 talents — the crowd fork under Swarm (Horn, Leech, Scavenge, Glide) and the dart split under Horn that opens after a prestige — and a committed Hive life moves faster while the crowd is on it.
+Breakdown:
+- T0113 M — Glide: a Hive fork under Swarm, while 3+ enemies are within 80 you move faster, refreshed on each of your hits — design
+Next: the gated dart split (Lash, the last tree gate) writes once the pool has room.
+
+## E26 The shop reaches the cap (active)
+Goal: the shop's ladders complete: each slot gets a 7th item past its old top, and the pattern shelf gets its last two steps to its cap of 12 — every shelf has a next save, and the price ladder has no hole.
+Done when: head, face and back each have 7 items, the pattern shelf has 12, and no ladder between 80 and 400 coins has a gap bigger than 150.
+Breakdown:
+- T0114 S — Candy: a 240-coin head, a striped candy on the side of the head — the head's step past Bloom — design
+- T0115 S — Smile: a 180-coin pattern, a light smile across the lower body — the pattern shelf to 11 — design
+Next: the face's 7th (the 200→350 gap), the back's 7th and the pattern shelf's 12th (200), one per cycle as the pool has room.

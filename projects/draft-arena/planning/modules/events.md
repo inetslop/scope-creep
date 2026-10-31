@@ -27,7 +27,8 @@ Next to the usual sections, it has:
 A missing row, or a row whose difference is only numbers, gets the task rejected by the architect.
 
 ## Not in this game
-(nothing removed yet)
+The owner removed these. Don't propose them again, or anything that works the same way.
+- The wound: a red collar around every critter below half hp. The owner didn't want it.
 
 ## What exists now
 
@@ -76,8 +77,8 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - tick: (code)
 - onKill: (code)
 
-### The wound (`wound`)
-- description: "A red collar shows on any critter under half hp."
+### Growth (`growth`)
+- description: "Players grow with their level: twice as wide at the top, smoothed over half a second."
 - tick: (code)
 
 ### Prestige pays (`prestige-coins`)
