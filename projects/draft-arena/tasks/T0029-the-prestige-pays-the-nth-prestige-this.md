@@ -1,14 +1,14 @@
 ---
 id: T0029
 title: "The prestige pays: the Nth prestige this life pays 25 x N coins"
-assignee: inet-racing
 size: M
 priority: 1
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-31T05:50:41Z
 claimed_at: 2026-10-31T07:10:04Z
+finished_at: 2026-10-31T07:27:59Z
 epic: E7
 ---
 
@@ -186,3 +186,28 @@ Fullest card state: one line, "Prestige 9! +225 coins" (22 chars, ≈230 px with
 
 ### Tests
 - `tests/prestige-coins.test.ts` as above: engine/tests already runs every `onPrestige` in a 3-prestige bot match (content.test.ts:246), but not the amounts, so this test pins 25/50/75, the knockout reset and the bot exclusion. No other pure helpers, so nothing else.
+
+## Attempt 1 failed (inet-racing)
+
+The agent reported it is blocked: engine/tests/sim.test.ts asserts exact post-prestige coin totals assuming no content pays coins on prestige; only the engine owner can update it
+- Deleted src/content/directors/prestige-coins.ts, as the agent asked.
+- Deleted src/hud/prestige.ts, as the agent asked.
+- Deleted src/hud/prestige.css, as the agent asked.
+- Deleted tests/prestige-coins.test.ts, as the agent asked.
+
+```
+Both registries are back to their original state. The work is done but cannot land, so here's the outcome:
+
+**What I found:** The design is sound and I implemented it, but the task cannot pass `npm run check` without an engine change:
+
+1. **Frozen engine test conflict (the blocker).** `engine/tests/sim.test.ts` ("reaching `rules.prestige.level` is a prestige…", lines 52–83) runs a match with the **full game content plus a test director that pays 10 coins on prestige**, then asserts `p.coins` is exactly `10` (line 76, and again `10` at line 82 after a knockout). That expectation was written on the assumption that content pays no coins on prestige. My `prestige-coins` director makes it `35` (10 + 25), and **any** content paying coins on prestige would break it. `engine/` is frozen and I may not weaken or delete tests, so the owner must update those two assertions (to `35`) before this task can be re-attempted. The director and HUD card themselves are otherwise complete and typecheck/lint clean.
+2. **Minor design fix (noted for the architect):** the design's `tests/prestige-coins.test.ts` imported `engine/registry.ts` and `engine/sim/match.ts`, which lint forbids for `tests/` (`eslint.config.js:19-23`: game code imports only `engine/api.ts`). I rewrote it in the established stub-`ctx` pattern from `tests/kill-coins.test.ts`, pinning 25/50/75/225 and the as-is `count` semantics; the knockout reset and bot exclusion are engine behaviors already covered in `engine/tests/sim.test.ts` (lines 79–92).
+3. All my changes are reverted/awaiting deletion so the tree is back to its original passing state.
+
+DELETE: src/content/directors/prestige-coins.ts
+DELETE: src/hud/prestige.ts
+DELETE: src/hud/prestige.css
+DELETE: tests/prestige-coins.test.ts
+SUMMARY: T0029 is blocked on a frozen engine test: engine/tests/sim.test.ts:76 and :82 assert a player's coins are exactly 10 (the test's own reward) after prestiging with the full game content, which any content paying coins on prestige breaks (it becomes 35). The director (25 × N coins via the engine's onPrestige + giveCoins) and the 2 s transient HUD card were built to spec and are ready, but I reverted all changes because engine/ cannot be edited and tests may not be weakened. Fix: the engine owner updates those two assertions from 10 to 35 (and note the design's test file must not import engine/registry.ts or engine/sim/match.ts — tests/ may only import engine/api.ts; use the stub-ctx pattern from tests/kill-coins.test.ts).
+STATUS: BLOCKED: engine/tests/sim.test.ts asserts exact post-prestige coin totals assuming no content pays coins on prestige; only the engine owner can update it
+```
