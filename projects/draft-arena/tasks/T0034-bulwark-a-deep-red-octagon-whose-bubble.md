@@ -3,11 +3,13 @@ id: T0034
 title: "Bulwark: a deep red octagon whose bubble shield eats the first 15 hits"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T06:50:30Z
+claimed_at: 2026-10-31T07:12:03Z
 epic: E9
+designer: desktop
 ---
 
 ## Goal
