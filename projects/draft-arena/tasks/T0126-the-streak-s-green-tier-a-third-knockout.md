@@ -1,0 +1,47 @@
+---
+id: T0126
+title: "The streak's green tier: a third knockout in the chain turns the sash green and pays +2"
+size: S
+priority: 2
+status: design
+depends_on: [T0125]
+attempts: 0
+created: 2026-10-31T21:05:07Z
+epic: E29
+---
+
+## Goal
+A deeper streak reads deeper: a third player knockout in the chain turns the sash green and doubles its pay, so a hot streak is worth more and looks different at a glance.
+
+## Details
+- In The streak's director: when the chain reaches three counted knockouts (a third within 20 s of the second), the tier becomes 2 — the sash area's `slots[0]` is set to 2, and the band and chest star are drawn in green (the rewards green, as the feast gems) instead of gold, same shape, same position, same ink outline.
+- While the sash is green, each kill by its wearer pays +2 coins instead of +1 (same `ctx.giveCoins`, same coin chip and coin tick). A fourth and further knockout in the chain keeps the sash green; there is no tier past 2.
+- A chain that stops at two knockouts stays a golden sash paying +1. A chain that is broken and restarted (two fresh knockouts) comes back golden; only a third in the new chain turns it green.
+- The 20 s window, the 15 s sash timer, the chain rules and the sash's shape and position are unchanged; this task changes only the tier, its color and its pay.
+
+## Compared with what exists
+| Existing | What it shares | What the new one does that it can't (not numbers) |
+| --- | --- | --- |
+| Gem rain | a director putting things on the field | drops gems around a player; the streak puts nothing on the ground — its marker rides on the body and its pay is a coin |
+| Prestige ring | plays a field effect at a player | plays once per prestige; the streak's moment comes from a chain of kills and then pays coins |
+| Prestige stars | a marker on the body, synced by a tick | a record of the life that grows per prestige and never moves; the sash is a live state that appears, refreshes and dies with the chain, deepens to a second color, and it pays |
+| Gem geyser | gives a place to hold | a spot on the ground worth defending; the streak is a state of the wearer (a chain of kills) worth holding, with no spot at all |
+| Jackpot | a prize in the field | a prize you go to; the streak is a prize that comes to the one who just earned it and is worn by them |
+| Kill coins | pays coins per kill, humans only | pays every kill the same; the streak pays a bonus only while the killer is on a chain, with a deeper chain paying more, and wears a badge while it does |
+| The corpse pays | reacts to a player's death | drops a gem at the death spot for anyone to take; the streak ends the dead player's chain and counts the kill toward the killer's |
+| The crown | a marker on a player, moved by a tick | marks a position (the top scorer), moves on overtake, and pays the one who takes it; the streak marks an action (your kills in a row), stays on its earner, and pays them |
+| The mark | a status on a player for 15 s from onKill | picked by chance, makes the wearer faster, and pays whoever breaks them; the streak is earned by the wearer, changes no body, and pays the wearer |
+| The price | onKill, reacts to a player knockout | turns the killer into a target for everyone via the mark; the streak turns a chained killer into a payer for themselves, with the target being whoever breaks the chain |
+| Growth | a per-player body change on a tick | passive with level, pays nothing; the streak is reactive to kills and pays a coin |
+| Prestige pays | gives coins per player | once per prestige, scaled by the life number; the streak pays per kill, scaled by the chain, mid-life only |
+| Prestige point | banks a reward per prestige | banks the draft currency (a talent point); the streak pays the shop's currency (a coin) |
+| Prestige feast | lays pickups where a player is | lays a ring of gems on the ground; the streak lays nothing on the ground |
+| Swarm surge | a director on a tick | spawns a crowd of monsters; the streak spawns nothing and only changes who pays what |
+| Gem rush | lays a line of pickups to race | a race against other players for a pickup; the streak's race is against the wearer's own last-kill clock |
+
+## Acceptance criteria
+- [ ] A third player knockout within 20 s of the second turns the sash green (same band and chest star, green instead of gold); while it is green, each kill pays +2 coins instead of +1.
+- [ ] A fourth and further knockout in the chain keeps the sash green and does not raise the pay above +2.
+- [ ] A chain that ends at two knockouts stays a golden sash paying +1.
+- [ ] A broken chain that restarts with two fresh knockouts comes back golden; only a third in the new chain turns it green.
+- [ ] The sash's shape, position and timers are unchanged; only its color and its coin pay differ by tier.

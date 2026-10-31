@@ -28,12 +28,12 @@ A missing row gets the task rejected by the architect.
 
 ## What exists now
 
-19 in the game, from game/src/content/accessories/ (the real values).
+20 in the game, from game/src/content/accessories/ (the real values).
 
 **By `slot`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
 - `back`: Candy Pack, Balloon, Party Blower, Candy Cane, Medal, Lollipop
-- `face`: Round Glasses, Bow Tie, Beak, Monocle, Heart Shades, Mustache
+- `face`: Round Glasses, Bow Tie, Beak, Monocle, Heart Shades, Kiss, Mustache
 - `head`: Cone, Beanie, Feather, Bloom, Candy, Chef Hat, Cherry
 
 ### Candy Pack (`candy-pack`)
@@ -113,6 +113,12 @@ A missing row gets the task rejected by the architect.
 - description: Pink heart frames around the eyes.
 - slot: face
 - price: 200
+- draw: (code)
+
+### Kiss (`kiss`)
+- description: A small red kiss mark on the cheek.
+- slot: face
+- price: 300
 - draw: (code)
 
 ### Mustache (`mustache`)

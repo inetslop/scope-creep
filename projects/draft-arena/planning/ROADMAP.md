@@ -102,8 +102,15 @@ Breakdown:
 - T0118 M — Bop: a Lobber fork, the bubble pops on the critter it touches: a burst at the hit point, no splash there — designing
 - T0121 M — Echo: a Lobber fork, the bubble splashes, comes back and splashes behind you — the kiting fork under Lob 3 — design
 
-## E28 The Goober and the Frenzy grow (active)
+## E28 The Goober and the Frenzy grow (fully tasked)
 Goal: the two trees that still lack their moment grow one fork each: the Goober's Goo grows a long arm (a needle that reaches the enemy that holds its distance), and the Frenzy's player kill grows a moment (a red burst when a hurt Frenzy takes a player) — each changes how the playstyle plays, not its numbers.
 Breakdown:
 - T0123 M — Reach: a Goober fork under Goo 2, a thin ice needle at the farthest enemy within 400 — design
 - T0124 M — Snap: a Frenzy fork under Nerve 2, a red burst (radius 110) on a player knockout while below half — design
+
+## E29 The streak (active)
+Goal: momentum pays — two player knockouts within 20 s wear a golden sash that pays +1 coin per kill for 15 s, a third in the chain deepens it to a green sash (+2), and the sash's arrival is a star ring and a chime: winning a duel in a row is a visible, audible, paid moment.
+Breakdown:
+- T0125 M — The streak: a permanent rule, a golden sash for two player knockouts in 20 s, +1 coin per kill for 15 s — design
+- T0126 S — Tier 2: a third in the chain turns the sash green and pays +2 — design
+- T0127 S — The sash moment: a star ring and a two-note chime when the sash appears — design

@@ -113,4 +113,5 @@ The owner removed these. Don't propose them again, or anything that works the sa
   - id scavenge, upgrade scavenge, max 3, needs [["swarm",1]]
   - id glide, upgrade glide, max 2, needs [["swarm",1]]
   - id nest, upgrade nest, max 3, needs [["horn",2]]
+  - id lash, upgrade lash, max 2, needs [["horn",2]], points 3, prestige 1
   - id sting, upgrade sting, max 1, needs [["horn",3],["nest",2]]

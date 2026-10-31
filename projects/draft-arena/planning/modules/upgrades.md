@@ -39,7 +39,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-43 in the game, from game/src/content/upgrades/ (the real values).
+44 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -152,6 +152,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - description: "On a Nerve hit: heal 1 hp per 10 hp missing. Per rank: +1 per 10 hp missing."
 - maxLevel: 3
 - look: shape star, color #51cf66
+- onHit: (code)
+
+### Lash (`lash`)
+- description: "After 1 prestige this life. Your horn darts split on hit: each hit sends 2 small darts (3 damage, 0.4 s) at the 2 nearest other enemies within 100. Rank 2: 3 small darts."
+- maxLevel: 2
+- look: shape hexagon, color #a78bfa
 - onHit: (code)
 
 ### Chomp (`chomp`)
