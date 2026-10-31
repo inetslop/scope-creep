@@ -3,11 +3,13 @@ id: T0121
 title: "Echo: a Lobber fork, the bubble splashes, comes back and splashes behind you"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T20:09:56Z
+claimed_at: 2026-10-31T20:09:59Z
 epic: E27
+designer: desktop
 ---
 
 ## Goal
