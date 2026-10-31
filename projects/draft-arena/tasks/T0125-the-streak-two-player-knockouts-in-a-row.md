@@ -4,11 +4,12 @@ title: "The streak: two player knockouts in a row wear a golden sash that pays +
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T21:05:07Z
 claimed_at: 2026-10-31T21:33:53Z
+finished_at: 2026-10-31T22:08:50Z
 epic: E29
 ---
 
@@ -145,3 +146,18 @@ export const streak: DirectorDef = {
 
 ### Tests
 - none (no pure helpers; engine/tests/ checks registration, one-item-per-file, valid data, draw functions in a real match, and the 60-player budget automatically).
+
+## Result (attempt 1, asus)
+
+Added "The streak" permanent-rule director (`src/content/directors/streak.ts`) that tracks per-killer chains of player knockouts in its match memory: two within 20 s put a golden sash on the killer for 15 s (refreshed by each further counted knockout), knocked-out or prestiging breaks the chain, and every kill while the sash shows pays +1 coin to humans only. The sash is a new critter-riding status (`src/content/statuses/streak-gold.ts`, registered next to `marked`; the director registered next to `price`) drawn as a clipped diagonal gold band with an ink rim and a pulsing chest star. T0126 can add `streak-green` and switch the one `addStatus` line in the director's `tick`.
+
+- Self-review: APPROVE
+- Time: 35.0 min
+
+```
+.../game/src/content/directors/index.ts            |  2 ++
+ .../game/src/content/directors/streak.ts           | 40 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/statuses/index.ts |  2 ++
+ .../game/src/content/statuses/streak-gold.ts       | 36 +++++++++++++++++++
+ 4 files changed, 80 insertions(+)
+```
