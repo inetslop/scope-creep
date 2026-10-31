@@ -4,11 +4,12 @@ title: "Star: a 100-coin pattern, one light star on the middle of the body"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T16:11:39Z
 claimed_at: 2026-10-31T16:19:38Z
+finished_at: 2026-10-31T16:28:54Z
 epic: E21
 ---
 
@@ -77,3 +78,16 @@ export const star: PatternDef = {
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+Added the Star pattern: `src/content/patterns/star.ts` — a 100-coin, no-prestige `PatternDef` that paints one plain, bold five-point star in the light shade `shade(w.color, 0.35)` (the same light shade the other light patterns use) centered at 0,0 under the face, traced with the engine's `traceShape(g, 'star', 0.5 * r)`. Registered it with one import and one line in `src/content/patterns/index.ts` after `lolly`, so the Cosmetics shelf now reads 30, 30, 40, 40, 50, 60, 80, 100 and always has a next save. It is pure drawing only — no stats, no size, no HUD — and `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 9.3 min
+
+```
+projects/draft-arena/game/src/content/patterns/index.ts |  2 ++
+ projects/draft-arena/game/src/content/patterns/star.ts  | 15 +++++++++++++++
+ 2 files changed, 17 insertions(+)
+```

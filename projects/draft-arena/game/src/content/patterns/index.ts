@@ -6,6 +6,7 @@ import { party } from './party.ts';
 import { halves } from './halves.ts';
 import { diagonal } from './diagonal.ts';
 import { lolly } from './lolly.ts';
+import { star } from './star.ts';
 
 /** Color patterns painted over a player's body. One per line. */
 export const PATTERNS: readonly PatternDef[] = [
@@ -16,4 +17,5 @@ export const PATTERNS: readonly PatternDef[] = [
   halves,
   diagonal,
   lolly,
+  star,
 ];
