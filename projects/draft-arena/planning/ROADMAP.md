@@ -193,10 +193,11 @@ Next: fully tasked — the mark's two fates (killed, escaped) both pay out once 
 
 ## E20 The menagerie grows back (active)
 Goal: the menagerie is 7 of 10 types after the cut; the crowd learns two new ways to threaten — a threat that comes in on an arc, and a kill that doesn't kill — each readable at a glance.
-Done when: the Toss (a lobbed splash) and the Twin (a split at half hp) are in the field, each with a behavior none of the other seven has.
+Done when: the Toss (a lobbed splash) and the Twin (a birth at half hp) are in the field, each with a behavior none of the other seven has.
 Breakdown:
 - T0085 M — Toss: a big slow melon that lobs an arc blob that splashes where it lands — design
-- T0086 M — Twin: a bean that splits into two smaller twins when it drops to half hp — design
+- T0086 M — Twin: a bean that splits into two smaller twins when it drops to half hp — failed (a split must remove the parent, and the only removal is a death, which always drops a gem)
+- T0090 M — Twin: a bean that gives birth to a small fast twin the first time it drops to half hp, and keeps living — design
 Next: the last slot (back to 10) — a way to threaten none of the nine has, picked from IDEAS once these two prove out.
 
 ## E21 The shop fills out (active)
@@ -205,4 +206,5 @@ Done when: each slot has at least 5 items including the free ones, the pattern s
 Breakdown:
 - T0088 S — Lolly: an 80-coin pattern, a light lollipop swirl — design
 - T0089 M — The third shelf: a 120-coin Feather (head) and a 300-coin Candy Cane (back) — design
-Next: a face-slot step (the thinnest shelf) and one more pattern step, once these prove out.
+- T0091 S — Monocle: a 150-coin face accessory, a gold lens over one eye — design
+Next: one more pattern step (the pattern shelf to 8), once these prove out.

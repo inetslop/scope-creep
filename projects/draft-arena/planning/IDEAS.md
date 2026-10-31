@@ -52,10 +52,11 @@ The backlog: add freely, turn the best into epics and tasks.
 - A sting (E19): a small sting when the mark lands on you, by the event or by a kill — the mark is silent today; a player should hear the moment they become the target. — T0084 (failed: the client has no surface for the local player's statuses — moved to Needs the engine)
 
 - Toss (E20): a big slow melon that holds a 220–420 band and lobs a high-arcing purple blob that splashes (radius 60, 12 damage) where it lands — the dodge is moving during the ~1.25 s flight; it punishes the mid-range camper and pays for a close-in, since it stops lobbing inside 220. — E20: T0085
-- Twin (E20): a bean that chases like a Dot, but the first time it drops to half hp it shakes 0.4 s and splits into two smaller, faster twins that can never split again — a half-kill is a two-kill, so finishing a target before the threshold is a real choice. — E20: T0086
+- Twin (E20): a bean that chases like a Dot, but the first time it drops to half hp it shakes 0.4 s and gives birth to a small, faster twin that can never give birth, and keeps living — a half-kill is a two-kill, so finishing a target before the threshold is a real choice. — E20: T0086 failed (a split must remove the parent, and a death always drops a gem), rebuilt as T0090 with the bean surviving the birth
 - Lolly (E21): an 80-coin pattern — a light lollipop swirl across the body, the pattern shelf's step past Diagonal's 60. — T0088
 - Feather (E21): a 120-coin head accessory — a single pink feather resting on the head, the head slot's step between the free hats and the 150-coin Bloom. — T0089
 - Candy Cane (E21): a 300-coin back accessory — a red and white striped cane hooked over the back, the back slot's step between the 180-coin Party Blower and the 400-coin Medal. — T0089
+- Monocle (E21): a 150-coin face accessory — a gold lens over one eye with a thin chain to the cheek, the face slot's step between the 100-coin Beak and the 200-coin Heart Shades. — T0091
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.
