@@ -1,12 +1,14 @@
 ---
 id: T0129
 title: "The surge warns: a dust ring and a low rumble where the swarm line walks in"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T21:28:31Z
+claimed_at: 2026-10-31T22:24:24Z
 ---
 
 ## Goal
