@@ -4,11 +4,12 @@ title: "Coins from kills: every kill pays, the start card shows the balance"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T04:17:26Z
 claimed_at: 2026-10-31T05:05:24Z
+finished_at: 2026-10-31T06:57:09Z
 epic: E6
 ---
 
@@ -223,3 +224,30 @@ describe('kill coins', () => {
 
 ### Tests
 - `tests/kill-coins.test.ts` (above): payout rules in a real match and the 5-minute pacing band. Everything else is covered by `engine/tests/`.
+
+## Result (attempt 1, asus)
+
+Kills now pay coins: the new `kill-coins` director (`src/content/directors/kill-coins.ts`) credits 1 coin per monster kill and the victim's level per real-player knockout via `ctx.giveCoins` (bots earn nothing), and plays one `coin` effect (`src/content/effects/coin.ts`) at the death spot — a candy coin that rises ~30 units and fades, with a knockout's whole fountain drawn from the single effect's value (one 12-byte network event per kill, never one per coin). The start card shows the saved balance in a thin line above Play (`src/menu/coins.ts` + `.css`), "0 coins" for a new player, kept in the browser between visits. `tests/kill-coins.test.ts` unit-tests the payout rules against a stub Ctx, since the lint boundary forbids `tests/` from importing the engine's `Match`/`buildRegistry`; the 5-minute pacing was verified by running the designed simulation (seed 7, one stationary player, 300 s): 104 coins, inside the 60–120 band. `npm run check` (typecheck + lint + 67 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 111.8 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../game/src/content/directors/index.ts            |  2 +
+ .../game/src/content/directors/kill-coins.ts       | 19 +++++
+ .../draft-arena/game/src/content/effects/coin.ts   | 33 ++++++++
+ .../draft-arena/game/src/content/effects/index.ts  |  2 +
+ projects/draft-arena/game/src/menu/coins.css       | 29 +++++++
+ projects/draft-arena/game/src/menu/coins.ts        | 22 +++++
+ projects/draft-arena/game/src/menu/index.ts        |  5 +-
+ projects/draft-arena/game/tests/kill-coins.test.ts | 97 ++++++++++++++++++++++
+ .../draft-arena/game/tests/pacing-probe.test.ts    | 11 +++
+ 9 files changed, 219 insertions(+), 1 deletion(-)
+```
+
+## Merge (attempt 1, asus)
+
+- Conflicts in: projects/draft-arena/game/src/content/directors/index.ts, projects/draft-arena/game/src/content/effects/index.ts, projects/draft-arena/game/src/menu/index.ts
+- Auto-resolved 4 spot(s) where both sides only added lines (clean: projects/draft-arena/game/src/content/directors/index.ts, projects/draft-arena/game/src/content/effects/index.ts).
+- The conflict agent resolved them.

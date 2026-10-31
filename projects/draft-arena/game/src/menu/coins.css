@@ -1,0 +1,29 @@
+/* The coin line in the start card (src/menu/coins.ts). */
+.coins-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.coins-coin {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffd43b;
+  border: 2.5px solid var(--ink);
+  box-sizing: border-box;
+  position: relative;
+}
+.coins-coin::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 3px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #fff;
+}
