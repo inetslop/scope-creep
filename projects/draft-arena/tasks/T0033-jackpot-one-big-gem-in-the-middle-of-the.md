@@ -1,12 +1,14 @@
 ---
 id: T0033
 title: "Jackpot: one big gem in the middle of the field, worth 25 xp"
+assignee: desktop-4070
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T06:30:37Z
+claimed_at: 2026-10-31T08:08:31Z
 epic: E10
 ---
 
