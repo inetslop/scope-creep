@@ -1,7 +1,12 @@
 ---
+id: T0095
 title: "Players grow with their level: twice as big by level 18"
 size: M
 priority: 1
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-31T15:20:51Z
 ---
 
 ## Goal

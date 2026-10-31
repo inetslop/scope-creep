@@ -1,7 +1,12 @@
 ---
+id: T0094
 title: "Hive's Horn gets an attack of its own, not Gunner's straight shot"
 size: M
 priority: 2
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-31T15:20:51Z
 ---
 
 ## Goal
