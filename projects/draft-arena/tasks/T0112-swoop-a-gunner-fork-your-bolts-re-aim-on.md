@@ -1,14 +1,14 @@
 ---
 id: T0112
 title: "Swoop: a Gunner fork, your bolts re-aim once at 200 units and fly a second leg"
-assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: [T0111]
 attempts: 1
 created: 2026-10-31T18:10:25Z
 claimed_at: 2026-10-31T19:06:33Z
+finished_at: 2026-10-31T21:06:36Z
 epic: E24
 ---
 
@@ -114,3 +114,7 @@ export function swoopDip(k: number): number; // k 0..1: 1 -> 0.85 -> 1, quadrati
 
 ### Tests
 - `tests/swoop.test.ts`: `targetP2` round-trips every id 1..65535 into i16 (0 stays "none"); `swoopTime` equals 200/s+0.15+leg2/s without drift and 120/s+80/(s*DRIFT_MUL[r])+0.15+leg2/s with it; `swoopDip(0)=1`, `swoopDip(0.5)=0.85`, `swoopDip(1)=1`, in [0.85, 1]. Everything else is covered by engine/tests (the upgrade in a real match, the talent reachable, registries, the 60-player budget) and the smoke test.
+
+## Attempt 1 failed (cachyos-x8664)
+
+The agent made no changes to the game (timeout).
