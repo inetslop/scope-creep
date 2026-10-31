@@ -12,6 +12,7 @@ let active = 0; // pops still sounding
 const heard = new Map<number, number>(); // effect seed -> until when its pop has played
 let lastFanfare = 0; // performance.now() of the last prestige fanfare
 let lastBonk = 0; // performance.now() of the last bonk
+const tootTicks = new Map<number, number>(); // crown-fall seed -> until when its toot tick has played
 
 function wake(): void {
   if (!ctx) {
@@ -101,6 +102,34 @@ export function bonk(seed: number, age: number): void {
   if (active >= 6) return;
   active += 1;
   blip(130, 0.1, 0.18, 60);
+}
+
+export function toot(seed: number, age: number): void {
+  if (!ctx) return;
+  if (age > 0.25) return; // the effect's first frames only
+  const now = performance.now();
+  if (now - lastHud > 1000) return; // no match on screen
+  const until = heard.get(seed);
+  if (until !== undefined && until > now) return;
+  heard.set(seed, now + 700);
+  if (heard.size > 96) for (const [s, u] of heard) if (u <= now) heard.delete(s);
+  if (active >= 6) return;
+  active += 1;
+  blip(500, 0.15, 0.25, 300); // 500->300 Hz over 0.25 s, peak 0.15: the party-horn toot
+}
+
+export function tootTick(seed: number, age: number): void {
+  if (!ctx) return;
+  if (age < 0.9 || age > 1.05) return; // only as the crown pops (0.9 s into the effect)
+  const now = performance.now();
+  if (now - lastHud > 1000) return; // no match on screen
+  const until = tootTicks.get(seed);
+  if (until !== undefined && until > now) return;
+  tootTicks.set(seed, now + 700);
+  if (tootTicks.size > 96) for (const [s, u] of tootTicks) if (u <= now) tootTicks.delete(s);
+  if (active >= 6) return;
+  active += 1;
+  blip(1500, 0.08, 0.05); // 1500 Hz over 0.05 s, peak 0.08: the small soft tick
 }
 
 /**

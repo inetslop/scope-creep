@@ -1,5 +1,6 @@
 import { traceShape, type EffectDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
+import { toot, tootTick } from '../../audio/sfx.ts';
 
 /**
  * Crown fall: the crown lifts off the fallen leader's head, spins up 60 units and pops into 20
@@ -9,6 +10,8 @@ export const crownFall: EffectDef = {
   id: 'crown-fall',
   duration: 1.3,
   draw(g, fx) {
+    toot(fx.seed, fx.age);
+    tootTick(fx.seed, fx.age);
     if (fx.age < 0.9) {
       const t = fx.age / 0.9;
       g.save();

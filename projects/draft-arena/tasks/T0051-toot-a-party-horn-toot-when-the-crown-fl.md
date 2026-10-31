@@ -4,11 +4,12 @@ title: "Toot: a party-horn toot when the crown flies off"
 assignee: cachyos-x8664
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T10:32:35Z
 claimed_at: 2026-10-31T10:52:50Z
+finished_at: 2026-10-31T10:59:29Z
 epic: E11
 ---
 
@@ -79,3 +80,16 @@ In `src/content/effects/crown-fall.ts`: add `import { toot, tootTick } from '../
 
 ### Tests
 none (engine/tests/ runs the effect's draw in a real match automatically).
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the crown-fall sounds: `toot` (500→300 Hz, 0.25 s, peak 0.15) and `tootTick` (1500 Hz, 0.05 s, peak 0.08) in `src/audio/sfx.ts`, cloned from the pop/bonk shape with per-seed dedupe (a separate `tootTicks` map for the tick so the toot can't block it) under the shared 6-voice cap, and hooked both as the first two statements of the crown-fall effect's `draw` in `src/content/effects/crown-fall.ts`. So knocking out the crowned leader now plays the party-horn toot as the crown lifts off and a soft tick as it pops into 20 stars, on every client, phone included (same gesture-arming as the other sounds).
+
+- Self-review: APPROVE
+- Time: 6.7 min
+
+```
+projects/draft-arena/game/src/audio/sfx.ts         | 29 ++++++++++++++++++++++
+ .../game/src/content/effects/crown-fall.ts         |  3 +++
+ 2 files changed, 32 insertions(+)
+```
