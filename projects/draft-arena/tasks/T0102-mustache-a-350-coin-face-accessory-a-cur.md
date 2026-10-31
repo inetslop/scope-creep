@@ -3,13 +3,11 @@ id: T0102
 title: "Mustache: a 350-coin face accessory, a curly pink mustache over the mouth"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:06:34Z
-claimed_at: 2026-10-31T17:15:53Z
 epic: E22
-designer: yoga
 ---
 
 ## Goal
@@ -34,3 +32,54 @@ The face slot gets its top item — the top of the thinnest ladder (80, 80, 100,
 - [ ] The Cosmetics panel's face row shows the Mustache last at 350 coins; before the profile has 1 prestige in all it is stamped "Needs 1 prestige in all" and can't be bought, and after it, it buys for 350 coins.
 - [ ] Worn, the player's critter in the match shows the pink mustache over the mouth: the mouth stays visible beneath it, the eyes stay clear, and bots can wear it at random.
 - [ ] Buying, wearing and taking it off are kept for the next visit, and it changes nothing in play.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/accessories/mustache.ts` - face accessory `mustache`: name "Mustache", price 350, `prestige: 1`, draw two pink curls over the mouth (candy-cane's double-stroke trick, one continuous path).
+- edit `src/content/accessories/index.ts` - one import line after the `heartShades` import, one list line after `heartShades,`.
+
+### Interfaces
+None — only an `AccessoryDef` instance, no new types.
+
+### Steps
+1. Create `mustache.ts` exactly:
+```ts
+import type { AccessoryDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** Two pink curls meeting at the centre under the nose, over the mouth, tips hooked up. */
+export const mustache: AccessoryDef = {
+  id: 'mustache',
+  name: 'Mustache',
+  description: 'A curly pink mustache over the mouth. Needs 1 prestige in all.',
+  slot: 'face',
+  price: 350,
+  prestige: 1,
+  draw(g, w) {
+    const r = w.radius;
+    const sway = Math.min(1, w.speed / 200) * Math.sin(w.time * 5 + w.seed) * 0.02 * r;
+    const ow = Math.max(1.5, r * 0.08);
+    const tube = 0.11 * r;
+    g.lineJoin = 'round';
+    g.lineCap = 'round';
+    const path = () => {
+      g.beginPath();
+      g.moveTo(-0.52 * r, 0.3 * r + sway);
+      g.bezierCurveTo(-0.5 * r, 0.44 * r, -0.2 * r, 0.32 * r, 0, 0.3 * r);
+      g.bezierCurveTo(0.2 * r, 0.32 * r, 0.5 * r, 0.44 * r, 0.52 * r, 0.3 * r + sway);
+    };
+    path(); g.lineWidth = tube + 2 * ow; g.strokeStyle = w.ink; g.stroke();
+    path(); g.lineWidth = tube; g.strokeStyle = PALETTE.pink; g.stroke();
+  },
+};
+```
+2. In `index.ts`, add `import { mustache } from './mustache.ts';` after the `heartShades` import and `mustache,` after `heartShades,` in `ACCESSORIES`. Face row then reads 80, 80, 100, 150, 200, 350.
+
+### Pitfalls
+- Geometry is fixed: eye bottom is 0.14r, mouth 0.29r..0.55r; tip tops reach 0.165r (eyes clear) and the tube sags to ~0.36r so the mouth shows beneath. Do not retune the curves.
+- One continuous path, stroked ink-then-pink = one outline (candy-cane pattern); don't switch to two paths, that would cross two outlines at the centre.
+- Shop, `cantBuy` ("Needs 1 prestige"), persistence and bot dressing are generic over `prestige`/`ACCESSORIES` — do not touch `src/menu/shop.ts` or engine.
+
+### Tests
+- none (engine/tests/ covers registration, draw and budget automatically).
