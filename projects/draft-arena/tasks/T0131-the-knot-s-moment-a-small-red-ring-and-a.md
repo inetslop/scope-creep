@@ -3,11 +3,13 @@ id: T0131
 title: "The knot's moment: a small red ring and a soft pop where a grudge starts"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0130]
 attempts: 0
 created: 2026-10-31T22:29:04Z
+claimed_at: 2026-10-31T22:39:05Z
 epic: E30
+designer: yoga
 ---
 
 ## Goal
