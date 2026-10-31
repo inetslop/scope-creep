@@ -1,12 +1,14 @@
 ---
 id: T0042
 title: "Cling: a Goo that splats on its target and rides it"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T08:05:11Z
+claimed_at: 2026-10-31T09:05:03Z
 epic: E12
 ---
 
