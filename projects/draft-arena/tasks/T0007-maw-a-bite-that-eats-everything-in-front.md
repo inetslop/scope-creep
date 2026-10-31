@@ -3,11 +3,13 @@ id: T0007
 title: "Maw: a bite that eats everything in front of you"
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T02:37:00Z
+claimed_at: 2026-10-31T02:37:03Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
