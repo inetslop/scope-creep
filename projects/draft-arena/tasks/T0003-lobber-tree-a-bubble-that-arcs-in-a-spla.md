@@ -1,12 +1,14 @@
 ---
 id: T0003
 title: "Lobber tree: a bubble that arcs in, a splash that marks the ground"
+assignee: asus
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T01:44:04Z
+claimed_at: 2026-10-31T02:03:17Z
 epic: E1
 ---
 
