@@ -3,11 +3,13 @@ id: T0103
 title: "Bloop: a low bloop when a Toss splash blooms"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:06:34Z
+claimed_at: 2026-10-31T17:26:27Z
 epic: E20
+designer: yoga
 ---
 
 ## Goal
