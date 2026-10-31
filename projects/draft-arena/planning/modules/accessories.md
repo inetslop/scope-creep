@@ -28,11 +28,11 @@ A missing row gets the task rejected by the architect.
 
 ## What exists now
 
-7 in the game, from game/src/content/accessories/ (the real values).
+8 in the game, from game/src/content/accessories/ (the real values).
 
 **By `slot`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
-- `back`: Candy Pack, Balloon
+- `back`: Candy Pack, Medal, Balloon
 - `face`: Round Glasses, Bow Tie
 - `head`: Chef Hat, Cone, Beanie
 
@@ -46,6 +46,13 @@ A missing row gets the task rejected by the architect.
 - description: A tall white puff on the head.
 - slot: head
 - price: 300
+- draw: (code)
+
+### Medal (`medal`)
+- description: "A yellow medal with a red ribbon. Needs 2 prestiges in all."
+- slot: back
+- price: 400
+- prestige: 2
 - draw: (code)
 
 ### Cone (`cone`)

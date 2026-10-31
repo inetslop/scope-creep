@@ -33,7 +33,7 @@ Breakdown:
 - T0012 S — Gem geyser: a spot that bubbles 8 gems, a position to hold — done
 Done: four events, four reasons to move (a windfall, a threat, a race, a position); the 5th starts E10.
 
-## E4 Pressure on the leader (active)
+## E4 Pressure on the leader (done)
 Goal: the top player is a target, and knocking them out pays. Built from events and the match's rules (planning/modules/events.md, match.md).
 Done when: the leader is readable on the field, and knocking the crown out is the most rewarding moment of a life.
 Ready: a director sees every player's score each tick and gets onKill after each player death (planning/modules/events.md); the pvp damage and bounty numbers are frozen in rules.ts — content adds its own drops and xp on top (T0015 proved there is no hook to change pvp damage).
@@ -42,8 +42,8 @@ Breakdown:
 - T0014 S — Leader's gem: a knocked-out crown drops a gem worth its level — done
 - T0015 S — The leader pays: the crown takes 25% more damage from players — failed (the engine's pvp damage is frozen)
 - T0028 S — The crown's bounty: the killer of the crown gets double the bounty xp — done
-- T0036 S — Crown fall: the crown flies off and pops where the leader is knocked out — todo
-Next: done once T0036 builds: the crown falling is a moment the whole field sees.
+- T0036 S — Crown fall: the crown flies off and pops where the leader is knocked out — done
+Done: the crown marks the leader, its fall is a moment the whole field sees, and knocking it out pays the most of any life.
 
 ## E5 Your own critter (done)
 Goal: players make their critter theirs: they pick its color and put on a hat, and everyone in the match sees it.
@@ -63,10 +63,10 @@ Breakdown:
 - T0021 M — First shop stock: two patterns, a face and a back accessory, priced — done
 - T0022 M — The shop: a panel over the start screen that sells the stock, with a preview critter — done
 - T0027 S — Coins from events: every gem an event drops pays 1 coin — done
-- T0044 S — Halves: a two-tone pattern, 50 coins, the third pattern price step — design
+- T0044 S — Halves: a two-tone pattern, 50 coins, the third pattern price step — todo
 - T0031 M — The shop's second stock: two patterns, a face and a back accessory, priced — done
 - T0035 S — Chef Hat: a 300-coin head accessory, the shop's long goal — done
-- T0046 S — Bloom: a 150-coin head accessory, a pink flower with a yellow center — design
+- T0046 S — Bloom: a 150-coin head accessory, a pink flower with a yellow center — todo
 Next: done once T0044 and T0046 build: kills and events pay coins, the shop sells its stock, and the Chef Hat is the goal to save for.
 
 ## E7 Prestige (tasked)
@@ -78,9 +78,9 @@ Breakdown:
 - T0024 M — The prestige pays (in all): the Nth prestige in all pays 25 x N coins — failed (the in-all count is client-only; see IDEAS)
 - T0029 M — The prestige pays: the Nth prestige this life pays 25 x N coins, a 2 s card under the xp bar — in progress
 - T0025 M — Slush: a Lobber talent that only opens after a prestige this life — in progress
-- T0026 S — Medal: a back accessory, buyable only after 2 prestiges in all — in progress
-- T0047 M — Prestige stars: a gold star on the critter per prestige this life, up to 3 — design
-Next: done once T0025, T0026, T0029 and T0047 build: the coin pays, Slush opens a second-life build, the Medal marks 2 prestiges in all, and the stars mark the life.
+- T0026 S — Medal: a back accessory, buyable only after 2 prestiges in all — done
+- T0047 M — Prestige stars: a gold star on the critter per prestige this life, up to 3 — todo
+Next: done once T0025, T0029 and T0047 build: the coin pays, Slush opens a second-life build, and the stars mark the life (the Medal is in).
 
 ## E8 The Goober tree (done)
 Goal: a fourth playstyle for the draft: a build whose weapon aims for you — your Goo turns in flight and catches the nearest enemy, while Gunner kites with straight Bolts, Lobber zones with bubbles and Body bites in front.
@@ -96,30 +96,33 @@ Breakdown:
 - T0032 M — Sleeper: a deep pink cushion that sleeps until you get close — done
 - T0034 M — Bulwark: a deep red octagon whose bubble shield eats the first 15 hits — failed (monsters have no target-side hit hook)
 - T0037 M — Boing: a deep red heart that crouches and leaps at where you are going — failed (the comparison table omitted the Sleeper; rebuilt as T0045)
-- T0045 M — Boing: a deep red heart that crouches, then leaps to where you're going — design
-Next: done once T0045 builds: the crowd gains a new way to move (it sleeps, it leaps).
+- T0045 M — Boing: a deep red heart that crouches, then leaps to where you're going — failed
+- T0048 M — Boing: a deep red heart that crouches, then leaps to where you're going — design
+Next: done once T0048 builds: the crowd gains a new way to move (it crouches, it leaps).
 
-## E10 More reasons to move (active)
+## E10 More reasons to move (done)
 Goal: a 5th, then a 6th, field event, so the field always has a new place to be (the cap is 6 events).
 Done when: the 5th event runs on the field.
 Breakdown:
-- T0033 S — Jackpot: one big gem in the middle of the field, worth 25 xp — design
-- T0038 M — The mark: a random player wears a red target for 15 s, the kill pays 20 xp and 5 coins — design
-Next: done once T0033 and T0038 build: six events, the cap.
+- T0033 S — Jackpot: one big gem in the middle of the field, worth 25 xp — done
+- T0038 M — The mark: a random player wears a red target for 15 s, the kill pays 20 xp and 5 coins — done
+Done: six events, the cap — a windfall, a threat, a race, a position, a prize in the middle, and a marked hunt.
 
 ## E11 Sound (active)
 Goal: the field is silent; every big moment gets a short candy sound, so a fight is readable by ear and the pops sound like the things that pop.
 Done when: a monster pop, a level-up and a coin each have a sound, on desktop and mobile, quiet enough to sit under the action.
 Breakdown:
-- T0039 M — Pop: the first sound, the game's audio, a pop when a monster dies, pitched by its size — design
-- T0040 S — Chime: a level-up chime — design
-- T0041 S — Coin: a coin tick when a coin is picked up or spent — design
-Next: more sounds per moment (a player knockout, a prestige, the crown falling) as the epic proves out.
+- T0039 M — Pop: the first sound, the game's audio, a pop when a monster dies, pitched by its size — done
+- T0040 S — Chime: a level-up chime — done
+- T0041 S — Coin: a coin tick when a coin is picked up or spent — in progress
+- T0049 S — Bonk: a deep thud when a player is knocked out — design
+- T0050 S — Fanfare: a rising three-note fanfare when a player prestiges — design
+Next: a sound for the crown falling, then more moments as the epic proves out.
 
 ## E12 The Goober grows (active)
 Goal: the fourth tree deepens: under Goo it forks three ways — a Goo that sticks to its target, a Gush puddle that bites, and the scatter that exists — so a Goober life picks a direction instead of buying the same four talents.
 Done when: the tree has six talents with a real fork under Goo, each readable in a crowd.
 Breakdown:
-- T0042 M — Cling: a Goo that splats on its target and rides it, damage every 0.5 s — design
-- T0043 M — Chew: your Gush puddle deals damage to whatever stands in it — design
+- T0042 M — Cling: a Goo that splats on its target and rides it, damage every 0.5 s — in progress
+- T0043 M — Chew: your Gush puddle deals damage to whatever stands in it — todo
 Next: done once T0042 and T0043 build: the Goober fork is real — sticky, zone or scatter.

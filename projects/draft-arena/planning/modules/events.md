@@ -31,7 +31,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-7 in the game, from game/src/content/directors/ (the real values).
+9 in the game, from game/src/content/directors/ (the real values).
 
 ### Gem rain (`gem-rain`)
 - description: "Every 75 s, 24 gems land in a ring around a random player."
@@ -45,12 +45,21 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - description: "A spot bubbles, then drops a gem every second for 8 s. Hold it."
 - tick: (code)
 
+### Jackpot (`jackpot`)
+- description: "A big gem worth 25 xp lands in the middle of the field and lasts 20 s."
+- tick: (code)
+
 ### Kill coins (`kill-coins`)
 - description: "Kills pay coins: 1 per monster, the victim's level per player knockout."
 - onKill: (code)
 
 ### The crown (`crown`)
 - description: "The top scorer wears a yellow crown; it moves on a strict overtake."
+- tick: (code)
+- onKill: (code)
+
+### The mark (`mark`)
+- description: "Every 90 s, a random player is marked for 15 s: +35% speed, and a bonus for who knocks them out."
 - tick: (code)
 - onKill: (code)
 
