@@ -3,10 +3,12 @@ id: T0314
 title: The first clean wave says what the streak pays
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T00:11:52Z
+claimed_at: 2026-10-31T00:12:23Z
+designer: yoga
 ---
 
 ## Goal
