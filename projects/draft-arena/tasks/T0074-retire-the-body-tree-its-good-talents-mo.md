@@ -1,7 +1,12 @@
 ---
+id: T0074
 title: "Retire the Body tree: its good talents move into playstyle trees"
 size: L
 priority: 2
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-31T12:51:01Z
 ---
 
 ## Goal

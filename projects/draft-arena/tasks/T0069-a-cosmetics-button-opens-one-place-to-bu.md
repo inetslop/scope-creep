@@ -1,7 +1,12 @@
 ---
+id: T0069
 title: A Cosmetics button opens one place to buy and wear every look
 size: M
 priority: 1
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-31T12:51:01Z
 ---
 
 ## Goal
