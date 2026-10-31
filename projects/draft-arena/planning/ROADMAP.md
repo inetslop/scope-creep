@@ -86,7 +86,7 @@ Breakdown:
 - T0113 M — Glide: a Hive fork under Swarm, while 3+ enemies are within 80 you move faster, refreshed on each of your hits — done
 - T0117 M — Lash: a Hive prestige gate, your horn darts split on hit into small darts at the critter's neighbors — the dart fork under Horn — todo
 
-## E26 The shop reaches the cap (active)
+## E26 The shop reaches the cap (fully tasked)
 Goal: the shop's ladders complete: each slot gets a 7th item past its old top, and the pattern shelf gets its last two steps to its cap of 12 — every shelf has a next save, and the price ladder has no hole.
 Done when: head, face and back each have 7 items, the pattern shelf has 12, and no ladder between 80 and 400 coins has a gap bigger than 150.
 Breakdown:
@@ -94,10 +94,16 @@ Breakdown:
 - T0115 S — Smile: a 180-coin pattern, a light smile across the lower body — the pattern shelf to 11 — done
 - T0119 S — Kiss: a 300-coin face, a small red kiss mark on the cheek — the face's 7th, the 200→350 gap — design
 - T0120 S — Heart: a 200-coin pattern, a light heart on the middle of the body — the pattern shelf to 12, the cap — design
-Next: the back's 7th (a 240 to sit between the 180 and the 300), one per cycle as the pool has room.
+- T0122 S — Pinwheel: a 240-coin back, a pink and white pinwheel on a stick that spins — the back's 7th, the 180→300 gap — design
 
 ## E27 The Lobber finds a second aim (fully tasked)
 Goal: the bubble grows a second, then a third, aim: a bubble that pops on the critter it touches (a kill-shot on the target instead of a zone), and a bubble that comes back and splashes behind you (a kiting loop that leaves a ring of ice you run through).
 Breakdown:
 - T0118 M — Bop: a Lobber fork, the bubble pops on the critter it touches: a burst at the hit point, no splash there — designing
 - T0121 M — Echo: a Lobber fork, the bubble splashes, comes back and splashes behind you — the kiting fork under Lob 3 — design
+
+## E28 The Goober and the Frenzy grow (active)
+Goal: the two trees that still lack their moment grow one fork each: the Goober's Goo grows a long arm (a needle that reaches the enemy that holds its distance), and the Frenzy's player kill grows a moment (a red burst when a hurt Frenzy takes a player) — each changes how the playstyle plays, not its numbers.
+Breakdown:
+- T0123 M — Reach: a Goober fork under Goo 2, a thin ice needle at the farthest enemy within 400 — design
+- T0124 M — Snap: a Frenzy fork under Nerve 2, a red burst (radius 110) on a player knockout while below half — design

@@ -39,7 +39,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-42 in the game, from game/src/content/upgrades/ (the real values).
+43 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -183,6 +183,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - maxLevel: 1
 - look: shape star, color #99e9f2
 - onKill: (code)
+
+### Fizz (`fizz`)
+- description: "When your bubble's splash lands, it lingers 2.5 s and strikes everything inside every 0.5 s for 3 damage. The puddle is as big as the splash."
+- maxLevel: 1
+- look: shape circle, color #99e9f2
+- onHit: (code)
 
 ### Scatter (`scatter`)
 - description: "When a Goo kills, it pops into 4 mini-Goo that home to the 4 nearest enemies: 4 damage, 200 u/s, 1 s. Mini-Goo do not pop again."
