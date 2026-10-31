@@ -3,11 +3,13 @@ id: T0136
 title: "Shrapnel: a Miner fork under Mine 2, a detonation flings ice shards at the crowd around it"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0135]
 attempts: 0
 created: 2026-10-31T23:01:32Z
+claimed_at: 2026-10-31T23:23:27Z
 epic: E31
+designer: desktop
 ---
 
 ## Goal
