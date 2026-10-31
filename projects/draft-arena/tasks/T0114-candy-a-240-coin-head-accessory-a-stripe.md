@@ -1,12 +1,14 @@
 ---
 id: T0114
 title: "Candy: a 240-coin head accessory, a striped candy on the side of the head"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T19:06:11Z
+claimed_at: 2026-10-31T19:20:47Z
 epic: E26
 ---
 
