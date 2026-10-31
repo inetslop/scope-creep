@@ -1,12 +1,14 @@
 ---
 id: T0048
 title: "Boing: a deep red heart that crouches, then leaps to where you're going"
+assignee: inet-racing
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T09:20:00Z
+claimed_at: 2026-10-31T10:14:03Z
 epic: E9
 ---
 
