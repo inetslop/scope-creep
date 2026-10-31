@@ -1,12 +1,14 @@
 ---
 id: T0078
 title: "Party Blower: a 180-coin back accessory, a red blower rolled on a stick"
+assignee: cachyos-x8664
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T13:15:23Z
+claimed_at: 2026-10-31T13:52:18Z
 ---
 
 ## Goal
