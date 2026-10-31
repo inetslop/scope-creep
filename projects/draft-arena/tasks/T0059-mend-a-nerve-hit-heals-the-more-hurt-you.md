@@ -1,12 +1,14 @@
 ---
 id: T0059
 title: "Mend: a Nerve hit heals the more hurt you are"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T11:14:52Z
+claimed_at: 2026-10-31T11:40:14Z
 epic: E15
 ---
 
