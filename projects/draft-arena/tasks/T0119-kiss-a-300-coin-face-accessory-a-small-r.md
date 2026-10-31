@@ -4,11 +4,12 @@ title: "Kiss: a 300-coin face accessory, a small red kiss mark on the cheek"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T20:09:56Z
 claimed_at: 2026-10-31T20:33:50Z
+finished_at: 2026-10-31T20:44:22Z
 epic: E26
 ---
 
@@ -114,3 +115,17 @@ describe('kiss accessory', () => {
 - Do not reformat or reorder `index.ts` beyond the two added lines.
 ### Tests
 `tests/kiss.test.ts` (named in the task; content bar and draw are auto-checked by `engine/tests/`).
+
+## Result (attempt 1, yoga)
+
+Added the Kiss face accessory: a new `src/content/accessories/kiss.ts` (300 coins, no prestige lock) that draws two little ink-outlined red lips — a shallow "w" of lower half-disks — on the right cheek at `+0.52r, 0.24r`, clear of the eyes and mouth line, with a tiny white glint and a small slow seed bob (0.025r @ 1.5, vs Candy's 0.05r @ 2); palette colors only (red, white, ink), draw-only with no stat/size/hitbox change. Registered it in `ACCESSORIES` in price order between Heart Shades and Mustache, filling the face shelf's 200→350 gap (face slot now 7 items), so the shop panel, preview, buy/wear and bot dressing pick it up automatically from the registry. New `tests/kiss.test.ts` locks slot, 300-coin price, absent prestige lock, name length and description. `npm run check` (131 tests) and `npm run smoke` (desktop + mobile) both pass. One tiny deviation from the design's code block: a one-line JSDoc comment above the export, matching the convention of the closest example `candy.ts` — no behavior or signature change.
+
+- Self-review: APPROVE
+- Time: 10.6 min
+
+```
+.../game/src/content/accessories/index.ts          |  2 ++
+ .../game/src/content/accessories/kiss.ts           | 34 ++++++++++++++++++++++
+ projects/draft-arena/game/tests/kiss.test.ts       | 15 ++++++++++
+ 3 files changed, 51 insertions(+)
+```

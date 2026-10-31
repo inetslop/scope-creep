@@ -15,6 +15,7 @@ import { bowTie } from './bow-tie.ts';
 import { beak } from './beak.ts';
 import { monocle } from './monocle.ts';
 import { heartShades } from './heart-shades.ts';
+import { kiss } from './kiss.ts';
 import { mustache } from './mustache.ts';
 import { balloon } from './balloon.ts';
 import { partyBlower } from './party-blower.ts';
@@ -34,6 +35,7 @@ export const ACCESSORIES: readonly AccessoryDef[] = [
   beak,
   monocle,
   heartShades,
+  kiss,
   mustache,
   balloon,
   partyBlower,
