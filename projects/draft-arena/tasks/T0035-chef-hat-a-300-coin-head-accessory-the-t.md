@@ -4,11 +4,12 @@ title: "Chef Hat: a 300-coin head accessory, the top of the shop"
 assignee: desktop-4070
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T06:50:30Z
 claimed_at: 2026-10-31T07:42:54Z
+finished_at: 2026-10-31T08:07:58Z
 epic: E6
 ---
 
@@ -89,3 +90,16 @@ In `index.ts`: `import { chefHat } from './chef-hat.ts';` between the candy-pack
 
 ### Tests
 none (content items are tested automatically by engine/tests/).
+
+## Result (attempt 1, desktop-4070)
+
+Added the shop's first long-saving goal — the "Chef Hat" head accessory (300 coins) — as `src/content/accessories/chef-hat.ts` exporting `chefHat`, registered in `src/content/accessories/index.ts`. It draws a tall white three-bump puff with an ink band at its base (~16 units above the head), bobbing with motion, distinct in shape (cloud) and color (white) from both starter hats, changing nothing in play. Fixed a missing `startAngle` argument in the design's `ellipse` call so it compiles to the same full-ellipse band.
+
+- Self-review: APPROVE
+- Time: 25.1 min
+
+```
+.../game/src/content/accessories/chef-hat.ts       | 27 ++++++++++++++++++++++
+ .../game/src/content/accessories/index.ts          |  2 ++
+ 2 files changed, 29 insertions(+)
+```
