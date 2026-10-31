@@ -1,6 +1,7 @@
 import type { MakeHudPart } from '../../engine/api.ts';
 import './base.css';
 import { audio } from './audio.ts';
+import { chime } from './chime.ts';
 import { connection } from './connection.ts';
 import { knockedOut } from './knockedOut.ts';
 import { scoreboard } from './scoreboard.ts';
@@ -11,6 +12,7 @@ import { xpBar } from './xpBar.ts';
 export const HUD_PARTS: readonly MakeHudPart[] = [
   audio,
   connection,
+  chime,
   xpBar,
   scoreboard,
   knockedOut,

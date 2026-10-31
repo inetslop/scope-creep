@@ -78,3 +78,22 @@ export function pop(seed: number, radius: number, age: number): void {
   active += 1;
   blip(pitchFor(radius), 0.12, 0.12);
 }
+
+/** Level-up: a bright two-note candy-bell "ding-ding", E6 then G6, under 0.2 s. */
+export function playChime(): void {
+  if (!ctx || !master) return;
+  if (performance.now() - lastHud > 1000) return; // no match on screen
+  const t0 = ctx.currentTime;
+  for (const [f, delay] of [[1318.5, 0], [1568, 0.07]] as const) {
+    const o = ctx.createOscillator();
+    o.type = 'sine';
+    o.frequency.value = f;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.12, t0 + delay);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + delay + 0.08);
+    o.connect(g);
+    g.connect(master);
+    o.start(t0 + delay);
+    o.stop(t0 + delay + 0.09);
+  }
+}

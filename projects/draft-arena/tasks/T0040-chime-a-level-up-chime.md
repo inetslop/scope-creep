@@ -4,11 +4,12 @@ title: "Chime: a level-up chime"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0039]
 attempts: 1
 created: 2026-10-31T07:44:39Z
 claimed_at: 2026-10-31T08:39:03Z
+finished_at: 2026-10-31T08:58:42Z
 epic: E11
 ---
 
@@ -94,3 +95,18 @@ export function playChime(): void {
 
 ### Tests
 - none (no new pure helper; the engine tests + smoke cover it — level up once and hear one chime with the ring).
+
+## Result (attempt 1, yoga)
+
+Level-up now plays a short bright two-note chime (E6→G6 sine "ding-ding", 0.16 s) at the exact moment the yellow level-up ring spreads from the player. Added `playChime()` to T0039's shared audio layer (`src/audio/sfx.ts`, next to `pop`, same ctx/master wiring and 0.12 peak gain as pops, fresh oscillators per call) and a new DOM-free HUD part `src/hud/chime.ts` (+ comment-only `chime.css`) that fires it when `view.me.level` rises — one chime per level-up event, none on prestige/respawn level drops, and never for other players (the `ring` effect was left untouched). Registered it in `HUD_PARTS` after `connection`; works on desktop and mobile with no extra gesture.
+
+- Self-review: APPROVE
+- Time: 19.7 min
+
+```
+projects/draft-arena/game/src/audio/sfx.ts  | 19 +++++++++++++++++++
+ projects/draft-arena/game/src/hud/chime.css |  1 +
+ projects/draft-arena/game/src/hud/chime.ts  | 17 +++++++++++++++++
+ projects/draft-arena/game/src/hud/index.ts  |  2 ++
+ 4 files changed, 39 insertions(+)
+```
