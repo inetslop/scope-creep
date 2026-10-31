@@ -1,12 +1,14 @@
 ---
 id: T0001
 title: "Lance: bolts that go straight through a line of monsters"
+assignee: desktop-4070
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T01:44:04Z
+claimed_at: 2026-10-31T02:04:48Z
 epic: E1
 ---
 
