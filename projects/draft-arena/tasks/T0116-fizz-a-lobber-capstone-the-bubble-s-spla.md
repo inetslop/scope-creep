@@ -1,12 +1,14 @@
 ---
 id: T0116
 title: "Fizz: a Lobber capstone, the bubble's splash lingers and strikes every 0.5 s"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T19:30:37Z
+claimed_at: 2026-10-31T19:51:27Z
 epic: E23
 ---
 
