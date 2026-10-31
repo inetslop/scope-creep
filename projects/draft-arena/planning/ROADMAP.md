@@ -159,7 +159,7 @@ Breakdown:
 - T0060 L — Hive tree: Swarm, Horn, Nest, the Sting capstone — failed (the on-kill tables missed the Fang row)
 - T0063 M — Hive, first slice: Swarm (hits grow with the crowd) and Horn (a fast teal dart) — failed (the on-hit table missed the Mend row)
 - T0064 M — Hive, second slice: Nest (a kill-buff from crowd kills) and the Sting capstone — failed (a timed damage buff needs an engine change; Nest becomes a crowd-scaled kill heal)
-- T0075 L — Hive, first slice: the tree, Swarm (hits grow with the crowd) and Horn (a fast teal dart) — design
+- T0075 L — Hive, first slice: the tree, Swarm (hits grow with the crowd) and Horn (a fast teal dart) — todo
 - T0076 M — Hive, second slice: Nest (a kill heal that grows with the crowd) and the Sting capstone — design (waits on T0075)
 Next: a fifth talent that forks the tree (a Hive sustain or a Hive defense) once it proves out.
 
@@ -167,7 +167,7 @@ Next: a fifth talent that forks the tree (a Hive sustain or a Hive defense) once
 Goal: prestiging pays in the draft, not just in coins: each prestige this life banks a talent point, and a prestige-gated talent later opens in a second tree, the Slush way (planning/modules/prestige.md).
 Done when: a prestige banks a point the player sees and spends, and a second tree has its own prestige-gated talent.
 Breakdown:
-- T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — designing
+- T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — in progress
 - T0067 M — Cover: a fan of bolts behind you, a Gunner talent open after a prestige this life — design (waits on T0061)
 Next: a second gated talent in another tree once Cover and the bank prove out.
 
@@ -175,5 +175,5 @@ Next: a second gated talent in another tree once Cover and the bank prove out.
 Goal: the menagerie's 10th and final monster type — a way to threaten no other monster has, so the crowd's ceiling is full.
 Done when: the 10th monster is in the field with a behavior no other has, readable at a glance.
 Breakdown:
-- T0066 L — Brood: a purple sac that keeps birthing Dots while it lives — design
+- T0066 L — Brood: a purple sac that keeps birthing Dots while it lives — in progress
 Next: the menagerie is full at 10 types; the crowd deepens through the trees that learn to fight it.
