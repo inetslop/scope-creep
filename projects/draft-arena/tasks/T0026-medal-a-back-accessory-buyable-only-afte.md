@@ -1,12 +1,14 @@
 ---
 id: T0026
 title: "Medal: a back accessory, buyable only after 2 prestiges in all"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0022]
-attempts: 0
+attempts: 1
 created: 2026-10-31T05:24:06Z
+claimed_at: 2026-10-31T07:48:09Z
 epic: E7
 ---
 
