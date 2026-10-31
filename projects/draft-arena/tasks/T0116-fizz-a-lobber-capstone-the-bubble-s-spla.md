@@ -3,13 +3,11 @@ id: T0116
 title: "Fizz: a Lobber capstone, the bubble's splash lingers and strikes every 0.5 s"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T19:30:37Z
-claimed_at: 2026-10-31T19:30:41Z
 epic: E23
-designer: desktop
 ---
 
 ## Goal
@@ -63,3 +61,147 @@ Fizz is an on-hit, so one row for every on-hit and on-kill upgrade that exists:
 - [ ] Split's fanned bubbles each leave their own puddle where they land.
 - [ ] A small white tick where the puddle strikes, each 0.5 s.
 - [ ] Fizz is in the Lobber tab of the talents panel as a 1-rank capstone beside Fuse, needs Lob 4, with the text above.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/areas/fizz-puddle.ts` — `fizzPuddle: AreaDef`: the lingering ice puddle (life 2.5, interval 0.5, strikes via `ctx.strike`, no slow)
+- create `src/content/effects/fizz-tick.ts` — `fizzTick: EffectDef`: the small white pop where the puddle strikes
+- create `src/content/upgrades/fizz.ts` — `fizz: UpgradeDef`: on-hit that lays one fizz-puddle per bubble splash
+- edit `src/content/areas/index.ts` — add `import { fizzPuddle } from './fizz-puddle.ts';` and `fizzPuddle,` in `AREAS` right after the `chewPuddle,` line
+- edit `src/content/effects/index.ts` — add `import { fizzTick } from './fizz-tick.ts';` and `fizzTick,` in `EFFECTS` right after the `slowPop,` line
+- edit `src/content/upgrades/index.ts` — add `import { fizz } from './fizz.ts';` and `fizz,` in `UPGRADES` right after the `fuse,` line
+- edit `src/content/talents/lobber.ts` — add one talent line after the `fuse` line (line 14)
+
+### Interfaces
+No new types; three content defs, exact code:
+
+`src/content/areas/fizz-puddle.ts` (copy the file shape of `chew-puddle.ts`):
+```ts
+import { noise, shade, type AreaDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/**
+ * Fizz's puddle: where a bubble's splash lands, the ice stays 2.5 s and strikes everything inside
+ * (monsters and players alike, players at half) every 0.5 s - five strikes. No slow (that is
+ * Slush). Laid by the fizz upgrade at the splash's spot, as big as the splash.
+ */
+export const fizzPuddle: AreaDef = {
+  id: 'fizz-puddle',
+  radius: 70,
+  life: 2.5,
+  interval: 0.5,
+  look: {
+    shape: 'circle',
+    color: PALETTE.ice,
+    draw(g, e) {
+      const a = Math.min(1, (1 - e.hp) * 5, e.hp * 2.5); // fade in fast, out over the last second
+      if (a <= 0) return;
+      g.save();
+      g.globalAlpha = a;
+      g.scale(1, 0.55); // the splash's rim, flattened to the ground
+      g.fillStyle = shade(PALETTE.ice, 0.25);
+      g.beginPath();
+      g.arc(0, 0, e.radius, 0, Math.PI * 2);
+      g.fill();
+      g.lineWidth = 3;
+      g.strokeStyle = PALETTE.ink;
+      g.stroke();
+      g.setLineDash([5, 7]);
+      g.lineWidth = 1.5;
+      g.beginPath();
+      g.arc(0, 0, e.radius * 0.6, 0, Math.PI * 2);
+      g.stroke();
+      g.setLineDash([]);
+      for (let i = 0; i < 3; i++) {
+        const ang = noise(e.seed, i) * Math.PI * 2;
+        const d = 0.3 + 0.45 * noise(e.seed, i + 3);
+        g.beginPath();
+        g.arc(Math.cos(ang) * d * e.radius, Math.sin(ang) * d * e.radius, 2.5, 0, Math.PI * 2);
+        g.fillStyle = PALETTE.white;
+        g.fill();
+      }
+      g.restore();
+    },
+  },
+  pulse(ctx, a) {
+    for (const u of ctx.enemiesNear(a.owner, a.x, a.y, a.radius)) {
+      ctx.effect('fizz-tick', { x: u.x, y: u.y });
+      ctx.strike(a, u); // 3 damage (mine, before my damage stat), half vs players, no slow
+    }
+  },
+};
+```
+
+`src/content/effects/fizz-tick.ts` (copy `slow-pop.ts`):
+```ts
+import type { EffectDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** The fizz-puddle's strike: a small white pop where it lands. */
+export const fizzTick: EffectDef = {
+  id: 'fizz-tick',
+  duration: 0.25,
+  draw(g, fx) {
+    g.globalAlpha = 1 - fx.t;
+    const r = 4 + 8 * fx.t; // a 4-unit pop that grows as it fades
+    g.fillStyle = PALETTE.white;
+    g.beginPath();
+    g.arc(fx.ax, fx.ay, r, 0, Math.PI * 2);
+    g.fill();
+    g.lineWidth = 2;
+    g.strokeStyle = PALETTE.ink;
+    g.stroke();
+  },
+};
+```
+
+`src/content/upgrades/fizz.ts` (copy `fuse.ts`):
+```ts
+import type { UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/**
+ * Lobber capstone beside Fuse: the splash itself lingers. One fizz-puddle per splash, at the
+ * splash's spot, as big as it; the puddle's own strikes (a different area) lay none.
+ */
+export const fizz: UpgradeDef = {
+  id: 'fizz',
+  name: 'Fizz',
+  description: "When your bubble's splash lands, it lingers 2.5 s and strikes everything inside every 0.5 s for 3 damage. The puddle is as big as the splash.",
+  maxLevel: 1,
+  look: { shape: 'circle', color: PALETTE.ice },
+  onHit(ctx, me, _level, hit) {
+    const a = hit.area;
+    if (!a || a.def.id !== 'splash') return; // only the bubble's splash; never the puddle's own strikes
+    if (a.slots[0] === 1) return; // this splash already fizzed: one puddle per splash
+    a.slots[0] = 1;
+    // The engine multiplies the area's radius by my area stat, so divide to land on the splash's
+    // final radius: a Wide splash leaves a puddle as big as it.
+    ctx.area(me, 'fizz-puddle', { x: a.x, y: a.y, radius: a.radius / me.stats.area, damage: 3 });
+  },
+};
+```
+
+`src/content/talents/lobber.ts` — insert after the `fuse` line:
+```ts
+    { id: 'fizz', upgrade: 'fizz', max: 1, needs: [['lob', 4]] },
+```
+
+### Steps
+1. Create `src/content/effects/fizz-tick.ts` exactly as above.
+2. Create `src/content/areas/fizz-puddle.ts` exactly as above.
+3. Create `src/content/upgrades/fizz.ts` exactly as above.
+4. Add the three registry lines (areas, effects, upgrades) and the one talent line, each beside its related line as specified.
+5. Run `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- **Double radius scaling:** the engine computes area radius as `(opts.radius ?? def.radius) * me.stats.area`. Passing `radius: a.radius` (already scaled) makes a rank-3 Wide puddle 1.6²× the splash, not 1.6×. Always pass `a.radius / me.stats.area` as written.
+- **`hit.area.id` is a number** (entity id) — the splash check is `a.def.id !== 'splash'`, never `a.id`.
+- **Self-laying:** `ctx.strike` fires the owner's on-hit hooks, so the puddle's own strikes re-enter Fizz's onHit. The `def.id` guard is what stops puddle-on-puddle chains; keep it before the slot check.
+- The first puddle pulse is immediate (area `interval` pulses at once), so strikes land at 0, 0.5, 1, 1.5, 2 s — exactly five. Don't "fix" this by delaying.
+- No `Math.random`/`Date` in draw (use `noise(e.seed, i)`); no status in the pulse (the puddle slows nothing); do not touch `splash.ts`, `bubble.ts` or `wide.ts`.
+- If Bop (T0118) lands first, popped bubbles simply never lay a splash — Fizz needs no change and no import from it.
+
+### Tests
+none (no pure helpers in src/; engine/tests/ covers the new upgrade, area, effect and talent automatically).
