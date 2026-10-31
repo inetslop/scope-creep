@@ -3,13 +3,11 @@ id: T0004
 title: "Chill: a hit that slows the target, a mod for any weapon"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T02:20:47Z
-claimed_at: 2026-10-31T02:21:10Z
 epic: E1
-designer: desktop-4070
 ---
 
 ## Goal
@@ -39,3 +37,37 @@ The Body tree gets its crowd tool: every hit slows the critter it hits, so a tan
 - [ ] While slowed, the critter's face is scared and returns when the slow wears off; a small ice bubble pops off when the slow first lands, and a refresh within the time extends the duration without popping again.
 - [ ] At rank 3 the slow is 50% for 2.0 s.
 - [ ] Without Chill, hits slow nothing: Dot and Puff are unchanged.
+
+## Design (architect, desktop-4070)
+
+### Files
+Create (5): `src/content/statuses/chill-1.ts` (`chill1`), `chill-2.ts` (`chill2`), `chill-3.ts` (`chill3`); `src/content/effects/slow-pop.ts` (`slowPop`); `src/content/upgrades/chill.ts` (`chill`).
+Edit (5): `src/content/statuses/index.ts`, `src/content/effects/index.ts`, `src/content/upgrades/index.ts` (T0003 also edits it — add only your two lines), `src/content/talents/body.ts`, `src/content/monsters/dot.ts`.
+
+### Interfaces
+- One status per rank: `speedMul` is a def constant and there is no removeStatus, so rank N needs id `chill-N`.
+- Statuses: `chillN: StatusDef = { id: 'chill-N', name: 'Chill N', color: PALETTE.ice, speedMul: 0.N }` — 0.7 / 0.6 / 0.5 (30/40/50% slow); `maxStacks` left at default 1 so re-adds refresh, never stack.
+- `chill: UpgradeDef = { id: 'chill', name: 'Chill', description: 'Hits slow the target by 30% for 1 s. Per rank: +10% slower, +0.5 s.', maxLevel: 3, look: { shape: 'hexagon', color: PALETTE.ice }, onHit(ctx, _me, level, hit) { … } }` — exact description string above; `onHit` fires after every projectile hit AND area pulse automatically (works with every weapon).
+- onHit body: `const id = `chill-${level}`; const fresh = [1,2,3].every((n) => !ctx.statusOf(hit.target, `chill-${n}`)); ctx.addStatus(hit.target, id, 0.5 + level * 0.5); if (fresh) ctx.effect('slow-pop', { x: hit.x, y: hit.y });` (durations 1.0/1.5/2.0).
+- `slowPop: EffectDef = { id: 'slow-pop', duration: 0.3, draw(g, fx) {…} }` — one ice bubble at `(fx.ax, fx.ay)`: `g.globalAlpha = 1 - fx.t; const r = 8 + 6 * fx.t;` fill circle radius r with `PALETTE.ice`, stroke `lineWidth 3` / `PALETTE.ink`, then a small white shine dot at `(fx.ax - r*0.35, fx.ay - r*0.35)` (`PALETTE.white`, radius ~2).
+- Body tree talent: `{ id: 'chill', upgrade: 'chill', max: 3, needs: [['vigor', 1]] }`.
+
+### Steps
+1. Create the three status files (copy of one shape above; file name = id, export camelCase) and register them in `statuses/index.ts` (3 imports + `STATUSES = [chill1, chill2, chill3]`).
+2. Create `slow-pop.ts`; add its import (after `ring`, alphabetical) and one line in `EFFECTS`.
+3. Create `upgrades/chill.ts`; in `upgrades/index.ts` add `import { chill } from './chill.ts';` (after `bolt`) and `chill,` right after the `ricochet,` line (on-hit group).
+4. In `talents/body.ts` add the talent line right after `{ id: 'vigor', upgrade: 'vigor', max: 3 },`.
+5. In `monsters/dot.ts`: change import to `import { chase, drawCritter, type MonsterDef } from '../../../engine/api.ts';`; replace `look` with `{ shape: 'circle', color: PALETTE.red, draw(g, e) { drawCritter(g, this, e, { ink: PALETTE.ink, face: e.slots[0] === 1 ? { mood: 'scared', mouth: 'o' } : { mood: 'angry' } }); } }` (drop the old `face` field — draw supplies it); add `think(ctx, m, _dt) { m.slots[0] = ctx.statusOf(m, 'chill-1') + ctx.statusOf(m, 'chill-2') + ctx.statusOf(m, 'chill-3') > 0 ? 1 : 0; chase(m); }`.
+
+### Pitfalls
+- Defining `think` REPLACES the engine's default chase — `chase(m)` must be the last line of it or Dot stops moving.
+- `look.draw` replaces the default body draw entirely: it must start with `drawCritter(g, this, e, {…face})` (pass `this` as the Look) or Dot draws nothing but extras.
+- Slow state reaches clients only via slots: scared face reads `e.slots[0]`; no status data exists in `DrawView`.
+- "Never stacks" holds per rank (maxStacks 1 → re-add takes max remaining time). A rank-2 hit while `chill-1` still runs briefly multiplies both `speedMul`s (<1 s, self-resolving); no engine fix exists — acceptable.
+- Effect is pure client draw: only `fx.*` fields (+ `noise(fx.seed, i)` if varying); never `Math.random`/`Date` (lint), no `ctx`.
+- File names must equal ids (`chill-1.ts`→`chill1`) — tests enforce one item per file by id.
+- Puff (T0002's file) is slowed by the statuses with zero changes; do NOT edit `puff.ts` — scared-face there is T0002's follow-up, not this task's.
+- Unused hook params as `_me` / `_dt`.
+
+### Tests
+No pure helpers added → no new unit tests. `npm run check` covers it: every status/upgrade/effect validated, chill and Dot played in a real match, talent reachable (needs vigor 1), sums ≤ maxLevel. Then `npm run smoke`.
