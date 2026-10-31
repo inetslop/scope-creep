@@ -3,11 +3,13 @@ id: T0003
 title: "Lobber tree: a bubble that arcs in, a splash that marks the ground"
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T01:44:04Z
+claimed_at: 2026-10-31T01:44:08Z
 epic: E1
+designer: desktop
 ---
 
 ## Goal
