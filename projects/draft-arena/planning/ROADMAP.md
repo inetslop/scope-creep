@@ -143,14 +143,14 @@ Breakdown:
 - T0055 M — Popper: a fat grinning red blob that pops a damaging puff when it dies — done
 Done: nine monsters; the last slot waits in IDEAS for a behavior the nine don't have.
 
-## E15 The Frenzy grows (active)
+## E15 The Frenzy grows (done)
 Goal: the fifth tree deepens: the hurt state the whole tree pays out on becomes visible on the field, and Nerve forks two ways — a coin branch and a sustain branch — so a Frenzy life picks a direction instead of buying the same four talents.
 Done when: a hurt critter shows its wound on the field, and the tree has six talents with a real fork under Nerve.
 Breakdown:
-- T0057 M — The wound: a red collar arc around any critter below half hp — design
+- T0057 M — The wound: a red collar arc around any critter below half hp — done
 - T0058 S — Fang: kills pay extra coins while below half hp — done
-- T0059 S — Mend: a Nerve hit heals the more hurt you are — design
-Next: done once T0057–T0059 build: the Frenzy state reads at a glance, and the tree forks — run, feed or heal while hurt.
+- T0059 S — Mend: a Nerve hit heals the more hurt you are — done
+Done: the wound reads the hurt state in a crowd, and Nerve forks — a coin branch, a heal branch, and the die-with-it capstone.
 
 ## E16 The Hive tree (active)
 Goal: a sixth playstyle (the cap): a build that hits harder the more crowded the fight is — a hit scales with the enemies around its target, so a Hive life runs into the swarm instead of kiting it, where Gunner kites, Goober zones and Frenzy bleeds.
@@ -166,4 +166,12 @@ Goal: prestiging pays in the draft, not just in coins: each prestige this life b
 Done when: a prestige banks a point the player sees and spends, and a second tree has its own prestige-gated talent.
 Breakdown:
 - T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — designing
-Next: a prestige-gated talent in a second tree (Gunner or Body) once the point bank proves out.
+- T0067 M — Cover: a fan of bolts behind you, a Gunner talent open after a prestige this life — design (waits on T0061)
+Next: a second gated talent in another tree once Cover and the bank prove out.
+
+## E18 The last slot (active)
+Goal: the menagerie's 10th and final monster type — a way to threaten no other monster has, so the crowd's ceiling is full.
+Done when: the 10th monster is in the field with a behavior no other has, readable at a glance.
+Breakdown:
+- T0066 L — Brood: a purple sac that keeps birthing Dots while it lives — design
+Next: the menagerie is full at 10 types; the crowd deepens through the trees that learn to fight it.

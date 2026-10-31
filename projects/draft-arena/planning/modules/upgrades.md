@@ -37,7 +37,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-29 in the game, from game/src/content/upgrades/ (the real values).
+30 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -110,6 +110,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - description: "Hits on an enemy below half its hp deal +6 damage, per rank."
 - maxLevel: 3
 - look: shape diamond, color #4dabf7
+- onHit: (code)
+
+### Mend (`mend`)
+- description: "On a Nerve hit: heal 1 hp per 10 hp missing. Per rank: +1 per 10 hp missing."
+- maxLevel: 3
+- look: shape star, color #51cf66
 - onHit: (code)
 
 ### Chomp (`chomp`)
