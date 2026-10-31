@@ -3,10 +3,12 @@ id: T0129
 title: "The surge warns: a dust ring and a low rumble where the swarm line walks in"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T21:28:31Z
+claimed_at: 2026-10-31T21:52:17Z
+designer: yoga
 ---
 
 ## Goal
