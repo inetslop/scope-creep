@@ -3,11 +3,13 @@ id: T0085
 title: "Toss: a big slow melon that lobs a high-arcing blob that splashes where it lands"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T14:39:38Z
+claimed_at: 2026-10-31T14:39:42Z
 epic: E20
+designer: desktop
 ---
 
 ## Goal
