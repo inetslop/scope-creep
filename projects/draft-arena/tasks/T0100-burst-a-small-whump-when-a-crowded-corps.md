@@ -3,11 +3,13 @@ id: T0100
 title: "Burst: a small whump when a crowded corpse bursts (Sting)"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T16:34:41Z
+claimed_at: 2026-10-31T16:35:08Z
 epic: E16
+designer: yoga
 ---
 
 ## Goal
