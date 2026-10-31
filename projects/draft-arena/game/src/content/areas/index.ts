@@ -1,6 +1,7 @@
 import type { AreaDef } from '../../../engine/api.ts';
 import { bite } from './bite.ts';
 import { bellowRing } from './bellow-ring.ts';
+import { jawBite } from './jaw-bite.ts';
 import { splash } from './splash.ts';
 import { plopSplash } from './plop-splash.ts';
 import { slushPuddle } from './slush-puddle.ts';
@@ -13,6 +14,7 @@ import { sappedDrop } from './sapped-drop.ts';
 export const AREAS: readonly AreaDef[] = [
   bite,
   bellowRing,
+  jawBite,
   splash,
   plopSplash,
   slushPuddle,

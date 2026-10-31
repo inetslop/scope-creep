@@ -6,6 +6,7 @@ import { brood } from './brood.ts';
 import { twin } from './twin.ts';
 import { twinling } from './twinling.ts';
 import { zippy } from './zippy.ts';
+import { jaw } from './jaw.ts';
 import { sleeper } from './sleeper.ts';
 import { spitter } from './spitter.ts';
 import { toss } from './toss.ts';
@@ -19,6 +20,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   twinling,
   flee,
   zippy,
+  jaw,
   sleeper,
   spitter,
   toss,

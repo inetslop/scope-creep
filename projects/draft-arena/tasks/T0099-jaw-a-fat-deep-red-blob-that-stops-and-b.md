@@ -4,11 +4,12 @@ title: "Jaw: a fat deep-red blob that stops and bites a locked cone in front of 
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T16:34:41Z
 claimed_at: 2026-10-31T17:09:38Z
+finished_at: 2026-10-31T18:36:33Z
 epic: E20
 ---
 
@@ -183,3 +184,34 @@ think(ctx, m, dt) {
 
 ### Tests
 none — every content item (the monster and the area) is exercised automatically by `engine/tests/`.
+
+## Result (attempt 1, cachyos-x8664)
+
+Done — everything passes. Final state:
+
+**Files**
+- New `src/content/monsters/jaw.ts` — the `jaw` MonsterDef: fat crimson blob (radius 26), `face: false` with a mouth drawn in front of the body (closed white teeth-grin at idle, wide dark mouth with 4 tooth bumps through the wind-up, angry brows + small eyes above), body squashed ≤12% along the locked facing via `drawCritter`. `think()` runs the phase machine: shuffle with `chase()` → within 90 and off-cooldown, lock facing in `mem.ja`, stop for the 0.6 s wind-up → bite fires `ctx.area(m, 'jaw-bite', { damage: 10 })` and sets a 1.5 s cooldown. Slots 0/1 carry phase and the eased mouth opening (×100).
+- New `src/content/areas/jaw-bite.ts` — the `jawBite` AreaDef: radius 85, life 0.3 s, interval 0.4 (> life, exactly one pulse). `pulse` strikes every unit within 85 whose angle from the owner differs from `mem.ja` by ≤ 50° (100° wedge) via `ctx.strike`; a red wedge with ink rim blooms out and fades over the life.
+- `src/content/palette.ts` — added `crimson: '#fa5252'` (the one-line palette addition the design allowed; `#fa5252` was not present).
+- `src/content/monsters/index.ts` and `src/content/areas/index.ts` — one import line and one registry line each, next to `zippy` / `bite` (jaw is the 10th/last monster slot).
+
+**Verified**
+- `npm run check`: typecheck + lint + all 114 tests pass (the monster and area are exercised in a real match: one pulse on wind-up, wedge only, monsters+players alike, damage 10, no stat scaling).
+- `npm…
+
+- Self-review: APPROVE
+- Time: 86.9 min
+
+```
+.../draft-arena/game/src/content/areas/index.ts    |   2 +
+ .../draft-arena/game/src/content/areas/jaw-bite.ts |  48 ++++++++
+ .../draft-arena/game/src/content/monsters/index.ts |   2 +
+ .../draft-arena/game/src/content/monsters/jaw.ts   | 128 +++++++++++++++++++++
+ projects/draft-arena/game/src/content/palette.ts   |   1 +
+ 5 files changed, 181 insertions(+)
+```
+
+## Merge (attempt 1, cachyos-x8664)
+
+- Conflicts in: projects/draft-arena/game/src/content/areas/index.ts
+- The conflict agent resolved them.
