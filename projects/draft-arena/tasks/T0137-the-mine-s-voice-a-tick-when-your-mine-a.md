@@ -3,13 +3,14 @@ id: T0137
 title: "The mine's voice: a tick when your mine arms, a low boom when a mine pops"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: [T0135]
 attempts: 0
 created: 2026-10-31T23:01:32Z
 claimed_at: 2026-10-31T23:29:59Z
+finished_at: 2026-10-31T23:37:17Z
 epic: E31
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -27,3 +28,7 @@ Two new sounds in game/src/audio/sfx.ts, next to the bloop and the plink (the cl
 - [ ] A mine's pop (yours or a neighbor's) thumps low on every client that sees it; two mines popping within 150 ms make one boom, not a squashed two.
 - [ ] Neither sound plays before the first gesture or while the match is off screen.
 - [ ] `npm run check` and `npm run smoke` pass.
+
+## Rejected by architect (desktop)
+
+the "yours only" mine-arm tick can't be built against the frozen engine — no client hook content may use exposes local-player identity (DrawView, EffectView, StatusView and WearView carry no self id, HudView's `me` and score rows have no player id, and the area wire format doesn't even send the mine's owner), so a client's content code can't tell its own mines from a neighbor's; an engine change is needed (e.g. a self id or owner flag in a content-visible view) — note the boom half (mine-pop effect's `draw(g, fx)` calling a `bloop`-style `mineBoom(fx.seed, fx.age)` with the 150 ms throttle) is fully feasible once the tick's ownership requirement is resolved.
