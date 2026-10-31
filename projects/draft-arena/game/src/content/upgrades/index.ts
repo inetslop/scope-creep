@@ -7,6 +7,7 @@ import { chew } from './chew.ts';
 import { chomp } from './chomp.ts';
 import { cling } from './cling.ts';
 import { cover } from './cover.ts';
+import { drift } from './drift.ts';
 import { fang } from './fang.ts';
 import { frenzy } from './frenzy.ts';
 import { fuse } from './fuse.ts';
@@ -72,6 +73,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   cling,
   snare,
   split,
+  drift,
   lance,
   swift,
   quick,

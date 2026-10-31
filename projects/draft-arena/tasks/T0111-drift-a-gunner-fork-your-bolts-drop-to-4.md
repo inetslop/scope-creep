@@ -4,11 +4,12 @@ title: "Drift: a Gunner fork, your bolts drop to 40% speed after 120 units and l
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T18:10:25Z
 claimed_at: 2026-10-31T18:39:44Z
+finished_at: 2026-10-31T19:06:00Z
 epic: E24
 ---
 
@@ -185,3 +186,23 @@ and change its docstring's second sentence to: `They are Bolt's bolts: Haste, Qu
 
 ### Tests
 - `tests/drift.test.ts` as above (pure flight + `driftRank`). Everything else (registry, data, path purity, looks, talent reachability, every upgrade in a match) is covered automatically by `engine/tests/`.
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the Drift fork to the Gunner tree: a new `drift` upgrade (with a defensive `driftRank` helper) and a `drift-bolt` projectile that flies full speed for its first 120 units, then drifts at 40% speed until it pops into a small ice ring (`src/content/upgrades/drift.ts`, `src/content/projectiles/drift-bolt.ts`), wired into the Gunner tree (`src/content/talents/gunner.ts`) and every bolt source — Bolt's volleys, Split via `shots`, Ricochet's bounce and Cover's back fan — so held-rank bolts linger 0.8 s (rank 1) or 1.2 s (rank 2) with 3 trailing ice streaks, and plain bolts are untouched. New unit tests cover the two-phase flight math and rank reading (`tests/drift.test.ts`). `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 26.3 min
+
+```
+.../game/src/content/projectiles/drift-bolt.ts     | 41 ++++++++++++++++++++++
+ .../game/src/content/projectiles/index.ts          |  2 ++
+ .../draft-arena/game/src/content/talents/gunner.ts |  1 +
+ .../draft-arena/game/src/content/upgrades/bolt.ts  |  5 ++-
+ .../draft-arena/game/src/content/upgrades/cover.ts |  9 +++--
+ .../draft-arena/game/src/content/upgrades/drift.ts | 18 ++++++++++
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ .../game/src/content/upgrades/ricochet.ts          | 13 +++++--
+ projects/draft-arena/game/tests/drift.test.ts      | 33 +++++++++++++++++
+ 9 files changed, 118 insertions(+), 6 deletions(-)
+```
