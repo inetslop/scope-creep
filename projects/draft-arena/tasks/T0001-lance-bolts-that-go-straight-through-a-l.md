@@ -3,13 +3,11 @@ id: T0001
 title: "Lance: bolts that go straight through a line of monsters"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T01:44:04Z
-claimed_at: 2026-10-31T01:50:57Z
 epic: E1
-designer: yoga
 ---
 
 ## Goal
@@ -37,3 +35,42 @@ A Gunner can punch a bolt through a line of monsters — each shot goes through 
 - [ ] A bolt that hits a player also continues on to the next enemy behind it (player takes half damage, as usual).
 - [ ] Without Lance, the Bolt is unchanged: a bolt stops at the first enemy it hits.
 - [ ] The Gunner tree keeps its shape: Haste and Lance both need nothing; Bolt still needs Haste 1; Split and Ricochet are untouched.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/upgrades/lance.ts` — the `lance` `UpgradeDef` (a pierce stat mod, same shape as `split.ts`)
+- edit `src/content/upgrades/index.ts` — one import line + one `UPGRADES` line
+- edit `src/content/talents/gunner.ts` — one talent line
+
+### Interfaces
+None — plain `UpgradeDef` data, no new types. `stats: { pierce: 1 }` uses the existing `Stats.pierce` key (engine/api.ts:182, "Added to the pierce of every projectile you fire").
+
+### Steps
+1. Create `src/content/upgrades/lance.ts` exactly:
+```ts
+import type { UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+export const lance: UpgradeDef = {
+  id: 'lance',
+  name: 'Lance',
+  description: 'Bolts go through 1 more enemy, per rank.',
+  maxLevel: 2,
+  look: { shape: 'diamond', color: PALETTE.blue },
+  stats: { pierce: 1 },
+};
+```
+   No `fire`/`cooldown`/`onHit` — a pure stat mod, exactly like `split.ts`. The engine applies `pierce` to every projectile a player fires, so it works with Bolt and any future projectile weapon, not areas.
+2. In `src/content/upgrades/index.ts`: add `import { lance } from './lance.ts';` after the `haste` import (keep alphabetical), and `  lance,` after `  split,` (stats section, beside the other projectile mod).
+3. In `src/content/talents/gunner.ts`, after the `haste` line add exactly: `    { id: 'lance', upgrade: 'lance', max: 2 },`. No `needs`, no `start` — it is a base talent beside Haste. Do not touch the `bolt`, `split` or `ricochet` lines.
+
+### Pitfalls
+- The text on its talent line is the upgrade's `description` (shown by the panel, as for every talent): 41 chars, well under `split`'s 71-char description that already fits at 412x915 — the Gunner tab's fullest state is 5 lines (Haste, Bolt, Split, Ricochet, Lance), no layout work needed.
+- `pierce: 1` is per level, not `+1`: rank 1 → pierce 1 (bolt hits 2 in a line), rank 2 → pierce 2 (hits 3). Do not write `pierce: 2` — that would fail rank-1 acceptance.
+- No `needs` on the talent line (a needs-less line must not get one); `max: 2` must stay ≤ `maxLevel: 2`.
+- No face on `look` (it is a talent icon, like `split`); no draw function needed.
+- One item per file: `lance.ts` holds only `lance`.
+
+### Tests
+none (engine/tests/ checks every upgrade and talent automatically, including real-match runs and talent reachability).
