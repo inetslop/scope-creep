@@ -31,10 +31,14 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-4 in the game, from game/src/content/directors/ (the real values).
+5 in the game, from game/src/content/directors/ (the real values).
 
 ### Gem rain (`gem-rain`)
 - description: "Every 75 s, 24 gems land in a ring around a random player."
+- tick: (code)
+
+### Gem geyser (`gem-geyser`)
+- description: "A spot bubbles, then drops a gem every second for 8 s. Hold it."
 - tick: (code)
 
 ### The crown (`crown`)

@@ -24,4 +24,14 @@ Each is one file in src/content/patterns/: `name` (at most 18 characters), `desc
 
 ## What exists now
 
-0 in the game, from game/src/content/patterns/ (the real values).
+2 in the game, from game/src/content/patterns/ (the real values).
+
+### Bands (`bands`)
+- description: Two light bands across the body.
+- price: 30
+- draw: (code)
+
+### Spots (`spots`)
+- description: Five dark dots on the body.
+- price: 30
+- draw: (code)

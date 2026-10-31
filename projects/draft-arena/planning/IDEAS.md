@@ -18,6 +18,11 @@ The backlog: add freely, turn the best into epics and tasks.
 - Shop card (E6): the start card's coin line opens the shop: patterns on top, accessories in rows by slot, the preview critter wears what you point at, Buy spends coins, and an out-of-reach item is stamped with its price.
 - Flee (E2): a small fast critter that runs from the nearest player; catch it for its gem — a crowd you chase, and it punishes a build that cannot close in. — T0020
 - Goober tree (E8): a fourth playstyle — your Goo, a big blue drop that fires at the nearest enemy and turns in flight to catch it; with it, Reap (extra damage on a half-dead target, any weapon), Gush (a slow puddle where your Goo kills) and the Scatter capstone (a Goo kill pops into four seekers). — T0030
+- Sleeper (E9): a deep pink rounded square that sleeps where it spawned; a player within 350 wakes it (eyes open 0.5 s first), it chases at 100 u/s, and it dozes off again after 10 s alone — a field of them is safe to cross, and camping a gem spot in one is a trap. — T0032
+- Jackpot (E10): every 150 s one big yellow gem, worth 25 xp, drops in the middle of the field and stays 20 s — a prize you go to, and a fight over it that shakes the scoreboard. — T0033
+- Bulwark (E9, later): a big tank with a shield that eats the first 30 hits and shatters into confetti — a front for a crowd, a target you have to crack first.
+- The shop's long goal (E6, later): a 300-coin hat — the first thing that takes many matches, the top of the shop.
+- Sound layer (later): a pop when a monster dies, a chime on a level-up, a coin tick in the shop — the game is quiet; sounds are the next juice.
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.

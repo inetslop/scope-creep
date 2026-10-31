@@ -28,6 +28,21 @@ A missing row gets the task rejected by the architect.
 
 ## What exists now
 
-0 in the game, from game/src/content/accessories/ (the real values).
+2 in the game, from game/src/content/accessories/ (the real values).
 
 **By `slot`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
+
+- `back`: Candy Pack
+- `face`: Round Glasses
+
+### Candy Pack (`candy-pack`)
+- description: A little green pack on the back.
+- slot: back
+- price: 100
+- draw: (code)
+
+### Round Glasses (`round-glasses`)
+- description: Round ink frames around the eyes.
+- slot: face
+- price: 80
+- draw: (code)
