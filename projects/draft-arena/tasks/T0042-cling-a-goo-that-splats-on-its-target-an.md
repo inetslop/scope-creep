@@ -3,11 +3,13 @@ id: T0042
 title: "Cling: a Goo that splats on its target and rides it"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T08:05:11Z
+claimed_at: 2026-10-31T08:32:36Z
 epic: E12
+designer: desktop
 ---
 
 ## Goal
