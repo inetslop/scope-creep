@@ -3,11 +3,13 @@ id: T0039
 title: "Pop: the first sound, a pop when a monster dies, pitched by its size"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T07:44:39Z
+claimed_at: 2026-10-31T08:05:14Z
 epic: E11
+designer: desktop
 ---
 
 ## Goal
