@@ -1,12 +1,14 @@
 ---
 id: T0002
 title: "Puff: a purple pentagon that pops into three Dots"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T01:44:04Z
+claimed_at: 2026-10-31T02:13:20Z
 epic: E2
 ---
 
