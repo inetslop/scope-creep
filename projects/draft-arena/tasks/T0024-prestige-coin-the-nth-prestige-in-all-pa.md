@@ -3,13 +3,14 @@ id: T0024
 title: "Prestige coin: the Nth prestige in all pays 25 x N coins"
 size: M
 priority: 1
-status: designing
+status: failed
 depends_on: [T0019]
 attempts: 0
 created: 2026-10-31T04:59:35Z
 claimed_at: 2026-10-31T05:31:50Z
+finished_at: 2026-10-31T05:34:48Z
 epic: E7
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -34,3 +35,7 @@ Prestiging is worth it: every prestige in all pays coins the moment it happens (
 - [ ] Bots get no coins from prestiging.
 - [ ] Right after, the player is at level 1 with only the free Bolt: the reward adds no hp, damage, speed, xp or talents.
 - [ ] A player knocked out before reaching level 18 gets no coins and no card.
+
+## Rejected by architect (desktop)
+
+the pay amount needs the player's prestiges in all on the server, but the frozen engine only exposes prestiges this life (player.prestige / onPrestige's count); the in-all count lives only in the client's browser profile and is never sent to the server, so it needs an engine change (join message carrying the profile's prestige count, exposed on Player).
