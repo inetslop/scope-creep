@@ -3,11 +3,13 @@ id: T0018
 title: "Spitter: an orange diamond that spits from a distance"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T03:51:35Z
+claimed_at: 2026-10-31T04:27:32Z
 epic: E2
+designer: desktop
 ---
 
 ## Goal
