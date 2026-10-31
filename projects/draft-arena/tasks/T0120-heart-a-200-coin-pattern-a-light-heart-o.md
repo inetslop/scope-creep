@@ -3,11 +3,13 @@ id: T0120
 title: "Heart: a 200-coin pattern, a light heart on the middle of the body"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T20:09:56Z
+claimed_at: 2026-10-31T20:18:59Z
 epic: E26
+designer: yoga
 ---
 
 ## Goal
