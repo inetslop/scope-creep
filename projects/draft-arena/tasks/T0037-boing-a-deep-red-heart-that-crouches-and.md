@@ -3,13 +3,14 @@ id: T0037
 title: "Boing: a deep red heart that crouches and leaps at where you are going"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T07:27:49Z
 claimed_at: 2026-10-31T08:11:46Z
+finished_at: 2026-10-31T08:14:35Z
 epic: E9
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -39,3 +40,7 @@ The 7th monster: a leaper that closes on a straight-line kiter, so running in a 
 - [ ] While touching a player it deals 16 damage per second; its hp is 16 and its radius 15, so a burst build can kill it in one volley during the crawl.
 - [ ] It spawns nothing and fires nothing: the field gains at most one monster per Boing.
 - [ ] In a crowd it reads at a glance: a deep red heart, distinct from every existing shape and color, with a visible crouch before every leap.
+
+## Rejected by architect (desktop)
+
+the comparison table omits the Sleeper, which moves and attacks the same way as the Boing (a stationary warning, then closing on the nearest player with touch damage) — add its row before this can be built.
