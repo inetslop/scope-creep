@@ -4,11 +4,12 @@ title: "Hive's Horn gets an attack of its own, not Gunner's straight shot"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T15:20:51Z
 claimed_at: 2026-10-31T16:58:37Z
+finished_at: 2026-10-31T17:15:07Z
 ---
 
 ## Goal
@@ -106,3 +107,16 @@ New-dart difference is mechanic, not numbers: no other weapon selects each enemy
 
 ### Tests
 none — the logic lives in a server hook and a straight projectile, both exercised automatically by `engine/tests/`; no new pure helpers in `src/`.
+
+## Result (attempt 1, inet-racing)
+
+The Hive tree's Horn now fires a crowd-sting: every 0.8 s it darts a small purple hexagon at each individual enemy within 150+25/rank range (nearest first, capped at 4+1/rank darts), 7+2/rank damage each at speed 460 — no other tree attacks per-target in all directions, and the hex look is unique among shots (was a teal triangle like Nerve). Changed only src/content/upgrades/horn.ts (new fire, description, look) and src/content/projectiles/horn.ts (purple hexagon, radius 6, life 0.5, straight flight); the id, talent line, Swarm/Nest/Sting and both registries are untouched.
+
+- Self-review: APPROVE
+- Time: 16.5 min
+
+```
+.../draft-arena/game/src/content/projectiles/horn.ts   |  8 ++++----
+ projects/draft-arena/game/src/content/upgrades/horn.ts | 18 +++++++++++-------
+ 2 files changed, 15 insertions(+), 11 deletions(-)
+```
