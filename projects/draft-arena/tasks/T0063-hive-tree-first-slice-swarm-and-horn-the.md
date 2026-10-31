@@ -3,11 +3,13 @@ id: T0063
 title: "Hive tree, first slice: Swarm and Horn, the more crowded the fight the harder you hit"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T12:00:08Z
+claimed_at: 2026-10-31T12:20:30Z
 epic: E16
+designer: inet-racing
 ---
 
 ## Goal
