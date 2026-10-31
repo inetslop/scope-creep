@@ -1,12 +1,14 @@
 ---
 id: T0009
 title: "Hide: take less damage, a second fork under Vigor"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T02:37:00Z
+claimed_at: 2026-10-31T03:04:51Z
 epic: E1
 ---
 
