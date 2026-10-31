@@ -59,6 +59,8 @@ The backlog: add freely, turn the best into epics and tasks.
 - Monocle (E21): a 150-coin face accessory — a gold lens over one eye with a thin chain to the cheek, the face slot's step between the 100-coin Beak and the 200-coin Heart Shades. — T0091
 - Bellow (E17): a Body prestige-gated talent — after 1 prestige this life, every 1.4 s a ring (radius 80) around you strikes everything within 60 (10 damage, +4 per rank): Maw keeps the front, the ring keeps the rest, so a second-life Body stands still in the middle of the swarm — every tree but Hive has a gated talent once it lands. — T0097
 - Star (E21): a 100-coin pattern — one light five-point star in the middle of the body, the pattern shelf's step past Lolly's 80, the shelf to 8. — T0098
+- Jaw (E20): a fat deep-red round blob (r26, hp 50, 55 u/s) that shuffles for you and, within 90, stops 0.6 s with its giant mouth open (facing locked) and bites a 100° cone (radius 85, 10 damage) in front of it — the dodge is strafing out of the locked wedge; it punishes standing still in a crowd and front-on kiting, the menagerie's last slot (back to 10). — E20: T0099
+- Burst (E16): a small low whump (200→130 Hz, 0.1 s, peak 0.05, one per 200 ms) when the Sting capstone bursts a crowded corpse — the Hive's signature kill lands by ear, under the normal pop. — T0100
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.

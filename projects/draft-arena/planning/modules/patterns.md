@@ -24,7 +24,7 @@ Each is one file in src/content/patterns/: `name` (at most 18 characters), `desc
 
 ## What exists now
 
-6 in the game, from game/src/content/patterns/ (the real values).
+7 in the game, from game/src/content/patterns/ (the real values).
 
 ### Bands (`bands`)
 - description: Two light bands across the body.
@@ -54,4 +54,9 @@ Each is one file in src/content/patterns/: `name` (at most 18 characters), `desc
 ### Diagonal (`diagonal`)
 - description: "Two light diagonal stripes across the body."
 - price: 60
+- draw: (code)
+
+### Lolly (`lolly`)
+- description: A light lollipop swirl across the body.
+- price: 80
 - draw: (code)
