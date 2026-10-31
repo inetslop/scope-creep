@@ -3,11 +3,13 @@ id: T0045
 title: "Boing: a deep red heart that crouches, then leaps to where you're going"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T08:32:32Z
+claimed_at: 2026-10-31T09:02:39Z
 epic: E9
+designer: desktop
 ---
 
 ## Goal
