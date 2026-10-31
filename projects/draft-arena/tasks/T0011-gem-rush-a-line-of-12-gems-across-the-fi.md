@@ -4,11 +4,12 @@ title: "Gem rush: a line of 12 gems across the field, first touch takes all"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T03:16:43Z
 claimed_at: 2026-10-31T04:11:10Z
+finished_at: 2026-10-31T05:28:13Z
 epic: E3
 ---
 
@@ -130,3 +131,22 @@ export const gemRush: DirectorDef = {
 
 ### Tests
 - none (the engine tests run every director in a 3-minute match, the 60-player budget and the load check automatically).
+
+## Result (attempt 1, yoga)
+
+Added the Gem rush director (`src/content/directors/gem-rush.ts`, registered after gem rain in `directors/index.ts`): every 100 s from 50 s, twelve standard `gem` pickups lay themselves one every 0.5 s along a random straight line (825 units long, fully ≥200 units inside the field edges); the first player to touch any one of them takes all twelve at once — 12 xp in a single grab paid by the director (gems are dropped with value 0 so the pickup's own collect adds nothing), the not-yet-laid gems appear at the grabber and are auto-collected, and rival pulls (e.g. a magnet's longer range) can't steal the take-all. An unclaimed line just sits as ordinary touch-collected gems, and gem rain runs unchanged. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: NO VERDICT
+- Time: 77.1 min
+
+```
+.../game/src/content/directors/gem-rush.ts         | 66 ++++++++++++++++++++++
+ .../game/src/content/directors/index.ts            |  2 +
+ 2 files changed, 68 insertions(+)
+```
+
+## Merge (attempt 1, yoga)
+
+- Conflicts in: projects/draft-arena/game/src/content/directors/index.ts
+- Auto-resolved 2 spot(s) where both sides only added lines (clean: projects/draft-arena/game/src/content/directors/index.ts).
+- Resolved without the conflict agent.
