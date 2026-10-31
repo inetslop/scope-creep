@@ -3,13 +3,14 @@ id: T0060
 title: "Hive tree: a sixth playstyle, the harder you hit the more crowded the fight is"
 size: L
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T11:40:36Z
 claimed_at: 2026-10-31T11:40:39Z
+finished_at: 2026-10-31T11:49:09Z
 epic: E16
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -133,3 +134,7 @@ Sting vs the other on-hit and on-kill effects:
 - [ ] Killing an enemy with 2 other enemies within 100 gives the killer +12% damage for 10 s at Nest 1, refreshed on the next such kill; at Nest 4 the cap is 6 stacks.
 - [ ] With Horn 3 and Nest 2, a kill with 2+ other enemies within 80 of the victim plays the teal ring (radius 80, 12 damage to everything inside, monsters and players).
 - [ ] A fresh life starts as a nomad with Bolt only, with no Hive ranks.
+
+## Rejected by architect (desktop)
+
+The "Compared with what exists" tables for Swarm, Nest, and Sting are each missing a row for Fang (src/content/upgrades/fang.ts), the game's seventh on-kill upgrade — add the Fang rows and reissue.
