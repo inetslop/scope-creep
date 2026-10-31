@@ -1,14 +1,14 @@
 ---
 id: T0309
 title: "The Feeder: the enemy that speeds the group around it"
-assignee: cachyos-x8664
 size: M
 priority: 1
-status: in-progress
+status: todo
 depends_on: []
 attempts: 2
 created: 2026-10-30T21:36:17Z
 claimed_at: 2026-10-30T23:56:07Z
+finished_at: 2026-10-31T00:51:32Z
 ---
 
 ## Goal
@@ -167,6 +167,14 @@ export function speedFactor(slowPct: number, hastePct: number, feedMul: number):
 - `tests/core/feed.test.ts` and `tests/systems/feed.test.ts` (new, as in steps 7-8); edits to `tests/core/waves.test.ts` (step 9).
 
 ## Attempt 1 failed (cachyos-x8664)
+
+The agent made no changes to the game (success).
+
+```
+Prompt is too long · automatic compaction failed: API Error: Claude's response exceeded the 22528 output token maximum. To configure this behavior, set the CLAUDE_CODE_MAX_OUTPUT_TOKENS environment variable.
+```
+
+## Attempt 2 failed (cachyos-x8664)
 
 The agent made no changes to the game (success).
 
