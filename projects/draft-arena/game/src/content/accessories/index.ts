@@ -7,6 +7,7 @@ import { candyCane } from './candy-cane.ts';
 import { chefHat } from './chef-hat.ts';
 import { cherry } from './cherry.ts';
 import { medal } from './medal.ts';
+import { lollipop } from './lollipop.ts';
 import { cone } from './cone.ts';
 import { roundGlasses } from './round-glasses.ts';
 import { bowTie } from './bow-tie.ts';
@@ -36,4 +37,5 @@ export const ACCESSORIES: readonly AccessoryDef[] = [
   partyBlower,
   candyCane,
   medal,
+  lollipop,
 ];

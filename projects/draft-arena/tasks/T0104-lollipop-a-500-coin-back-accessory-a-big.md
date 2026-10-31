@@ -4,11 +4,12 @@ title: "Lollipop: a 500-coin back accessory, a big green lollipop with a white s
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T17:29:12Z
 claimed_at: 2026-10-31T18:00:02Z
+finished_at: 2026-10-31T18:36:23Z
 epic: E22
 ---
 
@@ -110,3 +111,17 @@ export const lollipop: AccessoryDef = {
 - Keep the `index.ts` diff to exactly two lines — T0101/T0102 add their own lines to the same file.
 ### Tests
 `tests/lollipop.test.ts` (step 3, mirror of `tests/medal.test.ts`). No other tests: no pure helpers are added.
+
+## Result (attempt 1, yoga)
+
+Added the Lollipop — the back slot's 500-coin top: a new file `src/content/accessories/lollipop.ts` (green disc, 1.2 radii across, at one radius above the centre line on the right of the back, on a short ink stick up to the disc's lower edge, with a 2-turn white swirl in the Lolly pattern's light shade `shade(PALETTE.green, 0.35)`, ink-outlined, bobbing at 0.06r/2.5 — slower and smaller than the Balloon's 0.15r/6) plus one import and one registry line in `src/content/accessories/index.ts`, and `tests/lollipop.test.ts` mirroring the medal's test (back slot, 500 coins, `prestige: 2`). One deviation from the design: its exact description string is 78 characters, over the content test's 70-character limit for descriptions, so it reads "A big green lollipop with a white swirl. Needs 2 prestiges in all." (66 chars) — the lock sentence is kept exactly, and the buy button's "Needs 2 prestiges" comes from the engine off `prestige: 2` unchanged.
+
+- Self-review: APPROVE
+- Time: 36.4 min
+
+```
+.../game/src/content/accessories/index.ts          |  2 +
+ .../game/src/content/accessories/lollipop.ts       | 50 ++++++++++++++++++++++
+ projects/draft-arena/game/tests/lollipop.test.ts   | 15 +++++++
+ 3 files changed, 67 insertions(+)
+```
