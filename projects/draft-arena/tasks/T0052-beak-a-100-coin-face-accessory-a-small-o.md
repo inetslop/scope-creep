@@ -4,11 +4,12 @@ title: "Beak: a 100-coin face accessory, a small orange beak below the eyes"
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-10-31T10:32:35Z
 claimed_at: 2026-10-31T11:12:10Z
+finished_at: 2026-10-31T11:25:01Z
 ---
 
 ## Goal
@@ -97,4 +98,17 @@ error: cannot lock ref 'refs/remotes/origin/main': is at 2e828cdd9ded203493331d5
     at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:260:5)
     at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
     at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
+
+## Result (attempt 2, asus)
+
+Added the Beak face accessory (src/content/accessories/beak.ts) — a small solid orange triangle with an ink outline at face center, below the eyes and above the mouth, with a tiny time/seed bounce, priced at 100 coins with no prestige gate — and registered it in src/content/accessories/index.ts next to the other face items. The shop, hats card, bot wearing and profile persistence pick it up from the registry with no other edits; it changes nothing in play. npm run check and npm run smoke both pass.
+
+- Self-review: APPROVE
+- Time: 12.9 min
+
+```
+.../game/src/content/accessories/beak.ts           | 25 ++++++++++++++++++++++
+ .../game/src/content/accessories/index.ts          |  2 ++
+ 2 files changed, 27 insertions(+)
 ```
