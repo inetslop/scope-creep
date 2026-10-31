@@ -10,6 +10,7 @@ import { fang } from './fang.ts';
 import { frenzy } from './frenzy.ts';
 import { fuse } from './fuse.ts';
 import { goo } from './goo.ts';
+import { gore } from './gore.ts';
 import { gush } from './gush.ts';
 import { haste } from './haste.ts';
 import { hide } from './hide.ts';
@@ -53,6 +54,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   chomp,
   adrenaline,
   fang,
+  gore,
   fuse,
   scatter,
   gush,

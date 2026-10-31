@@ -4,11 +4,12 @@ title: "Gore: a Frenzy talent, the Nerve jab goes through enemies while you are 
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T13:48:21Z
 claimed_at: 2026-10-31T15:37:23Z
+finished_at: 2026-10-31T15:46:34Z
 epic: E17
 ---
 
@@ -106,3 +107,20 @@ That is the whole build. Everything else is existing: the `jab` projectile (`src
 - `npm run check` — typecheck + lint + tests: one item per file and registered, valid data (`max: 2` ≤ `maxLevel: 2`), the talent in the Frenzy tree, reachable (Nerve 2 in-tree, 3 points spent, prestige gate), every upgrade in a tree, no upgrade's ranks sum past its `maxLevel`.
 - `npm run smoke` — offline bots: a player with Gore rank 1 below half hp — jab hits the first monster, keeps flying, hits the second in its line (rank 2: 3); at/above half hp the same jab is gone on its first hit; a jab that pierced a monster still hits the player behind it at half damage; the 60-player budget holds with the jab unchanged (straight shot, no per-tick cost).
 - Readability: the wound collar (the existing `wound` director) is visible on your critter exactly when the jab pierces — no new UI to verify beyond it.
+
+## Result (attempt 1, desktop)
+
+Added the Gore upgrade (`src/content/upgrades/gore.ts`, maxLevel 2): an on-hit hook that, at the first hit of a Nerve jab while the player is below half hp, extends that jab's pierce by one per rank (armed once per jab via the projectile's server-only `mem`), so rank 1 jabs hit 2 enemies in a line and rank 2 hit 3. Registered it in `src/content/upgrades/index.ts` (import between goo and gush, one line in UPGRADES in the Frenzy cluster) and added its one-line prestige-gated talent (`needs nerve 2, points 3, prestige 1`) after fang in `src/content/talents/frenzy.ts`. The wound director's existing red collar doubles as the "pierce is live" tell; the jab projectile and Nerve weapon are untouched, so jabs cost no more bandwidth than before.
+
+- Self-review: APPROVE
+- Time: 9.2 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/draft-arena/game/src/content/areas/wound.ts    |  4 ++--
+ .../draft-arena/game/src/content/directors/wound.ts     |  4 ++--
+ projects/draft-arena/game/src/content/talents/frenzy.ts |  1 +
+ projects/draft-arena/game/src/content/upgrades/gore.ts  | 17 +++++++++++++++++
+ projects/draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ 5 files changed, 24 insertions(+), 4 deletions(-)
+```

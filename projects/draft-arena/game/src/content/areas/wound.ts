@@ -4,8 +4,8 @@ import { RULES } from '../rules.ts';
 
 /**
  * The wound: a thin red collar with an ink rim, 8 units outside the body, on any critter below
- * half hp. The wound director (directors/wound.ts) re-fires it every tick for every critter at
- * or below half: the sweep shrinks with the hp (240 deg at half max hp, nothing at zero), the
+ * half hp. The wound director (directors/wound.ts) re-fires it every tick while its hp is below
+ * half: the sweep shrinks with the hp (240 deg at half max hp, nothing at zero), the
  * top 120 deg stays open over the head so hats, the crown, the mark's ring and the prestige
  * stars all read on top of it.
  */
