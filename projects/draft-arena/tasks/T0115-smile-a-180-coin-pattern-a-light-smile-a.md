@@ -4,11 +4,12 @@ title: "Smile: a 180-coin pattern, a light smile across the lower body"
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T19:06:11Z
 claimed_at: 2026-10-31T19:26:35Z
+finished_at: 2026-10-31T19:38:01Z
 epic: E26
 ---
 
@@ -83,3 +84,16 @@ export const smile: PatternDef = {
 
 ### Tests
 - none (engine/tests/ covers the shelf's name, price, description and the draw automatically, like `ring.ts` has no test file)
+
+## Result (attempt 1, asus)
+
+Added the 11th pattern on the cosmetics shelf, **Smile** (180 coins, no prestige), a light turned-up arc across the lower body in the player's own lightened color (`shade(w.color, 0.35)`), in a new file `src/content/patterns/smile.ts` plus one import and one registry line after Ring in `src/content/patterns/index.ts`. It appears in the Cosmetics panel, the preview, and on bots in-match with no gameplay effect; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 11.4 min
+
+```
+.../draft-arena/game/src/content/patterns/index.ts     |  2 ++
+ .../draft-arena/game/src/content/patterns/smile.ts     | 18 ++++++++++++++++++
+ 2 files changed, 20 insertions(+)
+```
