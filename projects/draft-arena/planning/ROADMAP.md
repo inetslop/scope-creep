@@ -108,7 +108,7 @@ Breakdown:
 - T0038 M — The mark: a random player wears a red target for 15 s, the kill pays 20 xp and 5 coins — done
 Done: six events, the cap — a windfall, a threat, a race, a position, a prize in the middle, and a marked hunt.
 
-## E11 Sound (active)
+## E11 Sound (done)
 Goal: the field is silent; every big moment gets a short candy sound, so a fight is readable by ear and the pops sound like the things that pop.
 Done when: a monster pop, a level-up and a coin each have a sound, on desktop and mobile, quiet enough to sit under the action.
 Breakdown:
@@ -117,28 +117,37 @@ Breakdown:
 - T0041 S — Coin: a coin tick when a coin is picked up or spent — done
 - T0049 S — Bonk: a deep thud when a player is knocked out — done
 - T0050 S — Fanfare: a rising three-note fanfare when a player prestiges — done
-- T0051 S — Toot: a party-horn toot when the crown flies off — designing
-Next: done once T0050 and T0051 build: a pop, a level-up, a coin, a knockout, a prestige and a crown fall each have a sound.
+- T0051 S — Toot: a party-horn toot when the crown flies off — done
+Done: a pop, a level-up, a coin, a knockout, a prestige and a crown fall each have a sound.
 
-## E12 The Goober grows (active)
+## E12 The Goober grows (done)
 Goal: the fourth tree deepens: under Goo it forks three ways — a Goo that sticks to its target, a Gush puddle that bites, and the scatter that exists — so a Goober life picks a direction instead of buying the same four talents.
 Done when: the tree has six talents with a real fork under Goo, each readable in a crowd.
 Breakdown:
 - T0042 M — Cling: a Goo that splats on its target and rides it, damage every 0.5 s — done
-- T0043 M — Chew: your Gush puddle deals damage to whatever stands in it — in progress
-Next: done once T0042 and T0043 build: the Goober fork is real — sticky, zone or scatter.
+- T0043 M — Chew: your Gush puddle deals damage to whatever stands in it — done
+Done: the Goober fork is real — sticky, zone or scatter.
 
-## E13 The Frenzy tree (active)
+## E13 The Frenzy tree (done)
 Goal: a fifth playstyle, thin and mean: Frenzy trades max HP for damage, and the more hurt a player is, the harder they hit — a life that wants to stay at half HP instead of playing safe.
 Done when: the Frenzy tree is in the panel with its trade-off mod, its hurt-scaled jab, its low-HP sprint and its low-HP capstone, each readable in a crowd.
 Breakdown:
 - T0053 L — Frenzy tree: Frenzy, Nerve, Sprint, Reckless — failed (the engine can't express Sprint's below-half-hp per-rank speed; Adrenaline replaces it)
-- T0054 L — Frenzy tree: Frenzy, Nerve, Adrenaline, Reckless — design
-Next: done once T0054 builds: the tree is in the panel — trade hp for damage, a hurt-scaled jab, a kill-sprint while hurt, a double-hit capstone.
+- T0054 L — Frenzy tree: Frenzy, Nerve, Adrenaline, Reckless — done
+Done: the tree is in the panel — trade hp for damage, a hurt-scaled jab, a kill-sprint while hurt, a double-hit capstone.
 
 ## E14 A meaner menagerie (active)
 Goal: the crowd gains a 9th, then a 10th, way to threaten you — monsters that make the kill itself a choice, each readable at a glance (the cap is 10 types).
 Done when: the 9th monster is in the field with a behavior no other has.
 Breakdown:
-- T0055 M — Popper: a fat grinning red blob that pops a damaging puff when it dies — design
-Next: the 10th (and last) monster once Popper proves out; depth in E13 (a fork under Nerve) after T0054.
+- T0055 M — Popper: a fat grinning red blob that pops a damaging puff when it dies — designing
+Next: the 10th (and last) monster once Popper proves out.
+
+## E15 The Frenzy grows (active)
+Goal: the fifth tree deepens: the hurt state the whole tree pays out on becomes visible on the field, and Nerve forks two ways — a coin branch and a sustain branch — so a Frenzy life picks a direction instead of buying the same four talents.
+Done when: a hurt critter shows its wound on the field, and the tree has six talents with a real fork under Nerve.
+Breakdown:
+- T0057 M — The wound: a red collar arc around any critter below half hp — design
+- T0058 S — Fang: kills pay extra coins while below half hp — design
+- T0059 S — Mend: a Nerve hit heals the more hurt you are — design
+Next: done once T0057–T0059 build: the Frenzy state reads at a glance, and the tree forks — run, feed or heal while hurt.

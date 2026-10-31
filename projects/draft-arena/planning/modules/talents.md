@@ -39,7 +39,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-4 in the game, from game/src/content/talents/ (the real values).
+5 in the game, from game/src/content/talents/ (the real values).
 
 ### Gunner (`gunner`)
 - description: Your Bolt, faster and in volleys.
@@ -81,5 +81,15 @@ The owner removed these. Don't propose them again, or anything that works the sa
   - id reap, upgrade reap, max 3
   - id goo, upgrade goo, max 3, needs [["reap",1]]
   - id gush, upgrade gush, max 3, needs [["goo",1]]
+  - id chew, upgrade chew, max 3, needs [["gush",3]]
   - id cling, upgrade cling, max 3, needs [["goo",2]]
   - id scatter, upgrade scatter, max 1, needs [["goo",3]]
+
+### Frenzy (`frenzy`)
+- description: "Thin and mean: the more hurt you are, the harder you hit."
+- look: shape diamond, color #ff6b6b
+- talents:
+  - id frenzy, upgrade frenzy, max 3
+  - id nerve, upgrade nerve, max 3, needs [["frenzy",1]]
+  - id adrenaline, upgrade adrenaline, max 2, needs [["nerve",2]]
+  - id reckless, upgrade reckless, max 1, needs [["nerve",3],["frenzy",3]]

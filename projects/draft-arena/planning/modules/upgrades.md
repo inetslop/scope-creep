@@ -37,13 +37,14 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-23 in the game, from game/src/content/upgrades/ (the real values).
+28 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
 - `area`: Wide
 - `armor`: Hide
 - `cooldown`: Haste
+- `damage + maxHp`: Frenzy
 - `damage + shots`: Split
 - `damage`: Might
 - `maxHp + regen`: Vigor
@@ -80,10 +81,23 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - cooldown: 1.6
 - fire: (code)
 
+### Nerve (`nerve`)
+- description: "Every 0.8 s, a jab at the nearest enemy within 180. Hits harder the more hurt you are: +1 damage per 10 hp missing. Each rank: +2 damage."
+- maxLevel: 3
+- look: shape diamond, color #99e9f2
+- cooldown: 0.8
+- fire: (code)
+
 ### Ricochet (`ricochet`)
 - description: "Bolts that hit bounce on to another enemy nearby."
 - maxLevel: 1
 - look: shape star, color #ffd43b, scale 1.1
+- onHit: (code)
+
+### Reckless (`reckless`)
+- description: "While below half your hp, your hits hit twice as hard."
+- maxLevel: 1
+- look: shape circle, color #ff6b6b
 - onHit: (code)
 
 ### Chill (`chill`)
@@ -104,6 +118,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - look: shape pentagon, color #51cf66
 - onKill: (code)
 
+### Adrenaline (`adrenaline`)
+- description: "On a kill while below half your hp: +20% move speed for 1.5 s, refreshed on each kill. Rank 2: +30% for 2 s."
+- maxLevel: 2
+- look: shape star, color #ff6b6b
+- onKill: (code)
+
 ### Fuse (`fuse`)
 - description: "When your bubble kills something, it pops into a ring (radius 50) that deals 10 damage."
 - maxLevel: 1
@@ -120,6 +140,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - description: "When a Goo kills, a puddle marks the spot: 40 units around it, 20% slower for 1.5 s, refreshed while in it. Each rank: +10 radius."
 - maxLevel: 3
 - look: shape hexagon, color #38d9a9
+- onKill: (code)
+
+### Chew (`chew`)
+- description: "Whatever stands in your Gush puddle takes 6 damage every 0.5 s. Per rank: +6 damage."
+- maxLevel: 3
+- look: shape diamond, color #38d9a9
 - onKill: (code)
 
 ### Slush (`slush`)
@@ -176,6 +202,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - maxLevel: 5
 - look: shape circle, color #51cf66
 - stats: maxHp 25, regen 0.8
+
+### Frenzy (`frenzy`)
+- description: Trade 8 max hp for 12% damage, per rank.
+- maxLevel: 3
+- look: shape pentagon, color #ff6b6b
+- stats: maxHp -8, damage 0.12
 
 ### Hide (`hide`)
 - description: Take 10% less damage, per rank.
