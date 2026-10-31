@@ -3,13 +3,11 @@ id: T0101
 title: "Cherry: a 450-coin head accessory, a red cherry with a green stem"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:06:34Z
-claimed_at: 2026-10-31T17:06:57Z
 epic: E22
-designer: yoga
 ---
 
 ## Goal
@@ -34,3 +32,71 @@ The head slot gets its top item — the shop's first head long goal: a red cherr
 - [ ] The Cosmetics panel's head row shows the Cherry last at 450 coins; before the profile has 1 prestige in all it is stamped "Needs 1 prestige in all" and can't be bought, and after it, it buys for 450 coins.
 - [ ] Worn, the player's critter in the match shows the red cherry with the green stem on the head: the eyes stay clear, the name above the head is not covered, and bots can wear it at random.
 - [ ] Buying, wearing and taking it off are kept for the next visit, and it changes nothing in play.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/accessories/cherry.ts` — the Cherry head accessory (`AccessoryDef`), modelled on `bloom.ts`
+- edit `src/content/accessories/index.ts` — one import + one registry line, both after the chef-hat line
+
+### Interfaces
+- No new types. `cherry: AccessoryDef` exported from `cherry.ts`:
+```ts
+id: 'cherry'; name: 'Cherry';
+description: 'A red cherry with a green stem on the head. Needs 1 prestige in all.';
+slot: 'head'; price: 450; prestige: 1;
+```
+
+### Steps
+1. Write `src/content/accessories/cherry.ts` exactly (same imports as `bloom.ts`):
+```ts
+/** A red cherry with a green stem resting on the top of the head, slightly off-centre. */
+export const cherry: AccessoryDef = {
+  id: 'cherry',
+  name: 'Cherry',
+  description: 'A red cherry with a green stem on the head. Needs 1 prestige in all.',
+  slot: 'head',
+  price: 450,
+  prestige: 1,
+  draw(g, w) {
+    const r = w.radius;
+    const s = 1 + 0.05 * Math.sin(w.time * 2 + w.seed * 6.283);
+    const cx = 0.12 * r;
+    const cy = -1.25 * r;
+    g.lineCap = 'round';
+    // The green stem out of the top of the ball: an ink curve, then the green on top.
+    for (const [lw, style] of [[0.25 * r, w.ink], [0.09 * r, PALETTE.green]]) {
+      g.lineWidth = lw;
+      g.strokeStyle = style;
+      g.beginPath();
+      g.moveTo(cx, (cy - 0.15) * r);
+      g.quadraticCurveTo(cx + 0.05 * r, cy - 0.55 * r, cx + 0.24 * r, cy - 0.62 * r);
+      g.stroke();
+    }
+    // The red ball, over the stem's base.
+    g.beginPath();
+    g.arc(cx, cy, 0.25 * r * s, 0, Math.PI * 2);
+    g.fillStyle = PALETTE.red;
+    g.fill();
+    g.lineWidth = 0.08 * r;
+    g.strokeStyle = w.ink;
+    g.stroke();
+    // One small white shine.
+    g.beginPath();
+    g.arc(cx - 0.09 * r, cy - 0.1 * r, 0.06 * r, 0, Math.PI * 2);
+    g.fillStyle = PALETTE.white;
+    g.fill();
+  },
+};
+```
+2. In `src/content/accessories/index.ts`: add `import { cherry } from './cherry.ts';` after the `chefHat` import, and `cherry,` after the `chefHat,` line in `ACCESSORIES` (head row then reads 0, 0, 120, 150, 300, 450, price-ascending in the shop).
+3. Run `npm run check`; content tests cover it automatically (registered, drawn in a match, bots dress in it).
+
+### Pitfalls
+- Draw the ball after the stem so the ball's ink stroke joins the stem cleanly (one shared outline, no crossing lines).
+- Stay within the head budget: ball rests at `y = -1.25r` (top of head is `-r`), stem tip at `-1.87r`, never past `-2r` (name sits above that); nothing near the eyes.
+- Animate only from `w.time`/`w.seed` (no `Math.random`); scale bounce 5%, under the 20% cap.
+- `description` must keep the exact "Needs 1 prestige in all." text; the shop's "needs a prestige" stamp comes from the engine's `cantBuy` via the `prestige: 1` field (like `medal.ts`).
+
+### Tests
+none
