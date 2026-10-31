@@ -1,14 +1,14 @@
 ---
 id: T0061
 title: "Prestige banks a point: each prestige this life banks +1 talent point"
-assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-31T11:40:36Z
 claimed_at: 2026-10-31T11:47:33Z
+finished_at: 2026-10-31T12:00:31Z
 epic: E17
 ---
 
@@ -123,3 +123,18 @@ export const prestige: MakeHudPart = (root) => {
 
 ### Tests
 none (engine/tests/ already runs every director's `onPrestige` in a match; persistence/reset/knockout behavior is the engine's own `givePoints`, which sim.test.ts covers).
+
+## Attempt 1 failed (desktop-4070)
+
+The agent reported it is blocked: engine/tests/sim.test.ts:77 hardcodes 2 points granted by onPrestige and must expect 3 with this content in place, but engine/ is frozen and test expectations may not be weakened.
+- Deleted src/content/directors/prestige-points.ts, as the agent asked.
+
+```
+All three modified files are reverted to their exact original content. The only remaining trace of my work is the newly created `src/content/directors/prestige-points.ts` — since I can't `rm` it myself, I'm listing it for the runner to delete so the tree ends with no changes at all.
+
+SUMMARY: Implemented T0061 exactly per the design (new `prestige-points` director banking +1 talent point via `ctx.givePoints` on `onPrestige`, human-only, plus the two-line prestige card in `src/hud/prestige.ts`/`.css` and its registry line) and found it collides with a frozen check: `engine/tests/sim.test.ts:77` runs all `CONTENT.directors` plus its own test director and hardcodes `pendingPicks === 2` ("the points onPrestige gave") — i.e. it assumes no content grants points at prestige, so any correct implementation of this task makes that assertion receive 3 and fail `npm run check`. The engine itself fully supports the feature (`givePoints` → `pendingPicks`, pulse, reset-survival and knockout-loss are all engine behavior as the design notes); the only fix is updating that one expected number in `engine/tests/sim.test.ts` (2 → 3), which requires an unfrozen `engine/`. I would not route around it by banking the point a tick late — the design explicitly forbids that and it would break "spendable at the moment of the prestige" plus knockout/reset parity with other banked points. Reverted all four files per the blocked protocol; once `engine/tests/sim.test.ts:77` expects 3, the designed four-file change is ready to apply as-is.
+
+STATUS: BLOCKED: engine/tests/sim.test.ts:77 hardcodes 2 points granted by onPrestige and must expect 3 with this content in place, but engine/ is frozen and test expectations may not be weakened.
+
+DELETE: src/content/directors/prestige-points.ts
+```
