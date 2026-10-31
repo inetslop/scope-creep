@@ -3,11 +3,13 @@ id: T0132
 title: "The double knot: a second feud between the same pair wears a second knot and pays double"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0130]
 attempts: 0
 created: 2026-10-31T22:29:04Z
+claimed_at: 2026-10-31T22:29:08Z
 epic: E30
+designer: desktop
 ---
 
 ## Goal
