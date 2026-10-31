@@ -3,11 +3,13 @@ id: T0044
 title: "Halves: a two-tone pattern, the top of the body lighter"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T08:05:11Z
+claimed_at: 2026-10-31T08:32:17Z
 epic: E6
+designer: yoga
 ---
 
 ## Goal
