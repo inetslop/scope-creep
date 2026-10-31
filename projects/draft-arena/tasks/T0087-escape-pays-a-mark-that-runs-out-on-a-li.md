@@ -4,11 +4,12 @@ title: "Escape pays: a mark that runs out on a living player banks 5 coins"
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T15:05:01Z
 claimed_at: 2026-10-31T18:01:10Z
+finished_at: 2026-10-31T18:11:10Z
 epic: E19
 ---
 
@@ -80,3 +81,16 @@ None. No new types, defs, files or registries. The pay reuses the existing `coin
 
 ### Tests
 - none (the mark director is exercised in a real match by engine/tests/ automatically)
+
+## Result (attempt 1, asus)
+
+A mark that expires while its marked player is still alive now banks 5 coins for them — a `coin` pickup dropped at their feet, collected at once, so the existing candy pop, coin chip and tick read the pay. Applied in the mark director's expiry path (`src/content/directors/mark.ts`), guarded to humans only (`!gone.bot`), with a separate `ESCAPE_COINS` constant so the kill bonus can be tuned independently. The knock-out path, cadence, duration, speed bonus and ring are unchanged; no new HUD element, sound or effect.
+
+- Self-review: APPROVE
+- Time: 10.0 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/draft-arena/game/src/content/directors/mark.ts | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
+```

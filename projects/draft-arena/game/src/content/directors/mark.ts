@@ -6,13 +6,15 @@ const DURATION = 15;
 const RING = 26; // the ring's radius, and the pop/burst size
 const BONUS_XP = 20;
 const BONUS_COINS = 5;
+const ESCAPE_COINS = 5;
 
 /**
  * The mark: a random living player (human or bot, never the same one twice in a row when two or
  * more are alive) is marked for 15 s - a red target ring (areas/mark.ts) and +35% speed
  * (statuses/marked.ts). A player knockout pays 20 xp and 5 coins on top of the normal bounty,
- * with a burst where the ring was; a monster kill or an expired mark pops the ring into confetti
- * and pays nothing. It adds no monsters and no pickups.
+ * with a burst where the ring was; a monster kill pops the ring into confetti and pays nothing;
+ * an expired mark banks 5 coins for the marked player if they are still alive (humans only),
+ * as the existing coin pickup at their feet. It adds no monsters.
  */
 export const mark: DirectorDef = {
   id: 'mark',
@@ -28,7 +30,10 @@ export const mark: DirectorDef = {
       const gone = ctx.playerById(mem.mark); // expired: they are still alive (a kill clears mem first)
       mem.mark = 0;
       mem.until = 0;
-      if (gone) ctx.effect('pop', spot(gone), undefined, RING);
+      if (gone) {
+        ctx.effect('pop', spot(gone), undefined, RING);
+        if (!gone.bot) ctx.dropPickup('coin', gone.x, gone.y, ESCAPE_COINS);
+      }
     }
     if (ctx.time < (mem.next ?? FIRST)) return;
     mem.next = ctx.time + EVERY;
