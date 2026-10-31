@@ -22,7 +22,7 @@ It goes into the shared pool: any machine that takes size {{TASK_SIZE}} tasks ma
    - an upgrade that is an existing upgrade with other numbers, or that only matters under conditions the game doesn't have;
    - a mod (a stat, on-hit or on-kill) without a line for every weapon in the game, or a weapon that doesn't say which mods apply to it (pierce and shots only touch projectiles);
    - a talent that doesn't belong to its tree's playstyle, a capstone that asks for no real commitment, or a new tree that is another tree's playstyle with other numbers;
-   - a task that goes past a cap (10 monster types, 10 talents in a tree, 6 trees, 6 events, 10 accessories per slot, 12 patterns) without removing or merging one;
+   - a task that goes past a cap (10 monster types, 10 talents in a tree, 12 trees, 6 events, 10 accessories per slot, 12 patterns) without removing or merging one;
    - an accessory, pattern or shop item that changes play (stats, size, talents), an accessory that covers the eyes, or a new accessory or pattern without its "## Compared with what exists" table (every accessory in its slot, every pattern);
    - a prestige reward that gives back the power the reset took;
    - a new monster, upgrade, tree or event without a "## Compared with what exists" table, or with a row missing. Check the table against the content files yourself, every file, not only the ones it names: for a monster, every monster that moves or attacks the same way; for an upgrade, every upgrade of its kind (every weapon, every onHit/onKill, every upgrade with the same `stats` keys); for a tree, every tree; for an event, every director. Reject when a row is missing or a difference is only numbers (damage, cooldown, range, hp, speed, a count);
