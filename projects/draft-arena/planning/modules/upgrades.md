@@ -39,7 +39,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-41 in the game, from game/src/content/upgrades/ (the real values).
+42 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -226,6 +226,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - maxLevel: 3
 - look: shape star, color #ffd43b
 - onKill: (code)
+
+### Glide (`glide`)
+- description: "While 3+ enemies are within 80 of you, you move 20% faster, refreshed on each of your hits, 1.5 s. Rank 2: 30% for 2 s."
+- maxLevel: 2
+- look: shape triangle, color #ffd43b
+- onHit: (code)
 
 ### Cling (`cling`)
 - description: "When your Goo hits, it splats on its target and clings for 2 s, dealing 5 damage every 0.5 s. Per rank: +5 damage per tick."

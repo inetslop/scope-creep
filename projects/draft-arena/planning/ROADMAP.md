@@ -3,265 +3,101 @@
 Epics are the main work: one or two active at a time, each broken into playable slices (task ids once written). Content-only: anything that needs the engine changed goes to IDEAS.md under "Needs the engine".
 
 ## E1 New talent trees (done)
-Goal: more playstyles. Today: Gunner (your Bolt) and Body (plain stats).
-Done when: there are several trees, each a playstyle with its own weapon, its own shape, mods that help any weapon first, and a capstone behind a real commitment.
-Breakdown:
-- T0001 S — Lance: piercing bolts, a base fork in Gunner — done
-- T0003 L — Lobber tree: a bubble that arcs in, a splash that marks the ground — done
-- T0004 M — Chill: a hit that slows the target, a mod for any weapon — done
-- T0006 S — Chomp: a Body capstone, heal on kill — done
-- T0007 L — Maw: a bite that eats everything in front, the weapon for Body — done
-- T0009 S — Hide: take less damage, a second fork under Vigor — done
 Done: three trees (Gunner, Body, Lobber), each with its own weapon and a capstone.
 
 ## E2 Monster behaviors (done)
-Goal: crowds that make you move differently. Today: Dot (it chases you) and Puff (it pops into Dots).
-Done when: there are several monsters with behaviors of their own, each readable at a glance.
-Breakdown:
-- T0002 S — Puff: a purple pentagon that pops into three Dots on death — done
-- T0005 M — Zippy: a pink triangle that winds up and dashes — done
-- T0008 M — Snail: an orange hexagon that leaves sticky patches — done
-- T0018 M — Spitter: an orange diamond that spits from a distance — done
-- T0020 M — Flee: a red teardrop that runs from the nearest player — done
 Done: seven monsters, every one with its own way to move.
 
 ## E3 Field events (done)
-Goal: reasons to go somewhere on the field. Today: Gem rain. More events, built as directors (planning/modules/events.md).
-Breakdown:
-- T0010 M — Swarm surge: a line of calm Dots that crosses the field — done
-- T0011 S — Gem rush: a line of 12 gems, first touch takes all — done
-- T0012 S — Gem geyser: a spot that bubbles 8 gems, a position to hold — done
 Done: four events, four reasons to move (a windfall, a threat, a race, a position); the 5th starts E10.
 
 ## E4 Pressure on the leader (done)
-Goal: the top player is a target, and knocking them out pays. Built from events and the match's rules (planning/modules/events.md, match.md).
-Done when: the leader is readable on the field, and knocking the crown out is the most rewarding moment of a life.
-Ready: a director sees every player's score each tick and gets onKill after each player death (planning/modules/events.md); the pvp damage and bounty numbers are frozen in rules.ts — content adds its own drops and xp on top (T0015 proved there is no hook to change pvp damage).
-Breakdown:
-- T0013 M — The Crown: the top scorer wears a yellow crown, moves only on a strict overtake — done
-- T0014 S — Leader's gem: a knocked-out crown drops a gem worth its level — done
-- T0015 S — The leader pays: the crown takes 25% more damage from players — failed (the engine's pvp damage is frozen)
-- T0028 S — The crown's bounty: the killer of the crown gets double the bounty xp — done
-- T0036 S — Crown fall: the crown flies off and pops where the leader is knocked out — done
 Done: the crown marks the leader, its fall is a moment the whole field sees, and knocking it out pays the most of any life.
 
 ## E5 Your own critter (done)
-Goal: players make their critter theirs: they pick its color and put on a hat, and everyone in the match sees it.
-Done when: before playing, a player can choose a color and a hat (a couple of each to start); the choice is kept for their next visit and shows on their critter for everyone.
-Ready: the engine has what players wear (accessories, patterns), the color pick, the profile in the browser, and start-screen panels (src/menu/).
-Breakdown:
-- T0016 M — Your color: a card of the 10 colors, kept for the next visit — done
-- T0017 M — Two starter hats: a Hats card, wear and take off — done
 Done: a color and a hat, picked on the start screen, kept between visits, seen by everyone in the match.
 
 ## E6 Shop and coins (done)
-Goal: something to play for across matches: players earn coins in the match and spend them in a shop on color patterns and accessories (hats and more).
-Done when: coins are earned in play (how many, for what, is yours to design), kept between visits, shown where they are spent; the shop sells patterns and accessories with prices, and what a player buys is theirs to wear (E5).
-Ready: coins in the profile, ctx.giveCoins for content, prices and buying, and the start-screen panels. Nothing gives coins yet and there is no shop panel (planning/modules/shop.md).
-Breakdown:
-- T0019 M — Coins from kills: one coin per monster, the victim's level per knockout, a coin pop, the balance on the start card — done
-- T0021 M — First shop stock: two patterns, a face and a back accessory, priced — done
-- T0022 M — The shop: a panel over the start screen that sells the stock, with a preview critter — done
-- T0027 S — Coins from events: every gem an event drops pays 1 coin — done
-- T0044 S — Halves: a two-tone pattern, 50 coins, the third pattern price step — done
-- T0031 M — The shop's second stock: two patterns, a face and a back accessory, priced — done
-- T0035 S — Chef Hat: a 300-coin head accessory, the shop's long goal — done
-- T0046 S — Bloom: a 150-coin head accessory, a pink flower with a yellow center — done
 Done: kills and events pay coins, the shop sells its stock, and the Chef Hat is the goal to save for.
 
 ## E7 Prestige (done)
-Goal: nobody stays overpowered forever: a player who reaches level 18 prestiges back to level 1, and prestiging is worth it.
-Done when: reaching level 18 sends a player back to level 1 and gives them something for it. What they gain is yours to design: it must make prestiging worth it without making them overpowered again.
-Ready: the reset at level 18 works; the reward is content (a director's onPrestige, talents and wearables that need prestiges). Today a prestige gives nothing (planning/modules/prestige.md).
-Breakdown:
-- T0023 S — Prestige ring: a big yellow ring and confetti where a player prestiges — done
-- T0024 M — The prestige pays (in all): the Nth prestige in all pays 25 x N coins — failed (the in-all count is client-only; see IDEAS)
-- T0029 M — The prestige pays: the Nth prestige this life pays 25 x N coins, a 2 s card under the xp bar — done
-- T0025 M — Slush: a Lobber talent that only opens after a prestige this life — done
-- T0026 S — Medal: a back accessory, buyable only after 2 prestiges in all — done
-- T0047 M — Prestige stars: a gold star on the critter per prestige this life, up to 3 — done
 Done: the coin pays, Slush opens a second-life build, the stars mark the life, and the Medal is the long goal.
 
 ## E8 The Goober tree (done)
-Goal: a fourth playstyle for the draft: a build whose weapon aims for you — your Goo turns in flight and catches the nearest enemy, while Gunner kites with straight Bolts, Lobber zones with bubbles and Body bites in front.
-Done when: the Goober tree is in the panel with its finisher mod, its weapon, a fork and its capstone, each readable in a crowd.
-Breakdown:
-- T0030 L — Goober tree: Reap, a homing Goo, a Gush puddle, a Scatter capstone — done
-Done: the tree is playable end to end; the 5th and 6th talents wait in IDEAS for a later cycle.
+Done: the tree is playable end to end; the 5th and 6th talents landed in E12.
 
 ## E9 A bigger menagerie (done)
-Goal: the crowd grows a 6th, then a 7th, way to move; each new monster readable at a glance.
-Done when: the 7th monster is in the field with a behavior no other has (the 6th, the Sleeper, is already in).
-Breakdown:
-- T0032 M — Sleeper: a deep pink cushion that sleeps until you get close — done
-- T0034 M — Bulwark: a deep red octagon whose bubble shield eats the first 15 hits — failed (monsters have no target-side hit hook)
-- T0037 M — Boing: a deep red heart that crouches and leaps at where you are going — failed (the comparison table omitted the Sleeper; rebuilt as T0045)
-- T0045 M — Boing: a deep red heart that crouches, then leaps to where you're going — failed
-- T0048 M — Boing: a deep red heart that crouches, then leaps to where you're going — done
 Done: eight monsters, every one with its own way to move (Boing crouches and leaps to where you're going).
 
 ## E10 More reasons to move (done)
-Goal: a 5th, then a 6th, field event, so the field always has a new place to be (the cap is 6 events).
-Done when: the 5th event runs on the field.
-Breakdown:
-- T0033 S — Jackpot: one big gem in the middle of the field, worth 25 xp — done
-- T0038 M — The mark: a random player wears a red target for 15 s, the kill pays 20 xp and 5 coins — done
 Done: six events, the cap — a windfall, a threat, a race, a position, a prize in the middle, and a marked hunt.
 
 ## E11 Sound (done)
-Goal: the field is silent; every big moment gets a short candy sound, so a fight is readable by ear and the pops sound like the things that pop.
-Done when: a monster pop, a level-up and a coin each have a sound, on desktop and mobile, quiet enough to sit under the action.
-Breakdown:
-- T0039 M — Pop: the first sound, the game's audio, a pop when a monster dies, pitched by its size — done
-- T0040 S — Chime: a level-up chime — done
-- T0041 S — Coin: a coin tick when a coin is picked up or spent — done
-- T0049 S — Bonk: a deep thud when a player is knocked out — done
-- T0050 S — Fanfare: a rising three-note fanfare when a player prestiges — done
-- T0051 S — Toot: a party-horn toot when the crown flies off — done
 Done: a pop, a level-up, a coin, a knockout, a prestige and a crown fall each have a sound.
 
 ## E12 The Goober grows (done)
-Goal: the fourth tree deepens: under Goo it forks three ways — a Goo that sticks to its target, a Gush puddle that bites, and the scatter that exists — so a Goober life picks a direction instead of buying the same four talents.
-Done when: the tree has six talents with a real fork under Goo, each readable in a crowd.
-Breakdown:
-- T0042 M — Cling: a Goo that splats on its target and rides it, damage every 0.5 s — done
-- T0043 M — Chew: your Gush puddle deals damage to whatever stands in it — done
 Done: the Goober fork is real — sticky, zone or scatter.
 
 ## E13 The Frenzy tree (done)
-Goal: a fifth playstyle, thin and mean: Frenzy trades max HP for damage, and the more hurt a player is, the harder they hit — a life that wants to stay at half HP instead of playing safe.
-Done when: the Frenzy tree is in the panel with its trade-off mod, its hurt-scaled jab, its low-HP sprint and its low-HP capstone, each readable in a crowd.
-Breakdown:
-- T0053 L — Frenzy tree: Frenzy, Nerve, Sprint, Reckless — failed (the engine can't express Sprint's below-half-hp per-rank speed; Adrenaline replaces it)
-- T0054 L — Frenzy tree: Frenzy, Nerve, Adrenaline, Reckless — done
 Done: the tree is in the panel — trade hp for damage, a hurt-scaled jab, a kill-sprint while hurt, a double-hit capstone.
 
 ## E14 A meaner menagerie (done)
-Goal: the crowd gains a 9th, then a 10th, way to threaten you — monsters that make the kill itself a choice, each readable at a glance (the cap is 10 types).
-Done when: the 9th monster is in the field with a behavior no other has.
-Breakdown:
-- T0055 M — Popper: a fat grinning red blob that pops a damaging puff when it dies — done
-Done: nine monsters; the last slot waits in IDEAS for a behavior the nine don't have.
+Done: nine monsters; the 10th landed in E18.
 
 ## E15 The Frenzy grows (done)
-Goal: the fifth tree deepens: the hurt state the whole tree pays out on becomes visible on the field, and Nerve forks two ways — a coin branch and a sustain branch — so a Frenzy life picks a direction instead of buying the same four talents.
-Done when: a hurt critter shows its wound on the field, and the tree has six talents with a real fork under Nerve.
-Breakdown:
-- T0057 M — The wound: a red collar arc around any critter below half hp — done
-- T0058 S — Fang: kills pay extra coins while below half hp — done
-- T0059 S — Mend: a Nerve hit heals the more hurt you are — done
 Done: the wound reads the hurt state in a crowd, and Nerve forks — a coin branch, a heal branch, and the die-with-it capstone.
 
 ## E16 The Hive tree (done)
-Goal: a sixth playstyle (the cap): a build that hits harder the more crowded the fight is — a hit scales with the enemies around its target, so a Hive life runs into the swarm instead of kiting it, where Gunner kites, Goober zones and Frenzy bleeds.
-Done when: the Hive tree is in the panel with its crowd mod, its dart weapon, its crowd kill heal and its kill-burst capstone, each readable in a crowd.
-Breakdown:
-- T0060 L — Hive tree: Swarm, Horn, Nest, the Sting capstone — failed (the on-kill tables missed the Fang row)
-- T0063 M — Hive, first slice: Swarm (hits grow with the crowd) and Horn (a fast teal dart) — failed (the on-hit table missed the Mend row)
-- T0064 M — Hive, second slice: Nest (a kill-buff from crowd kills) and the Sting capstone — failed (a timed damage buff needs an engine change; Nest becomes a crowd-scaled kill heal)
-- T0075 L — Hive, first slice: the tree, Swarm (hits grow with the crowd) and Horn (a fast teal dart) — done
-- T0076 M — Hive, second slice: Nest (a kill heal that grows with the crowd) and the Sting capstone — done
-- T0081 M — Leech: a fifth talent, a hit heal while 3+ enemies are within 80 of you, the sustain fork under Swarm — done
-- T0100 S — Burst: a small whump when a crowded corpse bursts (the Sting moment) — done
-Done: the tree is in the panel — crowd mod, dart, kill heal, burst capstone and the sustain fork; the Hive grows further in E23.
+Done: the tree is in the panel — crowd mod, dart, kill heal, burst capstone and the sustain fork; the Hive grew further in E23 and E25.
 
 ## E17 A deeper second life (done)
-Goal: prestiging pays in the draft, not just in coins: each prestige this life banks a talent point, and a prestige-gated talent later opens in a second tree, the Slush way (planning/modules/prestige.md).
-Done when: a prestige banks a point the player sees and spends, and a second tree has its own prestige-gated talent.
-Breakdown:
-- T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — done
-- T0067 M — Cover: a fan of bolts behind you, a Gunner talent open after a prestige this life — done
-- T0079 M — Gore: a Frenzy talent, the jab goes through enemies while below half hp, open after a prestige — done
-- T0080 M — Snare: a Goober talent, your Gush puddles sap whatever stands in them, open after a prestige — done
-- T0097 M — Bellow: a Body talent, a ring around you that strikes everything close, open after a prestige — done
-Done: the point banks on the prestige card, and every tree but Hive has its own prestige-gated talent.
+Done: the point banks on the prestige card, and five trees have their own prestige-gated talent (the Hive's gate came in E25).
 
 ## E18 The last slot (done)
-Goal: the menagerie's 10th and final monster type — a way to threaten no other monster has, so the crowd's ceiling is full.
-Done when: the 10th monster is in the field with a behavior no other has, readable at a glance.
-Breakdown:
-- T0066 L — Brood: a purple sac that keeps birthing Dots while it lives — done
 Done: the 10th monster is in — a Brood that keeps birthing Dots while it lives; the menagerie is full, and the crowd deepens through the trees that learn to fight it.
 
 ## E19 The price of a kill (done)
-Goal: a player kill isn't free: the killer wears the mark for 15 s (revenge), and a level-4+ corpse drops a gem worth the life — every knockout starts a short hunt on the killer and a pickup fight over the corpse, so the scoreboard swings on both.
-Done when: a player who knocks out another is marked for 15 s and pays the mark bonus if knocked out in that window; a knocked-out player of level 4+ drops a gem worth their level (the leader's gem folded in); a mark that runs out on a living player banks 5 coins.
-Breakdown:
-- T0082 M — The price: killing a player marks you for 15 s, the mark pays out as usual — done
-- T0083 M — The corpse pays: a knocked-out player of level 4+ drops a gem worth their level; the leader's gem folds in — done
-- T0084 S — A sting: a small sting when the mark lands on you — failed (the client cannot tell the local player is marked; needs the engine, see IDEAS)
-- T0087 S — Escape pays: a mark that runs out on a living player banks 5 coins — done
 Done: the mark's two fates both pay — a kill marks the killer, an escape banks the coin.
 
 ## E20 The menagerie grows back (done)
-Goal: the menagerie is 7 of 10 types after the cut; the crowd learns three new ways to threaten — a threat that comes in on an arc, a kill that doesn't kill, and a bite that punishes standing still — each readable at a glance.
-Done when: the Toss (a lobbed splash), the Twin (a birth at half hp) and the Jaw (a bite from a stop) are in the field, each with a behavior none of the others has — the menagerie back to 10.
-Breakdown:
-- T0085 M — Toss: a big slow melon that lobs an arc blob that splashes where it lands — done
-- T0086 M — Twin: a bean that splits into two smaller twins when it drops to half hp — failed (a split must remove the parent, and the only removal is a death, which always drops a gem)
-- T0090 M — Twin: a bean that gives birth to a small fast twin the first time it drops to half hp, and keeps living — failed (the comparison table missed the Sleeper row)
-- T0096 M — Twin: a bean that shudders at half hp, births a fast twin and keeps living — done
-- T0099 M — Jaw: a fat deep-red blob that stops and bites a locked cone in front of it, the last slot — done
-- T0103 S — Bloop: a low bloop when a Toss splash blooms — done
 Done: the menagerie is back to 10 — the arc threat, the birth at half hp and the bite from a stop.
 
 ## E21 The shop fills out (done)
-Goal: after the Chef Hat and the Medal, the shelves go quiet: each slot and the pattern shelf get middle steps toward their caps (10 per slot, 12 patterns), so a player with a few lives always has a next save.
-Done when: each slot has at least 5 items including the free ones, the pattern shelf has 8, and no ladder between 80 and 400 coins has a gap bigger than 150.
-Breakdown:
-- T0088 S — Lolly: an 80-coin pattern, a light lollipop swirl — done
-- T0089 M — The third shelf: a 120-coin Feather (head) and a 300-coin Candy Cane (back) — done
-- T0091 S — Monocle: a 150-coin face accessory, a gold lens over one eye — done
-- T0098 S — Star: a 100-coin pattern, one light star on the middle of the body — done
-Done: every slot has 5 items, the pattern shelf has 8, and no ladder between 80 and 400 has a gap bigger than 150 — the tops wait in E22.
+Done: every slot has 5 items, the pattern shelf has 8, and no ladder between 80 and 400 has a gap bigger than 150 — the tops came in E22.
 
 ## E22 The shop's long goals (done)
-Goal: the tops of the ladders: each slot gets a top item that needs prestiges in all (the shop's first looks a new player can't have — a prestige and a stack of coins), and the pattern shelf reaches 10 — the longest goal in the game is a look, not a power.
-Done when: each slot's top item costs 350 or more and needs prestiges in all, and the pattern shelf has 10.
-Breakdown:
-- T0101 S — Cherry: a 450-coin head, a red cherry with a green stem, 1 prestige in all — the head's top — done
-- T0102 S — Mustache: a 350-coin face, a curly pink mustache, 1 prestige in all — the face's top — done
-- T0104 S — Lollipop: a 500-coin back, a big green lollipop with a white swirl, 2 prestiges in all — the back's top, the shop's longest goal — done
-- T0105 S — Cheeks: a 120-coin pattern, two light dots on the cheeks — the pattern shelf to 9 — done
-- T0107 S — Ring: a 150-coin pattern, a light ring around the middle of the body — the pattern shelf to 10 — done
 Done: the tops are in — the prestige head, face and back, and the pattern shelf at 10.
 
-## E23 The thin trees grow (active)
+## E23 The thin trees grow (fully tasked)
 Goal: the two thinnest trees (Hive 5 talents, Lobber 5) each gain a fork that changes how the playstyle plays, not its numbers: the Hive's crowd pays in the draft, the Lobber's splash lingers.
-Done when: both forks are in the panel and playable: a Hive life banks talent points from the kills in the swarm it runs into, and a committed Lobber life leaves a zone with every shot.
 Breakdown:
-- T0108 M — Thicket: a Hive talent, a hit that shields you while the crowd is on you — failed (no content hook for damage reduction, see Needs the engine)
 - T0110 M — Scavenge: a Hive talent, a monster kill is worth xp per enemy around the corpse — the crowd fork under Swarm — done
-- T0109 M — Fizz: a Lobber capstone, the bubble's splash lingers and strikes every 0.5 s — the zone capstone beside Fuse — rejected (the on-hit/on-kill table missed 11 rows), rewritten as T0116
-- T0116 M — Fizz: the same capstone, with the full on-hit/on-kill table — the zone capstone beside Fuse — design
-Next: Fizz lands as T0116; the Lobber's second aim grows in E27, and the Hive in E25.
+- T0116 M — Fizz: a Lobber capstone beside Fuse, the bubble's splash lingers and strikes every 0.5 s — todo
 
-## E24 The Gunner grows (active)
+## E24 The Gunner grows (fully tasked)
 Goal: the Gunner (6 talents) grows two forks under Bolt that change how the kite plays — a bolt that lingers in flight, so the straight line becomes a hazard on the ground, and a bolt that re-aims once, so a miss still finds the target that moved.
-Done when: the tree has 8 talents, and a committed Gunner's bolts leave a drifting line and swoop back on a moving target, each readable in a crowd.
 Breakdown:
 - T0111 M — Drift: a Gunner fork, bolts drop to 40% speed after 120 units and linger 0.8–1.2 s — the line fork under Bolt 2 — done
 - T0112 M — Swoop: a Gunner fork, bolts re-aim once at 200 units and fly a second leg of 160–240 units — the re-aim fork under Bolt 2 — in progress
 
-## E25 The Hive deepens (active)
+## E25 The Hive deepens (fully tasked)
 Goal: the Hive grows past its base shape and fills the last two holes in every tree's shape: a movement talent, so a Hive life can run into the swarm and come back out, and the prestige-gated talent — the Hive is the only tree without one.
-Done when: the Hive tab has 8 talents — the crowd fork under Swarm (Horn, Leech, Scavenge, Glide) and the dart split under Horn that opens after a prestige — and a committed Hive life moves faster while the crowd is on it.
 Breakdown:
-- T0113 M — Glide: a Hive fork under Swarm, while 3+ enemies are within 80 you move faster, refreshed on each of your hits — design
-- T0117 M — Lash: a Hive prestige gate, your horn darts split on hit into small darts at the critter's neighbors — the dart fork under Horn — design
-Next: Glide (T0113) and Lash (T0117) are written; the Hive is fully tasked.
+- T0113 M — Glide: a Hive fork under Swarm, while 3+ enemies are within 80 you move faster, refreshed on each of your hits — done
+- T0117 M — Lash: a Hive prestige gate, your horn darts split on hit into small darts at the critter's neighbors — the dart fork under Horn — todo
 
 ## E26 The shop reaches the cap (active)
 Goal: the shop's ladders complete: each slot gets a 7th item past its old top, and the pattern shelf gets its last two steps to its cap of 12 — every shelf has a next save, and the price ladder has no hole.
 Done when: head, face and back each have 7 items, the pattern shelf has 12, and no ladder between 80 and 400 coins has a gap bigger than 150.
 Breakdown:
-- T0114 S — Candy: a 240-coin head, a striped candy on the side of the head — the head's step past Bloom — design
-- T0115 S — Smile: a 180-coin pattern, a light smile across the lower body — the pattern shelf to 11 — design
-Next: the face's 7th (the 200→350 gap), the back's 7th and the pattern shelf's 12th (200), one per cycle as the pool has room.
+- T0114 S — Candy: a 240-coin head, a striped candy on the side of the head — the head's 7th — done
+- T0115 S — Smile: a 180-coin pattern, a light smile across the lower body — the pattern shelf to 11 — done
+- T0119 S — Kiss: a 300-coin face, a small red kiss mark on the cheek — the face's 7th, the 200→350 gap — design
+- T0120 S — Heart: a 200-coin pattern, a light heart on the middle of the body — the pattern shelf to 12, the cap — design
+Next: the back's 7th (a 240 to sit between the 180 and the 300), one per cycle as the pool has room.
 
-## E27 The Lobber finds a second aim (active)
-Goal: today the bubble only hits the ground, where it lands; a committed Lobber gets a second aim — a bubble that pops on the critter it touches, a kill-shot on the target instead of a zone, so the Lobber can snipe through a crowd the way a Gunner kites.
-Done when: the Bop fork is in the panel and a Lobber life can pop a bubble on a critter (a direct burst, no splash there) instead of splashing the ground.
+## E27 The Lobber finds a second aim (fully tasked)
+Goal: the bubble grows a second, then a third, aim: a bubble that pops on the critter it touches (a kill-shot on the target instead of a zone), and a bubble that comes back and splashes behind you (a kiting loop that leaves a ring of ice you run through).
 Breakdown:
-- T0118 M — Bop: a Lobber fork, the bubble pops on the critter it touches: a burst at the hit point, no splash there — design
-Next: a third direction for the bubble (from IDEAS) once Bop proves out.
+- T0118 M — Bop: a Lobber fork, the bubble pops on the critter it touches: a burst at the hit point, no splash there — designing
+- T0121 M — Echo: a Lobber fork, the bubble splashes, comes back and splashes behind you — the kiting fork under Lob 3 — design
