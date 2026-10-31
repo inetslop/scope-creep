@@ -4,11 +4,12 @@ title: "Spitter: an orange diamond that spits from a distance"
 assignee: cachyos-x8664
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T03:51:35Z
 claimed_at: 2026-10-31T05:20:58Z
+finished_at: 2026-10-31T05:32:30Z
 epic: E2
 ---
 
@@ -191,3 +192,18 @@ export const spitter: MonsterDef = {
 
 ### Tests
 - none (engine/tests/ auto-checks the new monster and projectile in a real match, plus the pure path and the registries)
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the Spitter monster (`src/content/monsters/spitter.ts`) — an orange diamond that holds a 160–280 u distance band around the nearest player, winds up 0.5 s (frown + orange glob at its mouth, synced in slot 0) and spits a glob (6 dmg, 150 u/s) every 1.6 s with at most 2 in the air; and the glob projectile (`src/content/projectiles/glob.ts`) — a small orange drop flying straight by a pure path, gone on hit or after 1.6 s. Registered each with one import and one line in their folder's `index.ts`. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 11.5 min
+
+```
+.../draft-arena/game/src/content/monsters/index.ts |  2 +
+ .../game/src/content/monsters/spitter.ts           | 92 ++++++++++++++++++++++
+ .../game/src/content/projectiles/glob.ts           | 19 +++++
+ .../game/src/content/projectiles/index.ts          |  2 +
+ 4 files changed, 115 insertions(+)
+```
