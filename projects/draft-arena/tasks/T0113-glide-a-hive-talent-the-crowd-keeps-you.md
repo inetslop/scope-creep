@@ -4,11 +4,12 @@ title: "Glide: a Hive talent, the crowd keeps you moving"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T19:06:11Z
 claimed_at: 2026-10-31T19:26:26Z
+finished_at: 2026-10-31T19:37:47Z
 epic: E25
 ---
 
@@ -109,3 +110,17 @@ export const glide: UpgradeDef = {
 
 ### Tests
 - none — engine/tests/ already verifies registration, the talent reaching Swarm 1, maxLevel 2 vs the talent's max, and plays the upgrade in a real match.
+
+## Result (attempt 1, inet-racing)
+
+Added Glide, a Hive on-hit upgrade (`src/content/upgrades/glide.ts`): while 3+ living enemies are within 80 of you, every hit you land (any weapon, guarding `hit.damage <= 0`) refreshes your own Wired speed — `wired-1` (+20%, 1.5 s) or `wired-2` (+30%, 2 s) at rank 2 — reusing the existing statuses and Adrenaline's `wired-pop` puff, which plays only when the speed was not already up. Registered it in `src/content/upgrades/index.ts` (after `scavenge` in the Hive cluster) and added the talent line `{ id: 'glide', max: 2, needs: [['swarm', 1]] }` under Swarm in `src/content/talents/hive.ts`, making it a fourth fork of the tree. `npm run check` (128 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 11.4 min
+
+```
+.../draft-arena/game/src/content/talents/hive.ts   |  1 +
+ .../draft-arena/game/src/content/upgrades/glide.ts | 22 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ 3 files changed, 25 insertions(+)
+```

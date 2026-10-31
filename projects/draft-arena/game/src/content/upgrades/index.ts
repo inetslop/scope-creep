@@ -14,6 +14,7 @@ import { fuse } from './fuse.ts';
 import { goo } from './goo.ts';
 import { gore } from './gore.ts';
 import { gush } from './gush.ts';
+import { glide } from './glide.ts';
 import { haste } from './haste.ts';
 import { hide } from './hide.ts';
 import { horn } from './horn.ts';
@@ -70,6 +71,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   nest,
   sting,
   scavenge,
+  glide,
   cling,
   snare,
   split,

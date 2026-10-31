@@ -12,6 +12,7 @@ export const hive: TalentTreeDef = {
     { id: 'horn', upgrade: 'horn', max: 3, needs: [['swarm', 1]] },
     { id: 'leech', upgrade: 'leech', max: 3, needs: [['swarm', 1]] },
     { id: 'scavenge', upgrade: 'scavenge', max: 3, needs: [['swarm', 1]] },
+    { id: 'glide', upgrade: 'glide', max: 2, needs: [['swarm', 1]] },
     { id: 'nest', upgrade: 'nest', max: 3, needs: [['horn', 2]] },
     { id: 'sting', upgrade: 'sting', max: 1, needs: [['horn', 3], ['nest', 2]] },
   ],
