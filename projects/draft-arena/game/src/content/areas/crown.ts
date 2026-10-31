@@ -15,9 +15,9 @@ export const crown: AreaDef = {
   look: {
     shape: 'circle',
     color: PALETTE.yellow,
-    draw(g) {
+    draw(g, e) {
       // The bottom of the crown sits 12 units above the head (top of the body is y = -radius). Always faces up.
-      const y0 = -(RULES.player.radius + 12);
+      const y0 = -((e.slots[0] || RULES.player.radius * 100) / 100 + 12);
       const y1 = y0 - 12;
       g.beginPath();
       g.moveTo(-13, y0);
@@ -36,5 +36,5 @@ export const crown: AreaDef = {
       g.stroke();
     },
   },
-  pulse() { /* a marker: no damage */ },
+  pulse(_ctx, a) { a.slots[0] = Math.round(a.owner.radius * 100); },
 };

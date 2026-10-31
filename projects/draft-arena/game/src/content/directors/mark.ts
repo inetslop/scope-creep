@@ -1,5 +1,4 @@
 import type { DirectorDef } from '../../../engine/api.ts';
-import { RULES } from '../rules.ts';
 
 const FIRST = 60; // the first mark
 const EVERY = 90; // then a new mark every 90 s
@@ -59,6 +58,6 @@ export const mark: DirectorDef = {
 };
 
 /** The ring's spot: 12 units above the head (the top of the body is at y = -radius). */
-function spot(u: { x: number; y: number }) {
-  return { x: u.x, y: u.y - (RULES.player.radius + 12) };
+function spot(u: { x: number; y: number; radius: number }) {
+  return { x: u.x, y: u.y - (u.radius + 12) };
 }

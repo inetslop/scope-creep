@@ -8,6 +8,7 @@ import { crown } from './crown.ts';
 import { mark } from './mark.ts';
 import { price } from './price.ts';
 import { wound } from './wound.ts';
+import { growth } from './growth.ts';
 import { prestigeCoins } from './prestige-coins.ts';
 import { swarmSurge } from './swarm-surge.ts';
 import { gemRush } from './gem-rush.ts';
@@ -29,6 +30,7 @@ export const DIRECTORS: readonly DirectorDef[] = [
   mark,
   price,
   wound,
+  growth,
   prestigeCoins,
   prestigePoints,
   prestigeFeast,

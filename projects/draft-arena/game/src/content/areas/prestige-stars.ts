@@ -19,7 +19,7 @@ export const prestigeStars: AreaDef = {
     shape: 'circle',
     color: PALETTE.yellow,
     draw(g, e) {
-      const r = RULES.player.radius; // top of the head is y = -r; the crown (areas/crown.ts) is at x -13..13, y -30..-42
+      const r = (e.slots[1] || RULES.player.radius * 100) / 100; // top of the head is y = -r
       const n = Math.min(3, e.slots[0] ?? 0);
       for (let i = 0; i < n; i++) {
         g.save();
@@ -38,5 +38,6 @@ export const prestigeStars: AreaDef = {
   },
   pulse(_ctx, a) {
     a.slots[0] = a.owner.type === 'player' ? Math.min(3, a.owner.prestige) : 0;
+    a.slots[1] = Math.round(a.owner.radius * 100);
   },
 };

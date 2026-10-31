@@ -17,7 +17,7 @@ export const mark: AreaDef = {
     shape: 'circle',
     color: PALETTE.red,
     draw(g, e) {
-      const y0 = -(RULES.player.radius + 12); // 12 units above the head (top of the body is y = -radius)
+      const y0 = -((e.slots[0] || RULES.player.radius * 100) / 100 + 12); // 12 units above the marked player's actual head
       const r = 26 * (1 + 0.08 * Math.sin(e.time * Math.PI * 2)); // one pulse per second
       g.beginPath();
       g.arc(0, y0, r, 0, Math.PI * 2);
@@ -31,5 +31,5 @@ export const mark: AreaDef = {
       g.stroke();
     },
   },
-  pulse() { /* a marker: no damage */ },
+  pulse(_ctx, a) { a.slots[0] = Math.round(a.owner.radius * 100); },
 };

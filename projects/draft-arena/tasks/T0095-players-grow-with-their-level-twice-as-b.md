@@ -4,11 +4,12 @@ title: "Players grow with their level: twice as big by level 18"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T15:20:51Z
 claimed_at: 2026-10-31T17:34:04Z
+finished_at: 2026-10-31T18:00:31Z
 ---
 
 ## Goal
@@ -109,3 +110,23 @@ function spot(u: { x: number; y: number; radius: number }) {
 
 ### Tests
 `tests/growth.test.ts` as specified in step 7 (pins the formula and smoothing; everything else is covered by `engine/tests/`, including the 3-minute long match and the 60-player budget).
+
+## Result (attempt 1, asus)
+
+Players now grow with their level — a new director (`src/content/directors/growth.ts`, registered in `src/content/directors/index.ts`) eases each living player's radius toward `rules.player.radius * (1 + (level-1)/17)` over 0.5 s, so a level 17 critter is almost twice as wide and prestige/knockout shrink it back smoothly. The mark ring, top-scorer crown and prestige stars (in `src/content/areas/`) now follow the wearer's actual radius via a slot instead of hard-coding the base size, and the mark director's pop/burst spots use the player's own radius. Added `tests/growth.test.ts` pinning the size formula and smoothing. One deviation from the design: its test expected a 1/30-s tick to move the radius by `(target-18)/30`, but the specified easing factor `dt/0.5` makes it 1/15, so the test asserts that (the implementation matches the design exactly). `npm run check` and `npm run smoke` both pass; `git diff` review was skipped only because git commands require an approval prompt unavailable in this unattended session.
+
+- Self-review: APPROVE
+- Time: 26.5 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../draft-arena/game/src/content/areas/crown.ts    |  6 ++--
+ .../draft-arena/game/src/content/areas/mark.ts     |  4 +--
+ .../game/src/content/areas/prestige-stars.ts       |  3 +-
+ .../game/src/content/directors/growth.ts           | 28 ++++++++++++++++
+ .../game/src/content/directors/index.ts            |  2 ++
+ .../draft-arena/game/src/content/directors/mark.ts |  5 ++-
+ .../game/src/content/directors/price.ts            |  5 ++-
+ projects/draft-arena/game/tests/growth.test.ts     | 38 ++++++++++++++++++++++
+ 8 files changed, 79 insertions(+), 12 deletions(-)
+```
