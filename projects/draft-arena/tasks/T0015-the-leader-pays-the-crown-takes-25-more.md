@@ -3,13 +3,14 @@ id: T0015
 title: "The leader pays: the crown takes 25% more damage from players"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: [T0013]
 attempts: 0
 created: 2026-10-31T03:34:39Z
 claimed_at: 2026-10-31T04:06:51Z
+finished_at: 2026-10-31T04:08:49Z
 epic: E4
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -28,3 +29,7 @@ Leading is a target, not just a scoreboard number: the crowned player takes more
 - [ ] Monster damage to the crowned player is unchanged (no 1.25 multiplier from monsters).
 - [ ] A non-crowned player takes exactly the same damage as before (0.5x pvp).
 - [ ] The new value lives in rules.ts next to the other pvp numbers; no new HUD or input.
+
+## Rejected by architect (desktop)
+
+needs an engine change: the 1.25× must be applied in the engine's frozen `damage()` (engine/sim/match.ts, which only reads `rules.pvp.damageMul`), and `Rules.pvp` in engine/api.ts must gain the `crownTakenMul` field — no content hook can multiply pvp damage taken, and the new value can't compile into `pvp` in rules.ts against the frozen `Rules` type.
