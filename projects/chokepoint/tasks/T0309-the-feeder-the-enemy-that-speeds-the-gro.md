@@ -1,14 +1,14 @@
 ---
 id: T0309
 title: "The Feeder: the enemy that speeds the group around it"
+assignee: cachyos-x8664
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 2
+attempts: 3
 created: 2026-10-30T21:36:17Z
-claimed_at: 2026-10-30T23:56:07Z
-finished_at: 2026-10-31T00:51:32Z
+claimed_at: 2026-10-31T00:51:36Z
 ---
 
 ## Goal
