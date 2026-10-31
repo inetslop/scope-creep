@@ -4,11 +4,12 @@ title: "The wound: a red collar arc around any critter below half hp"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T11:14:52Z
 claimed_at: 2026-10-31T11:48:37Z
+finished_at: 2026-10-31T12:03:19Z
 epic: E15
 ---
 
@@ -99,3 +100,18 @@ export const wound: DirectorDef = {
 - No effect, no one-shot, no module state: one thin stroke per critter, and only critters at/below half ever get an area — bounded at 60 players.
 ### Tests
 none
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the "wound" field area (`src/content/areas/wound.ts`) — a thin red collar with an ink rim, 8 world units outside the body, 240° sweep at half max hp shrinking to zero as hp goes to zero, top 120° open over the head — driven live by its pulse through the area's `slots` (`directors/wound.ts`) — and the wound director that re-fires the 0.15 s area every tick for every critter at or below half max hp. Registered both in their folder indexes (after `mark`). No engine changes; all checks and smoke tests pass.
+
+- Self-review: APPROVE
+- Time: 14.7 min
+
+```
+.../draft-arena/game/src/content/areas/index.ts    |  2 +
+ .../draft-arena/game/src/content/areas/wound.ts    | 43 ++++++++++++++++++++++
+ .../game/src/content/directors/index.ts            |  2 +
+ .../game/src/content/directors/wound.ts            | 18 +++++++++
+ 4 files changed, 65 insertions(+)
+```
