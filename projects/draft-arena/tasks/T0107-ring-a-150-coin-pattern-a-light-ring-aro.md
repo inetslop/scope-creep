@@ -1,12 +1,14 @@
 ---
 id: T0107
 title: "Ring: a 150-coin pattern, a light ring around the middle of the body"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T17:49:52Z
+claimed_at: 2026-10-31T18:17:53Z
 epic: E22
 ---
 
