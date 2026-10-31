@@ -3,11 +3,13 @@ id: T0046
 title: "Bloom: a 150-coin head accessory, a pink flower with a yellow center"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T08:32:32Z
+claimed_at: 2026-10-31T08:35:42Z
 epic: E6
+designer: yoga
 ---
 
 ## Goal
