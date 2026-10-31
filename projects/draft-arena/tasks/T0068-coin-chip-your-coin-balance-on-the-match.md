@@ -1,12 +1,14 @@
 ---
 id: T0068
 title: "Coin chip: your coin balance on the match HUD"
+assignee: desktop
 size: M
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T12:44:22Z
+claimed_at: 2026-10-31T13:49:14Z
 ---
 
 ## Goal
