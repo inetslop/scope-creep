@@ -4,11 +4,12 @@ title: The first clean wave says what the streak pays
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T00:11:52Z
 claimed_at: 2026-10-31T00:32:31Z
+finished_at: 2026-10-31T00:59:05Z
 ---
 
 ## Goal
@@ -70,3 +71,17 @@ export function streakTeach(fx: FxSystem, x: number, y: number): void {
 
 ### Tests
 - none
+
+## Result (attempt 1, asus)
+
+On the run's first clean wave, a muted 14 px line "3 in a row brings a life back · once per run" now pops in under the exit's green clean text for ~1.5 s, teaching the streak's pay at the moment it's earned. It's a new self-destroying fx (`src/systems/fx/streakTeach.ts`) fired from one guarded line in `RunFlow.clearWave()` when the ledger's clean count is still zero — so later clean waves and resumed runs (whose `cleanWaves` restore from the save) never show it, and no run field, sound, or save change was needed. `runFlow.test.ts`'s fakes were extended with a module stub for the new fx (they had no Phaser scene); no checks were weakened. Typecheck, lint, all 483 unit tests, and the desktop + mobile smoke pass.
+
+- Self-review: APPROVE
+- Time: 26.6 min
+
+```
+projects/chokepoint/game/src/systems/RunFlow.ts        |  2 ++
+ projects/chokepoint/game/src/systems/fx/streakTeach.ts | 17 +++++++++++++++++
+ projects/chokepoint/game/tests/systems/runFlow.test.ts |  3 +++
+ 3 files changed, 22 insertions(+)
+```

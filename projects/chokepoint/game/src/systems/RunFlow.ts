@@ -14,6 +14,7 @@ import type { Board } from './Board';
 import type { Building } from './Building';
 import type { EnemySystem } from './EnemySystem';
 import type { FxSystem } from './FxSystem';
+import { streakTeach } from './fx/streakTeach';
 import type { ProjectileSystem } from './ProjectileSystem';
 import type { TowerSystem } from './TowerSystem';
 import type { WaveSystem } from './WaveSystem';
@@ -152,6 +153,7 @@ export class RunFlow {
       const second = this.run.cleanStreakLine(!streakPaidBefore && this.run.streakPaid);
       // Under the wave-cleared text, for the beat before the draft veils the board.
       this.s.fx.cleanLines(cx, cy + 40, second);
+      if (cleanBefore === 0) streakTeach(this.s.fx, cx, cy + 40 + 52); // run's first clean wave: cleanWaves still 0, the muted line names the pay
       this.scene.time.delayedCall(1000, () => this.openDraft());
     } else {
       this.openDraft();

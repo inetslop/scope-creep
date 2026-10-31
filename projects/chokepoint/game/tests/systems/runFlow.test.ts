@@ -3,6 +3,9 @@ import { describe, expect, it, vi } from 'vitest';
 
 // RunFlow reaches debug/flags, which reads window.location at load — node has no window.
 vi.mock('../../src/debug/flags', () => ({ flags: { smoke: false, debug: false, skipMenu: false, seed: undefined } }));
+// The first-clean-wave teach (fx/streakTeach) draws on a Phaser scene the fakes below don't have: count its calls.
+const teachCalls = vi.hoisted(() => ({ n: 0 }));
+vi.mock('../../src/systems/fx/streakTeach', () => ({ streakTeach: () => (teachCalls.n += 1) }));
 
 import { START } from '../../src/config';
 import { RunState } from '../../src/core/run';
