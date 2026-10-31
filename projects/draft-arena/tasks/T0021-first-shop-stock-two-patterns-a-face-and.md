@@ -3,13 +3,11 @@ id: T0021
 title: "First shop stock: two patterns, a face and a back accessory"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T04:17:26Z
-claimed_at: 2026-10-31T04:59:39Z
 epic: E6
-designer: desktop
 ---
 
 ## Goal
@@ -33,3 +31,154 @@ The shop has something to sell: two patterns and two accessories with prices, se
 - [ ] In a fresh match, within about a minute a bot wearing the glasses and a bot wearing Spots or Bands are visible on the field.
 - [ ] Each item has a one-line shop description and a name of at most 18 characters.
 - [ ] Nothing in the match changes because of them: no stats, no size, no behavior.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/patterns/spots.ts` — pattern `id: 'spots'` (5 dark dots, 30 coins)
+- create `src/content/patterns/bands.ts` — pattern `id: 'bands'` (2 light bands, 30 coins)
+- create `src/content/accessories/round-glasses.ts` — accessory `id: 'round-glasses'`, slot `face`, 80 coins
+- create `src/content/accessories/candy-pack.ts` — accessory `id: 'candy-pack'`, slot `back`, 100 coins
+- edit `src/content/patterns/index.ts` — add the two imports and two array lines (exact content in Steps)
+- edit `src/content/accessories/index.ts` — add the two imports and two array lines (exact content in Steps)
+
+### Interfaces
+No new types. The four defs use `PatternDef` / `AccessoryDef` from `engine/api.ts`; `draw(g, w)` draws only from `w` (`WearView`: `radius`, `color`, `ink`, `time`, `seed`, `angle`, `speed`). Verified coordinate facts (from `drawCritter`/`drawFace` in `engine/api.ts`):
+- Player body: circle, radius `r = w.radius` (36 units across ⇒ r=18); origin at body centre, +y down.
+- Eyes: white circles radius `0.26r` centred `(±0.34r, -0.12r)`; pupils never leave the white. Blush circles `0.14r` at `(±0.56r, 0.22r)`; mouth none.
+- Pattern `draw()` runs clipped to the body, under the outline and under the face — the face can never be covered; don't clip manually.
+- `back` accessories draw **before** the body (only the crescent outside the body circle is visible); `face` accessories draw **after** the face (on top).
+- The player's name renders at ≥ `r` above the centre — never extend a back item upward past the centre.
+- Bots dress at random per slot (engine `sim/match.ts` `botWear`, 40% per slot, 30% pattern) — nothing to build for the "visible on the field" criterion.
+
+### Steps
+1. Create `src/content/patterns/spots.ts` exactly:
+```ts
+import { shade, type PatternDef } from '../../../engine/api.ts';
+
+export const spots: PatternDef = {
+  id: 'spots',
+  name: 'Spots',
+  description: 'Five dark dots on the body.',
+  price: 30,
+  draw(g, w) {
+    const r = w.radius;
+    g.fillStyle = shade(w.color, -0.3);
+    for (const [x, y] of [[-0.52, -0.64], [0.52, -0.64], [-0.82, -0.28], [0.82, -0.28], [0, 0.8]] as const) {
+      g.beginPath();
+      g.arc(x * r, y * r, r * 0.22, 0, Math.PI * 2);
+      g.fill();
+    }
+  },
+};
+```
+2. Create `src/content/patterns/bands.ts` exactly:
+```ts
+import { shade, type PatternDef } from '../../../engine/api.ts';
+
+export const bands: PatternDef = {
+  id: 'bands',
+  name: 'Bands',
+  description: 'Two light bands across the body.',
+  price: 30,
+  draw(g, w) {
+    const r = w.radius;
+    g.fillStyle = shade(w.color, 0.35);
+    g.fillRect(-r, -0.35 * r, r * 2, r * 0.4);
+    g.fillRect(-r, 0.42 * r, r * 2, r * 0.4);
+  },
+};
+```
+3. Create `src/content/accessories/round-glasses.ts` exactly:
+```ts
+import type { AccessoryDef } from '../../../engine/api.ts';
+
+export const roundGlasses: AccessoryDef = {
+  id: 'round-glasses',
+  name: 'Round Glasses',
+  description: 'Round ink frames around the eyes.',
+  slot: 'face',
+  price: 80,
+  draw(g, w) {
+    const r = w.radius;
+    g.strokeStyle = w.ink;
+    g.lineWidth = Math.max(1.5, r * 0.08);
+    g.lineCap = 'round';
+    g.beginPath();
+    g.arc(-0.34 * r, -0.12 * r, 0.32 * r, 0, Math.PI * 2);
+    g.stroke();
+    g.beginPath();
+    g.arc(0.34 * r, -0.12 * r, 0.32 * r, 0, Math.PI * 2);
+    g.stroke();
+    g.beginPath();
+    g.moveTo(-0.05 * r, -0.14 * r);
+    g.lineTo(0.05 * r, -0.14 * r);
+    g.stroke();
+  },
+};
+```
+4. Create `src/content/accessories/candy-pack.ts` exactly:
+```ts
+import type { AccessoryDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+export const candyPack: AccessoryDef = {
+  id: 'candy-pack',
+  name: 'Candy Pack',
+  description: 'A little green pack on the back.',
+  slot: 'back',
+  price: 100,
+  draw(g, w) {
+    const r = w.radius;
+    const sway = Math.min(1, w.speed / 200) * Math.sin(w.time * 6 + w.seed) * 0.12 * r;
+    g.lineWidth = Math.max(1.5, r * 0.08);
+    g.fillStyle = PALETTE.green;
+    g.beginPath();
+    g.arc(sway, 0.5 * r, 0.75 * r, 0, Math.PI * 2);
+    g.fill();
+    g.strokeStyle = w.ink;
+    g.stroke();
+    g.fillStyle = PALETTE.yellow;
+    g.beginPath();
+    g.arc(sway, 1.12 * r, 0.13 * r, 0, Math.PI * 2);
+    g.fill();
+    g.stroke();
+  },
+};
+```
+5. Replace `src/content/patterns/index.ts` with exactly:
+```ts
+import type { PatternDef } from '../../../engine/api.ts';
+import { bands } from './bands.ts';
+import { spots } from './spots.ts';
+
+/** Color patterns painted over a player's body. One per line. */
+export const PATTERNS: readonly PatternDef[] = [
+  bands,
+  spots,
+];
+```
+6. Replace `src/content/accessories/index.ts` with exactly:
+```ts
+import type { AccessoryDef } from '../../../engine/api.ts';
+import { candyPack } from './candy-pack.ts';
+import { roundGlasses } from './round-glasses.ts';
+
+/** Everything players can wear on their head, face or back (hats and more). One per line. */
+export const ACCESSORIES: readonly AccessoryDef[] = [
+  candyPack,
+  roundGlasses,
+];
+```
+7. Run `npm run check`.
+
+### Pitfalls
+- Copy the snippets verbatim; the spot/band/lens positions were computed against the eye and blush circles — moving them can push a dot or band under the face.
+- No `Math.random`/`Date`/`performance` in `src/content`; the candy-pack bob uses only `w.time`, `w.speed`, `w.seed` (tests call draw at `time` 0 and 2.7 — it must not throw and must stay finite).
+- Keep the pack below the centre (y > 0): the name sits above the player, so an angle-based "opposite the heading" pack would cover the name when a player faces down. Do not add it.
+- Only `shade(w.color, …)` and `PALETTE` colors; the patterns must not import `PALETTE` (they paint in the player's own color).
+- Names ≤18 and descriptions ≤70 characters and integer prices are enforced by the content tests; file name = item id, export = camelCase id.
+- Face/back slots and the pattern list are currently empty, so no "compared with what exists" rows exist to write (task pre-approved); add no head item — that is T0017's file territory.
+
+### Tests
+- none (engine/tests/ automatically checks file/registry layout, shop data, and runs each draw; no pure helpers are added here).
