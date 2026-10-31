@@ -3,11 +3,13 @@ id: T0105
 title: "Cheeks: a 120-coin pattern, two light dots on the cheeks"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:29:12Z
+claimed_at: 2026-10-31T17:49:56Z
 epic: E22
+designer: desktop
 ---
 
 ## Goal
