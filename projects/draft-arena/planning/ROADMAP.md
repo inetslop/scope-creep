@@ -2,17 +2,17 @@
 
 Epics are the main work: one or two active at a time, each broken into playable slices (task ids once written). Content-only: anything that needs the engine changed goes to IDEAS.md under "Needs the engine".
 
-## E1 New talent trees (tasked)
+## E1 New talent trees (done)
 Goal: more playstyles. Today: Gunner (your Bolt) and Body (plain stats).
 Done when: there are several trees, each a playstyle with its own weapon, its own shape, mods that help any weapon first, and a capstone behind a real commitment.
 Breakdown:
 - T0001 S — Lance: piercing bolts, a base fork in Gunner — done
 - T0003 L — Lobber tree: a bubble that arcs in, a splash that marks the ground — done
-- T0004 M — Chill: a hit that slows the target, a mod for any weapon — designing
+- T0004 M — Chill: a hit that slows the target, a mod for any weapon — done
 - T0006 S — Chomp: a Body capstone, heal on kill — done
 - T0007 L — Maw: a bite that eats everything in front, the weapon for Body — done
 - T0009 S — Hide: take less damage, a second fork under Vigor — done
-Next: done once T0003-T0009 build: three trees, each with its own weapon and a capstone.
+Done: three trees (Gunner, Body, Lobber), each with its own weapon and a capstone.
 
 ## E2 Monster behaviors (tasked)
 Goal: crowds that make you move differently. Today: Dot (it chases you) and Puff (it pops into Dots).
@@ -59,9 +59,14 @@ Ready: coins in the profile, ctx.giveCoins for content, prices and buying, and t
 Breakdown:
 - T0019 M — Coins from kills: one coin per monster, the victim's level per knockout, a coin pop, the balance on the start card — design
 - T0021 M — First shop stock: two patterns, a face and a back accessory, priced — design
-Next: the shop panel that sells the stock (try on, buy, wear), then coins from events and prestige.
+- T0022 M — The shop: a panel over the start screen that sells the stock, with a preview critter — design
+Next: the shop panel (T0022), then coins from events.
 
-## E7 Prestige
+## E7 Prestige (active)
 Goal: nobody stays overpowered forever: a player who reaches level 18 prestiges back to level 1, and prestiging is worth it.
 Done when: reaching level 18 sends a player back to level 1 and gives them something for it. What they gain is yours to design: it must make prestiging worth it without making them overpowered again.
 Ready: the reset at level 18 works; the reward is content (a director's onPrestige, talents and wearables that need prestiges). Today a prestige gives nothing (planning/modules/prestige.md).
+Breakdown:
+- T0023 S — Prestige ring: a big yellow ring and confetti where a player prestiges — design
+- T0024 M — The prestige pays: the Nth prestige in all pays 25 x N coins, a card shows what you got — design
+Next: once the shop is built, the medal (needs 2 prestiges in all) and a prestige-gated talent.
