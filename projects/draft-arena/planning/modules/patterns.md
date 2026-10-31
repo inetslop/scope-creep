@@ -24,7 +24,7 @@ Each is one file in src/content/patterns/: `name` (at most 18 characters), `desc
 
 ## What exists now
 
-11 in the game, from game/src/content/patterns/ (the real values).
+12 in the game, from game/src/content/patterns/ (the real values).
 
 ### Bands (`bands`)
 - description: Two light bands across the body.
@@ -79,4 +79,9 @@ Each is one file in src/content/patterns/: `name` (at most 18 characters), `desc
 ### Smile (`smile`)
 - description: A light smile across the lower body.
 - price: 180
+- draw: (code)
+
+### Heart (`heart`)
+- description: A light heart on the middle of the body.
+- price: 200
 - draw: (code)

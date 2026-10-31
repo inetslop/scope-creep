@@ -68,11 +68,8 @@ Done: every slot has 5 items, the pattern shelf has 8, and no ladder between 80 
 ## E22 The shop's long goals (done)
 Done: the tops are in — the prestige head, face and back, and the pattern shelf at 10.
 
-## E23 The thin trees grow (fully tasked)
-Goal: the two thinnest trees (Hive 5 talents, Lobber 5) each gain a fork that changes how the playstyle plays, not its numbers: the Hive's crowd pays in the draft, the Lobber's splash lingers.
-Breakdown:
-- T0110 M — Scavenge: a Hive talent, a monster kill is worth xp per enemy around the corpse — the crowd fork under Swarm — done
-- T0116 M — Fizz: a Lobber capstone beside Fuse, the bubble's splash lingers and strikes every 0.5 s — todo
+## E23 The thin trees grow (done)
+Done: the two thin trees each grew a fork — the Hive's crowd pays the draft (Scavenge), the Lobber's splash lingers (Fizz).
 
 ## E24 The Gunner grows (fully tasked)
 Goal: the Gunner (6 talents) grows two forks under Bolt that change how the kite plays — a bolt that lingers in flight, so the straight line becomes a hazard on the ground, and a bolt that re-aims once, so a miss still finds the target that moved.
@@ -80,21 +77,18 @@ Breakdown:
 - T0111 M — Drift: a Gunner fork, bolts drop to 40% speed after 120 units and linger 0.8–1.2 s — the line fork under Bolt 2 — done
 - T0112 M — Swoop: a Gunner fork, bolts re-aim once at 200 units and fly a second leg of 160–240 units — the re-aim fork under Bolt 2 — in progress
 
-## E25 The Hive deepens (fully tasked)
-Goal: the Hive grows past its base shape and fills the last two holes in every tree's shape: a movement talent, so a Hive life can run into the swarm and come back out, and the prestige-gated talent — the Hive is the only tree without one.
-Breakdown:
-- T0113 M — Glide: a Hive fork under Swarm, while 3+ enemies are within 80 you move faster, refreshed on each of your hits — done
-- T0117 M — Lash: a Hive prestige gate, your horn darts split on hit into small darts at the critter's neighbors — the dart fork under Horn — todo
+## E25 The Hive deepens (done)
+Done: the Hive runs into the swarm and comes back out (Glide), and the last tree without a prestige gate got one (Lash).
 
-## E26 The shop reaches the cap (fully tasked)
+## E26 The shop reaches the cap (active)
 Goal: the shop's ladders complete: each slot gets a 7th item past its old top, and the pattern shelf gets its last two steps to its cap of 12 — every shelf has a next save, and the price ladder has no hole.
 Done when: head, face and back each have 7 items, the pattern shelf has 12, and no ladder between 80 and 400 coins has a gap bigger than 150.
 Breakdown:
 - T0114 S — Candy: a 240-coin head, a striped candy on the side of the head — the head's 7th — done
 - T0115 S — Smile: a 180-coin pattern, a light smile across the lower body — the pattern shelf to 11 — done
-- T0119 S — Kiss: a 300-coin face, a small red kiss mark on the cheek — the face's 7th, the 200→350 gap — design
-- T0120 S — Heart: a 200-coin pattern, a light heart on the middle of the body — the pattern shelf to 12, the cap — design
-- T0122 S — Pinwheel: a 240-coin back, a pink and white pinwheel on a stick that spins — the back's 7th, the 180→300 gap — design
+- T0119 S — Kiss: a 300-coin face, a small red kiss mark on the cheek — the face's 7th, the 200→350 gap — done
+- T0120 S — Heart: a 200-coin pattern, a light heart on the middle of the body — the pattern shelf to 12, the cap — done
+- T0128 S — Pinwheel: a 240-coin back, a pink and white pinwheel that turns at a constant spin — the back's 7th, the 180→300 gap — design
 
 ## E27 The Lobber finds a second aim (fully tasked)
 Goal: the bubble grows a second, then a third, aim: a bubble that pops on the critter it touches (a kill-shot on the target instead of a zone), and a bubble that comes back and splashes behind you (a kiting loop that leaves a ring of ice you run through).
@@ -111,6 +105,13 @@ Breakdown:
 ## E29 The streak (active)
 Goal: momentum pays — two player knockouts within 20 s wear a golden sash that pays +1 coin per kill for 15 s, a third in the chain deepens it to a green sash (+2), and the sash's arrival is a star ring and a chime: winning a duel in a row is a visible, audible, paid moment.
 Breakdown:
-- T0125 M — The streak: a permanent rule, a golden sash for two player knockouts in 20 s, +1 coin per kill for 15 s — design
-- T0126 S — Tier 2: a third in the chain turns the sash green and pays +2 — design
-- T0127 S — The sash moment: a star ring and a two-note chime when the sash appears — design
+- T0125 M — The streak: a permanent rule, a golden sash for two player knockouts in 20 s, +1 coin per kill for 15 s — todo
+- T0126 S — Tier 2: a third in the chain turns the sash green and pays +2 — designing, waits on T0125
+- T0127 S — The sash moment: a star ring and a two-note chime when the sash appears — design, waits on T0126
+
+## E30 The grudge (active)
+Goal: a personal feud inside the big field — two players who knock each other out again bear a red knot the field can see, and the knockout that ends the feud pays its killer.
+Breakdown:
+- T0130 M — The grudge: a permanent rule, the red knot on both feuding players, the end of the feud pays +15 xp and +5 coins — design
+- the knot's moment (S): a small ring and a soft pop when a grudge forms — to be tasked, waits on T0130
+- the double knot (M): the same pair feuding a second time in a match wears a second, smaller knot, and the end pays double — to be tasked, waits on T0130
