@@ -1,12 +1,14 @@
 ---
 id: T0008
 title: "Snail: an orange hexagon that leaves sticky patches behind"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T02:37:00Z
+claimed_at: 2026-10-31T04:13:06Z
 epic: E2
 ---
 
