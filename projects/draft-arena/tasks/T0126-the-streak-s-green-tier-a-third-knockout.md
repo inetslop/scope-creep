@@ -1,12 +1,14 @@
 ---
 id: T0126
 title: "The streak's green tier: a third knockout in the chain turns the sash green and pays +2"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0125]
-attempts: 0
+attempts: 1
 created: 2026-10-31T21:05:07Z
+claimed_at: 2026-10-31T22:46:52Z
 epic: E29
 ---
 
