@@ -4,11 +4,12 @@ title: The first run says pick a card
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T01:13:09Z
 claimed_at: 2026-10-31T23:13:37Z
+finished_at: 2026-10-31T23:43:44Z
 epic: E11
 ---
 
@@ -91,3 +92,15 @@ No new types. All additions are locals/constants inside `DraftScene.create()`.
 
 ### Tests
 none
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the "Pick a card" first-run teach to `src/scenes/DraftScene.ts`. On the opening draft of a first run (`opening && runsPlayed === 0`), a white card (the HUD's own `makeCard`, 140×44, bold ink text) is centered above the row; `pick()` fades it over 150 ms before stopping the scene, and it re-derives from run state so it never shows in a later draft, any run with `runsPlayed ≥ 1`, or a resumed first run that already picked. Reroll leaves it up (the cards re-flip under it), and it takes no sound or input. The non-hint layout stays byte-identical (all new expressions no-op when `showHint` is false). `npm run check` and `npm run smoke` both pass; only the one file was touched.
+
+- Self-review: APPROVE
+- Time: 30.1 min
+
+```
+projects/chokepoint/game/src/scenes/DraftScene.ts | 33 +++++++++++++++++++----
+ 1 file changed, 28 insertions(+), 5 deletions(-)
+```

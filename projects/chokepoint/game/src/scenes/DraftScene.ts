@@ -5,9 +5,11 @@ import { getAugment } from '../content/augments';
 import { cssColor, PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
 import { TIER_ORDER, tierAddedLine, tierIndex, tierOdds, tierTowerLine } from '../core/tiers';
+import { loadProfile } from '../core/profile';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
+import { makeCard } from '../ui/card';
 import { textStyle, titleStyle } from '../ui/text';
 import { tierGemColor, tierName } from '../ui/tierLook';
 import { uiCamera, viewSize } from '../ui/display';
@@ -16,6 +18,9 @@ import { getGameScene, getSfx, onKey, onResize, SCENES } from './keys';
 
 const CARD_W = 220;
 const CARD_H = 206;
+const HINT_W = 140;
+const HINT_H = 44;
+const HINT_GAP = 12;
 
 /**
  * Before the first wave and after every cleared one: the draft's cards (three, four on every
@@ -46,13 +51,19 @@ export class DraftScene extends Phaser.Scene {
       if (this.picked || !flipped[i]) return;
       this.picked = true;
       hook.overlay = '';
-      this.scene.stop();
+      if (hint) {
+        this.tweens.add({ targets: hint, alpha: 0, duration: 150, ease: 'Quad.easeIn' });
+        this.time.delayedCall(150, () => this.scene.stop());
+      } else {
+        this.scene.stop();
+      }
       game.flow.finishDraft(game.flow.offer[i]);
     };
 
     // Veils the board and swallows clicks, so nothing underneath reacts.
     const shade = this.add.rectangle(0, 0, 10, 10, PALETTE.ground, 0.78).setOrigin(0).setInteractive();
     const opening = game.run.wave === 0;
+    const showHint = opening && loadProfile(window.localStorage).runsPlayed === 0;
     // The fit row: at least one run tower with a free slot — the draft's version of the ghost.
     const hasRow = game.towers.towers.some((t) => t.freeSlots > 0);
     const title = this.add.text(0, 0, opening ? 'Choose your first augment' : `Wave ${game.run.wave} cleared`, titleStyle(30)).setOrigin(0.5);
@@ -70,10 +81,17 @@ export class DraftScene extends Phaser.Scene {
       TIER_ORDER.map((t) => `${t.charAt(0).toUpperCase() + t.slice(1)} ${oddsLine[t]}`).join(' · '),
       textStyle(12, PALETTE.muted),
     ).setOrigin(0.5);
+    const hint = showHint
+      ? this.add.container(0, 0, [
+          makeCard(this, 0, 0, HINT_W, HINT_H, 14),
+          this.add.text(0, 0, 'Pick a card', textStyle(14, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5),
+        ])
+      : undefined;
     const portrait = (h: number, n: number): { top: number; header: number; gap: number } => {
       let header = 84, gap = 16;
+      if (showHint) header += HINT_H + HINT_GAP * 2 - 26; // the hint card takes the odds-to-cards gap
       const col = () => header + n * H + (n - 1) * gap + 16 + 52;
-      if (70 + col() > h - 8) { header = 76; gap = 12; }
+      if (70 + col() > h - 8) { header = 76 + (showHint ? HINT_H + HINT_GAP * 2 - 18 : 0); gap = 12; }
       const c = col();
       return { top: Math.min(Math.max(70, (h - c) / 2), h - c - 8), header, gap };
     };
@@ -239,9 +257,10 @@ export class DraftScene extends Phaser.Scene {
         subtitle.setPosition(width / 2, p.top + 34);
         odds.setPosition(width / 2, p.top + 58);
       } else {
-        title.setPosition(width / 2, height / 2 - H / 2 - 74);
-        subtitle.setPosition(width / 2, height / 2 - H / 2 - 40);
-        odds.setPosition(width / 2, height / 2 - H / 2 - 18);
+        const shift = showHint ? HINT_H + HINT_GAP * 2 : 0;
+        title.setPosition(width / 2, height / 2 - H / 2 - 74 - shift);
+        subtitle.setPosition(width / 2, height / 2 - H / 2 - 40 - shift);
+        odds.setPosition(width / 2, height / 2 - H / 2 - 18 - shift);
       }
       cards.forEach((c, i) => {
         const s = cardSlot(i, width, height, cards.length);
@@ -250,6 +269,10 @@ export class DraftScene extends Phaser.Scene {
       });
       const r = rerollSlot(width, height, rows);
       rerollButton.container.setPosition(r.x, r.y);
+      if (hint) {
+        const first = cardSlot(0, width, height, cards.length);
+        hint.setPosition(width / 2, (odds.y + 6 + first.y - H / 2) / 2);
+      }
     };
     layout(viewSize(this).width, viewSize(this).height);
     onResize(this, layout);
