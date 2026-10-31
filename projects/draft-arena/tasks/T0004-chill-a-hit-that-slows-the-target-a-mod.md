@@ -1,12 +1,14 @@
 ---
 id: T0004
 title: "Chill: a hit that slows the target, a mod for any weapon"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T02:20:47Z
+claimed_at: 2026-10-31T03:34:42Z
 epic: E1
 ---
 
