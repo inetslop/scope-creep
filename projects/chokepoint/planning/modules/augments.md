@@ -93,8 +93,8 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - tiers: rare {damageMul 1.3, cooldownMul 0.85, splash 1.5}, epic {damageMul 1.7, cooldownMul 0.7, splash 2}
 
 ### Spray (`spray`)
-- description: "Blasts 5 pellets in a cone: deadly up close. Added: +2 pellets per blast."
-- asTower: "Blasts 5 pellets in a cone: deadly up close."
+- description: "Blasts 5 pellets in a cone: deadly up close, 15% hit for double. Added: +2 pellets per blast."
+- asTower: "Blasts 5 pellets in a cone: 15% hit for double."
 - asAdded: +2 pellets per blast.
 - look: shape diamond, color yellow, size 0.24
 - first: kind spray, damage 4, range 2.5, rate 0.833, spray 5
