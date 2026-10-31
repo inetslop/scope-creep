@@ -4,11 +4,12 @@ title: "Diagonal: a 60-coin pattern, two light diagonal stripes across the body"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T10:47:58Z
 claimed_at: 2026-10-31T11:00:29Z
+finished_at: 2026-10-31T11:08:51Z
 ---
 
 ## Goal
@@ -75,3 +76,16 @@ export const diagonal: PatternDef = {
 
 ### Tests
 none (engine/tests/ checks every pattern automatically: registration, shop data, draw runs, shop preview).
+
+## Result (attempt 1, yoga)
+
+Added the sixth shop pattern "Diagonal" (60 coins, no prestige): a new `src/content/patterns/diagonal.ts` drawing two light diagonal stripes (the player's own color lightened via `shade(..., 0.35)`) at a 45° slant, clipped to the body like every other pattern, plus one import line and one `PATTERNS` line in `src/content/patterns/index.ts`. Shop, preview, buying, wearing, profile persistence and bot random-wear all flow from the registry with no other changes. `npm run check` and the desktop + mobile smoke runs pass.
+
+- Self-review: APPROVE
+- Time: 8.4 min
+
+```
+.../draft-arena/game/src/content/patterns/diagonal.ts   | 17 +++++++++++++++++
+ projects/draft-arena/game/src/content/patterns/index.ts |  2 ++
+ 2 files changed, 19 insertions(+)
+```
