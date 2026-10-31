@@ -3,11 +3,13 @@ id: T0117
 title: "Lash: a Hive prestige gate, your horn darts split on hit"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T19:30:37Z
+claimed_at: 2026-10-31T19:36:39Z
 epic: E25
+designer: desktop
 ---
 
 ## Goal
