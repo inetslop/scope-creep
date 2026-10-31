@@ -57,6 +57,8 @@ The backlog: add freely, turn the best into epics and tasks.
 - Feather (E21): a 120-coin head accessory — a single pink feather resting on the head, the head slot's step between the free hats and the 150-coin Bloom. — T0089
 - Candy Cane (E21): a 300-coin back accessory — a red and white striped cane hooked over the back, the back slot's step between the 180-coin Party Blower and the 400-coin Medal. — T0089
 - Monocle (E21): a 150-coin face accessory — a gold lens over one eye with a thin chain to the cheek, the face slot's step between the 100-coin Beak and the 200-coin Heart Shades. — T0091
+- Bellow (E17): a Body prestige-gated talent — after 1 prestige this life, every 1.4 s a ring (radius 80) around you strikes everything within 60 (10 damage, +4 per rank): Maw keeps the front, the ring keeps the rest, so a second-life Body stands still in the middle of the swarm — every tree but Hive has a gated talent once it lands. — T0097
+- Star (E21): a 100-coin pattern — one light five-point star in the middle of the body, the pattern shelf's step past Lolly's 80, the shelf to 8. — T0098
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.

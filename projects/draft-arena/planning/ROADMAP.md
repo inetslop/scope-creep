@@ -170,9 +170,10 @@ Done when: a prestige banks a point the player sees and spends, and a second tre
 Breakdown:
 - T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — done
 - T0067 M — Cover: a fan of bolts behind you, a Gunner talent open after a prestige this life — done
-- T0079 M — Gore: a Frenzy talent, the jab goes through enemies while below half hp, open after a prestige — design
+- T0079 M — Gore: a Frenzy talent, the jab goes through enemies while below half hp, open after a prestige — done
 - T0080 M — Snare: a Goober talent, your Gush puddles sap whatever stands in them, open after a prestige — design
-Next: a third gated talent once the bank, Cover and the two gated talents prove out.
+- T0097 M — Bellow: a Body talent, a ring around you that strikes everything close, open after a prestige — design
+Next: Bellow is written; the gated talents reach every tree but Hive once Snare lands.
 
 ## E18 The last slot (done)
 Goal: the menagerie's 10th and final monster type — a way to threaten no other monster has, so the crowd's ceiling is full.
@@ -186,7 +187,7 @@ Goal: a player kill isn't free: the killer wears the mark for 15 s (revenge), an
 Done when: a player who knocks out another is marked for 15 s and pays the mark bonus if knocked out in that window; a knocked-out player of level 4+ drops a gem worth their level (the leader's gem folded in); a mark that runs out on a living player banks 5 coins.
 Breakdown:
 - T0082 M — The price: killing a player marks you for 15 s, the mark pays out as usual — design
-- T0083 M — The corpse pays: a knocked-out player of level 4+ drops a gem worth their level; the leader's gem folds in — design
+- T0083 M — The corpse pays: a knocked-out player of level 4+ drops a gem worth their level; the leader's gem folds in — done
 - T0084 S — A sting: a small sting when the mark lands on you — failed (the client cannot tell the local player is marked; needs the engine, see IDEAS)
 - T0087 S — Escape pays: a mark that runs out on a living player banks 5 coins — design
 Next: fully tasked — the mark's two fates (killed, escaped) both pay out once the three tasks land.
@@ -198,7 +199,7 @@ Breakdown:
 - T0085 M — Toss: a big slow melon that lobs an arc blob that splashes where it lands — in progress
 - T0086 M — Twin: a bean that splits into two smaller twins when it drops to half hp — failed (a split must remove the parent, and the only removal is a death, which always drops a gem)
 - T0090 M — Twin: a bean that gives birth to a small fast twin the first time it drops to half hp, and keeps living — failed (the comparison table missed the Sleeper row)
-- T0096 M — Twin: a bean that shudders at half hp, births a fast twin and keeps living — design
+- T0096 M — Twin: a bean that shudders at half hp, births a fast twin and keeps living — todo
 Next: fully tasked — the arc threat and the kill that doesn't kill are both written; the last slot (back to 10) waits in IDEAS.
 
 ## E21 The shop fills out (active)
@@ -207,5 +208,6 @@ Done when: each slot has at least 5 items including the free ones, the pattern s
 Breakdown:
 - T0088 S — Lolly: an 80-coin pattern, a light lollipop swirl — design
 - T0089 M — The third shelf: a 120-coin Feather (head) and a 300-coin Candy Cane (back) — design
-- T0091 S — Monocle: a 150-coin face accessory, a gold lens over one eye — design
-Next: one more pattern step (the pattern shelf to 8), once these prove out.
+- T0091 S — Monocle: a 150-coin face accessory, a gold lens over one eye — done
+- T0098 S — Star: a 100-coin pattern, one light star on the middle of the body — design
+Next: the back slot needs a 5th item (it has 4), once these prove out.
