@@ -1,12 +1,14 @@
 ---
 id: T0120
 title: "Heart: a 200-coin pattern, a light heart on the middle of the body"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T20:09:56Z
+claimed_at: 2026-10-31T20:45:42Z
 epic: E26
 ---
 
