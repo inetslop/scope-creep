@@ -13,5 +13,6 @@ export const gunner: TalentTreeDef = {
     { id: 'bolt', upgrade: 'bolt', max: 5, start: 1, needs: [['haste', 1]] },
     { id: 'split', upgrade: 'split', max: 2, needs: [['bolt', 2]] },
     { id: 'ricochet', upgrade: 'ricochet', max: 1, needs: [['bolt', 4]] },
+    { id: 'cover', upgrade: 'cover', max: 3, needs: [['bolt', 2]], points: 3, prestige: 1 },
   ],
 };

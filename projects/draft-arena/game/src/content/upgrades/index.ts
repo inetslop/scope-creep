@@ -5,6 +5,7 @@ import { chill } from './chill.ts';
 import { chew } from './chew.ts';
 import { chomp } from './chomp.ts';
 import { cling } from './cling.ts';
+import { cover } from './cover.ts';
 import { fang } from './fang.ts';
 import { frenzy } from './frenzy.ts';
 import { fuse } from './fuse.ts';
@@ -35,6 +36,7 @@ import { wide } from './wide.ts';
 /** Every upgrade talents give. One per line: weapons, capstones, on-hit, then stats. */
 export const UPGRADES: readonly UpgradeDef[] = [
   bolt,
+  cover,
   maw,
   lob,
   goo,

@@ -4,11 +4,12 @@ title: "Cover: a Gunner talent that fires a fan of bolts behind you, open after 
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0061]
 attempts: 1
 created: 2026-10-31T12:44:22Z
 claimed_at: 2026-10-31T13:42:16Z
+finished_at: 2026-10-31T14:02:15Z
 epic: E17
 ---
 
@@ -111,3 +112,17 @@ export const cover: UpgradeDef = {
 
 ### Tests
 - none (content is tested automatically by engine/tests/, which will take a rank of Cover in a real match and check the tree, the registry and the data)
+
+## Result (attempt 1, asus)
+
+Added the Cover weapon for a second-life Gunner build: a new `src/content/upgrades/cover.ts` that fires a 70° fan of 3 Bolt stars (9/12/15 damage per rank) straight behind the player every 1.0 s, opposite its movement (last movement when still), plus one registry line in `upgrades/index.ts` and one talent line in the Gunner tree (`max: 3`, needs Bolt 2, 3 tree points, `prestige: 1`) so it stays greyed until the player has prestiged this life — gated exactly like Slush. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 20.0 min
+
+```
+.../draft-arena/game/src/content/talents/gunner.ts |  1 +
+ .../draft-arena/game/src/content/upgrades/cover.ts | 28 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ 3 files changed, 31 insertions(+)
+```
