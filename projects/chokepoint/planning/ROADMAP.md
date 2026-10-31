@@ -21,7 +21,7 @@ The game grows through epics: bigger features that take several tasks. One or tw
 ### E3 — Levels: a run is a journey (dropped — 2026-10-30, by hand)
 The level rule (T0260) and its wave-card line (T0262) landed and played badly: re-growing the board empty every 10 waves throws away the build. Both are removed by T0283 (done 2026-10-30); T0261 is dropped with them. Do not re-task levels, the level-clear pick or the level-clear sting. The difficulty-for-reward idea lives on as **E9**.
 
-### E4 — Augment rarity (active — started 2026-10-28)
+### E4 — Augment rarity (fully tasked 2026-10-31 — closing on the pool's landings)
 **Goal:** the draft is exciting: sometimes a card is something special.
 **When done:** every augment card in the draft comes in a rarity: Common, Rare or Epic. A rarer card is the same augment with stronger numbers (a Rare Rapid attacks faster than a Common one), and a few rule-changing augments only ever come as Epic. Rarity shows everywhere the augment does: the card's frame and a small gem row on the draft, hand and tower-panel cards, and on the tower itself (its slot pip). Rarer cards turn up more often the further the run gets; the odds are shown in the draft.
 **Breakdown:**
@@ -92,15 +92,15 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 - T0243 (L) — the draft shows where the card lands (the re-file): each offered card shows the towers a pick would land on — done (2026-10-30)
 - T0276 (M) — endless rerolls: every reroll costs more — **done** (2026-10-30, desktop)
 - T0279 (S) — balance: Beam hits too softly — **done** (2026-10-30, desktop)
-- T0280 (M) — Beam added is a damage boost, not another beam — failed 2026-10-30 (cachyos context overflow ×3); re-file pending for a strong machine
+- T0280 (M) — Beam added is a damage boost, not another beam — failed 2026-10-30 (cachyos context overflow ×3); **re-filed as T0316 (M, priority 2, in the pool)**
 - T0281 (L) — Beam and burn deal damage in ticks — **done** (2026-10-30, asus)
 - T0282 (M) — Spray crits: the shotgun rolls for double damage — file lost from the pool; re-filed as T0299
 - T0298 (L) — Wildcard: the 4th card of the 4-card drafts becomes whatever you pick, always Rare or better — in the pool (todo)
 - T0299 (M) — Spray crits (the T0282 re-file): 15% of pellets hit for double, a yellow chip at the impact — **done** (2026-10-31, asus)
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095) and T0298; T0280 failed 2026-10-30 (re-file pending for a strong machine); T0150 rides behind T0025.
+Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095), T0298 and T0316 (T0280's re-file); T0150 rides behind T0025.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0235, T0248 and T0280's re-file land.**
+**E4 closes when T0025, T0062, T0064, T0095, T0235, T0248 and T0316 (T0280's re-file) land — every E4 task is now written; it counts as finished while the pool lands.**
 
 **16-cap (protocol):** the pool is 16 (Haste landed with no removal triggered); the five queued registrations (T0025, T0062, T0064, T0095, T0235) land exactly five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
 
@@ -145,6 +145,14 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line) — **T0305 (M, priority 1) — done** (2026-10-30, asus)
 - (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set
 
+### E10 — The sky: not everything walks the road (active — opened 2026-10-31)
+**Goal:** the road stops being the only line on the board: something crosses the island over it, and a build that only covers the road stops being enough.
+**When done:** the wave-50 boss never touches the road — it crosses the island in a straight line and banks to a new one at half health — and a small regular flyer in the wave mix teaches the same read; the flight line's telegraph is the enemy's own language, and the player learns to cover the island, not just the road.
+**Breakdown:**
+- The Flyer, the wave-50 boss: the fifth every-10 boss, the first that doesn't walk the road — a straight-line crossing from the island's edge to the exit, a bank at half health — **T0317 (L, priority 2, in the pool)**
+- (to task) the regular Flyer in the wave mix: a small fast shape that crosses straight, one every few waves; lands behind the enemy queue (the Feeder first) and needs the 10-regular cap to open — a removal or a merge in its own task
+- (to task) the crossing learns: the bank's line is chosen to cross where the run's towers don't reach — the boss banks into uncovered ground, its telegraph keeping it fair
+
 ### Enemy queue (non-epic)
 
 New enemies land one at a time: each new-enemy task chains behind the one before it so the enemy system, the wave mix and the art settle between additions.
@@ -167,7 +175,7 @@ Ideas that may become epics or tasks of one.
 - Targeting modes per tower (first, strongest, closest) — **tasked as T0114 (L, non-epic, in the pool)** — the spec and its parked follow-ups (the plinth notch, the chip's teach line) stand in IDEAS
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
-- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is T0292; after it, the wave-50 candidate is the flyer's straight-line crossing (the parked flyer line in IDEAS) at boss scale — the first boss that doesn't walk the road)
+- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is T0292; the wave-50 Flyer, the first boss that doesn't walk the road, is **E10's T0317 (in the pool)**)
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
