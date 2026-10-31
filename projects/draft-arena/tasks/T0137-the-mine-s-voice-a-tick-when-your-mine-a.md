@@ -3,11 +3,13 @@ id: T0137
 title: "The mine's voice: a tick when your mine arms, a low boom when a mine pops"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0135]
 attempts: 0
 created: 2026-10-31T23:01:32Z
+claimed_at: 2026-10-31T23:29:59Z
 epic: E31
+designer: desktop
 ---
 
 ## Goal
