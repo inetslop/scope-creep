@@ -3,12 +3,10 @@ id: T0052
 title: "Beak: a 100-coin face accessory, a small orange beak below the eyes"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T10:32:35Z
-claimed_at: 2026-10-31T10:47:33Z
-designer: yoga
 ---
 
 ## Goal
@@ -28,3 +26,56 @@ The face slot is the shop's thinnest shelf (two items): give it a third — a bo
 - [ ] The shop sells the Beak at 100 coins; buying it makes it wearable, the choice is kept for the next visit, and a critter wearing it reads as a clear orange point below the eyes in a crowd.
 - [ ] It shows on all 10 player colors with the ink outline and the face drawn on top, and bots wear it at random like the other face items.
 - [ ] It changes nothing in play.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/accessories/beak.ts` - the face accessory `beak` (100 coins, no prestige): a small solid orange triangle (beak) at face center, below the eyes, above the mouth
+- edit `src/content/accessories/index.ts` - one import + one list line, both next to the other face items
+
+### Interfaces
+No new types. The new item is an `AccessoryDef`:
+
+```ts
+import type { AccessoryDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+export const beak: AccessoryDef = {
+  id: 'beak',
+  name: 'Beak',
+  description: 'A small orange beak below the eyes.',
+  slot: 'face',
+  price: 100,
+  draw(g, w) {
+    const r = w.radius;
+    const dip = Math.sin(w.time * 3 + w.seed) * 0.02 * r;
+    g.lineJoin = 'round';
+    g.lineWidth = Math.max(1.5, r * 0.08);
+    g.fillStyle = PALETTE.orange;
+    g.strokeStyle = w.ink;
+    g.beginPath();
+    g.moveTo(-0.16 * r, 0.18 * r + dip);
+    g.lineTo(0, 0.42 * r + dip);
+    g.lineTo(0.16 * r, 0.18 * r + dip);
+    g.closePath();
+    g.fill();
+    g.stroke();
+  },
+};
+```
+
+### Steps
+1. Create `beak.ts` exactly as above (copy `bow-tie.ts`'s shape: same imports, same field order, same `lineWidth`/fill/stroke idiom).
+2. In `index.ts`: add `import { beak } from './beak.ts';` after the `bowTie` import, and `beak,` after `bowTie,` in `ACCESSORIES` (next to the other face items, before `balloon,`).
+
+Shop, hats card, bot wearing (`botWear` dresses bots at random from `ACCESSORIES`) and profile persistence all read the registry — no other edits.
+
+### Pitfalls
+- Eyes (2 of them) end at y = 0.14r; the beak's top edge must stay below them: base 0.18r, bounce ±0.02r → never above 0.16r. Never let the triangle reach the eye circles.
+- Bounce is the only animation: `w.time` + `w.seed` only (no `Math.random`/`Date` in `src/content/`, lint fails); amplitude ≤ 0.02r ("at most a little bounce", cf. `balloon.ts`).
+- Colors: `PALETTE.orange` fill, `w.ink` stroke only; inked outline is required.
+- One item per file: `beak.ts` holds only `beak`, exported in camelCase; registry gets exactly one import and one list line. Face slot goes to 3/10 accessories — cap fine.
+- No gameplay fields (`price`/`slot`/`draw` only) — it must change nothing in play.
+
+### Tests
+- none (content is tested automatically by `engine/tests/`: it draws every accessory and checks the registry/one-per-file rule).
