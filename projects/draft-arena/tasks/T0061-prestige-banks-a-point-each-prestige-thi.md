@@ -1,14 +1,14 @@
 ---
 id: T0061
 title: "Prestige banks a point: each prestige this life banks +1 talent point"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 1
+attempts: 2
 created: 2026-10-31T11:40:36Z
-claimed_at: 2026-10-31T11:47:33Z
-finished_at: 2026-10-31T12:00:31Z
+claimed_at: 2026-10-31T12:00:34Z
 epic: E17
 ---
 
