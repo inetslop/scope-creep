@@ -1,6 +1,7 @@
 import { v, type UpgradeDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
 import { BUBBLE_FLIGHT, BUBBLE_SPEED } from '../projectiles/bubble.ts';
+import { bopRank } from './bop.ts';
 
 /** The Lobber's weapon: an arcing bubble that splashes where it lands. */
 export const lob: UpgradeDef = {
@@ -15,7 +16,7 @@ export const lob: UpgradeDef = {
     if (!target) return;
     // Aims at where the enemy is now, with no lead: the bubble lands where it was.
     // life shortens with the projectileSpeed stat, so Quick lands the splash sooner.
-    ctx.fire(me, 'bubble', {
+    ctx.fire(me, bopRank(me) > 0 ? 'bop-bubble' : 'bubble', {
       angle: v.angleTo(me, target),
       speed: BUBBLE_SPEED,
       damage: 0,

@@ -10,6 +10,7 @@ import { fizzTick } from './fizz-tick.ts';
 import { wiredPop } from './wired-pop.ts';
 import { lashTick } from './lash-tick.ts';
 import { bellowMouth } from './bellow-mouth.ts';
+import { bopConfetti } from './bop-confetti.ts';
 import { geyserBubble } from './geyser-bubble.ts';
 import { splashRing } from './splash-ring.ts';
 import { stingBurst } from './sting-burst.ts';
@@ -25,6 +26,7 @@ export const EFFECTS: readonly EffectDef[] = [
   crownFall,
   geyserBubble,
   splashRing,
+  bopConfetti,
   burst,
   stingBurst,
   snapBurst,

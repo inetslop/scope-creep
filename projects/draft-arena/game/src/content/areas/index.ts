@@ -3,6 +3,7 @@ import { bite } from './bite.ts';
 import { bellowRing } from './bellow-ring.ts';
 import { jawBite } from './jaw-bite.ts';
 import { splash } from './splash.ts';
+import { bopBurst } from './bop-burst.ts';
 import { plopSplash } from './plop-splash.ts';
 import { slushPuddle } from './slush-puddle.ts';
 import { splat } from './splat.ts';
@@ -17,6 +18,7 @@ export const AREAS: readonly AreaDef[] = [
   bellowRing,
   jawBite,
   splash,
+  bopBurst,
   plopSplash,
   slushPuddle,
   splat,

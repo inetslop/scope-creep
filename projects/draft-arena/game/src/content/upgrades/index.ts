@@ -2,6 +2,7 @@ import type { UpgradeDef } from '../../../engine/api.ts';
 import { adrenaline } from './adrenaline.ts';
 import { bellow } from './bellow.ts';
 import { bolt } from './bolt.ts';
+import { bop } from './bop.ts';
 import { chill } from './chill.ts';
 import { chew } from './chew.ts';
 import { chomp } from './chomp.ts';
@@ -84,6 +85,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   snare,
   split,
   drift,
+  bop,
   lance,
   swift,
   quick,

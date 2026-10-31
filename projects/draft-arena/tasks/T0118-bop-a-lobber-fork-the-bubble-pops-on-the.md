@@ -4,11 +4,12 @@ title: "Bop: a Lobber fork, the bubble pops on the critter it touches"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T19:30:37Z
 claimed_at: 2026-10-31T21:18:55Z
+finished_at: 2026-10-31T22:23:24Z
 epic: E27
 ---
 
@@ -176,3 +177,24 @@ export const bopConfetti: EffectDef = {
 
 ### Tests
 None to write — `npm run check` auto-tests registration, talent reachability, each item in a real match and the 60-player budget; `npm run smoke` plays it in a browser. `bopRank` is a copy of the proven `driftRank` and needs no unit test.
+
+## Result (attempt 1, inet-racing)
+
+Added Bop, a Lobber fork under Lob (needs Lob 3, 3 ranks): with it, Lob fires a `bop-bubble` that keeps the bubble's arc flight but pops on the first critter it touches — a one-pulse `bop-burst` area (rank 1: 14 dmg / r35, +5/+5 per rank) at the hit point with no splash there, while a bubble that touches nothing still lands its normal splash (Wide/Fuse/Fizz apply). The band-marked bubble, a white ice ring and teal confetti mark pops; kills credit to the player so on-kill upgrades pay, and Split/Lance/Might/Quick/Haste compose with it via the engine. One deviation from the design: the design's `pierce: 0` on the projectile fails the content test (pierce must be ≥1), so I omitted it — the engine defaults it to 1 and `onHit` zeroes it, so the pop-on-first-touch and Lance-immunity behavior are identical. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 64.5 min
+
+```
+.../game/src/content/areas/bop-burst.ts            | 19 ++++++++
+ .../draft-arena/game/src/content/areas/index.ts    |  2 +
+ .../game/src/content/effects/bop-confetti.ts       | 26 ++++++++++
+ .../draft-arena/game/src/content/effects/index.ts  |  2 +
+ .../game/src/content/projectiles/bop-bubble.ts     | 57 ++++++++++++++++++++++
+ .../game/src/content/projectiles/index.ts          |  2 +
+ .../draft-arena/game/src/content/talents/lobber.ts |  1 +
+ .../draft-arena/game/src/content/upgrades/bop.ts   | 19 ++++++++
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 +
+ .../draft-arena/game/src/content/upgrades/lob.ts   |  3 +-
+ 10 files changed, 132 insertions(+), 1 deletion(-)
+```
