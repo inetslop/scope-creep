@@ -4,11 +4,12 @@ title: "Prestige stars: a gold star on the critter per prestige this life, up to
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T08:32:32Z
 claimed_at: 2026-10-31T09:16:15Z
+finished_at: 2026-10-31T10:23:46Z
 epic: E7
 ---
 
@@ -121,3 +122,19 @@ Like the crown (the only other per-player marker: an area the director keeps att
 
 ### Tests
 - none (content is tested automatically by engine/tests/).
+
+## Result (attempt 1, asus)
+
+Added prestige stars: a `prestige-stars` area (src/content/areas/prestige-stars.ts) draws 1–3 small gold stars fanned off the top-right of a critter's head, count synced on slots[0] and refreshed by a 1-second pulse; a `prestige-stars` director (src/content/directors/prestige-stars.ts) fires it once per player per life when `player.prestige > 0` and clears its flag on a knockout so stars reset with the life. Both registered one line each in AREAS and DIRECTORS next to crown/prestigeRing. The stars are purely cosmetic — no stats — and persist until a knockout. Check and smoke (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 67.5 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../draft-arena/game/src/content/areas/index.ts    |  2 ++
+ .../game/src/content/areas/prestige-stars.ts       | 42 ++++++++++++++++++++++
+ .../game/src/content/directors/index.ts            |  2 ++
+ .../game/src/content/directors/prestige-stars.ts   | 26 ++++++++++++++
+ 4 files changed, 72 insertions(+)
+```

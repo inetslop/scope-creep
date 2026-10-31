@@ -1,6 +1,7 @@
 import type { DirectorDef } from '../../../engine/api.ts';
 import { gemRain } from './gem-rain.ts';
 import { prestigeRing } from './prestige-ring.ts';
+import { prestigeStars } from './prestige-stars.ts';
 import { gemGeyser } from './gem-geyser.ts';
 import { jackpot } from './jackpot.ts';
 import { crown } from './crown.ts';
@@ -14,6 +15,7 @@ import { killCoins } from './kill-coins.ts';
 export const DIRECTORS: readonly DirectorDef[] = [
   gemRain,
   prestigeRing,
+  prestigeStars,
   gemGeyser,
   jackpot,
   killCoins,
