@@ -37,7 +37,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-28 in the game, from game/src/content/upgrades/ (the real values).
+29 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -122,6 +122,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - description: "On a kill while below half your hp: +20% move speed for 1.5 s, refreshed on each kill. Rank 2: +30% for 2 s."
 - maxLevel: 2
 - look: shape star, color #ff6b6b
+- onKill: (code)
+
+### Fang (`fang`)
+- description: "On a kill while below half your hp: +2 coins. Per rank: +2 more."
+- maxLevel: 2
+- look: shape circle, color #ffd43b
 - onKill: (code)
 
 ### Fuse (`fuse`)

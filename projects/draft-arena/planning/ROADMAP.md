@@ -136,19 +136,19 @@ Breakdown:
 - T0054 L — Frenzy tree: Frenzy, Nerve, Adrenaline, Reckless — done
 Done: the tree is in the panel — trade hp for damage, a hurt-scaled jab, a kill-sprint while hurt, a double-hit capstone.
 
-## E14 A meaner menagerie (active)
+## E14 A meaner menagerie (done)
 Goal: the crowd gains a 9th, then a 10th, way to threaten you — monsters that make the kill itself a choice, each readable at a glance (the cap is 10 types).
 Done when: the 9th monster is in the field with a behavior no other has.
 Breakdown:
-- T0055 M — Popper: a fat grinning red blob that pops a damaging puff when it dies — designing
-Next: the 10th (and last) monster once Popper proves out.
+- T0055 M — Popper: a fat grinning red blob that pops a damaging puff when it dies — done
+Done: nine monsters; the last slot waits in IDEAS for a behavior the nine don't have.
 
 ## E15 The Frenzy grows (active)
 Goal: the fifth tree deepens: the hurt state the whole tree pays out on becomes visible on the field, and Nerve forks two ways — a coin branch and a sustain branch — so a Frenzy life picks a direction instead of buying the same four talents.
 Done when: a hurt critter shows its wound on the field, and the tree has six talents with a real fork under Nerve.
 Breakdown:
 - T0057 M — The wound: a red collar arc around any critter below half hp — design
-- T0058 S — Fang: kills pay extra coins while below half hp — design
+- T0058 S — Fang: kills pay extra coins while below half hp — done
 - T0059 S — Mend: a Nerve hit heals the more hurt you are — design
 Next: done once T0057–T0059 build: the Frenzy state reads at a glance, and the tree forks — run, feed or heal while hurt.
 
@@ -156,12 +156,14 @@ Next: done once T0057–T0059 build: the Frenzy state reads at a glance, and the
 Goal: a sixth playstyle (the cap): a build that hits harder the more crowded the fight is — a hit scales with the enemies around its target, so a Hive life runs into the swarm instead of kiting it, where Gunner kites, Goober zones and Frenzy bleeds.
 Done when: the Hive tree is in the panel with its crowd mod, its dart weapon, its kill buff and its kill-burst capstone, each readable in a crowd.
 Breakdown:
-- T0060 L — Hive tree: Swarm, Horn, Nest, the Sting capstone — design
+- T0060 L — Hive tree: Swarm, Horn, Nest, the Sting capstone — failed (the on-kill tables missed the Fang row)
+- T0063 M — Hive, first slice: Swarm (hits grow with the crowd) and Horn (a fast teal dart) — design
+- T0064 M — Hive, second slice: Nest (a kill-buff from crowd kills) and the Sting capstone — design (waits on T0063)
 Next: a fifth talent that forks the tree (a Hive sustain or a Hive defense) once it proves out.
 
 ## E17 A deeper second life (active)
 Goal: prestiging pays in the draft, not just in coins: each prestige this life banks a talent point, and a prestige-gated talent later opens in a second tree, the Slush way (planning/modules/prestige.md).
 Done when: a prestige banks a point the player sees and spends, and a second tree has its own prestige-gated talent.
 Breakdown:
-- T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — design
+- T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — designing
 Next: a prestige-gated talent in a second tree (Gunner or Body) once the point bank proves out.

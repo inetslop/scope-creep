@@ -32,7 +32,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-8 in the game, from game/src/content/monsters/ (the real values).
+9 in the game, from game/src/content/monsters/ (the real values).
 
 ### Dot (`dot`)
 - description: Heads straight for the nearest player.
@@ -130,3 +130,16 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - fromLevel: 5
 - look: shape hexagon, color #ffa94d, face {mood calm, eyes 2, mouth smile}, draw (code)
 - think: (code)
+
+### Popper (`popper`)
+- description: Standing on it as it dies costs 10.
+- hp: 50
+- speed: 35
+- radius: 20
+- damage: 10
+- xp: 4
+- weight: 4
+- fromLevel: 3
+- look: shape circle, color #ff6b6b, draw (code)
+- think: (code)
+- onDeath: (code)
