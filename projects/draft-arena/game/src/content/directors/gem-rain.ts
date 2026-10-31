@@ -16,7 +16,7 @@ export const gemRain: DirectorDef = {
     const p = ctx.rng.pick(players);
     for (let i = 0; i < GEMS; i++) {
       const a = (i / GEMS) * Math.PI * 2;
-      ctx.dropPickup('gem', p.x + Math.cos(a) * 220, p.y + Math.sin(a) * 220, 2);
+      ctx.dropPickup('event-gem', p.x + Math.cos(a) * 220, p.y + Math.sin(a) * 220, 2);
     }
     ctx.effect('ring', p);
   },

@@ -58,6 +58,10 @@ export const gemRush: DirectorDef = {
       mem['c' + i] = 1;
       mem.claimed = 1;
       ctx.giveXp(p, 12);
+      if (!p.bot) {
+        ctx.giveCoins(p, 12);
+        ctx.effect('coin', { x, y }, undefined, 12);
+      }
       for (let j = mem.spawned; j < N; j++) ctx.dropPickup('gem', p.x, p.y, 0);
       mem.spawned = N;
       break;

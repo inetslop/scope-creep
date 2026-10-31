@@ -17,7 +17,7 @@ export const crown: DirectorDef = {
     if (victim.type !== 'player') return;
     if (killer && mem.crown === victim.id) {
       ctx.giveXp(killer, RULES.pvp.bountyXpPerLevel * victim.level);
-      ctx.dropPickup(ctx.rules.gem, victim.x, victim.y, victim.level);
+      ctx.dropPickup('event-gem', victim.x, victim.y, victim.level);
     }
     check(ctx, mem);
   },

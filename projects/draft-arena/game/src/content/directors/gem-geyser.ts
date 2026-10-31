@@ -18,7 +18,7 @@ export const gemGeyser: DirectorDef = {
       if (age >= WARN) {
         while (mem.drops < GEMS && age >= WARN + mem.drops) {
           mem.drops += 1;
-          ctx.dropPickup('gem', mem.x, mem.y, XP);
+          ctx.dropPickup('event-gem', mem.x, mem.y, XP);
         }
       }
       if (age >= WARN + GEMS) mem.phase = 0;

@@ -4,11 +4,12 @@ title: "Coins from events: every gem an event drops pays 1 coin"
 assignee: desktop
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0019, T0011, T0012]
 attempts: 1
 created: 2026-10-31T05:24:06Z
 claimed_at: 2026-10-31T07:46:45Z
+finished_at: 2026-10-31T07:53:46Z
 epic: E6
 ---
 
@@ -80,3 +81,21 @@ export const eventGem: PickupDef = {
 
 ### Tests
 - none (content is tested automatically by engine/tests/).
+
+## Result (attempt 1, desktop)
+
+Event gems now pay 1 coin when a human collects them, on top of their unchanged xp. New pickup `event-gem` (yellow star, vs the monster's green diamond) in `src/content/pickups/event-gem.ts`, registered in `pickups/index.ts`; gem rain and gem geyser drop it (rain 2 xp, geyser 4 xp, same as before), and the gem rush winner gets 12 coins with a single 12-coin coin pop at the first gem (its gems stay value-0 plain gems so each pickup collects silently). Monster drops and the crown's knockout bounty are untouched, and bots get neither coins nor the pop.
+
+- Self-review: APPROVE
+- Time: 7.0 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../draft-arena/game/src/content/directors/crown.ts     |  2 +-
+ .../game/src/content/directors/gem-geyser.ts            |  2 +-
+ .../draft-arena/game/src/content/directors/gem-rain.ts  |  2 +-
+ .../draft-arena/game/src/content/directors/gem-rush.ts  |  4 ++++
+ .../draft-arena/game/src/content/pickups/event-gem.ts   | 17 +++++++++++++++++
+ projects/draft-arena/game/src/content/pickups/index.ts  |  2 ++
+ 6 files changed, 26 insertions(+), 3 deletions(-)
+```
