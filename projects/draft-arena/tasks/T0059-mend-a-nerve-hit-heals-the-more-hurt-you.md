@@ -4,11 +4,12 @@ title: "Mend: a Nerve hit heals the more hurt you are"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T11:14:52Z
 claimed_at: 2026-10-31T11:40:14Z
+finished_at: 2026-10-31T11:52:11Z
 epic: E15
 ---
 
@@ -89,3 +90,17 @@ export const mend: UpgradeDef = {
 
 ### Tests
 none (content is auto-tested by engine/tests/).
+
+## Result (attempt 1, yoga)
+
+Added the Frenzy tree's sustain branch: a new "Mend" on-hit upgrade (`src/content/upgrades/mend.ts`) that heals the attacker on every Nerve jab hit for their missing hp / 10 per rank (guard on projectile id `'jab'` only, so Split's extra jabs each heal the same and Reckless doubles damage but not the heal; `ctx.heal` clamps at maxHp), registered in `upgrades/index.ts` and granted as a 3-rank talent needing Nerve 3 in `talents/frenzy.ts`, drawn under Nerve by the panel automatically. Text, star look and green color as specced; the hp climb is the readout, no new effect or slot. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 12.0 min
+
+```
+projects/draft-arena/game/src/content/talents/frenzy.ts |  1 +
+ projects/draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ projects/draft-arena/game/src/content/upgrades/mend.ts  | 16 ++++++++++++++++
+ 3 files changed, 19 insertions(+)
+```

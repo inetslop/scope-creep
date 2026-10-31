@@ -16,6 +16,7 @@ import { lance } from './lance.ts';
 import { lob } from './lob.ts';
 import { magnet } from './magnet.ts';
 import { maw } from './maw.ts';
+import { mend } from './mend.ts';
 import { might } from './might.ts';
 import { nerve } from './nerve.ts';
 import { quick } from './quick.ts';
@@ -40,6 +41,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   reckless,
   chill,
   reap,
+  mend,
   chomp,
   adrenaline,
   fang,
