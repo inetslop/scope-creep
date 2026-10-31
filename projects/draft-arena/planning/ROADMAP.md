@@ -202,7 +202,7 @@ Breakdown:
 - T0090 M — Twin: a bean that gives birth to a small fast twin the first time it drops to half hp, and keeps living — failed (the comparison table missed the Sleeper row)
 - T0096 M — Twin: a bean that shudders at half hp, births a fast twin and keeps living — done
 - T0099 M — Jaw: a fat deep-red blob that stops and bites a locked cone in front of it, the last slot — in progress
-- T0103 S — Bloop: a low bloop when a Toss splash blooms — todo
+- T0103 S — Bloop: a low bloop when a Toss splash blooms — done
 Next: the menagerie is back to 10 once the Jaw lands; the arc threat and the birth at half hp are in.
 
 ## E21 The shop fills out (done)
@@ -227,8 +227,17 @@ Breakdown:
 Next: the Ring (T0107) brings the pattern shelf to 10 and E22 to done.
 
 ## E23 The thin trees grow (active)
-Goal: the two thinnest trees (Hive 5 talents, Lobber 5) each gain a fork that changes how the playstyle plays, not its numbers: the Hive gets a shield from the crowd it runs into, the Lobber gets a splash that lingers.
-Done when: both forks are in the panel and playable: a Hive life can stand in the middle of a swarm without dying for it, and a committed Lobber life leaves a zone with every shot.
+Goal: the two thinnest trees (Hive 5 talents, Lobber 5) each gain a fork that changes how the playstyle plays, not its numbers: the Hive's crowd pays in the draft, the Lobber's splash lingers.
+Done when: both forks are in the panel and playable: a Hive life banks talent points from the kills in the swarm it runs into, and a committed Lobber life leaves a zone with every shot.
 Breakdown:
-- T0108 M — Thicket: a Hive talent, a hit that shields you while 3+ enemies are within 80 of you — the shield fork under Swarm — design
-- T0109 M — Fizz: a Lobber capstone, the bubble's splash lingers and strikes every 0.5 s — the zone capstone beside Fuse — design
+- T0108 M — Thicket: a Hive talent, a hit that shields you while the crowd is on you — failed (no content hook for damage reduction, see Needs the engine)
+- T0110 M — Scavenge: a Hive talent, a monster kill is worth xp per enemy around the corpse — the crowd fork under Swarm — design
+- T0109 M — Fizz: a Lobber capstone, the bubble's splash lingers and strikes every 0.5 s — the zone capstone beside Fuse — designing
+Next: the zone capstone is designed; the Hive fork is rebuilt as Scavenge.
+
+## E24 The Gunner grows (active)
+Goal: the Gunner (6 talents) grows two forks under Bolt that change how the kite plays — a bolt that lingers in flight, so the straight line becomes a hazard on the ground, and a bolt that re-aims once, so a miss still finds the target that moved.
+Done when: the tree has 8 talents, and a committed Gunner's bolts leave a drifting line and swoop back on a moving target, each readable in a crowd.
+Breakdown:
+- T0111 M — Drift: a Gunner fork, bolts drop to 40% speed after 120 units and linger 0.8–1.2 s — the line fork under Bolt 2 — design
+- T0112 M — Swoop: a Gunner fork, bolts re-aim once at 200 units and fly a second leg of 160–240 units — the re-aim fork under Bolt 2 — design
