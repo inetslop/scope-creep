@@ -1,7 +1,12 @@
 ---
+id: T0324
 title: The boards rank by level, then score
 size: M
 priority: 1
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-31T23:37:22Z
 epic: E9
 ---
 

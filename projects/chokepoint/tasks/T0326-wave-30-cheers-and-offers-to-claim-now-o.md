@@ -1,8 +1,12 @@
 ---
+id: T0326
 title: Wave 30 cheers, and offers to claim now or keep going
 size: M
 priority: 1
+status: design
 depends_on: [T0325]
+attempts: 0
+created: 2026-10-31T23:37:22Z
 epic: E9
 ---
 

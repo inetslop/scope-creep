@@ -1,7 +1,12 @@
 ---
+id: T0323
 title: Play opens the daily board pick (level augments leave the menu)
 size: L
 priority: 1
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-31T23:37:22Z
 epic: E9
 ---
 

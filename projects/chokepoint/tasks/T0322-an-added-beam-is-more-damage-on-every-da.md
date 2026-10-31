@@ -1,7 +1,12 @@
 ---
+id: T0322
 title: An added Beam is more damage, on every damage tower
 size: M
 priority: 1
+status: design
+depends_on: []
+attempts: 0
+created: 2026-10-31T23:37:22Z
 ---
 
 ## Goal
