@@ -3,13 +3,14 @@ id: T0090
 title: "Twin: a bean that gives birth to a small fast twin the first time it drops to half hp"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T15:16:30Z
 claimed_at: 2026-10-31T15:16:33Z
+finished_at: 2026-10-31T15:20:48Z
 epic: E20
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -39,3 +40,7 @@ A kill that doesn't end: a bean that chases like a Dot, but the first time a hit
 | Dot | chases the nearest player | a hit ends a Dot; a hit that drops the Twin to half hp changes the fight — one target becomes two, one of them faster than the parent |
 | Zippy | a face change before it acts | the Zippy's windup ends in a dash you can dodge by moving; the Twin's shake ends in a birth you can't dodge — moving only helps you escape the fast small twin |
 | Flee | a small fast chaser in the crowd | the Flee sprints away from you; the small twin runs at you, and it is born from the player's own hits |
+
+## Rejected by architect (desktop)
+
+the "## Compared with what exists" table is missing its Sleeper row — the Sleeper also chases with `chase()` once awake and changes its face before acting (sleepy → snarling over its 0.5 s wake windup), both traits the Twin shares, so the monster's novelty can't be checked against every same-way mover as written.
