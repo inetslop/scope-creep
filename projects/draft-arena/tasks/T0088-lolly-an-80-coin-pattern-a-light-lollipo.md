@@ -1,12 +1,14 @@
 ---
 id: T0088
 title: "Lolly: an 80-coin pattern, a light lollipop swirl across the body"
+assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T15:05:01Z
+claimed_at: 2026-10-31T15:58:46Z
 epic: E21
 ---
 
