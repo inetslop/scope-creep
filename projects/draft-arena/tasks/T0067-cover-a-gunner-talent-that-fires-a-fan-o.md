@@ -1,12 +1,14 @@
 ---
 id: T0067
 title: "Cover: a Gunner talent that fires a fan of bolts behind you, open after a prestige"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0061]
-attempts: 0
+attempts: 1
 created: 2026-10-31T12:44:22Z
+claimed_at: 2026-10-31T13:42:16Z
 epic: E17
 ---
 
