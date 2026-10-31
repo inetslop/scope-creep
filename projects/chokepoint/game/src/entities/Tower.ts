@@ -149,7 +149,7 @@ export class Tower extends Phaser.GameObjects.Image {
       return;
     }
     if (spec.kind === 'beam') { // never fires: a post with an orb on top, the line leaves the orb's centre
-      this.gun.add(artScale(this.scene.add.image(0, 0, orbTexture(this.scene, color, spec.beamExtras.length))));
+      this.gun.add(artScale(this.scene.add.image(0, 0, orbTexture(this.scene, color, spec.beamAdds))));
       this.disc = artScale(this.scene.add.image(0, -BEAM_ORB_LIFT, beamDiscTexture(this.scene)));
       this.barrelLength = 0;
       return;

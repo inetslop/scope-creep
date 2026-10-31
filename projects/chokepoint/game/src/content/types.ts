@@ -183,7 +183,7 @@ export interface AddedForm {
   mark?: number;
   /** Hits set ablaze: the burn they apply, `dps` per second for `sec` seconds (Ember). */
   burn?: Burn;
-  /** Adds a second beam on the enemy nearest the main target, at this damage per second (Beam). */
+  /** A flat per-second addition to the tower's own beam, on a beam tower; nothing on other kinds (Beam). */
   beam?: { dps: number };
   /** Hits push enemies back this many cells along the road (Push). */
   push?: number;

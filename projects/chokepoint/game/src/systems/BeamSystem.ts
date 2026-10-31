@@ -21,10 +21,10 @@ import type { TowerSystem } from './TowerSystem';
  * (the target rules in core/beam.ts). Each line deals its rate in ticks: one hit per TICK_SEC
  * held, a quarter of its rate (core/beamHold.ts). A Beam-first tower's main line is sticky; a
  * Bolt added to it adds a full-rate ray on the next enemy furthest along (core/beam.ts's
- * rayTargets, re-derived every frame); a Beam added adds a half-rate line on the enemy nearest the
- * main target. Rapid and Rally scale every line the same way. Every tick goes through
- * EnemySystem.beamTick, so it credits kills, gold, the combo, the mints and the tower's kills
- * like a shot, attributed to the beam's tower.
+ * rayTargets, re-derived every frame); a Beam added fattens the main line — one width step per
+ * copy, a flat per-second addition to its rate. Rapid and Rally scale every line the same way.
+ * Every tick goes through EnemySystem.beamTick, so it credits kills, gold, the combo, the mints
+ * and the tower's kills like a shot, attributed to the beam's tower.
  */
 export class BeamSystem {
   private readonly towers: TowerSystem;
@@ -33,7 +33,7 @@ export class BeamSystem {
   /** One Graphics for every line, cleared and redrawn each frame (the scene destroys it). */
   private readonly lines: Phaser.GameObjects.Graphics;
   /** Each beam tower's line state (core/beamHold.ts): the tick clock per line
-   * [main line, one per Bolt ray, one per extra line], and the pierce and the scorch shapes'
+   * [main line, one per Bolt ray], and the pierce and the scorch shapes'
    * clocks, which tick with the main line. */
   private readonly state = new Map<Tower, { lines: BeamHold[]; pierce: BeamHold; scorch: BeamHold }>();
   /** The beam towers whose hum is on (or asked for): it follows the main line's on/off. */
@@ -47,18 +47,14 @@ export class BeamSystem {
   }
 
   /** This tower's line state, grown or shrunk in lockstep when its line count changes (an augment
-   * just placed): the main and the old extras keep their clocks, new slots start empty so their
-   * first tick comes a full TICK_SEC into the next hold; the pierce and the scorch keep running. */
+   * just placed): the main keeps its clock, the ray slots start empty so their first tick comes a
+   * full TICK_SEC into the next hold; the pierce and the scorch keep running. */
   private stateFor(t: Tower, size: number): { lines: BeamHold[]; pierce: BeamHold; scorch: BeamHold } {
     let st = this.state.get(t);
     if (!st || st.lines.length !== size) {
-      // The rays sit between the main and the extras, like in the old `held` resize: keep the main
-      // in slot 0 and the old extras at their new end; the ray slots start free.
       const old = st?.lines ?? [];
       const next: BeamHold[] = new Array<BeamHold>(size).fill(EMPTY_BEAM_HOLD);
       next[0] = old[0] ?? EMPTY_BEAM_HOLD;
-      const extras = t.spec.beamExtras.length;
-      for (let i = 0; i < Math.min(old.length - 1, extras); i++) next[size - extras + i] = old[1 + i]!;
       st = { lines: next, pierce: st?.pierce ?? EMPTY_BEAM_HOLD, scorch: st?.scorch ?? EMPTY_BEAM_HOLD };
       this.state.set(t, st);
     }
@@ -69,7 +65,7 @@ export class BeamSystem {
     const g = this.lines;
     g.clear();
     for (const t of this.towers.towers) {
-      if (t.spec.beamDps <= 0 && t.spec.beamExtras.length === 0) continue;
+      if (t.spec.beamDps <= 0) continue; // no beam of its own, and added Beams only fatten one
       const wasHumming = this.humming.has(t);
       if (t.jammed) {
         t.setBeamOn(false); // a Mute holds it: no attack, no line, no pulse
@@ -79,26 +75,24 @@ export class BeamSystem {
         continue;
       }
       const range = t.spec.range * CELL;
-      // The tower's lines: [main, one per Bolt ray, one per extra line], each with its tick clock.
-      const size = 1 + t.spec.beamRays + t.spec.beamExtras.length;
+      // The tower's lines: [main, one per Bolt ray], each with its tick clock.
+      const size = 1 + t.spec.beamRays;
       const st = this.stateFor(t, size);
       // The effects the tower's lines carry (core/beamEffects.ts): none on a plain beam or a
       // Beam added to another kind.
       const fx = beamFx(t.spec);
-      const { main, lines } = beamLines(
+      const main = beamLines(
         st.lines[0]!.enemy as Enemy | undefined,
-        st.lines.slice(1 + t.spec.beamRays).map((h) => h.enemy as Enemy | undefined),
         this.enemies.all, t.x, t.y, range, t.spec.kind === 'beam');
       // Rapid's net factor times the Rally's speed: one factor for every line, the same as towerDps.
       const m = t.spec.beamRapidMul * t.rallyRateMul;
       const mainTarget = main === -1 ? undefined : this.enemies.all[main]!;
       // The rays are not sticky: re-derived every frame on the next enemies furthest along.
       const rays = mainTarget ? rayTargets(this.enemies.all, t.x, t.y, range, mainTarget, t.spec.beamRays) : [];
-      // What every line holds this frame, in the lines' slot order [main, rays, extras]: a ray
+      // What every line holds this frame, in the lines' slot order [main, rays]: a ray
       // with no enemy this frame holds undefined, so its clock starts fresh with the next lock.
       const targets: (Enemy | undefined)[] = [mainTarget];
       for (let i = 0; i < t.spec.beamRays; i++) targets.push(i < rays.length ? rays[i]! : undefined);
-      for (let i = 0; i < lines.length; i++) targets.push(lines[i]);
       // One frame of every line's tick clock (core/beamHold.ts): a missing or new target deals
       // nothing for its partial tick and starts a fresh clock; a pulse rides every 4th tick.
       const steps = targets.map((e, i) => beamHoldStep(st.lines[i]!, e, dt));
@@ -130,10 +124,6 @@ export class BeamSystem {
       for (let i = 1; i <= t.spec.beamRays; i++) {
         const e = targets[i];
         if (e) for (let k = 0; k < steps[i]!.ticks; k++) this.enemies.beamTick(e, t.spec.beamDps * m * TICK_SEC, t);
-      }
-      for (let i = 0; i < lines.length; i++) {
-        const e = lines[i];
-        if (e) for (let k = 0; k < steps[1 + t.spec.beamRays + i]!.ticks; k++) this.enemies.beamTick(e, t.spec.beamExtras[i]! * m * TICK_SEC, t);
       }
       // The hold's effects, only on the targets still alive after the tick (it may have killed one).
       if (fx) {
@@ -173,7 +163,7 @@ export class BeamSystem {
         // The main line is straight: it runs through the pierced enemies to the last one struck,
         // or to the range edge along the aim when none is.
         const end = pierceEnd(t.x, t.y, mainE, range, this.enemies.all, pierced);
-        g.lineStyle(4, color, 1);
+        g.lineStyle(4 + 2 * t.spec.beamAdds, color, 1); // one visible width step per added Beam
         g.lineBetween(muzzle.x, muzzle.y, end.x, end.y);
         fxLines(g, muzzle, end, fxs);
         hitTick(g, muzzle, mainE);
@@ -186,7 +176,7 @@ export class BeamSystem {
           }
         }
       } else if (mainE) {
-        g.lineStyle(4, color, 1);
+        g.lineStyle(4 + 2 * t.spec.beamAdds, color, 1); // one visible width step per added Beam
         g.lineBetween(muzzle.x, muzzle.y, mainE.x, mainE.y);
         fxLines(g, muzzle, mainE, fxs);
         hitTick(g, muzzle, mainE);

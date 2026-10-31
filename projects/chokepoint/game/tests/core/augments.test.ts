@@ -209,7 +209,7 @@ describe('push (Push)', () => {
 describe('beam (Beam)', () => {
   it('a Beam tower is a sustained line: no damage of its own, the beam deals it', () => {
     const s = spec('beam');
-    expect(s).toMatchObject({ attacks: true, kind: 'beam', damage: 0, beamDps: 14, beamExtras: [] });
+    expect(s).toMatchObject({ attacks: true, kind: 'beam', damage: 0, beamDps: 14, beamAdds: 0 });
     expect(s.range).toBeCloseTo(3.5);
     expect(s.rate).toBe(1); // nominal: the beam never fires on a cooldown
     expect(beam.opening).toBe(true);
@@ -220,35 +220,39 @@ describe('beam (Beam)', () => {
     expect(towerSpec([copy('beam', 'epic')]).beamDps).toBe(28);
   });
 
-  it('a Beam added to any tower is a second line at half the rate; copies stack', () => {
-    expect(spec('bolt', 'beam').beamExtras).toEqual([3]);
-    expect(spec('bolt', 'beam', 'beam').beamExtras).toEqual([3, 3]);
+  it('a Beam added to a beam tower fattens the main line, one step per copy', () => {
+    expect(spec('beam', 'beam')).toMatchObject({ kind: 'beam', beamDps: 19, beamAdds: 1 });
+    expect(spec('beam', 'beam', 'beam')).toMatchObject({ beamDps: 24, beamAdds: 2 });
+    expect(towerSpec([copy('beam', 'rare'), copy('beam', 'epic')]).beamDps).toBe(29); // 20 + 9
   });
 
-  it('a second Beam on a Beam tower adds a half-rate line', () => {
-    expect(spec('beam', 'beam')).toMatchObject({ kind: 'beam', beamDps: 14, beamExtras: [3] });
+  it('a tiered added Beam fattens by its tier amount', () => {
+    expect(towerSpec([copy('beam'), copy('beam', 'rare')]).beamDps).toBe(21); // 14 + 7
+    expect(towerSpec([copy('beam'), copy('beam', 'epic')]).beamDps).toBe(23); // 14 + 9
   });
 
-  it('a tiered added Beam uses the tier rate', () => {
-    expect(towerSpec([copy('bolt'), copy('beam', 'rare')]).beamExtras).toEqual([4]);
-    expect(towerSpec([copy('bolt'), copy('beam', 'epic')]).beamExtras).toEqual([5]);
+  it('a Beam added to a non-beam tower does nothing: there is no beam to fatten', () => {
+    for (const first of ['bolt', 'spray', 'splash', 'ember', 'mark', 'rally']) {
+      expect(spec(first, 'beam')).toMatchObject({ beamDps: 0, beamAdds: 0 });
+      expect(towerDps(spec(first, 'beam'))).toBe(towerDps(spec(first)));
+    }
   });
 
   it('the card shows the tier rate in both lines', () => {
     expect(tierTowerLine(beam, 'common')).toBe('Beams the furthest enemy: 14 per second, range 3.5.');
     expect(tierTowerLine(beam, 'rare')).toBe('Beams the furthest enemy: 20 per second, range 3.5.');
     expect(tierTowerLine(beam, 'epic')).toBe('Beams the furthest enemy: 28 per second, range 3.5.');
-    expect(tierAddedLine(beam, 'common')).toBe('A second beam on the nearest enemy: 3 per second.');
-    expect(tierAddedLine(beam, 'rare')).toBe('A second beam on the nearest enemy: 4 per second.');
-    expect(tierAddedLine(beam, 'epic')).toBe('A second beam on the nearest enemy: 5 per second.');
+    expect(tierAddedLine(beam, 'common')).toBe('The beam deals 5 more per second.');
+    expect(tierAddedLine(beam, 'rare')).toBe('The beam deals 7 more per second.');
+    expect(tierAddedLine(beam, 'epic')).toBe('The beam deals 9 more per second.');
   });
 
-  it('the tower line says what it beams, and the second beam when one is added', () => {
+  it('the tower line says what it beams, at the boosted rate when Beams are added', () => {
     expect(describeSpec(spec('beam'))).toBe('Beams the furthest enemy: 14 per second.');
     expect(describeSpec(towerSpec([copy('beam', 'epic')]))).toBe('Beams the furthest enemy: 28 per second.');
-    expect(describeSpec(spec('beam', 'beam'))).toContain('a second beam at 3 per second');
-    expect(describeSpec(spec('beam', 'beam', 'beam'))).toContain('2 beams at 3 per second on the nearest enemies');
-    expect(describeSpec(spec('bolt', 'beam'))).not.toContain('beam at');
+    expect(describeSpec(spec('beam', 'beam'))).toBe('Beams the furthest enemy: 19 per second.');
+    expect(describeSpec(towerSpec([copy('beam', 'rare'), copy('beam', 'epic')]))).toBe('Beams the furthest enemy: 29 per second.');
+    expect(describeSpec(spec('bolt', 'beam'))).toBe(describeSpec(spec('bolt')));
   });
 
   it('a Bolt added to a beam adds a full-rate ray; a Rapid scales the beam by its net factor', () => {

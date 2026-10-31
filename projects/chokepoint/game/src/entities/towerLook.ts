@@ -41,11 +41,11 @@ export function speedUps(spec: TowerSpec): number {
  */
 export function barrelLook(spec: TowerSpec): BarrelLook {
   // A gust throws nothing: a short, wide flat mouth, wider than the body reads "wind, not a shot".
-  if (spec.gust > 0) return { length: 1.2, width: 2.2, bulb: false, bands: 0, emberTicks: spec.burnCount, emberMuzzle: false, beamTicks: spec.beamExtras.length };
+  if (spec.gust > 0) return { length: 1.2, width: 2.2, bulb: false, bands: 0, emberTicks: spec.burnCount, emberMuzzle: false, beamTicks: spec.beamAdds };
   // A spray blasts a cone of pellets from one flat wide head like the gust mouth, one tick per Spray copy.
   if (spec.kind === 'spray') return { length: 1.2, width: 2.2, bulb: spec.splash > 0, bands: speedUps(spec), emberTicks: spec.burnCount, emberMuzzle: false, sprayTicks: spec.sprayCount };
   // A beam never fires: a post with an orb on top, one tick per Beam added.
-  if (spec.kind === 'beam') return { length: 1, width: 1, bulb: false, bands: 0, beamTicks: spec.beamExtras.length };
+  if (spec.kind === 'beam') return { length: 1, width: 1, bulb: false, bands: 0, beamTicks: spec.beamAdds };
   const plain = bolt.first;
   const damage = spec.kind === 'shot' ? spec.damage : spec.boltDamage;
   // A piercing shot shows as a long thin rod (fixed length: a range-scaled rod would reach past
@@ -58,7 +58,7 @@ export function barrelLook(spec: TowerSpec): BarrelLook {
     bands: speedUps(spec),
     emberTicks: spec.burnCount - (spec.kind === 'burn' ? 1 : 0), // the first Ember is the muzzle dot; each added one is a tick
     emberMuzzle: spec.kind === 'burn',
-    beamTicks: spec.beamExtras.length, // a Beam added to any tower ticks its barrels
+    beamTicks: spec.beamAdds, // a Beam only fattens a beam tower's line, so its ticks live there
   };
 }
 

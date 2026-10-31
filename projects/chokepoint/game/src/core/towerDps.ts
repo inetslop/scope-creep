@@ -10,16 +10,18 @@ import { SPRAY_CRIT_CHANCE } from './sprayCrit';
  * enemies, but the damage to one is still damage times rate. A spray's pellets all fly at the
  * one enemy up close, so every pellet counts: damage times pellets times rate, each pellet also
  * expected to crit now and then (×1.15). A beam tower's
- * lines count too: the main line plus a ray per Bolt and a line per Beam added, every one
- * scaled by Rapid's net factor on the beam and the Rally's speed (`rallyRateMul`).
+ * lines count too: the main line — already fatter by each Beam added to it — plus a ray per
+ * Bolt, every one scaled by Rapid's net factor on the beam and the Rally's speed
+ * (`rallyRateMul`).
  */
 export function towerDps(spec: TowerSpec, rallyRateMul = 1): number {
   if (!spec.attacks) return 0;
   let dps = 0;
-  // A beam's term: every line at its per-second rate, the same factor (Rapid x Rally) on all.
+  // A beam's term: every line at its per-second rate (the main line already includes the
+  // additions of its Beams added), the same factor (Rapid x Rally) on all.
   if (spec.kind === 'beam') {
     const m = spec.beamRapidMul * rallyRateMul;
-    dps += (1 + spec.beamRays) * spec.beamDps * m + spec.beamExtras.reduce((a, b) => a + b, 0) * m;
+    dps += (1 + spec.beamRays) * spec.beamDps * m;
   }
   // A shot or pulse term: the damage of its hits times its rate against one enemy.
   if (spec.kind === 'shot' || spec.kind === 'pulse') dps += spec.damage * spec.rate;

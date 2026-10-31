@@ -61,8 +61,12 @@ describe('towerDps', () => {
     expect(towerDps(towerSpec([copy('beam', 'rare'), copy('bolt'), copy('rapid')]), 1.1)).toBeCloseTo(49.5);
   });
 
-  it('a Beam added is a line at its own rate, scaled by the same factor', () => {
-    expect(towerDps(spec('beam', 'beam'))).toBe(17);
-    expect(towerDps(spec('beam', 'beam', 'rapid'))).toBeCloseTo(19.125);
+  it('a Beam added fattens the main line, scaled by the same factor', () => {
+    expect(towerDps(spec('beam', 'beam'))).toBe(19);
+    expect(towerDps(spec('beam', 'beam', 'rapid'))).toBeCloseTo(21.375);
+  });
+
+  it('a Beam added to a non-beam tower deals nothing', () => {
+    expect(towerDps(spec('bolt', 'beam'))).toBe(towerDps(spec('bolt')));
   });
 });

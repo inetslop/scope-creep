@@ -47,10 +47,10 @@ export interface TowerSpec {
   burn: Burn | undefined;
   /** Embers in the tower: a muzzle dot when one is the first, one barrel tick each added. */
   burnCount: number;
-  /** The beam's damage per second when Beam is the first (0: no beam of the tower's own). */
+  /** The main line's rate: its own tier rate + each added Beam's flat addition (0: no beam). */
   beamDps: number;
-  /** One half-rate per second entry per Beam added after the first, in the order put in. */
-  beamExtras: number[];
+  /** Beams added to a beam tower (rate already in beamDps; line width step per copy). */
+  beamAdds: number;
   /** Bolts added to a beam tower: one more ray each, at the beam's own rate (the main is ray 0). */
   beamRays: number;
   /** The beam's rate factor from Rapids added: the net `rateMul * damageMul` per Rapid (its own stat, never through `damage`). */
@@ -102,7 +102,7 @@ const EMPTY: TowerSpec = {
   burn: undefined,
   burnCount: 0,
   beamDps: 0,
-  beamExtras: [],
+  beamAdds: 0,
   beamRays: 0,
   beamRapidMul: 1,
   goldPerKill: 0,
@@ -154,7 +154,7 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     burn: undefined,
     burnCount: 0,
     beamDps: 0,
-    beamExtras: [],
+    beamAdds: 0,
     beamRays: 0,
     beamRapidMul: 1,
     goldRadius: f.goldRadius ?? 0,
@@ -216,14 +216,15 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     spec.burnCount += 1;
     if (!spec.burn || b.dps > spec.burn.dps) spec.burn = { ...b };
   }
-  // Beams in any slot: the first is the tower's own line, each added one a half-rate line on a
-  // nearer enemy. The rate is its own stat (like burnDps): never scaled by damage or rate.
+  // Beams in any slot: the first is the tower's own line, each added one fattens it — a flat
+  // per-second addition per copy, one width step. The rate is its own stat (like burnDps): never
+  // scaled by damage or rate. Added to any other kind it does nothing — no beam to fatten.
   for (let i = 0; i < augments.length; i++) {
     const c = augments[i]!;
     const dps = i === 0 ? f.beam?.dps ?? 0 : tierAdded(getAugment(c.id), c.tier).beam?.dps ?? 0;
     if (dps <= 0) continue;
     if (i === 0) spec.beamDps = dps;
-    else spec.beamExtras.push(dps);
+    else if (spec.kind === 'beam') { spec.beamDps += dps; spec.beamAdds += 1; }
   }
   // Pushes in any slot: the first is the tower's gust, each extra one adds per-hit push.
   for (let i = 0; i < augments.length; i++) {
@@ -306,8 +307,6 @@ export function describeSpec(spec: TowerSpec): string {
     line = beams === 1
       ? `Beams the furthest enemy: ${spec.beamDps} per second`
       : `Beams ${beams} enemies: ${spec.beamDps} per second each`;
-    if (spec.beamExtras.length === 1) line += `, and a second beam at ${spec.beamExtras[0]} per second on the nearest enemy`;
-    else if (spec.beamExtras.length > 1) line += `, and ${spec.beamExtras.length} beams at ${spec.beamExtras[spec.beamExtras.length - 1]} per second on the nearest enemies`;
     // The shapes its main line has (core/beamShapes.ts, T0210): the pierce and the scorch.
     if (spec.pierce > 0) line += `, the beam pierces ${spec.pierce} more`;
     if (spec.splash > 0) line += `, and scorches ${splashHits(spec.splashCount) - 1} nearby at ${spec.beamDps / 2} per second`;

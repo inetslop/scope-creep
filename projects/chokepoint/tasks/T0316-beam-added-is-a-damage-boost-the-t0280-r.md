@@ -4,11 +4,12 @@ title: Beam added is a damage boost (the T0280 re-file)
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T00:35:25Z
 claimed_at: 2026-10-31T00:59:13Z
+finished_at: 2026-10-31T02:00:06Z
 epic: E4
 ---
 
@@ -91,3 +92,25 @@ export function beamLines<C extends TargetCandidate>(
 - `tests/core/augments.test.ts` beam block: `spec('beam','beam')` → `{ beamDps: 19, beamAdds: 1 }`; `spec('beam','beam','beam')` → `24/2`; `towerSpec([copy('beam','rare'), copy('beam','epic')])` → `beamDps 29`; tiered added: rare → 21, epic → 23; for firsts `bolt, spray, splash, ember, mark, rally`: added Beam gives `beamDps 0, beamAdds 0` and `towerDps` equal to the same tower without it; `tierAddedLine` pins the three new lines; `describeSpec` pins `Beams the furthest enemy: 19 per second.` / `… 29 per second.` and `describeSpec(spec('bolt','beam')) === describeSpec(spec('bolt'))`.
 - `tests/core/beam.test.ts`: call `beamLines(held, enemies, x, y, R, sticky)` (no `[]`), expect the returned index; keep the sticky/re-take/nothing-in-range tests; delete the seven extra-line tests; rename the non-sticky test to "a non-sticky main line always follows the furthest enemy".
 - `tests/core/towerDps.test.ts`: `towerDps(spec('beam','beam'))` = 19; `spec('beam','beam','rapid')` ≈ 21.375; `towerDps(spec('bolt','beam'))` = `towerDps(spec('bolt'))`.
+
+## Result (attempt 1, asus)
+
+An added Beam no longer grows a second, quiet beam — it now fattens the beam that is already firing. The added form is a flat per-second addition to the main line's rate (Common +5, Rare +7, Epic +9, additive per copy), folded into `spec.beamDps` with a new `spec.beamAdds` count replacing the old `beamExtras` list; a Beam added to any non-beam tower does nothing (no damage, no line, no hum, no visual change). `beamLines` (core/beam.ts) is now main-line only, `BeamSystem` renders one line one width step thicker per added copy and deals no second beam, and the card lines read "The beam deals 5/7/9 more per second." per tier. All beam interactions (burn, root, push, mark, Lance pierce, Spray needles, hum) ride the single main line unchanged; unit tests pin the worked examples and `npm run check` + desktop/mobile smoke pass.
+
+- Self-review: APPROVE
+- Time: 60.9 min
+
+```
+.../chokepoint/game/src/content/augments/beam.ts   |  15 +--
+ projects/chokepoint/game/src/content/types.ts      |   2 +-
+ projects/chokepoint/game/src/core/augments.ts      |  19 ++--
+ projects/chokepoint/game/src/core/beam.ts          |  57 ++---------
+ projects/chokepoint/game/src/core/towerDps.ts      |  10 +-
+ projects/chokepoint/game/src/entities/Tower.ts     |   2 +-
+ projects/chokepoint/game/src/entities/towerLook.ts |   6 +-
+ projects/chokepoint/game/src/systems/BeamSystem.ts |  38 +++-----
+ .../chokepoint/game/tests/core/augments.test.ts    |  36 ++++---
+ projects/chokepoint/game/tests/core/beam.test.ts   | 108 +++------------------
+ .../chokepoint/game/tests/core/towerDps.test.ts    |  10 +-
+ 11 files changed, 91 insertions(+), 212 deletions(-)
+```
