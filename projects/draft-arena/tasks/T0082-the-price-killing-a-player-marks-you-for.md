@@ -1,12 +1,14 @@
 ---
 id: T0082
 title: "The price: killing a player marks you for 15 s"
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T14:05:22Z
+claimed_at: 2026-10-31T14:44:28Z
 epic: E19
 ---
 
