@@ -3,13 +3,11 @@ id: T0031
 title: "Second shop stock: two patterns, a face and a back accessory"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T06:30:37Z
-claimed_at: 2026-10-31T07:02:38Z
 epic: E6
-designer: desktop
 ---
 
 ## Goal
@@ -44,3 +42,114 @@ Accessories:
 - [ ] Bow Tie (face, 80) and Balloon (back, 120) exist with the looks above; the bow tie never covers the eyes or the blush, and the balloon sits behind and below the centre of the body.
 - [ ] In a fresh match, within about a minute a bot wearing the Bow Tie and a bot wearing Belly or Party are visible on the field.
 - [ ] Each item has a one-line shop description and a name of at most 18 characters; nothing in the match changes because of them.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/patterns/belly.ts` - pattern `belly`, price 40
+- create `src/content/patterns/party.ts` - pattern `party`, price 40
+- create `src/content/accessories/bow-tie.ts` - face accessory `bow-tie`, price 80
+- create `src/content/accessories/balloon.ts` - back accessory `balloon`, price 120
+- edit `src/content/patterns/index.ts` - import `belly`, `party`; add one line each to `PATTERNS` after `spots,`
+- edit `src/content/accessories/index.ts` - import `bowTie`, `balloon`; add one line each to `ACCESSORIES` after `roundGlasses,`
+
+### Interfaces
+No new types. Use existing `PatternDef`, `AccessoryDef`, `WearView`, `shade`, `PALETTE`. Exact contents:
+
+belly.ts:
+```ts
+import { shade, type PatternDef } from '../../../engine/api.ts';
+export const belly: PatternDef = {
+  id: 'belly', name: 'Belly', description: 'A light round patch on the lower body.', price: 40,
+  draw(g, w) {
+    const r = w.radius;
+    g.fillStyle = shade(w.color, 0.35);
+    g.beginPath();
+    g.arc(0, 0.6 * r, 0.5 * r, 0, Math.PI * 2);
+    g.fill();
+  },
+};
+```
+party.ts:
+```ts
+import { shade, type PatternDef } from '../../../engine/api.ts';
+export const party: PatternDef = {
+  id: 'party', name: 'Party', description: 'A light zigzag across the top, like a paper party hat.', price: 40,
+  draw(g, w) {
+    const r = w.radius;
+    g.fillStyle = shade(w.color, 0.35);
+    g.beginPath();
+    g.moveTo(-r, -0.42 * r);
+    g.lineTo(-r, -0.6 * r);
+    g.lineTo(-0.8 * r, -0.85 * r); g.lineTo(-0.6 * r, -0.6 * r);
+    g.lineTo(-0.4 * r, -0.85 * r); g.lineTo(-0.2 * r, -0.6 * r);
+    g.lineTo(0, -0.85 * r); g.lineTo(0.2 * r, -0.6 * r);
+    g.lineTo(0.4 * r, -0.85 * r); g.lineTo(0.6 * r, -0.6 * r);
+    g.lineTo(0.8 * r, -0.85 * r); g.lineTo(r, -0.6 * r);
+    g.lineTo(r, -0.42 * r);
+    g.closePath();
+    g.fill();
+  },
+};
+```
+bow-tie.ts:
+```ts
+import type { AccessoryDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+export const bowTie: AccessoryDef = {
+  id: 'bow-tie', name: 'Bow Tie', description: 'A red bow tie at the mouth.', slot: 'face', price: 80,
+  draw(g, w) {
+    const r = w.radius;
+    g.lineWidth = Math.max(1.5, r * 0.08);
+    g.lineJoin = 'round';
+    g.fillStyle = PALETTE.red;
+    g.strokeStyle = w.ink;
+    g.beginPath();
+    g.moveTo(-0.08 * r, 0.34 * r); g.lineTo(-0.42 * r, 0.42 * r); g.lineTo(-0.08 * r, 0.5 * r);
+    g.closePath(); g.fill(); g.stroke();
+    g.beginPath();
+    g.moveTo(0.08 * r, 0.34 * r); g.lineTo(0.42 * r, 0.42 * r); g.lineTo(0.08 * r, 0.5 * r);
+    g.closePath(); g.fill(); g.stroke();
+    g.beginPath();
+    g.rect(-0.07 * r, 0.35 * r, 0.14 * r, 0.14 * r);
+    g.fill(); g.stroke();
+  },
+};
+```
+balloon.ts:
+```ts
+import type { AccessoryDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+export const balloon: AccessoryDef = {
+  id: 'balloon', name: 'Balloon', description: 'A small yellow balloon bobbing on the back.', slot: 'back', price: 120,
+  draw(g, w) {
+    const r = w.radius;
+    const bob = Math.min(1, w.speed / 200) * Math.sin(w.time * 6 + w.seed) * 0.15 * r;
+    g.lineWidth = Math.max(1.5, r * 0.08);
+    g.fillStyle = PALETTE.yellow;
+    g.strokeStyle = w.ink;
+    g.beginPath();
+    g.arc(0, (1.05 + (bob / r)) * r, 0.5 * r, 0, Math.PI * 2);
+    g.fill(); g.stroke();
+    g.beginPath();
+    g.moveTo(0, 0.98 * r); g.lineTo(0.08 * r, 1.06 * r); g.lineTo(0, 1.14 * r); g.lineTo(-0.08 * r, 1.06 * r);
+    g.closePath(); g.fill(); g.stroke();
+  },
+};
+```
+
+### Steps
+1. Create the four files exactly as above (one item per file, export name = id in camelCase).
+2. Add the two registry imports + lines to `src/content/patterns/index.ts` (after `spots,`).
+3. Add the two registry imports + lines to `src/content/accessories/index.ts` (after `roundGlasses,`).
+4. Run `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- Balloon is a `back` slot: drawn BEHIND the body, so only the crescent below the body's rim is visible. That is intended — do not move the balloon above the body or enlarge it. Balloon centre stays at 1.05r±0.15r, radius 0.5r (never past 2 radii); do not use `w.time`/`w.seed` anywhere except the one `bob` line.
+- The knot is fixed at (0, 1.06r) (where the string meets the body), NOT attached to the bobbing balloon — it must not move with `bob`.
+- Bow tie is `face` slot: drawn ON TOP of the face. Keep the exact y-range 0.34r–0.50r (eyes end at 0.14r, blush inner edge at ~0.46r from centre); do not raise or widen the wings.
+- Patterns are clipped to the body and painted under face/outline — never stroke the body outline or draw outside; never use `PALETTE` for pattern fills (must be `shade(w.color, 0.35)` so they read on all 10 player colors).
+- No `Math.random`, no module-level state; draw hooks are pure drawing only. Registry lines: exactly one per line, do not reformat the array or other tasks' lines.
+
+### Tests
+- none (all four items are content, tested automatically by `engine/tests/` plus the smoke test).
