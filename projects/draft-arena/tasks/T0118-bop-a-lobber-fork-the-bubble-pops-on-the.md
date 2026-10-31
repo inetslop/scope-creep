@@ -3,13 +3,11 @@ id: T0118
 title: "Bop: a Lobber fork, the bubble pops on the critter it touches"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T19:30:37Z
-claimed_at: 2026-10-31T19:38:26Z
 epic: E27
-designer: inet-racing
 ---
 
 ## Goal
@@ -50,3 +48,129 @@ Bop changes how a projectile flies (the same kind as Drift), so one row for that
 - [ ] A popped bubble's kill pays Chomp/Nest/Sting/Scavenge as your kill.
 - [ ] With Split, every fanned bubble pops on the critter it touches, all 12% weaker.
 - [ ] Bop is in the Lobber tab as a 3-rank fork under Lob (needs Lob 3), with the text above.
+
+## Design (architect, inet-racing)
+
+### Files
+Create: `src/content/upgrades/bop.ts`, `src/content/projectiles/bop-bubble.ts`, `src/content/areas/bop-burst.ts`, `src/content/effects/bop-confetti.ts`
+Edit (one import + one list line each, beside the named line): `src/content/upgrades/index.ts` (import after `bolt` line 4; list line after `drift,` line 78), `src/content/projectiles/index.ts` (both after the `bubble` line), `src/content/areas/index.ts` (both after the `splash` line), `src/content/effects/index.ts` (import after `bellowMouth` line 10; list line after `splashRing,` line 26), `src/content/upgrades/lob.ts`, `src/content/talents/lobber.ts`.
+
+### Interfaces
+`src/content/upgrades/bop.ts` — copy `upgrades/drift.ts` exactly, renaming drift→bop: `maxLevel: 3`, `name: 'Bop'`, `look: { shape: 'circle', color: PALETTE.ice }`, `description: "Your bubble pops on the critter it touches: a burst (radius 35) for 14 damage where it hits, no splash there. Per rank: +5 damage, +5 radius. A bubble that touches nothing splashes where it lands."`, and the same `stats: {},` comment line and `bopRank(me: Player)` (same defensive cast, `.get(bop)`).
+
+`src/content/projectiles/bop-bubble.ts`:
+```ts
+import { drawCritter, type Launch, type ProjectileDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+import { BUBBLE_FLIGHT, BUBBLE_SPEED } from './bubble.ts';
+import { bopRank } from '../upgrades/bop.ts';
+
+const ARC = 80; // bubble.ts keeps its own copy
+
+function aim(s: Launch): { x: number; y: number } { return { x: s.p1, y: Math.floor(s.p2 / 8) }; }
+
+/** Bop's bubble: same arc flight; the first critter it touches pops it into a burst instead of splashing. */
+export const bopBubble: ProjectileDef = {
+  id: 'bop-bubble',
+  radius: 8,
+  life: BUBBLE_FLIGHT,
+  pierce: 0, // dies on the first critter it touches
+  look: {
+    shape: 'circle',
+    color: PALETTE.ice,
+    draw(g, e) {
+      drawCritter(g, this, e, { ink: PALETTE.ink });
+      g.beginPath();
+      g.arc(0, 0, e.radius * 0.7, 0, Math.PI * 2);
+      g.lineWidth = 2;
+      g.strokeStyle = PALETTE.white; // the lollipop band
+      g.stroke();
+    },
+  },
+  path(s, t) { // copy of bubble.ts's path, word for word
+    const a = aim(s);
+    const d = Math.hypot(a.x - s.x, a.y - s.y);
+    const f = Math.min(1, (s.speed / BUBBLE_SPEED) * (t / BUBBLE_FLIGHT));
+    return { x: s.x + Math.cos(s.angle) * d * f, y: s.y + Math.sin(s.angle) * d * f - ARC * Math.sin(Math.PI * f) };
+  },
+  onHit(ctx, p) {
+    p.pierce = 0; // a pop always kills the bubble, even with Lance pierce
+    const me = p.owner;
+    if (me.type !== 'player') return;
+    const rank = Math.min(3, Math.max(1, bopRank(me)));
+    const radius = 30 + 5 * rank;
+    ctx.area(me, 'bop-burst', { x: p.x, y: p.y, damage: 14 + 5 * (rank - 1), life: 0.2 * rank });
+    ctx.effect('splash-ring', { x: p.x, y: p.y }, undefined, radius);
+    ctx.effect('bop-confetti', { x: p.x, y: p.y }, undefined, radius);
+  },
+  onEnd(ctx, p) { // touched nothing: splash exactly like the plain bubble (Wide/Fuse/Fizz apply)
+    const me = p.owner;
+    if (me.type !== 'player') return;
+    const level = (p.launch.p2 % 8) + 1;
+    ctx.area(me, 'splash', { x: p.x, y: p.y, damage: 10 + 2 * (level - 1) });
+    ctx.effect('splash-ring', { x: p.x, y: p.y }, undefined, Math.round(70 * me.stats.area));
+  },
+};
+```
+`src/content/areas/bop-burst.ts`:
+```ts
+import type { AreaDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** Bop's pop: one strike for the burst radius, invisible, and no splash where it popped. */
+export const bopBurst: AreaDef = {
+  id: 'bop-burst',
+  radius: 1, // the strike range comes from the rank; 1 unit is not seen
+  life: 0.6, // firing site sets it: 0.2 * rank
+  interval: 60, // pulses exactly once
+  look: { shape: 'circle', color: PALETTE.ice },
+  pulse(ctx, a) {
+    const rank = Math.min(3, Math.max(1, Math.round(a.life / 0.2)));
+    for (const u of ctx.enemiesNear(a.owner, a.x, a.y, 30 + 5 * rank)) ctx.strike(a, u);
+  },
+};
+```
+`src/content/effects/bop-confetti.ts`:
+```ts
+import { noise, type EffectDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+const COLORS = [PALETTE.teal, PALETTE.ice, PALETTE.white] as const;
+
+/** Bop's pop: a few candy dots fly out from the hit point. */
+export const bopConfetti: EffectDef = {
+  id: 'bop-confetti',
+  duration: 0.5,
+  draw(g, fx) {
+    g.save();
+    g.globalAlpha = 1 - fx.t;
+    for (let i = 0; i < 8; i++) {
+      const a = (i / 8) * Math.PI * 2 + 0.4 * noise(fx.seed, i);
+      const d = fx.value * (0.2 + 0.8 * fx.t);
+      g.beginPath();
+      g.arc(fx.ax + Math.cos(a) * d, fx.ay + Math.sin(a) * d, 4 * (1 - fx.t) + 1.5, 0, Math.PI * 2);
+      g.fillStyle = COLORS[i % 3];
+      g.fill();
+      g.lineWidth = 1;
+      g.strokeStyle = PALETTE.ink;
+      g.stroke();
+    }
+    g.restore();
+  },
+};
+```
+
+### Steps
+1. Create `upgrades/bop.ts` (per Interfaces). 2. Create `projectiles/bop-bubble.ts`. 3. Create `areas/bop-burst.ts`. 4. Create `effects/bop-confetti.ts`. 5. In `upgrades/lob.ts`: add `import { bopRank } from './bop.ts';` and change only the projectile id in its `fire` — `'bubble'` → `bopRank(me) > 0 ? 'bop-bubble' : 'bubble'` (every other option stays byte-for-byte). 6. In `talents/lobber.ts`, insert after the `wide` line: `{ id: 'bop', upgrade: 'bop', max: 3, needs: [['lob', 3]] },`. 7. Add the four registry lines exactly where Files says. Run `npm run check` and `npm run smoke`.
+
+### Pitfalls
+- The pop = first-touch death comes from `pierce: 0` + the engine killing a spent projectile **without** calling `onEnd` — that is what suppresses the splash. Do not add a lifetime-based pop, and do not set `pierce: 99` like bubble.ts.
+- `onHit` runs before the engine decrements pierce, so `p.pierce = 0` there is what makes Lance's fire-time `+ stats.pierce` do nothing.
+- bop-burst must NOT set `u.mem.splashAt` (only `areas/splash.ts` does) — so a pop kill does not fire Fuse, Gush, Chew or Scatter, exactly as the spec's details list it (the compared-with table's "still fires Fuse" line is wrong; trust the details). Kill credit goes to the owner via `ctx.strike(a, u)`, so Chomp/Nest/Sting/Scavenge/Adrenaline/Fang all pay.
+- Wide must size only the missed splash: the burst area's def radius is 1 and the pulse uses the fixed `30 + 5 * rank`; the rank is carried in the area's `life` (0.2/0.4/0.6), which the engine does not scale (it scales only radius and damage, so the damage stat scales the burst for free).
+- `path` is pure: copy bubble.ts's formula, redeclare `ARC` (not exported), never `ctx`/`Math.random`/state. Draws use only `noise(seed, i)`.
+- Do not repack `p1`/`p2` (aim + Lob level already live there); read the Bop rank from `p.owner` at pop time and clamp 1..3 (a mid-flight prestige only lowers it).
+- No sound: the spec asks for none and the Lobber's splash is currently silent. Do not touch `src/audio/sfx.ts`.
+
+### Tests
+None to write — `npm run check` auto-tests registration, talent reachability, each item in a real match and the 60-player budget; `npm run smoke` plays it in a browser. `bopRank` is a copy of the proven `driftRank` and needs no unit test.
