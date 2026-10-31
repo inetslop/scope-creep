@@ -3,11 +3,13 @@ id: T0009
 title: "Hide: take less damage, a second fork under Vigor"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T02:37:00Z
+claimed_at: 2026-10-31T02:47:43Z
 epic: E1
+designer: yoga
 ---
 
 ## Goal
