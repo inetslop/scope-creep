@@ -3,11 +3,13 @@ id: T0086
 title: "Twin: a bean that splits into two smaller twins when it drops to half hp"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T14:39:38Z
+claimed_at: 2026-10-31T14:43:54Z
 epic: E20
+designer: cachyos-x8664
 ---
 
 ## Goal
