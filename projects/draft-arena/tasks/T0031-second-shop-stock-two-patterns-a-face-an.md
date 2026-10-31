@@ -1,12 +1,14 @@
 ---
 id: T0031
 title: "Second shop stock: two patterns, a face and a back accessory"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T06:30:37Z
+claimed_at: 2026-10-31T07:27:53Z
 epic: E6
 ---
 
