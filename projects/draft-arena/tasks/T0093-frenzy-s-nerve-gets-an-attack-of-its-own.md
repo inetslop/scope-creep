@@ -4,11 +4,12 @@ title: "Frenzy's Nerve gets an attack of its own, not Gunner's straight shot"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T15:20:51Z
 claimed_at: 2026-10-31T16:50:49Z
+finished_at: 2026-10-31T16:59:13Z
 ---
 
 ## Goal
@@ -108,3 +109,16 @@ No difference is numbers-only: the new Nerve is the only weapon that strikes in 
 
 ### Tests
 - none (content is tested automatically by engine/tests/: both defs run in a real match, look validity, projectile purity; no pure helpers are added).
+
+## Result (attempt 1, cachyos-x8664)
+
+Redid Frenzy's Nerve (`src/content/upgrades/nerve.ts`) from a straight pale dart at the nearest enemy into its own mean close-range attack: every 0.6 s, when an enemy is within 200, a full 360° ring of needle shards (4/6/8 at ranks 1/2/3, randomly offset from the player's facing) bursts out at once — same damage formula as before (5 + 2/rank, +1 per 10 hp missing, so Mend and Gore built on it still key off `jab` and still pay out). Its projectile `jab` (`src/content/projectiles/jab.ts`) is now a small red diamond needle with scale 1.2, launch-only flight (no path, no step, 0.33 s life) and a look distinct from every other tree's shot. Description, icon (red diamond) and cooldown (0.6) updated in place; the `v` import dropped; `frenzy.ts`, the talent line, and both registries untouched.
+
+- Self-review: APPROVE
+- Time: 8.4 min
+
+```
+.../draft-arena/game/src/content/projectiles/jab.ts |  6 +++---
+ .../draft-arena/game/src/content/upgrades/nerve.ts  | 21 +++++++++++++--------
+ 2 files changed, 16 insertions(+), 11 deletions(-)
+```

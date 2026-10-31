@@ -1,18 +1,23 @@
-import { v, type UpgradeDef } from '../../../engine/api.ts';
+import type { UpgradeDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
 
-/** A close jab: it only fires within 180, and bites harder the more hurt you are. */
+/** A mean close-range ring: needles burst from the player in every direction, biting harder the more hurt you are. */
 export const nerve: UpgradeDef = {
   id: 'nerve',
   name: 'Nerve',
-  description: 'Every 0.8 s, a jab at the nearest enemy within 180. Hits harder the more hurt you are: +1 damage per 10 hp missing. Each rank: +2 damage.',
+  description:
+    'Every 0.6 s, when an enemy is near, a ring of needles bursts from you, stabbing whatever is close: 4 at rank 1, 6 at rank 2, 8 at rank 3. Each needle: 5 damage, +2 per rank, +1 per 10 hp missing.',
   maxLevel: 3,
-  look: { shape: 'diamond', color: PALETTE.ice },
-  cooldown: 0.8,
+  look: { shape: 'diamond', color: PALETTE.red },
+  cooldown: 0.6,
   fire(ctx, me, level) {
-    const target = ctx.nearestEnemy(me, 180);
-    if (!target) return;
+    if (!ctx.nearestEnemy(me, 200)) return;
     const missing = me.maxHp - me.hp;
-    ctx.fire(me, 'jab', { angle: v.angleTo(me, target), speed: 360, damage: 5 + 2 * (level - 1) + Math.floor(missing / 10) });
+    const needles = 2 + 2 * level; // rank 1: 4, rank 2: 6, rank 3: 8
+    const damage = 5 + 2 * (level - 1) + Math.floor(missing / 10);
+    const turn = me.angle + ctx.rng.next() * Math.PI * 2;
+    for (let i = 0; i < needles; i++) {
+      ctx.fire(me, 'jab', { angle: turn + (i * Math.PI * 2) / needles, speed: 520, damage, life: 0.33 / me.stats.projectileSpeed });
+    }
   },
 };
