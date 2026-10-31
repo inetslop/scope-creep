@@ -1,12 +1,14 @@
 ---
 id: T0118
 title: "Bop: a Lobber fork, the bubble pops on the critter it touches"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T19:30:37Z
+claimed_at: 2026-10-31T21:18:55Z
 epic: E27
 ---
 
