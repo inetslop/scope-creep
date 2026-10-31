@@ -12,7 +12,7 @@ The live Critter Clash: one small Debian container at home that serves the game 
 | nftables | the box may reach the internet (GitHub, npm, Tailscale), never the LAN |
 | `/srv/arena/` | `repo/` (a clone, no working tree), `releases/<commit>/` (built releases), `current` (the live one), `state/` (`live-tree`, `failed`, `hold`), `npm-cache/` |
 
-GitHub Pages keeps its own build without a server (Play there runs the match in the tab, against bots).
+GitHub Pages keeps its own build without a server: it sends players on to this box's page (`LIVE_URL` in `engine/config.ts`), and only when the box can't be reached does Play there run a match in the tab, against bots.
 
 ## First-time setup
 

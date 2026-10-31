@@ -29,7 +29,7 @@ Owner or frontier-model work. Things that need it: a new input (an aimed ability
 
 ## Hosting
 
-The live server is a home box that serves the page and the match from one build of one commit, and updates itself from GitHub: `deploy/arena/` at the repo root (setup, self-update, rollback). GitHub Pages keeps the build without a server: Play there starts the same match in the tab, against bots.
+The live server is a home box that serves the page and the match from one build of one commit, and updates itself from GitHub: `deploy/arena/` at the repo root (setup, self-update, rollback). GitHub Pages keeps a build without a server: it sends players on to the live page (`LIVE_URL` in `config.ts`, which always matches its server), and plays against bots in the tab only when the live server can't be reached. `?offline` and `?smoke` stay on Pages.
 
 `npm run server` (Node 24, or `bun engine/server/main.ts`) listens on `PORT` (8790) and `HOST` (0.0.0.0). From the environment:
 - `STATIC_DIR=dist`: the same port serves the built page; `GET /status` is the status JSON (players, tick time, bytes per second, content errors).

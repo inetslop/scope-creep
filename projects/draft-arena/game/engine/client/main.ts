@@ -14,7 +14,7 @@ import '@fontsource/fredoka/500.css';
 import '@fontsource/fredoka/600.css';
 import '@fontsource/fredoka/700.css';
 import type { HudScore, HudTree, HudView, UpgradeDef } from '../api.ts';
-import { DEFAULT_PORT } from '../config.ts';
+import { DEFAULT_PORT, LIVE_URL } from '../config.ts';
 import { buildRegistry } from '../registry.ts';
 import type { WireSelf } from '../shared/protocol.ts';
 import { canTake, missingFor, spentIn } from '../talents.ts';
@@ -247,7 +247,31 @@ hook.invariants = () => {
   return out;
 };
 
+/**
+ * A copy of the page built without a server (GitHub Pages) runs another version than the live
+ * server most of the time, so it doesn't connect to it: it sends the player to the live page,
+ * which always matches its server. When the live server can't be reached, it stays and plays here.
+ */
+async function goLive(): Promise<void> {
+  const live = import.meta.env.VITE_LIVE_URL || LIVE_URL;
+  showMenu('Finding the live game…');
+  try {
+    const ask = new AbortController();
+    const timer = setTimeout(() => ask.abort(), 4000);
+    const res = await fetch(new URL('status', `${live}/`), { signal: ask.signal, cache: 'no-store' });
+    clearTimeout(timer);
+    if (res.ok) {
+      location.replace(live);
+      return;
+    }
+  } catch {
+    // Unreachable: play here.
+  }
+  showMenu('The live game is down right now: Play starts a match against bots in this tab.');
+}
+
 if (smoke) start('offline', 'Smoke');
 else if (params.has('offline')) start('offline', '');
+else if (!serverUrl && import.meta.env.PROD) void goLive();
 else showMenu();
 requestAnimationFrame(frame);

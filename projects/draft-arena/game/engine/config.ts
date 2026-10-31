@@ -52,6 +52,12 @@ export const MAX_BACKLOG_BYTES = 256 * 1024;
 /** Not 8787: that is wrangler's (Cloudflare Workers) default, often already running on the same machine. */
 export const DEFAULT_PORT = 8790;
 
+/**
+ * The live game (deploy/arena/: the home box, reached through Tailscale Funnel). A copy of the page
+ * built without a server (GitHub Pages) sends players there; VITE_LIVE_URL overrides it.
+ */
+export const LIVE_URL = 'https://multi-slop.tail7ea268.ts.net';
+
 /** What the load test (engine/tests/load.test.ts) allows with 60 players in one match. */
 export const BUDGET = {
   /** Snapshot bytes one player receives per second (~0.36 Mbit/s; 60 players ≈ 22 Mbit/s of upload). */
