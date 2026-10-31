@@ -3,13 +3,14 @@ id: T0086
 title: "Twin: a bean that splits into two smaller twins when it drops to half hp"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T14:39:38Z
 claimed_at: 2026-10-31T14:43:54Z
+finished_at: 2026-10-31T15:06:03Z
 epic: E20
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
@@ -39,3 +40,7 @@ A kill that doesn't kill: a bean that chases like a Dot, but the first time it d
 | Brood | adds monsters to the crowd | the Brood keeps birthing Dots on a timer for as long as it lives; the Twin splits once, at a threshold of its own hp, and its twins can never split again |
 | Dot | chases the nearest player | the Twin chases the same way, but its fight changes at half hp: what ends a Dot can double the Twin |
 | Zippy | a face change before it acts | the Zippy's windup warns of a dash you can dodge by moving; the Twin's windup ends in a split you can't dodge — moving only helps you get out of the pop |
+
+## Rejected by architect (cachyos-x8664)
+
+the split must remove the parent and the only removal path is monster death, which unconditionally drops a gem worth def.xp (engine/sim/match.ts:766) — with xp 4 the split always drops a gem, so "no gem on the split" cannot be built without an engine change (a despawn/transform API or suppression of the death gem).
