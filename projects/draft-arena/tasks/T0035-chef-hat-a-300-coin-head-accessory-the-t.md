@@ -1,12 +1,14 @@
 ---
 id: T0035
 title: "Chef Hat: a 300-coin head accessory, the top of the shop"
+assignee: desktop-4070
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T06:50:30Z
+claimed_at: 2026-10-31T07:42:54Z
 epic: E6
 ---
 
