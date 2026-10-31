@@ -4,11 +4,12 @@ title: "The mark: a random player wears a red target for 15 s, and knocking them
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T07:27:49Z
 claimed_at: 2026-10-31T08:33:19Z
+finished_at: 2026-10-31T09:04:29Z
 epic: E10
 ---
 
@@ -188,3 +189,20 @@ function spot(u: { x: number; y: number }) {
 
 ### Tests
 None — the whole feature is server hooks and draws, covered automatically by `engine/tests/` (director long-match, area/status validation, draw functions).
+
+## Result (attempt 1, desktop-4070)
+
+Added "The mark", the sixth field event: three new files plus one-line registry entries in statuses/areas/directors. Every 90 s (first at 60 s) a random living player is marked for 15 s — a red target ring with ink rim pulsing once per second, 12 units above their head (`src/content/areas/mark.ts`, re-fired every tick like the crown), plus the "Marked" status giving +35% move speed and nothing else (`src/content/statuses/marked.ts`). The director (`src/content/directors/mark.ts`) schedules the marks, picks a random player (never the same one twice in a row when two or more are alive), pays a player killer 20 bonus xp and 5 coins with a burst where the ring was, and pops the ring into confetti for free if the mark dies to a monster or the 15 s expire. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 31.2 min
+
+```
+.../draft-arena/game/src/content/areas/index.ts    |  2 +
+ .../draft-arena/game/src/content/areas/mark.ts     | 35 ++++++++++++
+ .../game/src/content/directors/index.ts            |  2 +
+ .../draft-arena/game/src/content/directors/mark.ts | 64 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/statuses/index.ts |  2 +
+ .../game/src/content/statuses/marked.ts            |  5 ++
+ 6 files changed, 110 insertions(+)
+```
