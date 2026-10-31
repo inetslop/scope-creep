@@ -4,11 +4,12 @@ title: "Sleeper: a deep pink cushion that sleeps until you get close"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T06:30:37Z
 claimed_at: 2026-10-31T07:32:08Z
+finished_at: 2026-10-31T07:38:45Z
 epic: E9
 ---
 
@@ -149,3 +150,17 @@ export const sleeper: MonsterDef = {
 
 ### Tests
 - None (every content item is tested automatically by `engine/tests/`; there are no pure helpers here).
+
+## Result (attempt 1, desktop)
+
+Added the 6th monster, the Sleeper (`src/content/monsters/sleeper.ts`): a deep pink squashed-cushion critter with a three-state machine in `think` — sleeping (still, no touch damage, calm face with closed eyes), waking (a 0.5 s synced open-eyed warning, `slots[0]` = 1), and awake (chases the nearest player at 100 u/s, 10 dps, falling asleep again only after 10 s with every player beyond 500). hp 20, radius 15, xp 3, weight 5, fromLevel 4. Registered in `src/content/monsters/index.ts` right after Zippy, its closest relative. One deviation from the design's snippet: it declared both the 500-unit distance and the sleeping `Face` as `SLEEP`, a TS redeclaration error, so the face constants are named `CALM`/`ANGRY` like the neighboring zippy.ts.
+
+- Self-review: APPROVE
+- Time: 6.6 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../draft-arena/game/src/content/monsters/index.ts |  2 +
+ .../game/src/content/monsters/sleeper.ts           | 83 ++++++++++++++++++++++
+ 2 files changed, 85 insertions(+)
+```
