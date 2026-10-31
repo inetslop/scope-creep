@@ -3,13 +3,11 @@ id: T0087
 title: "Escape pays: a mark that runs out on a living player banks 5 coins"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T15:05:01Z
-claimed_at: 2026-10-31T15:13:55Z
 epic: E19
-designer: yoga
 ---
 
 ## Goal
@@ -45,3 +43,38 @@ Being marked is a risk either way: today the mark only pays the killer, so a mar
 | Prestige point | both bank something for a player | the point banks a talent point on a prestige; the escape banks coins on a survival |
 | Prestige ring | both mark a life moment on the field | the ring is a spectacle for everyone; the escape is a quiet coin for the marked player alone |
 | Prestige stars | both mark a life on the critter | the stars decorate a living player; the escape pays them out in coins |
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/content/directors/mark.ts` - the mark's expiry path banks 5 coins for a marked player who is still alive (humans only), as a `coin` pickup at their feet
+
+### Interfaces
+None. No new types, defs, files or registries. The pay reuses the existing `coin` pickup (`src/content/pickups/coin.ts`, already registered, already collects at the collector's feet via `ctx.giveCoins`).
+
+### Steps
+1. In `src/content/directors/mark.ts`, add one line after `const BONUS_COINS = 5;` (line 9): `const ESCAPE_COINS = 5;` — do not reuse `BONUS_COINS`, the kill bonus may be tuned separately.
+2. Replace the expired branch in `tick` (lines 28–33):
+   ```ts
+   if (mem.until) {
+     const gone = ctx.playerById(mem.mark); // expired: they are still alive (a kill clears mem first)
+     mem.mark = 0;
+     mem.until = 0;
+     if (gone) {
+       ctx.effect('pop', spot(gone), undefined, RING);
+       if (!gone.bot) ctx.dropPickup('coin', gone.x, gone.y, ESCAPE_COINS);
+     }
+   }
+   ```
+   `!gone.bot` is the human check (`Player.bot`, `engine/api.ts` line 118). `dropPickup` is on `ctx` (api.ts line 281); the drop is at the feet, exactly like `src/content/directors/prestige-coins.ts` line 23. Do not defer it through `mem` the way prestige-coins does — `gone` is right here in the tick.
+3. Fix the doc comment (lines 14–16) which will now be false: change "a monster kill or an expired mark pops the ring into confetti and pays nothing" to "a monster kill pops the ring into confetti and pays nothing; an expired mark banks 5 coins for the marked player if they are still alive (humans only)".
+4. Touch nothing else: no change to `onKill`, no new effect, sound, HUD or file.
+
+### Pitfalls
+- Drop for humans only: a marked bot that survives must bank nothing (`!gone.bot` guard), same rule as kill coins.
+- Drop at `gone.x, gone.y` (the feet), not `spot(gone)` — that is 12 units above the head and is the ring's spot, not the feet.
+- The knockout path is safe as-is: `onKill` clears `mem.mark`/`mem.until`, so `if (mem.until)` never runs for a killed mark and the killer's bonus is untouched.
+- The pickup (`life: 2`, `radius: 7`) collects at once because the player is standing on it — that is also how the candy pop, the coin chip and the coin tick show, so add no visual of your own.
+
+### Tests
+- none (the mark director is exercised in a real match by engine/tests/ automatically)
