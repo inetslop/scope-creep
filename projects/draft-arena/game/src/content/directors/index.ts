@@ -11,6 +11,7 @@ import { prestigeCoins } from './prestige-coins.ts';
 import { swarmSurge } from './swarm-surge.ts';
 import { gemRush } from './gem-rush.ts';
 import { killCoins } from './kill-coins.ts';
+import { prestigePoints } from './prestige-points.ts';
 
 /** Everything that runs the whole match (field events, elites, bounties). One per line. */
 export const DIRECTORS: readonly DirectorDef[] = [
@@ -24,6 +25,7 @@ export const DIRECTORS: readonly DirectorDef[] = [
   mark,
   wound,
   prestigeCoins,
+  prestigePoints,
   swarmSurge,
   gemRush,
 ];
