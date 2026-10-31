@@ -3,11 +3,13 @@ id: T0126
 title: "The streak's green tier: a third knockout in the chain turns the sash green and pays +2"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0125]
 attempts: 0
 created: 2026-10-31T21:05:07Z
+claimed_at: 2026-10-31T21:07:11Z
 epic: E29
+designer: yoga
 ---
 
 ## Goal
