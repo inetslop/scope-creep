@@ -3,11 +3,13 @@ id: T0107
 title: "Ring: a 150-coin pattern, a light ring around the middle of the body"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:49:52Z
+claimed_at: 2026-10-31T17:53:51Z
 epic: E22
+designer: yoga
 ---
 
 ## Goal
