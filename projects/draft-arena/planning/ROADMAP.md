@@ -54,7 +54,7 @@ Breakdown:
 - T0017 M — Two starter hats: a Hats card, wear and take off — done
 Done: a color and a hat, picked on the start screen, kept between visits, seen by everyone in the match.
 
-## E6 Shop and coins (active)
+## E6 Shop and coins (done)
 Goal: something to play for across matches: players earn coins in the match and spend them in a shop on color patterns and accessories (hats and more).
 Done when: coins are earned in play (how many, for what, is yours to design), kept between visits, shown where they are spent; the shop sells patterns and accessories with prices, and what a player buys is theirs to wear (E5).
 Ready: coins in the profile, ctx.giveCoins for content, prices and buying, and the start-screen panels. Nothing gives coins yet and there is no shop panel (planning/modules/shop.md).
@@ -63,11 +63,11 @@ Breakdown:
 - T0021 M — First shop stock: two patterns, a face and a back accessory, priced — done
 - T0022 M — The shop: a panel over the start screen that sells the stock, with a preview critter — done
 - T0027 S — Coins from events: every gem an event drops pays 1 coin — done
-- T0044 S — Halves: a two-tone pattern, 50 coins, the third pattern price step — todo
+- T0044 S — Halves: a two-tone pattern, 50 coins, the third pattern price step — done
 - T0031 M — The shop's second stock: two patterns, a face and a back accessory, priced — done
 - T0035 S — Chef Hat: a 300-coin head accessory, the shop's long goal — done
-- T0046 S — Bloom: a 150-coin head accessory, a pink flower with a yellow center — todo
-Next: done once T0044 and T0046 build: kills and events pay coins, the shop sells its stock, and the Chef Hat is the goal to save for.
+- T0046 S — Bloom: a 150-coin head accessory, a pink flower with a yellow center — done
+Done: kills and events pay coins, the shop sells its stock, and the Chef Hat is the goal to save for.
 
 ## E7 Prestige (tasked)
 Goal: nobody stays overpowered forever: a player who reaches level 18 prestiges back to level 1, and prestiging is worth it.
@@ -76,11 +76,11 @@ Ready: the reset at level 18 works; the reward is content (a director's onPresti
 Breakdown:
 - T0023 S — Prestige ring: a big yellow ring and confetti where a player prestiges — done
 - T0024 M — The prestige pays (in all): the Nth prestige in all pays 25 x N coins — failed (the in-all count is client-only; see IDEAS)
-- T0029 M — The prestige pays: the Nth prestige this life pays 25 x N coins, a 2 s card under the xp bar — in progress
-- T0025 M — Slush: a Lobber talent that only opens after a prestige this life — in progress
+- T0029 M — The prestige pays: the Nth prestige this life pays 25 x N coins, a 2 s card under the xp bar — done
+- T0025 M — Slush: a Lobber talent that only opens after a prestige this life — done
 - T0026 S — Medal: a back accessory, buyable only after 2 prestiges in all — done
-- T0047 M — Prestige stars: a gold star on the critter per prestige this life, up to 3 — todo
-Next: done once T0025, T0029 and T0047 build: the coin pays, Slush opens a second-life build, and the stars mark the life (the Medal is in).
+- T0047 M — Prestige stars: a gold star on the critter per prestige this life, up to 3 — in progress
+Next: done once T0047 builds: the coin pays, Slush opens a second-life build, and the stars mark the life (the Medal is in).
 
 ## E8 The Goober tree (done)
 Goal: a fourth playstyle for the draft: a build whose weapon aims for you — your Goo turns in flight and catches the nearest enemy, while Gunner kites with straight Bolts, Lobber zones with bubbles and Body bites in front.
@@ -97,7 +97,7 @@ Breakdown:
 - T0034 M — Bulwark: a deep red octagon whose bubble shield eats the first 15 hits — failed (monsters have no target-side hit hook)
 - T0037 M — Boing: a deep red heart that crouches and leaps at where you are going — failed (the comparison table omitted the Sleeper; rebuilt as T0045)
 - T0045 M — Boing: a deep red heart that crouches, then leaps to where you're going — failed
-- T0048 M — Boing: a deep red heart that crouches, then leaps to where you're going — design
+- T0048 M — Boing: a deep red heart that crouches, then leaps to where you're going — designing
 Next: done once T0048 builds: the crowd gains a new way to move (it crouches, it leaps).
 
 ## E10 More reasons to move (done)
@@ -114,10 +114,11 @@ Done when: a monster pop, a level-up and a coin each have a sound, on desktop an
 Breakdown:
 - T0039 M — Pop: the first sound, the game's audio, a pop when a monster dies, pitched by its size — done
 - T0040 S — Chime: a level-up chime — done
-- T0041 S — Coin: a coin tick when a coin is picked up or spent — in progress
-- T0049 S — Bonk: a deep thud when a player is knocked out — design
-- T0050 S — Fanfare: a rising three-note fanfare when a player prestiges — design
-Next: a sound for the crown falling, then more moments as the epic proves out.
+- T0041 S — Coin: a coin tick when a coin is picked up or spent — done
+- T0049 S — Bonk: a deep thud when a player is knocked out — done
+- T0050 S — Fanfare: a rising three-note fanfare when a player prestiges — in progress
+- T0051 S — Toot: a party-horn toot when the crown flies off — design
+Next: done once T0050 and T0051 build: a pop, a level-up, a coin, a knockout, a prestige and a crown fall each have a sound.
 
 ## E12 The Goober grows (active)
 Goal: the fourth tree deepens: under Goo it forks three ways — a Goo that sticks to its target, a Gush puddle that bites, and the scatter that exists — so a Goober life picks a direction instead of buying the same four talents.
@@ -126,3 +127,10 @@ Breakdown:
 - T0042 M — Cling: a Goo that splats on its target and rides it, damage every 0.5 s — in progress
 - T0043 M — Chew: your Gush puddle deals damage to whatever stands in it — todo
 Next: done once T0042 and T0043 build: the Goober fork is real — sticky, zone or scatter.
+
+## E13 The Frenzy tree (active)
+Goal: a fifth playstyle, thin and mean: Frenzy trades max HP for damage, and the more hurt a player is, the harder they hit — a life that wants to stay at half HP instead of playing safe.
+Done when: the Frenzy tree is in the panel with its trade-off mod, its hurt-scaled jab, its low-HP sprint and its low-HP capstone, each readable in a crowd.
+Breakdown:
+- T0053 L — Frenzy tree: Frenzy, Nerve, Sprint, Reckless — design
+Next: depth (a fork, a new talent) once the tree proves out, the way E12 did for Goober.

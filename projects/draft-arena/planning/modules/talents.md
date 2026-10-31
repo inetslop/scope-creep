@@ -72,6 +72,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
   - id lob, upgrade lob, max 5, needs [["quick",1]]
   - id wide, upgrade wide, max 3, needs [["lob",2]]
   - id fuse, upgrade fuse, max 1, needs [["lob",4]]
+  - id slush, upgrade slush, max 3, needs [["lob",1]], points 2, prestige 1
 
 ### Goober (`goober`)
 - description: "Your Goo: a drop that turns and finds the nearest enemy for you."

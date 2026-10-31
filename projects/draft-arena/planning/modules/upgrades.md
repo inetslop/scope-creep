@@ -37,7 +37,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-21 in the game, from game/src/content/upgrades/ (the real values).
+22 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -121,6 +121,13 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - maxLevel: 3
 - look: shape hexagon, color #38d9a9
 - onKill: (code)
+
+### Slush (`slush`)
+- description: "Every 1.6 s, if an enemy is within 240, throws a slush blob straight toward it; it flies past enemies and, where it lands, leaves a 40-unit puddle for 2.5 s (+0.5 s per rank) that strikes and slows whatever stands in it for 2.5 s. Rank 1: 4 damage, rank 2: 6, rank 3: 8."
+- maxLevel: 3
+- look: shape circle, color #99e9f2
+- cooldown: 1.6
+- fire: (code)
 
 ### Split (`split`)
 - description: "Every weapon fires 1 more shot, fanned out; all shots 12% weaker. Per rank."

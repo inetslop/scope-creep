@@ -24,12 +24,16 @@ The backlog: add freely, turn the best into epics and tasks.
 - Bulwark (E9): a big slow tank with a bubble shield that eats the first 15 hits, then takes damage and its face turns scared — a front for a crowd, a target you have to crack first. — T0034
 - The shop's long goal (E6): a 300-coin Chef Hat — the first thing that takes many matches, the top of the shop. — T0035
 - Halves pattern (E6): a two-tone pattern — the top half of the body painted lighter than the player's own color, 50 coins — the third price step in the shop's patterns. — T0044
-- Sound layer: a pop when a monster dies, a chime on a level-up, a coin tick in the shop, a bonk when a player is knocked out, a fanfare on a prestige — the game is quiet; sounds are the next juice. — E11 (T0039, T0040, T0041, T0049, T0050)
+- Sound layer: a pop when a monster dies, a chime on a level-up, a coin tick in the shop, a bonk when a player is knocked out, a fanfare on a prestige, a toot when the crown flies off — the game is quiet; sounds are the next juice. — E11 (T0039, T0040, T0041, T0049, T0050, T0051)
 - Boing (E9): a deep red heart that crouches, then leaps to where you are going (a prediction of your run) — a straight-line kite no longer escapes it, and a hard direction change makes it leap past you. — T0048 (T0037 and T0045 failed: the comparison table was missing rows; T0048 carries the full table)
 - The mark (E10): every 90 s, one random player wears a red target ring for 15 s and runs 35% faster; knocking them out pays 20 bonus xp and 5 coins — the field turns from a farm into a hunt. — T0038
 - Goober depth (E8): the 5th and 6th talent for the tree once it is proven (a Goo that sticks to its target, a Gush puddle that bites). — E12: T0042 (Cling), T0043 (Chew)
 - Bloom (E6): a 150-coin head accessory — a pink five-petal flower with a yellow center on the head, filling the gap between the free hats and the 300-coin Chef Hat. — T0046
 - Prestige stars (E7): a small gold star beside the critter per prestige this life, up to 3, gone on a knockout — a visible, powerless mark of a life, so a veteran reads in a crowd. — T0047
+- Frenzy tree (E13): a fifth playstyle, thin and mean — Frenzy trades 8 max HP for 12% damage per rank, Nerve is a jab that hits harder the more hurt you are, Sprint only runs below half HP, and the Reckless capstone doubles damage below half HP. — E13: T0053
+- Beak: a 100-coin face accessory — a small orange beak below the eyes, the shop's third face item (the face slot is its thinnest shelf). — T0052
+- Popper (a later menagerie epic): a fat red critter that pops a damaging puff (radius 40, 10 damage) when it dies — killing it up close is a choice, not a free hit.
+- Diagonal pattern: two diagonal light stripes across the body, 60 coins — the next pattern price step.
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.

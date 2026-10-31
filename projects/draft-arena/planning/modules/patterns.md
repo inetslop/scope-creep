@@ -24,7 +24,7 @@ Each is one file in src/content/patterns/: `name` (at most 18 characters), `desc
 
 ## What exists now
 
-4 in the game, from game/src/content/patterns/ (the real values).
+5 in the game, from game/src/content/patterns/ (the real values).
 
 ### Bands (`bands`)
 - description: Two light bands across the body.
@@ -44,4 +44,9 @@ Each is one file in src/content/patterns/: `name` (at most 18 characters), `desc
 ### Party (`party`)
 - description: "A light zigzag across the top, like a paper party hat."
 - price: 40
+- draw: (code)
+
+### Halves (`halves`)
+- description: "The top half of the body, lighter, like a two-tone critter."
+- price: 50
 - draw: (code)
