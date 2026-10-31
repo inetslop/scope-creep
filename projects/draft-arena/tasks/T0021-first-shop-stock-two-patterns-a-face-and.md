@@ -3,11 +3,13 @@ id: T0021
 title: "First shop stock: two patterns, a face and a back accessory"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T04:17:26Z
+claimed_at: 2026-10-31T04:59:39Z
 epic: E6
+designer: desktop
 ---
 
 ## Goal
