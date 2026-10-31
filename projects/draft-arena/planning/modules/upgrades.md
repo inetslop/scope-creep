@@ -11,6 +11,7 @@ An upgrade is what a talent gives: every rank of a talent is one level of its up
 Weapons hit other players too, at half damage (planning/modules/match.md). Under "What exists now", code shows as "(code)": `fire` makes a weapon, `onHit` and `onKill` react to hits and kills, and the description says what each does.
 
 ## The bar for a new upgrade
+- **A tree's weapon is its own.** How it reaches and hurts enemies (a straight shot, a homing drop, an arcing splash, a bite in front...) belongs to one tree and expresses that tree's playstyle. A weapon that attacks like another tree's, with other numbers or another look, is a copy.
 - **It changes how you play or combines in a new way.** Another weapon that only differs in numbers, or a stat an existing upgrade already raises, is not a new upgrade. Upgrades in one row of the `stats` index raise the same stats.
 - **A mod says what it does with every weapon.** A stat, on-hit or on-kill effect works on all weapons, not just Bolt: say what it does with each weapon under "What exists now" (one line per weapon where it differs), or that it does nothing there and why that's fine.
 - **A weapon says what every mod does to it.** pierce and shots apply to projectiles only; on-hit effects run on its hits. A weapon that ignores most mods leaves its player's points dead: say which apply and which don't.
@@ -33,7 +34,8 @@ Next to the usual sections, it has:
 A missing row, or a row whose difference is only numbers, gets the task rejected by the architect.
 
 ## Not in this game
-(nothing removed yet)
+The owner removed these. Don't propose them again, or anything that works the same way.
+- Three trees with the same weapon: Frenzy's Nerve and Hive's Horn were straight darts at the nearest enemy like Gunner's Bolt, and looked alike.
 
 ## What exists now
 
