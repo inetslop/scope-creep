@@ -4,11 +4,12 @@ title: "Second shop stock: two patterns, a face and a back accessory"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T06:30:37Z
 claimed_at: 2026-10-31T07:27:53Z
+finished_at: 2026-10-31T07:32:05Z
 epic: E6
 ---
 
@@ -155,3 +156,20 @@ export const balloon: AccessoryDef = {
 
 ### Tests
 - none (all four items are content, tested automatically by `engine/tests/` plus the smoke test).
+
+## Result (attempt 1, desktop)
+
+Added a second shop shelf with four draw-only cosmetics: patterns Belly and Party (40 coins each, painted lighter than the player's own color via `shade`), face accessory Bow Tie (80, red bow at the mouth below the eyes), and back accessory Balloon (120, yellow balloon bobbing behind the body with a fixed knot). Each is one file in its folder plus one line in its registry (`src/content/patterns/index.ts`, `src/content/accessories/index.ts`); the shop and bot dressing pick them up automatically. `npm run check` (77 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 4.2 min
+
+```
+.../game/src/content/accessories/balloon.ts        | 23 +++++++++++++++++++
+ .../game/src/content/accessories/bow-tie.ts        | 26 ++++++++++++++++++++++
+ .../game/src/content/accessories/index.ts          |  4 ++++
+ .../draft-arena/game/src/content/patterns/belly.ts | 15 +++++++++++++
+ .../draft-arena/game/src/content/patterns/index.ts |  4 ++++
+ .../draft-arena/game/src/content/patterns/party.ts | 23 +++++++++++++++++++
+ 6 files changed, 95 insertions(+)
+```
