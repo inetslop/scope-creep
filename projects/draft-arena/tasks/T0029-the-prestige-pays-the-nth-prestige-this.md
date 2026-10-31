@@ -1,12 +1,14 @@
 ---
 id: T0029
 title: "The prestige pays: the Nth prestige this life pays 25 x N coins"
+assignee: inet-racing
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T05:50:41Z
+claimed_at: 2026-10-31T07:10:04Z
 epic: E7
 ---
 
