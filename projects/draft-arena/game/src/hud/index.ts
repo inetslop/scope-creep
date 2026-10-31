@@ -3,6 +3,7 @@ import './base.css';
 import { audio } from './audio.ts';
 import { chime } from './chime.ts';
 import { coin } from './coin.ts';
+import { coinChip } from './coinChip.ts';
 import { connection } from './connection.ts';
 import { knockedOut } from './knockedOut.ts';
 import { prestige } from './prestige.ts';
@@ -14,6 +15,7 @@ import { xpBar } from './xpBar.ts';
 export const HUD_PARTS: readonly MakeHudPart[] = [
   audio,
   coin,
+  coinChip,
   connection,
   chime,
   xpBar,

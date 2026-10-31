@@ -4,11 +4,12 @@ title: "Coin chip: your coin balance on the match HUD"
 assignee: desktop
 size: M
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T12:44:22Z
 claimed_at: 2026-10-31T13:49:14Z
+finished_at: 2026-10-31T13:52:52Z
 ---
 
 ## Goal
@@ -128,3 +129,17 @@ Fullest state (must fit one line): a 14 px coin dot + "99999" (5 digits, no sepa
 
 ### Tests
 - none (no pure helpers; the engine content tests and smoke test cover it).
+
+## Result (attempt 1, desktop)
+
+Added a coin chip to the match HUD: `src/hud/coinChip.ts` + `src/hud/coinChip.css` — a small white sticker card under the connection card (top-left, 58px desktop / 110px phone) showing a 14px yellow coin and the player's live coin balance (`view.me.coins`), updating the same frame coins land; registered in `src/hud/index.ts` right after the sound-only `coin` part, which was left untouched.
+
+- Self-review: APPROVE
+- Time: 3.6 min
+
+```
+projects/draft-arena/game/src/hud/coinChip.css | 39 ++++++++++++++++++++++++++
+ projects/draft-arena/game/src/hud/coinChip.ts  | 25 +++++++++++++++++
+ projects/draft-arena/game/src/hud/index.ts     |  2 ++
+ 3 files changed, 66 insertions(+)
+```
