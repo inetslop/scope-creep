@@ -183,12 +183,13 @@ Done: the 10th monster is in — a Brood that keeps birthing Dots while it lives
 
 ## E19 The price of a kill (active)
 Goal: a player kill isn't free: the killer wears the mark for 15 s (revenge), and a level-4+ corpse drops a gem worth the life — every knockout starts a short hunt on the killer and a pickup fight over the corpse, so the scoreboard swings on both.
-Done when: a player who knocks out another is marked for 15 s and pays the mark bonus if knocked out in that window; a knocked-out player of level 4+ drops a gem worth their level (the leader's gem folded in); a player hears the moment they are marked.
+Done when: a player who knocks out another is marked for 15 s and pays the mark bonus if knocked out in that window; a knocked-out player of level 4+ drops a gem worth their level (the leader's gem folded in); a mark that runs out on a living player banks 5 coins.
 Breakdown:
 - T0082 M — The price: killing a player marks you for 15 s, the mark pays out as usual — design
 - T0083 M — The corpse pays: a knocked-out player of level 4+ drops a gem worth their level; the leader's gem folds in — design
-- T0084 S — A sting: a small sting when the mark lands on you — design
-Next: the escape pays — a marked player who survives all 15 s banks 5 coins — once the price and the corpse prove out.
+- T0084 S — A sting: a small sting when the mark lands on you — failed (the client cannot tell the local player is marked; needs the engine, see IDEAS)
+- T0087 S — Escape pays: a mark that runs out on a living player banks 5 coins — design
+Next: fully tasked — the mark's two fates (killed, escaped) both pay out once the three tasks land.
 
 ## E20 The menagerie grows back (active)
 Goal: the menagerie is 7 of 10 types after the cut; the crowd learns two new ways to threaten — a threat that comes in on an arc, and a kill that doesn't kill — each readable at a glance.
@@ -197,3 +198,11 @@ Breakdown:
 - T0085 M — Toss: a big slow melon that lobs an arc blob that splashes where it lands — design
 - T0086 M — Twin: a bean that splits into two smaller twins when it drops to half hp — design
 Next: the last slot (back to 10) — a way to threaten none of the nine has, picked from IDEAS once these two prove out.
+
+## E21 The shop fills out (active)
+Goal: after the Chef Hat and the Medal, the shelves go quiet: each slot and the pattern shelf get middle steps toward their caps (10 per slot, 12 patterns), so a player with a few lives always has a next save.
+Done when: each slot has at least 5 items including the free ones, the pattern shelf has 8, and no ladder between 80 and 400 coins has a gap bigger than 150.
+Breakdown:
+- T0088 S — Lolly: an 80-coin pattern, a light lollipop swirl — design
+- T0089 M — The third shelf: a 120-coin Feather (head) and a 300-coin Candy Cane (back) — design
+Next: a face-slot step (the thinnest shelf) and one more pattern step, once these prove out.

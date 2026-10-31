@@ -71,7 +71,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - xp: 6
 - weight: 3
 - fromLevel: 6
-- look: shape circle, color #6d5aa3, face {mood calm, eyes 3, mouth o}, draw (code)
+- look: shape circle, color #845ef7, face {mood calm, eyes 3, mouth o}, draw (code)
 - think: (code)
 
 ### Flee (`flee`)
@@ -83,7 +83,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - xp: 2
 - weight: 5
 - fromLevel: 3
-- look: shape circle, color #ff6b6b, face {mood calm, eyes 2, mouth o}, draw (code)
+- look: shape circle, color #ffa8a8, face {mood calm, eyes 2, mouth o}, draw (code)
 - think: (code)
 - onDeath: (code)
 
@@ -108,7 +108,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - xp: 3
 - weight: 5
 - fromLevel: 4
-- look: shape square, color #a15570, face {mood calm, eyes 2, mouth o}, draw (code)
+- look: shape square, color #da77f2, face {mood calm, eyes 2, mouth o}, draw (code)
 - think: (code)
 
 ### Spitter (`spitter`)

@@ -48,10 +48,14 @@ The backlog: add freely, turn the best into epics and tasks.
 - Leech (E16): a fifth Hive talent, the sustain fork under Swarm — while 3+ enemies are within 80 of you, your hits heal 1 hp, per rank +1 — the swarm that chases you feeds you. — T0081
 - The price (E19): a player who knocks out another player wears the mark for 15 s — the mark's +35% speed and the 20 xp + 5 coin bonus now fall on the killer: the real threat has a cost, and escaping after a kill is a decision (a permanent rule in the crown/kill-coins class, not one of the 6 field events). — T0082
 - The corpse pays (E19): a knocked-out player of level 4 or higher drops a green gem worth their level in xp where they fell — every midgame corpse is a pickup anyone can snipe, and the leader's gem (T0014) folds into it, so the crown keeps its double bounty and its fall. — T0083
-- A sting (E19): a small sting when the mark lands on you, by the event or by a kill — the mark is silent today; a player should hear the moment they become the target. — T0084
+- Escape pays (E19): a marked player who survives all 15 s banks 5 coins where they stand — the mark's two fates both pay (killed: the killer takes the bonus; escaped: the survivor banks the coins), so being marked is a risk either way, not a free speed boost. — T0087
+- A sting (E19): a small sting when the mark lands on you, by the event or by a kill — the mark is silent today; a player should hear the moment they become the target. — T0084 (failed: the client has no surface for the local player's statuses — moved to Needs the engine)
 
 - Toss (E20): a big slow melon that holds a 220–420 band and lobs a high-arcing purple blob that splashes (radius 60, 12 damage) where it lands — the dodge is moving during the ~1.25 s flight; it punishes the mid-range camper and pays for a close-in, since it stops lobbing inside 220. — E20: T0085
 - Twin (E20): a bean that chases like a Dot, but the first time it drops to half hp it shakes 0.4 s and splits into two smaller, faster twins that can never split again — a half-kill is a two-kill, so finishing a target before the threshold is a real choice. — E20: T0086
+- Lolly (E21): an 80-coin pattern — a light lollipop swirl across the body, the pattern shelf's step past Diagonal's 60. — T0088
+- Feather (E21): a 120-coin head accessory — a single pink feather resting on the head, the head slot's step between the free hats and the 150-coin Bloom. — T0089
+- Candy Cane (E21): a 300-coin back accessory — a red and white striped cane hooked over the back, the back slot's step between the 180-coin Party Blower and the 400-coin Medal. — T0089
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.
@@ -61,3 +65,4 @@ The backlog: add freely, turn the best into epics and tasks.
 - A kill feed and announcements on the HUD.
 - A knockout card on the HUD (after you knock out a player: their name and the xp and score you got): the HUD cannot know who you knocked out or what you got — it knows only your own counters and the scoreboard (planning/modules/screen.md).
 - A prestige coin based on prestiges in all: the profile's count is client-only; the server would need the profile's prestige count sent at join.
+- A sting or announcement when the mark lands on you (E19): the client has no surface for the local player's statuses or speed — the mark's +35% and its 15 s live only inside the match, so content cannot tell when the local player is marked; the engine should expose the self's statuses to the HUD and the audio layer (T0084 failed on exactly this).
