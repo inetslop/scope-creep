@@ -19,6 +19,7 @@ import { kiss } from './kiss.ts';
 import { mustache } from './mustache.ts';
 import { balloon } from './balloon.ts';
 import { partyBlower } from './party-blower.ts';
+import { pinwheel } from './pinwheel.ts';
 
 /** Everything players can wear on their head, face or back (hats and more). One per line. */
 export const ACCESSORIES: readonly AccessoryDef[] = [
@@ -39,6 +40,7 @@ export const ACCESSORIES: readonly AccessoryDef[] = [
   mustache,
   balloon,
   partyBlower,
+  pinwheel,
   candyCane,
   medal,
   lollipop,

@@ -4,11 +4,12 @@ title: "Pinwheel: a 240-coin back accessory, a pink and white pinwheel that turn
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T21:28:31Z
 claimed_at: 2026-10-31T21:59:44Z
+finished_at: 2026-10-31T22:09:26Z
 epic: E26
 ---
 
@@ -108,3 +109,16 @@ export const pinwheel: AccessoryDef = {
 
 ### Tests
 - none (accessories are tested automatically by `engine/tests/`: file named after its id, registered, draw hook runs).
+
+## Result (attempt 1, yoga)
+
+Added the Pinwheel back accessory — a 240-coin, no-prestige-lock item in `src/content/accessories/pinwheel.ts`: an ink stick up off the back with a round head of four triangular blades (two pink, two white) around a small yellow hub, blades ink-outlined, clear of the eyes, keeping the Party Blower's small speed sway. The blades complete one full turn every 4 s computed from the draw hook's `time` alone (no speed dependence, no accumulated state). Registered it in `src/content/accessories/index.ts` between Party Blower (180) and Candy Cane (300), which the shop panel picks up for buying, preview, wearing and persistence — the back slot now has 7 items with no price gap past 150 coins. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 9.7 min
+
+```
+.../game/src/content/accessories/index.ts          |  2 +
+ .../game/src/content/accessories/pinwheel.ts       | 46 ++++++++++++++++++++++
+ 2 files changed, 48 insertions(+)
+```
