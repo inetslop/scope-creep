@@ -1,14 +1,14 @@
 ---
 id: T0310
 title: "The switchback: the board branch's fourth node, a fold in the road"
+assignee: inet-racing
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 1
+attempts: 2
 created: 2026-10-30T22:00:22Z
-claimed_at: 2026-10-30T23:09:27Z
-finished_at: 2026-10-31T01:09:32Z
+claimed_at: 2026-10-31T01:09:38Z
 epic: E9
 ---
 
