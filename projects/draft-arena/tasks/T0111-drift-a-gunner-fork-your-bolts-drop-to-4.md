@@ -1,12 +1,14 @@
 ---
 id: T0111
 title: "Drift: a Gunner fork, your bolts drop to 40% speed after 120 units and linger"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T18:10:25Z
+claimed_at: 2026-10-31T18:39:44Z
 epic: E24
 ---
 
