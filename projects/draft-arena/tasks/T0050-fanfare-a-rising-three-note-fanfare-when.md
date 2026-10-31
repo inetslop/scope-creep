@@ -1,12 +1,14 @@
 ---
 id: T0050
 title: "Fanfare: a rising three-note fanfare when a player prestiges"
+assignee: cachyos-x8664
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T09:20:00Z
+claimed_at: 2026-10-31T10:05:30Z
 epic: E11
 ---
 
