@@ -3,10 +3,12 @@ id: T0134
 title: "Retire the Body tree: Maw and Chomp to Frenzy, Bellow and Hide to Hive, Chill to Lobber"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T22:41:05Z
+claimed_at: 2026-10-31T23:01:36Z
+designer: desktop
 ---
 
 ## Goal
