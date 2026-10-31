@@ -3,11 +3,13 @@ id: T0123
 title: "Reach: a Goober fork under Goo 2, a thin ice needle at the farthest enemy within 400"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T20:44:19Z
+claimed_at: 2026-10-31T20:44:23Z
 epic: E28
+designer: desktop
 ---
 
 ## Goal
