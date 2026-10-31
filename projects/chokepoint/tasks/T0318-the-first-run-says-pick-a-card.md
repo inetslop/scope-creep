@@ -3,11 +3,13 @@ id: T0318
 title: The first run says pick a card
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T01:13:09Z
+claimed_at: 2026-10-31T01:13:12Z
 epic: E11
+designer: desktop
 ---
 
 ## Goal
