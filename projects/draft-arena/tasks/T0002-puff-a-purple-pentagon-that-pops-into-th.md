@@ -3,13 +3,11 @@ id: T0002
 title: "Puff: a purple pentagon that pops into three Dots"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T01:44:04Z
-claimed_at: 2026-10-31T01:57:50Z
 epic: E2
-designer: yoga
 ---
 
 ## Goal
@@ -34,3 +32,52 @@ A slow, tanky monster that pops into three Dots when it dies: killing it becomes
 - [ ] When the Puff dies, a purple confetti burst pops, three Dots burst out of its spot, and its gem (worth 4 xp) drops.
 - [ ] A player who runs (210 u/s) always escapes the three Dots; a player who stands still is caught by them.
 - [ ] A Puff death adds three to the per-player crowd; the cap of 60 monsters around a player still holds.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/monsters/puff.ts` - the Puff `MonsterDef` (same data shape as `src/content/monsters/dot.ts`), with one `onDeath`
+- edit `src/content/monsters/index.ts` - one import line + one line in `MONSTERS`
+
+### Interfaces
+None - no new or changed types.
+
+### Steps
+1. Create `src/content/monsters/puff.ts` with exactly:
+```ts
+import type { MonsterDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** Slow and tanky; pops into three Dots when it dies. */
+export const puff: MonsterDef = {
+  id: 'puff',
+  name: 'Puff',
+  description: 'Pops into three Dots when it dies.',
+  hp: 45,
+  speed: 50,
+  radius: 22,
+  damage: 14,
+  xp: 4,
+  weight: 4,
+  fromLevel: 3,
+  look: { shape: 'pentagon', color: PALETTE.purple, face: { mood: 'calm', eyes: 1, mouth: 'o' } },
+  onDeath(ctx, m) {
+    for (let i = 0; i < 3; i++) {
+      const a = (i / 3) * Math.PI * 2;
+      ctx.spawnMonster('dot', m.x + Math.cos(a) * 18, m.y + Math.sin(a) * 18);
+    }
+  },
+};
+```
+2. In `src/content/monsters/index.ts`: add `import { puff } from './puff.ts';` after the dot import, and `puff,` after `dot,` in `MONSTERS`.
+
+### Pitfalls
+- No `think` hook: the engine's default `chase()` is exactly "straight for the nearest player, fanned out a little" (stable per-monster angular spread); a `think` would duplicate it.
+- No effect or pickup code in `onDeath`: the engine itself plays the `pop` confetti effect and drops the xp-worth gem on every monster death (engine/sim/match.ts:750-751) - adding `ctx.effect`/`dropPickup` would double them. The burst reads purple because the Puff's own body is `PALETTE.purple`; do not create a purple effect.
+- The three Dots spawn at base hp (12): `ctx.spawnMonster` takes no level argument - there is no API to scale them; do not invent one.
+- The 18 u offsets at 0/120/240 degrees keep the three Dots (radius 14) from overlapping at spawn; "each facing a different way" is the offset plus each Dot's own chase spread. No `ctx.rng` needed.
+- The three Dots count into the per-player crowd on the next spawn tick, and the engine's spawn loop (cap 60 around a player) stops topping up while they are alive - the cap holds by itself.
+- `xp: 4` makes the gem worth 4 xp automatically; the engine clamps the spawn spots inside the world.
+
+### Tests
+none (content is tested automatically by engine/tests/).
