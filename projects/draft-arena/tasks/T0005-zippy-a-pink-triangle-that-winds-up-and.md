@@ -4,11 +4,12 @@ title: "Zippy: a pink triangle that winds up and dashes"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T02:20:47Z
 claimed_at: 2026-10-31T02:51:41Z
+finished_at: 2026-10-31T03:06:34Z
 epic: E2
 ---
 
@@ -157,3 +158,16 @@ export const zippy: MonsterDef = {
 
 ### Tests
 none (no pure helpers in src/; engine/tests/ already checks the def, runs look.draw with slots 0 and 1, and runs 12 Zippies in a 12 s match where they enter range and dash).
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the Zippy monster — a pink triangle that crawls at 60 u/s, then within 260 of a player stops for a 0.8 s wind-up (squashed flat, angry face, a 30-unit pink lane line) before dashing straight along that fixed lane at 420 u/s for 0.4 s, hurting everything it touches (22/s, players at half), and is tired for 1.5 s before cycling again on its own rhythm. It's the first monster with a `think` (state in `mem`, phase in `slots[0]`); Dot and Puff are unchanged. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 14.9 min
+
+```
+.../draft-arena/game/src/content/monsters/index.ts |  2 +
+ .../draft-arena/game/src/content/monsters/zippy.ts | 90 ++++++++++++++++++++++
+ 2 files changed, 92 insertions(+)
+```
