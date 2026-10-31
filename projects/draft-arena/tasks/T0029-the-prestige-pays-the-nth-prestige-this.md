@@ -1,14 +1,14 @@
 ---
 id: T0029
 title: "The prestige pays: the Nth prestige this life pays 25 x N coins"
-assignee: inet-racing
 size: M
 priority: 1
-status: in-progress
+status: todo
 depends_on: []
 attempts: 2
 created: 2026-10-31T05:50:41Z
 claimed_at: 2026-10-31T07:28:03Z
+finished_at: 2026-10-31T07:42:59Z
 epic: E7
 ---
 
@@ -210,4 +210,24 @@ DELETE: src/hud/prestige.css
 DELETE: tests/prestige-coins.test.ts
 SUMMARY: T0029 is blocked on a frozen engine test: engine/tests/sim.test.ts:76 and :82 assert a player's coins are exactly 10 (the test's own reward) after prestiging with the full game content, which any content paying coins on prestige breaks (it becomes 35). The director (25 × N coins via the engine's onPrestige + giveCoins) and the 2 s transient HUD card were built to spec and are ready, but I reverted all changes because engine/ cannot be edited and tests may not be weakened. Fix: the engine owner updates those two assertions from 10 to 35 (and note the design's test file must not import engine/registry.ts or engine/sim/match.ts — tests/ may only import engine/api.ts; use the stub-ctx pattern from tests/kill-coins.test.ts).
 STATUS: BLOCKED: engine/tests/sim.test.ts asserts exact post-prestige coin totals assuming no content pays coins on prestige; only the engine owner can update it
+```
+
+## Attempt 2 failed (inet-racing)
+
+The agent reported it is blocked: engine/tests/sim.test.ts:76/:82 assert exact post-prestige coin totals assuming no content pays coins on prestige; only the engine owner can update them
+
+```
+…`engine/tests/sim.test.ts:64` builds its test match with the **full game content plus its own reward director**: `buildRegistry({ ...CONTENT, directors: [...CONTENT.directors, reward] })` where `reward` pays 10 coins via `onPrestige`.
+- It then asserts the exact coin total after a human player's first prestige: `expect(p.coins).toBe(10)` at line 76, and again `toBe(10)` at line 82 after the knockout ("the coins stay given").
+- `ctx.giveCoins` adds the floored amount straight to `p.coins` for humans (`engine/sim/match.ts:1161-1165`).
+- The engine tests enforce file↔registry consistency, so any director I add must be in `DIRECTORS` → in `CONTENT.directors` → in that test's match. The designed pay of 25 × 1 on the first prestige makes the total **35**, breaking line 76 (and line 82).
+- Every alternate route fails the same frozen assertions: pickups **auto-collect on overlap** and are pulled to the player (`engine/sim/match.ts:665-688`), so coins would still land on the test player; a deferred pay (status `tick` or director `mem` paid on a later tick) runs during the post-knockout steps and breaks line 82. There is no way for content to pay a human prestige coins in a full-content match without breaking this test.
+- I declined the only "workaround" I could construct (gating the pay on match population, since the test match has 1 player): it would silently disable the feature in single-player matches — a gameplay bug planted to pass a frozen test, not the feature the task specifies.
+
+Also confirmed for the architect: the design's proposed `tests/prestige-coins.test.ts` imports `engine/registry.ts` and `engine/sim/match.ts`, which lint forbids for `tests/` (`eslint.config.js:19-23` — game code imports only `engine/api.ts`). It needs the stub-`ctx` pattern from `tests/kill-coins.test.ts` (attempt 1 already rewrote it that way).
+
+No changes were made; the tree is left exactly as found and passing.
+
+SUMMARY: T0029 remains blocked on a frozen engine test: `engine/tests/sim.test.ts:76` and `:82` assert a player's coins are exactly 10 (the test's own on-prestige reward) after prestiging in a match built from the full game content, so any content director paying coins on prestige — the entire point of this task — makes the total 35 and fails the test. No alternative mechanism (pickup, deferred status/director tick) avoids the same assertions, since pickups auto-collect and deferred pays run during the test's steps. The director (25 × N coins via `onPrestige` + `ctx.giveCoins`) and the 2 s transient HUD card are ready to land the moment the engine owner updates those two assertions from 10 to 35; note also the design's test file must not import `engine/registry.ts`/`engine/sim/match.ts` (lint allows only `engine/api.ts` from `tests/`) — use the stub-ctx pattern from `tests/kill-coins.test.ts`.
+STATUS: BLOCKED: engine/tests/sim.test.ts:76/:82 assert exact post-prestige coin totals assuming no content pays coins on prestige; only the engine owner can update them
 ```
