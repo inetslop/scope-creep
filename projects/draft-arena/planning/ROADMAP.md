@@ -161,20 +161,20 @@ Breakdown:
 - T0064 M — Hive, second slice: Nest (a kill-buff from crowd kills) and the Sting capstone — failed (a timed damage buff needs an engine change; Nest becomes a crowd-scaled kill heal)
 - T0075 L — Hive, first slice: the tree, Swarm (hits grow with the crowd) and Horn (a fast teal dart) — done
 - T0076 M — Hive, second slice: Nest (a kill heal that grows with the crowd) and the Sting capstone — done
-- T0081 M — Leech: a fifth talent, a hit heal while 3+ enemies are within 80 of you, the sustain fork under Swarm — design
+- T0081 M — Leech: a fifth talent, a hit heal while 3+ enemies are within 80 of you, the sustain fork under Swarm — in progress
 - T0100 S — Burst: a small whump when a crowded corpse bursts (the Sting moment) — done
 Next: a Hive defense once Leech and the capstone prove out.
 
-## E17 A deeper second life (active)
+## E17 A deeper second life (done)
 Goal: prestiging pays in the draft, not just in coins: each prestige this life banks a talent point, and a prestige-gated talent later opens in a second tree, the Slush way (planning/modules/prestige.md).
 Done when: a prestige banks a point the player sees and spends, and a second tree has its own prestige-gated talent.
 Breakdown:
 - T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — done
 - T0067 M — Cover: a fan of bolts behind you, a Gunner talent open after a prestige this life — done
 - T0079 M — Gore: a Frenzy talent, the jab goes through enemies while below half hp, open after a prestige — done
-- T0080 M — Snare: a Goober talent, your Gush puddles sap whatever stands in them, open after a prestige — design
-- T0097 M — Bellow: a Body talent, a ring around you that strikes everything close, open after a prestige — design
-Next: Bellow is written; the gated talents reach every tree but Hive once Snare lands.
+- T0080 M — Snare: a Goober talent, your Gush puddles sap whatever stands in them, open after a prestige — done
+- T0097 M — Bellow: a Body talent, a ring around you that strikes everything close, open after a prestige — done
+Done: the point banks on the prestige card, and every tree but Hive has its own prestige-gated talent.
 
 ## E18 The last slot (done)
 Goal: the menagerie's 10th and final monster type — a way to threaten no other monster has, so the crowd's ceiling is full.
@@ -187,10 +187,10 @@ Done: the 10th monster is in — a Brood that keeps birthing Dots while it lives
 Goal: a player kill isn't free: the killer wears the mark for 15 s (revenge), and a level-4+ corpse drops a gem worth the life — every knockout starts a short hunt on the killer and a pickup fight over the corpse, so the scoreboard swings on both.
 Done when: a player who knocks out another is marked for 15 s and pays the mark bonus if knocked out in that window; a knocked-out player of level 4+ drops a gem worth their level (the leader's gem folded in); a mark that runs out on a living player banks 5 coins.
 Breakdown:
-- T0082 M — The price: killing a player marks you for 15 s, the mark pays out as usual — design
+- T0082 M — The price: killing a player marks you for 15 s, the mark pays out as usual — in progress
 - T0083 M — The corpse pays: a knocked-out player of level 4+ drops a gem worth their level; the leader's gem folds in — done
 - T0084 S — A sting: a small sting when the mark lands on you — failed (the client cannot tell the local player is marked; needs the engine, see IDEAS)
-- T0087 S — Escape pays: a mark that runs out on a living player banks 5 coins — design
+- T0087 S — Escape pays: a mark that runs out on a living player banks 5 coins — todo
 Next: fully tasked — the mark's two fates (killed, escaped) both pay out once the three tasks land.
 
 ## E20 The menagerie grows back (active)
@@ -200,9 +200,10 @@ Breakdown:
 - T0085 M — Toss: a big slow melon that lobs an arc blob that splashes where it lands — done
 - T0086 M — Twin: a bean that splits into two smaller twins when it drops to half hp — failed (a split must remove the parent, and the only removal is a death, which always drops a gem)
 - T0090 M — Twin: a bean that gives birth to a small fast twin the first time it drops to half hp, and keeps living — failed (the comparison table missed the Sleeper row)
-- T0096 M — Twin: a bean that shudders at half hp, births a fast twin and keeps living — todo
-- T0099 M — Jaw: a fat deep-red blob that stops and bites a locked cone in front of it, the last slot — design
-Next: fully tasked — the arc threat, the kill that doesn't kill and the last slot are all written.
+- T0096 M — Twin: a bean that shudders at half hp, births a fast twin and keeps living — done
+- T0099 M — Jaw: a fat deep-red blob that stops and bites a locked cone in front of it, the last slot — in progress
+- T0103 S — Bloop: a low bloop when a Toss splash blooms — todo
+Next: the menagerie is back to 10 once the Jaw lands; the arc threat and the birth at half hp are in.
 
 ## E21 The shop fills out (done)
 Goal: after the Chef Hat and the Medal, the shelves go quiet: each slot and the pattern shelf get middle steps toward their caps (10 per slot, 12 patterns), so a player with a few lives always has a next save.
@@ -218,6 +219,8 @@ Done: every slot has 5 items, the pattern shelf has 8, and no ladder between 80 
 Goal: the tops of the ladders: each slot gets a top item that needs prestiges in all (the shop's first looks a new player can't have — a prestige and a stack of coins), and the pattern shelf reaches 10 — the longest goal in the game is a look, not a power.
 Done when: each slot's top item costs 350 or more and needs prestiges in all, and the pattern shelf has 10.
 Breakdown:
-- T0101 S — Cherry: a 450-coin head, a red cherry with a green stem, 1 prestige in all — the head's top — design
-- T0102 S — Mustache: a 350-coin face, a curly pink mustache, 1 prestige in all — the face's top — design
-Next: the Lollipop (a 500-coin back, a big green lollipop with a white swirl, 2 prestiges in all — the longest goal in the shop), then the pattern shelf to 10 (a 120-coin Cheeks, two light dots on the cheeks; a 150-coin Ring, a light ring around the middle).
+- T0101 S — Cherry: a 450-coin head, a red cherry with a green stem, 1 prestige in all — the head's top — todo
+- T0102 S — Mustache: a 350-coin face, a curly pink mustache, 1 prestige in all — the face's top — designing
+- T0104 S — Lollipop: a 500-coin back, a big green lollipop with a white swirl, 2 prestiges in all — the back's top, the shop's longest goal — design
+- T0105 S — Cheeks: a 120-coin pattern, two light dots on the cheeks — the pattern shelf to 9 — design
+Next: the pattern shelf's last step (a 150-coin Ring, a light ring around the middle) brings the shelf to 10 and E22 to done.

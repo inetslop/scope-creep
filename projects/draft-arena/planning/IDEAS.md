@@ -63,8 +63,10 @@ The backlog: add freely, turn the best into epics and tasks.
 - Burst (E16): a small low whump (200→130 Hz, 0.1 s, peak 0.05, one per 200 ms) when the Sting capstone bursts a crowded corpse — the Hive's signature kill lands by ear, under the normal pop. — T0100
 - Cherry (E22): a 450-coin head accessory — a red cherry with a green stem resting on the head, the head slot's top and the shop's first head long goal, needs 1 prestige in all. — T0101
 - Mustache (E22): a 350-coin face accessory — a curly pink mustache over the mouth, the top of the face slot's thinnest ladder, needs 1 prestige in all. — T0102
-- Lollipop (E22): a 500-coin back accessory — a big green lollipop with a white swirl on the back, the longest goal in the shop, needs 2 prestiges in all. — next in E22
+- Lollipop (E22): a 500-coin back accessory — a big green lollipop with a white swirl on the back, the longest goal in the shop, needs 2 prestiges in all. — T0104
 - Bloop (E20): a low bloop (160→70 Hz, 0.12 s, peak 0.08, one per 150 ms) when a Toss splash blooms — the arc threat lands by ear, under the pop. — T0103
+- Cheeks (E22): a 120-coin pattern — two light dots on the cheeks, one on each side of the mouth, the pattern shelf's step past Star's 100, the shelf to 9. — T0105
+- The feast (prestige): when a player prestiges, 8 gems worth 4 xp each land in an even ring (radius 120) around them and last 20 s — the match's biggest moment lays a field event at the prestiger's feet: the fresh level-1 critter is the feast and every nearby player is a guest; a permanent rule like the crown, not one of the 6 field events. — T0106
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.

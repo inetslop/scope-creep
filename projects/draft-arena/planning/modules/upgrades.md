@@ -39,7 +39,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-36 in the game, from game/src/content/upgrades/ (the real values).
+38 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -76,6 +76,13 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - cooldown: 0.9
 - fire: (code)
 
+### Bellow (`bellow`)
+- description: "After 1 prestige this life. Every 1.4 s, if a critter is within 60, a ring (radius 80) around you strikes everything inside. 10 damage. Per rank: +4."
+- maxLevel: 3
+- look: shape star, color #99e9f2
+- cooldown: 1.4
+- fire: (code)
+
 ### Lob (`lob`)
 - description: "Every 1.1 s, throws a bubble at the nearest enemy. It splashes where it lands. Each rank: +2 splash damage."
 - maxLevel: 5
@@ -91,16 +98,16 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - fire: (code)
 
 ### Nerve (`nerve`)
-- description: "Every 0.8 s, a jab at the nearest enemy within 180. Hits harder the more hurt you are: +1 damage per 10 hp missing. Each rank: +2 damage."
+- description: "Every 0.6 s, when an enemy is near, a ring of needles bursts from you, stabbing whatever is close: 4 at rank 1, 6 at rank 2, 8 at rank 3. Each needle: 5 damage, +2 per rank, +1 per 10 hp missing."
 - maxLevel: 3
-- look: shape diamond, color #99e9f2
-- cooldown: 0.8
+- look: shape diamond, color #ff6b6b
+- cooldown: 0.6
 - fire: (code)
 
 ### Horn (`horn`)
-- description: "Every 0.8 s, a fast dart at the nearest enemy within 240. 9 damage. Per rank: +3 damage."
+- description: "Every 0.8 s, a purple hex dart at every enemy within 150 (nearest first, up to 4). 7 damage each. Per rank: +2 damage, +25 range, +1 more dart."
 - maxLevel: 3
-- look: shape triangle, color #38d9a9
+- look: shape hexagon, color #a78bfa
 - cooldown: 0.8
 - fire: (code)
 
@@ -211,6 +218,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - description: "When your Goo hits, it splats on its target and clings for 2 s, dealing 5 damage every 0.5 s. Per rank: +5 damage per tick."
 - maxLevel: 3
 - look: shape star, color #4dabf7
+- onHit: (code)
+
+### Snare (`snare`)
+- description: "After 1 prestige this life. Whatever stands in your Gush puddle is sapped: it takes 15% more damage from you, per rank +10%."
+- maxLevel: 3
+- look: shape circle, color #4dabf7
 - onHit: (code)
 
 ### Split (`split`)

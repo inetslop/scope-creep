@@ -36,7 +36,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-8 in the game, from game/src/content/monsters/ (the real values).
+10 in the game, from game/src/content/monsters/ (the real values).
 
 ### Dot (`dot`)
 - description: Heads straight for the nearest player.
@@ -73,6 +73,29 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - fromLevel: 6
 - look: shape circle, color #845ef7, face {mood calm, eyes 3, mouth o}, draw (code)
 - think: (code)
+
+### Twin (`twin`)
+- description: "At half hp it shudders, births a twinling, and keeps living."
+- hp: 40
+- speed: 70
+- radius: 16
+- damage: 10
+- xp: 3
+- weight: 4
+- fromLevel: 4
+- look: shape circle, color #e64980, face {mood calm, eyes 2, mouth smile}, draw (code)
+- think: (code)
+
+### Twinling (`twinling`)
+- description: "A small, fast bean born from a wounded Twin."
+- hp: 8
+- speed: 110
+- radius: 10
+- damage: 8
+- xp: 1
+- weight: 0
+- fromLevel: 1
+- look: shape circle, color #f092b3, face {mood angry, eyes 1, mouth o}, draw (code)
 
 ### Flee (`flee`)
 - description: "Notices you, then sprints straight away from you."
