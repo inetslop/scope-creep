@@ -31,7 +31,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-13 in the game, from game/src/content/directors/ (the real values).
+14 in the game, from game/src/content/directors/ (the real values).
 
 ### Gem rain (`gem-rain`)
 - description: "Every 75 s, 24 gems land in a ring around a random player."
@@ -55,6 +55,10 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ### Kill coins (`kill-coins`)
 - description: "Kills pay coins: 1 per monster, the victim's level per player knockout."
+- onKill: (code)
+
+### The corpse pays (`corpse`)
+- description: "A knocked-out player of level 4 or higher drops a gem worth their level where they fell."
 - onKill: (code)
 
 ### The crown (`crown`)

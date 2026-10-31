@@ -195,10 +195,11 @@ Next: fully tasked — the mark's two fates (killed, escaped) both pay out once 
 Goal: the menagerie is 7 of 10 types after the cut; the crowd learns two new ways to threaten — a threat that comes in on an arc, and a kill that doesn't kill — each readable at a glance.
 Done when: the Toss (a lobbed splash) and the Twin (a birth at half hp) are in the field, each with a behavior none of the other seven has.
 Breakdown:
-- T0085 M — Toss: a big slow melon that lobs an arc blob that splashes where it lands — design
+- T0085 M — Toss: a big slow melon that lobs an arc blob that splashes where it lands — in progress
 - T0086 M — Twin: a bean that splits into two smaller twins when it drops to half hp — failed (a split must remove the parent, and the only removal is a death, which always drops a gem)
 - T0090 M — Twin: a bean that gives birth to a small fast twin the first time it drops to half hp, and keeps living — failed (the comparison table missed the Sleeper row)
-Next: the Twin rewrite, with the full comparison table (Sleeper included: awake chase, face change before it acts), then the last slot (back to 10).
+- T0096 M — Twin: a bean that shudders at half hp, births a fast twin and keeps living — design
+Next: fully tasked — the arc threat and the kill that doesn't kill are both written; the last slot (back to 10) waits in IDEAS.
 
 ## E21 The shop fills out (active)
 Goal: after the Chef Hat and the Medal, the shelves go quiet: each slot and the pattern shelf get middle steps toward their caps (10 per slot, 12 patterns), so a player with a few lives always has a next save.

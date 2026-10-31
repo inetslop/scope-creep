@@ -39,7 +39,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-35 in the game, from game/src/content/upgrades/ (the real values).
+36 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -157,6 +157,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - maxLevel: 2
 - look: shape circle, color #ffd43b
 - onKill: (code)
+
+### Gore (`gore`)
+- description: "After 1 prestige this life. While below half your hp, your Nerve jabs go through 1 more enemy, per rank."
+- maxLevel: 2
+- look: shape star, color #ff6b6b
+- onHit: (code)
 
 ### Fuse (`fuse`)
 - description: "When your bubble kills something, it pops into a ring (radius 50) that deals 10 damage."

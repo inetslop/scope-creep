@@ -96,6 +96,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
   - id adrenaline, upgrade adrenaline, max 2, needs [["nerve",2]]
   - id mend, upgrade mend, max 3, needs [["nerve",3]]
   - id fang, upgrade fang, max 2, needs [["nerve",2]]
+  - id gore, upgrade gore, max 2, needs [["nerve",2]], points 3, prestige 1
   - id reckless, upgrade reckless, max 1, needs [["nerve",3],["frenzy",3]]
 
 ### Hive (`hive`)
