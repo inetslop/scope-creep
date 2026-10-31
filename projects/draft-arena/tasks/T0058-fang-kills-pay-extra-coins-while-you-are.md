@@ -3,13 +3,11 @@ id: T0058
 title: "Fang: kills pay extra coins while you are below half hp"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T11:14:52Z
-claimed_at: 2026-10-31T11:15:39Z
 epic: E15
-designer: yoga
 ---
 
 ## Goal
@@ -47,3 +45,49 @@ The Frenzy tree's first fork under Nerve: a coin branch, so a thin-and-mean life
 - [ ] The same player below half hp kills a monster: the normal coin plus 2 extra land, the coin pop and tick playing as for the kill; with Fang 2, 4 extra.
 - [ ] A Fang coin lands on a kill by any weapon, including a splash or a puddle kill.
 - [ ] The extra coins show in the start card's balance on the next visit.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/upgrades/fang.ts` — the Fang `UpgradeDef` (on-kill coin payer, copy the shape of `adrenaline.ts`):
+  ```ts
+  import type { UpgradeDef } from '../../../engine/api.ts';
+  import { PALETTE } from '../palette.ts';
+
+  /** Fang: while below half hp, a kill pays 2 extra coins per rank. */
+  export const fang: UpgradeDef = {
+    id: 'fang',
+    name: 'Fang',
+    description: 'On a kill while below half your hp: +2 coins. Per rank: +2 more.',
+    maxLevel: 2,
+    look: { shape: 'circle', color: PALETTE.yellow },
+    onKill(ctx, me, level, victim) {
+      if (me.hp < me.maxHp * 0.5) {
+        ctx.giveCoins(me, 2 * level);
+        ctx.effect('coin', { x: victim.x, y: victim.y }, undefined, 2 * level);
+      }
+    },
+  };
+  ```
+- edit `src/content/upgrades/index.ts` — add `import { fang } from './fang.ts';` (after the `chomp` import, before `frenzy`, keeping alpha order) and one line `fang,` in `UPGRADES` right after `adrenaline,` (line 43).
+- edit `src/content/talents/frenzy.ts` — insert one line after the `adrenaline` line: `{ id: 'fang', upgrade: 'fang', max: 2, needs: [['nerve', 2]] },`
+
+### Interfaces
+No new types. Uses existing: `UpgradeDef.onKill(ctx, me, level, victim)` (engine calls it after every death credited to the player, from any weapon/source), `ctx.giveCoins(player, amount)`, `ctx.effect(effectId, a, b?, value?)`. `PALETTE.yellow` is `#ffd43b`.
+
+### Steps
+1. Create `src/content/upgrades/fang.ts` exactly as above.
+2. Register it in `src/content/upgrades/index.ts` (import + one line after `adrenaline`).
+3. Add the talent line in `src/content/talents/frenzy.ts` after the `adrenaline` line.
+4. `npm run check`.
+
+### Pitfalls
+- No `victim.type` branch: Fang must pay on knockouts too (same credited kill that pays the normal coin).
+- `giveCoins` and the effect amount are `2 * level` (2 at rank 1, 4 at rank 2) — not `level`.
+- Effect is the existing `'coin'` effect (one pop per coin, 0.05 s apart = the tick) at the victim's position, exactly as `directors/kill-coins.ts` plays it.
+- Do not touch `directors/kill-coins.ts` — the normal coin and Fang stack from the same kill.
+- Bots get no coins (`giveCoins` no-ops on bots); no guard needed, as in `adrenaline.ts`.
+- Insertion points in both shared files are next to `adrenaline` (its tree sibling), keeping registry line order.
+
+### Tests
+- none (content is tested automatically by engine/tests/: upgrade in a tree, talent needs/ranks, on-kill in a real match).
