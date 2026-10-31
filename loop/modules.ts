@@ -13,7 +13,8 @@ import { AGENTS_DIR, GAME_DIR, PLANNING_DIR, PROJECT } from './paths.ts';
  *
  * A guide's frontmatter:
  *   summary: one line, listed in the PO prompt
- *   content: folder in game/src/content whose registry fills "What exists" (optional)
+ *   content: folder in game/src/content whose registry fills "What exists", or a file there whose
+ *            values do (rules.ts) (optional)
  *   group_by: [first.kind, added]   fields to index "what shares a mechanic" by (optional)
  */
 export const MODULES_SOURCE_DIR = path.join(AGENTS_DIR, 'prompts', PROJECT, 'modules');
@@ -63,7 +64,7 @@ function keyAt(item: Item, at: string): string | undefined {
 
 /** The generated part of a module doc: an index by shared mechanic, then every item with its data. */
 export function renderContent(items: readonly Item[], groupBy: readonly string[]): string {
-  const label = (it: Item): string => String(it.name ?? it.id);
+  const label = (it: Item): string => String(it.name ?? it.id ?? '');
   const out: string[] = [];
   for (const at of groupBy) {
     const groups = new Map<string, string[]>();
@@ -76,10 +77,16 @@ export function renderContent(items: readonly Item[], groupBy: readonly string[]
     out.push('');
   }
   for (const it of items) {
-    out.push(`### ${label(it)}${it.id && it.id !== it.name ? ` (\`${fmt(it.id)}\`)` : ''}`);
+    // A file's values (rules.ts) have no name: their fields stand on their own.
+    if (label(it)) out.push(`### ${label(it)}${it.id && it.id !== it.name ? ` (\`${fmt(it.id)}\`)` : ''}`);
     for (const [k, v] of Object.entries(it)) if (isProse(v)) out.push(`- ${k}: "${v}"`);
     for (const [k, v] of Object.entries(it)) {
       if (k === 'id' || k === 'name' || isProse(v) || v === undefined) continue;
+      // A list of objects (a tree's talents) gets one line per entry.
+      if (Array.isArray(v) && v.length && v.every((e) => e && typeof e === 'object' && !Array.isArray(e))) {
+        out.push(`- ${k}:`, ...v.map((e) => `  - ${fields(e as Item)}`));
+        continue;
+      }
       out.push(`- ${k}: ${v && typeof v === 'object' && !Array.isArray(v) ? fields(v as Item) : fmt(v)}`);
     }
     out.push('');
@@ -98,7 +105,8 @@ export function renderModuleDoc(guide: ModuleGuide, load: (folder: string) => It
     let data: string;
     try {
       const items = load(guide.content);
-      data = `${items.length} in the game, from game/src/content/${guide.content}/ (the real values).\n\n${renderContent(items, guide.groupBy)}`;
+      const from = guide.content.endsWith('.ts') ? `From game/src/content/${guide.content}` : `${items.length} in the game, from game/src/content/${guide.content}/`;
+      data = `${from} (the real values).\n\n${renderContent(items, guide.groupBy)}`;
     } catch (err) {
       warn(`module doc ${guide.name}: could not load game/src/content/${guide.content}: ${(err as Error).message.split('\n')[0]}`);
       data = '(Could not load the content this cycle; fall back to the inventory in your prompt.)';

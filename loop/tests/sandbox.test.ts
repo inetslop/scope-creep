@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 import { needsRestart } from '../restart.ts';
 import path from 'node:path';
 import { ARCHIVE_REL, GAME_REL, ORIGINAL_PROJECT, permissionPath, PLANNING_REL, PROJECT, projectDir, REPO, TASKS_REL } from '../paths.ts';
-import { claudeSettings, isWritable } from '../sandbox.ts';
+import { claudeSettings, isWritable, OWNER_DIR } from '../sandbox.ts';
 
 // Paths of the project loop.project points at ("game/" for Scope Creep, "projects/<id>/game/" otherwise).
 const G = GAME_REL;
@@ -16,6 +16,14 @@ describe('projects', () => {
     assert.ok(GAME_REL.endsWith('game/') && TASKS_REL.endsWith('tasks/') && PLANNING_REL.endsWith('planning/'));
   });
 
+  it('no agent can read or change the project\'s owner/ folder', () => {
+    for (const profile of ['dev', 'po', 'architect'] as const) {
+      const s = claudeSettings(profile, {}) as { permissions: { deny: string[] } };
+      assert.ok(s.permissions.deny.includes(`Read(${permissionPath(OWNER_DIR)}/**)`), profile);
+      assert.equal(isWritable(profile, `${path.relative(REPO, OWNER_DIR).split(path.sep).join('/')}/x.ts`), false, profile);
+    }
+  });
+
   it('agents cannot see the other games', () => {
     for (const profile of ['dev', 'po', 'architect'] as const) {
       const s = claudeSettings(profile, {}) as { permissions: { deny: string[] } };
@@ -26,9 +34,13 @@ describe('projects', () => {
 });
 
 describe('isWritable', () => {
-  it('dev agents may only change the game, and not its CLAUDE.md', () => {
+  it('dev agents may only change the game, and not its CLAUDE.md or engine/', () => {
     assert.equal(isWritable('dev', `${G}src/main.ts`), true);
     assert.equal(isWritable('dev', `${G}CLAUDE.md`), false);
+    assert.equal(isWritable('dev', `${G}engine/sim/match.ts`), false, 'a game\'s engine/ is the owner\'s');
+    assert.equal(isWritable('dev', `${G}src/engineering.ts`), true);
+    const s = claudeSettings('dev', {}) as { permissions: { deny: string[] } };
+    assert.ok(s.permissions.deny.some((r) => r.startsWith('Edit(') && r.endsWith('/game/engine/**)')));
     assert.equal(isWritable('dev', `${T}yoga/T0001-x.md`), false);
     assert.equal(isWritable('dev', 'loop/runner.ts'), false);
     assert.equal(isWritable('dev', 'package.json'), false);
@@ -53,6 +65,18 @@ describe('the public build log', () => {
     for (const profile of ['dev', 'po'] as const) {
       const s = claudeSettings(profile, {}) as { permissions: { deny: string[] } };
       assert.ok(s.permissions.deny.some((r) => r.startsWith('Edit(') && r.includes('/site/**')), profile);
+    }
+  });
+});
+
+describe('the live server\'s deploy scripts', () => {
+  it('no agent may read or change deploy/ (it runs as root on the game server)', () => {
+    for (const profile of ['dev', 'po', 'architect'] as const) {
+      assert.equal(isWritable(profile, 'deploy/arena/update.sh'), false, profile);
+      const s = claudeSettings(profile, {}) as { permissions: { deny: string[] } };
+      assert.ok(s.permissions.deny.some((r) => r.startsWith('Read(') && r.includes('/deploy/**')), `${profile} Read`);
+      // The architect may edit nothing at all (a bare Edit deny).
+      assert.ok(s.permissions.deny.includes('Edit') || s.permissions.deny.some((r) => r.startsWith('Edit(') && r.includes('/deploy/**')), `${profile} Edit`);
     }
   });
 });

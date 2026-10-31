@@ -1,0 +1,100 @@
+/* The start screen, in the Critters look: a white sticker card with an ink rim. */
+#menu {
+  --ink: #3b3355;
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  /* Light enough to see the match going on behind (the start screen watches it). */
+  background: rgba(223, 241, 233, 0.35);
+  font-family: Fredoka, system-ui, sans-serif;
+  font-weight: 500;
+  color: var(--ink);
+}
+#menu[hidden] {
+  display: none;
+}
+/* The match plays in the middle of the screen: keep the card beside it (wide screens) or below it (phones). */
+@media (min-width: 900px) {
+  #menu {
+    justify-content: flex-start;
+    padding-left: max(48px, 7vw);
+  }
+}
+@media (max-width: 899px) {
+  #menu {
+    align-items: flex-end;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+}
+.menu-card {
+  width: min(380px, 100%);
+  box-sizing: border-box;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 22px;
+  box-shadow: 5px 6px 0 var(--ink);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.menu-card h1 {
+  margin: 0;
+  font-size: 38px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.05;
+}
+.menu-tag,
+.menu-help,
+.menu-message {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.4;
+  color: #7a7193;
+}
+.menu-message:empty {
+  display: none;
+}
+.menu-message {
+  color: #e03131;
+  font-weight: 600;
+}
+.menu-name {
+  font: inherit;
+  font-size: 18px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 3px solid var(--ink);
+  outline: none;
+  color: var(--ink);
+}
+.menu-name:focus {
+  box-shadow: 0 0 0 4px #ffd43b;
+}
+.menu-button {
+  font: inherit;
+  font-size: 20px;
+  font-weight: 700;
+  min-height: 52px;
+  border-radius: 14px;
+  border: 3px solid var(--ink);
+  background: #ffd43b;
+  color: var(--ink);
+  box-shadow: 3px 4px 0 var(--ink);
+  cursor: pointer;
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.menu-button:hover,
+.menu-button:focus-visible {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 6px 0 var(--ink);
+  outline: none;
+}
+.menu-button:active {
+  transform: translate(2px, 3px);
+  box-shadow: 1px 1px 0 var(--ink);
+}

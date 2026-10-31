@@ -46,6 +46,12 @@ function contentList(dir: string, withDescriptions: boolean): string[] {
       const note = withDescriptions ? description : behavior;
       items.push(note ? `${name} (${note})` : name);
     }
+    // Items the player never sees by name (projectiles, effects, pickups): the id and what the file says it is.
+    const id = names.length === 0 && files.length > 0 ? /\bid:\s*['"`]([\w-]+)['"`]/.exec(source)?.[1] : undefined;
+    if (id) {
+      const doc = fileDoc(source, 120);
+      items.push(doc ? `${id} (${doc.replace(/\.$/, '')})` : id);
+    }
   }
   return items;
 }
@@ -88,8 +94,9 @@ export function buildInventory(gameDir: string): string {
     for (const folder of fs.readdirSync(contentDir).sort()) {
       const dir = path.join(contentDir, folder);
       if (!fs.statSync(dir).isDirectory()) continue;
-      // Things the player picks or builds show their one-line description; enemies show their behavior.
-      const items = contentList(dir, ['upgrades', 'weapons', 'towers', 'boons', 'augments'].includes(folder));
+      // Things the player picks or builds show their one-line description (Draft Arena's monsters,
+      // trees and events too); Chokepoint's enemies show their behavior.
+      const items = contentList(dir, ['upgrades', 'weapons', 'towers', 'boons', 'augments', 'monsters', 'talents', 'directors'].includes(folder));
       if (items.length) lines.push(`- **${folder[0]!.toUpperCase()}${folder.slice(1)}** (${items.length}): ${items.join(', ')}`);
     }
   }
@@ -97,11 +104,13 @@ export function buildInventory(gameDir: string): string {
   const scenes = tsFiles(path.join(src, 'scenes')).filter((f) => f.endsWith('Scene.ts'));
   if (scenes.length) lines.push(`- **Scenes**: ${scenes.map((f) => strip(f, 'Scene')).join(', ')}`);
   // What the player already sees, element by element, so a new readout never repeats one.
-  const hud = describedFiles(path.join(src, 'ui', 'hud'), ['hud.ts']);
+  // Chokepoint keeps its HUD parts in ui/hud/, Draft Arena in hud/.
+  const hudDir = [path.join(src, 'ui', 'hud'), path.join(src, 'hud')].find((d) => fs.existsSync(d)) ?? path.join(src, 'ui', 'hud');
+  const hud = describedFiles(hudDir, ['hud.ts']);
   if (hud.length) lines.push(`- **On screen** (the HUD, each element and what it shows; a new one must show something none of these does):`, ...hud);
   const systems = describedFiles(path.join(src, 'systems'), [], 200);
   if (systems.length) lines.push(`- **Systems** (each and what it does; the board readouts live here too):`, ...systems);
-  const known = new Set(['content', 'scenes', 'systems']);
+  const known = new Set(['content', 'scenes', 'systems', 'hud']);
   const other = fs.existsSync(src)
     ? fs
         .readdirSync(src)

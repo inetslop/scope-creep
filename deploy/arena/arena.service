@@ -1,0 +1,29 @@
+# The Draft Arena game server: the page and the match from the live release (/srv/arena/current,
+# switched by arena-update). Installed by setup.sh. Tailscale Funnel forwards https to port 8790.
+[Unit]
+Description=Draft Arena game server
+After=network-online.target
+Wants=network-online.target
+# Nothing to run until the first release is built.
+ConditionPathExists=/srv/arena/current/arena.env
+
+[Service]
+User=arena
+Group=arena
+WorkingDirectory=/srv/arena/current/projects/draft-arena/game
+EnvironmentFile=/srv/arena/current/arena.env
+Environment=PORT=8790 HOST=127.0.0.1 STATIC_DIR=dist NODE_ENV=production
+ExecStart=/opt/node/bin/node engine/server/main.ts
+Restart=always
+RestartSec=2
+MemoryMax=1G
+# Hardening: the server runs code the agents wrote, and needs to write nothing. These work in an
+# unprivileged LXC with nesting; if the container refuses one (the unit fails with 226/NAMESPACE
+# or similar), comment that line out and run setup.sh again.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=multi-user.target

@@ -1,7 +1,7 @@
 import path from 'node:path';
 import type { Role } from './config.ts';
 import type { ChangedPath, Git } from './git.ts';
-import { AGENT_DIR, AGENTS_DIR, ARCHIVE_REL, GAME_DIR, GAME_REL, ORIGINAL_PROJECT, permissionPath, PLANNING_DIR, PLANNING_REL, PROJECT, projectDir, projectIds, PROJECTS_DIR, REPO, TASKS_DIR, TASKS_REL } from './paths.ts';
+import { AGENT_DIR, AGENTS_DIR, ARCHIVE_REL, GAME_DIR, GAME_REL, ORIGINAL_PROJECT, permissionPath, PLANNING_DIR, PLANNING_REL, PROJECT, PROJECT_DIR, projectDir, projectIds, PROJECTS_DIR, REPO, TASKS_DIR, TASKS_REL } from './paths.ts';
 
 /**
  * Who may change what. This is the core of the separation between the game and
@@ -21,9 +21,13 @@ export const WRITABLE: Record<Profile, readonly string[]> = {
   architect: [],
 };
 
-/** Inside writable areas, but still human-owned. The vision (pitch and pillars) is the game owner's. */
+/**
+ * Inside writable areas, but still human-owned. The vision (pitch and pillars) is the game owner's.
+ * A game's engine/ folder is too: a game that has one (Draft Arena: netcode, server, simulation)
+ * keeps it frozen, and its agents build on engine/api.ts instead of changing what is under it.
+ */
 export const PROTECTED: Record<Profile, readonly string[]> = {
-  dev: [`${GAME_REL}CLAUDE.md`],
+  dev: [`${GAME_REL}CLAUDE.md`, `${GAME_REL}engine/`],
   po: [ARCHIVE_REL, `${PLANNING_REL}VISION.md`],
   architect: [],
 };
@@ -44,8 +48,17 @@ export async function enforceWritable(git: Git, profile: Profile): Promise<strin
 
 const rule = (tool: string, absPath: string, glob = '/**'): string => `${tool}(${permissionPath(absPath)}${glob})`;
 
-/** Root-level loop folders/files no agent may touch. */
-const LOOP_AREAS = [path.join(REPO, 'loop'), path.join(REPO, 'setup'), path.join(REPO, 'site'), path.join(REPO, 'leaderboard'), AGENTS_DIR, AGENT_DIR, path.join(REPO, '.github'), path.join(REPO, 'node_modules')];
+/**
+ * The project's owner/ folder: what the owner keeps out of the agents' sight (Draft Arena: content
+ * taken out of the game to see what the fleet invents without it). No role may read or search it.
+ */
+export const OWNER_DIR = path.join(PROJECT_DIR, 'owner');
+
+/**
+ * Root-level loop folders/files no agent may touch. deploy/ holds the scripts the live game server
+ * runs as root (Draft Arena's box): an agent must never read or change them.
+ */
+const LOOP_AREAS = [path.join(REPO, 'loop'), path.join(REPO, 'setup'), path.join(REPO, 'site'), path.join(REPO, 'leaderboard'), path.join(REPO, 'deploy'), AGENTS_DIR, AGENT_DIR, path.join(REPO, '.github'), path.join(REPO, 'node_modules')];
 const ROOT_FILES = ['package.json', 'package-lock.json', 'tsconfig.json', '.gitignore', 'README.md'].map((f) => path.join(REPO, f));
 
 /** The other games in the repo: agents see only the project they work on, so they never copy from or edit the wrong one. */
@@ -98,7 +111,7 @@ const ALWAYS_DENY = [
 
 /** Claude Code settings for a profile, passed with --settings (rules use absolute paths). */
 export function claudeSettings(profile: Profile, env: Record<string, string>): object {
-  const hidden = [...LOOP_AREAS, ...otherProjectAreas()];
+  const hidden = [...LOOP_AREAS, ...otherProjectAreas(), OWNER_DIR];
   const loopReads = hidden.map((d) => rule('Read', d));
   const loopEdits = [...hidden.map((d) => rule('Edit', d)), ...ROOT_FILES.map((f) => `Edit(${permissionPath(f)})`)];
 
@@ -131,6 +144,7 @@ export function claudeSettings(profile: Profile, env: Record<string, string>): o
           rule('Edit', PLANNING_DIR),
           ...loopEdits,
           `Edit(${permissionPath(path.join(GAME_DIR, 'CLAUDE.md'))})`,
+          rule('Edit', path.join(GAME_DIR, 'engine')),
         ],
       },
       env,

@@ -2,7 +2,7 @@
 
 An abstract, Bauhaus-style twin-stick roguelite for desktop and mobile browsers, built continuously by a fleet of local LLM agents.
 
-- **The games**: the fleet works on one game at a time, set by `loop.project` in [`agents/machines.json`](agents/machines.json) (see *Projects*). The first, Scope Creep, lives in [`game/`](game/); every other one in `projects/<id>/` (now [Chokepoint](projects/chokepoint/game/), a roguelite tower defence). Phaser 3 + TypeScript + Vite. All of them are deployed to GitHub Pages every 10 minutes, each at `/<id>/` (Scope Creep at `/scope-creep/`).
+- **The games**: the fleet works on one game at a time, set by `loop.project` in [`agents/machines.json`](agents/machines.json) (see *Projects*). The first, Scope Creep, lives in [`game/`](game/); every other one in `projects/<id>/` (now [Chokepoint](projects/chokepoint/game/), a roguelite tower defence, and [Draft Arena](projects/draft-arena/game/), a multiplayer .io arena with a frozen engine: the agents build its content and HUD, its netcode and server are human-owned). TypeScript + Vite; Phaser 3 for the single-player games. All of them are deployed to GitHub Pages every 10 minutes, each at `/<id>/` (Scope Creep at `/scope-creep/`).
 - **The loop** around it: a Product Owner agent writes tasks, an architect agent designs each one against the real code, developer agents on several machines (Windows, or Linux in Docker) implement them, a browser smoke test gates every change.
 - **The site** ([`site/`](site/)): the front page lists the games and what every machine of the fleet is doing (building or designing which task, idle, paused, its last push). Each game has a build log next to it (`/<id>/build-log/`, linked from the menu) listing every feature, which machine built it and how long it took. The deploy workflow generates both from runner-written records, so the agents can't change them.
 
@@ -24,10 +24,10 @@ An abstract, Bauhaus-style twin-stick roguelite for desktop and mobile browsers,
 
 | Path | Dev agents | Architect | PO agent | Runner | Humans |
 | --- | --- | --- | --- | --- | --- |
-| `game/` (except `game/CLAUDE.md`) | **write** | read | no access (gets a generated inventory) | commits it | ✔ |
+| `game/` (except `game/CLAUDE.md` and a game's `engine/`) | **write** | read | no access (gets a generated inventory) | commits it | ✔ |
 | `tasks/` (the shared pool) | no access | no access (gets its task in the prompt) | **write** new / `design` / `todo` tasks | claims, status, designs, results | ✔ |
 | `planning/` | no access | no access | **write** | — | ✔ |
-| `loop/`, `agents/`, `setup/`, `site/`, `.github/`, root files | no access | no access | no access | — | ✔ |
+| `loop/`, `agents/`, `setup/`, `site/`, `deploy/`, `.github/`, root files | no access | no access | no access | — | ✔ |
 
 Enforced twice: Claude Code permission rules (generated per run with absolute paths), and after every agent session the runner reverts any change outside the allowed paths and only ever stages those paths when it commits. The smoke test lives in `loop/`, so agents can run it but cannot weaken it.
 
@@ -157,6 +157,7 @@ site/            the front page and the build log pages (generated at deploy tim
 tasks/           the shared pool (<id>-<slug>.md), archive/, salvage/ (unmerged work kept for a retry), inbox/ (tasks without an id: see below) — PO + runner only
 planning/        VISION, ROADMAP, IDEAS, CHANGELOG — PO-owned (the runner appends to CHANGELOG)
 .github/         Pages deployment
+deploy/          the live game server: Draft Arena's home box, its setup and self-update (humans only)
 ```
 
 ## Tuning

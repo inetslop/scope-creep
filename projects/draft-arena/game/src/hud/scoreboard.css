@@ -1,0 +1,40 @@
+/* scoreboard.ts: top right. */
+.hud-scores {
+  position: absolute;
+  right: calc(12px + env(safe-area-inset-right));
+  top: calc(12px + env(safe-area-inset-top));
+  min-width: 150px;
+  font-size: 14px;
+}
+.hud-score-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 22px;
+}
+.hud-score-row.me {
+  font-weight: 700;
+}
+.hud-score-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  flex: none;
+}
+.hud-score-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 110px;
+}
+
+/* Phones (narrow screens). */
+@media (max-width: 520px) {
+  .hud-scores {
+    top: calc(64px + env(safe-area-inset-top));
+    min-width: 120px;
+    font-size: 13px;
+  }
+}

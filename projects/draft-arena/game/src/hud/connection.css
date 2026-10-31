@@ -1,0 +1,15 @@
+/* connection.ts: top left. */
+.hud-connection {
+  position: absolute;
+  left: calc(12px + env(safe-area-inset-left));
+  top: calc(12px + env(safe-area-inset-top));
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* Phones (narrow screens). */
+@media (max-width: 520px) {
+  .hud-connection {
+    top: calc(64px + env(safe-area-inset-top));
+  }
+}

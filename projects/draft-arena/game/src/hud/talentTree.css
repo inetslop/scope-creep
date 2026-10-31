@@ -1,0 +1,263 @@
+/* talentTree.ts: the Talents button (bottom centre) and the panel (desktop: a column at the right; phone: above the button). */
+.hud-talents-button {
+  position: absolute;
+  left: 50%;
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  pointer-events: auto;
+  font: inherit;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--ink);
+  min-height: 44px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+.hud-talents-button b {
+  background: var(--ink);
+  color: #fff;
+  border-radius: 8px;
+  padding: 0 7px;
+  font-size: 14px;
+}
+.hud-talents-button kbd {
+  font: inherit;
+  font-size: 12px;
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  padding: 0 5px;
+  color: var(--muted);
+}
+.hud-talents-button.glow {
+  background: #ffd43b;
+  animation: hud-talents-glow 0.9s ease-in-out infinite alternate;
+}
+@keyframes hud-talents-glow {
+  to {
+    transform: translateX(-50%) scale(1.06);
+  }
+}
+.hud-tree {
+  position: absolute;
+  right: calc(16px + env(safe-area-inset-right));
+  /* Below the scoreboard. */
+  top: calc(180px + env(safe-area-inset-top));
+  width: 360px;
+  max-height: calc(100% - 260px);
+  box-sizing: border-box;
+  overflow-y: auto;
+  pointer-events: auto;
+  padding: 10px 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+/* The panel scrolls when it runs out of room; its parts never squash. */
+.hud-tree > * {
+  flex-shrink: 0;
+}
+.hud-tree-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 16px;
+}
+.hud-tree-points {
+  background: #ffd43b;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  padding: 0 7px;
+  font-size: 13px;
+}
+.hud-tree-close {
+  margin-left: auto;
+  font: inherit;
+  font-size: 18px;
+  font-weight: 700;
+  color: inherit;
+  background: none;
+  border: none;
+  min-width: 36px;
+  min-height: 36px;
+  cursor: pointer;
+}
+/* Every tab always in view: they wrap onto a second line instead of scrolling out of reach. */
+.hud-tree-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 5px;
+  padding: 3px 2px 4px;
+}
+.hud-tree-tab {
+  flex: none;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 30px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: inherit;
+  background: #fff;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  padding: 2px 9px 2px 6px;
+  cursor: pointer;
+}
+.hud-tree-tab small {
+  color: var(--muted);
+  font-weight: 600;
+}
+.hud-tree-tab.on {
+  background: #fff3bf;
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.hud-tree-dot {
+  position: absolute;
+  top: -4px;
+  right: -3px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #ffd43b;
+  border: 2px solid var(--ink);
+}
+.hud-tree-title {
+  font-size: 12px;
+  color: var(--muted);
+  border-bottom: 2px dotted rgba(59, 51, 85, 0.25);
+  padding-bottom: 4px;
+}
+.hud-tree-title b {
+  color: var(--ink);
+  font-size: 15px;
+}
+.hud-tree-rows {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.hud-tree-rows svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+.hud-tree-rows path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  opacity: 0.25;
+}
+.hud-tree-rows path.on {
+  opacity: 0.85;
+}
+.hud-talent {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  min-height: 44px;
+  padding: 2px 4px 2px calc(4px + var(--indent, 0px));
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 10px;
+  cursor: default;
+}
+.hud-talent:disabled {
+  color: inherit;
+}
+.hud-talent.can {
+  cursor: pointer;
+  background: rgba(255, 243, 191, 0.75);
+}
+.hud-talent.can:hover {
+  background: #fff3bf;
+}
+.hud-talent-bubble {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: #fff;
+  display: grid;
+  place-items: center;
+}
+.hud-talent.can .hud-talent-bubble {
+  background: #fff3bf;
+  box-shadow: 0 0 0 3px #ffd43b;
+}
+.hud-talent.maxed .hud-talent-bubble {
+  background: color-mix(in srgb, var(--c) 45%, #fff);
+}
+.hud-talent.locked .hud-talent-bubble,
+.hud-talent.locked .hud-talent-name,
+.hud-talent.locked .hud-talent-desc {
+  opacity: 0.45;
+}
+.hud-talent-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.hud-talent-name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.hud-pips {
+  display: inline-flex;
+  gap: 2px;
+}
+.hud-pips i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  background: #fff;
+}
+.hud-pips i.on {
+  background: var(--c);
+}
+.hud-talent-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.25;
+}
+.hud-talent-needs {
+  font-size: 11px;
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hud-talents-button.glow {
+    animation: none;
+  }
+}
+@media (max-width: 720px) {
+  /* Phones: the lower half, ending just below your critter in the middle of the screen; it scrolls inside. */
+  .hud-tree {
+    left: 12px;
+    right: 12px;
+    width: auto;
+    top: auto;
+    bottom: calc(70px + env(safe-area-inset-bottom));
+    max-height: calc(50% - 90px);
+  }
+}

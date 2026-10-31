@@ -1,0 +1,28 @@
+/*
+ * Shared by every HUD part: the HUD layer, the colors, and the sticker card (white, ink rim, solid
+ * offset shadow) in Fredoka. A part's own styles go in its own file next to it (xpBar.css...).
+ */
+#hud {
+  --ink: #3b3355;
+  --muted: #7a7193;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  font-family: Fredoka, system-ui, sans-serif;
+  font-weight: 500;
+  color: var(--ink);
+}
+#hud[hidden],
+#hud [hidden] {
+  display: none !important;
+}
+.hud-card {
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  box-shadow: 3px 4px 0 var(--ink);
+  padding: 6px 12px;
+}
+.hud-muted {
+  color: var(--muted);
+}

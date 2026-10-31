@@ -1,0 +1,14 @@
+/* knockedOut.ts: centre, while you are down. */
+.hud-down {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  padding: 14px 22px;
+}
+.hud-down b {
+  display: block;
+  font-size: 22px;
+  font-weight: 700;
+}

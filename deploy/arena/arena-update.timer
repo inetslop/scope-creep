@@ -1,0 +1,10 @@
+# Checks GitHub for a new Draft Arena every 5 minutes.
+[Unit]
+Description=Check for a new Draft Arena every 5 minutes
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=5min
+
+[Install]
+WantedBy=timers.target

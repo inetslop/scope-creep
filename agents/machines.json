@@ -119,6 +119,10 @@
         "src/input/hotkeys.ts",
         "src/debug/runChecks.ts",
         "src/art/generate.ts"
+      ],
+      "draft-arena": [
+        "src/content/*/index.ts",
+        "src/hud/index.ts"
       ]
     },
     "smokeSeconds": 24,
