@@ -114,7 +114,7 @@ Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
 ### E9 — Level augments: harder runs for a bigger payout (active, **top priority** — opened 2026-10-30, by hand)
-**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0285, T0291 (the payout), T0294 (Swift and Crowded), T0295 (Lean and Short fuse), the reprice T0288, the third node T0297 and the slot ladder T0305 landed; T0310 (the switchback) is in progress; the claim branch's second node (Flawless pays 10 coins) is **tasked as T0313 (M, priority 1, in the pool)**.
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0285, T0291 (the payout), T0294 (Swift and Crowded), T0295 (Lean and Short fuse), the reprice T0288, the third node T0297 and the slot ladder T0305 landed; T0310 (the switchback) is in progress; the claim branch's second node (Flawless pays 10 coins) is **tasked as T0313 (M, priority 1, in the pool)**. Every E9 task is now written (T0310 in progress, T0313 in the pool) — it counts as finished while they land.
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
 - **Unlock, a slot ladder:** level augments are picked into **slots**, and slots are earned one at a time.
@@ -152,6 +152,14 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - The Flyer, the wave-50 boss: the fifth every-10 boss, the first that doesn't walk the road — a straight-line crossing from the island's edge to the exit, a bank at half health — **T0317 (L, priority 2, in the pool)**
 - (to task) the regular Flyer in the wave mix: a small fast shape that crosses straight, one every few waves; lands behind the enemy queue (the Feeder first) and needs the 10-regular cap to open — a removal or a merge in its own task
 - (to task) the crossing learns: the bank's line is chosen to cross where the run's towers don't reach — the boss banks into uncovered ground, its telegraph keeping it fair
+
+### E11 — First run teaches itself (active — opened 2026-10-31)
+**Goal:** a first-time player never meets a mechanic unexplained: on the device's very first run, three plain white hint cards name the three first steps, each dismissed by doing it.
+**When done:** on runs with runsPlayed = 0 only — "Pick a card" above the pre-wave-1 draft until a pick; "Build beside the road" beside the first buildable cell in the first build phase until the first tower stands; "Hold the road" under the wave banner during wave 1 until the wave ends. Each re-derived from the run's state on resume, so a resumed first run that has already done a step never shows it; no sound, no input; nothing on any later run.
+**Breakdown:**
+- T0318 (M) — the first hint: "Pick a card" on the pre-wave-1 draft — in the pool
+- T0319 (S) — the second hint: "Build beside the road" beside the first buildable cell — in the pool
+- (to task) the third hint: "Hold the road" under the wave 1 banner
 
 ### Enemy queue (non-epic)
 
