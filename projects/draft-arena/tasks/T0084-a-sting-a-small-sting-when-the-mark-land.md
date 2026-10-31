@@ -3,13 +3,14 @@ id: T0084
 title: "A sting: a small sting when the mark lands on you"
 size: S
 priority: 3
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T14:05:22Z
 claimed_at: 2026-10-31T14:06:25Z
+finished_at: 2026-10-31T14:34:55Z
 epic: E19
-designer: yoga
+design_attempts: 1
 ---
 
 ## Goal
@@ -25,3 +26,7 @@ The mark is silent today: a player should hear the moment they become the target
 - [ ] The sound does not play when another player is marked.
 - [ ] It sits under the action like the other candy sounds (short and quiet, 0.2 s total or less).
 - [ ] No new DOM element or card; the HUD is otherwise unchanged.
+
+## Rejected by architect (yoga)
+
+needs an engine change: no client API surface tells src/ code the local player is marked — `view.me` (HudMe) has no status or speed field (the mark's +35% lives only in the internal `WireSelf.speed`), and `DrawView`/`EffectView` carry no `me`/owner flag — so the sting's trigger ("marked status lands on view.me", never for another player's mark) cannot be detected from content code; the engine must expose the self's statuses (e.g. a `statuses` field on `HudView.me` built from the client's own frame entity).
