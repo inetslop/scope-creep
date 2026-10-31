@@ -4,11 +4,12 @@ title: "Gem geyser: a spot that bubbles gems, a position to hold"
 assignee: cachyos-x8664
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T03:16:43Z
 claimed_at: 2026-10-31T05:40:15Z
+finished_at: 2026-10-31T05:47:02Z
 epic: E3
 ---
 
@@ -145,3 +146,18 @@ export const geyserBubble: EffectDef = {
 
 ### Tests
 none (content is tested automatically by engine/tests/: effect draw at t 0/0.5/1, directors in a 180 s match, file/registry rules).
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the Gem geyser event: a new director `src/content/directors/gem-geyser.ts` (`gemGeyser`) that, at 90 s and every 120 s, marks a random spot at least 300 units inside the field's edges with the new `geyser-bubble` effect (10 s: 2 s of rising white bubbles, then a pulsing lime ring with ink rim) and drops the existing gem pickup (4 xp each, 8 gems = 32 xp) in the middle every second for 8 s; state lives in the director's `mem` (`phase`/`start`/`drops`/`x`/`y`), the timer waits while a geyser is running, and pickup range plus PvP stakes are untouched engine behavior. Registered `gemGeyser` in `directors/index.ts` and `geyserBubble` in `effects/index.ts` (one import + one line each, right after `gemRain`/`ring`); no other content changed. `npm run check` passes (typecheck, lint, 64 tests) and `npm run smoke` passes desktop and mobile.
+
+- Self-review: APPROVE
+- Time: 6.8 min
+
+```
+.../game/src/content/directors/gem-geyser.ts       | 36 +++++++++++++++++++
+ .../game/src/content/directors/index.ts            |  2 ++
+ .../game/src/content/effects/geyser-bubble.ts      | 40 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/effects/index.ts  |  2 ++
+ 4 files changed, 80 insertions(+)
+```
