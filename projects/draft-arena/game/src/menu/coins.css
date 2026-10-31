@@ -1,25 +1,10 @@
-/* The coin line in the start card (src/menu/coins.ts): a button, it opens the shop. */
+/* The Cosmetics button in the start card (src/menu/coins.ts): a .menu-button, with the coin icon. */
 .coins-line {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  font-family: inherit;
-  font-weight: inherit;
-  font-size: 15px;
-  color: var(--ink);
   white-space: nowrap;
-  border: none;
-  background: none;
-  padding: 4px 8px;
-  margin: 0;
-  border-radius: 10px;
-  cursor: pointer;
-}
-.coins-line:hover {
-  background: rgba(59, 51, 85, 0.08);
-}
-.coins-line:active {
-  background: rgba(59, 51, 85, 0.16);
 }
 .coins-coin {
   flex: none;

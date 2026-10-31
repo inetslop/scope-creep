@@ -4,9 +4,9 @@ import { PALETTE } from '../content/palette.ts';
 import { coinTick } from '../audio/sfx.ts';
 
 /**
- * The shop: a sticker card over the start screen that sells looks. Opens when the coin line is
- * tapped (a 'critter-shop-open' event bubbling to .menu-parts); what a player buys is theirs to
- * wear, kept for the next visit.
+ * The Cosmetics panel: a sticker card over the start screen where every look is bought and worn.
+ * Opens when the Cosmetics button is tapped (a 'critter-shop-open' event bubbling to .menu-parts);
+ * what a player buys is theirs to wear, kept for the next visit.
  */
 export const shop: MakeMenuPart = (root): MenuPart => {
   let view: MenuView;
@@ -23,7 +23,7 @@ export const shop: MakeMenuPart = (root): MenuPart => {
   const head = document.createElement('header');
   head.className = 'shop-head';
   const title = document.createElement('h2');
-  title.textContent = 'Shop';
+  title.textContent = 'Cosmetics';
   const balance = document.createElement('span');
   balance.className = 'shop-balance';
   const balanceCoin = document.createElement('span');
@@ -134,14 +134,18 @@ export const shop: MakeMenuPart = (root): MenuPart => {
       c.width = 96;
       c.height = 96;
       swatch.append(c);
-      if (!owned) {
+      if (def.price === 0 || !owned) {
         const price = document.createElement('span');
         price.className = 'price';
-        const priceCoin = document.createElement('span');
-        priceCoin.className = 'coin';
-        const priceValue = document.createElement('span');
-        priceValue.textContent = `${def.price}`;
-        price.append(priceCoin, priceValue);
+        if (def.price === 0) {
+          price.textContent = 'Free';
+        } else {
+          const priceCoin = document.createElement('span');
+          priceCoin.className = 'coin';
+          const priceValue = document.createElement('span');
+          priceValue.textContent = `${def.price}`;
+          price.append(priceCoin, priceValue);
+        }
         swatch.append(price);
       }
       view.preview(c, { [slot]: def.id });
@@ -158,11 +162,11 @@ export const shop: MakeMenuPart = (root): MenuPart => {
   const renderAll = (): void => {
     balanceCoins.textContent = `${view.profile.coins}`;
     rows.textContent = '';
-    addSection('Patterns', view.patterns.filter((p) => p.price > 0));
     for (const slot of ACCESSORY_SLOTS) {
-      const label = slot === 'head' ? 'Hat' : slot === 'face' ? 'Face' : 'Back';
-      addSection(label, view.accessories.filter((a) => a.slot === slot && a.price > 0));
+      const label = slot === 'head' ? 'Head' : slot === 'face' ? 'Face' : 'Back';
+      addSection(label, view.accessories.filter((a) => a.slot === slot));
     }
+    addSection('Patterns', view.patterns);
     paintPreview();
     renderFooter();
   };

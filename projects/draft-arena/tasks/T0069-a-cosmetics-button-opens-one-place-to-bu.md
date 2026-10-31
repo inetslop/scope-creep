@@ -4,11 +4,12 @@ title: A Cosmetics button opens one place to buy and wear every look
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T12:51:01Z
 claimed_at: 2026-10-31T13:25:38Z
+finished_at: 2026-10-31T13:41:37Z
 ---
 
 ## Goal
@@ -84,3 +85,22 @@ Fullest state (verify by eye, no code): start card 380 px wide on both viewports
 
 ### Tests
 - none (DOM menu parts are exercised by check + smoke; no pure helpers added).
+
+## Result (attempt 1, asus)
+
+The start card's tappable coin line is now a "Cosmetics" button (menu-button look, 52 px) labelled "Cosmetics · <coins>" with the coin icon, opening the renamed Cosmetics panel. The panel lists every accessory under Head/Face/Back and every pattern (free ones included, with a "Free" chip instead of a price), where players try, buy, wear and take off looks; free items need no purchase since `owns` is already true for them. The separate Hats card is removed from the start screen (hats are worn from Cosmetics); the color picker is untouched. Note: I couldn't read the external smoke script (`loop/smoke/smoke.ts` is outside my working directory) — smoke passed with the old files still present, but if it still taps `.hats-card`, it will need updating now that the card is gone.
+
+- Self-review: APPROVE
+- Time: 16.0 min
+- Deleted src/menu/hats.ts, as the agent asked.
+- Deleted src/menu/hats.css, as the agent asked.
+
+```
+projects/draft-arena/game/src/menu/coins.css | 19 +--------
+ projects/draft-arena/game/src/menu/coins.ts  |  8 ++--
+ projects/draft-arena/game/src/menu/hats.css  | 19 ---------
+ projects/draft-arena/game/src/menu/hats.ts   | 64 ----------------------------
+ projects/draft-arena/game/src/menu/index.ts  |  2 -
+ projects/draft-arena/game/src/menu/shop.ts   | 30 +++++++------
+ 6 files changed, 23 insertions(+), 119 deletions(-)
+```
