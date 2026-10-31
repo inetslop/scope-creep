@@ -3,13 +3,14 @@ id: T0053
 title: "Frenzy tree: a fifth playstyle that hits harder the more hurt you are"
 size: L
 priority: 1
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-10-31T10:32:35Z
 claimed_at: 2026-10-31T10:32:39Z
+finished_at: 2026-10-31T10:37:52Z
 epic: E13
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -59,3 +60,7 @@ A fifth talent tree with its own playstyle: Frenzy is thin and mean — it trade
 - [ ] Nerve fires every 0.8 s at the nearest enemy within 180 while one is in range, and a jab lands for base (5 + 2 per extra rank) plus 1 per full 10 HP below max.
 - [ ] Sprint's speed and Reckless's doubled damage are only on while the player is below half max HP, and switch off the moment they heal back above it.
 - [ ] The tree's own tests pass: needs point at talents of the same tree, every talent is reachable, and every upgrade is in a tree.
+
+## Rejected by architect (desktop)
+
+Sprint cannot be built on the frozen engine — `UpgradeDef.stats` is applied unconditionally (the sim's `recomputeStats` flatly sums `def.stats * level` on pick/prestige only, with no conditional hook), `Ctx` exposes no way to read a player's upgrade rank (a director can't know how many ranks of Sprint a player holds), and the only speed status effect is a fixed per-def `speedMul` multiplier (no additive speed, no rank scaling, no removal — statuses only expire), so there is no way to implement "+15 move speed per rank that is only on while below half max HP and switches off the moment they heal above it"; the other three pieces are buildable as written (Frenzy as a `stats: { maxHp: -8, damage: 0.12 }` upgrade, Nerve as a 0.8 s cooldown weapon firing a straight path dart at `ctx.nearestEnemy(me, 180)` with damage 5 + 2·(level−1) + floor((maxHp−hp)/10), and Reckless as an onHit capstone that adds a `ctx.damage(hit.target, hit.damage, me)` copy while `me.hp < me.maxHp * 0.5`, exactly the Reap pattern), so the task is salvageable if Sprint is redefined to something the engine can express (e.g. a fixed-mul speed status a director re-applies while any player is below half HP — which loses the per-rank scaling — or an always-on `stats: { speed: 15 }`), or the engine gains conditional stats.
