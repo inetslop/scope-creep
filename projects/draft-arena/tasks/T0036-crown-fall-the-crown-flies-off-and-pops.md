@@ -1,12 +1,14 @@
 ---
 id: T0036
 title: "Crown fall: the crown flies off and pops where the leader is knocked out"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T06:50:30Z
+claimed_at: 2026-10-31T08:38:10Z
 epic: E4
 ---
 
