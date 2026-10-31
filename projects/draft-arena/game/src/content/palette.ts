@@ -17,6 +17,7 @@ export const PALETTE = {
   magenta: '#da77f2',
   coral: '#ffa8a8',
   violet: '#845ef7',
+  berry: '#e64980',
 
   teal: '#38d9a9',
   blue: '#4dabf7',

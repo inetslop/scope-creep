@@ -3,6 +3,8 @@ import { dot } from './dot.ts';
 import { flee } from './flee.ts';
 import { puff } from './puff.ts';
 import { brood } from './brood.ts';
+import { twin } from './twin.ts';
+import { twinling } from './twinling.ts';
 import { zippy } from './zippy.ts';
 import { sleeper } from './sleeper.ts';
 import { spitter } from './spitter.ts';
@@ -13,6 +15,8 @@ export const MONSTERS: readonly MonsterDef[] = [
   dot,
   puff,
   brood,
+  twin,
+  twinling,
   flee,
   zippy,
   sleeper,
