@@ -3,13 +3,11 @@ id: T0027
 title: "Coins from events: every gem an event drops pays 1 coin"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: [T0019, T0011, T0012]
 attempts: 0
 created: 2026-10-31T05:24:06Z
-claimed_at: 2026-10-31T06:06:08Z
 epic: E6
-designer: yoga
 ---
 
 ## Goal
@@ -29,3 +27,54 @@ The positions and races the field events make pay in the long game too: a gem dr
 - [ ] A bot collecting an event gem gets no coins and no coin pop.
 - [ ] Event gems tell apart from the monster's gems at a glance, and the xp of every event gem is the same as before this change.
 - [ ] No new HUD element: the coin pop is the readout, the balance stays on the start card.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/pickups/event-gem.ts` - the event gem pickup `eventGem` (id `event-gem`): what field events drop; same xp as the gem it replaces, plus 1 coin (humans only) with T0019's coin pop
+- edit `src/content/pickups/index.ts` - import `eventGem` and one line in `PICKUPS`
+- edit `src/content/directors/gem-rain.ts` - drop `'event-gem'` instead of `'gem'` (one line)
+- edit `src/content/directors/gem-geyser.ts` - drop `'event-gem'` instead of `'gem'` (one line)
+- edit `src/content/directors/gem-rush.ts` - pay the grabber 12 coins + one 12-coin coin pop at the first gem (bots none)
+
+### Interfaces
+No new types. New export, exact:
+```ts
+export const eventGem: PickupDef = {
+  id: 'event-gem',
+  radius: 7,
+  life: 30,
+  look: { shape: 'star', color: PALETTE.yellow },
+  collect(ctx, p, value) {
+    ctx.giveXp(p, value);
+    if (!p.bot) {
+      ctx.giveCoins(p, 1);
+      ctx.effect('coin', { x: p.x, y: p.y }, undefined, 1);
+    }
+  },
+};
+```
+
+### Steps
+1. Read `src/content/pickups/gem.ts` (closest example) and create `src/content/pickups/event-gem.ts` with the def above (copy `gem.ts`, change id/look/collect; keep `radius: 7`, `life: 30`). The coin effect call: first read `src/content/directors/kill-coins.ts` (T0019) and use exactly the shape of `ctx.effect('coin', ...)` call it makes there (a `Point` + value).
+2. Edit `src/content/pickups/index.ts`: `import { eventGem } from './event-gem.ts';` (above the gem import) and add `eventGem,` as its own line in `PICKUPS`, before `gem,`.
+3. `gem-rain.ts` line 19: `ctx.dropPickup('event-gem', p.x + Math.cos(a) * 220, p.y + Math.sin(a) * 220, 2);`
+4. `gem-geyser.ts` line 21: `ctx.dropPickup('event-gem', mem.x, mem.y, XP);` (XP stays 4)
+5. `gem-rush.ts`: leave both `dropPickup('gem', ..., 0)` lines alone; after `ctx.giveXp(p, 12);` (line 60) add:
+```ts
+      if (!p.bot) {
+        ctx.giveCoins(p, 12);
+        ctx.effect('coin', { x, y }, undefined, 12);
+      }
+```
+(`x`/`y` are the first gem's spot, already in scope.)
+
+### Pitfalls
+- The rush must NOT switch to the new pickup: 12 separate 1-coin collects would draw 12 one-coin pops instead of the one 12-coin fountain at the first gem. Director pays all 12 coins at once; its gems stay value-0 plain `gem` (0 xp, no coin, no pop).
+- Never touch `pickups/gem.ts`: monster drops come from the engine (rules.gem) and must pay no coins. All xp values are untouched (rain 2, geyser 4, rush 12 to the grabber).
+- Guard the effect with `p.bot` (coins are engine-guaranteed bot-free, but the pop must not play for a bot collect).
+- `ctx.effect('coin', ...)` needs T0019's `coin` effect in `EFFECTS`; build T0019 first and copy its call exactly.
+- The crown's leader's gem does not exist yet (T0014, todo): when it lands, its drop line must use `'event-gem'`; not built here.
+
+### Tests
+- none (content is tested automatically by engine/tests/).
