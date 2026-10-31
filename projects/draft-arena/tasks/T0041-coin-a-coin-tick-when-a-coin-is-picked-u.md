@@ -4,11 +4,12 @@ title: "Coin: a coin tick when a coin is picked up or spent"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0039]
 attempts: 2
 created: 2026-10-31T07:44:39Z
 claimed_at: 2026-10-31T09:16:43Z
+finished_at: 2026-10-31T09:33:07Z
 epic: E11
 ---
 
@@ -98,4 +99,20 @@ Error: UNKNOWN: unknown error, open 'C:\Users\InetSpark\Documents\Repos\scope-cr
     at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:266:28)
     at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
     at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
+
+## Result (attempt 2, yoga)
+
+Coins are no longer silent. A short bright clink (triangle wave at the coin's own 3000 Hz pitch, 0.08 s, peak 0.18 — distinct from the low monster pop and the two-note level-up chime) now plays in two places: in the match the moment coins land on the player (kill or event coins, from the coin HUD part watching the coin delta — several coins at once roll out one tick per coin, 30 ms apart), and in the shop the moment a buy succeeds (synchronously inside the buy tap, which also lets the audio layer start there on a phone before the first match). Added `coinTick()` to the existing audio layer, a no-DOM `coin` HUD part (sound only), and the shop hook; no engine changes.
+
+- Self-review: APPROVE
+- Time: 16.4 min
+
+```
+projects/draft-arena/game/src/audio/sfx.ts | 21 +++++++++++++++++++++
+ projects/draft-arena/game/src/hud/coin.css |  1 +
+ projects/draft-arena/game/src/hud/coin.ts  | 21 +++++++++++++++++++++
+ projects/draft-arena/game/src/hud/index.ts |  2 ++
+ projects/draft-arena/game/src/menu/shop.ts |  3 ++-
+ 5 files changed, 47 insertions(+), 1 deletion(-)
 ```

@@ -1,6 +1,7 @@
 import './shop.css';
 import { ACCESSORY_SLOTS, type AccessorySlot, type MakeMenuPart, type MenuPart, type MenuView, type Wearing } from '../../engine/api.ts';
 import { PALETTE } from '../content/palette.ts';
+import { coinTick } from '../audio/sfx.ts';
 
 /**
  * The shop: a sticker card over the start screen that sells looks. Opens when the coin line is
@@ -99,7 +100,7 @@ export const shop: MakeMenuPart = (root): MenuPart => {
       buyBtn.disabled = cant !== '';
       buyBtn.textContent = cant !== '' ? cant : `Buy · ${def.price}`;
       buyBtn.onclick = () => {
-        if (view.buy(id)) popConfetti();
+        if (view.buy(id)) { coinTick(); popConfetti(); }
       };
     }
   };

@@ -79,6 +79,27 @@ export function pop(seed: number, radius: number, age: number): void {
   blip(pitchFor(radius), 0.12, 0.12);
 }
 
+/**
+ * One coin clink: the coin's own pitch, a dry triangle blip over in 0.08 s — above the low
+ * monster pop, shorter and thinner than the level-up chime. Not gated on a match frame: the
+ * shop plays it on the start screen, where the buy tap is the user gesture that starts the context.
+ */
+export function coinTick(): void {
+  if (!ctx || !master) return;
+  const t0 = ctx.currentTime;
+  const o = ctx.createOscillator();
+  o.type = 'triangle';
+  o.frequency.value = 3000;
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(0.18, t0 + 0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.08);
+  o.connect(g);
+  g.connect(master);
+  o.start(t0);
+  o.stop(t0 + 0.1);
+}
+
 /** Level-up: a bright two-note candy-bell "ding-ding", E6 then G6, under 0.2 s. */
 export function playChime(): void {
   if (!ctx || !master) return;
