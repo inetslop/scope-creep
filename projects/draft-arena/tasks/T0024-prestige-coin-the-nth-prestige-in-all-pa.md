@@ -3,11 +3,13 @@ id: T0024
 title: "Prestige coin: the Nth prestige in all pays 25 x N coins"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: [T0019]
 attempts: 0
 created: 2026-10-31T04:59:35Z
+claimed_at: 2026-10-31T05:31:50Z
 epic: E7
+designer: desktop
 ---
 
 ## Goal
