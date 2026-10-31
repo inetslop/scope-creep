@@ -1,12 +1,14 @@
 ---
 id: T0044
 title: "Halves: a two-tone pattern, the top of the body lighter"
+assignee: inet-racing
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T08:05:11Z
+claimed_at: 2026-10-31T09:34:34Z
 epic: E6
 ---
 
