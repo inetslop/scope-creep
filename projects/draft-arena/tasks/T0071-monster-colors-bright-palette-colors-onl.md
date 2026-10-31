@@ -3,10 +3,12 @@ id: T0071
 title: "Monster colors: bright palette colors only, and no two monsters alike"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T12:51:01Z
+claimed_at: 2026-10-31T13:18:41Z
+designer: desktop
 ---
 
 ## Goal
