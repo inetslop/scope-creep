@@ -1,12 +1,14 @@
 ---
 id: T0021
 title: "First shop stock: two patterns, a face and a back accessory"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T04:17:26Z
+claimed_at: 2026-10-31T05:33:02Z
 epic: E6
 ---
 
