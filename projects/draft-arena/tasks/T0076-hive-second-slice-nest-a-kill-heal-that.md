@@ -4,11 +4,12 @@ title: "Hive, second slice: Nest (a kill heal that grows with the crowd) and the
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0075]
 attempts: 1
 created: 2026-10-31T13:15:23Z
 claimed_at: 2026-10-31T13:56:45Z
+finished_at: 2026-10-31T14:14:42Z
 epic: E16
 ---
 
@@ -187,3 +188,21 @@ export const sting: UpgradeDef = {
 
 ### Tests
 none
+
+## Result (attempt 1, inet-racing)
+
+The Hive tree gets its sustain branch and capstone. Nest (src/content/upgrades/nest.ts) is an on-kill heal of 2 hp per living critter within 100 of the corpse, up to 3 neighbors, scaling with rank (max 6/12/18); Sting (src/content/upgrades/sting.ts) is the max-1 capstone that bursts a corpse standing within 80 of 2+ critters for 12 damage (6 to players, halved by the engine), with a new 0.3 s teal ring-and-confetti effect (src/content/effects/sting-burst.ts) distinct from the Popper's orange puff and leaving no field. Both are registered in the upgrade/effect registries and added as exactly the specified two talent lines under Horn in src/content/talents/hive.ts.
+
+- Self-review: APPROVE
+- Time: 18.0 min
+- Did not delete (none): only files in src/, tests/, docs/, public/ can be deleted.
+
+```
+.../draft-arena/game/src/content/effects/index.ts  |  2 ++
+ .../game/src/content/effects/sting-burst.ts        | 31 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/talents/hive.ts   |  2 ++
+ .../draft-arena/game/src/content/upgrades/index.ts |  4 +++
+ .../draft-arena/game/src/content/upgrades/nest.ts  | 15 +++++++++++
+ .../draft-arena/game/src/content/upgrades/sting.ts | 21 +++++++++++++++
+ 6 files changed, 75 insertions(+)
+```

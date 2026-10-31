@@ -20,6 +20,7 @@ import { magnet } from './magnet.ts';
 import { maw } from './maw.ts';
 import { mend } from './mend.ts';
 import { might } from './might.ts';
+import { nest } from './nest.ts';
 import { nerve } from './nerve.ts';
 import { quick } from './quick.ts';
 import { reap } from './reap.ts';
@@ -28,6 +29,7 @@ import { ricochet } from './ricochet.ts';
 import { scatter } from './scatter.ts';
 import { slush } from './slush.ts';
 import { split } from './split.ts';
+import { sting } from './sting.ts';
 import { swarm } from './swarm.ts';
 import { swift } from './swift.ts';
 import { vigor } from './vigor.ts';
@@ -56,6 +58,8 @@ export const UPGRADES: readonly UpgradeDef[] = [
   gush,
   chew,
   slush,
+  nest,
+  sting,
   cling,
   split,
   lance,

@@ -9,6 +9,7 @@ import { slowPop } from './slow-pop.ts';
 import { wiredPop } from './wired-pop.ts';
 import { geyserBubble } from './geyser-bubble.ts';
 import { splashRing } from './splash-ring.ts';
+import { stingBurst } from './sting-burst.ts';
 
 /** Every one-shot visual. One per line. */
 export const EFFECTS: readonly EffectDef[] = [
@@ -20,6 +21,7 @@ export const EFFECTS: readonly EffectDef[] = [
   geyserBubble,
   splashRing,
   burst,
+  stingBurst,
   slowPop,
   wiredPop,
 ];
