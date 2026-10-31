@@ -4,11 +4,12 @@ title: "Two starter hats: a Hats card on the start screen"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T03:51:35Z
 claimed_at: 2026-10-31T05:41:34Z
+finished_at: 2026-10-31T07:23:50Z
 epic: E5
 ---
 
@@ -316,3 +317,26 @@ export const MENU_PARTS: readonly MakeMenuPart[] = [
 
 ### Tests
 - none (engine/tests/ validates both accessories' data, draw and registration, and every talent/upgrade in a real match; the smoke test exercises the start screen part, which the Menu builds and updates once at construction).
+
+## Result (attempt 1, desktop-4070)
+
+Added the two free head accessories (Cone, a yellow party cone with a red tip ball; Beanie, a purple dome and band with a pink pom) as one file each in `src/content/accessories/`, registered with one import and one line per accessory, plus a "Hats" card on the start screen whose panel previews all three choices (None, Cone, Beanie) and wears them at once, with tapping the worn hat taking it off. Two deviations from the design's literal text, both because the repo already had content: the registries were not empty, so my import/registry lines were appended next to the existing entries rather than written as full-file content, and the design's exact click handler (`view?.wear('head', c.dataset.id || undefined)`) cannot remove a hat since `MenuView.wear()` is set-only (only `undefined` takes a slot off), so the choice handler toggles — clicking the currently worn hat passes `undefined`. Hats persist in the profile, are worn in-match for everyone every life via the engine's existing draw order and bot-wear, and change no stats.
+
+- Self-review: APPROVE
+- Time: 102.3 min
+
+```
+.../game/src/content/accessories/beanie.ts         | 45 +++++++++++++++
+ .../game/src/content/accessories/cone.ts           | 32 +++++++++++
+ .../game/src/content/accessories/index.ts          |  4 ++
+ projects/draft-arena/game/src/menu/hats.css        | 19 +++++++
+ projects/draft-arena/game/src/menu/hats.ts         | 64 ++++++++++++++++++++++
+ projects/draft-arena/game/src/menu/index.ts        |  3 +-
+ 6 files changed, 166 insertions(+), 1 deletion(-)
+```
+
+## Merge (attempt 1, desktop-4070)
+
+- Conflicts in: projects/draft-arena/game/src/menu/index.ts
+- Auto-resolved 1 spot(s) where both sides only added lines.
+- The conflict agent resolved them.

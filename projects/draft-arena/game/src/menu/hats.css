@@ -1,0 +1,19 @@
+.hats-card { box-sizing: border-box; min-height: 52px; display: flex; align-items: center; gap: 8px; padding: 8px 14px; border: 3px solid #3b3355; border-radius: 14px; background: #fff; color: #3b3355; font: inherit; font-size: 16px; text-align: left; cursor: pointer; box-shadow: 3px 4px 0 #3b3355; transition: transform 0.08s, box-shadow 0.08s; }
+.hats-card:hover { transform: translate(-2px, -2px); box-shadow: 5px 6px 0 #3b3355; }
+.hats-card:active { transform: translate(2px, 3px); box-shadow: 1px 1px 0 #3b3355; }
+.hats-card-label { font-size: 20px; font-weight: 700; }
+.hats-card-current { color: #7a7193; }
+.hats-card-mini { flex: none; width: 44px; height: 44px; }
+.hats-panel { position: absolute; top: max(16px, 6vh); left: 50%; transform: translateX(-50%); z-index: 5; box-sizing: border-box; width: min(340px, calc(100vw - 32px)); display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 14px 16px 18px; border: 3px solid #3b3355; border-radius: 22px; background: #fff; color: #3b3355; box-shadow: 5px 6px 0 #3b3355; }
+@media (max-width: 899px) { .hats-panel { top: 12px; } }
+.hats-panel-head { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+.hats-panel-head span { font-size: 24px; font-weight: 700; }
+.hats-close { width: 44px; height: 44px; border: 3px solid #3b3355; border-radius: 12px; background: #fff; color: #3b3355; font: inherit; font-size: 26px; line-height: 1; cursor: pointer; box-shadow: 2px 3px 0 #3b3355; transition: transform 0.08s, box-shadow 0.08s; }
+.hats-close:active { transform: translate(1px, 2px); box-shadow: 1px 1px 0 #3b3355; }
+.hats-preview { display: block; width: 140px; height: 140px; }
+.hats-choices { display: flex; gap: 8px; width: 100%; }
+.hats-choice { flex: 1; min-width: 0; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 84px; padding: 8px 2px; border: 3px solid #3b3355; border-radius: 12px; background: #fff; color: #3b3355; cursor: pointer; box-shadow: 2px 3px 0 #3b3355; transition: transform 0.08s, box-shadow 0.08s; }
+.hats-choice:active { transform: translate(1px, 2px); box-shadow: 1px 1px 0 #3b3355; }
+.hats-choice canvas { display: block; width: 56px; height: 56px; }
+.hats-choice span { font-size: 14px; font-weight: 600; }
+.hats-choice.worn { box-shadow: 0 0 0 4px #ffd43b, 2px 3px 0 #3b3355; }
