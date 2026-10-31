@@ -3,11 +3,13 @@ id: T0104
 title: "Lollipop: a 500-coin back accessory, a big green lollipop with a white swirl"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:29:12Z
+claimed_at: 2026-10-31T17:30:41Z
 epic: E22
+designer: yoga
 ---
 
 ## Goal
