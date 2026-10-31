@@ -3,12 +3,10 @@ id: T0068
 title: "Coin chip: your coin balance on the match HUD"
 size: M
 priority: 3
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T12:44:22Z
-claimed_at: 2026-10-31T13:30:56Z
-designer: inet-racing
 ---
 
 ## Goal
@@ -27,3 +25,104 @@ The shop's numbers are hidden while you play: coins tick in (the clink, the pop)
 - [ ] The chip fits one line at 412x915 and 1280x720 with a 5-digit balance, covering nothing already on screen.
 - [ ] It shows while online, in this tab, and while the player is down; it is not shown on the start screen.
 - [ ] The start card's coin line still shows the balance between matches, unchanged.
+
+## Design (architect, inet-racing)
+
+### Files
+- create `src/hud/coinChip.ts` — the chip: a small white HUD card, one line, yellow coin + live balance
+- create `src/hud/coinChip.css` — its position and the coin dot
+- edit `src/hud/index.ts` — add `import { coinChip } from './coinChip.ts';` after the `coin` import (line 4), and one line `coinChip,` in `HUD_PARTS` right after `coin,` (line 16)
+
+### Interfaces
+No new types. The part is the standard `MakeHudPart` from `engine/api.ts`:
+```ts
+import type { MakeHudPart } from '../../engine/api.ts';
+export const coinChip: MakeHudPart = (root: HTMLElement) => { /* builds DOM, returns { update(view: HudView) } */ };
+```
+Data source, already existing — no engine work: `HudView.me.coins` (`engine/api.ts:606`, "coins in your profile (in this browser), coins earned in this match included"; built in `engine/client/main.ts:173` from the profile, defined the whole time the session has a self — including while down, `alive: false`). The HUD host already hides the whole `#hud` on the start screen (`engine/client/main.ts:221`), so "not on the start screen" is free.
+
+### Steps
+1. Create `src/hud/coinChip.ts` exactly:
+```ts
+import type { MakeHudPart } from '../../engine/api.ts';
+import './coinChip.css';
+
+/** Top left, under the connection card: the coin balance, live while it ticks in. */
+export const coinChip: MakeHudPart = (root) => {
+  const el = document.createElement('div');
+  el.className = 'hud-card hud-coin-chip';
+  el.hidden = true;
+  const dot = document.createElement('span');
+  dot.className = 'hud-coin-dot';
+  const num = document.createElement('span');
+  el.append(dot, num);
+  root.append(el);
+  let shown: number | undefined;
+  return {
+    update(view) {
+      const c = view.me?.coins;
+      if (c === undefined) { el.hidden = true; shown = undefined; return; }
+      el.hidden = false;
+      if (c === shown) return;
+      shown = c;
+      num.textContent = String(c);
+    },
+  };
+};
+```
+(Do NOT put this in `src/hud/coin.ts` — that part is deliberately sound-only, "No DOM, no card".)
+2. Create `src/hud/coinChip.css` exactly:
+```css
+/* coinChip.ts: top left, just under the connection card. */
+.hud-coin-chip {
+  position: absolute;
+  left: calc(12px + env(safe-area-inset-left));
+  top: calc(58px + env(safe-area-inset-top));
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.hud-coin-dot {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffd43b; /* PALETTE.yellow, the pickup's coin */
+  border: 2px solid var(--ink);
+  box-sizing: border-box;
+  position: relative;
+}
+.hud-coin-dot::after {
+  content: '';
+  position: absolute;
+  top: 1px;
+  left: 2px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+/* Phones (narrow screens): the connection card sits at 64px there. */
+@media (max-width: 520px) {
+  .hud-coin-chip {
+    top: calc(110px + env(safe-area-inset-top));
+  }
+}
+```
+3. Edit `src/hud/index.ts` as above (one import line, one registry line, next to `coin`).
+4. `npm run check`.
+
+Fullest state (must fit one line): a 14 px coin dot + "99999" (5 digits, no separators, no label) — card ≈ 90 × 38 px. Desktop 1280×720: under the connection card (12, 12, ends ~y50), clear of the centred xp bar (460–820 px) and the centred prestige chip (top 56 px). Phone 412×915: under the connection card (12, 64), clear of the full-width xp bar (top 12), the scoreboard (top 64, right) and the prestige chip (top 182, centred); far above the thumb drag path.
+
+### Pitfalls
+- Editing `src/hud/coin.ts`, `src/menu/coins.ts` or `src/menu/coins.css` — the sound part stays sound-only, and T0069 owns the menu coin files right now.
+- The top offsets (58/110 px) mirror how every other part sits under a fixed-height card (connection is one 14 px line + 12 px padding + 6 px borders ≈ 38 px). Keep the `env(safe-area-inset-*)` calcs in both rules.
+- Don't add thousands separators, a "coins" label, or any DOM churn: `update()` runs every frame — only touch the DOM when `shown` changes (the `el.hidden` toggle is the exception, and it only flips between states).
+- No `Math.random`/`Date` — none needed; this part is pure display.
+
+### Tests
+- none (no pure helpers; the engine content tests and smoke test cover it).
