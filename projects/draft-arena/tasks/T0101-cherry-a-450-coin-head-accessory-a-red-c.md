@@ -1,12 +1,14 @@
 ---
 id: T0101
 title: "Cherry: a 450-coin head accessory, a red cherry with a green stem"
+assignee: inet-racing
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T17:06:34Z
+claimed_at: 2026-10-31T17:27:23Z
 epic: E22
 ---
 
