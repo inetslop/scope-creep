@@ -4,11 +4,12 @@ title: "Lance: bolts that go straight through a line of monsters"
 assignee: desktop-4070
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T01:44:04Z
 claimed_at: 2026-10-31T02:04:48Z
+finished_at: 2026-10-31T02:11:02Z
 epic: E1
 ---
 
@@ -76,3 +77,17 @@ export const lance: UpgradeDef = {
 
 ### Tests
 none (engine/tests/ checks every upgrade and talent automatically, including real-match runs and talent reachability).
+
+## Result (attempt 1, desktop-4070)
+
+Added the Lance upgrade (`src/content/upgrades/lance.ts`), a pure stat mod giving pierce +1 per rank (maxLevel 2) so a Gunner's Bolt passes straight through 1 more enemy per rank at full damage — registered in `src/content/upgrades/index.ts` and added as a needs-less base talent beside Haste in `src/content/talents/gunner.ts`, letting players fork early between faster shots and piercing ones. It works with any projectile weapon, not splashes, and bolts hitting a player keep going behind it as usual (players take half damage). `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 6.2 min
+
+```
+projects/draft-arena/game/src/content/talents/gunner.ts |  1 +
+ projects/draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ projects/draft-arena/game/src/content/upgrades/lance.ts | 11 +++++++++++
+ 3 files changed, 14 insertions(+)
+```

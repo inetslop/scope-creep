@@ -1,6 +1,7 @@
 import type { UpgradeDef } from '../../../engine/api.ts';
 import { bolt } from './bolt.ts';
 import { haste } from './haste.ts';
+import { lance } from './lance.ts';
 import { magnet } from './magnet.ts';
 import { might } from './might.ts';
 import { ricochet } from './ricochet.ts';
@@ -13,6 +14,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   bolt,
   ricochet,
   split,
+  lance,
   swift,
   might,
   vigor,
