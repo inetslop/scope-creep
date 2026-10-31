@@ -1,12 +1,14 @@
 ---
 id: T0097
 title: "Bellow: a Body talent, a ring around you that strikes everything close, open after a prestige"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T16:11:39Z
+claimed_at: 2026-10-31T17:06:38Z
 epic: E17
 ---
 
