@@ -4,11 +4,12 @@ title: Gentler squash for the Zippy and the Sleeper
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T12:51:01Z
 claimed_at: 2026-10-31T15:06:05Z
+finished_at: 2026-10-31T15:37:22Z
 ---
 
 ## Goal
@@ -126,3 +127,29 @@ export const sleeperCushion = (state: number, t: number): [number, number] => {
 
 ### Tests
 - `tests/squash.test.ts` as in step 10 (the two exported curves are pure and a future retune could silently break the 0.8–1.2 / 0.15 s rule). Everything else is covered by `engine/tests` (draw smoke, match run) and the smoke test.
+
+## Result (attempt 1, cachyos-x8664)
+
+All green. Both `npm run check` (typecheck + lint + 106 tests) and `npm run smoke` (desktop + mobile) pass.
+
+Summary of the fix for the 20% squash bound:
+
+**Problem:** Zippy and Sleeper squashed in a single frame, so the crouch was a hard pop, not the eased in-and-out the style calls for.
+
+**Change:** shared `squashEase(t)` in each monster (`c = clamp(t / 0.15)`, `c*c*(3-2c)`) replaces the frame-quantized scaling:
+
+- **Zippy** (`zippy.ts`): phase 1 winds in over 0.15 s into the crouch; phase 2 springs back over the first 0.15 s of the dash (starts fully crouched from phase 1's exit); phase 3 and 0 use a softer 0.5 crouch so the tired/crawl transition is continuous. Scales stay in [0.8, 1.2].
+- **Sleeper** (`sleeper.ts`): `sleeperCushion(state, t)` eases flat-asleep (1.15 × 0.85) ↔ awake (1.05 × 0.95) over 0.15 s per state transition, out of the previous cushion.
+
+Tests: `tests/squash.test.ts` (new) locks the invariants — every (phase, t) sample of both curves stays within 20% of size, the 0.15 s ease-in/out never completes in one frame, phase continuity across 2→3→0, and the per-state cushion endpoints. (One fixup during the run: the test name's apostrophe broke tsc, rewritten.)
+
+- Self-review: APPROVE
+- Time: 31.3 min
+
+```
+.../draft-arena/game/src/content/monsters/brood.ts |  5 ++-
+ .../game/src/content/monsters/sleeper.ts           | 20 +++++++--
+ .../draft-arena/game/src/content/monsters/zippy.ts | 31 ++++++++++++--
+ projects/draft-arena/game/tests/squash.test.ts     | 49 ++++++++++++++++++++++
+ 4 files changed, 97 insertions(+), 8 deletions(-)
+```

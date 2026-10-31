@@ -1,4 +1,4 @@
-import { chase, drawCritter, type Face, type Look, type MonsterDef } from '../../../engine/api.ts';
+import { chase, drawCritter, drawFace, type Face, type Look, type MonsterDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
 
 /** A player within 350 wakes it; it sleeps again only after 10 s with every player beyond 500. */
@@ -7,6 +7,12 @@ const SLEEP = 500;
 const WINDUP = 0.5;
 const AWAY = 10;
 
+export const squashEase = (t: number) => { const c = Math.min(1, Math.max(0, t / 0.15)); return c * c * (3 - 2 * c); };
+export const sleeperCushion = (state: number, t: number): [number, number] => {
+  const awake = state === 0 ? 1 - squashEase(t) : squashEase(t);
+  return [1.15 - 0.1 * awake, 0.85 + 0.1 * awake]; // flat asleep, up awake, eased
+};
+
 const CALM: Face = { mood: 'calm', eyes: 2, mouth: 'o' };
 const ANGRY: Face = { mood: 'angry', eyes: 2, mouth: 'frown' };
 
@@ -14,9 +20,14 @@ const look: Look = { shape: 'square', color: PALETTE.magenta, face: CALM };
 /** A magenta squashed cushion; flatter with closed eyes while asleep, snarling with open eyes once woken. */
 look.draw = (g, e) => {
   const state = e.slots[0] ?? 0; // 0 sleeping, 1 waking, 2 awake
+  const [sx, sy] = sleeperCushion(state, (e.slots[1] ?? 0) / 100);
   g.save();
-  g.scale(state === 0 ? 1.15 : 1.05, state === 0 ? 0.85 : 0.95); // the cushion, flatter while it sleeps
-  drawCritter(g, look, e, { ink: PALETTE.ink, face: state === 0 ? CALM : ANGRY });
+  g.scale(sx, sy);
+  drawCritter(g, look, e, { ink: PALETTE.ink }); // no face: it keeps its shape
+  g.restore();
+  g.save(); // face rides with the cushion's height, drawn unsquashed
+  g.translate(0, (sy - 1) * e.radius * 0.15);
+  drawFace(g, state === 0 ? CALM : ANGRY, e.radius, e.angle, PALETTE.ink);
   if (state === 0) {
     // Closed eyes: paint over the open ones, then a small arc under each (drawFace puts two eyes at ±0.34r, -0.12r, radius 0.26r).
     const eyeR = e.radius * 0.26;
@@ -76,8 +87,11 @@ export const sleeper: MonsterDef = {
         mem.at = 0;
       }
     }
+    if (state !== (mem.sl ?? 0)) mem.ste = 0; // new state: the clock starts at 0
+    else mem.ste = (mem.ste ?? 0) + dt;
     mem.sl = state;
     m.slots[0] = state;
+    m.slots[1] = Math.min(32767, Math.round((mem.ste ?? 0) * 100));
     m.damage = state === 2 ? m.def.damage : 0; // touch damage while awake only
   },
 };

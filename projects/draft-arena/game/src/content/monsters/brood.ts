@@ -1,4 +1,4 @@
-import { chase, drawCritter, type Face, type Look, type MonsterDef } from '../../../engine/api.ts';
+import { chase, drawCritter, drawFace, type Face, type Look, type MonsterDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
 
 /** A player within 300 starts the cycle: telegraph 0.8 s, pop, three births 4 s apart, then 8 s rest. */
@@ -21,8 +21,9 @@ look.draw = (g, e) => {
   g.save();
   if (ph === 1) { const fill = (e.slots[1] ?? 0) / 100; g.scale(1 + 0.1 * fill, 1 + 0.1 * fill); } // belly fills over the 0.8 s telegraph
   else if (ph === 2) g.scale(1.1, 0.88); // squashed flat for the beat as the Dot pops out
-  drawCritter(g, look, e, { ink: PALETTE.ink, face: ph === 0 ? CALM : TEETH });
+  drawCritter(g, look, e, { ink: PALETTE.ink });
   g.restore();
+  drawFace(g, ph === 0 ? CALM : TEETH, e.radius, e.angle, PALETTE.ink);
 };
 
 /** The menagerie's 10th type: a slow sac that keeps birthing Dots while a player stays close. */
