@@ -3,10 +3,12 @@ id: T0077
 title: "Plink: a small plink when you collect a gem"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T13:15:23Z
+claimed_at: 2026-10-31T13:16:00Z
+designer: yoga
 ---
 
 ## Goal
