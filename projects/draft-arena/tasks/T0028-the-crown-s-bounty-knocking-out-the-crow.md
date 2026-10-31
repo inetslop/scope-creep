@@ -3,11 +3,13 @@ id: T0028
 title: "The crown's bounty: knocking out the crowned player pays double the bounty xp"
 size: S
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T05:50:41Z
+claimed_at: 2026-10-31T06:00:12Z
 epic: E4
+designer: yoga
 ---
 
 ## Goal
