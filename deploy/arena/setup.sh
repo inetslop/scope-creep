@@ -27,18 +27,20 @@ die() { printf 'setup: %s\n' "$*" >&2; exit 1; }
 [ "${ID:-}" = debian ] || die "this is meant for Debian (found ${ID:-unknown})"
 CODENAME="${VERSION_CODENAME:?no VERSION_CODENAME in /etc/os-release}"
 
-# The firewall below drops everything to the LAN, the router's DNS too. Check that first, or the
-# box loses DNS (and apt, git, Tailscale) the moment the firewall is on.
-say "Checking DNS"
-private_dns=$(awk '/^[[:space:]]*nameserver/ {print $2}' /etc/resolv.conf |
-  grep -E '^(10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.|169\.254\.|100\.(6[4-9]|[7-9][0-9]|1[01][0-9]|12[0-7])\.|f[cd]|fe80)' || true)
-if [ -n "$private_dns" ]; then
-  die "/etc/resolv.conf uses a DNS server on the LAN ($(echo "$private_dns" | tr '\n' ' ')), which the firewall will block.
-In Proxmox: the container -> DNS -> DNS servers: 1.1.1.1, then restart the container and run this again."
+# The firewall below drops everything to the LAN, the router's DNS too, so the box uses public DNS
+# and keeps it: Proxmox is told to leave resolv.conf alone, and the DHCP client to ignore the DNS
+# servers the router hands out (a lease renewal rewrote it to the LAN's DNS once, and every update
+# failed until it was found).
+say "DNS: public resolvers, kept through DHCP renewals"
+touch /etc/.pve-ignore.resolv.conf
+printf 'nameserver 1.1.1.1\nnameserver 1.0.0.1\n' >/etc/resolv.conf
+if [ -f /etc/dhcp/dhclient.conf ] && ! grep -q '^supersede domain-name-servers' /etc/dhcp/dhclient.conf; then
+  printf '\n# Critter Clash box: the firewall blocks the LAN, so keep public DNS whatever DHCP offers.\nsupersede domain-name-servers 1.1.1.1, 1.0.0.1;\n' >>/etc/dhcp/dhclient.conf
 fi
-if grep -Eq '^[[:space:]]*nameserver[[:space:]]+127\.' /etc/resolv.conf; then
-  echo "note: DNS goes through a local resolver; make sure its upstream is not on the LAN."
+if [ -f /etc/dhcpcd.conf ] && ! grep -q '^nohook resolv.conf' /etc/dhcpcd.conf; then
+  printf '\n# Critter Clash box: keep the public DNS in resolv.conf.\nnohook resolv.conf\n' >>/etc/dhcpcd.conf
 fi
+getent hosts github.com >/dev/null || die "DNS doesn't work with 1.1.1.1: check the container's network"
 
 say "Packages"
 export DEBIAN_FRONTEND=noninteractive
