@@ -4,11 +4,12 @@ title: "Bellow: a Body talent, a ring around you that strikes everything close, 
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T16:11:39Z
 claimed_at: 2026-10-31T17:06:38Z
+finished_at: 2026-10-31T17:16:10Z
 epic: E17
 ---
 
@@ -178,3 +179,21 @@ export const bellow: UpgradeDef = {
 
 ### Tests
 - None in `tests/` (no pure helpers; content is tested automatically by `engine/tests/`, including the draw functions, the real-match weapon test and the 60-player budget). Verify with `npm run check` and `npm run smoke`.
+
+## Result (attempt 1, desktop)
+
+Added Bellow, a prestige-gated stand-still weapon for second-life Bodies: a new `bellow` upgrade (1.4 s cooldown, unaimed ring strike for 10/14/18 by rank), its `bellow-ring` area (ice ring with an ink rim that blooms to radius 80 and strikes everything around the player once, following them), and a `bellow-mouth` effect showing the mouth open for 0.3 s, plus the `bellow` talent (needs Maw 3, 3 Body points, 1 prestige) under Maw in the Body tree. Registered in `AREAS`, `EFFECTS`, `UPGRADES` and `body.ts`; all mod interactions come from the engine via `ctx.strike`. Verified with `npm run check` (112 tests) and `npm run smoke` (desktop + mobile), both passing.
+
+- Self-review: APPROVE
+- Time: 9.5 min
+
+```
+.../game/src/content/areas/bellow-ring.ts          | 32 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/areas/index.ts    |  2 ++
+ .../game/src/content/effects/bellow-mouth.ts       | 20 ++++++++++++++
+ .../draft-arena/game/src/content/effects/index.ts  |  2 ++
+ .../draft-arena/game/src/content/talents/body.ts   |  1 +
+ .../game/src/content/upgrades/bellow.ts            | 17 ++++++++++++
+ .../draft-arena/game/src/content/upgrades/index.ts |  2 ++
+ 7 files changed, 76 insertions(+)
+```

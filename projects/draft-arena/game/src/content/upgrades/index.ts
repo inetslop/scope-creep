@@ -1,5 +1,6 @@
 import type { UpgradeDef } from '../../../engine/api.ts';
 import { adrenaline } from './adrenaline.ts';
+import { bellow } from './bellow.ts';
 import { bolt } from './bolt.ts';
 import { chill } from './chill.ts';
 import { chew } from './chew.ts';
@@ -42,6 +43,7 @@ export const UPGRADES: readonly UpgradeDef[] = [
   bolt,
   cover,
   maw,
+  bellow,
   lob,
   goo,
   nerve,

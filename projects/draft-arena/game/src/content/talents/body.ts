@@ -15,6 +15,7 @@ export const body: TalentTreeDef = {
     { id: 'chomp', upgrade: 'chomp', max: 1, needs: [['vigor', 3], ['swift', 3]] },
     { id: 'might', upgrade: 'might', max: 5 },
     { id: 'maw', upgrade: 'maw', max: 5, needs: [['might', 2]] },
+    { id: 'bellow', upgrade: 'bellow', max: 3, needs: [['maw', 3]], points: 3, prestige: 1 },
     { id: 'magnet', upgrade: 'magnet', max: 3 },
   ],
 };

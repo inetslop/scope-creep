@@ -1,5 +1,6 @@
 import type { AreaDef } from '../../../engine/api.ts';
 import { bite } from './bite.ts';
+import { bellowRing } from './bellow-ring.ts';
 import { crown } from './crown.ts';
 import { prestigeStars } from './prestige-stars.ts';
 import { mark } from './mark.ts';
@@ -15,6 +16,7 @@ import { sappedDrop } from './sapped-drop.ts';
 /** Every area (fields, auras, puddles). One per line. */
 export const AREAS: readonly AreaDef[] = [
   bite,
+  bellowRing,
   crown,
   prestigeStars,
   mark,
