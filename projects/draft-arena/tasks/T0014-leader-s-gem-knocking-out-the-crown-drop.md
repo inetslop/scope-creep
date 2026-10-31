@@ -3,11 +3,13 @@ id: T0014
 title: "Leader's gem: knocking out the crown drops a gem worth its level"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0013]
 attempts: 0
 created: 2026-10-31T03:34:39Z
+claimed_at: 2026-10-31T04:06:19Z
 epic: E4
+designer: cachyos-x8664
 ---
 
 ## Goal
