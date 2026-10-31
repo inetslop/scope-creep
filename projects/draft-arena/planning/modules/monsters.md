@@ -32,7 +32,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-4 in the game, from game/src/content/monsters/ (the real values).
+5 in the game, from game/src/content/monsters/ (the real values).
 
 ### Dot (`dot`)
 - description: Heads straight for the nearest player.
@@ -68,6 +68,18 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - weight: 6
 - fromLevel: 4
 - look: shape triangle, color #f783ac, face {mood calm, eyes 2, mouth smile}, draw (code)
+- think: (code)
+
+### Spitter (`spitter`)
+- description: "Keeps its distance and spits a glob that deals 6."
+- hp: 20
+- speed: 75
+- radius: 13
+- damage: 8
+- xp: 2
+- weight: 5
+- fromLevel: 5
+- look: shape diamond, color #ffa94d, face {mood calm, eyes 2, mouth o}, draw (code)
 - think: (code)
 
 ### Snail (`snail`)

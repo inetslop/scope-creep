@@ -31,7 +31,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-2 in the game, from game/src/content/directors/ (the real values).
+4 in the game, from game/src/content/directors/ (the real values).
 
 ### Gem rain (`gem-rain`)
 - description: "Every 75 s, 24 gems land in a ring around a random player."
@@ -41,3 +41,11 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - description: "The top scorer wears a yellow crown; it moves on a strict overtake."
 - tick: (code)
 - onKill: (code)
+
+### Swarm surge (`swarm-surge`)
+- description: "A line of twelve Dots walks from an edge toward the centre."
+- tick: (code)
+
+### Gem rush (`gem-rush`)
+- description: "Every 100 s, twelve gems lay themselves in a line across the field: the first to grab one takes all twelve."
+- tick: (code)
