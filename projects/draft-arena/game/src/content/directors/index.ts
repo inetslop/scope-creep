@@ -11,6 +11,7 @@ import { prestigeCoins } from './prestige-coins.ts';
 import { swarmSurge } from './swarm-surge.ts';
 import { gemRush } from './gem-rush.ts';
 import { killCoins } from './kill-coins.ts';
+import { corpse } from './corpse.ts';
 import { prestigePoints } from './prestige-points.ts';
 
 /** Everything that runs the whole match (field events, elites, bounties). One per line. */
@@ -21,6 +22,7 @@ export const DIRECTORS: readonly DirectorDef[] = [
   gemGeyser,
   jackpot,
   killCoins,
+  corpse,
   crown,
   mark,
   wound,

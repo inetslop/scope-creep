@@ -4,11 +4,12 @@ title: "The corpse pays: a knocked-out player of level 4 or higher drops a gem w
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T14:05:22Z
 claimed_at: 2026-10-31T15:37:56Z
+finished_at: 2026-10-31T15:43:49Z
 epic: E19
 ---
 
@@ -96,3 +97,17 @@ That is the complete file, exactly as written.
 
 ### Tests
 - none (no pure helpers; engine/tests/ validates the director and exercises it in matches)
+
+## Result (attempt 1, cachyos-x8664)
+
+Added a new `corpse` director in `src/content/directors/corpse.ts` ("The corpse pays") that, on any player knockout at level 4+, drops one standard green `gem` pickup worth the victim's level in xp at the death spot (level 1–3 drops nothing); the gem is xp-only via the existing `pickups/gem.ts`. Registered it in `src/content/directors/index.ts` (import and `DIRECTORS` entry, both next to `killCoins`), and removed the crown's separate leader-gem line in `crown.ts` so a crowned player's death now drops the same level-worth gem through the corpse rule (the crown keeps its fall effect and double bounty). `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 5.9 min
+
+```
+.../draft-arena/game/src/content/directors/corpse.ts  | 19 +++++++++++++++++++
+ .../draft-arena/game/src/content/directors/crown.ts   |  1 -
+ .../draft-arena/game/src/content/directors/index.ts   |  2 ++
+ 3 files changed, 21 insertions(+), 1 deletion(-)
+```
