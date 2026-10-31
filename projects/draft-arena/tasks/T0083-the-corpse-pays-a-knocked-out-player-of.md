@@ -3,11 +3,13 @@ id: T0083
 title: "The corpse pays: a knocked-out player of level 4 or higher drops a gem worth their level"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T14:05:22Z
+claimed_at: 2026-10-31T14:23:11Z
 epic: E19
+designer: desktop
 ---
 
 ## Goal
