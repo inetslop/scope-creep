@@ -3,11 +3,13 @@ id: T0130
 title: "The grudge: two players who knock each other out wear a knot, and the end of the feud pays"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T21:28:31Z
+claimed_at: 2026-10-31T21:46:35Z
 epic: E30
+designer: desktop
 ---
 
 ## Goal
