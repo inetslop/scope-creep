@@ -1,12 +1,14 @@
 ---
 id: T0040
 title: "Chime: a level-up chime"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0039]
-attempts: 0
+attempts: 1
 created: 2026-10-31T07:44:39Z
+claimed_at: 2026-10-31T08:39:03Z
 epic: E11
 ---
 
