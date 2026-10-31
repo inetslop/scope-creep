@@ -370,13 +370,37 @@ export interface UpgradeDef {
 export interface StatusDef {
   id: string;
   name: string;
-  /** The ring drawn around a unit that has it. */
+  /** The ring drawn around a unit that has it (unless it has its own draw()). */
   color: string;
   /** Movement multiplier while it lasts. */
   speedMul?: number;
   /** Default 1. */
   maxStacks?: number;
   tick?: (ctx: Ctx, u: Unit, dt: number, stacks: number) => void;
+  /**
+   * Draw it yourself instead of the ring: a crown, a target, a cloud over the head. Runs on every
+   * client every frame, around the unit's centre, so it moves with the unit exactly (your own
+   * player included). Anything that marks a creature belongs here: an area that follows a unit is
+   * drawn where the server last saw it, so it trails behind.
+   */
+  draw?: (g: CanvasRenderingContext2D, v: StatusView) => void;
+  /** How far its drawing reaches above `top` (world units): the unit's name moves up to clear it. */
+  above?: number;
+}
+
+/** What a status's draw() knows. The origin is the unit's centre. */
+export interface StatusView {
+  /** The unit's radius (players grow). */
+  radius: number;
+  /** The top of the unit as drawn, as a y (negative): -radius, or higher when it wears a hat. Draw things over the head from here. */
+  top: number;
+  /** The status's color. */
+  color: string;
+  ink: string;
+  /** Seconds, for animation. */
+  time: number;
+  /** Differs per unit. */
+  seed: number;
 }
 
 export interface PickupDef {

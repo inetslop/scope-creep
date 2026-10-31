@@ -29,4 +29,5 @@ Next to the usual sections, it has:
 A missing row, or a row whose difference is only numbers, gets the task rejected by the architect.
 
 ## Not in this game
-(nothing removed yet)
+The owner removed these. Don't propose them again, or anything that works the same way.
+- The wound: a red collar around every critter below half hp. The owner didn't want it.

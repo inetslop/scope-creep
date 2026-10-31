@@ -5,6 +5,10 @@ import { chill3 } from './chill-3.ts';
 import { cling } from './cling.ts';
 import { gooSlow } from './goo-slow.ts';
 import { sapped } from './sapped.ts';
+import { crowned } from './crowned.ts';
+import { prestige1 } from './prestige-1.ts';
+import { prestige2 } from './prestige-2.ts';
+import { prestige3 } from './prestige-3.ts';
 import { marked } from './marked.ts';
 import { slushed } from './slushed.ts';
 import { wired1 } from './wired-1.ts';
@@ -18,6 +22,10 @@ export const STATUSES: readonly StatusDef[] = [
   wired1,
   wired2,
   marked,
+  crowned,
+  prestige1,
+  prestige2,
+  prestige3,
   gooSlow,
   slushed,
   cling,

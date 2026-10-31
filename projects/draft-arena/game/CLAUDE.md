@@ -130,7 +130,9 @@ Several developers change this game at the same time, each on their own task. Tw
 
 **Add a stat upgrade** — `stats: { speed: 20 }` per level (copy `upgrades/swift.ts`). The stats are in `Stats` in `engine/api.ts`.
 
-**Add a status** — a `StatusDef` in `src/content/statuses/` (a `speedMul`, and/or a `tick` for damage over time; see `engine/api.ts`), added to `STATUSES`; apply it with `ctx.addStatus(target, id, seconds)`. A ring in its color shows on units that have it.
+**Add a status** — a `StatusDef` in `src/content/statuses/` (a `speedMul`, and/or a `tick` for damage over time; see `engine/api.ts`), added to `STATUSES`; apply it with `ctx.addStatus(target, id, seconds)`. A ring in its color shows on units that have it, unless it has its own `draw(g, v)`.
+
+**Show something on a creature** (a crown, a target, stars over the head) — a status with its own `draw(g, v)` (copy `statuses/crowned.ts`), kept on the creature with `ctx.addStatus(unit, id, 0.2)` every tick while it should show. It is drawn with the creature, exactly where the player sees it. Never an area that follows the creature: an area is drawn where the server last saw it, so it trails behind (the crown and the mark once did).
 
 **Add an effect** — copy `effects/pop.ts`; play it with `ctx.effect(id, a, b?, value?)` from any server hook.
 

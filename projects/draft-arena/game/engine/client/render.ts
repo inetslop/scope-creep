@@ -169,7 +169,7 @@ export class Renderer {
     const look = k.look;
     const face = look.face === false ? undefined : (look.face ?? (k.type === 'monster' ? MONSTER_FACE : undefined));
     this.drawLook(look, this.view(e, look, time), look, face, k.type === 'pickup');
-    if (e.statuses.length) this.drawStatuses(e);
+    if (e.statuses.length) this.drawStatuses(e, time, -e.radius);
   }
 
   private drawLook(look: Look, v: DrawView, owner: object, face: Face | undefined, glint: boolean): void {
@@ -230,26 +230,42 @@ export class Renderer {
     g.translate(e.x, e.y);
     drawPlayerCritter(g, this.view(e, look, time), color, worn, this.ink, (def, err) => this.report(def, 'draw', err));
     g.restore();
-    if (e.statuses.length) this.drawStatuses(e);
+    // A hat may reach a radius above the head: what a status draws over the head goes above it.
+    if (e.statuses.length) this.drawStatuses(e, time, worn.head ? -2 * e.radius : -e.radius);
   }
 
-  private drawStatuses(e: FrameEntity): void {
+  private drawStatuses(e: FrameEntity, time: number, top: number): void {
     const g = this.g;
     const statuses = this.registry.content.statuses;
-    g.save();
-    g.lineWidth = 3.5;
-    g.lineCap = 'round';
-    g.setLineDash([3, 7]);
-    e.statuses.forEach((index, i) => {
+    let ring = 0;
+    for (const index of e.statuses) {
       const def = statuses[index];
-      if (!def) return;
+      if (!def || this.failed.has(def)) continue;
+      if (def.draw) {
+        // Drawn with the unit, at the position the unit is shown at: it never trails.
+        g.save();
+        g.translate(e.x, e.y);
+        try {
+          def.draw(g, { radius: e.radius, top, color: def.color, ink: this.ink, time, seed: e.id });
+        } catch (err) {
+          this.report(def, 'draw', err);
+        }
+        g.restore();
+        continue;
+      }
+      g.save();
+      g.lineWidth = 3.5;
+      g.lineCap = 'round';
+      g.setLineDash([3, 7]);
       g.strokeStyle = def.color;
       g.beginPath();
-      g.arc(e.x, e.y, e.radius + 6 + i * 5, 0, Math.PI * 2);
+      g.arc(e.x, e.y, e.radius + 6 + ring * 5, 0, Math.PI * 2);
       g.stroke();
-    });
-    g.restore();
+      g.restore();
+      ring++;
+    }
   }
+
 
   private drawLabels(visible: FrameEntity[], roster: ReadonlyMap<number, RosterEntry>, kinds: Registry['kinds']): void {
     const g = this.g;
@@ -264,7 +280,10 @@ export class Renderer {
         const entry = roster.get(e.id);
         const name = entry?.name ?? '';
         // A hat may reach a radius above the head: the name goes above it.
-        const y = e.y - e.radius * (entry?.wear.head ? 2 : 1) - 10 * px;
+        // Above the hat (a hat reaches a radius over the head) and above what statuses draw there.
+        let above = 0;
+        for (const index of e.statuses) above = Math.max(above, this.registry.content.statuses[index]?.above ?? 0);
+        const y = e.y - e.radius * (entry?.wear.head ? 2 : 1) - above - 10 * px;
         g.strokeStyle = 'rgba(255, 255, 255, 0.85)';
         g.lineWidth = 4 * px;
         g.strokeText(name, e.x, y);

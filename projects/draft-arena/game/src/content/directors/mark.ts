@@ -10,7 +10,7 @@ const ESCAPE_COINS = 5;
 
 /**
  * The mark: a random living player (human or bot, never the same one twice in a row when two or
- * more are alive) is marked for 15 s - a red target ring (areas/mark.ts) and +35% speed
+ * more are alive) is marked for 15 s - a red target around them (statuses/marked.ts) and +35% speed
  * (statuses/marked.ts). A player knockout pays 20 xp and 5 coins on top of the normal bounty,
  * with a burst where the ring was; a monster kill pops the ring into confetti and pays nothing;
  * an expired mark banks 5 coins for the marked player if they are still alive (humans only),
@@ -21,11 +21,8 @@ export const mark: DirectorDef = {
   name: 'The mark',
   description: 'Every 90 s, a random player is marked for 15 s: +35% speed, and a bonus for who knocks them out.',
   tick(ctx, mem) {
-    if (mem.until && ctx.time < mem.until) {
-      const target = ctx.playerById(mem.mark);
-      if (target) ctx.area(target, 'mark');
-      return;
-    }
+    // The target is the 'marked' status itself (statuses/marked.ts): it lasts as long as the mark.
+    if (mem.until && ctx.time < mem.until) return;
     if (mem.until) {
       const gone = ctx.playerById(mem.mark); // expired: they are still alive (a kill clears mem first)
       mem.mark = 0;
@@ -62,7 +59,7 @@ export const mark: DirectorDef = {
   },
 };
 
-/** The ring's spot: 12 units above the head (the top of the body is at y = -radius). */
-function spot(u: { x: number; y: number; radius: number }) {
-  return { x: u.x, y: u.y - (u.radius + 12) };
+/** Where the target is: around the player. */
+function spot(u: { x: number; y: number }) {
+  return { x: u.x, y: u.y };
 }

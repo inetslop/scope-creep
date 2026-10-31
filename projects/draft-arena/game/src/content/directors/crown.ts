@@ -2,7 +2,7 @@ import type { Ctx, DirectorDef, Player } from '../../../engine/api.ts';
 import { RULES } from '../rules.ts';
 
 /**
- * The crown: the top scorer wears a yellow crown above their head (areas/crown.ts). The crown
+ * The crown: the top scorer wears a yellow crown above their head (the status statuses/crowned.ts, drawn with them). The crown
  * moves only on a strict overtake or when the crowned critter is knocked out - a tie keeps it
  * where it is - and each move spreads the level-up ring from the new leader. Bots can wear it.
  */
@@ -39,5 +39,5 @@ function check(ctx: Ctx, mem: Record<string, number>): void {
     ctx.effect(RULES.effects.levelUp, { x: leader.x, y: leader.y });
     wearer = leader;
   }
-  ctx.area(wearer, 'crown');
+  ctx.addStatus(wearer, 'crowned', 0.2);
 }

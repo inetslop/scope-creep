@@ -118,6 +118,9 @@ describe('content data', () => {
     for (const s of CONTENT.statuses) {
       expect(s.color, `status ${s.id}: color`).toMatch(HEX);
       if (s.speedMul !== undefined) expect(s.speedMul >= 0 && s.speedMul <= 3, `status ${s.id}: speedMul`).toBe(true);
+      if (s.draw) {
+        for (const time of [0, 1.3]) expect(() => s.draw!(stubContext, { radius: 18, top: -18, color: s.color, ink: '#3b3355', time, seed: 3 }), `status ${s.id}: draw threw`).not.toThrow();
+      }
     }
     for (const k of CONTENT.pickups) {
       expect(positive(k.radius) && positive(k.life), `pickup ${k.id}: radius and life`).toBe(true);

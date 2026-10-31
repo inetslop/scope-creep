@@ -1,7 +1,7 @@
 import type { DirectorDef, Player } from '../../../engine/api.ts';
 
 const DURATION = 15; // same as the event's mark: a full 15 s window, refreshed by every kill
-const RING = 26; // the ring's radius, and the pop/burst size (areas/mark.ts)
+const RING = 26; // the pop/burst size where the target was (statuses/marked.ts)
 const BONUS_XP = 20;
 const BONUS_COINS = 5;
 
@@ -57,11 +57,6 @@ export const price: DirectorDef = {
         mem.apps = 0;
       }
     }
-    // Keep the ring over my marked player (the area is short-lived; re-fire it every tick).
-    if (mem.until && ctx.time < mem.until) {
-      const target = ctx.playerById(mem.claim);
-      if (target) ctx.area(target, 'mark');
-    }
   },
   onKill(ctx, mem, killer, victim) {
     // My marked player is knocked out: end my mark on them, and pay the bonus unless the
@@ -94,7 +89,7 @@ export const price: DirectorDef = {
   },
 };
 
-/** The ring's spot: 12 units above the head (the top of the body is at y = -radius). */
-function spot(u: { x: number; y: number; radius: number }) {
-  return { x: u.x, y: u.y - (u.radius + 12) };
+/** Where the target is: around the player. */
+function spot(u: { x: number; y: number }) {
+  return { x: u.x, y: u.y };
 }
