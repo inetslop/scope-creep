@@ -3,11 +3,13 @@ id: T0017
 title: "Two starter hats: a Hats card on the start screen"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T03:51:35Z
+claimed_at: 2026-10-31T04:32:00Z
 epic: E5
+designer: desktop
 ---
 
 ## Goal
