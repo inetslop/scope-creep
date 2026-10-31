@@ -36,7 +36,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-9 in the game, from game/src/content/monsters/ (the real values).
+10 in the game, from game/src/content/monsters/ (the real values).
 
 ### Dot (`dot`)
 - description: Heads straight for the nearest player.
@@ -61,6 +61,18 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - fromLevel: 3
 - look: shape pentagon, color #a78bfa, face {mood calm, eyes 1, mouth o}
 - onDeath: (code)
+
+### Brood (`brood`)
+- description: "Keeps birthing Dots while you stay close."
+- hp: 70
+- speed: 25
+- radius: 24
+- damage: 8
+- xp: 6
+- weight: 3
+- fromLevel: 6
+- look: shape circle, color #6d5aa3, face {mood calm, eyes 3, mouth o}, draw (code)
+- think: (code)
 
 ### Flee (`flee`)
 - description: "Notices you, then sprints straight away from you."

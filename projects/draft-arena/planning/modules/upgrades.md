@@ -37,7 +37,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-30 in the game, from game/src/content/upgrades/ (the real values).
+32 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -88,6 +88,13 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - cooldown: 0.8
 - fire: (code)
 
+### Horn (`horn`)
+- description: "Every 0.8 s, a fast dart at the nearest enemy within 240. 9 damage. Per rank: +3 damage."
+- maxLevel: 3
+- look: shape triangle, color #38d9a9
+- cooldown: 0.8
+- fire: (code)
+
 ### Ricochet (`ricochet`)
 - description: "Bolts that hit bounce on to another enemy nearby."
 - maxLevel: 1
@@ -110,6 +117,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - description: "Hits on an enemy below half its hp deal +6 damage, per rank."
 - maxLevel: 3
 - look: shape diamond, color #4dabf7
+- onHit: (code)
+
+### Swarm (`swarm`)
+- description: "Your hits deal +2 damage per other enemy within 80 of the target (up to 3). Per rank: +1 more per neighbor."
+- maxLevel: 3
+- look: shape hexagon, color #a78bfa
 - onHit: (code)
 
 ### Mend (`mend`)

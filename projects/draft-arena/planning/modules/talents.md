@@ -40,7 +40,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-5 in the game, from game/src/content/talents/ (the real values).
+6 in the game, from game/src/content/talents/ (the real values).
 
 ### Gunner (`gunner`)
 - description: Your Bolt, faster and in volleys.
@@ -96,3 +96,10 @@ The owner removed these. Don't propose them again, or anything that works the sa
   - id mend, upgrade mend, max 3, needs [["nerve",3]]
   - id fang, upgrade fang, max 2, needs [["nerve",2]]
   - id reckless, upgrade reckless, max 1, needs [["nerve",3],["frenzy",3]]
+
+### Hive (`hive`)
+- description: "The crowd is your weapon: the more around, the harder you hit."
+- look: shape hexagon, color #a78bfa
+- talents:
+  - id swarm, upgrade swarm, max 3
+  - id horn, upgrade horn, max 3, needs [["swarm",1]]

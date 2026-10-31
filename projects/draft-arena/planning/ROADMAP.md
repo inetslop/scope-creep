@@ -159,21 +159,24 @@ Breakdown:
 - T0060 L — Hive tree: Swarm, Horn, Nest, the Sting capstone — failed (the on-kill tables missed the Fang row)
 - T0063 M — Hive, first slice: Swarm (hits grow with the crowd) and Horn (a fast teal dart) — failed (the on-hit table missed the Mend row)
 - T0064 M — Hive, second slice: Nest (a kill-buff from crowd kills) and the Sting capstone — failed (a timed damage buff needs an engine change; Nest becomes a crowd-scaled kill heal)
-- T0075 L — Hive, first slice: the tree, Swarm (hits grow with the crowd) and Horn (a fast teal dart) — todo
-- T0076 M — Hive, second slice: Nest (a kill heal that grows with the crowd) and the Sting capstone — design (waits on T0075)
-Next: a fifth talent that forks the tree (a Hive sustain or a Hive defense) once it proves out.
+- T0075 L — Hive, first slice: the tree, Swarm (hits grow with the crowd) and Horn (a fast teal dart) — done
+- T0076 M — Hive, second slice: Nest (a kill heal that grows with the crowd) and the Sting capstone — design
+- T0081 M — Leech: a fifth talent, a hit heal while 3+ enemies are within 80 of you, the sustain fork under Swarm — design
+Next: a Hive defense once Leech and the capstone prove out.
 
 ## E17 A deeper second life (active)
 Goal: prestiging pays in the draft, not just in coins: each prestige this life banks a talent point, and a prestige-gated talent later opens in a second tree, the Slush way (planning/modules/prestige.md).
 Done when: a prestige banks a point the player sees and spends, and a second tree has its own prestige-gated talent.
 Breakdown:
-- T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — in progress
-- T0067 M — Cover: a fan of bolts behind you, a Gunner talent open after a prestige this life — design (waits on T0061)
-Next: a second gated talent in another tree once Cover and the bank prove out.
+- T0061 M — Prestige banks a point: +1 talent point per prestige this life, on the prestige card — done
+- T0067 M — Cover: a fan of bolts behind you, a Gunner talent open after a prestige this life — todo
+- T0079 M — Gore: a Frenzy talent, the jab goes through enemies while below half hp, open after a prestige — design
+- T0080 M — Snare: a Goober talent, your Gush puddles sap whatever stands in them, open after a prestige — design
+Next: a third gated talent once the bank, Cover and the two gated talents prove out.
 
-## E18 The last slot (active)
+## E18 The last slot (done)
 Goal: the menagerie's 10th and final monster type — a way to threaten no other monster has, so the crowd's ceiling is full.
 Done when: the 10th monster is in the field with a behavior no other has, readable at a glance.
 Breakdown:
-- T0066 L — Brood: a purple sac that keeps birthing Dots while it lives — in progress
-Next: the menagerie is full at 10 types; the crowd deepens through the trees that learn to fight it.
+- T0066 L — Brood: a purple sac that keeps birthing Dots while it lives — done
+Done: the 10th monster is in — a Brood that keeps birthing Dots while it lives; the menagerie is full, and the crowd deepens through the trees that learn to fight it.

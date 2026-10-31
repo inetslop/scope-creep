@@ -43,6 +43,9 @@ The backlog: add freely, turn the best into epics and tasks.
 - Prestige banks a point (E17): each prestige this life banks +1 talent point — the second life pays in the draft currency itself, shown on the 2 s prestige card next to the coins. — E17: T0061
 - Plink (a later sound pass): a small plink when you collect a gem, a touch lower and longer for the big jackpot gem — the farm loop is the quietest moment in the match. — T0077 (with a small green star where the gem is picked up)
 - Coin chip (shop support): a small sticker chip on the match HUD with the coin balance, ticking up as kills, events and prestiges pay — the shop's long goals (Bloom 150, Chef Hat 300) read as close or not yet, mid-life. — T0068
+- Gore (E17): a Frenzy prestige-gated talent — after 1 prestige this life, while below half hp the Nerve jab goes through 1 more enemy per rank — the hurt state becomes how the jab moves, the third fork under Nerve. — T0079
+- Snare (E17): a Goober prestige-gated talent — after 1 prestige this life, your Gush puddles sap whatever stands in them (a small blue drop on the back): a sapped critter takes 15% more damage from you, +10% per rank — the zone feeds every weapon, the second fork under Gush. — T0080
+- Leech (E16): a fifth Hive talent, the sustain fork under Swarm — while 3+ enemies are within 80 of you, your hits heal 1 hp, per rank +1 — the swarm that chases you feeds you. — T0081
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.
