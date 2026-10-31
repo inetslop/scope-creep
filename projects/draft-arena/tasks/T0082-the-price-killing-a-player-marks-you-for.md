@@ -3,11 +3,13 @@ id: T0082
 title: "The price: killing a player marks you for 15 s"
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T14:05:22Z
+claimed_at: 2026-10-31T14:05:26Z
 epic: E19
+designer: desktop
 ---
 
 ## Goal
