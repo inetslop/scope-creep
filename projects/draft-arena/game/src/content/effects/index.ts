@@ -6,6 +6,7 @@ import { crownFall } from './crown-fall.ts';
 import { coin } from './coin.ts';
 import { ring } from './ring.ts';
 import { slowPop } from './slow-pop.ts';
+import { puffBurst } from './puff-burst.ts';
 import { wiredPop } from './wired-pop.ts';
 import { geyserBubble } from './geyser-bubble.ts';
 import { splashRing } from './splash-ring.ts';
@@ -21,5 +22,6 @@ export const EFFECTS: readonly EffectDef[] = [
   splashRing,
   burst,
   slowPop,
+  puffBurst,
   wiredPop,
 ];

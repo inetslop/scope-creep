@@ -4,11 +4,12 @@ title: "Popper: a fat grinning red blob that pops a damaging puff when it dies"
 assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T10:47:58Z
 claimed_at: 2026-10-31T11:16:04Z
+finished_at: 2026-10-31T11:35:06Z
 epic: E14
 ---
 
@@ -162,3 +163,20 @@ export const popper: MonsterDef = {
 
 ### Tests
 none - content is tested automatically by engine/tests (registration, valid data, every monster in a real match); run `npm run check` and `npm run smoke`.
+
+## Result (attempt 1, desktop-4070)
+
+Added the 9th monster "Popper" (`src/content/monsters/popper.ts`): a fat red grinning blob (50 hp, 35 u/s, r20) that chases the nearest player from level 3 and shows fangs (slot-driven face flip) when one is within 60. When it dies it pops: `pop-puff` (`src/content/areas/pop-puff.ts`) leaves a still 40-unit orange zone at the spot that strikes everything inside — players and monsters — once for 10 and is gone after 0.5 s, so ranged kills are free but finishing on top costs 10 hp; `puff-burst` (`src/content/effects/puff-burst.ts`) shows the soft orange ring blooming out to 40 with confetti, as small as a monster pop. All three are registered (after snail / end of lists). `npm run check` (typecheck, lint, 95 tests) and the desktop + mobile smoke runs all pass; note `git diff` couldn't be run because git commands are approval-gated in this session.
+
+- Self-review: APPROVE
+- Time: 19.0 min
+
+```
+.../draft-arena/game/src/content/areas/index.ts    |  2 ++
+ .../draft-arena/game/src/content/areas/pop-puff.ts | 31 ++++++++++++++++++++
+ .../draft-arena/game/src/content/effects/index.ts  |  2 ++
+ .../game/src/content/effects/puff-burst.ts         | 29 ++++++++++++++++++
+ .../draft-arena/game/src/content/monsters/index.ts |  2 ++
+ .../game/src/content/monsters/popper.ts            | 34 ++++++++++++++++++++++
+ 6 files changed, 100 insertions(+)
+```

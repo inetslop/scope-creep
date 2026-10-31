@@ -9,6 +9,7 @@ import { splat } from './splat.ts';
 import { puddle } from './puddle.ts';
 import { sticky } from './sticky.ts';
 import { chewPuddle } from './chew-puddle.ts';
+import { popPuff } from './pop-puff.ts';
 
 /** Every area (fields, auras, puddles). One per line. */
 export const AREAS: readonly AreaDef[] = [
@@ -22,4 +23,5 @@ export const AREAS: readonly AreaDef[] = [
   sticky,
   puddle,
   chewPuddle,
+  popPuff,
 ];
