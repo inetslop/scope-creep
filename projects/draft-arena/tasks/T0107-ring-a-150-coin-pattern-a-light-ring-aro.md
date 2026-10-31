@@ -3,13 +3,11 @@ id: T0107
 title: "Ring: a 150-coin pattern, a light ring around the middle of the body"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:49:52Z
-claimed_at: 2026-10-31T17:53:51Z
 epic: E22
-designer: yoga
 ---
 
 ## Goal
@@ -41,3 +39,44 @@ The pattern shelf's tenth and last step: a light ring around the middle of the b
 - [ ] The ring reads on every one of the 10 player colors (light shade of the own color, hollow, centred on the middle of the body) and the face stays easy to see.
 - [ ] Bots wear it at random like every pattern.
 - [ ] Nothing in play changes: no stats, no size, no behavior.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/content/patterns/ring.ts` - the Ring pattern def, exactly as below
+- edit `src/content/patterns/index.ts` - one import + one registry line
+
+### Interfaces
+No new types. Uses the existing `PatternDef` (`id, name, description, price, draw(g, w)`); no `prestige` field.
+
+### Steps
+1. Create `src/content/patterns/ring.ts` with exactly this content (mirror of `star.ts`, stroked like `lolly.ts`):
+```ts
+import { shade, type PatternDef } from '../../../engine/api.ts';
+
+export const ring: PatternDef = {
+  id: 'ring',
+  name: 'Ring',
+  description: 'A light ring around the middle of the body.',
+  price: 150,
+  draw(g, w) {
+    const r = w.radius;
+    g.strokeStyle = shade(w.color, 0.35);
+    g.lineWidth = 0.18 * r;
+    g.beginPath();
+    g.arc(0, 0, r / 3, 0, 2 * Math.PI);
+    g.stroke();
+  },
+};
+```
+2. In `src/content/patterns/index.ts`: add `import { ring } from './ring.ts';` after the `star` import, and `ring,` as the last entry of `PATTERNS` (150 is the top price, so it always comes last: after `star,` — or after T0105's `cheeks,` line if that has landed).
+
+### Pitfalls
+- Hollow means **stroke only**: never call `g.fill()` (a fill would paint the whole disc).
+- No ink stroke, no face — the engine draws the outline and face on top of every pattern; do not add them.
+- `lineWidth` is relative (`0.18 * r`, the lolly idiom), not pixels; ring radius is `r / 3`.
+- Keep `ring,` last in `PATTERNS` so the shelf stays price-ascending (150 is the max).
+- Nothing in play changes: no stats, no size, no behavior; no `Math.random`/`Date` anywhere (draw is pure canvas state).
+
+### Tests
+none (no pure helpers; content is tested automatically by engine/tests/).
