@@ -3,11 +3,13 @@ id: T0038
 title: "The mark: a random player wears a red target for 15 s, and knocking them out pays"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T07:27:49Z
+claimed_at: 2026-10-31T08:14:37Z
 epic: E10
+designer: desktop
 ---
 
 ## Goal
