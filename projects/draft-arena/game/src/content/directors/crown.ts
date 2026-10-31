@@ -15,6 +15,7 @@ export const crown: DirectorDef = {
   },
   onKill(ctx, mem, killer, victim) {
     if (victim.type !== 'player') return;
+    if (victim.id === mem.crown) ctx.effect('crown-fall', { x: victim.x, y: victim.y });
     if (killer && mem.crown === victim.id) {
       ctx.giveXp(killer, RULES.pvp.bountyXpPerLevel * victim.level);
       ctx.dropPickup('event-gem', victim.x, victim.y, victim.level);

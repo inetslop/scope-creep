@@ -4,11 +4,12 @@ title: "Crown fall: the crown flies off and pops where the leader is knocked out
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T06:50:30Z
 claimed_at: 2026-10-31T08:38:10Z
+finished_at: 2026-10-31T08:48:00Z
 epic: E4
 ---
 
@@ -131,3 +132,17 @@ Crown path = the same crown as `areas/crown.ts` (peaks ±13/0, valleys ±6.5 at 
 
 ### Tests
 - none (engine/tests/ runs every effect in a real match automatically).
+
+## Result (attempt 1, asus)
+
+Added `src/content/effects/crown-fall.ts` — when the crowned player is knocked out, a yellow 3-point crown lifts off, spins up 60 units over 0.9 s, pops into 20 yellow stars, while a yellow ink-rimmed ring spreads to radius 120 over 0.8 s at the spot, on top of the normal knockout burst (and the leader's gem, which can drop at the same spot). Registered it in `src/content/effects/index.ts` and made the crown director's `onKill` play `crown-fall` at the victim's spot when they wore the crown; the crown's movement logic is untouched.
+
+- Self-review: APPROVE
+- Time: 9.8 min
+
+```
+.../game/src/content/directors/crown.ts            |  1 +
+ .../game/src/content/effects/crown-fall.ts         | 70 ++++++++++++++++++++++
+ .../draft-arena/game/src/content/effects/index.ts  |  2 +
+ 3 files changed, 73 insertions(+)
+```
