@@ -37,7 +37,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-22 in the game, from game/src/content/upgrades/ (the real values).
+23 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -128,6 +128,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - look: shape circle, color #99e9f2
 - cooldown: 1.6
 - fire: (code)
+
+### Cling (`cling`)
+- description: "When your Goo hits, it splats on its target and clings for 2 s, dealing 5 damage every 0.5 s. Per rank: +5 damage per tick."
+- maxLevel: 3
+- look: shape star, color #4dabf7
+- onHit: (code)
 
 ### Split (`split`)
 - description: "Every weapon fires 1 more shot, fanned out; all shots 12% weaker. Per rank."

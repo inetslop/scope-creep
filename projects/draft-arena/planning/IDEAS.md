@@ -30,10 +30,11 @@ The backlog: add freely, turn the best into epics and tasks.
 - Goober depth (E8): the 5th and 6th talent for the tree once it is proven (a Goo that sticks to its target, a Gush puddle that bites). — E12: T0042 (Cling), T0043 (Chew)
 - Bloom (E6): a 150-coin head accessory — a pink five-petal flower with a yellow center on the head, filling the gap between the free hats and the 300-coin Chef Hat. — T0046
 - Prestige stars (E7): a small gold star beside the critter per prestige this life, up to 3, gone on a knockout — a visible, powerless mark of a life, so a veteran reads in a crowd. — T0047
-- Frenzy tree (E13): a fifth playstyle, thin and mean — Frenzy trades 8 max HP for 12% damage per rank, Nerve is a jab that hits harder the more hurt you are, Sprint only runs below half HP, and the Reckless capstone doubles damage below half HP. — E13: T0053
+- Frenzy tree (E13): a fifth playstyle, thin and mean — Frenzy trades 8 max HP for 12% damage per rank, Nerve is a jab that hits harder the more hurt you are, Adrenaline sprints +20% speed for 1.5 s on a kill while below half hp, and the Reckless capstone doubles damage below half HP. — E13: T0054 (T0053 rejected: the engine can't do stats that switch on hp, so the per-rank Sprint became a flat Wired status on kill)
+- Frenzy depth (E13): a fork under Nerve once the tree proves out — a jab that slows on hit, or kills that pay an extra coin while you're hurt, the way E12 forked Goober.
 - Beak: a 100-coin face accessory — a small orange beak below the eyes, the shop's third face item (the face slot is its thinnest shelf). — T0052
-- Popper (a later menagerie epic): a fat red critter that pops a damaging puff (radius 40, 10 damage) when it dies — killing it up close is a choice, not a free hit.
-- Diagonal pattern: two diagonal light stripes across the body, 60 coins — the next pattern price step.
+- Popper (a later menagerie epic): a fat red critter that pops a damaging puff (radius 40, 10 damage) when it dies — killing it up close is a choice, not a free hit. — E14: T0055
+- Diagonal pattern: two diagonal light stripes across the body, 60 coins — the next pattern price step. — T0056
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.

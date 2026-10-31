@@ -69,7 +69,7 @@ Breakdown:
 - T0046 S — Bloom: a 150-coin head accessory, a pink flower with a yellow center — done
 Done: kills and events pay coins, the shop sells its stock, and the Chef Hat is the goal to save for.
 
-## E7 Prestige (tasked)
+## E7 Prestige (done)
 Goal: nobody stays overpowered forever: a player who reaches level 18 prestiges back to level 1, and prestiging is worth it.
 Done when: reaching level 18 sends a player back to level 1 and gives them something for it. What they gain is yours to design: it must make prestiging worth it without making them overpowered again.
 Ready: the reset at level 18 works; the reward is content (a director's onPrestige, talents and wearables that need prestiges). Today a prestige gives nothing (planning/modules/prestige.md).
@@ -79,8 +79,8 @@ Breakdown:
 - T0029 M — The prestige pays: the Nth prestige this life pays 25 x N coins, a 2 s card under the xp bar — done
 - T0025 M — Slush: a Lobber talent that only opens after a prestige this life — done
 - T0026 S — Medal: a back accessory, buyable only after 2 prestiges in all — done
-- T0047 M — Prestige stars: a gold star on the critter per prestige this life, up to 3 — in progress
-Next: done once T0047 builds: the coin pays, Slush opens a second-life build, and the stars mark the life (the Medal is in).
+- T0047 M — Prestige stars: a gold star on the critter per prestige this life, up to 3 — done
+Done: the coin pays, Slush opens a second-life build, the stars mark the life, and the Medal is the long goal.
 
 ## E8 The Goober tree (done)
 Goal: a fourth playstyle for the draft: a build whose weapon aims for you — your Goo turns in flight and catches the nearest enemy, while Gunner kites with straight Bolts, Lobber zones with bubbles and Body bites in front.
@@ -89,7 +89,7 @@ Breakdown:
 - T0030 L — Goober tree: Reap, a homing Goo, a Gush puddle, a Scatter capstone — done
 Done: the tree is playable end to end; the 5th and 6th talents wait in IDEAS for a later cycle.
 
-## E9 A bigger menagerie (active)
+## E9 A bigger menagerie (done)
 Goal: the crowd grows a 6th, then a 7th, way to move; each new monster readable at a glance.
 Done when: the 7th monster is in the field with a behavior no other has (the 6th, the Sleeper, is already in).
 Breakdown:
@@ -97,8 +97,8 @@ Breakdown:
 - T0034 M — Bulwark: a deep red octagon whose bubble shield eats the first 15 hits — failed (monsters have no target-side hit hook)
 - T0037 M — Boing: a deep red heart that crouches and leaps at where you are going — failed (the comparison table omitted the Sleeper; rebuilt as T0045)
 - T0045 M — Boing: a deep red heart that crouches, then leaps to where you're going — failed
-- T0048 M — Boing: a deep red heart that crouches, then leaps to where you're going — designing
-Next: done once T0048 builds: the crowd gains a new way to move (it crouches, it leaps).
+- T0048 M — Boing: a deep red heart that crouches, then leaps to where you're going — done
+Done: eight monsters, every one with its own way to move (Boing crouches and leaps to where you're going).
 
 ## E10 More reasons to move (done)
 Goal: a 5th, then a 6th, field event, so the field always has a new place to be (the cap is 6 events).
@@ -116,21 +116,29 @@ Breakdown:
 - T0040 S — Chime: a level-up chime — done
 - T0041 S — Coin: a coin tick when a coin is picked up or spent — done
 - T0049 S — Bonk: a deep thud when a player is knocked out — done
-- T0050 S — Fanfare: a rising three-note fanfare when a player prestiges — in progress
-- T0051 S — Toot: a party-horn toot when the crown flies off — design
+- T0050 S — Fanfare: a rising three-note fanfare when a player prestiges — done
+- T0051 S — Toot: a party-horn toot when the crown flies off — designing
 Next: done once T0050 and T0051 build: a pop, a level-up, a coin, a knockout, a prestige and a crown fall each have a sound.
 
 ## E12 The Goober grows (active)
 Goal: the fourth tree deepens: under Goo it forks three ways — a Goo that sticks to its target, a Gush puddle that bites, and the scatter that exists — so a Goober life picks a direction instead of buying the same four talents.
 Done when: the tree has six talents with a real fork under Goo, each readable in a crowd.
 Breakdown:
-- T0042 M — Cling: a Goo that splats on its target and rides it, damage every 0.5 s — in progress
-- T0043 M — Chew: your Gush puddle deals damage to whatever stands in it — todo
+- T0042 M — Cling: a Goo that splats on its target and rides it, damage every 0.5 s — done
+- T0043 M — Chew: your Gush puddle deals damage to whatever stands in it — in progress
 Next: done once T0042 and T0043 build: the Goober fork is real — sticky, zone or scatter.
 
 ## E13 The Frenzy tree (active)
 Goal: a fifth playstyle, thin and mean: Frenzy trades max HP for damage, and the more hurt a player is, the harder they hit — a life that wants to stay at half HP instead of playing safe.
 Done when: the Frenzy tree is in the panel with its trade-off mod, its hurt-scaled jab, its low-HP sprint and its low-HP capstone, each readable in a crowd.
 Breakdown:
-- T0053 L — Frenzy tree: Frenzy, Nerve, Sprint, Reckless — design
-Next: depth (a fork, a new talent) once the tree proves out, the way E12 did for Goober.
+- T0053 L — Frenzy tree: Frenzy, Nerve, Sprint, Reckless — failed (the engine can't express Sprint's below-half-hp per-rank speed; Adrenaline replaces it)
+- T0054 L — Frenzy tree: Frenzy, Nerve, Adrenaline, Reckless — design
+Next: done once T0054 builds: the tree is in the panel — trade hp for damage, a hurt-scaled jab, a kill-sprint while hurt, a double-hit capstone.
+
+## E14 A meaner menagerie (active)
+Goal: the crowd gains a 9th, then a 10th, way to threaten you — monsters that make the kill itself a choice, each readable at a glance (the cap is 10 types).
+Done when: the 9th monster is in the field with a behavior no other has.
+Breakdown:
+- T0055 M — Popper: a fat grinning red blob that pops a damaging puff when it dies — design
+Next: the 10th (and last) monster once Popper proves out; depth in E13 (a fork under Nerve) after T0054.
