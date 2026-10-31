@@ -95,7 +95,7 @@
     "L": { "maxTurns": 160, "timeoutMin": 240 }
   },
   "loop": {
-    "project": "draft-arena",
+    "project": "chokepoint",
     "pollSeconds": 60,
     "maxAttempts": 3,
     "fixRounds": 2,

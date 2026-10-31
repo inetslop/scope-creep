@@ -34,3 +34,4 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - Lead: shots that aim ahead of the enemy. Shots home in and never miss, so it only added a way to miss.
 - Pulse (T0089): Splash without its cap, plus Reach's added form.
 - Ricochet (T0038): shots bouncing off the board's rocks. Hard to read, and Chain already leaps between enemies.
+- An added Spray that adds pellets, or a beam kill's needles per added Spray (T0242): the owner made an added Spray crit chance on every damage tower (T0321).

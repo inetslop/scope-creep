@@ -17,3 +17,4 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - Status chips over enemies for mark, burn, slow, ramp and root (T0179, T0192): the enemy's own look already shows them.
 - A second start-wave button, "Send · +N" (T0223): the big button does it, and the early-send gold moved onto it.
 - The wave preview's "+N gold" line (T0223): awkward, and not worth the room.
+- A level-augment picker on the main menu (T0285's card): the owner moved the choice into the step after Play, the daily board pick (T0323).
