@@ -3,11 +3,13 @@ id: T0008
 title: "Snail: an orange hexagon that leaves sticky patches behind"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T02:37:00Z
+claimed_at: 2026-10-31T03:06:37Z
 epic: E2
+designer: cachyos-x8664
 ---
 
 ## Goal
