@@ -4,11 +4,12 @@ title: "Halves: a two-tone pattern, the top of the body lighter"
 assignee: inet-racing
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T08:05:11Z
 claimed_at: 2026-10-31T09:34:34Z
+finished_at: 2026-10-31T09:45:07Z
 epic: E6
 ---
 
@@ -78,3 +79,16 @@ export const halves: PatternDef = {
 
 ### Tests
 none (engine/tests/ checks the pattern is registered, draws, and the 12-pattern cap automatically; this makes it 5 of 12).
+
+## Result (attempt 1, inet-racing)
+
+Added the "Halves" two-tone pattern (`src/content/patterns/halves.ts`): one bold cut painting the top half of the body in `shade(w.color, 0.35)` (the same light shade as the other light patterns), so it reads on all 10 player colors with the engine's outline and face drawn on top. Registered it as the 5th of 12 patterns in `src/content/patterns/index.ts` (one import, one line, existing order untouched); the shop, bot wearing, and profile persistence pick it up from the registry with no other edits. Priced at 50 coins, no prestige gate. `npm run check` (86 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 10.6 min
+
+```
+projects/draft-arena/game/src/content/patterns/halves.ts | 16 ++++++++++++++++
+ projects/draft-arena/game/src/content/patterns/index.ts  |  2 ++
+ 2 files changed, 18 insertions(+)
+```

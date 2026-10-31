@@ -3,6 +3,7 @@ import { bands } from './bands.ts';
 import { spots } from './spots.ts';
 import { belly } from './belly.ts';
 import { party } from './party.ts';
+import { halves } from './halves.ts';
 
 /** Color patterns painted over a player's body. One per line. */
 export const PATTERNS: readonly PatternDef[] = [
@@ -10,4 +11,5 @@ export const PATTERNS: readonly PatternDef[] = [
   spots,
   belly,
   party,
+  halves,
 ];
