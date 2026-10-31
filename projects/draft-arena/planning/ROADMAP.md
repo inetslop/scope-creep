@@ -232,22 +232,24 @@ Done when: both forks are in the panel and playable: a Hive life banks talent po
 Breakdown:
 - T0108 M — Thicket: a Hive talent, a hit that shields you while the crowd is on you — failed (no content hook for damage reduction, see Needs the engine)
 - T0110 M — Scavenge: a Hive talent, a monster kill is worth xp per enemy around the corpse — the crowd fork under Swarm — done
-- T0109 M — Fizz: a Lobber capstone, the bubble's splash lingers and strikes every 0.5 s — the zone capstone beside Fuse — designing
-Next: the Fizz capstone (T0109) is being designed; the Scavenge fork has landed, and the Hive grows further in E25.
+- T0109 M — Fizz: a Lobber capstone, the bubble's splash lingers and strikes every 0.5 s — the zone capstone beside Fuse — rejected (the on-hit/on-kill table missed 11 rows), rewritten as T0116
+- T0116 M — Fizz: the same capstone, with the full on-hit/on-kill table — the zone capstone beside Fuse — design
+Next: Fizz lands as T0116; the Lobber's second aim grows in E27, and the Hive in E25.
 
 ## E24 The Gunner grows (active)
 Goal: the Gunner (6 talents) grows two forks under Bolt that change how the kite plays — a bolt that lingers in flight, so the straight line becomes a hazard on the ground, and a bolt that re-aims once, so a miss still finds the target that moved.
 Done when: the tree has 8 talents, and a committed Gunner's bolts leave a drifting line and swoop back on a moving target, each readable in a crowd.
 Breakdown:
-- T0111 M — Drift: a Gunner fork, bolts drop to 40% speed after 120 units and linger 0.8–1.2 s — the line fork under Bolt 2 — in progress
-- T0112 M — Swoop: a Gunner fork, bolts re-aim once at 200 units and fly a second leg of 160–240 units — the re-aim fork under Bolt 2 — todo (waits on T0111)
+- T0111 M — Drift: a Gunner fork, bolts drop to 40% speed after 120 units and linger 0.8–1.2 s — the line fork under Bolt 2 — done
+- T0112 M — Swoop: a Gunner fork, bolts re-aim once at 200 units and fly a second leg of 160–240 units — the re-aim fork under Bolt 2 — in progress
 
 ## E25 The Hive deepens (active)
 Goal: the Hive grows past its base shape and fills the last two holes in every tree's shape: a movement talent, so a Hive life can run into the swarm and come back out, and the prestige-gated talent — the Hive is the only tree without one.
 Done when: the Hive tab has 8 talents — the crowd fork under Swarm (Horn, Leech, Scavenge, Glide) and the dart split under Horn that opens after a prestige — and a committed Hive life moves faster while the crowd is on it.
 Breakdown:
 - T0113 M — Glide: a Hive fork under Swarm, while 3+ enemies are within 80 you move faster, refreshed on each of your hits — design
-Next: the gated dart split (Lash, the last tree gate) writes once the pool has room.
+- T0117 M — Lash: a Hive prestige gate, your horn darts split on hit into small darts at the critter's neighbors — the dart fork under Horn — design
+Next: Glide (T0113) and Lash (T0117) are written; the Hive is fully tasked.
 
 ## E26 The shop reaches the cap (active)
 Goal: the shop's ladders complete: each slot gets a 7th item past its old top, and the pattern shelf gets its last two steps to its cap of 12 — every shelf has a next save, and the price ladder has no hole.
@@ -256,3 +258,10 @@ Breakdown:
 - T0114 S — Candy: a 240-coin head, a striped candy on the side of the head — the head's step past Bloom — design
 - T0115 S — Smile: a 180-coin pattern, a light smile across the lower body — the pattern shelf to 11 — design
 Next: the face's 7th (the 200→350 gap), the back's 7th and the pattern shelf's 12th (200), one per cycle as the pool has room.
+
+## E27 The Lobber finds a second aim (active)
+Goal: today the bubble only hits the ground, where it lands; a committed Lobber gets a second aim — a bubble that pops on the critter it touches, a kill-shot on the target instead of a zone, so the Lobber can snipe through a crowd the way a Gunner kites.
+Done when: the Bop fork is in the panel and a Lobber life can pop a bubble on a critter (a direct burst, no splash there) instead of splashing the ground.
+Breakdown:
+- T0118 M — Bop: a Lobber fork, the bubble pops on the critter it touches: a burst at the hit point, no splash there — design
+Next: a third direction for the bubble (from IDEAS) once Bop proves out.

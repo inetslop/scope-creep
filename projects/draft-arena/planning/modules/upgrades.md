@@ -39,10 +39,11 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-40 in the game, from game/src/content/upgrades/ (the real values).
+41 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
+- `(none)`: Drift
 - `area`: Wide
 - `armor`: Hide
 - `cooldown`: Haste
@@ -243,6 +244,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - maxLevel: 2
 - look: shape triangle, color #ffd43b
 - stats: shots 1, damage -0.12
+
+### Drift (`drift`)
+- description: "After 120 units, your bolts fly at 40% speed and keep going until 0.8 s after launch. Rank 2: until 1.2 s."
+- maxLevel: 2
+- look: shape triangle, color #99e9f2
+- stats: 
 
 ### Lance (`lance`)
 - description: Bolts go through 1 more enemy, per rank.
