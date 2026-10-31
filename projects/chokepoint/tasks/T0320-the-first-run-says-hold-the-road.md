@@ -3,11 +3,13 @@ id: T0320
 title: The first run says hold the road
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T01:28:10Z
+claimed_at: 2026-10-31T01:28:13Z
 epic: E11
+designer: desktop
 ---
 
 ## Goal
