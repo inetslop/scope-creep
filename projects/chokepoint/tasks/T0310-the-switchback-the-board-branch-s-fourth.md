@@ -1,14 +1,14 @@
 ---
 id: T0310
 title: "The switchback: the board branch's fourth node, a fold in the road"
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 2
+attempts: 3
 created: 2026-10-30T22:00:22Z
-claimed_at: 2026-10-31T01:09:38Z
-finished_at: 2026-10-31T07:09:58Z
+claimed_at: 2026-10-31T23:04:28Z
 epic: E9
 ---
 
