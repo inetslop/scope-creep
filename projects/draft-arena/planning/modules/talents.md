@@ -39,7 +39,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-3 in the game, from game/src/content/talents/ (the real values).
+4 in the game, from game/src/content/talents/ (the real values).
 
 ### Gunner (`gunner`)
 - description: Your Bolt, faster and in volleys.
@@ -72,3 +72,12 @@ The owner removed these. Don't propose them again, or anything that works the sa
   - id lob, upgrade lob, max 5, needs [["quick",1]]
   - id wide, upgrade wide, max 3, needs [["lob",2]]
   - id fuse, upgrade fuse, max 1, needs [["lob",4]]
+
+### Goober (`goober`)
+- description: "Your Goo: a drop that turns and finds the nearest enemy for you."
+- look: shape circle, color #4dabf7
+- talents:
+  - id reap, upgrade reap, max 3
+  - id goo, upgrade goo, max 3, needs [["reap",1]]
+  - id gush, upgrade gush, max 3, needs [["goo",1]]
+  - id scatter, upgrade scatter, max 1, needs [["goo",3]]

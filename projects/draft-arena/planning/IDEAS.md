@@ -24,6 +24,9 @@ The backlog: add freely, turn the best into epics and tasks.
 - Bulwark (E9): a big slow tank with a bubble shield that eats the first 15 hits, then takes damage and its face turns scared — a front for a crowd, a target you have to crack first. — T0034
 - The shop's long goal (E6): a 300-coin Chef Hat — the first thing that takes many matches, the top of the shop. — T0035
 - Sound layer (later): a pop when a monster dies, a chime on a level-up, a coin tick in the shop — the game is quiet; sounds are the next juice.
+- Boing (E9): a deep red heart that crouches, then leaps to where you are going (a prediction of your run) — a straight-line kite no longer escapes it, and a hard direction change makes it leap past you. — T0037
+- The mark (E10): every 90 s, one random player wears a red target ring for 15 s and runs 35% faster; knocking them out pays 20 bonus xp and 5 coins — the field turns from a farm into a hunt. — T0038
+- Goober depth (E8): the 5th and 6th talent for the tree once it is proven (a Goo that sticks to its target, a Gush puddle that bites) — plan in a later cycle.
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.

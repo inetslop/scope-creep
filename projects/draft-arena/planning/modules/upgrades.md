@@ -37,7 +37,7 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-17 in the game, from game/src/content/upgrades/ (the real values).
+21 in the game, from game/src/content/upgrades/ (the real values).
 
 **By `stats`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
@@ -73,6 +73,13 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - cooldown: 1.1
 - fire: (code)
 
+### Goo (`goo`)
+- description: "Every 1.6 s, lobs a big blue drop at the nearest enemy within 260; it turns in flight to catch it, or plops straight with none in range. 18 damage, 110 u/s, 2.5 s. Each rank: +6 damage."
+- maxLevel: 3
+- look: shape circle, color #4dabf7
+- cooldown: 1.6
+- fire: (code)
+
 ### Ricochet (`ricochet`)
 - description: "Bolts that hit bounce on to another enemy nearby."
 - maxLevel: 1
@@ -85,6 +92,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - look: shape hexagon, color #99e9f2
 - onHit: (code)
 
+### Reap (`reap`)
+- description: "Hits on an enemy below half its hp deal +6 damage, per rank."
+- maxLevel: 3
+- look: shape diamond, color #4dabf7
+- onHit: (code)
+
 ### Chomp (`chomp`)
 - description: "On kill: heal 5 hp. On a player knockout: heal 25."
 - maxLevel: 1
@@ -95,6 +108,18 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - description: "When your bubble kills something, it pops into a ring (radius 50) that deals 10 damage."
 - maxLevel: 1
 - look: shape star, color #99e9f2
+- onKill: (code)
+
+### Scatter (`scatter`)
+- description: "When a Goo kills, it pops into 4 mini-Goo that home to the 4 nearest enemies: 4 damage, 200 u/s, 1 s. Mini-Goo do not pop again."
+- maxLevel: 1
+- look: shape pentagon, color #4dabf7
+- onKill: (code)
+
+### Gush (`gush`)
+- description: "When a Goo kills, a puddle marks the spot: 40 units around it, 20% slower for 1.5 s, refreshed while in it. Each rank: +10 radius."
+- maxLevel: 3
+- look: shape hexagon, color #38d9a9
 - onKill: (code)
 
 ### Split (`split`)
