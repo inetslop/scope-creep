@@ -3,11 +3,13 @@ id: T0061
 title: "Prestige banks a point: each prestige this life banks +1 talent point"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T11:40:36Z
+claimed_at: 2026-10-31T11:40:42Z
 epic: E17
+designer: desktop-4070
 ---
 
 ## Goal
