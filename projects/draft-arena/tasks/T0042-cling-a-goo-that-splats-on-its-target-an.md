@@ -3,13 +3,11 @@ id: T0042
 title: "Cling: a Goo that splats on its target and rides it"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T08:05:11Z
-claimed_at: 2026-10-31T08:32:36Z
 epic: E12
-designer: desktop
 ---
 
 ## Goal
@@ -52,3 +50,136 @@ The Goober tree gets its 5th talent: a Goo that hits doesn't just pop — it spl
 | Fuse | an on-kill that pops the kill into something | needs a kill and makes one ring on the ground; Cling needs a hit and sticks to the target itself |
 | Scatter | an on-kill on a Goo | needs a kill and spawns new shots at other enemies; Cling needs a hit and adds damage to the one it already caught |
 | Gush | an on-kill on a Goo that marks the ground | leaves a puddle where the kill happened; Cling marks the target itself, wherever it runs |
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/statuses/cling.ts` — status `cling`: the 2 s mark on the splatted target (blue ring + timer ledger). No tick, no speedMul.
+- create `src/content/areas/splat.ts` — area `splat`: the blue drop that rides the marked target; its 0.5 s pulse is the bite (`ctx.strike`).
+- create `src/content/upgrades/cling.ts` — upgrade `cling`: on-hit, casts mark + splat only when a Goo drop hits.
+- edit `src/content/statuses/index.ts` — import `cling`, add `cling,` to `STATUSES` after `gooSlow,`.
+- edit `src/content/areas/index.ts` — import `splat`, add `splat,` to `AREAS` after `puddle,`.
+- edit `src/content/upgrades/index.ts` — import `cling` (after the `chill` import), add `cling,` to `UPGRADES` after `gush,`.
+- edit `src/content/talents/goober.ts` — add one line after the `gush` line (below).
+
+### Interfaces (exact file contents)
+`src/content/statuses/cling.ts`:
+```ts
+import type { StatusDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** A Cling splat is riding this critter: the 2 s mark it keeps biting. Refreshed by each new Goo hit. */
+export const cling: StatusDef = { id: 'cling', name: 'Cling', color: PALETTE.blue };
+```
+`src/content/upgrades/cling.ts`:
+```ts
+import type { UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** Goober fork: a Goo that hits doesn't pop — it splats on its mark and keeps biting while it runs. */
+export const cling: UpgradeDef = {
+  id: 'cling',
+  name: 'Cling',
+  description:
+    'When your Goo hits, it splats on its target and clings for 2 s, dealing 5 damage every 0.5 s. Per rank: +5 damage per tick.',
+  maxLevel: 3,
+  look: { shape: 'star', color: PALETTE.blue },
+  onHit(ctx, me, level, hit) {
+    if (!hit.projectile || hit.projectile.def.id !== 'goo') return; // only the Goo's drop splats (goolet, Bolt, Maw, Lob: nothing)
+    const t = hit.target;
+    if (t.hp <= 0) return; // kills resolve after onHit: a finishing Goo leaves no splat on the corpse
+    const fresh = ctx.statusOf(t, 'cling') <= 0;
+    ctx.addStatus(t, 'cling', 2);
+    t.mem.clingUntil = Math.round(ctx.time * 100) + 200; // mark's deadline, refreshed by every hit
+    if (fresh) {
+      t.mem.clingBorn = Math.round(ctx.time * 100); // epoch of this splat
+      ctx.area(me, 'splat', { x: t.x, y: t.y, damage: 5 * level });
+    }
+  },
+};
+```
+`src/content/areas/splat.ts`:
+```ts
+import type { AreaDef, Unit } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** A Cling splat: a blue drop on its mark's back that bites every 0.5 s until the mark fades. */
+export const splat: AreaDef = {
+  id: 'splat', radius: 10, life: 2, interval: 0.5, follow: false,
+  look: {
+    shape: 'circle', color: PALETTE.blue,
+    draw(g, e) {
+      const r = e.radius;
+      const tr = e.slots[0] > 0 ? e.slots[0] : 12; // the mark's radius, set by the pulse
+      const q = 1 - (e.time % 0.5) / 0.5; // 1 just after a bite, 0 just before the next
+      const fade = Math.min(1, e.hp * 5); // dries out as it wears off
+      if (fade <= 0) return;
+      g.save();
+      g.globalAlpha = fade;
+      g.rotate(e.angle); // the mark's facing; its back is -x
+      g.translate(-(tr + r * 0.6), 0); // sit on the back, just past the body edge
+      g.scale(1 + 0.3 * q, 1 - 0.25 * q); // squish once per tick
+      g.beginPath();
+      g.arc(0, 0, r, 0, Math.PI * 2);
+      g.fillStyle = PALETTE.blue;
+      g.fill();
+      g.lineWidth = 2;
+      g.lineJoin = 'round';
+      g.strokeStyle = PALETTE.ink;
+      g.stroke();
+      g.beginPath();
+      g.ellipse(-r * 0.3, -r * 0.35, r * 0.22, r * 0.13, -0.6, 0, Math.PI * 2); // candy shine
+      g.fillStyle = PALETTE.white;
+      g.fill();
+      g.restore();
+    },
+  },
+  pulse(ctx, a) {
+    // The mark is the only unit wearing 'cling'. Fastest unit (Swift-3 player) runs 135 in 0.5 s,
+    // so 170 reach always finds it; nearest wins when two marks crowd.
+    let t: Unit | undefined;
+    let best = 170 * 170;
+    for (const u of ctx.unitsNear(a.x, a.y, 170)) {
+      if (ctx.statusOf(u, 'cling') <= 0) continue;
+      const d = (u.x - a.x) ** 2 + (u.y - a.y) ** 2;
+      if (d < best) { best = d; t = u; }
+    }
+    if (!t) { a.life = a.age; return; }
+    const born = t.mem.clingBorn ?? -1;
+    if (a.mem.born === undefined) a.mem.born = born; // first pulse
+    if (born !== a.mem.born || Math.round(ctx.time * 100) >= (t.mem.clingUntil ?? -1)) {
+      a.life = a.age; // the mark faded, or was re-cast by a newer splat: dry up
+      return;
+    }
+    a.x = t.x; a.y = t.y; a.angle = t.angle; // ride it wherever it runs
+    a.slots[0] = Math.round(t.radius);
+    a.life = a.age + 0.55; // one more pulse (0.5 s); the gate above ends it after
+    ctx.strike(a, t); // the bite: credited to the Goober, half vs players, and a hit (Reap applies)
+  },
+};
+```
+`src/content/talents/goober.ts`, after the `gush` line:
+```ts
+    { id: 'cling', upgrade: 'cling', max: 3, needs: [['goo', 2]] },
+```
+
+### Steps
+1. Create the three new files exactly as above.
+2. Add the three registry lines (import + list line, each next to the goober cluster).
+3. Add the talent line to `goober.ts` after `gush`.
+4. `npm run check` — fixes, if any, must stay in the new files' logic.
+5. `npm run smoke`.
+
+### Pitfalls
+- Why an area pulse, not a status tick or a step projectile: a status `tick` can only `ctx.damage` (no on-hit hooks, so Reap would never apply); a step projectile sitting on its target is killed by the engine's own collision loop (pierce) the moment it overlaps a crowd-mate. Areas have no collision; the pulse strikes exactly the mark. Do not "simplify" the bite to `ctx.damage`.
+- Do not gate the bite on the status alone: the status is spliced after areas in the tick, so a pulse at t=2.0 would see it and land a 5th tick. The `clingUntil` deadline gives exactly 4 ticks per 2 s window; the `born` epoch stops a dried-up splat from adopting a re-cast mark (one splat per target, ever).
+- `a.life = a.age + 0.55`: the death check is `age >= life` and the next pulse is exactly 0.5 s out, so any extension ≤ 0.5 kills the splat after one bite.
+- Keep the 170 reach: a Swift-3 player runs 135 units between pulses; a smaller search loses the mark mid-sprint.
+- Areas render under units by design — the drop peeks out from the mark's back; don't move it to draw on top.
+- Squish comes from `e.time` (client clock, 0.5 s period, phase not server-synced — fine). Never `Math.random`/`Date` in `src/content/`.
+- Bandwidth: every area is sent every tick, so the 60-player load test will feel 1–3 extra splats per Goober bot. If it fails on bytes, report it — the mechanic needs a synced rider.
+
+### Tests
+none — engine/tests cover it: one-item-per-file + registries, the upgrade in a real match, the talent reachable (Goo 2 exists, ranks 3 ≤ maxLevel 3), panel data, and the 60-player budget.
+
+Panel fullest state (no HUD file changes): Goober tab shows 5 rows — Reap (3 pips) at left; under Goo (3 pips, under Reap) in order: Gush (3), Cling (3), Scatter (1). Cling's description is 116 chars; Goo's (~170) stays the longest wrapping line, so the existing card layout (right column at 1280x720, above the Talents button at 412x915) holds. Before Goo rank 2, the Cling row shows the panel's standard "Needs Goo 2".
