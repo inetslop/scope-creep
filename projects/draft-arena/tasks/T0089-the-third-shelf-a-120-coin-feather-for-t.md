@@ -1,12 +1,14 @@
 ---
 id: T0089
 title: "The third shelf: a 120-coin Feather for the head, a 300-coin Candy Cane for the back"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T15:05:01Z
+claimed_at: 2026-10-31T16:38:49Z
 epic: E21
 ---
 
