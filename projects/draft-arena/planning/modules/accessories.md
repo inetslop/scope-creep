@@ -28,31 +28,18 @@ A missing row gets the task rejected by the architect.
 
 ## What exists now
 
-13 in the game, from game/src/content/accessories/ (the real values).
+15 in the game, from game/src/content/accessories/ (the real values).
 
 **By `slot`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
-- `back`: Candy Pack, Medal, Balloon, Party Blower
+- `back`: Candy Pack, Balloon, Party Blower, Candy Cane, Medal
 - `face`: Round Glasses, Bow Tie, Beak, Monocle, Heart Shades
-- `head`: Chef Hat, Cone, Beanie, Bloom
+- `head`: Cone, Beanie, Feather, Bloom, Chef Hat
 
 ### Candy Pack (`candy-pack`)
 - description: A little green pack on the back.
 - slot: back
 - price: 100
-- draw: (code)
-
-### Chef Hat (`chef-hat`)
-- description: A tall white puff on the head.
-- slot: head
-- price: 300
-- draw: (code)
-
-### Medal (`medal`)
-- description: "A yellow medal with a red ribbon. Needs 2 prestiges in all."
-- slot: back
-- price: 400
-- prestige: 2
 - draw: (code)
 
 ### Cone (`cone`)
@@ -67,10 +54,22 @@ A missing row gets the task rejected by the architect.
 - price: 0
 - draw: (code)
 
+### Feather (`feather`)
+- description: "A single pink feather resting on the head."
+- slot: head
+- price: 120
+- draw: (code)
+
 ### Bloom (`bloom`)
 - description: "A pink flower with a yellow center on the head."
 - slot: head
 - price: 150
+- draw: (code)
+
+### Chef Hat (`chef-hat`)
+- description: A tall white puff on the head.
+- slot: head
+- price: 300
 - draw: (code)
 
 ### Round Glasses (`round-glasses`)
@@ -113,4 +112,17 @@ A missing row gets the task rejected by the architect.
 - description: "A red party blower, rolled up on a stick, on the back."
 - slot: back
 - price: 180
+- draw: (code)
+
+### Candy Cane (`candy-cane`)
+- description: "A red and white striped cane hooked over the back."
+- slot: back
+- price: 300
+- draw: (code)
+
+### Medal (`medal`)
+- description: "A yellow medal with a red ribbon. Needs 2 prestiges in all."
+- slot: back
+- price: 400
+- prestige: 2
 - draw: (code)

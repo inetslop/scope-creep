@@ -61,6 +61,10 @@ The backlog: add freely, turn the best into epics and tasks.
 - Star (E21): a 100-coin pattern — one light five-point star in the middle of the body, the pattern shelf's step past Lolly's 80, the shelf to 8. — T0098
 - Jaw (E20): a fat deep-red round blob (r26, hp 50, 55 u/s) that shuffles for you and, within 90, stops 0.6 s with its giant mouth open (facing locked) and bites a 100° cone (radius 85, 10 damage) in front of it — the dodge is strafing out of the locked wedge; it punishes standing still in a crowd and front-on kiting, the menagerie's last slot (back to 10). — E20: T0099
 - Burst (E16): a small low whump (200→130 Hz, 0.1 s, peak 0.05, one per 200 ms) when the Sting capstone bursts a crowded corpse — the Hive's signature kill lands by ear, under the normal pop. — T0100
+- Cherry (E22): a 450-coin head accessory — a red cherry with a green stem resting on the head, the head slot's top and the shop's first head long goal, needs 1 prestige in all. — T0101
+- Mustache (E22): a 350-coin face accessory — a curly pink mustache over the mouth, the top of the face slot's thinnest ladder, needs 1 prestige in all. — T0102
+- Lollipop (E22): a 500-coin back accessory — a big green lollipop with a white swirl on the back, the longest goal in the shop, needs 2 prestiges in all. — next in E22
+- Bloop (E20): a low bloop (160→70 Hz, 0.12 s, peak 0.08, one per 150 ms) when a Toss splash blooms — the arc threat lands by ear, under the pop. — T0103
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.

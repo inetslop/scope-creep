@@ -162,7 +162,7 @@ Breakdown:
 - T0075 L — Hive, first slice: the tree, Swarm (hits grow with the crowd) and Horn (a fast teal dart) — done
 - T0076 M — Hive, second slice: Nest (a kill heal that grows with the crowd) and the Sting capstone — done
 - T0081 M — Leech: a fifth talent, a hit heal while 3+ enemies are within 80 of you, the sustain fork under Swarm — design
-- T0100 S — Burst: a small whump when a crowded corpse bursts (the Sting moment) — design
+- T0100 S — Burst: a small whump when a crowded corpse bursts (the Sting moment) — done
 Next: a Hive defense once Leech and the capstone prove out.
 
 ## E17 A deeper second life (active)
@@ -197,19 +197,27 @@ Next: fully tasked — the mark's two fates (killed, escaped) both pay out once 
 Goal: the menagerie is 7 of 10 types after the cut; the crowd learns three new ways to threaten — a threat that comes in on an arc, a kill that doesn't kill, and a bite that punishes standing still — each readable at a glance.
 Done when: the Toss (a lobbed splash), the Twin (a birth at half hp) and the Jaw (a bite from a stop) are in the field, each with a behavior none of the others has — the menagerie back to 10.
 Breakdown:
-- T0085 M — Toss: a big slow melon that lobs an arc blob that splashes where it lands — in progress
+- T0085 M — Toss: a big slow melon that lobs an arc blob that splashes where it lands — done
 - T0086 M — Twin: a bean that splits into two smaller twins when it drops to half hp — failed (a split must remove the parent, and the only removal is a death, which always drops a gem)
 - T0090 M — Twin: a bean that gives birth to a small fast twin the first time it drops to half hp, and keeps living — failed (the comparison table missed the Sleeper row)
 - T0096 M — Twin: a bean that shudders at half hp, births a fast twin and keeps living — todo
 - T0099 M — Jaw: a fat deep-red blob that stops and bites a locked cone in front of it, the last slot — design
 Next: fully tasked — the arc threat, the kill that doesn't kill and the last slot are all written.
 
-## E21 The shop fills out (active)
+## E21 The shop fills out (done)
 Goal: after the Chef Hat and the Medal, the shelves go quiet: each slot and the pattern shelf get middle steps toward their caps (10 per slot, 12 patterns), so a player with a few lives always has a next save.
 Done when: each slot has at least 5 items including the free ones, the pattern shelf has 8, and no ladder between 80 and 400 coins has a gap bigger than 150.
 Breakdown:
-- T0088 S — Lolly: an 80-coin pattern, a light lollipop swirl — design
-- T0089 M — The third shelf: a 120-coin Feather (head) and a 300-coin Candy Cane (back) — design
+- T0088 S — Lolly: an 80-coin pattern, a light lollipop swirl — done
+- T0089 M — The third shelf: a 120-coin Feather (head) and a 300-coin Candy Cane (back) — done
 - T0091 S — Monocle: a 150-coin face accessory, a gold lens over one eye — done
-- T0098 S — Star: a 100-coin pattern, one light star on the middle of the body — design
-Next: the back slot needs a 5th item (it has 4), once these prove out.
+- T0098 S — Star: a 100-coin pattern, one light star on the middle of the body — done
+Done: every slot has 5 items, the pattern shelf has 8, and no ladder between 80 and 400 has a gap bigger than 150 — the tops wait in E22.
+
+## E22 The shop's long goals (active)
+Goal: the tops of the ladders: each slot gets a top item that needs prestiges in all (the shop's first looks a new player can't have — a prestige and a stack of coins), and the pattern shelf reaches 10 — the longest goal in the game is a look, not a power.
+Done when: each slot's top item costs 350 or more and needs prestiges in all, and the pattern shelf has 10.
+Breakdown:
+- T0101 S — Cherry: a 450-coin head, a red cherry with a green stem, 1 prestige in all — the head's top — design
+- T0102 S — Mustache: a 350-coin face, a curly pink mustache, 1 prestige in all — the face's top — design
+Next: the Lollipop (a 500-coin back, a big green lollipop with a white swirl, 2 prestiges in all — the longest goal in the shop), then the pattern shelf to 10 (a 120-coin Cheeks, two light dots on the cheeks; a 150-coin Ring, a light ring around the middle).

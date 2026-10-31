@@ -36,7 +36,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 ## What exists now
 
-7 in the game, from game/src/content/monsters/ (the real values).
+8 in the game, from game/src/content/monsters/ (the real values).
 
 ### Dot (`dot`)
 - description: Heads straight for the nearest player.
@@ -121,4 +121,16 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - weight: 5
 - fromLevel: 5
 - look: shape diamond, color #ffa94d, face {mood calm, eyes 2, mouth o}, draw (code)
+- think: (code)
+
+### Toss (`toss`)
+- description: "Holds its band and lobs a blob that splashes where it lands."
+- hp: 60
+- speed: 55
+- radius: 26
+- damage: 16
+- xp: 5
+- weight: 3
+- fromLevel: 6
+- look: shape circle, color #ffc078, face {mood calm, eyes 2, mouth smile}, draw (code)
 - think: (code)
