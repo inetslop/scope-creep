@@ -161,7 +161,9 @@ const STYLE = `
   h1 .clip { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: 0.06em; }
   h1 .ch { display: inline-block; transform: translateY(110%); animation: rise 0.75s cubic-bezier(0.2, 0.9, 0.2, 1) forwards; }
   @keyframes rise { to { transform: translateY(0); } }
-  .blurb { margin: 0; max-width: 54ch; font-size: 18px; line-height: 1.5; color: ${C.muted}; min-height: 3em; }
+  /* Room for four lines, so the title stays put whichever game is shown. */
+  .blurb { margin: 0; max-width: 54ch; font-size: 18px; line-height: 1.5; color: ${C.muted}; min-height: 6em; }
+  @media (max-width: 640px) { .blurb { font-size: 16px; min-height: 0; } }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
   .chips span { border: 1px solid ${C.faint}; background: rgba(255, 255, 255, 0.6); border-radius: 999px; padding: 6px 12px; font-size: 14px; }
   .cta { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
@@ -178,7 +180,7 @@ const STYLE = `
 
   main { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; gap: 40px; }
   main + main { padding-bottom: 56px; }
-  section { display: grid; gap: 16px; }
+  main section { display: grid; gap: 16px; }
   h2 { margin: 0; font: 500 20px/1.2 ${DISPLAY}; display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
   h2 small { font: 600 14px/1.3 ${BODY}; color: ${C.muted}; }
   .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
