@@ -1,12 +1,14 @@
 ---
 id: T0052
 title: "Beak: a 100-coin face accessory, a small orange beak below the eyes"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T10:32:35Z
+claimed_at: 2026-10-31T10:53:57Z
 ---
 
 ## Goal
