@@ -3,11 +3,13 @@ id: T0115
 title: "Smile: a 180-coin pattern, a light smile across the lower body"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T19:06:11Z
+claimed_at: 2026-10-31T19:16:01Z
 epic: E26
+designer: yoga
 ---
 
 ## Goal
