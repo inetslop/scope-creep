@@ -3,11 +3,13 @@ id: T0047
 title: "Prestige stars: a gold star on the critter per prestige this life, up to 3"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T08:32:32Z
+claimed_at: 2026-10-31T09:05:36Z
 epic: E7
+designer: desktop
 ---
 
 ## Goal
