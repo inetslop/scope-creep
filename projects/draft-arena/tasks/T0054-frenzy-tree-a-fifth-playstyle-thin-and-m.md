@@ -3,11 +3,13 @@ id: T0054
 title: "Frenzy tree: a fifth playstyle, thin and mean, that hits harder the more hurt you are"
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T10:47:58Z
+claimed_at: 2026-10-31T10:48:02Z
 epic: E13
+designer: desktop
 ---
 
 ## Goal
