@@ -31,11 +31,15 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-5 in the game, from game/src/content/directors/ (the real values).
+6 in the game, from game/src/content/directors/ (the real values).
 
 ### Gem rain (`gem-rain`)
 - description: "Every 75 s, 24 gems land in a ring around a random player."
 - tick: (code)
+
+### Prestige ring (`prestige-ring`)
+- description: "The biggest ring on the field and 24 stars, where a player prestiges."
+- onPrestige: (code)
 
 ### Gem geyser (`gem-geyser`)
 - description: "A spot bubbles, then drops a gem every second for 8 s. Hold it."

@@ -42,7 +42,8 @@ Breakdown:
 - T0014 S — Leader's gem: a knocked-out crown drops a gem worth its level — todo
 - T0015 S — The leader pays: the crown takes 25% more damage from players — failed (the engine's pvp damage is frozen)
 - T0028 S — The crown's bounty: the killer of the crown gets double the bounty xp — todo
-Next: done once T0014 and T0028 build: the crown is readable on the field, the leader's gem makes the knockout a race, and the bounty makes it pay.
+- T0036 S — Crown fall: the crown flies off and pops where the leader is knocked out — todo
+Next: done once T0014, T0028 and T0036 build: the leader's gem makes the knockout a race, the bounty makes it pay, and the crown falling is a moment everyone sees.
 
 ## E5 Your own critter (tasked)
 Goal: players make their critter theirs: they pick its color and put on a hat, and everyone in the match sees it.
@@ -63,7 +64,8 @@ Breakdown:
 - T0022 M — The shop: a panel over the start screen that sells the stock, with a preview critter — todo (waits on T0019)
 - T0027 S — Coins from events: every gem an event drops pays 1 coin — designing (waits on T0019)
 - T0031 M — The shop's second stock: two patterns, a face and a back accessory, priced — design
-Next: done once all four build: kills and events pay coins, and the shop sells the stock.
+- T0035 S — Chef Hat: a 300-coin head accessory, the shop's long goal — todo
+Next: done once all five build: kills and events pay coins, the shop sells the stock, and the Chef Hat is the goal to save for.
 
 ## E7 Prestige (tasked)
 Goal: nobody stays overpowered forever: a player who reaches level 18 prestiges back to level 1, and prestiging is worth it.
@@ -89,7 +91,8 @@ Goal: the crowd grows a 6th, then a 7th, way to move; each new monster readable 
 Done when: the 6th monster is in the field with a behavior no other has.
 Breakdown:
 - T0032 M — Sleeper: a deep pink cushion that sleeps until you get close — design
-Next: the 7th monster in a later cycle (the Bulwark, see IDEAS).
+- T0034 M — Bulwark: a deep red octagon whose bubble shield eats the first 15 hits — todo
+Next: done once T0032 and T0034 build: the crowd gains two ways to survive (it sleeps, it shields).
 
 ## E10 More reasons to move (active)
 Goal: a 5th, then a 6th, field event, so the field always has a new place to be (the cap is 6 events).

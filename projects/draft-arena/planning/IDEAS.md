@@ -6,6 +6,7 @@ The backlog: add freely, turn the best into epics and tasks.
 - Gem rush field event (E3): a line of 12 gems crosses the field over 6 s; whoever touches one collects the rest, so players chase the line across each other. — T0011
 - Leader pressure (E4): the top score wears a crown mark on its critter; knocking the leader out drops a gem worth the leader's level. — T0013, T0014, T0015
 - Leader bounty x2 (E4): knocking out the crowned player gives double the bounty xp (8 per their level instead of 4) — the pressure on the leader, since the crown's own damage can't change. — T0028
+- Crown fall (E4): when the crowned player is knocked out, the crown flies off their head and pops into confetti where the leader fell — the knockout is a moment the whole field sees, and the ring marks where the gem landed. — T0036
 - Snail (E2): a slow orange blob that leaves sticky patches behind (small fields that slow what walks over them for 2 s); a crowd turns the floor into a maze.
 - Prestige medal (E7): a small medal accessory, buyable only after 2 prestiges in all — the wearable that marks the long goal. — T0026
 - Slush (E7): after your first prestige this life, the Lobber tree opens a new talent, Slush: a blob that lands and leaves a slow puddle — a zone weapon only a player who has prestiged can build, so the second life grows into a control build. — T0025
@@ -20,8 +21,8 @@ The backlog: add freely, turn the best into epics and tasks.
 - Goober tree (E8): a fourth playstyle — your Goo, a big blue drop that fires at the nearest enemy and turns in flight to catch it; with it, Reap (extra damage on a half-dead target, any weapon), Gush (a slow puddle where your Goo kills) and the Scatter capstone (a Goo kill pops into four seekers). — T0030
 - Sleeper (E9): a deep pink rounded square that sleeps where it spawned; a player within 350 wakes it (eyes open 0.5 s first), it chases at 100 u/s, and it dozes off again after 10 s alone — a field of them is safe to cross, and camping a gem spot in one is a trap. — T0032
 - Jackpot (E10): every 150 s one big yellow gem, worth 25 xp, drops in the middle of the field and stays 20 s — a prize you go to, and a fight over it that shakes the scoreboard. — T0033
-- Bulwark (E9, later): a big tank with a shield that eats the first 30 hits and shatters into confetti — a front for a crowd, a target you have to crack first.
-- The shop's long goal (E6, later): a 300-coin hat — the first thing that takes many matches, the top of the shop.
+- Bulwark (E9): a big slow tank with a bubble shield that eats the first 15 hits, then takes damage and its face turns scared — a front for a crowd, a target you have to crack first. — T0034
+- The shop's long goal (E6): a 300-coin Chef Hat — the first thing that takes many matches, the top of the shop. — T0035
 - Sound layer (later): a pop when a monster dies, a chime on a level-up, a coin tick in the shop — the game is quiet; sounds are the next juice.
 
 ## Needs the engine (for the owner, not tasks)
