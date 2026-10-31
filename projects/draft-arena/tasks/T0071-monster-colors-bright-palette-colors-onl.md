@@ -1,14 +1,12 @@
 ---
 id: T0071
 title: "Monster colors: bright palette colors only, and no two monsters alike"
-assignee: desktop-4070
 size: M
 priority: 1
-status: in-progress
+status: todo
 depends_on: [T0073]
 attempts: 1
 created: 2026-10-31T12:51:01Z
-claimed_at: 2026-10-31T13:47:47Z
 ---
 
 ## Goal
@@ -61,3 +59,7 @@ Both are bright (HSL lightness ~74-77%, same tier as red/orange/purple/pink), wa
 
 ### Tests
 none (no pure helpers added; every content item is tested automatically by engine/tests/).
+
+## Attempt 1 interrupted (desktop-4070)
+
+The owner stopped desktop-4070 mid-task (it had made no changes yet). Requeued for any machine.
