@@ -25,9 +25,11 @@ The backlog: add freely, turn the best into epics and tasks.
 - The shop's long goal (E6): a 300-coin Chef Hat — the first thing that takes many matches, the top of the shop. — T0035
 - Halves pattern (E6): a two-tone pattern — the top half of the body painted lighter than the player's own color, 50 coins — the third price step in the shop's patterns. — T0044
 - Sound layer: a pop when a monster dies, a chime on a level-up, a coin tick in the shop — the game is quiet; sounds are the next juice. — E11
-- Boing (E9): a deep red heart that crouches, then leaps to where you are going (a prediction of your run) — a straight-line kite no longer escapes it, and a hard direction change makes it leap past you. — T0037
+- Boing (E9): a deep red heart that crouches, then leaps to where you are going (a prediction of your run) — a straight-line kite no longer escapes it, and a hard direction change makes it leap past you. — T0045 (T0037 failed: the comparison table omitted the Sleeper)
 - The mark (E10): every 90 s, one random player wears a red target ring for 15 s and runs 35% faster; knocking them out pays 20 bonus xp and 5 coins — the field turns from a farm into a hunt. — T0038
 - Goober depth (E8): the 5th and 6th talent for the tree once it is proven (a Goo that sticks to its target, a Gush puddle that bites). — E12: T0042 (Cling), T0043 (Chew)
+- Bloom (E6): a 150-coin head accessory — a pink five-petal flower with a yellow center on the head, filling the gap between the free hats and the 300-coin Chef Hat. — T0046
+- Prestige stars (E7): a small gold star beside the critter per prestige this life, up to 3, gone on a knockout — a visible, powerless mark of a life, so a veteran reads in a crowd. — T0047
 
 ## Needs the engine (for the owner, not tasks)
 - Timed rounds with a shrinking zone at the end (farm early, fight late), a round winner.

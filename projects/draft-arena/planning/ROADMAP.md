@@ -65,8 +65,9 @@ Breakdown:
 - T0027 S — Coins from events: every gem an event drops pays 1 coin — done
 - T0044 S — Halves: a two-tone pattern, 50 coins, the third pattern price step — design
 - T0031 M — The shop's second stock: two patterns, a face and a back accessory, priced — done
-- T0035 S — Chef Hat: a 300-coin head accessory, the shop's long goal — todo
-Next: done once T0035 and T0044 build: kills and events pay coins, the shop sells its stock, and the Chef Hat is the goal to save for.
+- T0035 S — Chef Hat: a 300-coin head accessory, the shop's long goal — done
+- T0046 S — Bloom: a 150-coin head accessory, a pink flower with a yellow center — design
+Next: done once T0044 and T0046 build: kills and events pay coins, the shop sells its stock, and the Chef Hat is the goal to save for.
 
 ## E7 Prestige (tasked)
 Goal: nobody stays overpowered forever: a player who reaches level 18 prestiges back to level 1, and prestiging is worth it.
@@ -78,7 +79,8 @@ Breakdown:
 - T0029 M — The prestige pays: the Nth prestige this life pays 25 x N coins, a 2 s card under the xp bar — in progress
 - T0025 M — Slush: a Lobber talent that only opens after a prestige this life — in progress
 - T0026 S — Medal: a back accessory, buyable only after 2 prestiges in all — in progress
-Next: done once T0025, T0026 and T0029 build: the coin pays, Slush opens a second-life build, and the Medal marks 2 prestiges in all.
+- T0047 M — Prestige stars: a gold star on the critter per prestige this life, up to 3 — design
+Next: done once T0025, T0026, T0029 and T0047 build: the coin pays, Slush opens a second-life build, the Medal marks 2 prestiges in all, and the stars mark the life.
 
 ## E8 The Goober tree (done)
 Goal: a fourth playstyle for the draft: a build whose weapon aims for you — your Goo turns in flight and catches the nearest enemy, while Gunner kites with straight Bolts, Lobber zones with bubbles and Body bites in front.
@@ -89,12 +91,13 @@ Done: the tree is playable end to end; the 5th and 6th talents wait in IDEAS for
 
 ## E9 A bigger menagerie (active)
 Goal: the crowd grows a 6th, then a 7th, way to move; each new monster readable at a glance.
-Done when: the 6th monster is in the field with a behavior no other has.
+Done when: the 7th monster is in the field with a behavior no other has (the 6th, the Sleeper, is already in).
 Breakdown:
 - T0032 M — Sleeper: a deep pink cushion that sleeps until you get close — done
 - T0034 M — Bulwark: a deep red octagon whose bubble shield eats the first 15 hits — failed (monsters have no target-side hit hook)
-- T0037 M — Boing: a deep red heart that crouches and leaps at where you are going — design
-Next: done once T0037 builds: the crowd gains two new ways to move and to be (it sleeps, it leaps).
+- T0037 M — Boing: a deep red heart that crouches and leaps at where you are going — failed (the comparison table omitted the Sleeper; rebuilt as T0045)
+- T0045 M — Boing: a deep red heart that crouches, then leaps to where you're going — design
+Next: done once T0045 builds: the crowd gains a new way to move (it sleeps, it leaps).
 
 ## E10 More reasons to move (active)
 Goal: a 5th, then a 6th, field event, so the field always has a new place to be (the cap is 6 events).

@@ -28,18 +28,24 @@ A missing row gets the task rejected by the architect.
 
 ## What exists now
 
-6 in the game, from game/src/content/accessories/ (the real values).
+7 in the game, from game/src/content/accessories/ (the real values).
 
 **By `slot`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
 - `back`: Candy Pack, Balloon
 - `face`: Round Glasses, Bow Tie
-- `head`: Cone, Beanie
+- `head`: Chef Hat, Cone, Beanie
 
 ### Candy Pack (`candy-pack`)
 - description: A little green pack on the back.
 - slot: back
 - price: 100
+- draw: (code)
+
+### Chef Hat (`chef-hat`)
+- description: A tall white puff on the head.
+- slot: head
+- price: 300
 - draw: (code)
 
 ### Cone (`cone`)
