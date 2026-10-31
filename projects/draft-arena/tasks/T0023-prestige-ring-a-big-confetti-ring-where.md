@@ -4,11 +4,12 @@ title: "Prestige ring: a big confetti ring where a player prestiges"
 assignee: yoga
 size: S
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T04:59:35Z
 claimed_at: 2026-10-31T06:20:04Z
+finished_at: 2026-10-31T06:32:20Z
 epic: E7
 ---
 
@@ -107,3 +108,18 @@ export const prestigeRing: DirectorDef = {
 
 ### Tests
 None (engine/tests/ runs every effect's draw and the prestige match fires this director's `onPrestige` automatically).
+
+## Result (attempt 1, yoga)
+
+Added a prestige ring: a director that plays a big field effect wherever a player (human or bot) prestiges, and the effect itself — a yellow ring with an ink rim blooming to radius 220 over 0.8 s with 24 yellow confetti stars, drawn 0.2 s after the unchanged level-up ring. Two new files (`src/content/effects/prestige-ring.ts`, `src/content/directors/prestige-ring.ts`) plus one registry line each in `effects/index.ts` and `directors/index.ts`; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 12.3 min
+
+```
+.../game/src/content/directors/index.ts            |  2 ++
+ .../game/src/content/directors/prestige-ring.ts    | 11 +++++++
+ .../draft-arena/game/src/content/effects/index.ts  |  2 ++
+ .../game/src/content/effects/prestige-ring.ts      | 35 ++++++++++++++++++++++
+ 4 files changed, 50 insertions(+)
+```
