@@ -1,7 +1,9 @@
 import type { AccessoryDef } from '../../../engine/api.ts';
 import { beanie } from './beanie.ts';
 import { bloom } from './bloom.ts';
+import { feather } from './feather.ts';
 import { candyPack } from './candy-pack.ts';
+import { candyCane } from './candy-cane.ts';
 import { chefHat } from './chef-hat.ts';
 import { medal } from './medal.ts';
 import { cone } from './cone.ts';
@@ -16,11 +18,11 @@ import { partyBlower } from './party-blower.ts';
 /** Everything players can wear on their head, face or back (hats and more). One per line. */
 export const ACCESSORIES: readonly AccessoryDef[] = [
   candyPack,
-  chefHat,
-  medal,
   cone,
   beanie,
+  feather,
   bloom,
+  chefHat,
   roundGlasses,
   bowTie,
   beak,
@@ -28,4 +30,6 @@ export const ACCESSORIES: readonly AccessoryDef[] = [
   heartShades,
   balloon,
   partyBlower,
+  candyCane,
+  medal,
 ];

@@ -4,11 +4,12 @@ title: "The third shelf: a 120-coin Feather for the head, a 300-coin Candy Cane 
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T15:05:01Z
 claimed_at: 2026-10-31T16:38:49Z
+finished_at: 2026-10-31T16:50:46Z
 epic: E21
 ---
 
@@ -176,3 +177,17 @@ export const ACCESSORIES: readonly AccessoryDef[] = [
 
 ### Tests
 none — no pure helpers; `engine/tests/` covers both accessories (data, one-item-per-file, registration, `draw()` runs) and the 60-player budget automatically.
+
+## Result (attempt 1, cachyos-x8664)
+
+Added two accessories to the shop's price ladders: a 120-coin pink Feather for the head (a single tilted pink leaf with a quill line, resting on top of the head, clear of the eyes) and a 300-coin striped Candy Cane for the back (a curved red-and-white cane hooked over the shoulder). Both are in `src/content/accessories/` and registered in `index.ts`, which I reordered so each slot's prices read ascending in the shop (head: 0, 0, 120, 150, 300; back: 100, 120, 180, 300, 400). Both `npm run check` and `npm run smoke` pass; buying, wearing, persistence and bot dressing come for free via the generic `ACCESSORIES` iteration. One deviation from the design doc: its target list for `index.ts` omitted `monocle`, which exists in the folder and was already registered — I kept that line (in place, between `beak` and `heartShades`) since every file must stay registered.
+
+- Self-review: APPROVE
+- Time: 12.0 min
+
+```
+.../game/src/content/accessories/candy-cane.ts     | 44 ++++++++++++++++++++++
+ .../game/src/content/accessories/feather.ts        | 37 ++++++++++++++++++
+ .../game/src/content/accessories/index.ts          |  8 +++-
+ 3 files changed, 87 insertions(+), 2 deletions(-)
+```
