@@ -3,6 +3,8 @@ import { bolt } from './bolt.ts';
 import { chill } from './chill.ts';
 import { chomp } from './chomp.ts';
 import { fuse } from './fuse.ts';
+import { goo } from './goo.ts';
+import { gush } from './gush.ts';
 import { haste } from './haste.ts';
 import { hide } from './hide.ts';
 import { lance } from './lance.ts';
@@ -11,7 +13,9 @@ import { magnet } from './magnet.ts';
 import { maw } from './maw.ts';
 import { might } from './might.ts';
 import { quick } from './quick.ts';
+import { reap } from './reap.ts';
 import { ricochet } from './ricochet.ts';
+import { scatter } from './scatter.ts';
 import { split } from './split.ts';
 import { swift } from './swift.ts';
 import { vigor } from './vigor.ts';
@@ -22,10 +26,14 @@ export const UPGRADES: readonly UpgradeDef[] = [
   bolt,
   maw,
   lob,
+  goo,
   ricochet,
   chill,
+  reap,
   chomp,
   fuse,
+  scatter,
+  gush,
   split,
   lance,
   swift,

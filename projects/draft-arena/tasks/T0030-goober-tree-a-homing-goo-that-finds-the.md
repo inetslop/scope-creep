@@ -4,11 +4,12 @@ title: "Goober tree: a homing Goo that finds the nearest enemy for you"
 assignee: desktop
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T05:50:41Z
 claimed_at: 2026-10-31T06:50:33Z
+finished_at: 2026-10-31T07:02:04Z
 epic: E8
 ---
 
@@ -234,3 +235,28 @@ export const goober: TalentTreeDef = {
 
 ### Tests
 none — all new items are content defs auto-tested by `engine/tests/` (one-item-per-file, valid data, reachable talents, each upgrade in a real match, 60-player budget); the smoke test exercises Goo/Gush/Scatter in live 60-bot play.
+
+## Result (attempt 1, desktop)
+
+Added the Goober talent tree, the fourth playstyle: a self-firing Goo weapon (big blue drop that turns in flight to hunt the nearest enemy within 260), Reap (bonus damage on hits below half hp, all weapons), Gush (a Goo kill leaves a teal slow puddle at the kill spot), and the Scatter capstone (a Goo kill pops 4 mini-Goo that each hunt a different nearby enemy). Nine new content files (2 projectiles, 1 area, 1 status, 4 upgrades, 1 tree) plus one registry line each in five index files; no engine, rules, palette or HUD changes. check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 11.5 min
+
+```
+.../draft-arena/game/src/content/areas/index.ts    |  2 ++
+ .../draft-arena/game/src/content/areas/puddle.ts   | 28 ++++++++++++++++++++++
+ .../game/src/content/projectiles/goo.ts            | 26 ++++++++++++++++++++
+ .../game/src/content/projectiles/goolet.ts         | 16 +++++++++++++
+ .../game/src/content/projectiles/index.ts          |  4 ++++
+ .../game/src/content/statuses/goo-slow.ts          |  5 ++++
+ .../draft-arena/game/src/content/statuses/index.ts |  2 ++
+ .../draft-arena/game/src/content/talents/goober.ts | 16 +++++++++++++
+ .../draft-arena/game/src/content/talents/index.ts  |  2 ++
+ .../draft-arena/game/src/content/upgrades/goo.ts   | 17 +++++++++++++
+ .../draft-arena/game/src/content/upgrades/gush.ts  | 16 +++++++++++++
+ .../draft-arena/game/src/content/upgrades/index.ts |  8 +++++++
+ .../draft-arena/game/src/content/upgrades/reap.ts  | 16 +++++++++++++
+ .../game/src/content/upgrades/scatter.ts           | 22 +++++++++++++++++
+ 14 files changed, 180 insertions(+)
+```
