@@ -1,12 +1,14 @@
 ---
 id: T0069
 title: A Cosmetics button opens one place to buy and wear every look
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T12:51:01Z
+claimed_at: 2026-10-31T13:25:38Z
 ---
 
 ## Goal
