@@ -3,10 +3,12 @@ id: T0133
 title: "The set-up: a Body fork, your Bellow ring arms your next Maw bite"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T22:29:04Z
+claimed_at: 2026-10-31T22:34:52Z
+designer: desktop
 ---
 
 ## Goal
