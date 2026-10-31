@@ -3,11 +3,13 @@ id: T0057
 title: "The wound: a red collar arc around any critter below half hp"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T11:14:52Z
+claimed_at: 2026-10-31T11:34:53Z
 epic: E15
+designer: cachyos-x8664
 ---
 
 ## Goal
