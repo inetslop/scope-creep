@@ -2,7 +2,7 @@
 
 The Worker serves two games' boards: Chokepoint's (below) and Critter Clash's (further down).
 
-Two boards for Chokepoint: **Today** (the last 24 hours, rolling) and **Forever**. Players post as four letters; each board shows every name's best run.
+Two boards for Chokepoint: **Today** (the UTC day, since 00:00 UTC: the day the game's daily boards share) and **Forever**. Players post as four letters; each board shows every name's best run. A run ranks by its **level** first (how many level augments were on), then by its score: level 2 at 1000 points beats level 0 at 10000.
 
 It's a Cloudflare Worker (`src/worker.ts`) over a D1 (SQLite) database (`migrations/`), both on Cloudflare's free plan. The game talks to it from `projects/chokepoint/game/src/net/boards.ts`. Without a server address the game simply has no boards, and the smoke test never uses them.
 
@@ -11,7 +11,8 @@ It's a Cloudflare Worker (`src/worker.ts`) over a D1 (SQLite) database (`migrati
 `src/rules.ts` checks every submitted run:
 - the name is four letters and not on a short blocked list;
 - the waves and kills are whole, sane numbers;
-- the score is computed on the server from waves and kills, never sent.
+- the level is 0 to 10 and its multiplier is between 1 and 1 + 0.5 per level (a game that sends no level posts at level 0, ×1);
+- the score is computed on the server from waves, kills and the multiplier, never sent.
 
 Each address (stored as a salted hash) may post 30 runs an hour. That stops casual nonsense, but not someone determined to fake a score.
 

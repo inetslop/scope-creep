@@ -1,10 +1,12 @@
 /**
  * The Chokepoint leaderboard: a Cloudflare Worker over a D1 (SQLite) database. Two boards, each
- * keeping every name's best run: "today", the last 24 hours (rolling), and "forever".
+ * keeping every name's best run: "today", the UTC day (since 00:00 UTC, the day the game's daily
+ * boards share), and "forever". A run ranks by its level first (how many level augments were on),
+ * then by its score (which carries the level's multiplier): level 2 at 1000 beats level 0 at 10000.
  *
  *   GET  /board?b=today&me=ABCD      the top entries, the board's size, and ABCD's place
  *   GET  /board?b=forever&me=ABCD
- *   POST /submit  {name, waves, kills, seed}   records a run; answers its place on both boards
+ *   POST /submit  {name, waves, kills, seed, level, mul}   records a run; answers its place on both boards
  *
  * Forever lives in `best` (one row per name) with a size counter in `boards`, so reading it costs
  * a few rows (D1's free plan counts rows read). Today is read from the run log (`runs`, kept two
@@ -48,28 +50,41 @@ function sameSecret(a: string, b: string): boolean {
 export const RATE_PER_HOUR = 30;
 /** Entries a board answers with at most. */
 export const TOP_MAX = 20;
-/** Today's window. */
-export const TODAY_MS = 24 * 3_600_000;
-/** How long the run log is kept: longer than today's window. */
+const DAY_MS = 86_400_000;
+/** How long the run log is kept: longer than today. */
 const LOG_DAYS = 2;
+
+/** Today's start: 00:00 UTC of the day `nowMs` is in. */
+export const dayStart = (nowMs: number): number => Math.floor(nowMs / DAY_MS) * DAY_MS;
+
+/** One number that orders runs by level, then score (scores stay far below a billion). */
+export const rankKey = (level: number, score: number): number => level * 1_000_000_000 + score;
+const KEY_SQL = 'level * 1000000000 + score';
 
 export interface Entry {
   rank: number;
   name: string;
   score: number;
   waves: number;
+  /** The level the run was played at (0: no level augments). */
+  level: number;
+  /** The level's score multiplier (1 at level 0). */
+  mul: number;
 }
 export interface Place {
   rank: number;
   total: number;
   /** The name's best score on that board (this run's, or a better one). */
   score: number;
+  /** That best run's level. */
+  level: number;
   /** This run is the name's best on that board. */
   best: boolean;
 }
 
 type Which = 'today' | 'forever';
-type Row = { name: string; score: number; waves: number };
+type Row = { name: string; score: number; waves: number; level: number; mul: number };
+type Best = Omit<Row, 'name'>;
 
 function cors(origin: string | null, env: Env): Record<string, string> {
   const allowed = (env.ALLOWED_ORIGINS ?? '').split(',').map((o) => o.trim()).filter(Boolean);
@@ -85,35 +100,40 @@ async function hashAddress(ip: string, salt: string): Promise<string> {
   return [...new Uint8Array(bytes).slice(0, 12)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
-/** Ranks in order, ties sharing a rank (two at 4200 are both #3, the next is #5). */
+/** Ranks in order, ties (the same level and score) sharing a rank (two at 4200 are both #3, the next is #5). */
 export function rankEntries(rows: readonly Row[]): Entry[] {
   const out: Entry[] = [];
-  rows.forEach((r, i) => out.push({ rank: i > 0 && rows[i - 1]!.score === r.score ? out[i - 1]!.rank : i + 1, name: r.name, score: r.score, waves: r.waves }));
+  rows.forEach((r, i) => {
+    const prev = rows[i - 1];
+    const tied = prev !== undefined && prev.level === r.level && prev.score === r.score;
+    out.push({ rank: tied ? out[i - 1]!.rank : i + 1, name: r.name, score: r.score, waves: r.waves, level: r.level, mul: r.mul });
+  });
   return out;
 }
 
-/** One board's queries: the top, the size, a name's best, and how many names beat a score. */
+/** One board's queries: the top, the size, a name's best, and how many names beat a level and score. */
 function board(db: D1Database, which: Which, nowMs: number) {
-  const since = new Date(nowMs - TODAY_MS).toISOString();
+  const since = new Date(dayStart(nowMs)).toISOString();
   if (which === 'today') {
-    // One MAX per query, nothing else aggregated: SQLite then takes `waves` from the best run's row.
+    // One MAX per query, nothing else aggregated: SQLite then takes the bare columns from the best run's row.
     return {
       top: async (limit: number) =>
-        (await db.prepare('SELECT name, MAX(score) AS score, waves FROM runs WHERE at > ? GROUP BY name ORDER BY score DESC, name ASC LIMIT ?').bind(since, limit).all<Row>()).results,
-      size: async () => (await db.prepare('SELECT COUNT(DISTINCT name) AS n FROM runs WHERE at > ?').bind(since).first<{ n: number }>())?.n ?? 0,
-      bestOf: async (name: string) => {
-        const r = await db.prepare('SELECT MAX(score) AS score, waves FROM runs WHERE name = ? AND at > ?').bind(name, since).first<{ score: number | null; waves: number }>();
-        return r && r.score !== null ? { score: r.score, waves: r.waves } : null;
+        (await db.prepare(`SELECT name, MAX(${KEY_SQL}) AS k, score, waves, level, mul FROM runs WHERE at >= ? GROUP BY name ORDER BY k DESC, name ASC LIMIT ?`).bind(since, limit).all<Row>()).results,
+      size: async () => (await db.prepare('SELECT COUNT(DISTINCT name) AS n FROM runs WHERE at >= ?').bind(since).first<{ n: number }>())?.n ?? 0,
+      bestOf: async (name: string): Promise<Best | null> => {
+        const r = await db.prepare(`SELECT MAX(${KEY_SQL}) AS k, score, waves, level, mul FROM runs WHERE name = ? AND at >= ?`).bind(name, since).first<Best & { k: number | null }>();
+        return r && r.k !== null ? { score: r.score, waves: r.waves, level: r.level, mul: r.mul } : null;
       },
-      above: async (score: number) =>
-        (await db.prepare('SELECT COUNT(*) AS n FROM (SELECT MAX(score) AS s FROM runs WHERE at > ? GROUP BY name) WHERE s > ?').bind(since, score).first<{ n: number }>())?.n ?? 0,
+      above: async (level: number, score: number) =>
+        (await db.prepare(`SELECT COUNT(*) AS n FROM (SELECT MAX(${KEY_SQL}) AS k FROM runs WHERE at >= ? GROUP BY name) WHERE k > ?`).bind(since, rankKey(level, score)).first<{ n: number }>())?.n ?? 0,
     };
   }
   return {
-    top: async (limit: number) => (await db.prepare("SELECT name, score, waves FROM best WHERE board = 'forever' ORDER BY score DESC, at ASC LIMIT ?").bind(limit).all<Row>()).results,
+    top: async (limit: number) => (await db.prepare("SELECT name, score, waves, level, mul FROM best WHERE board = 'forever' ORDER BY level DESC, score DESC, at ASC LIMIT ?").bind(limit).all<Row>()).results,
     size: async () => (await db.prepare("SELECT names FROM boards WHERE board = 'forever'").first<{ names: number }>())?.names ?? 0,
-    bestOf: async (name: string) => db.prepare("SELECT score, waves FROM best WHERE board = 'forever' AND name = ?").bind(name).first<{ score: number; waves: number }>(),
-    above: async (score: number) => (await db.prepare("SELECT COUNT(*) AS n FROM best WHERE board = 'forever' AND score > ?").bind(score).first<{ n: number }>())?.n ?? 0,
+    bestOf: async (name: string) => db.prepare("SELECT score, waves, level, mul FROM best WHERE board = 'forever' AND name = ?").bind(name).first<Best>(),
+    above: async (level: number, score: number) =>
+      (await db.prepare("SELECT COUNT(*) AS n FROM best WHERE board = 'forever' AND (level > ? OR (level = ? AND score > ?))").bind(level, level, score).first<{ n: number }>())?.n ?? 0,
   };
 }
 
@@ -122,19 +142,19 @@ async function placeOf(db: D1Database, which: Which, name: string, nowMs: number
   const b = board(db, which, nowMs);
   const mine = await b.bestOf(name);
   if (!mine) return null;
-  return { rank: (await b.above(mine.score)) + 1, name, score: mine.score, waves: mine.waves, total: await b.size() };
+  return { rank: (await b.above(mine.level, mine.score)) + 1, name, ...mine, total: await b.size() };
 }
 
 /** Records the run on forever: a new name, a better run (replaces the name's best), or neither. */
 async function recordForever(db: D1Database, run: Run, at: string): Promise<boolean> {
-  const prev = await db.prepare("SELECT score FROM best WHERE board = 'forever' AND name = ?").bind(run.name).first<{ score: number }>();
+  const prev = await db.prepare("SELECT score, level FROM best WHERE board = 'forever' AND name = ?").bind(run.name).first<{ score: number; level: number }>();
   if (!prev) {
-    await db.prepare("INSERT INTO best (board, name, score, waves, at) VALUES ('forever', ?, ?, ?, ?)").bind(run.name, run.score, run.waves, at).run();
+    await db.prepare("INSERT INTO best (board, name, score, waves, level, mul, at) VALUES ('forever', ?, ?, ?, ?, ?, ?)").bind(run.name, run.score, run.waves, run.level, run.mul, at).run();
     await db.prepare("INSERT INTO boards (board, names) VALUES ('forever', 1) ON CONFLICT (board) DO UPDATE SET names = names + 1").run();
     return true;
   }
-  if (run.score <= prev.score) return false;
-  await db.prepare("UPDATE best SET score = ?, waves = ?, at = ? WHERE board = 'forever' AND name = ?").bind(run.score, run.waves, at, run.name).run();
+  if (rankKey(run.level, run.score) <= rankKey(prev.level, prev.score)) return false;
+  await db.prepare("UPDATE best SET score = ?, waves = ?, level = ?, mul = ?, at = ? WHERE board = 'forever' AND name = ?").bind(run.score, run.waves, run.level, run.mul, at, run.name).run();
   return true;
 }
 
@@ -146,7 +166,7 @@ async function getBoard(url: URL, env: Env, nowMs: number, headers: Record<strin
   const me = (url.searchParams.get('me') ?? '').toUpperCase();
   const mine = /^[A-Z]{4}$/.test(me) ? await placeOf(env.DB, which, me, nowMs) : null;
   return json(
-    { board: which, total: await b.size(), entries: rankEntries(await b.top(limit)), me: mine ? { rank: mine.rank, name: mine.name, score: mine.score, waves: mine.waves } : null },
+    { board: which, total: await b.size(), entries: rankEntries(await b.top(limit)), me: mine ? { rank: mine.rank, name: mine.name, score: mine.score, waves: mine.waves, level: mine.level, mul: mine.mul } : null },
     200,
     { ...headers, 'Cache-Control': 'max-age=15' },
   );
@@ -169,13 +189,14 @@ async function submit(request: Request, env: Env, nowMs: number, headers: Record
   if (recent >= RATE_PER_HOUR) return json({ error: 'rate' }, 429, headers);
   const todayBefore = await board(env.DB, 'today', nowMs).bestOf(run.name);
   await env.DB.prepare('DELETE FROM runs WHERE at < ?').bind(new Date(nowMs - LOG_DAYS * 86_400_000).toISOString()).run();
-  await env.DB.prepare('INSERT INTO runs (at, ip, name, seed, waves, kills, score) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(at, ip, run.name, run.seed, run.waves, run.kills, run.score).run();
+  await env.DB.prepare('INSERT INTO runs (at, ip, name, seed, waves, kills, score, level, mul) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(at, ip, run.name, run.seed, run.waves, run.kills, run.score, run.level, run.mul).run();
   const foreverBest = await recordForever(env.DB, run, at);
   const place = async (which: Which, best: boolean): Promise<Place> => {
     const p = (await placeOf(env.DB, which, run.name, nowMs))!;
-    return { rank: p.rank, total: p.total, score: p.score, best };
+    return { rank: p.rank, total: p.total, score: p.score, level: p.level, best };
   };
-  return json({ today: await place('today', !todayBefore || run.score > todayBefore.score), forever: await place('forever', foreverBest) }, 200, headers);
+  const todayBest = !todayBefore || rankKey(run.level, run.score) > rankKey(todayBefore.level, todayBefore.score);
+  return json({ today: await place('today', todayBest), forever: await place('forever', foreverBest) }, 200, headers);
 }
 
 export async function handle(request: Request, env: Env, nowMs = Date.now()): Promise<Response> {
