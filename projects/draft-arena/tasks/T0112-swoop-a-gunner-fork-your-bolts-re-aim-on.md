@@ -3,11 +3,13 @@ id: T0112
 title: "Swoop: a Gunner fork, your bolts re-aim once at 200 units and fly a second leg"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T18:10:25Z
+claimed_at: 2026-10-31T18:26:32Z
 epic: E24
+designer: desktop
 ---
 
 ## Goal
