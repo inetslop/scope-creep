@@ -4,11 +4,12 @@ title: "Heart Shades: a 200-coin face accessory, pink heart frames around the ey
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T12:00:08Z
 claimed_at: 2026-10-31T12:35:16Z
+finished_at: 2026-10-31T12:43:32Z
 ---
 
 ## Goal
@@ -100,3 +101,16 @@ export const heartShades: AccessoryDef = {
 
 ### Tests
 none (engine/tests/ checks the file/registry/draw automatically).
+
+## Result (attempt 1, yoga)
+
+Added "Heart Shades" — a 200-coin face accessory drawing two outlined pink hearts (wide ink stroke with a thin pink inner stroke, no fill so the eyes and mouth stay visible) around the eyes with a short ink nose bridge, bobbing gently with the critter's bob. Created `src/content/accessories/heart-shades.ts` (export `heartShades`) and added it to `ACCESSORIES` right after `beak`, keeping the face items together; the shop face row, preview, bot wearing and profile persistence all pick it up from the registry with no other edits. `npm run check` (97 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 8.3 min
+
+```
+.../game/src/content/accessories/heart-shades.ts   | 40 ++++++++++++++++++++++
+ .../game/src/content/accessories/index.ts          |  2 ++
+ 2 files changed, 42 insertions(+)
+```
