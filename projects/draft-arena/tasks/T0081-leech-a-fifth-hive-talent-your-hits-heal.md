@@ -4,11 +4,12 @@ title: "Leech: a fifth Hive talent, your hits heal you while the crowd is on you
 assignee: inet-racing
 size: M
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T13:48:21Z
 claimed_at: 2026-10-31T17:15:47Z
+finished_at: 2026-10-31T17:25:41Z
 epic: E16
 ---
 
@@ -107,3 +108,17 @@ export const leech: UpgradeDef = {
 
 ### Tests
 - None (no pure helpers; the engine tests run the upgrade in a real match and check the talent line automatically).
+
+## Result (attempt 1, inet-racing)
+
+Added Leech, a third-rank on-hit upgrade in the Hive tree that heals the attacker 1–3 hp per hit (per rank) while 3+ other enemies are within 80 of them, working with every weapon and area; it's a sustain fork off Swarm 1 alongside Horn, so a Hive life can stand in the crowd and chew through it. Files: new `src/content/upgrades/leech.ts`, one import + one list line in `src/content/upgrades/index.ts`, and one talent line in `src/content/talents/hive.ts`.
+
+- Self-review: APPROVE
+- Time: 9.9 min
+
+```
+projects/draft-arena/game/src/content/talents/hive.ts  |  1 +
+ .../draft-arena/game/src/content/upgrades/index.ts     |  2 ++
+ .../draft-arena/game/src/content/upgrades/leech.ts     | 18 ++++++++++++++++++
+ 3 files changed, 21 insertions(+)
+```
