@@ -1,12 +1,14 @@
 ---
 id: T0095
 title: "Players grow with their level: twice as big by level 18"
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T15:20:51Z
+claimed_at: 2026-10-31T17:34:04Z
 ---
 
 ## Goal
