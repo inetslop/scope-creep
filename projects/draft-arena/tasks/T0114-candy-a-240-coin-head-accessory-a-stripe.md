@@ -3,11 +3,13 @@ id: T0114
 title: "Candy: a 240-coin head accessory, a striped candy on the side of the head"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T19:06:11Z
+claimed_at: 2026-10-31T19:06:39Z
 epic: E26
+designer: yoga
 ---
 
 ## Goal
