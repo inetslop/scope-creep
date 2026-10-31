@@ -10,6 +10,7 @@ import { bowTie } from './bow-tie.ts';
 import { beak } from './beak.ts';
 import { heartShades } from './heart-shades.ts';
 import { balloon } from './balloon.ts';
+import { partyBlower } from './party-blower.ts';
 
 /** Everything players can wear on their head, face or back (hats and more). One per line. */
 export const ACCESSORIES: readonly AccessoryDef[] = [
@@ -24,4 +25,5 @@ export const ACCESSORIES: readonly AccessoryDef[] = [
   beak,
   heartShades,
   balloon,
+  partyBlower,
 ];

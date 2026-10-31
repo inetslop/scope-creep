@@ -4,11 +4,12 @@ title: "Party Blower: a 180-coin back accessory, a red blower rolled on a stick"
 assignee: cachyos-x8664
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T13:15:23Z
 claimed_at: 2026-10-31T13:52:18Z
+finished_at: 2026-10-31T13:55:59Z
 ---
 
 ## Goal
@@ -101,3 +102,16 @@ export const partyBlower: AccessoryDef = {
 
 ### Tests
 none
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the Party Blower back accessory (180 coins): created `src/content/accessories/party-blower.ts` with a red rolled-horn spiral, inner roll line, white tip and thin stick with a gentle speed-driven sway, and registered `partyBlower` in `src/content/accessories/index.ts` right after `balloon`. Checks and smoke tests pass; it's purely cosmetic and slots into the shop's back row.
+
+- Self-review: APPROVE
+- Time: 3.7 min
+
+```
+.../game/src/content/accessories/index.ts          |  2 +
+ .../game/src/content/accessories/party-blower.ts   | 43 ++++++++++++++++++++++
+ 2 files changed, 45 insertions(+)
+```
