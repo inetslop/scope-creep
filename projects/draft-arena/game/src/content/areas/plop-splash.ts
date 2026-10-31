@@ -1,5 +1,6 @@
 import type { AreaDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
+import { bloop } from '../../audio/sfx.ts';
 
 /** Where a plop lands: a purple ink-rimmed ring blooms to 60 over 0.2 s, strikes once for 12 (players and monsters alike), then vanishes. */
 export const plopSplash: AreaDef = {
@@ -10,6 +11,7 @@ export const plopSplash: AreaDef = {
   look: {
     shape: 'circle', color: PALETTE.purple,
     draw(g, e) {
+      bloop(e.seed, (1 - e.hp) * 0.2); // the 0.2 s bloom
       const q = Math.min(1, 1 - e.hp); // the bloom: 0 at spawn, 1 at the end (the wire hp is the life left)
       const r = e.radius * q;
       if (r <= 1) return;

@@ -4,11 +4,12 @@ title: "Bloop: a low bloop when a Toss splash blooms"
 assignee: inet-racing
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T17:06:34Z
 claimed_at: 2026-10-31T17:41:07Z
+finished_at: 2026-10-31T17:52:59Z
 epic: E20
 ---
 
@@ -49,3 +50,16 @@ export function bloop(seed: number, age: number): void
 - Reuse the shared `heard`/`active` maps — the 6-voice cap and the match-on-screen/first-gesture gates come for free; never touch `arm()`, `hudNow()` or `src/hud/audio.ts`.
 ### Tests
 - none (client sound; engine/tests already run every area's draw in a real match).
+
+## Result (attempt 1, inet-racing)
+
+Added a low "bloop" sound for Toss splashes: `bloop(seed, age)` in `src/audio/sfx.ts` (a sine sweep 160→70 Hz over 0.12 s, peak 0.08 — lower and softer than the monster pop), modeled on `whump` with the same gesture/match-on-screen gates, a 700 ms per-seed dedupe, a 150 ms global throttle, and the shared 6-voice cap. The plop-splash area (`src/content/areas/plop-splash.ts`) calls it at the top of its `draw`, once per splash at the bloom. No new content files; plop-splash is used only by the Toss, so nothing else is affected.
+
+- Self-review: APPROVE
+- Time: 11.9 min
+
+```
+projects/draft-arena/game/src/audio/sfx.ts         | 24 ++++++++++++++++++++++
+ .../game/src/content/areas/plop-splash.ts          |  2 ++
+ 2 files changed, 26 insertions(+)
+```

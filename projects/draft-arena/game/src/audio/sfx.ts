@@ -13,6 +13,7 @@ const heard = new Map<number, number>(); // effect seed -> until when its pop ha
 let lastFanfare = 0; // performance.now() of the last prestige fanfare
 let lastBonk = 0; // performance.now() of the last bonk
 let lastWhump = 0; // performance.now() of the last whump
+let lastBloop = 0; // performance.now() of the last bloop
 const tootTicks = new Map<number, number>(); // crown-fall seed -> until when its toot tick has played
 
 function wake(): void {
@@ -127,6 +128,29 @@ export function whump(seed: number, age: number): void {
   if (active >= 6) return;
   active += 1;
   blip(200, 0.05, 0.1, 130); // 200 -> 130 Hz over 0.1 s, peak 0.05: the dull low squeeze
+}
+
+/**
+ * One low bloop when a Toss blob's splash blooms: a 160 Hz sine falling to 70 Hz over 0.12 s,
+ * peak 0.08 — lower and softer than the pop, so the splash reads as a dull strike by ear.
+ * Called from the plop-splash area's draw() on every client: at most once per splash (its seed),
+ * at most one bloop per 150 ms, under the same 6-voice cap as the pops, so a Toss crowd doesn't
+ * stack them.
+ */
+export function bloop(seed: number, age: number): void {
+  if (!ctx) return;
+  if (age > 0.25) return; // the splash's first frames only
+  const now = performance.now();
+  if (now - lastHud > 1000) return; // no match on screen
+  const until = heard.get(seed);
+  if (until !== undefined && until > now) return;
+  heard.set(seed, now + 700);
+  if (heard.size > 96) for (const [s, u] of heard) if (u <= now) heard.delete(s);
+  if (now - lastBloop < 150) return; // one bloop per 150 ms
+  lastBloop = now;
+  if (active >= 6) return;
+  active += 1;
+  blip(160, 0.08, 0.12, 70); // 160 -> 70 Hz over 0.12 s, peak 0.08
 }
 
 export function toot(seed: number, age: number): void {
