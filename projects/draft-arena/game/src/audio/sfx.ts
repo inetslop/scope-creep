@@ -10,6 +10,7 @@ let armed = false;
 let lastHud = 0; // performance.now() of the last match frame
 let active = 0; // pops still sounding
 const heard = new Map<number, number>(); // effect seed -> until when its pop has played
+let lastFanfare = 0; // performance.now() of the last prestige fanfare
 let lastBonk = 0; // performance.now() of the last bonk
 
 function wake(): void {
@@ -139,5 +140,37 @@ export function playChime(): void {
     g.connect(master);
     o.start(t0 + delay);
     o.stop(t0 + delay + 0.09);
+  }
+}
+
+/**
+ * Prestige: a bright rising arpeggio C5→E5→G5 ("da-da-DA"), lower and longer than the
+ * level-up chime so a prestige reads bigger. Called from the prestige-ring effect's
+ * draw() on every client: the frames the ring blooms (its seed) and at most one
+ * fanfare every 2 s, so a player and a bot prestiging at once sound as one.
+ */
+export function fanfare(seed: number, age: number): void {
+  if (!ctx || !master) return; // not unlocked by a gesture yet
+  if (age < 0.2 || age > 0.35) return; // only as the ring blooms
+  const now = performance.now();
+  if (now - lastHud > 1000) return; // no match on screen
+  const until = heard.get(seed);
+  if (until !== undefined && until > now) return;
+  heard.set(seed, now + 700);
+  if (heard.size > 96) for (const [s, u] of heard) if (u <= now) heard.delete(s);
+  if (now - lastFanfare < 2000) return; // one fanfare per 2 s
+  lastFanfare = now;
+  const t0 = ctx.currentTime;
+  for (const [f, d] of [[523.25, 0], [659.25, 0.1], [784, 0.2]] as const) {
+    const o = ctx.createOscillator();
+    o.type = 'sine';
+    o.frequency.value = f;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.09, t0 + d);
+    g.gain.exponentialRampToValueAtTime(0.001, t0 + d + 0.12);
+    o.connect(g);
+    g.connect(master);
+    o.start(t0 + d);
+    o.stop(t0 + d + 0.14);
   }
 }

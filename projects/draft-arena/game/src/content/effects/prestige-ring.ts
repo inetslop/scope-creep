@@ -1,11 +1,13 @@
 import { traceShape, type EffectDef } from '../../../engine/api.ts';
 import { PALETTE } from '../palette.ts';
+import { fanfare } from '../../audio/sfx.ts';
 
 /** Prestige: the field's biggest ring, 0.2 s after the level-up ring, with 24 stars off it. */
 export const prestigeRing: EffectDef = {
   id: 'prestige-ring',
   duration: 1,
   draw(g, fx) {
+    fanfare(fx.seed, fx.age);
     if (fx.t < 0.2) return;
     const t = (fx.t - 0.2) / 0.8;
     const r = 26 + t * 194;
