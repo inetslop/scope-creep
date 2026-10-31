@@ -3,11 +3,13 @@ id: T0317
 title: "The Flyer: the wave-50 boss that crosses the sky"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T00:35:25Z
+claimed_at: 2026-10-31T00:44:16Z
 epic: E10
+designer: desktop
 ---
 
 ## Goal
