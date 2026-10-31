@@ -1,12 +1,14 @@
 ---
 id: T0098
 title: "Star: a 100-coin pattern, one light star on the middle of the body"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T16:11:39Z
+claimed_at: 2026-10-31T16:19:38Z
 epic: E21
 ---
 
