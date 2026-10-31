@@ -3,13 +3,11 @@ id: T0117
 title: "Lash: a Hive prestige gate, your horn darts split on hit"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-10-31T19:30:37Z
-claimed_at: 2026-10-31T19:36:39Z
 epic: E25
-designer: desktop
 ---
 
 ## Goal
@@ -63,3 +61,89 @@ Lash is an on-hit, so one row for every on-hit and on-kill upgrade that exists:
 - [ ] A small dart that kills a monster pays Chomp/Nest/Sting/Scavenge as your kill, and its hit gets Swarm's crowd bonus.
 - [ ] Small darts read as shards: half the horn dart's size with a white edge, and a purple tick puff where a dart splits.
 - [ ] Lash is in the Hive tab under Horn, needs Horn 2, 2 ranks, 3 points in the tree, 1 prestige this life, with the text above.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/projectiles/lash-dart.ts` — the `lashDart` projectile (small purple hexagon shard, straight, 0.4 s)
+- create `src/content/upgrades/lash.ts` — the `lash` on-hit upgrade (horn-dart guard, spawns the shards)
+- create `src/content/effects/lash-tick.ts` — the `lashTick` purple tick puff (copy of `wired-pop`, yellow → purple)
+- edit `src/content/projectiles/index.ts` — import + one list line, both right after `horn`
+- edit `src/content/upgrades/index.ts` — import after the `lance` import (alphabetical); list line after `mend,` (the other guarded on-hit)
+- edit `src/content/effects/index.ts` — import + list line, both right after `wiredPop`
+- edit `src/content/talents/hive.ts` — one talent line after the `nest` line (both need `horn` 2)
+
+### Interfaces
+No new types. Exact file contents:
+
+`src/content/projectiles/lash-dart.ts`:
+```ts
+import { drawCritter, type Look, type ProjectileDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+const look: Look = { shape: 'hexagon', color: PALETTE.purple };
+look.draw = (g, e) => drawCritter(g, look, e, { ink: PALETTE.white });
+
+/** A Lash shard: half a horn dart with a thin white edge, straight, gone on hit or after 0.4 s. It never splits. */
+export const lashDart: ProjectileDef = {
+  id: 'lash-dart',
+  radius: 3,
+  life: 0.4,
+  look,
+};
+```
+No `path`, no `step`: straight flight, client-computed, cheap.
+
+`src/content/upgrades/lash.ts`:
+```ts
+import { v, type UpgradeDef } from '../../../engine/api.ts';
+import { PALETTE } from '../palette.ts';
+
+/** A Lash split: a horn dart that hits sends small darts at the critters standing beside it. */
+export const lash: UpgradeDef = {
+  id: 'lash',
+  name: 'Lash',
+  description:
+    'After 1 prestige this life. Your horn darts split on hit: each hit sends 2 small darts (3 damage, 0.4 s) at the 2 nearest other enemies within 100. Rank 2: 3 small darts.',
+  maxLevel: 2,
+  look: { shape: 'hexagon', color: PALETTE.purple },
+  onHit(ctx, me, level, hit) {
+    if (!hit.projectile || hit.projectile.def.id !== 'horn') return; // horn darts only
+    const others = ctx.enemiesNear(me, hit.x, hit.y, 100).filter((u) => u !== hit.target);
+    if (others.length === 0) return;
+    others.sort((a, b) => (a.x - hit.x) ** 2 + (a.y - hit.y) ** 2 - ((b.x - hit.x) ** 2 + (b.y - hit.y) ** 2));
+    const n = Math.min(1 + level, others.length); // rank 1: 2 darts, rank 2: 3
+    ctx.effect('lash-tick', { x: hit.x, y: hit.y });
+    for (let i = 0; i < n; i++) {
+      const t = others[i]!;
+      ctx.fire(me, 'lash-dart', { x: hit.x, y: hit.y, angle: v.angleTo({ x: hit.x, y: hit.y }, t), speed: 400, damage: 3 });
+    }
+  },
+};
+```
+
+`src/content/effects/lash-tick.ts`: copy `src/content/effects/wired-pop.ts` verbatim, change `id` to `'lash-tick'`, export name to `lashTick`, and both `PALETTE.yellow` uses to `PALETTE.purple`. Keep `duration: 0.3`, ink rim and white glint.
+
+`src/content/talents/hive.ts` — insert after the `{ id: 'nest', ... }` line:
+```ts
+    { id: 'lash', upgrade: 'lash', max: 2, needs: [['horn', 2]], points: 3, prestige: 1 },
+```
+
+Registry lines: `import { lashDart } from './lash-dart.ts';` + `lashDart,`; `import { lash } from './lash.ts';` + `lash,`; `import { lashTick } from './lash-tick.ts';` + `lashTick,` — each in its `index.ts` as placed above.
+
+### Steps
+1. Create the three content files exactly as above.
+2. Add the three registry lines (import + list entry each).
+3. Add the one talent line in `hive.ts`.
+4. Run `npm run check`.
+
+### Pitfalls
+- `ctx.fire` defaults to the owner's position — without `x: hit.x, y: hit.y` the shards would fly from the player, not the critter hit.
+- Exclude the hit critter by identity (`u !== hit.target`); it sits at distance 0 in the scan and would sort first. Do the scan synchronously at `hit.x/hit.y` — a critter killed by the hit still anchors the split there; never re-read the target's position.
+- `.filter()` before `.sort()`: never sort the array `enemiesNear` returns in place.
+- No `life` override in `ctx.fire` (flat 0.4 s, unlike horn's `0.5 / projectileSpeed`); `speed: 400` is the base and the engine scales it by stats, as for every player shot. Player targets already take half damage via `rules.pvp.damageMul` — pass `damage: 3` plain.
+- "Never split": the `id !== 'horn'` guard rejects `lash-dart` hits; do not add any `onHit` to the projectile def. Kills credit to `me` automatically (the dart's owner), so Chomp/Nest/Sting/Scavenge/Adrenaline/Fang and Swarm all apply with no extra code.
+- White edge only through `drawCritter(..., { ink: PALETTE.white })` (one outline, no glow); default engine ink is the dark one — a plain `Look` would not read as a shard.
+
+### Tests
+- none (no pure helpers; the engine tests cover the def, the guarded on-hit in a real match, talent reachability, and the 60-player budget).
