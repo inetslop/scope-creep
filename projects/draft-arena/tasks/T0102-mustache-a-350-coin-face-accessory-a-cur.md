@@ -3,11 +3,13 @@ id: T0102
 title: "Mustache: a 350-coin face accessory, a curly pink mustache over the mouth"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T17:06:34Z
+claimed_at: 2026-10-31T17:15:53Z
 epic: E22
+designer: yoga
 ---
 
 ## Goal
