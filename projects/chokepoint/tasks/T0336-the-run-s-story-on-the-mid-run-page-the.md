@@ -3,11 +3,13 @@ id: T0336
 title: "The run's story on the mid-run page: the pause's Summary"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T03:39:37Z
+claimed_at: 2026-11-01T04:06:39Z
 epic: E12
+designer: inet-racing
 ---
 
 ## Goal
