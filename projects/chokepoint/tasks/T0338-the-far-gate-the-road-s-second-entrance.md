@@ -3,11 +3,13 @@ id: T0338
 title: "The far gate: the road's second entrance"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T04:12:33Z
+claimed_at: 2026-11-01T04:42:35Z
 epic: E13
+designer: inet-racing
 ---
 
 ## Goal
