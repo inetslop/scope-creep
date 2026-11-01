@@ -1,7 +1,12 @@
 ---
+id: T0343
 title: On touch, a tap previews the tower; a ✓ builds it, an ✗ cancels
 size: M
 priority: 1
+status: design
+depends_on: []
+attempts: 0
+created: 2026-11-01T06:40:31Z
 ---
 
 ## Goal
