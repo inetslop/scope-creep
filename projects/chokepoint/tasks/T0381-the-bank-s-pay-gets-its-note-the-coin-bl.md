@@ -3,12 +3,13 @@ id: T0381
 title: "The bank's pay gets its note: the coin blip on the interest"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-01T21:18:04Z
 claimed_at: 2026-11-01T21:35:12Z
-designer: yoga
+finished_at: 2026-11-01T21:37:57Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -24,3 +25,7 @@ The interest pay (T0363) lands in the gold silently. The quiet coin blip — the
 - [ ] A wave-start interest pay of at least 1 gold plays the coin blip exactly once, at the same moment the gold is added, on both pay paths; a pay of 0 plays nothing.
 - [ ] Silent with sound off (the pause's Sound toggle); the blip is the existing coinBlip at its existing volume.
 - [ ] No HUD, text, chip, new Sfx method or layout change anywhere; npm run check and the desktop 1280×720 / mobile 412×915 smoke pass.
+
+## Rejected by architect (yoga)
+
+Already exists — the interest pay already plays the coin blip: bankPay() (src/systems/RunFlow.ts:133) calls Sfx.coinBlip() at the moment the gold is added, on both wave-start paths, silent for a pay of 0.
