@@ -24,85 +24,11 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 ### E4 — Augment rarity (fully tasked 2026-10-31 — closing on the pool's landings)
 **Goal:** the draft is exciting: sometimes a card is something special.
 **When done:** every augment card in the draft comes in a rarity: Common, Rare or Epic. A rarer card is the same augment with stronger numbers (a Rare Rapid attacks faster than a Common one), and a few rule-changing augments only ever come as Epic. Rarity shows everywhere the augment does: the card's frame and a small gem row on the draft, hand and tower-panel cards, and on the tower itself (its slot pip). Rarer cards turn up more often the further the run gets; the odds are shown in the draft.
-**Breakdown:**
-- T0002 (L) — the tiers: the draft roll, card frame + gem row, odds line — done
-- T0004 (L) — Lance — done
-- T0008 (M) — rarity on the hand and the tower panel — done
-- T0010 (S) — the tier pip per slot on the tower — done
-- T0011 (M) — the odds shift deeper into the run — done
-- T0012 (L) — Mark: the first rule-changing Epic — done
-- T0020 (L) — Rally: the cluster Epic — done
-- T0021 (L) — Mint: the economy Epic — done
-- T0023 (L) — Anchor: the root Epic — done
-- T0024 (S) — the draft reveal flip — done
-- T0025 (L) — Chain: the leap-zap augment — the first attack that changes target mid-attack — in the pool (todo)
-- T0026 (S) — the tier word on the draft card — done
-- T0027 (L) — Push: moves enemies back along the road — done
-- T0028 (L) — Ember: the first damage over time — done
-- T0029 (L) — Beam: failed three times — superseded by T0073
-- T0032 (S) — the tier chime on the draft reveal — done
-- T0036 (M) — reroll: once per run, three new cards for 15 gold — done
-- T0038 (L) — Ricochet: rejected (shots home) — don't re-propose unless rocks block shots
-- T0039 (S) — Mint's gold pop — done
-- T0040 (M) — Lead: removed (shots home and never miss) — don't re-propose an aimed shot
-- T0041 (S) — the Epic frame shimmer on the reveal — done
-- T0043 (S) — the beam hum: landed as T0112 — done
-- T0044 (S) — the owned dot on the draft card — done
-- T0048 (S) — the first draft always offers a Common Bolt — done
-- T0052 (S) — the draft never repeats the previous offer — done
-- T0055 (S) — the working-aura ring under support towers — done
-- T0058 (S) — the Push wind-up ring — done
-- T0059 (S) — the burn jumps once to the nearest on death — done
-- T0062 (M) — Trap: the bomb that springs on the road, the first triggered attack — in the pool (todo)
-- T0064 (L) — Momentum: each clean wave, +5% damage to every tower (Epic-only, gated) — in the pool (todo)
-- T0065 (M) — second pick: every 5th draft offers a fourth card — done
-- T0073 (L) — Beam: the first sustained attack — done
-- T0084 (M) — the "≈ N/s" DPS line in the tower panel — done
-- T0088 (S) — the tier chime plays on the build commit — done
-- T0089 (L) — Pulse: dropped (fails the content bar) — don't re-task it or a variant
-- T0093 (L) — Mend: rejected on the 56-char tier-line cap — re-filed as T0095
-- T0094 (S) — the owned dot counts copies (×N) — done
-- T0095 (L) — Mend: the Epic that buys a life back (every 12 kills, +1 life; −2 per extra copy, floor 4) — in the pool (todo, priority 3)
-- T0096 (M) — the what-if preview of the held card — done
-- T0099 (M) — the mark shows on the enemy — done
-- T0100 (S) — the tier word wears its tier's color — done
-- T0101 (L) — Spray: the pool's aimed spread — done
-- T0104 (S) — the Sprinter shows its ramp — done
-- T0105 (S) — the Splitter's crack widens at half hp — done
-- T0112 (S) — the beam hum — done
-- T0113 (S) — the burn shows on the enemy — done
-- T0130 (M) — Beam combos I: Bolt adds a ray, Rapid and Rally feed the beam — done
-- T0131 (M) — Beam combos II: failed (context overflow) — re-filed as T0210, the needle clause parked for T0242
-- T0210 (M) — Beam combos II: Lance pierces the beam's main line, Splash scorches its target — done
-- T0242 (M) — Beam combos IIb: a beam kill splits into one homing needle per added Spray — **done** (2026-10-30, desktop-4070)
-- T0248 (S) — the codex lock: a muted lock on the gated augments' codex cards — in the pool (todo, waits on T0062 and T0095)
-- T0132 (M) — Beam combos III: the beam carries Ember, Anchor, Push and Mark — done
-- T0133 (M) — a new look for the Beam tower — done
-- T0134 (L) — Spray becomes a shotgun: a cone of pellets — done
-- T0135 (S) — Spray gets its own look — done
-- T0152 (L) — Haste: the Epic that hastens everything it touches (2-cell aura, +30% to both sides, +15% per copy; gated by its tech node) — done (2026-10-30)
-- T0138 (S) — the slow shows on the enemy — done
-- T0139 (S) — the root shows on the enemy — done
-- T0221 (L) — the Augments codex: every augment in the pool, one card each — done
-- T0228 (S) — the end card's towers wear their tier — done
-- T0234 (M) — Toll: the Epic that pays gold when a leak gets through — done (2026-10-30)
-- T0235 (L) — Feast: the Epic that feeds on the kill chain (its added form lengthens the chain's window) — in the pool (todo)
-- T0236 (S) — the what-if says "nothing": failed on a wrong premise — dropped, don't re-propose a hits-card dim
-- T0238 (L) — the draft shows where the card lands: failed (wrong premise) — re-filed as T0243
-- T0243 (L) — the draft shows where the card lands (the re-file): each offered card shows the towers a pick would land on — done (2026-10-30)
-- T0276 (M) — endless rerolls: every reroll costs more — **done** (2026-10-30, desktop)
-- T0279 (S) — balance: Beam hits too softly — **done** (2026-10-30, desktop)
-- T0280 (M) — Beam added is a damage boost, not another beam — failed 2026-10-30 (cachyos context overflow ×3); **re-filed as T0316 (M, priority 2, in the pool)**
-- T0281 (L) — Beam and burn deal damage in ticks — **done** (2026-10-30, asus)
-- T0282 (M) — Spray crits: the shotgun rolls for double damage — file lost from the pool; re-filed as T0299
-- T0298 (L) — Wildcard: the 4th card of the 4-card drafts becomes whatever you pick, always Rare or better — in the pool (todo)
-- T0299 (M) — Spray crits (the T0282 re-file): 15% of pellets hit for double, a yellow chip at the impact — **done** (2026-10-31, asus)
+**Breakdown:** everything landed — the rarity (T0002), the augments (Lance T0004, Mark T0012, Rally T0020, Mint T0021, Anchor T0023, Push T0027, Ember T0028, Beam T0073, Spray T0101, Haste T0152, Toll T0234), the card, hand, panel and tower reads, the odds shift (T0011), the rerolls (T0036, T0276), the codex (T0221) and the beam-combo web (T0130, T0210, T0242, T0132) — except the pool's registrations: T0025 (L) Chain · T0062 (M) Trap · T0064 (L) Momentum · T0095 (L) Mend · T0235 (L) Feast, one at a time in claim order; behind them T0248 (S, the codex lock, waits on T0062 and T0095) and T0150 (S, waits on T0025). T0298 (Wildcard) is out of the pool (its file is gone) — re-task it if it is still wanted.
 
-Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one at a time, in claim order, under the 16-cap); also in the pool: T0248 (waits on T0062 and T0095) and T0298; T0316 (T0280's re-file) landed 2026-10-31 (asus); T0150 rides behind T0025.
+**E4 closes when T0025, T0062, T0064, T0095, T0235 and T0248 land — every E4 task is written; it counts as finished while the pool lands.**
 
-**E4 closes when T0025, T0062, T0064, T0095, T0235 and T0248 land (T0316 landed 2026-10-31) — every E4 task is now written; it counts as finished while the pool lands.**
-
-**16-cap (protocol):** the pool is 16 (Haste landed with no removal triggered); the five queued registrations (T0025, T0062, T0064, T0095, T0235) land exactly five removals. The rule: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
+**16-cap (protocol):** the five queued registrations (T0025, T0062, T0064, T0095, T0235) land exactly five removals: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
 
 ### E5 — Bosses: every 10th wave is something you remember (done; history in planning/archive/ROADMAP.md)
 
@@ -114,7 +40,7 @@ Progress: the pool's registrations are T0025, T0062, T0064, T0095 and T0235 (one
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
 ### E9 — Level augments: harder runs for a bigger payout (active, **top priority** — opened 2026-10-30, by hand)
-**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0285, T0291 (the payout), T0294 (Swift and Crowded), T0295 (Lean and Short fuse), the reprice T0288, the third node T0297 and the slot ladder T0305 landed; T0310 (the switchback) landed 2026-11-01; the claim branch's second node (Flawless pays 10 coins) is **tasked as T0313 (M, priority 1, in the pool)**. Every E9 task is now written (T0313, T0325, T0326 and T0329 in the pool) — it counts as finished while they land.
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0285, T0291 (the payout), T0294 (Swift and Crowded), T0295 (Lean and Short fuse), the reprice T0288, the third node T0297 and the slot ladder T0305 landed; T0310 (the switchback) landed 2026-11-01; the claim branch's second node (Flawless pays 10 coins) landed as T0313 (2026-11-01, asus). Every E9 task is now written (T0325, T0326 and T0329 in the pool) — it counts as finished while they land.
 **The owner's redesign (by hand, 2026-10-31):** six owner tasks, priority 1, numbered T0321–T0326 from the inbox: an added Spray is crit chance and an added Beam is +damage, both on every damage tower (T0321, T0322); Play opens a daily board pick, three boards seeded on the UTC date with their level augments and a level row from 0 to the slots, replacing the menu picker (T0323); the boards rank by level, then score, and Today is the UTC day (T0324; the server side is the owner's, done); rewards need wave 10, Quit run pays out and ends the run, a new Main menu keeps it (T0325); the wave-30 card offers to claim now or keep going (T0326). Where the "When done" list below says the menu picker, the saved preselected choice or a rolling Today, these tasks replace it; don't plan around the old picker.
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
@@ -142,7 +68,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the payout made visible: the multiplier applied to score and coins (stacks with Iron), the claim card's line, the leaderboard row's tag, the HUD chips — **T0291 (L, priority 1) — done** (2026-10-30, asus)
 - the rest of the first set, one task per side: Swift (+15% enemy speed) + Crowded (+20% enemies per wave) — **T0294 (M) — done** (2026-10-30, asus); Lean (−25% kill gold) + Short fuse (−30% build time) — **T0295 (M) — done** (2026-10-30, asus); each a pure rule with tests, each one's multiplier bonus is its own number
 - the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned — **done as T0288 (M, 2026-10-30, cachyos-x8664)**
-- deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **done as T0297 (M, 2026-10-30, desktop)**; the claim branch's second node (Flawless pays 10 coins, T0076's open door) — **tasked as T0313 (M, priority 1, in the pool)**; the board branch's fourth node (The switchback, the road's fold) — **T0310 (M) — done** (2026-11-01, asus)
+- deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **done as T0297 (M, 2026-10-30, desktop)**; the claim branch's second node (Flawless pays 10 coins, T0076's open door) — **T0313 (M) — done** (2026-11-01, asus); the board branch's fourth node (The switchback, the road's fold) — **T0310 (M) — done** (2026-11-01, asus)
 - the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line) — **T0305 (M, priority 1) — done** (2026-10-30, asus)
 - the coins reference: how a run pays, off the pause (the rates, this run's terms, the multipliers — the payout math in one card) — **T0329 (M, E9, in the pool, waits on T0313)**
 - (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set
@@ -160,8 +86,8 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **When done:** on runs with runsPlayed = 0 only — "Pick a card" above the pre-wave-1 draft until a pick; "Build beside the road" beside the first buildable cell in the first build phase until the first tower stands; "Hold the road" under the wave banner during wave 1 until the wave ends. Each re-derived from the run's state on resume, so a resumed first run that has already done a step never shows it; no sound, no input; nothing on any later run.
 **Breakdown:**
 - T0318 (M) — the first hint: "Pick a card" on the pre-wave-1 draft — done (2026-11-01, cachyos-x8664)
-- T0319 (S) — the second hint: "Build beside the road" beside the first buildable cell — in the pool
-- T0320 (M) — the third hint: "Hold the road" under the wave 1 banner — in the pool
+- T0319 (S) — the second hint: "Build beside the road" beside the first buildable cell — in progress (yoga)
+- T0320 (M) — the third hint: "Hold the road" under the wave 1 banner — done (2026-11-01, inet-racing)
 
 **All three E11 hints are now written (T0318, T0319, T0320) — it counts as finished while they land.**
 
@@ -179,7 +105,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Breakdown:**
 - the far gate: a second entrance partway down the road; a third of each non-boss wave comes through it; the board, the board preview and the next-wave preview show it — **T0338 (M, in the pool)**
 - (to task) the fork: the road splits into two lanes and re-joins; enemies take either lane
-- (to task) the marked cell: one build cell that makes a tower built on it stronger
+- the marked cell: one build cell that makes a tower built on it stronger — **tasked as T0340 (M, in the pool)**
 
 ### Enemy queue (non-epic)
 
@@ -189,7 +115,7 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Splitter (T0068, M) — **done** (2026-10-28, desktop-4070): breaks into two fast splinters at its spot.
 - Hauler (T0057, M) — **done** (2026-10-28, cachyos-x8664): a big slow hexagon — worth 10 gold, a leak costs a life plus 5 gold.
 - Mute (T0074, M) — **done** (2026-10-29, desktop-4070): silences every tower within 2 cells. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
-- Feeder (IDEAS) — **tasked as T0334 (M, designing, the T0309 re-file)**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring — it lands the regular-enemy cap at 10 of 10 (the Wall stays parked behind it).
+- Feeder (IDEAS) — **T0334 (M, in progress, the T0309 re-file)**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring — it lands the regular-enemy cap at 10 of 10 (the Wall stays parked behind it).
 - The Hive (IDEAS) — **tasked as T0292 (L, in the pool)**: the wave-40 boss, the next peak after the Orb — the first boss that grows the group (a Dot every 6 s, up to 5); `spawnOnly`, so the 10-regular cap is untouched (the Feeder fills it).
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
@@ -205,7 +131,7 @@ Ideas that may become epics or tasks of one.
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
 - Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is T0292; the wave-50 Flyer, the first boss that doesn't walk the road, is **E10's T0317 (in the pool)**)
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
-- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **now E13 (opened 2026-11-01)**: the far gate is T0338 (M, in the pool); the fork and the marked cell task behind it
+- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **now E13 (opened 2026-11-01)**: the far gate is T0338 (M, in the pool); the marked cell is T0340 (M, in the pool); the fork tasks behind them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **built as T0239 (L, non-epic, 2026-10-30, asus)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
 - Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**; the mid-run page **built as T0306 (2026-10-30, inet-racing)** — the pause's "Summary": the ledger's rows and the standing towers' kills and ≈N/s (the end card's and claim card's reads, re-used); damage per tower and leaks per wave still need the ledger's new terms — the per-wave leaks record landed with **E12's T0333 (2026-11-01)**; the mid-run story line is **T0336 (M, in the pool)**
