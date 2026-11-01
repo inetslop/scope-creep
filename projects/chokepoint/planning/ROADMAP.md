@@ -24,11 +24,11 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 ### E4 — Augment rarity (fully tasked 2026-10-31 — closing on the pool's landings)
 **Goal:** the draft is exciting: sometimes a card is something special.
 **When done:** every augment card in the draft comes in a rarity: Common, Rare or Epic. A rarer card is the same augment with stronger numbers (a Rare Rapid attacks faster than a Common one), and a few rule-changing augments only ever come as Epic. Rarity shows everywhere the augment does: the card's frame and a small gem row on the draft, hand and tower-panel cards, and on the tower itself (its slot pip). Rarer cards turn up more often the further the run gets; the odds are shown in the draft.
-**Breakdown:** everything landed — the rarity (T0002), the augments (Lance T0004, Mark T0012, Rally T0020, Mint T0021, Anchor T0023, Push T0027, Ember T0028, Beam T0073, Spray T0101, Haste T0152, Toll T0234), the card, hand, panel and tower reads, the odds shift (T0011), the rerolls (T0036, T0276), the codex (T0221) and the beam-combo web (T0130, T0210, T0242, T0132) — except the pool's registrations: T0025 (L) Chain · T0062 (M) Trap · T0064 (L) Momentum · T0095 (L) Mend · T0235 (L) Feast, one at a time in claim order; behind them T0248 (S, the codex lock, waits on T0062 and T0095) and T0150 (S, waits on T0025). T0298 (Wildcard) is out of the pool (its file is gone) — re-task it if it is still wanted.
+**Breakdown:** everything landed — the rarity (T0002), the augments (Lance T0004, Mark T0012, Rally T0020, Mint T0021, Anchor T0023, Push T0027, Ember T0028, Beam T0073, Spray T0101, Haste T0152, Toll T0234), the card, hand, panel and tower reads, the odds shift (T0011), the rerolls (T0036, T0276), the codex (T0221) and the beam-combo web (T0130, T0210, T0242, T0132) — except the pool's registrations: T0062 (M) Trap · T0064 (L) Momentum · T0095 (L) Mend · T0235 (L) Feast, one at a time in claim order (T0025 (L) Chain failed and its file is gone — dropped, no re-file; T0150, its leap re-tune, dies with it); behind them T0248 (S, the codex lock, waits on T0062 and T0095). T0298 (Wildcard) is out of the pool (its file is gone) — re-task it if it is still wanted.
 
-**E4 closes when T0025, T0062, T0064, T0095, T0235 and T0248 land — every E4 task is written; it counts as finished while the pool lands.**
+**E4 closes when T0062, T0064, T0095, T0235 and T0248 land — every E4 task is written (Chain and its re-tune dropped with T0025's failure); it counts as finished while the pool lands.**
 
-**16-cap (protocol):** the five queued registrations (T0025, T0062, T0064, T0095, T0235) land exactly five removals: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark, then Anchor**, and say which in the result (the canonical statement is in T0064's task). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
+**16-cap (protocol):** the four queued registrations (T0062, T0064, T0095, T0235) land exactly four removals: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark**, and say which in the result (the canonical statement is in T0064's task; Anchor is out of reach at four registrations). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
 
 ### E5 — Bosses: every 10th wave is something you remember (done; history in planning/archive/ROADMAP.md)
 
@@ -61,7 +61,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the far gate: a second entrance partway down the road; a third of each non-boss wave comes through it; the board, the board preview and the next-wave preview show it — **T0338 (M, done 2026-11-01)**
 - the fork: the road splits into two lanes and re-joins; enemies take either lane — **tasked as T0352 (L, in the pool)**
 - the marked cell: one build cell that makes a tower built on it stronger — **tasked as T0340 (M, in the pool)**
-- the boards reference: the pause screen names the board's modifiers — mark, name, one dry line, and where each comes from (always / tech / some boards) — the vocabulary for the new islands — **tasked as T0350 (M, in the pool)**
+- the boards reference: the pause screen names the board's modifiers — mark, name, one dry line, and where each comes from (always / tech / some boards) — the vocabulary for the new islands — **done as T0350 (M, 2026-11-01, cachyos-x8664)**
 
 ### Enemy queue (non-epic)
 

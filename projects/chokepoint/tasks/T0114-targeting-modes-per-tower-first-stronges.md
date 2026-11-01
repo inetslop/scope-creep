@@ -4,7 +4,7 @@ title: "Targeting modes per tower: first, strongest, closest"
 size: L
 priority: 2
 status: todo
-depends_on: [T0025]
+depends_on: []
 attempts: 0
 created: 2026-10-29T09:55:07Z
 ---
@@ -17,7 +17,7 @@ Every tower aims at the enemy furthest along by default; a small chip in the tow
   - **First** (the default) — exactly today's targeting: the enemy furthest along in range. Every fresh tower is First, and a resumed run keeps First unless it was changed, so existing play is byte-identical.
   - **Strongest** — the enemy in range with the most current hp; a tie goes to the furthest of those.
   - **Closest** — the enemy nearest the tower; a tie goes to the furthest of those.
-- The mode applies to the tower's main target choice for every targeting augment: Bolt, Rapid, Reach, Lance, Splash (the blast center), Chain (the first strike), Beam (the main line), Spray (the first shot), Mark (the marked enemy) and Ember (the ignited enemy). It never applies to position-based auras (Frost's ring, Push's gust, Anchor's root, Pulse's ring, Rally, Mint) or to nearest-pick added forms (the Beam's second beam, Spray's needles, the Chain's leaps).
+- The mode applies to the tower's main target choice for every targeting augment: Bolt, Rapid, Reach, Lance, Splash (the blast center), Beam (the main line), Spray (the first shot), Mark (the marked enemy) and Ember (the ignited enemy). It never applies to position-based auras (Frost's ring, Push's gust, Anchor's root, Pulse's ring, Rally, Mint) or to nearest-pick added forms (the Beam's second beam, Spray's needles).
 - Target selection is centralized where it lives today (the targeting core, `core/targeting.ts`, is the home): add the mode there so every attack's main choice goes through the one place that knows it; where an attack hard-codes "furthest" today, route it through the same helper.
 - UI — the tower panel (T0008): one small chip on the panel's stats line reading "First" / "Strongest" / "Closest" in muted ink, tappable to cycle First → Strongest → Closest → First, with the existing soft button blip (no new sound). The chip shows on every tower, always — the mode is not an augment: no barrel, ring or tick on the tower (the small board-side marker is parked in IDEAS as a follow-up while the tower-look file is busy).
 - Listed on the pause screen: "Targeting — tap the mode chip in the tower panel: First / Strongest / Closest."
@@ -29,7 +29,7 @@ Every tower aims at the enemy furthest along by default; a small chip in the tow
 - [ ] Tapping the mode chip in the tower panel cycles First → Strongest → Closest → First with the soft blip; the chip's word updates in place.
 - [ ] A Strongest-mode tower aims at the enemy in range with the most current hp (the Hauler over Darts and Dots); when it dies or leaves range, the next strongest; ties go to the furthest.
 - [ ] A Closest-mode tower aims at the nearest enemy in range; ties go to the furthest.
-- [ ] The mode applies to the main attack of Bolt, Rapid, Reach, Lance, Splash, Chain, Beam, Spray, Mark and Ember; position-based auras and nearest-pick added forms (the Beam's second beam, Spray's needles, the Chain's leaps) are unaffected.
+- [ ] The mode applies to the main attack of Bolt, Rapid, Reach, Lance, Splash, Beam, Spray, Mark and Ember; position-based auras and nearest-pick added forms (the Beam's second beam, Spray's needles) are unaffected.
 - [ ] The mode survives a resume (the save carries it; a save without it loads as First).
 - [ ] The pause screen lists the mode chip; no new key, no new sound.
 
@@ -43,7 +43,6 @@ Every tower aims at the enemy furthest along by default; a small chip in the tow
 - edit `src/systems/attacks/spray.ts` - pass `tower.targetMode` to `pickTarget()`
 - edit `src/systems/attacks/burn.ts` - pass `tower.targetMode` to `pickTarget()` (Ember)
 - edit `src/systems/attacks/mark.ts` - its local `furthestUnmarked()` becomes mode-aware via `prefers()`
-- edit `src/systems/attacks/chain.ts` - the first strike's `pickTarget()` call passes `tower.targetMode` (file exists only after T0025)
 - edit `src/systems/BeamSystem.ts` - pass `t.targetMode` to `beamLines()`
 - edit `src/core/saveRun.ts` - `SavedTower` gains optional `targetMode`; load validation rejects unknown values
 - edit `src/systems/RunSave.ts` - persist `targetMode` in `persist()`; restore it in `restore()` (`?? 'first'`)
@@ -82,7 +81,6 @@ export interface SavedTower { col: number; row: number; slots: number; augments:
 7. `TowerPanel.ts`: import `getSfx` from `../../scenes/keys` and `type TargetMode` from `../../core/targeting`. In `build()`, change the stats text (line 77) `wordWrap` width to `w - 36 - 100` (reserve the chip's column). After the `items` declaration add: a `modeWord: Record<TargetMode, string> = { first: 'First', strongest: 'Strongest', closest: 'Closest' }`; `chipW = 88`; `chipLabel = scene.add.text(0, 0, modeWord[tower.targetMode], textStyle(11, PALETTE.muted, { fontStyle: 'bold' })).setOrigin(0.5)`; `chip = scene.add.container(w / 2 - 18 - chipW / 2, top + 60, [makeCard(scene, 0, 0, chipW, 26, 13), chipLabel])`; `chip.setSize(chipW, 44); chip.setInteractive({ useHandCursor: true });` (44 px hit area around the 26 px chip, like `makeButton`); `chip.on('pointerup', (_p, _x, _y, event) => { event.stopPropagation(); const order: TargetMode[] = ['first', 'strongest', 'closest']; tower.targetMode = order[(order.indexOf(tower.targetMode) + 1) % order.length]!; chipLabel.setText(modeWord[tower.targetMode]); getSfx(scene)?.blip(); })`; `items.push(chip)`. The chip is created for every tower (including the `n === 0` branch) and rebuilds with the panel.
 8. `PauseScene.ts` line 62 only: append `\nTargeting — tap the mode chip in the tower panel: First / Strongest / Closest.` to the Controls string and add `wordWrap: { width: panelW - 48 }` to its style. It wraps to two lines and fits between the block (ends ≈ y -14) and the Resume button (top y 10); no other element moves.
 9. `runChecks.ts`: next to `'towers.gold'` add `['towers.targetMode', (g) => { for (const t of g.towers.towers) if (t.targetMode !== 'first' && t.targetMode !== 'strongest' && t.targetMode !== 'closest') return \`target mode ${t.targetMode} at (${t.cell.col}, ${t.cell.row})\`; return null; }]`.
-10. `systems/attacks/chain.ts` (after T0025 lands): find the first strike's `pickTarget(...)` and pass `tower.targetMode` as the last argument; leave the leaps alone.
 11. Tests: add `hp: 1` to every `TargetCandidate` literal in `targeting.test.ts` (enemies list, pickNearest and pickPierceTarget fixtures); add a `describe('targeting modes')` covering: strongest picks most current hp over furthest, hp tie → furthest, no-mode call still furthest; closest picks nearest, distance tie → furthest; `pickTargets` orderings per mode and unchanged default. `beam.test.ts`: factory becomes `const e = (x: number, y: number, distance: number, active = true, hp = 1): TargetCandidate => ({ x, y, distance, active, hp });` plus one test that `beamLines([], [a, b], 0, 0, R, true, 'strongest')` re-takes the most-hp enemy. `saveRun.test.ts`: a tower with `targetMode: 'strongest'` round-trips; a save written without it loads `targetMode` undefined; `broken({ towers: [{ col: 2, row: 1, slots: 1, augments: [{ id: 'bolt', tier: 'common' }], targetMode: 'nearest' }] })`.
 12. `npm run check`.
 
@@ -98,3 +96,7 @@ export interface SavedTower { col: number; row: number; slots: number; augments:
 - `tests/core/targeting.test.ts`: strongest (hp over distance, tie → furthest), closest (nearest, tie → furthest), multi-shot ordering per mode, default unchanged.
 - `tests/core/beam.test.ts`: strongest-mode re-take.
 - `tests/core/saveRun.test.ts`: mode round-trip, absent → undefined, invalid value rejects the save.
+
+## Note (by hand, 2026-11-01)
+
+T0025 (Chain) failed and its file is gone: the wait on it is dropped, and the two chain lines above (the files list and step 10) are removed — build against the tree as it is.
