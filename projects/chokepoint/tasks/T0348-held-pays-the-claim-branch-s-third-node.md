@@ -3,10 +3,12 @@ id: T0348
 title: "Held pays: the claim branch's third node"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T08:42:47Z
+claimed_at: 2026-11-01T08:42:50Z
+designer: desktop
 ---
 
 ## Goal
