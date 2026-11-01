@@ -3,10 +3,12 @@ id: T0380
 title: "The bank's rule, taught once: a chip at the first interest pay"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T21:18:04Z
+claimed_at: 2026-11-01T21:18:23Z
+designer: yoga
 ---
 
 ## Goal
