@@ -54,6 +54,7 @@ export class GameOverScene extends Phaser.Scene {
       this.tweens.add({ targets: coinsText, scale: 1, duration: 150, ease: 'Quad.easeOut' });
       getSfx(this)?.chime();
     }
+    getSfx(this)?.runEnd();
     const bestText = this.add
       .text(0, 25, result.newBest ? 'New best!' : `Best: wave ${result.profile.bestWave}`, textStyle(15, result.newBest ? PALETTE.greenDeep : PALETTE.faint, { fontStyle: 'bold' }))
       .setOrigin(0.5);

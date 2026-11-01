@@ -4,11 +4,12 @@ title: "The run's end gets its note"
 assignee: inet-racing
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T16:45:37Z
 claimed_at: 2026-11-01T17:09:43Z
+finished_at: 2026-11-01T17:19:31Z
 ---
 
 ## Goal
@@ -66,3 +67,16 @@ No new types or exports. One new method on the existing `Sfx` class, following `
 
 ### Tests
 - none (audio task; `npm run check` and `npm run smoke` suffice)
+
+## Result (attempt 1, inet-racing)
+
+The run's end now has its own quiet note: a new `Sfx.runEnd()` (src/audio/Sfx.ts) plays the boss horn's two low notes falling — 123.47 Hz then 98 Hz sine, 80 ms each, 90 ms apart, volume 0.1 — from one new line in GameOverScene.create() (src/scenes/GameOverScene.ts) as the game-over card lands, on both the last-leak and the pause's quit path. It layers on top of the unchanged leak thud/jolt/echo and boss-leak horn, respects the sound toggle, and leaves every visual on the card untouched.
+
+- Self-review: APPROVE
+- Time: 9.8 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts            | 6 ++++++
+ projects/chokepoint/game/src/scenes/GameOverScene.ts | 1 +
+ 2 files changed, 7 insertions(+)
+```

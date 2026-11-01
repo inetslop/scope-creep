@@ -117,6 +117,12 @@ export class Sfx {
     this.tone(196, 0.08, 'sine', 0.1, undefined, 0.08);
   }
 
+  /** The run ends as the game-over card lands: the boss horn's two low notes falling (123.47 then 98 Hz), 80 ms each, 90 ms apart, the sting's quiet class. */
+  runEnd(): void {
+    this.tone(123.47, 0.08, 'sine', 0.1);
+    this.tone(98, 0.08, 'sine', 0.1, undefined, 0.09);
+  }
+
   /** The boss arrives: a deep two-note horn rising (65 then 82 Hz), 180 ms each, ~90 ms apart, the sting's volume class. */
   bossHorn(): void {
     this.tone(65, 0.18, 'sine', 0.12);
