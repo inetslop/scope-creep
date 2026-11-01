@@ -3,12 +3,10 @@ id: T0367
 title: "The run's end gets its note"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-01T16:45:37Z
-claimed_at: 2026-11-01T17:05:58Z
-designer: inet-racing
 ---
 
 ## Goal
@@ -30,3 +28,39 @@ The end of a run is heard before it is read: the moment the game-over card lands
 - [ ] The leak's feedback (thud, jolt, echo), the boss-leak horn (T0269) and the coin chime (T0009) are all unchanged; on a boss-leak death the horn plays at the leak and the sting lands with the card.
 - [ ] The game-over card's count-up, pop, score, coins, by-tower rows and the Flawless mark are byte-identical; the screen shows nothing new.
 - [ ] No other scene or phase plays the note: the menu, the menu demo, the draft, the build and the wave phases are byte-identical in sound.
+
+## Design (architect, inet-racing)
+
+### Files
+- edit `src/audio/Sfx.ts` - add one `runEnd()` method directly after `sting()` (ends line 118), before `bossHorn()`
+- edit `src/scenes/GameOverScene.ts` - one line in `create()` after the coin-chime block (after line 56, the `}` closing `if (result.coins > 0) {`)
+
+### Interfaces
+No new types or exports. One new method on the existing `Sfx` class, following `sting()`'s pattern exactly.
+
+### Steps
+1. In `src/audio/Sfx.ts`, insert between `sting()` and `bossHorn()`:
+
+```ts
+  /** The run ends as the game-over card lands: the boss horn's two low notes falling (123.47 then 98 Hz), 80 ms each, 90 ms apart, the sting's quiet class. */
+  runEnd(): void {
+    this.tone(123.47, 0.08, 'sine', 0.1);
+    this.tone(98, 0.08, 'sine', 0.1, undefined, 0.09);
+  }
+```
+
+2. In `src/scenes/GameOverScene.ts`, `create()`, after line 56 (the closing brace of the `if (result.coins > 0)` block) and before the `bestText` line, add:
+
+```ts
+    getSfx(this)?.runEnd();
+```
+
+`getSfx` is already imported (line 15) and used at line 55. This covers both end paths: the last leak (`RunFlow` starts the scene, line 269) and the pause's "End the run?" (which pops `runEnded` and lands on the same `create()`).
+
+### Pitfalls
+- Use `tone()`'s `delaySec` for the second note (exactly like `sting()` and `bossHorn()`), never `window.setTimeout` (the `tierChime` pattern is for per-note loops only). Muting is handled inside `tone()` (line 42), so the pause's sound toggle needs no handling here.
+- Do not move, renumber or reformat any other line; do not touch `leak()`, `bossHorn()`, `chime()` or the card's count-up/coin tween. `Sfx.ts` is a shared file — other tasks may append methods, so insert at the exact spot named, one method only.
+- `create()` runs exactly once per scene launch, so the sting plays once per run end; no guard needed.
+
+### Tests
+- none (audio task; `npm run check` and `npm run smoke` suffice)
