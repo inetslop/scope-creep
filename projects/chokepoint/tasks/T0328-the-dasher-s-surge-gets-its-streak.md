@@ -3,10 +3,12 @@ id: T0328
 title: "The Dasher's surge gets its streak"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T01:14:01Z
+claimed_at: 2026-11-01T01:14:14Z
+designer: yoga
 ---
 
 ## Goal
