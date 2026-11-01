@@ -3,12 +3,10 @@ id: T0347
 title: "The Orb's split gets its moment"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-01T08:02:39Z
-claimed_at: 2026-11-01T08:05:36Z
-designer: yoga
 ---
 
 ## Goal
@@ -39,3 +37,46 @@ The wave-30 boss's signature move — splitting into two Shards at half health �
 - [ ] The window runs on the simulation clock: at 2x fast-forward it lasts half as long in real time.
 - [ ] The Colossus (wave 10), the Titan (wave 20), the Splitter's live crack and every regular enemy behave byte-identically to before.
 - [ ] The BossCard still shows the Orb's live hp while it is alive; the crack and the bar do not compete (the bar is the precise readout, the crack is the token's own look).
+
+## Design (architect, yoga)
+
+### Files
+- create `src/systems/enemyHooks/orbSplit.ts` - display hook: the Orb's live crack line, the 0.4 s white flash tint, the 12-chip purple burst.
+- edit `src/systems/enemyHooks/midSplit.ts` - the 0.4 s window: open/advance `splitClock`, capture triggering hp, split at window end (new `SPLIT_TELEGRAPH_SEC`).
+- edit `src/entities/Enemy.ts` - field `splitClock`, spawn reset, `hit()` unkillable inside the window.
+- edit `src/systems/enemyHooks/bossDeath.ts` - Orb's split horn at the split's moment, not per window frame.
+- edit `src/art/entities.ts` - delete the Orb's baked-in crack block (the live line replaces it).
+- edit `src/systems/enemyHooks/index.ts` - import + one line for `orbSplit`, after `midSplit`.
+- edit `src/debug/runChecks.ts` - import + `enemies.orbSplit` invariant line, after `enemies.orb`.
+
+### Interfaces
+```ts
+// Enemy.ts, field after `reachClock`; `this.splitClock = -1;` in spawn() after `this.reachClock = -1;`
+/** Seconds since its split window opened (the Orb); -1 before its hp first dropped to the split line. */
+splitClock = -1;
+// Enemy.hit() last line `return this.hp <= 0;` becomes:
+return this.splitClock < 0 && this.hp <= 0; // window open: hits deal, never kill, even down to 0
+// midSplit.ts new export: `export const SPLIT_TELEGRAPH_SEC = 0.4;` — midSplit: MakeEnemyHook (same type), update(dt)
+// orbSplit.ts: `export const orbSplit: MakeEnemyHook;`
+```
+### Steps
+1. Enemy.ts: add field after `reachClock = -1;` (line 70); reset `this.splitClock = -1;` in `spawn()` after `this.reachClock = -1;` (line 123); in `hit()` replace `return this.hp <= 0;` with the line above (+ doc: "never inside its split window").
+2. midSplit.ts: keep imports (add `import type { Enemy } from '../../entities/Enemy';`); add `export const SPLIT_TELEGRAPH_SEC = 0.4;`; body becomes: `const hpAt = new Map<Enemy, number>();` then `update(dt)` over `enemies.all`: `if (!e.active || e.def.splitsAt === undefined) continue;` `if (e.splitClock < 0) { if (!atSplitLine(e.def, e.hp, e.maxHp)) continue; e.splitClock = 0; hpAt.set(e, e.hp); }` `e.splitClock += dt;` `if (e.splitClock < SPLIT_TELEGRAPH_SEC) continue;` then unchanged split: `const child = getEnemy(e.def.splitsAt!.into); const half = splitChildHp(hpAt.get(e) ?? e.hp);` capture `x,y,d,size,sm` before spawn, `e.despawn(); hpAt.delete(e);` the two `enemies.spawn(child, half / child.hp, sm, dd)`, `clearRing(fx, x, y, size);`. Add `onKill({ enemy }) { hpAt.delete(enemy); }, onLeak(enemy) { hpAt.delete(enemy); },`.
+3. orbSplit.ts (new, model crackDeep.ts): `({ fx, enemies }) => { const seen = new Map<Enemy, { line: Phaser.GameObjects.Graphics; x: number; y: number; color: number; serial: number }>(); }`. `update()`: first `for (const [e, s] of [...seen]) if (!e.active || e.serial !== s.serial) drop(e, true);` (a tracked Orb gone without kill/leak = the split consumed it; `serial` tells the slot recycled to its live Shards). Then over `enemies.all`: `if (!e.active || e.def.splitsAt === undefined) { drop(e, false); continue; }`; get-or-create state (`makeState`); `s.x = e.x; s.y = e.y;` `s.line.setPosition(e.x, e.y - Math.max(2, e.def.look.size * CELL * 0.18) / 2);` `s.line.setAlpha(0.25 + 0.75 * Math.min(1, (e.maxHp - e.hp) / (e.maxHp * e.def.splitsAt!.hpFrac)));` `if (e.splitClock >= 0) e.setTintFill(0xffffff);`. `onKill({ enemy }) { drop(enemy, false); }, onLeak(enemy) { drop(enemy, false); },`. `drop(e, burst)`: delete from `seen`, `s.line.destroy()`, `if (burst) fx.burst(s.x, s.y, s.color, 12);`. `makeState`: `const r = e.def.look.size * CELL;` `const g = fx.scene.add.graphics().setDepth(DEPTH.fx);` `g.lineStyle(Math.max(1, r * 0.1), PALETTE.muted, 1);` `g.beginPath(); g.moveTo(0, -r * 0.55); g.lineTo(-r * 0.08, -r * 0.06); g.lineTo(r * 0.06, r * 0.12); g.lineTo(0, r * 0.5); g.strokePath(); g.setAlpha(0.25);` `return { line: g, x: e.x, y: e.y, color: PALETTE[e.def.look.color], serial: e.serial };`.
+4. index.ts: `import { orbSplit } from './orbSplit';` after the midSplit import; `orbSplit,` after `midSplit,` in `ENEMY_HOOKS`.
+5. bossDeath.ts: closure `let lastAlive = false; let lastAtLine = false; let leaked = false;`; `onLeak(enemy) { if (bossId(run.wave) === enemy.def.id) leaked = true; }`; `update()`: `const boss = bossId(run.wave);` `if (boss === undefined) { lastAlive = false; lastAtLine = false; leaked = false; return; }` find `alive`/`atLine` over `enemies.all` (`e.active && e.def.id === boss`); `if (!alive && lastAlive && lastAtLine && !leaked) sfx?.bossDown();` then set `lastAlive = alive; lastAtLine = atLine; leaked = false;`. `onKill` unchanged.
+6. art/entities.ts: delete the whole `if (e.id === 'orb') { ... }` block (lines 33–47).
+7. runChecks.ts: `import { SPLIT_TELEGRAPH_SEC } from '../systems/enemyHooks/midSplit';` and after `enemies.orb`: `['enemies.orbSplit', (g) => (g.enemies.all.every((e) => !e.active || e.def.splitsAt === undefined || (Number.isFinite(e.splitClock) && e.splitClock >= -1 - 1e-9 && e.splitClock <= SPLIT_TELEGRAPH_SEC + 1e-9)) ? null : 'a split window out of its beat')],`.
+### Pitfalls
+- The window must advance even at hp ≤ 0 inside it: gate the OPEN on `atSplitLine` only; once `splitClock >= 0` advance unconditionally — else an Orb drained to 0 in the window never splits and is unkillable.
+- Shards' hp comes from `hpAt` (hp at window open), not window-end hp: `splitChildHp(0)` is 1.
+- The split's own spawn may recycle the Orb's pooled slot: detect consumption by `serial`, carry `x/y/color` in state; never read `e.def`/`e.x` for the burst.
+- `orbSplit` must stay after `midSplit` in `ENEMY_HOOKS`: the burst branch assumes midSplit consumed the Orb earlier the same frame.
+- Tint: the hook only ever `setTintFill(0xffffff)` on window frames; the clear is the split's `despawn()` — never `clearTint()` on non-window frames (that kills the per-hit white blink `Enemy.advance`/`hit` own).
+- Without the bossDeath fix the horn plays every frame of the 0.4 s window (~25× at 1x).
+- Alpha needs `Math.min(1, ...)`: the fraction exceeds 1 below the line; without it the crack is >100% (and never "opaque at the half-hp line").
+- `this.splitClock < 0`, not `!this.splitClock` (0 = window just opened; the falsy check would let one killing hit through).
+- The art block is deleted, not overlaid — else the crack is doubled; the BossCard's 8 px token simply loses the (invisible at that size) baked crack. No sound: no Sfx method; the burst is `fx.burst` (self-capping).
+- Don't touch `crackDeep.ts`, `split.ts`, `core/midSplit.ts` — Splitter, Colossus, Titan and regular enemies stay byte-identical.
+### Tests
+- none
