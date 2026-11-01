@@ -3,10 +3,12 @@ id: T0388
 title: "The kill trail weighs the bounty: a coin per 10 gold"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T23:16:36Z
+claimed_at: 2026-11-01T23:29:00Z
+designer: yoga
 ---
 
 ## Goal
