@@ -3,10 +3,12 @@ id: T0359
 title: "The menu demo's far gate: the second entrance before the first run"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T12:52:50Z
+claimed_at: 2026-11-01T12:52:54Z
+designer: desktop
 ---
 
 ## Goal
