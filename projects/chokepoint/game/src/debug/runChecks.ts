@@ -85,6 +85,10 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
     for (const t of g.towers.towers) if (!Number.isInteger(t.spec.goldPerKill) || t.spec.goldPerKill < 0 || t.spec.goldPerKill > t.augments.length) return `kill-gold ${t.spec.goldPerKill} at (${t.cell.col}, ${t.cell.row})`;
     return null;
   }],
+  ['towers.targetMode', (g) => {
+    for (const t of g.towers.towers) if (t.targetMode !== 'first' && t.targetMode !== 'strongest' && t.targetMode !== 'closest') return `target mode ${t.targetMode} at (${t.cell.col}, ${t.cell.row})`;
+    return null;
+  }],
   ['towers.toll', (g) => {
     for (const t of g.towers.towers) if (!Number.isInteger(t.spec.tollCount) || t.spec.tollCount < 0 || t.spec.tollCount > t.augments.length) return `toll ${t.spec.tollCount} at (${t.cell.col}, ${t.cell.row})`;
     return null;

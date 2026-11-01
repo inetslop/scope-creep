@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { beamLines, inBeamRange, rayTargets } from '../../src/core/beam';
 import type { TargetCandidate } from '../../src/core/targeting';
 
-const e = (x: number, y: number, distance: number, active = true): TargetCandidate => ({ x, y, distance, active });
+const e = (x: number, y: number, distance: number, active = true, hp = 1): TargetCandidate => ({ x, y, distance, active, hp });
 const R = 10; // the tower sits at (0, 0)
 
 describe('inBeamRange', () => {
@@ -52,6 +52,14 @@ describe('beamLines', () => {
     expect(beamLines(undefined, [a, b], 0, 0, R, false)).toBe(0);
     b.distance = 40;
     expect(beamLines(a, [a, b], 0, 0, R, false)).toBe(1);
+  });
+
+  it('in strongest mode the sticky line re-takes the enemy with the most hp when its target dies', () => {
+    const a = e(2, 0, 40, true, 9); // the strong one
+    const b = e(-2, 0, 50, true, 2); // the weak one, furthest along
+    expect(beamLines(undefined, [a, b], 0, 0, R, true, 'strongest')).toBe(0);
+    a.active = false; // the strong one dies
+    expect(beamLines(a, [a, b], 0, 0, R, true, 'strongest')).toBe(1); // the line drops to the weak one
   });
 
   it('nothing in range: no line', () => {

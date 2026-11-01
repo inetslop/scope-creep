@@ -3,6 +3,7 @@ import { AUGMENTS } from '../content/augments';
 import { getLevelAugment } from '../content/levels';
 import type { AugmentCopy, Tier } from '../content/types';
 import type { RunMode, WaveRecord } from './run';
+import type { TargetMode } from './targeting';
 import { TIER_ORDER } from './tiers';
 import { LEVEL_UNLOCK_WAVE } from './levels';
 
@@ -19,12 +20,14 @@ export interface RunStore {
   removeItem(k: string): void;
 }
 
-/** A tower: its cell, its unlocked slots, and the augment copies in them, in order. */
+/** A tower: its cell, its unlocked slots, the augment copies in them in order, and how it picks
+ * its main target (First, the default; absent in older saves). */
 export interface SavedTower {
   col: number;
   row: number;
   slots: number;
   augments: AugmentCopy[];
+  targetMode?: TargetMode;
 }
 
 /** A mid-way run: the board regenerates from the seed, the rest is the run's state as saved. */
@@ -129,6 +132,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
     if (tower.col >= p.cols || tower.row >= p.rows) return undefined; // off the board this save describes
     if (!inInt(tower.slots, 1, MAX_SLOTS)) return undefined;
     if (!Array.isArray(tower.augments) || tower.augments.length > tower.slots || !tower.augments.every(isCopy)) return undefined;
+    if (tower.targetMode !== undefined && tower.targetMode !== 'first' && tower.targetMode !== 'strongest' && tower.targetMode !== 'closest') return undefined;
   }
   return {
     v: 1,

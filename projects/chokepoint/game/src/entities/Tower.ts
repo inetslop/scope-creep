@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { CELL, DEPTH } from '../config';
 import { PALETTE } from '../content/palette';
 import { towerColor, towerSpec, type TowerSpec } from '../core/augments';
+import type { TargetMode } from '../core/targeting';
 import type { AugmentCopy } from '../content/types';
 import type { Cell } from '../core/map';
 import { BEAM_ORB_LIFT, barrelTexture, beamDiscTexture, orbTexture } from '../art/barrels';
@@ -56,6 +57,8 @@ export class Tower extends Phaser.GameObjects.Image {
   kills = 0;
   /** Damage this tower dealt with its own damage this run, as it landed (the summary's "dmg N" line). */
   damageDealt = 0;
+  /** How it picks its main target when several are in range (the tower panel's mode chip). */
+  targetMode: TargetMode = 'first';
   /** Where the barrels point, in radians (0 = up, clockwise). */
   aim = 0;
   /** Length of the barrels in board units, and their side offsets (for the muzzles). */

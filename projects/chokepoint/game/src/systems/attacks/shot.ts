@@ -3,7 +3,7 @@ import type { Attack } from './attack';
 
 /** A volley: every shot at the enemy furthest along, each from its own barrel. */
 export const shot: Attack = ({ tower, enemies, range, payload, fireBolt, sfx }) => {
-  const t = pickTarget(tower.x, tower.y, range, enemies);
+  const t = pickTarget(tower.x, tower.y, range, enemies, tower.targetMode);
   if (t < 0) return false;
   const first = enemies[t]!;
   tower.aimAt(first.x, first.y);

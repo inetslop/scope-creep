@@ -5,7 +5,7 @@ import { describeSpec, towerSpec } from '../../src/core/augments';
 import { BEAM_PIERCE_HALF_WIDTH, beamPierceVictims, beamScorch } from '../../src/core/beamShapes';
 import type { TargetCandidate } from '../../src/core/targeting';
 
-const e = (x: number, y: number, distance: number, active = true): TargetCandidate => ({ x, y, distance, active });
+const e = (x: number, y: number, distance: number, active = true, hp = 1): TargetCandidate => ({ x, y, distance, active, hp });
 const copy = (id: string, tier: Tier = 'common'): AugmentCopy => ({ id, tier });
 const R = 3.5 * CELL; // the beam's range: the tower sits at (0, 0)
 

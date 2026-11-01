@@ -19,6 +19,7 @@ const CONTROLS: string[] = [
   'F — fast-forward (2x) during waves',
   '1-9 — pick a card from the hand',
   'Sell — the panel\'s line, build phase only',
+  'Targeting — tap the mode chip in the tower panel: First / Strongest / Closest',
   '+ / - — zoom the board',
   'Enemies — the shapes and what they do',
   'Waves — the tags and when they come',

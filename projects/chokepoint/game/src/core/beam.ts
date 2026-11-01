@@ -1,4 +1,4 @@
-import type { TargetCandidate } from './targeting';
+import type { TargetCandidate, TargetMode } from './targeting';
 import { pickTarget, pickTargets } from './targeting';
 
 /**
@@ -20,8 +20,8 @@ export function inBeamRange(e: TargetCandidate, x: number, y: number, range: num
  * target's index into `enemies`, -1 when nothing is in range.
  *
  * A Beam-first tower (`mainTower`) is STICKY — it holds its target while the enemy is active and
- * in range, even when another enemy overtakes it, and re-takes (the furthest along) only when its
- * target is gone. A Beam added to another tower always follows the furthest along.
+ * in range, even when another enemy overtakes it, and re-takes (by the tower's mode, `mode`) only
+ * when its target is gone. A Beam added to another tower follows the tower's mode.
  */
 export function beamLines<C extends TargetCandidate>(
   heldMain: C | undefined,
@@ -30,8 +30,9 @@ export function beamLines<C extends TargetCandidate>(
   y: number,
   range: number,
   mainTower: boolean,
+  mode?: TargetMode,
 ): number {
-  return mainTower && heldMain && inBeamRange(heldMain, x, y, range) ? enemies.indexOf(heldMain) : pickTarget(x, y, range, enemies);
+  return mainTower && heldMain && inBeamRange(heldMain, x, y, range) ? enemies.indexOf(heldMain) : pickTarget(x, y, range, enemies, mode);
 }
 
 /**

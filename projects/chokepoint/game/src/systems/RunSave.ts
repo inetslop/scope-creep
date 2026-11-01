@@ -60,6 +60,7 @@ export class RunSave {
         row: t.cell.row,
         slots: t.slots,
         augments: t.augments.map((a) => ({ id: a.id, tier: a.tier })),
+        targetMode: t.targetMode,
       })),
     });
   }
@@ -90,6 +91,7 @@ export class RunSave {
       game.board.place(cell, tower);
       game.towers.towers.push(tower);
       tower.slots = t.slots;
+      tower.targetMode = t.targetMode ?? 'first'; // older saves have no mode: they resume as First
       for (const a of t.augments) tower.addAugment(a);
     }
     if (saved.phase === 'build') {

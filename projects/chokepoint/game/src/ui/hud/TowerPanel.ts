@@ -4,11 +4,13 @@ import { getAugment } from '../../content/augments';
 import { cssColor, PALETTE } from '../../content/palette';
 import { describeSpec } from '../../core/augments';
 import type { RunPhase } from '../../core/run';
+import type { TargetMode } from '../../core/targeting';
 import { sellPrice, slotPrice } from '../../core/techEffects';
 import { towerDps } from '../../core/towerDps';
 import { tierAddedLine } from '../../core/tiers';
 import { artScale, augmentTexture, COIN_TEXTURE } from '../../art/textures';
 import type { Tower } from '../../entities/Tower';
+import { getSfx } from '../../scenes/keys';
 import type { GameScene } from '../../scenes/GameScene';
 import { makeButton, type Button } from '../button';
 import { makeCard } from '../card';
@@ -89,9 +91,24 @@ export class TowerPanel implements HudPart {
     // The card swallows taps, so tapping the panel never builds on the board under it.
     const card = makeCard(scene, 0, 0, w, H, 22).setInteractive();
     const desc = scene.add.text(left, top + 12, describeSpec(tower.spec), textStyle(13, PALETTE.muted, { wordWrap: { width: w - 36 } })).setOrigin(0, 0);
-    const stats = scene.add.text(left, top + 54, statsLine(tower), textStyle(13, PALETTE.ink, { fontStyle: 'bold', wordWrap: { width: w - 36 } })).setOrigin(0, 0);
+    const stats = scene.add.text(left, top + 54, statsLine(tower), textStyle(13, PALETTE.ink, { fontStyle: 'bold', wordWrap: { width: w - 136 } })).setOrigin(0, 0); // the mode chip wears on this line's right
     const close = makeButton(scene, w / 2 - 26, top + 26, '×', () => game.building.closePanel(), { width: 44, height: 44, radius: 22, fontSize: 24 });
     const items: Phaser.GameObjects.GameObject[] = [card, desc, stats, close.container];
+    // The targeting mode chip: a small card on the stats line, tapped to cycle First → Strongest → Closest.
+    const modeWord: Record<TargetMode, string> = { first: 'First', strongest: 'Strongest', closest: 'Closest' };
+    const chipW = 88;
+    const chipLabel = scene.add.text(0, 0, modeWord[tower.targetMode], textStyle(11, PALETTE.muted, { fontStyle: 'bold' })).setOrigin(0.5);
+    const chip = scene.add.container(w / 2 - 18 - chipW / 2, top + 60, [makeCard(scene, 0, 0, chipW, 26, 13), chipLabel]);
+    chip.setSize(chipW, 44);
+    chip.setInteractive({ useHandCursor: true });
+    chip.on('pointerup', (_p: Phaser.Input.Pointer, _x: number, _y: number, event: Phaser.Types.Input.EventData) => {
+      event.stopPropagation();
+      const order: TargetMode[] = ['first', 'strongest', 'closest'];
+      tower.targetMode = order[(order.indexOf(tower.targetMode) + 1) % order.length]!;
+      chipLabel.setText(modeWord[tower.targetMode]);
+      getSfx(scene)?.blip();
+    });
+    items.push(chip);
     // One row per augment, like the draft cards: the icon, "Name · Tier", the tier's gems and its added line.
     let rowY = 72 + (rows[0]?.rowH ?? 0) / 2; // first row's top where today's 64px row starts; each next top is the last row's bottom plus ROW_GAP
     tower.augments.forEach((c, i) => {

@@ -83,7 +83,7 @@ export class BeamSystem {
       const fx = beamFx(t.spec);
       const main = beamLines(
         st.lines[0]!.enemy as Enemy | undefined,
-        this.enemies.all, t.x, t.y, range, t.spec.kind === 'beam');
+        this.enemies.all, t.x, t.y, range, t.spec.kind === 'beam', t.targetMode);
       // Rapid's net factor times the Rally's speed: one factor for every line, the same as towerDps.
       const m = t.spec.beamRapidMul * t.rallyRateMul;
       const mainTarget = main === -1 ? undefined : this.enemies.all[main]!;

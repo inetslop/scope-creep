@@ -5,17 +5,32 @@ export interface TargetCandidate {
   /** Distance walked along the path: bigger is closer to the exit. */
   distance: number;
   active: boolean;
+  /** Current hit points: the Strongest mode's pick. */
+  hp: number;
   /** Out of reach right now (the Colossus's timed beat): the picks skip it; area, line and held damage still reach it. */
   untargetable?: boolean;
 }
 
+/** How a tower picks its main target when several are in range. */
+export type TargetMode = 'first' | 'strongest' | 'closest';
+
+/** Both in range: should the tower prefer a over b? Ties always go to the furthest along. */
+export function prefers(a: TargetCandidate, b: TargetCandidate, mode: TargetMode, x: number, y: number): boolean {
+  if (mode === 'strongest') return a.hp > b.hp || (a.hp === b.hp && a.distance > b.distance);
+  if (mode === 'closest') {
+    const da = (a.x - x) * (a.x - x) + (a.y - y) * (a.y - y);
+    const db = (b.x - x) * (b.x - x) + (b.y - y) * (b.y - y);
+    return da < db || (da === db && a.distance > b.distance);
+  }
+  return a.distance > b.distance;
+}
+
 /**
  * Index of the enemy a tower at (x, y) with `range` (board units) should shoot: the one in range
- * that is furthest along the path, or -1 when nothing is in range.
+ * that the tower's mode prefers (First: furthest along the path), or -1 when nothing is in range.
  */
-export function pickTarget(x: number, y: number, range: number, enemies: readonly TargetCandidate[]): number {
+export function pickTarget(x: number, y: number, range: number, enemies: readonly TargetCandidate[], mode: TargetMode = 'first'): number {
   let best = -1;
-  let bestDistance = -Infinity;
   const r2 = range * range;
   for (let i = 0; i < enemies.length; i++) {
     const e = enemies[i]!;
@@ -23,10 +38,7 @@ export function pickTarget(x: number, y: number, range: number, enemies: readonl
     const dx = e.x - x;
     const dy = e.y - y;
     if (dx * dx + dy * dy > r2) continue;
-    if (e.distance > bestDistance) {
-      best = i;
-      bestDistance = e.distance;
-    }
+    if (best === -1 || prefers(e, enemies[best]!, mode, x, y)) best = i;
   }
   return best;
 }
@@ -45,11 +57,25 @@ export function inRange(x: number, y: number, range: number, enemies: readonly T
   return out;
 }
 
-/** Up to `count` active enemies in range, furthest along the path first (multi-shot towers). Untargetable ones are skipped. */
-export function pickTargets(x: number, y: number, range: number, enemies: readonly TargetCandidate[], count: number): number[] {
+/**
+ * Up to `count` active enemies in range (multi-shot towers), best first by the tower's mode —
+ * First: furthest along the path; Untargetable ones are skipped.
+ */
+export function pickTargets(x: number, y: number, range: number, enemies: readonly TargetCandidate[], count: number, mode: TargetMode = 'first'): number[] {
+  const by = (a: number, b: number): number => {
+    const ea = enemies[a]!;
+    const eb = enemies[b]!;
+    if (mode === 'strongest') return eb.hp - ea.hp || eb.distance - ea.distance;
+    if (mode === 'closest') {
+      const da = (ea.x - x) * (ea.x - x) + (ea.y - y) * (ea.y - y);
+      const db = (eb.x - x) * (eb.x - x) + (eb.y - y) * (eb.y - y);
+      return da - db || eb.distance - ea.distance;
+    }
+    return eb.distance - ea.distance;
+  };
   return inRange(x, y, range, enemies)
     .filter((i) => !enemies[i]!.untargetable)
-    .sort((a, b) => enemies[b]!.distance - enemies[a]!.distance)
+    .sort(by)
     .slice(0, Math.max(0, count));
 }
 

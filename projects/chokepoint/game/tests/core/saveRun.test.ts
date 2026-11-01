@@ -276,4 +276,18 @@ describe('saveRun', () => {
     broken({ towers: [{ col: 64, row: 1, slots: 1, augments: [{ id: 'bolt', tier: 'common' }] }] });
     broken({ towers: [{ col: 20, row: 1, slots: 1, augments: [{ id: 'bolt', tier: 'common' }] }] }); // past the save's 14 columns
   });
+
+  it('round-trips a tower\'s targeting mode, and a save written without the key loads without it', () => {
+    const store = memory();
+    const withMode = sample({ towers: [{ col: 2, row: 1, slots: 1, augments: [{ id: 'bolt', tier: 'common' }], targetMode: 'strongest' }] });
+    saveRun(store, withMode);
+    expect(loadSavedRun(store)).toEqual(withMode);
+    const old = { ...sample() } as Record<string, unknown>;
+    (old.towers as { targetMode?: string }[]).forEach((t) => delete t.targetMode); // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(old));
+    expect(loadSavedRun(store)!.towers[0]!.targetMode).toBeUndefined();
+    broken({ towers: [{ col: 2, row: 1, slots: 1, augments: [{ id: 'bolt', tier: 'common' }], targetMode: 'nearest' }] });
+    broken({ towers: [{ col: 2, row: 1, slots: 1, augments: [{ id: 'bolt', tier: 'common' }], targetMode: 1 }] });
+    broken({ towers: [{ col: 2, row: 1, slots: 1, augments: [{ id: 'bolt', tier: 'common' }], targetMode: 'strongest ' }] });
+  });
 });
