@@ -3,6 +3,7 @@ import { BOARD_NODES } from '../content/tech/board';
 import { CLAIM_NODES } from '../content/tech/claim';
 import { POOL_NODES } from '../content/tech/pool';
 import { DRAFT_NODES } from '../content/tech/draft';
+import { WAVE_NODES } from '../content/tech/wave';
 import { PROFILE_KEY, loadProfile, type KeyValueStore } from './profile';
 
 /** One buyable node: what it costs, what it needs before it unlocks, and what it adds to every new run. */
@@ -99,6 +100,19 @@ export function boardFold(owned: readonly string[]): boolean {
   return false;
 }
 
+/** Whether a new run's board carries the far gate: true when an owned wave node has it; each node counts once, unknown ids count for nothing. */
+export function boardFarGate(owned: readonly string[]): boolean {
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = WAVE_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    if (node.farGate) return true;
+  }
+  return false;
+}
+
 /** A branch's first-node price scaled by depth^1.5 and rounded to the nearest multiple of 5 (halves up). */
 export function nodePrice(base: number, depth: number): number {
   return Math.round((base * Math.pow(depth, 1.5)) / 5) * 5;
@@ -156,7 +170,7 @@ export function buyPoolNode(store: KeyValueStore | undefined, id: string): boole
  * branch node lists are the ones the tech screen's rows read (TechScene's `rows`).
  */
 export function nodeInReach(purchased: readonly string[], coins: number): boolean {
-  for (const branch of [TECH_NODES, POOL_NODES, CLAIM_NODES, BOARD_NODES]) {
+  for (const branch of [TECH_NODES, POOL_NODES, CLAIM_NODES, BOARD_NODES, WAVE_NODES]) {
     for (const node of branch) {
       if (!purchased.includes(node.id) && coins >= nodeCost(branch, node.id)) return true;
     }
@@ -196,6 +210,27 @@ export function buyBoardNode(store: KeyValueStore | undefined, id: string): bool
   const node = BOARD_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
   const price = nodeCost(BOARD_NODES, id);
+  if (profile.coins < price) return false;
+  profile.coins -= price;
+  profile.purchased.push(id);
+  try {
+    store?.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    /* private mode or full storage: the purchase just isn't kept */
+  }
+  return true;
+}
+
+/**
+ * Buys a wave node from the saved profile's coins. Refuses an unknown or already owned id and a
+ * price the coins don't cover (they never go below zero); a wave node has no prerequisites and
+ * no gate — its effect is in new runs the moment it is bought.
+ */
+export function buyWaveNode(store: KeyValueStore | undefined, id: string): boolean {
+  const profile = loadProfile(store);
+  const node = WAVE_NODES.find((n) => n.id === id);
+  if (!node || profile.purchased.includes(id)) return false;
+  const price = nodeCost(WAVE_NODES, id);
   if (profile.coins < price) return false;
   profile.coins -= price;
   profile.purchased.push(id);

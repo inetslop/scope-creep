@@ -9,7 +9,7 @@ import { cellsBesidePath, generateMap } from '../core/map';
 import { loadProfile } from '../core/profile';
 import { RunState } from '../core/run';
 import type { SavedRun } from '../core/saveRun';
-import { boardBends, boardChokes, boardFold, boardLengthMul, startBonuses } from '../core/tech';
+import { boardBends, boardChokes, boardFarGate, boardFold, boardLengthMul, startBonuses } from '../core/tech';
 import { draftTech } from '../core/techEffects';
 import { flags } from '../debug/flags';
 import { registerRunChecks, syncHookStats } from '../debug/runChecks';
@@ -113,16 +113,18 @@ export class GameScene extends Phaser.Scene {
     }
     // The board's tech nodes wind new runs' roads one turn further, lengthen them, with "Two
     // chokes" fold them back for a second choke cell, and with "The switchback" give them a fold
-    // on themselves mid-board; a resumed run keeps its saved board (its own bends, length, chokes
-    // and fold), and a ghost run replays the best board as generated (0 bends, length 1, the
-    // owned nodes' choke count and fold).
+    // on themselves mid-board; with the wave branch's "The door" every board also carries the far
+    // gate (it is not saved: a resumed board regrows it from the seed); a resumed run keeps its
+    // saved board (its own bends, length, chokes and fold), and a ghost run replays the best board
+    // as generated (0 bends, length 1, the owned nodes' choke count and fold).
     const bends = saved ? saved.bends : ghost === undefined ? boardBends(loadProfile(window.localStorage).purchased) : 0;
     const lengthMul = saved ? saved.lengthMul : ghost === undefined ? boardLengthMul(loadProfile(window.localStorage).purchased) : 1;
     const chokes = saved ? saved.chokes : boardChokes(loadProfile(window.localStorage).purchased);
     const fold = saved ? saved.fold === 1 : boardFold(loadProfile(window.localStorage).purchased);
+    const farGate = boardFarGate(loadProfile(window.localStorage).purchased);
     const view = viewSize(this);
     const portrait = saved ? saved.rows > saved.cols : view.height > view.width;
-    const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, bends, lengthMul, this.run.bgen, chokes, fold);
+    const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, bends, lengthMul, this.run.bgen, chokes, fold, farGate);
     this.mapLengthMul = lengthMul;
     this.mapChokes = chokes;
     this.mapFold = fold ? 1 : 0;

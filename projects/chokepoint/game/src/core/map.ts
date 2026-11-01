@@ -37,9 +37,10 @@ export interface GameMap {
  * are the board as grown; `bgen` 2 boards always have a choke cell, and with `chokes` 2 they
  * carry two (the road folds back twice, when its tail has room). With `fold` the road gets one
  * switchback fold mid-board: a straight stretch running alongside its own return, a cell of
- * island between (see `core/switchback.ts`).
+ * island between (see `core/switchback.ts`). With `farGate` (the wave branch's The door) every
+ * board carries the far gate, no roll.
  */
-export function generateMap(rng: Rng, cols: number, rows: number, rocks: number, extraBends = 0, lengthMul = 1, bgen = 2, chokes = 1, fold = false): GameMap {
+export function generateMap(rng: Rng, cols: number, rows: number, rocks: number, extraBends = 0, lengthMul = 1, bgen = 2, chokes = 1, fold = false, farGate = false): GameMap {
   const vertical = rows > cols;
   // Work in "along x across" space, then map to cells.
   const length = vertical ? rows : cols;
@@ -94,13 +95,13 @@ export function generateMap(rng: Rng, cols: number, rows: number, rocks: number,
   const map: GameMap = { cols, rows, kinds, path, vertical };
   const folded = fold ? foldSwitchback(map) : map;
   const result = bgen >= 2 ? ensureChokes(folded, chokes) : folded;
-  // The far gate (core/farGate.ts): one board in three grows a second entrance. The roll is the seed's last draw, so the road keeps this seed's usual shape.
-  const farGate = rng.chance(1 / 3) ? farGateCell(result) : undefined;
+  // The far gate (core/farGate.ts): one board in three grows a second entrance. The roll is the seed's last draw, so the road keeps this seed's usual shape; with the wave branch's The door the gate is on every board and the roll is skipped.
+  const gate = farGate ? farGateCell(result) : rng.chance(1 / 3) ? farGateCell(result) : undefined;
   // The fork (core/fork.ts): one board in three splits the road into two lanes that rejoin before the
   // exit, a full build row between them. The roll is after the far gate's and the placement is
   // rng-free, so a board without it is today's exact board; a switchback board keeps its fold.
-  const forked = fold ? undefined : rng.chance(1 / 3) ? placeFork({ ...result, farGate }) : undefined;
-  return { ...(forked ?? result), farGate };
+  const forked = fold ? undefined : rng.chance(1 / 3) ? placeFork({ ...result, farGate: gate }) : undefined;
+  return { ...(forked ?? result), farGate: gate };
 }
 
 /** 1 when the road's second cell is the entrance jog (not one step along the entrance axis), else 0. */

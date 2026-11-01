@@ -4,11 +4,12 @@ title: "The wave branch and its first node, The door: the far gate on every boar
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T12:34:19Z
 claimed_at: 2026-11-01T16:45:41Z
+finished_at: 2026-11-01T17:03:44Z
 epic: E14
 ---
 
@@ -89,3 +90,25 @@ export type BoardFactTag = { kind: 'always' } | { kind: 'some' } | { kind: 'tech
 - `tests/core/farGate.test.ts`, new describe "the far gate as the wave node is owned": per size (14x8, 8x14), over seeds 1-300, `generateMap(rng, cols, rows, 5, 0, 1, 2, 1, false, true)` has `farGate` equal to `farGateCell(owned)`, keeps every gate the unowned roll produced on the same cell, shares `path`/`kinds` with the unowned map, and gates strictly more boards than the roll does; plus `generateMap(..., 2, 1, false, false)` toEqual today's default call (same seed); plus one send-rule check that `isFarGateSpawn(i, planOf(9, 9), !!owned.farGate)` is `i % 3 === 2` for a non-boss wave and none for a boss (10) — the existing `isFarGateSpawn` tests already pin the rest unchanged.
 - `tests/core/tech.test.ts`: `WAVE_NODES` shape (`[['door', 'The door', 'the far gate on every board', 30, true]]`); `nodeCost(WAVE_NODES, 'door')` is 30; `boardFarGate` false for `[]`/other-branch ids, true for `['door']`/duplicates; `buyWaveNode` refuses unknown/owned/unaffordable (29 coins, coins unchanged), and a 60-coin buy leaves 30 and `purchased` containing `'door'`.
 - `tests/core/boardFacts.test.ts`: `boardFactTag(BOARD_FACTS[5]!, ['door'])` is `'tech · The door'` (the unowned `'some boards'` assertion already exists).
+
+## Result (attempt 1, desktop)
+
+The tech tree's new "The wave" branch carries its first node, The door (30 coins, `src/content/tech/wave.ts` + the TechScene row): while owned, every board carries the far gate — `generateMap` gains a trailing `farGate` param that skips the 1-in-3 roll (`core/map.ts`), read via `boardFarGate` in `core/tech.ts` and passed by GameScene and the pick screen's previews; the gate's look, position and one-third wave behavior are T0338's, untouched, and without the node the same seed yields today's byte-identical board. The pause's boards reference line now reads "tech · The door" while owned and "some boards" otherwise (`core/boardFacts.ts` new `someTech` tag). Tests cover the node's shape and purchase, the gate as a pure function of ownership (per size, 300 seeds), byte-identity and the unchanged send rule; `npm run check` (525 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 18.1 min
+- Deleted tests/core/zz-t0358-probe.test.ts, as the agent asked.
+
+```
+projects/chokepoint/game/src/content/tech/wave.ts  | 14 +++++
+ projects/chokepoint/game/src/core/boardFacts.ts    | 16 ++++--
+ projects/chokepoint/game/src/core/map.ts           | 13 ++---
+ projects/chokepoint/game/src/core/tech.ts          | 37 ++++++++++++-
+ projects/chokepoint/game/src/scenes/GameScene.ts   | 12 +++--
+ projects/chokepoint/game/src/scenes/PickScene.ts   |  6 ++-
+ projects/chokepoint/game/src/scenes/TechScene.ts   | 18 ++++---
+ .../chokepoint/game/tests/core/boardFacts.test.ts  |  9 ++++
+ .../chokepoint/game/tests/core/farGate.test.ts     | 60 ++++++++++++++++++++++
+ projects/chokepoint/game/tests/core/tech.test.ts   | 38 ++++++++++++--
+ 10 files changed, 194 insertions(+), 29 deletions(-)
+```

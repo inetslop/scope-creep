@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { BOARD_FACTS, boardFactTag } from '../../src/core/boardFacts';
 import { BOARD_NODES } from '../../src/content/tech/board';
+import { WAVE_NODES } from '../../src/content/tech/wave';
 
 describe('the board facts', () => {
   it('lists the eight modifiers in order, each with its mark key', () => {
@@ -20,6 +21,14 @@ describe('the board facts', () => {
       const node = tag.node;
       expect(BOARD_NODES.find((n) => n.id === node)).toBeDefined();
     }
+  });
+
+  it('the far gate row tags the wave branch\'s The door: "tech · The door" while owned, "some boards" while it is not', () => {
+    const tag = BOARD_FACTS[5]!.tag;
+    expect(tag).toEqual({ kind: 'someTech', node: 'door' });
+    expect(WAVE_NODES.some((n) => n.id === (tag.kind === 'someTech' ? tag.node : ''))).toBe(true); // the id points at the wave branch's own data
+    expect(boardFactTag(BOARD_FACTS[5]!, ['door'])).toBe('tech · The door');
+    expect(boardFactTag(BOARD_FACTS[5]!, ['one-more-bend'])).toBe('some boards'); // the other branches leave the row as today
   });
 
   it('resolves the tag: always, some boards, the tree\'s own name, and owned while purchased', () => {

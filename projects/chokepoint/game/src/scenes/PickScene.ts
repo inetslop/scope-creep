@@ -10,7 +10,7 @@ import { loadProfile } from '../core/profile';
 import { pathLineFor } from '../core/path';
 import { Rng } from '../core/rng';
 import { roadBends } from '../core/roadBends';
-import { boardBends, boardChokes, boardFold, boardLengthMul } from '../core/tech';
+import { boardBends, boardChokes, boardFarGate, boardFold, boardLengthMul } from '../core/tech';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton, type Button } from '../ui/button';
@@ -66,6 +66,7 @@ export class PickScene extends Phaser.Scene {
   private lengthMul = 1;
   private chokes = 1;
   private fold = false;
+  private farGate = false;
   private portrait = false;
   private closed = false;
   private box: Phaser.GameObjects.Container | undefined;
@@ -92,6 +93,7 @@ export class PickScene extends Phaser.Scene {
     this.lengthMul = boardLengthMul(p.purchased);
     this.chokes = boardChokes(p.purchased);
     this.fold = boardFold(p.purchased);
+    this.farGate = boardFarGate(p.purchased);
     // The day is read when the step opens; the choices change at 00:00 UTC.
     this.seeds = dailySeeds(utcDay(Date.now()));
     this.build();
@@ -121,7 +123,7 @@ export class PickScene extends Phaser.Scene {
     this.box?.destroy();
 
     const maps = this.seeds.map((seed, i) => {
-      const map = generateMap(new Rng(seed), portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, this.bends, this.lengthMul, 2, this.chokes, this.fold);
+      const map = generateMap(new Rng(seed), portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, this.bends, this.lengthMul, 2, this.chokes, this.fold, this.farGate);
       paintBoardPreview(this, this.boardKey(i), map, pathLineFor(map, CELL));
       return map;
     });

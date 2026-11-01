@@ -144,3 +144,63 @@ describe('farGate', () => {
     });
   });
 });
+
+/**
+ * The far gate as the wave node is owned (the wave branch's The door): the flag makes the gate
+ * a pure function of the board — farGateCell, no roll — so every board the roll would give keeps
+ * its gate, the seed's road and rocks are untouched, and the gate's send rule is unchanged. The
+ * fork rolls after the gate, and the node changes the draw the fork's roll consumes, so fork
+ * boards are left to the fork's own tests (their pre-fork road is the shared road).
+ */
+describe('the far gate as the wave node is owned', () => {
+  for (const [cols, rows] of [
+    [14, 8],
+    [8, 14],
+  ] as const) {
+    it(`on ${cols}x${rows}: every gate the roll produced is kept on the same cell, the road and rocks are unchanged, and more boards gate than the roll`, () => {
+      let noFork = 0;
+      let kept = 0;
+      let ownedGates = 0;
+      let rolledGates = 0;
+      for (let seed = 1; seed <= 300; seed++) {
+        const owned = generateMap(new Rng(seed), cols, rows, 5, 0, 1, 2, 1, false, true);
+        const rolled = generateMap(new Rng(seed), cols, rows, 5, 0, 1, 2, 1, false, false);
+        // The owned board's gate is what farGateCell stamps (possibly none), on the pre-fork road.
+        if (!owned.fork) expect(farGateCell(owned)).toEqual(owned.farGate);
+        // The seed's road and rocks: equal while neither board grew a fork (the node skips the
+        // gate's draw, which is the draw the fork's roll would otherwise consume).
+        if (!owned.fork && !rolled.fork) {
+          noFork++;
+          expect(owned.path).toEqual(rolled.path);
+          expect(owned.kinds).toEqual(rolled.kinds);
+        }
+        // Every gate the unowned roll produced, the owned board keeps, on the same cell.
+        if (rolled.farGate) {
+          kept++;
+          expect(owned.farGate).toEqual(rolled.farGate);
+        }
+        if (owned.farGate) ownedGates++;
+        if (rolled.farGate) rolledGates++;
+      }
+      expect(noFork).toBeGreaterThan(0); // the checks above ran on real boards, far from all of them
+      expect(kept).toBeGreaterThan(0);
+      // The node gates strictly more boards than the roll does (the roll misses two in three).
+      expect(ownedGates).toBeGreaterThan(rolledGates);
+    });
+  }
+
+  it('without the node the flag leaves today\'s board byte-identical: the same seed, the default call', () => {
+    for (let seed = 1; seed <= 50; seed++) {
+      expect(generateMap(new Rng(seed), 14, 8, 5, 0, 1, 2, 1, false, false)).toEqual(generateMap(new Rng(seed), 14, 8, 5));
+    }
+  });
+
+  it("the gate's send rule is unchanged by the node: a third of each non-boss wave through, none on a boss", () => {
+    const owned = generateMap(new Rng(6), 14, 8, 5, 0, 1, 2, 1, false, true); // seed 6's owned board carries the gate
+    expect(owned.farGate).toBeDefined();
+    const wave = planOf(9, 9); // a non-boss wave: the 3rd, 6th and 9th come through
+    for (let i = 0; i < 9; i++) expect(isFarGateSpawn(i, wave, !!owned.farGate)).toBe(i % 3 === 2);
+    const boss = planOf(9, 10); // the boss wave: one big shape, none through the gate
+    for (let i = 0; i < 9; i++) expect(isFarGateSpawn(i, boss, !!owned.farGate)).toBe(false);
+  });
+});
