@@ -1,12 +1,14 @@
 ---
 id: T0373
 title: "The flyer's preview teach: the first flyer preview says it doesn't walk the road"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T18:48:59Z
+claimed_at: 2026-11-01T19:01:04Z
 epic: E10
 ---
 
