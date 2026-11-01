@@ -163,4 +163,4 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The first clean wave says what the streak pays — **built as T0314 (2026-10-31, asus)**: one muted line under the exit's clean text names the streak's reward, once per run
 - The speed toggle gets its note — **tasked as T0315 (S, non-epic, in the pool)**: a quiet blip on the 2x fast-forward's flip
 - The Ward shows its immunity — when a push, a root or a Frost slow is applied to a Ward, one small muted ring at its base says the control did not take; display-only, no sound; the hook rides the control-apply path (T0301's module) — **tasked as T0332 (S, in the pool)**
-- The Dasher's surge gets its streak — **tasked as T0328 (S, non-epic, in the pool)**: a short flat purple streak trails a dashing Dasher
+- The Dasher's surge gets its streak — **built as T0328 (S, non-epic, 2026-11-01, yoga)**: a short flat purple streak trails a dashing Dasher (it fades out over 100 ms when the dash ends)
