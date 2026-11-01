@@ -39,8 +39,8 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 ### E8 — A run you can show (dropped — 2026-10-30, by hand)
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
-### E9 — Level augments: harder runs for a bigger payout (active, **top priority** — opened 2026-10-30, by hand)
-**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0285, T0291 (the payout), T0294 (Swift and Crowded), T0295 (Lean and Short fuse), the reprice T0288, the third node T0297 and the slot ladder T0305 landed; T0310 (the switchback) landed 2026-11-01; the claim branch's second node (Flawless pays 10 coins) landed as T0313 (2026-11-01, asus). Every E9 task is now written: T0329 and T0325 landed (2026-11-01, asus); T0326 (the wave-30 claim offer) is the last in progress — it counts as finished while it lands.
+### E9 — Level augments: harder runs for a bigger payout (done 2026-11-01; history in planning/archive/ROADMAP.md)
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0285, T0291 (the payout), T0294 (Swift and Crowded), T0295 (Lean and Short fuse), the reprice T0288, the third node T0297 and the slot ladder T0305 landed; T0310 (the switchback) landed 2026-11-01; the claim branch's second node (Flawless pays 10 coins) landed as T0313 (2026-11-01, asus). Every E9 task is now written: T0329 and T0325 landed (2026-11-01, asus); T0326 (the wave-30 claim offer) landed 2026-11-01 (asus) — every E9 slice is done.
 **The owner's redesign (by hand, 2026-10-31):** six owner tasks, priority 1, numbered T0321–T0326 from the inbox: an added Spray is crit chance and an added Beam is +damage, both on every damage tower (T0321, T0322); Play opens a daily board pick, three boards seeded on the UTC date with their level augments and a level row from 0 to the slots, replacing the menu picker (T0323); the boards rank by level, then score, and Today is the UTC day (T0324; the server side is the owner's, done); rewards need wave 10, Quit run pays out and ends the run, a new Main menu keeps it (T0325); the wave-30 card offers to claim now or keep going (T0326). Where the "When done" list below says the menu picker, the saved preselected choice or a rolling Today, these tasks replace it; don't plan around the old picker.
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
@@ -79,12 +79,12 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Breakdown:**
 - The Flyer, the wave-50 boss: the fifth every-10 boss, the first that doesn't walk the road — a straight-line crossing from the island's edge to the exit, a bank at half health — **T0317 (L, priority 2, in the pool)**
 - the build phase shows the line: before the flyer's wave, its route is on the board through the build — the crossing's cover is chosen in the build, not learned at the wave's door — **tasked as T0346 (M, in the pool, waits on T0317)**
-- (to task) the regular Flyer in the wave mix: a small fast shape that crosses straight, one every few waves; lands behind the enemy queue — the Feeder is T0334 (in progress, the T0309 re-file), which lands the 10-regular cap at 10 of 10, so the Flyer's own task carries the removal or the merge
+- (to task) the regular Flyer in the wave mix: a small fast shape that crosses straight, one every few waves; the Feeder landed (T0334, 2026-11-01) and the regular cap is 10 of 10, so the Flyer's own task carries the removal or the merge
 - (to task) the crossing learns: the bank's line is chosen to cross where the run's towers don't reach — the boss banks into uncovered ground, its telegraph keeping it fair
 
 ### E11 — First run teaches itself (done; history in planning/archive/ROADMAP.md)
 
-### E12 — The run's story: a run you can look back on (active — opened 2026-11-01)
+### E12 — The run's story: a run you can look back on (fully tasked — closing on T0345's landing)
 **Goal:** the end of a run shows the run's shape, not just its numbers: which waves were clean, which were held, which one fell.
 **When done:** the claim card carries a small second card under the first — one small mark per wave faced (green = a clean wave, muted gray = a held wave with leaks, red = the wave the run ended on), a muted legend, and the run's loudest wave (the one that leaked most); the per-wave record is written as the run goes and carried through the resume save, so a resumed run's story is whole.
 **Breakdown:**
@@ -108,11 +108,11 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Splitter (T0068, M) — **done** (2026-10-28, desktop-4070): breaks into two fast splinters at its spot.
 - Hauler (T0057, M) — **done** (2026-10-28, cachyos-x8664): a big slow hexagon — worth 10 gold, a leak costs a life plus 5 gold.
 - Mute (T0074, M) — **done** (2026-10-29, desktop-4070): silences every tower within 2 cells. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
-- Feeder (IDEAS) — **T0334 (M, in progress, the T0309 re-file)**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring — it lands the regular-enemy cap at 10 of 10 (the Wall stays parked behind it).
+- Feeder (IDEAS) — **done as T0334 (2026-11-01, desktop, the T0309 re-file)**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring — the regular-enemy cap is 10 of 10 (the Wall is next).
 - The Hive (IDEAS) — **tasked as T0292 (L, in the pool)**: the wave-40 boss, the next peak after the Orb — the first boss that grows the group (a Dot every 6 s, up to 5); `spawnOnly`, so the 10-regular cap is untouched (the Feeder fills it).
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
-Queue order: the Bulwark (T0102), the Ward (T0111) and the Dart's removal (T0237) are done; the Feeder is **T0334 (in progress)** — it brings the regular-enemy cap (10, the bar in modules/enemies.md) to 10 of 10; the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
+Queue order: the Bulwark (T0102), the Ward (T0111), the Dart's removal (T0237) and the Feeder (T0334) are done — the regular-enemy cap (10, the bar in modules/enemies.md) is 10 of 10; the Wall is next. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
 
 ## Later
 
@@ -127,7 +127,9 @@ Ideas that may become epics or tasks of one.
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **now E13 (opened 2026-11-01)**: the far gate is T0338 (M, in the pool); the marked cell is T0340 (M, in the pool); the fork tasks behind them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **built as T0239 (L, non-epic, 2026-10-30, asus)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
-- Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**; the mid-run page **built as T0306 (2026-10-30, inet-racing)** — the pause's "Summary": the ledger's rows and the standing towers' kills and ≈N/s (the end card's and claim card's reads, re-used); damage per tower and leaks per wave still need the ledger's new terms — the per-wave leaks record landed with **E12's T0333 (2026-11-01)**; the mid-run story line is **T0336 (M, in the pool)**
+- Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**; the mid-run page **built as T0306 (2026-10-30, inet-racing)**; the per-wave leaks record landed with **E12's T0333 (2026-11-01)** and the mid-run story line with **T0336 (2026-11-01, inet-racing)**; damage per tower is **T0345 (M, in progress)**
 - The board shows its corners: a notch on the bend cells — **built as T0140 (2026-10-29), removed as T0227 (2026-10-29)**
 - Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **built as T0217 (2026-10-30, asus)**
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
+- The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **tasked as T0348 (M, in the pool)**
+- More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **E9's later slice, parked**
