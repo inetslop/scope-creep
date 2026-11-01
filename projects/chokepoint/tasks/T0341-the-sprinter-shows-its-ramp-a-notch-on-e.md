@@ -4,11 +4,12 @@ title: "The Sprinter shows its ramp: a notch on each hit that speeds it up"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T05:22:57Z
 claimed_at: 2026-11-01T05:59:48Z
+finished_at: 2026-11-01T06:21:50Z
 ---
 
 ## Goal
@@ -139,3 +140,16 @@ export const sprinterRamp: MakeEnemyHook = ({ scene, enemies }) => {
 
 ### Tests
 none (display-only; no `src/core` rule added or changed)
+
+## Result (attempt 1, yoga)
+
+The Sprinter's speed ramp is now visible on the board: the moment any hit raises its speed, a small orange notch (its own color) pops at the chevron's base — scales in ~150 ms, holds ~100 ms, fades ~150 ms, ~a third of the token's wide — reading "it's getting faster" the instant the trap triggers, gone within ~0.4 s. Re-derived every frame from the enemy's live speed (buildTeach pattern), so a fresh spawn or a resumed mid-ramp run sets its baseline silently and never replays; a capped Sprinter (5.32) shows no notch since its speed stops rising; each Sprinter notches independently. Display-only: the ramp rule, white hit flash, numbers and wave mix are untouched, and there is no new HUD, card line, sound or text. Added `src/systems/enemyHooks/sprinterRamp.ts` (a per-enemy hook like dasherStreak/wardDeny) and registered it in `ENEMY_HOOKS` in `index.ts` (one import + one line, after `dasherStreak`). One doc fix vs. the design: the design's docstring said the ramp rule is in `Enemy.damage()`, but that method doesn't exist — it's in `Enemy.hit()` — so I corrected that one word.
+
+- Self-review: APPROVE
+- Time: 22.1 min
+
+```
+.../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/sprinterRamp.ts    | 80 ++++++++++++++++++++++
+ 2 files changed, 82 insertions(+)
+```
