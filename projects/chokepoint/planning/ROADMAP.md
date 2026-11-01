@@ -81,6 +81,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Breakdown:**
 - the branch and its first node, Soft sell: the tech screen's sixth row plus a 30-coin node that raises the sell's refund 70% → 80% of slot cost — **done as T0383 (M, 2026-11-01, desktop)**
 - The rich cell: the branch's second node, 85 coins by the depth rule, the marked cell's buff 1.25× → 1.5× — **tasked as T0386 (M, in the pool)**
+- The panel line: the tower panel says which tower rides the marked cell — a muted "marked · +N% damage" line (N 25 plain, 50 with the node) on a marked-cell tower, reading the live buff — **tasked as T0387 (S, in the pool)**
 - The light move: the branch's third node, 155 coins by the depth rule, a move's fee 60% → 30% — **waits on T0382 (E15); task when it can start (the rich cell takes the depth-2 slot ahead of it)**
 
 ## Enemy queue (non-epic)
