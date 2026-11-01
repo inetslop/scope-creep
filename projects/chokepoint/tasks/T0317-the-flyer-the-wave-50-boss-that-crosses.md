@@ -1,14 +1,14 @@
 ---
 id: T0317
 title: "The Flyer: the wave-50 boss that crosses the sky"
-assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-31T00:35:25Z
 claimed_at: 2026-11-01T17:52:17Z
+finished_at: 2026-11-01T21:38:41Z
 epic: E10
 ---
 
@@ -112,3 +112,20 @@ takeFlight(route: FlyRoute): void;
 - `tests/core/waves.test.ts`: `bossId(50) === 'flyer'`; wave 50 = `[{ enemy: 'flyer', delaySec: 0 }]`, `['boss']`, `waveHpMul(50)`, identical on seeds 1/7/42/50; no wave 1–49 sends a flyer.
 - `tests/core/control.test.ts`: `pushable` true for dot, false for ward and flyer (a gust does not move the Flyer).
 - Add `remaining` literals to the four targeting/beam test files as in Pitfalls.
+
+## Attempt 1 failed (asus)
+
+Runner error: git fetch --quiet --prune origin failed (exit 1):
+error: cannot lock ref 'refs/remotes/origin/main': is at 6bf74ab9ff71383eee6e4baaf433c75365992c08 but expected 7c09becc67089cf8883bdde79a9d58d274f20eb2
+
+
+```
+Error: git fetch --quiet --prune origin failed (exit 1):
+error: cannot lock ref 'refs/remotes/origin/main': is at 6bf74ab9ff71383eee6e4baaf433c75365992c08 but expected 7c09becc67089cf8883bdde79a9d58d274f20eb2
+
+    at Git.fetch (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/git.ts:134:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:260:5)
+    at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
+    at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
