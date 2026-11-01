@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { artScale, augmentTexture, STAR_TEXTURE } from '../art/textures';
 import { boardCode } from '../core/boardCode';
 import { towerDps } from '../core/towerDps';
+import { loudestWave } from '../core/waveStory';
 import { PALETTE } from '../content/palette';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
@@ -104,12 +105,36 @@ export class SummaryScene extends Phaser.Scene {
       heading = this.add.text(0, 0, 'By tower', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
     }
 
+    // The run's story, the claim card's own marks (T0333): one per wave faced — green clean,
+    // muted held. There is no lost wave mid-run, so no red mark on this page. Absent while no
+    // wave has ended yet (before wave 1, the pause reads "Ready").
+    const story = run.story;
+    const loudest = loudestWave(story);
+    const MARK = 6, MARK_GAP = 3, MARKS_PER_ROW = 14; // the claim card's own mark size and wrap
+    const marksRows = Math.ceil(story.length / MARKS_PER_ROW);
+    const marksH = marksRows * MARK + Math.max(0, marksRows - 1) * MARK_GAP;
+    let storyHeading: Phaser.GameObjects.Text | undefined;
+    let legendClean: Phaser.GameObjects.Text | undefined;
+    let legendHeld: Phaser.GameObjects.Text | undefined;
+    let loudestText: Phaser.GameObjects.Text | undefined;
+    if (story.length > 0) {
+      storyHeading = this.add.text(0, 0, 'Story', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
+      legendClean = this.add.text(0, 0, 'clean', textStyle(13, PALETTE.muted)).setOrigin(0, 0.5);
+      legendHeld = this.add.text(0, 0, 'held', textStyle(13, PALETTE.muted)).setOrigin(0, 0.5);
+      // The claim card's own line, shown once any wave has been held: a story of all-clean
+      // waves still has a loudestWave (its first record, 0 leaks) and must not print it.
+      if (loudest && loudest.leaks > 0) loudestText = this.add.text(0, 0, `loudest · wave ${loudest.wave} · ${loudest.leaks} leaks`, textStyle(13, PALETTE.muted)).setOrigin(0.5);
+    }
+
     // The card grows to its content, top-down: the title, the read lines, then the by-tower rows.
     const title = this.add.text(0, 0, 'Summary', titleStyle(28)).setOrigin(0.5);
     let h = PAD + title.height + GAP;
     readLines.forEach((line, i) => {
       h += line.height + (i === readLines.length - 1 ? 0 : GAP);
     });
+    if (story.length > 0 && storyHeading && legendClean && legendHeld) {
+      h += GAP_BIG + storyHeading.height + GAP + marksH + 12 + Math.max(legendClean.height, legendHeld.height) + (loudestText ? 10 + loudestText.height : 0);
+    }
     if (entries.length > 0 && heading) {
       h += GAP_BIG + heading.height + GAP + entryRows * ENTRY_H + (entryRows - 1) * ROW_GAP_Y;
     }
@@ -135,6 +160,43 @@ export class SummaryScene extends Phaser.Scene {
       // The star sits right of the word, like the claim card's (the texture is painted 1px low).
       flawlessStar.setY(flawlessText.y + 1);
       flawlessStar.setX(flawlessText.width / 2 + 13);
+    }
+    if (story.length > 0 && storyHeading && legendClean && legendHeld) {
+      y += GAP_BIG;
+      storyHeading.setY(cy(storyHeading.height));
+      y += GAP;
+      const markTopY = y; // top of the marks' first row, in the card's top-down y
+      y += marksH;
+      y += 12;
+      const legendY = cy(Math.max(legendClean.height, legendHeld.height));
+      // Marks and legend swatches share one graphics object, drawn in card coordinates
+      // (card center is 0,0), the claim card's own mark: 6px rounded squares, gap 3.
+      const marks = this.add.graphics();
+      story.forEach((r, i) => {
+        const row = (i / MARKS_PER_ROW) | 0;
+        const inRow = Math.min(MARKS_PER_ROW, story.length - row * MARKS_PER_ROW);
+        const w = inRow * MARK + (inRow - 1) * MARK_GAP;
+        const x = -w / 2 + (i % MARKS_PER_ROW) * (MARK + MARK_GAP); // left edge; rows center on the card
+        marks.fillStyle(r.leaks === 0 ? PALETTE.green : PALETTE.muted);
+        marks.fillRoundedRect(x, markTopY + row * (MARK + MARK_GAP), MARK, MARK, 2);
+      });
+      // The legend is T0333's own, sans "lost": the death wave's mark lives on the claim card only.
+      const items = [legendClean, legendHeld];
+      const colors = [PALETTE.green, PALETTE.muted];
+      const itemW = items.map((t) => MARK + 4 + t.width);
+      let lx = -(itemW[0] + 12 + itemW[1]) / 2;
+      items.forEach((t, i) => {
+        marks.fillStyle(colors[i]);
+        marks.fillRoundedRect(lx, legendY - MARK / 2, MARK, MARK, 2);
+        t.setPosition(lx + MARK + 4, legendY);
+        lx += itemW[i] + 12;
+      });
+      parts.push(storyHeading, marks, legendClean, legendHeld);
+      if (loudestText) {
+        y += 10;
+        loudestText.setY(cy(loudestText.height));
+        parts.push(loudestText);
+      }
     }
     if (entries.length > 0 && heading) {
       y += GAP_BIG;

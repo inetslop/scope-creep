@@ -4,11 +4,12 @@ title: "The run's story on the mid-run page: the pause's Summary"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T03:39:37Z
 claimed_at: 2026-11-01T04:26:01Z
+finished_at: 2026-11-01T04:42:30Z
 epic: E12
 ---
 
@@ -119,3 +120,15 @@ No new types, functions, fields, or registry lines. Reused as-is: `run.story: Wa
 
 ### Tests
 none — no core rule changes; `loudestWave` is already covered by `tests/core/waveStory.test.ts`, and this is a UI-only task.
+
+## Result (attempt 1, inet-racing)
+
+The pause's Summary page (T0306) now shows the run's story while the run is happening: a "Story" section between the run reads and the by-tower rows with one 6px mark per wave faced (green clean, muted-gray held, no red mid-run), T0333's legend, and the claim card's "loudest · wave N · M leaks" line when any wave has been held. It reads the existing per-wave ledger `run.story` (so resumed runs show their whole story so far), is absent before wave 1, and grows the card's height through the existing scale-to-fit. Only `src/scenes/SummaryScene.ts` changed.
+
+- Self-review: APPROVE
+- Time: 16.5 min
+
+```
+.../chokepoint/game/src/scenes/SummaryScene.ts     | 62 ++++++++++++++++++++++
+ 1 file changed, 62 insertions(+)
+```
