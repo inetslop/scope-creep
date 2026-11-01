@@ -1,12 +1,14 @@
 ---
 id: T0315
 title: The speed toggle gets its note
+assignee: desktop
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T00:11:52Z
+claimed_at: 2026-11-01T05:06:56Z
 ---
 
 ## Goal
