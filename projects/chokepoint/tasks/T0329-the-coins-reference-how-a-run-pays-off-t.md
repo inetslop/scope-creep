@@ -3,13 +3,11 @@ id: T0329
 title: "The coins reference: how a run pays, off the pause"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: [T0313]
 attempts: 0
 created: 2026-11-01T01:46:07Z
-claimed_at: 2026-11-01T01:46:11Z
 epic: E9
-designer: desktop
 ---
 
 ## Goal
@@ -35,3 +33,47 @@ The coin payout is three layers deep now — the base rates, the claim branch's 
 - [ ] "Multipliers" shows "×2 Iron" in Iron runs and "×N level augments" only when the run's level multiplier is above 1; a plain run with no level augments shows no multipliers section.
 - [ ] The card shows no wave number, lives, gold, coin tally or total; the pause's own run line and worth line are untouched.
 - [ ] No new save field: a resumed run mid-wave shows the same card, and the card's text fits at 412x915 and 1280x720.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/scenes/CoinsScene.ts` - the "Coins" reference page off the pause (models `SummaryScene.ts` exactly: dim shade + white card + round ink back button + top-down content, scaled to fit).
+- edit `src/scenes/keys.ts` - add `coins: 'Coins'` to `SCENES` (after `summary: 'Summary'`).
+- edit `src/main.ts` - add `import { CoinsScene } from './scenes/CoinsScene';` and add `CoinsScene` to the `scene:` array right after `SummaryScene`.
+- edit `src/scenes/PauseScene.ts` - add one CONTROLS line, one reference row button, its card-height term, its placement and its boxKids entry.
+
+### Interfaces
+No new types. `CoinsScene` reads, once, exactly what already exists:
+- `run = getGameScene(this).run`; `profile = loadProfile(window.localStorage)`; `owned = profile.purchased`.
+- `cleanPay = cleanWavePay(owned)` (1 or 2) — exists in `src/content/tech/claim.ts`.
+- `flawPay = flawlessPay(owned)` — **added by T0313** in the same file; the Flawless node's pay (10) once owned, 0 otherwise.
+- `iron = run.mode === 'iron' ? 2 : 1`; `flawlessSoFar = run.wavesCleared === run.cleanWaves && run.wavesCleared > 0`; `run.levelHpMul`, `levelMultiplierLabel(run.level)`.
+
+### Steps
+1. `src/scenes/keys.ts`: after `summary: 'Summary',` add `  coins: 'Coins',`.
+2. `src/main.ts`: add the import (after `CodexScene`), and in the `scene:` array insert `CoinsScene` after `SummaryScene` (draw order: on top of pause, under GameOver).
+3. Create `src/scenes/CoinsScene.ts` (class `CoinsScene`, key `SCENES.coins`, `private panelW = 340`). `create()`: `uiCamera(this)`; `hook.overlay = SCENES.coins`; `this.shade = this.add.rectangle(0,0,10,10,PALETTE.ground,0.78).setOrigin(0).setInteractive()`; `doBack()` = guard `this.closed`, `getSfx(this)?.blip()`, `hook.overlay = SCENES.pause`, `this.scene.start(SCENES.pause)`; bind `this.shade.on('pointerdown', doBack)`; build the round ink back button (48x48, `PALETTE.ink`) with a white `arrow.fillTriangle(3,-7, 3,7, -8,0)` in `this.back.content` → `doBack`; call `this.build()`; `layout(w,h)` = shade.setSize+hitArea, `this.box` center scaled by `Math.min(1,(w-24)/panelW,(h-24)/panelH)`, `this.back.container.setPosition(width-EDGE-24, 40)`; `layout(viewSize(...))`; `onResize`; `if (flags.smoke) this.time.delayedCall(1000, doBack)`.
+
+   `build()`: compute `cleanPay, flawPay, hasFlawless = flawPay > 0, iron, flawlessSoFar`. Constants `PAD=28, GAP=10, GAP_BIG=20, innerW = panelW - PAD*2`.
+   - `title = this.add.text(0,0,'Coins', titleStyle(28))`.
+   - "Pays" heading `textStyle(13, PALETTE.ink, {fontStyle:'bold'})`; lines `textStyle(12, PALETTE.muted)`: `'each wave held · +1'`, `'every 10 stopped · +1'`, `` `each clean wave · +${cleanPay}` ``; plus (only if `hasFlawless`) `` `a flawless run · +${flawPay}` ``.
+   - "This run" heading (same bold style); `parts = [waves +${run.wavesCleared*iron}, stopped +${Math.floor(run.kills/10)*iron}, clean +${run.cleanWaves*iron}]`; if `hasFlawless && flawlessSoFar` push `` `flawless +${flawPay*iron}` ``; `recipe` = `parts.join(' · ')` as `textStyle(14, PALETTE.ink, {fontStyle:'bold', wordWrap:{width:innerW}})`.
+   - "Multipliers": `multFacts = (run.mode==='iron'?['×2 Iron']:[]).concat(run.levelHpMul>1?[`${levelMultiplierLabel(run.level)} level augments`]:[])`; heading only if `multFacts.length>0`; lines `textStyle(12, PALETTE.muted)`.
+   - Height `h = PAD + title.height + GAP_BIG + paysHeading.height + Σ(GAP+line.height) [+ flawlessLine] + GAP_BIG + runHeading.height + GAP + recipe.height + (if mult: GAP_BIG + multHeading.height + Σ multLines) + PAD`; `panelH = Math.ceil(h)`; `makeCard(panelW, panelH, 28)`; place top-down with a `cy(hh)` cursor (title → each section: `y+=GAP_BIG` then heading, then `y+=GAP` before each line). Put every created object (card, title, headings, all lines, recipe) into `this.box` container. Create `flawlessLine`/`multHeading`/`multLines` **only** when shown (no unused text at 0,0).
+4. `src/scenes/PauseScene.ts`:
+   - In `CONTROLS`, after `'Summary — the run so far: score, combo, by tower',` add `'Coins — how a run pays',`.
+   - After `summaryButton` (line 186): `const showCoins = (): void => { if (closed) return; this.scene.launch(SCENES.coins); this.scene.pause(); };` then `const coinsButton = makeButton(this, 0, 0, 'Coins', showCoins, { width: 240, height: 52, radius: 26 });`
+   - Line 193 card-height: append `+ GAP_S + 52` immediately before the trailing `+ PAD`.
+   - After `summaryButton.container.setY(cy(52));` (line 228) add `y += GAP_S;` and `coinsButton.container.setY(cy(52));`.
+   - In `boxKids` (line 230) add `coinsButton.container`.
+
+### Pitfalls
+- **flawlessPay behavior**: T0313 lands first — read `flawlessPay` in `content/tech/claim.ts`. The owned-test `flawPay > 0` is only valid if it returns 0 when the node is absent. If it returns 10 regardless, instead read the Flawless node's `id` from `CLAIM_NODES` and test `owned.includes(id)`.
+- **clean part is the COUNT, not the pay**: "This run" clean part = `run.cleanWaves * iron`. Do NOT multiply by `cleanPay` — the clean rate (`+1`/`+2`) lives in the "Pays" section by design; the two sections multiply to the clean total.
+- **No totals/ledger on the card**: never show a coin total, wave number, lives, gold or tally. The pause's `worthText`/stats line are untouched (you only add a row + a controls line + a height term).
+- **Close**: the references' close is the round ink back button; the brief also says "a tap on the dim shade" — bind both the shade and the back button to the same idempotent `doBack` (guarded by `this.closed`), so it works either way. `doBack` restarts the pause via `scene.start(SCENES.pause)` (GameScene stays paused), exactly like the other references.
+- **Wrap/measure**: set `wordWrap` in the `recipe` text's style (not a post-hoc `setStyle`) and read `.height` before computing `panelH`, or the card under-sizes when the line wraps at big numbers.
+- **Fit**: the card scales via `Math.min(1,(w-24)/panelW,(h-24)/panelH)` so it always fits at 412x915 and 1280x720; the pause card already scales the same way, so the added row keeps fitting.
+
+### Tests
+- none (read-only UI page; no new/changed `src/core` rule).
