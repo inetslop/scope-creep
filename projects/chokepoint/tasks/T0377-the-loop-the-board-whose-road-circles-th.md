@@ -1,12 +1,14 @@
 ---
 id: T0377
 title: "The loop: the board whose road circles the island once"
+assignee: inet-racing
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T20:21:14Z
+claimed_at: 2026-11-01T20:45:39Z
 ---
 
 ## Goal
