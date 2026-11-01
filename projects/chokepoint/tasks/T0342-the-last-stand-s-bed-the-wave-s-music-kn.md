@@ -1,12 +1,14 @@
 ---
 id: T0342
 title: "The last stand's bed: the wave's music knows the run is at one life"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T05:50:54Z
+claimed_at: 2026-11-01T09:17:02Z
 ---
 
 ## Goal
