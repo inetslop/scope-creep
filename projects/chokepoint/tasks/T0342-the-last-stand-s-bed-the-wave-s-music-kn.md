@@ -4,11 +4,12 @@ title: "The last stand's bed: the wave's music knows the run is at one life"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T05:50:54Z
 claimed_at: 2026-11-01T09:17:02Z
+finished_at: 2026-11-01T09:21:56Z
 ---
 
 ## Goal
@@ -133,3 +134,18 @@ GameScene line 215 becomes:
 
 ### Tests
 `tests/core/bedForm.test.ts`, one `it` per combination of `(lastStand, quicken)`: (false,false) normal — notes deep-equal `[164.81, 164.81, 196, 164.81, 130.81, 164.81, 196, 220]`, stepSec 0.4, vol 0.04, echoVol 0, drone 0, realTime false; (false,true) — stepSec 0.2, echoVol 0.03, rest as normal; (true,false) — notes each value halved, stepSec 0.4, echoVol 0, drone 41.2025 (expect `BED_NOTES[0]! / 4`), droneVol 0.02, realTime true; (true,true) — stepSec 0.2, echoVol 0.03, drone as above.
+
+## Result (attempt 1, desktop)
+
+The wave's music bed now wears a last-stand form while the run is at one life: new pure `src/core/bedForm.ts` selects the form from (last stand, quicken) — the 8-note heartbeat drops an octave with a quiet held E1 drone at 0.02, stepping on real audio seconds so 2× fast-forward leaves it unchanged; `MusicBed` in `src/audio/music.ts` crossfades in/out over 1 s via a drone oscillator hung under the bed's gain (so the existing 0.5 s wave fades cover it), while the normal form stays byte-identical; GameScene passes real `dt` and `isLastStand(this.run)` (import added — the design thought it was already there), and `tests/core/bedForm.test.ts` covers all four form combinations. `npm run check` (509 tests) and `npm run smoke` (desktop + mobile) pass.
+
+- Self-review: APPROVE
+- Time: 4.9 min
+
+```
+projects/chokepoint/game/src/audio/music.ts        | 70 +++++++++++++++++-----
+ projects/chokepoint/game/src/core/bedForm.ts       | 32 ++++++++++
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  3 +-
+ .../chokepoint/game/tests/core/bedForm.test.ts     | 48 +++++++++++++++
+ 4 files changed, 137 insertions(+), 16 deletions(-)
+```

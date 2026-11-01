@@ -1,33 +1,43 @@
+import { bedForm, type BedForm } from '../core/bedForm';
 import type { Sfx } from './Sfx';
 
-const NOTES = [164.81, 164.81, 196, 164.81, 130.81, 164.81, 196, 220]; // E3 E3 G3 E3 C3 E3 G3 A3
-const STEP_SEC = 0.4, DECAY_SEC = 0.3, FADE_SEC = 0.5, VOL = 0.04, DANGER_VOL = 0.03;
+const DECAY_SEC = 0.3, FADE_SEC = 0.5, FORM_FADE_SEC = 1.0;
 
 /**
  * The quiet generative bed under the wave phase: an 8-step loop on Sfx's WebAudio context
  * (one sine note at a time, 0.4 s steps, 0.3 s decays, 0.04 pre-master). While the exit
  * warning is live the step halves and a second voice plays the same pattern an octave up.
- * Driven by the wave's sim seconds (2× fast-forward runs it 2×); the fades live on the bed's
- * own gain node, so note volumes stay exact.
+ * While the run's last stand is on the loop drops an octave and a quiet held root drone sits
+ * under it, the form crossfading in and out over 1 s; that form keeps its step in real audio
+ * seconds, so 2× fast-forward leaves it unchanged. The normal form is driven by the wave's sim
+ * seconds. The fades live on the bed's own gain node, so note volumes stay exact.
  */
 export class MusicBed {
   private ctx: AudioContext | undefined;
   private gain: GainNode | undefined; // the bed's own gain: the fades live here, notes hang under it
   private started = false;
   private danger = false;
-  private acc = 0;   // sim seconds since the last step
+  private lastStand = false;
+  private droneOsc: OscillatorNode | undefined;
+  private droneGain: GainNode | undefined;
+  private acc = 0;   // seconds since the last step, on the form's own clock
   private step = 0;  // next note's index in the loop
   private liveNotes = 0;
   constructor(private readonly sfx: Sfx | undefined) {}
 
-  /** dt = the wave's sim seconds (2× fast-forward runs the loop 2×). playing = run.phase === 'wave'; danger = exitWarn.live. */
-  update(dt: number, playing: boolean, danger: boolean): void {
+  /** dt = real audio seconds (the last-stand form's clock); simDt = the wave's sim seconds (the
+   * normal form's, 2× fast-forward runs it 2×); playing = run.phase === 'wave'; lastStand = the
+   * run's last stand; danger = exitWarn.live. */
+  update(dt: number, simDt: number, playing: boolean, lastStand: boolean, danger: boolean): void {
     if (playing && this.sfx && !this.sfx.muted) {
       if (!this.started) this.start();
-      if (this.danger !== danger) { this.danger = danger; this.acc = 0; } // new rate's first note comes a full step away
-      const stepSec = this.danger ? STEP_SEC / 2 : STEP_SEC;
-      this.acc += dt;
-      while (this.acc >= stepSec) { this.acc -= stepSec; this.note(); }
+      const form = bedForm(lastStand, danger);
+      if (this.danger !== danger || this.lastStand !== lastStand) {
+        this.danger = danger; this.lastStand = lastStand; this.acc = 0; // new form's first note comes a full step away
+      }
+      if (lastStand) this.startDrone(form); else this.endDrone(FORM_FADE_SEC); // level-based: a fresh wave re-enters the form
+      this.acc += form.realTime ? dt : simDt; // the last-stand form keeps its 0.4 s step at 2× fast-forward
+      while (this.acc >= form.stepSec) { this.acc -= form.stepSec; this.note(form); }
       return;
     }
     if (this.started) this.stop();
@@ -38,6 +48,8 @@ export class MusicBed {
     if (!this.started) return;
     this.started = false;
     this.danger = false;
+    this.lastStand = false;
+    this.endDrone(FADE_SEC);
     const { ctx, gain } = this; this.ctx = undefined; this.gain = undefined;
     if (ctx && gain) {
       const t = ctx.currentTime;
@@ -65,13 +77,41 @@ export class MusicBed {
     this.ctx = a.ctx; this.gain = g;
   }
 
-  private note(): void {
+  private note(form: BedForm): void {
     const { ctx, gain } = this;
     if (!ctx || !gain || ctx.state !== 'running' || this.sfx?.muted) return;
-    const f = NOTES[this.step % 8]!;
-    this.playNote(f, VOL);
-    if (this.danger) this.playNote(f * 2, DANGER_VOL);
+    const f = form.notes[this.step % 8]!;
+    this.playNote(f, form.vol);
+    if (form.echoVol > 0) this.playNote(f * 2, form.echoVol);
     this.step += 1;
+  }
+
+  /** The held root under the last-stand form: one constant sine, faded in/out over FORM_FADE_SEC, hung under the bed's own gain. */
+  private startDrone(form: BedForm): void {
+    const { ctx, gain } = this;
+    if (!ctx || !gain || this.droneOsc || ctx.state !== 'running') return;
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const g = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = form.drone;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(form.droneVol, t + FORM_FADE_SEC);
+    osc.connect(g).connect(gain);
+    osc.start(t);
+    this.droneOsc = osc; this.droneGain = g;
+  }
+
+  /** Fades the drone out over `fade` and clears it at once, so a fast 1↔2 toggle never stacks drones. */
+  private endDrone(fade: number): void {
+    const { ctx, droneOsc, droneGain } = this;
+    this.droneOsc = undefined; this.droneGain = undefined;
+    if (!ctx || !droneOsc || !droneGain) return;
+    const t = ctx.currentTime;
+    droneGain.gain.cancelScheduledValues(t);
+    droneGain.gain.setValueAtTime(droneGain.gain.value, t);
+    droneGain.gain.linearRampToValueAtTime(0.0001, t + fade);
+    droneOsc.stop(t + fade + 0.05);
   }
 
   private playNote(freq: number, vol: number): void {

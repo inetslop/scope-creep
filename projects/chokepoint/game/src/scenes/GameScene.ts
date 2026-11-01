@@ -4,6 +4,7 @@ import { GRID, HUD, ROCKS } from '../config';
 import { cssColor, PALETTE } from '../content/palette';
 import type { DailyPick } from '../core/daily';
 import { farGateDistance } from '../core/farGate';
+import { isLastStand } from '../core/lastStand';
 import { cellsBesidePath, generateMap } from '../core/map';
 import { loadProfile } from '../core/profile';
 import { RunState } from '../core/run';
@@ -213,7 +214,7 @@ export class GameScene extends Phaser.Scene {
     this.flow.update(simDt);
     this.saver.update();
     this.exitWarn.update(simDt);
-    this.music.update(simDt, this.run.phase === 'wave', this.exitWarn.live); // after, so `live` is this frame's
+    this.music.update(dt, simDt, this.run.phase === 'wave', isLastStand(this.run), this.exitWarn.live); // after, so `live` is this frame's
     this.leakCost.update(simDt);
     this.rally.update(simDt);
     this.haste.update(simDt);
