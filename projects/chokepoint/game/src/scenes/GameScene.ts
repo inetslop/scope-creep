@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { MusicBed } from '../audio/music';
 import { GRID, HUD, ROCKS } from '../config';
 import { cssColor, PALETTE } from '../content/palette';
-import { capLevelChoice } from '../core/levels';
+import type { DailyPick } from '../core/daily';
 import { cellsBesidePath, generateMap } from '../core/map';
 import { loadProfile } from '../core/profile';
 import { RunState } from '../core/run';
@@ -87,8 +87,9 @@ export class GameScene extends Phaser.Scene {
 
     const saved = this.registry.pop('resumeRun') as SavedRun | undefined;
     const ghost = this.registry.pop('ghostSeed') as { seed: number; bgen: number } | undefined;
+    const pick = this.registry.pop('dailyPick') as DailyPick | undefined;
     const iron = this.registry.pop('ironMode') === true;
-    const seed = saved ? saved.seed : (flags.seed ?? ghost?.seed ?? Math.floor(Math.random() * 2 ** 31));
+    const seed = saved ? saved.seed : (pick ? pick.seed : (flags.seed ?? ghost?.seed ?? Math.floor(Math.random() * 2 ** 31)));
     const bgen = saved ? saved.bgen : (ghost ? ghost.bgen : 2);
     // The profile's purchased tech nodes at run start gate the draft's pool (Haste's `tech`).
     const purchased = loadProfile(window.localStorage).purchased;
@@ -104,8 +105,8 @@ export class GameScene extends Phaser.Scene {
       const draft = draftTech(profile.purchased);
       this.run.slotDiscount = draft.slotDiscount;
       this.run.fourthCard = draft.fourthCard;
-      // New and ghost runs take the profile's level-augment choice, capped at its slots.
-      this.run.level = capLevelChoice(profile.levelSlots, profile.levelOn);
+      // The picked board's augments; ghost and "again" runs play at level 0 (no pick step).
+      this.run.level = pick ? pick.level : [];
     }
     // The board's tech nodes wind new runs' roads one turn further, lengthen them, with "Two
     // chokes" fold them back for a second choke cell, and with "The switchback" give them a fold

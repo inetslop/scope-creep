@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { AUGMENTS } from '../content/augments';
 import { cssColor, PALETTE } from '../content/palette';
-import { loadProfile, saveLevelOn } from '../core/profile';
+import { loadProfile } from '../core/profile';
 import { clearSavedRun, loadSavedRun } from '../core/saveRun';
 import { nodeInReach } from '../core/tech';
 import { MENU_ROAD_SIZE } from '../art/menu';
@@ -13,8 +13,7 @@ import { makeButton, type Button } from '../ui/button';
 import { addUpdateNotice } from '../ui/updateNotice';
 import { uiCamera, viewSize } from '../ui/display';
 import { textStyle, titleStyle } from '../ui/text';
-import { getSfx, onKey, onResize, SCENES } from './keys';
-import { buildLevelCard } from './menu/LevelCard';
+import { onKey, onResize, SCENES } from './keys';
 import { MenuDemo } from './menu/MenuDemo';
 import { buildProfileCard, PROFILE_CARD_W } from './menu/ProfileCard';
 
@@ -53,10 +52,11 @@ export class MenuScene extends Phaser.Scene {
     hook.overlay = '';
     this.clock = 0;
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
-    // A new run abandons a saved one for nothing.
+    // A new run abandons a saved one for nothing, and opens the day's board pick first.
     const play = (): void => {
       clearSavedRun(window.localStorage);
-      this.scene.start(SCENES.game);
+      this.registry.remove('ironMode');
+      this.scene.start(SCENES.pick);
     };
 
     this.drifters = AUGMENTS.flatMap((a, i) =>
@@ -81,18 +81,12 @@ export class MenuScene extends Phaser.Scene {
     const iron = makeButton(this, 0, 0, '', () => {
       clearSavedRun(window.localStorage); // a new run abandons a saved one for nothing
       this.registry.set('ironMode', true);
-      this.scene.start(SCENES.game);
+      this.scene.start(SCENES.pick); // the Iron run also picks its board
     }, { width: 220, height: IRON_H, radius: 30 });
     iron.label.setVisible(false);
     const ironTitle = this.add.text(0, -10, 'Iron', titleStyle(24)).setOrigin(0.5);
     const ironLine = this.add.text(0, 16, '1 life · 2× coins', textStyle(14, PALETTE.muted)).setOrigin(0.5);
     iron.content.add([ironTitle, ironLine]);
-    const sfx = getSfx(this);
-    // The level-augment picker: the profile's choice, capped at its slots; every tap saves it back.
-    const level = buildLevelCard(this, p.levelSlots, p.levelOn, (on) => {
-      saveLevelOn(window.localStorage, on);
-      sfx?.blip();
-    });
     const savedRun = loadSavedRun(window.localStorage);
     let resume: Button | undefined;
     if (savedRun) {
@@ -146,7 +140,6 @@ export class MenuScene extends Phaser.Scene {
     if (resume) fadeIn.push(resume.container);
     fadeIn.push(playBox);
     fadeIn.push(iron.container);
-    fadeIn.push(level.container);
     fadeIn.push(tech.container);
     fadeIn.push(techLine);
     fadeIn.push(augments.container);
@@ -174,7 +167,7 @@ export class MenuScene extends Phaser.Scene {
       // The gap between the road and the column counts for the fit, too.
       let below = GAP + title.height + GAP + cardH + GAP + howH + GAP;
       if (resume) below += BUTTON_H + GAP;
-      below += BUTTON_H + GAP + IRON_H + GAP + level.height + GAP + BUTTON_H + CAPTION_GAP + techLine.height + GAP + BUTTON_H;
+      below += BUTTON_H + GAP + IRON_H + GAP + BUTTON_H + CAPTION_GAP + techLine.height + GAP + BUTTON_H;
       if (boards) below += GAP + BUTTON_H;
       if (ghost && ghostLine) below += GAP + BUTTON_H + CAPTION_GAP + ghostLine.height + GAP;
       below += (ghost && ghostLine ? 0 : GAP) + hint.height; // the gap above the hint (the ghost's line adds its own)
@@ -222,9 +215,6 @@ export class MenuScene extends Phaser.Scene {
       gap(GAP);
       iron.container.setScale(s);
       iron.container.setPosition(cx, put(IRON_H));
-      gap(GAP);
-      level.container.setScale(s);
-      level.container.setPosition(cx, put(level.height));
       gap(GAP);
       tech.container.setScale(s);
       tech.container.setPosition(cx, put(BUTTON_H));

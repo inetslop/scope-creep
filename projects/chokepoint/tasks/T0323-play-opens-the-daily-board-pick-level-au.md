@@ -4,11 +4,12 @@ title: Play opens the daily board pick (level augments leave the menu)
 assignee: asus
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T23:37:22Z
 claimed_at: 2026-11-01T01:39:40Z
+finished_at: 2026-11-01T03:34:44Z
 epic: E9
 ---
 
@@ -101,3 +102,35 @@ export interface RunResult { /* existing */ levelOn?: number; }    // how many l
 - `tests/core/daily.test.ts`: one fixed UTC day gives the same three seeds and the same three orders on every call (seeds in [0, 2^31)); the next day's seeds and orders differ; `dailyLevel(s, L)` equals `dailyOrder(s).slice(0, L)` and is nested (level L+1 extends level L); `dailyLevel(s, 0)` is `[]`; `utcDay(Date.UTC(2026, 0, 2, 0, 0, 0) - 1000) === '2026-01-01'` and `utcDay(... + 1000) === '2026-01-02'` — either side of 00:00 UTC is a different day whatever the local time zone, since the instants are built with `Date.UTC`.
 - `tests/core/profile.test.ts`: new test — profile with `levelSlots: 2`; `recordRun` at `reached: 30` with `levelOn: 2` earns the slot, `levelOn: 1` earns nothing (the ladder counts the run's own level); delete the `saveLevelOn` test.
 - `tests/core/levels.test.ts`: delete the `capLevelChoice` cases.
+
+## Result (attempt 1, asus)
+
+- **`npm run check`**: lint and all 477 unit tests pass; the only typecheck error is inside `src/scenes/menu/LevelCard.ts` (its now-deleted `capLevelChoice` import) — that file is unused, unimported, and listed for deletion below, so the check passes once it's gone.
+- **`npm run smoke`**: PASS on desktop (1280×720) and mobile (412×915) — the flow now runs menu → pick (auto card 0 under `?smoke`) → run.
+- **Acceptance criteria**: menu has no level card and Play/Iron open the pick while Resume/Ghost go straight to the run; `tests/core/daily.test.ts` covers same-day stability, next-day difference, first-L nesting, and the 00:00 UTC flip via `Date.UTC` instants; previews are generated with the same `Rng(seed)` and the same `generateMap` arguments as a new run (including the `fold` parameter GameScene's call carries); the level row runs 0→slots, defaults to the highest, and a chip tap rebuilds the cards' augments/multiplier; cards, chips and Back respond to tap, keys 1/2/3 and Esc, with key hints shown on cards and the button (hidden on touch screens).
+
+SUMMARY: Pressing Play or Iron on the menu now opens a new pick step (scenes/PickScene.ts) instead of starting the run: the day's three boards from the UTC date (new pure module core/daily.ts with unit tests), each as a tappable card showing a pixel-identical preview of the exact board it will play (art/board.ts gained paintBoardPreview over the extracted drawBoard), the level augments it carries at the chosen level, and the run mu…
+
+- Self-review: APPROVE
+- Time: 115.1 min
+- Deleted src/scenes/menu/LevelCard.ts, as the agent asked.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/art/board.ts          | 190 ++++++++-------
+ projects/chokepoint/game/src/core/daily.ts         |  41 ++++
+ projects/chokepoint/game/src/core/levels.ts        |   5 -
+ projects/chokepoint/game/src/core/profile.ts       |  15 +-
+ projects/chokepoint/game/src/debug/runChecks.ts    |   1 +
+ projects/chokepoint/game/src/main.ts               |   3 +-
+ .../chokepoint/game/src/scenes/GameOverScene.ts    |   2 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |   9 +-
+ projects/chokepoint/game/src/scenes/MenuScene.ts   |  24 +-
+ projects/chokepoint/game/src/scenes/PickScene.ts   | 264 +++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/keys.ts        |   1 +
+ .../chokepoint/game/src/scenes/menu/LevelCard.ts   |  83 -------
+ projects/chokepoint/game/tests/core/daily.test.ts  |  51 ++++
+ projects/chokepoint/game/tests/core/levels.test.ts |   8 +-
+ .../chokepoint/game/tests/core/profile.test.ts     |  20 +-
+ 15 files changed, 498 insertions(+), 219 deletions(-)
+```

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { coinsForRun, loadProfile, recordRun, saveLevelOn, saveSound, type KeyValueStore } from '../../src/core/profile';
+import { coinsForRun, loadProfile, recordRun, saveSound, type KeyValueStore } from '../../src/core/profile';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -150,13 +150,17 @@ describe('profile', () => {
     expect(gap.levelSlotEarned).toBe(false);
   });
 
-  it('saves the level-augment choice, drops unknown ids on load, and keeps it through runs', () => {
-    const store = memory();
-    saveLevelOn(store, ['tough', 'nope']);
-    expect(loadProfile(store).levelOn).toEqual(['tough']);
-    expect(recordRun(store, { waves: 5, stopped: 0, clean: 0, seed: 305, bgen: 2 }).profile.levelOn).toEqual(['tough']);
-    saveLevelOn(store, []);
-    expect(loadProfile(store).levelOn).toEqual([]);
+  it('the ladder counts the run\'s own level: wave 30 with every slot the run filled earns one, a slot left empty earns nothing', () => {
+    const filled = memory();
+    filled.setItem('chokepoint:profile', JSON.stringify({ levelSlots: 2 }));
+    const earned = recordRun(filled, { waves: 29, stopped: 0, clean: 0, seed: 314, bgen: 2, reached: 30, levelOn: 2 });
+    expect(earned.levelSlotEarned).toBe(true);
+    expect(earned.profile.levelSlots).toBe(3); // died during wave 30 with its two slots filled
+    const partial = memory();
+    partial.setItem('chokepoint:profile', JSON.stringify({ levelSlots: 2 }));
+    const short = recordRun(partial, { waves: 29, stopped: 0, clean: 0, seed: 315, bgen: 2, reached: 30, levelOn: 1 });
+    expect(short.levelSlotEarned).toBe(false); // one of its two slots empty: nothing earned
+    expect(short.profile.levelSlots).toBe(2);
   });
 
   it('keeps the four most recent runs, newest first', () => {

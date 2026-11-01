@@ -3,7 +3,7 @@ import { BUILD_SEC } from '../../src/config';
 import { ENEMIES } from '../../src/content/enemies';
 import { dot } from '../../src/content/enemies/dot';
 import { getLevelAugment } from '../../src/content/levels';
-import { LEVEL_UNLOCK_WAVE, capLevelChoice, leanBounty, levelBuildSeconds, levelCountMul, levelMultiplier, levelMultiplierLabel, levelMultiplierTag, levelSlotsAfter, levelSpeedMul } from '../../src/core/levels';
+import { LEVEL_UNLOCK_WAVE, leanBounty, levelBuildSeconds, levelCountMul, levelMultiplier, levelMultiplierLabel, levelMultiplierTag, levelSlotsAfter, levelSpeedMul } from '../../src/core/levels';
 import { killGold } from '../../src/core/lastStand';
 import { RunState } from '../../src/core/run';
 import { Rng } from '../../src/core/rng';
@@ -20,12 +20,6 @@ describe('level augments', () => {
     expect(levelSlotsAfter(2, 29, 2, 5)).toBe(2); // short of the wave: nothing
     expect(levelSlotsAfter(5, 40, 5, 5)).toBe(5); // capped at the set's size
     expect(levelSlotsAfter(4, 10, 4, 5)).toBe(4); // never fewer
-  });
-
-  it('the capped choice keeps only known ids, the first of them up to the slots', () => {
-    expect(capLevelChoice(0, ['tough'])).toEqual([]);
-    expect(capLevelChoice(1, ['tough', 'nope'])).toEqual(['tough']);
-    expect(capLevelChoice(2, ['nope', 'tough'])).toEqual(['tough']);
   });
 
   it('the multiplier is 1 plus the chosen augments\' bonuses, and its label', () => {

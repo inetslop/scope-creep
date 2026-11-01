@@ -10,11 +10,6 @@ export function levelSlotsAfter(old: number, wavesReached: number, on: number, s
   return wavesReached >= LEVEL_UNLOCK_WAVE && on >= slots ? Math.min(slots + 1, setSize) : slots;
 }
 
-/** The capped choice: known ids only, the first `slots` of them in order. */
-export function capLevelChoice(slots: number, ids: readonly string[]): string[] {
-  return ids.filter((id) => getLevelAugment(id) !== undefined).slice(0, Math.max(0, slots));
-}
-
 /** The run multiplier: 1 plus the chosen augments' bonuses (unknown ids ignored). */
 export function levelMultiplier(ids: readonly string[]): number {
   let mul = 1;

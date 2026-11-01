@@ -43,6 +43,8 @@ export interface RunResult {
   levelMul?: number;
   /** The wave number the run reached (it started that wave); a run dying during wave 30 reports 30. */
   reached?: number;
+  /** The level augments the run ran with (the slot ladder's "every unlocked slot filled"). */
+  levelOn?: number;
 }
 
 export interface RecordResult {
@@ -124,7 +126,7 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
   const old = loadProfile(store);
   const coins = coinsForRun(result, cleanWavePay(old.purchased), result.mul ?? 1, result.levelMul ?? 1);
   const newBest = result.waves > old.bestWave;
-  const levelSlots = levelSlotsAfter(old.levelSlots, result.reached ?? result.waves, old.levelOn.length, LEVEL_AUGMENTS.length);
+  const levelSlots = levelSlotsAfter(old.levelSlots, result.reached ?? result.waves, result.levelOn ?? old.levelOn.length, LEVEL_AUGMENTS.length);
   const profile: Profile = {
     bestWave: Math.max(old.bestWave, result.waves),
     // A ghost run replays the best board, so it never moves the button.
@@ -153,17 +155,6 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
 export function saveSound(store: KeyValueStore | undefined, on: boolean): void {
   const profile = loadProfile(store);
   profile.sound = on;
-  try {
-    store?.setItem(PROFILE_KEY, JSON.stringify(profile));
-  } catch {
-    /* private mode or full storage: the preference just isn't kept */
-  }
-}
-
-/** Saves the level-augment choice for the next run; the profile's other fields keep what they had. */
-export function saveLevelOn(store: KeyValueStore | undefined, on: string[]): void {
-  const profile = loadProfile(store);
-  profile.levelOn = on;
   try {
     store?.setItem(PROFILE_KEY, JSON.stringify(profile));
   } catch {
