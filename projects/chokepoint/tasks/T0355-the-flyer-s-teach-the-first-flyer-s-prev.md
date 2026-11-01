@@ -3,11 +3,13 @@ id: T0355
 title: "The Flyer's teach: the first Flyer's preview says it crosses the sky"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0353]
 attempts: 0
 created: 2026-11-01T11:14:54Z
+claimed_at: 2026-11-01T11:42:14Z
 epic: E10
+designer: cachyos-x8664
 ---
 
 ## Goal
