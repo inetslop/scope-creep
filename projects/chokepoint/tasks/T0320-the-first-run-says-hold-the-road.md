@@ -4,11 +4,12 @@ title: The first run says hold the road
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T01:28:10Z
 claimed_at: 2026-11-01T03:35:32Z
+finished_at: 2026-11-01T04:06:34Z
 epic: E11
 ---
 
@@ -130,3 +131,17 @@ Call sites: (1) in `update()`, in the `run.phase === 'wave'` branch, the line `i
 
 ### Tests
 - none (no `core/` rule; placement and show/hide are covered by `npm run check` + `npm run smoke`).
+
+## Result (attempt 1, inet-racing)
+
+Added the third first-run hint (T0318/T0319 series): a plain white "Hold the road" card that appears under the wave banner's band for the whole of wave 1 on a first run only. New file src/systems/fx/holdRoad.ts (builder/placer/fader, card in the HUD's white-card look, 14 px bold ink, ~200 ms pop-in, ~150 ms fade-out, no input or sound); RunFlow gained a `firstRun` flag in RunSystems, a `holdBox` field, and the guarded `holdRoad()` hook called from the wave branch of `update()` (after the clearWave line, so the fade fires in the same frame) and first in `endRun()` — re-derived each frame from run state, never stored, so resumed first runs re-show it only while wave 1 is still going. GameScene passes `firstRun: runsPlayed === 0` from the profile. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 31.0 min
+
+```
+projects/chokepoint/game/src/scenes/GameScene.ts   |  1 +
+ projects/chokepoint/game/src/systems/RunFlow.ts    | 22 +++++++++++++
+ .../chokepoint/game/src/systems/fx/holdRoad.ts     | 36 ++++++++++++++++++++++
+ 3 files changed, 59 insertions(+)
+```

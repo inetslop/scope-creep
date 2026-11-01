@@ -10,10 +10,12 @@ import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { SCENES } from '../scenes/keys';
 import type { Sfx } from '../audio/Sfx';
+import { viewSize } from '../ui/display';
 import type { Board } from './Board';
 import type { Building } from './Building';
 import type { EnemySystem } from './EnemySystem';
 import type { FxSystem } from './FxSystem';
+import { buildHoldRoad, fadeHoldRoad, placeHoldRoad } from './fx/holdRoad';
 import { streakTeach } from './fx/streakTeach';
 import type { ProjectileSystem } from './ProjectileSystem';
 import type { TowerSystem } from './TowerSystem';
@@ -29,6 +31,8 @@ export interface RunSystems {
   projectiles: ProjectileSystem;
   fx: FxSystem;
   sfx: Sfx | undefined;
+  /** The profile still has no finished run (recordRun adds one only at run end): the wave-1 teach may show. */
+  firstRun: boolean;
 }
 
 /**
@@ -45,6 +49,8 @@ export class RunFlow {
   draftWave = 1;
   /** Length of the current build countdown (the HUD draws its ring from it). */
   buildTotalSec = 0;
+  /** The wave-1 teach's card while it is up; undefined while it fades out. */
+  private holdBox: Phaser.GameObjects.Container | undefined;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -76,6 +82,7 @@ export class RunFlow {
         return;
       }
       if (this.s.waves.spawningDone && this.s.enemies.aliveCount === 0) this.clearWave();
+      this.holdRoad(); // after: a clearWave this frame already turned the phase to draft and fades it in the same frame
     } else {
       // Bolts in flight finish (or fizzle) between waves.
       this.s.projectiles.update(dt);
@@ -135,6 +142,20 @@ export class RunFlow {
     if (flags.smoke) this.s.building.autoBuild(); // a random tap may never build the first tower in time
   }
 
+  /** The first run's wave-1 teach, "Hold the road": re-derived from the run on every wave frame (T0272's
+   *  pattern, never stored) — up only while the profile has no finished run and wave 1 is in its wave phase,
+   *  so a resumed first run re-shows it only while wave 1 is still going, and it is never up on wave 2+. */
+  private holdRoad(): void {
+    const on = this.s.firstRun && this.run.wave === 1 && this.run.phase === 'wave';
+    if (on) {
+      if (!this.holdBox) this.holdBox = buildHoldRoad(this.s.fx);
+      else placeHoldRoad(this.holdBox, viewSize(this.scene).width); // a resize mid-wave keeps it centered
+    } else if (this.holdBox) {
+      fadeHoldRoad(this.s.fx, this.holdBox);
+      this.holdBox = undefined;
+    }
+  }
+
   private clearWave(): void {
     const cleanBefore = this.run.cleanWaves;
     const streakPaidBefore = this.run.streakPaid;
@@ -161,6 +182,7 @@ export class RunFlow {
   }
 
   private endRun(): void {
+    this.holdRoad(); // the phase is already 'over': it fades, and the game-over card takes its place
     hook.stats.runsLost += 1;
     this.scene.registry.set('towerKills', this.s.towers.towers.map((t) => ({ first: t.augments[0]?.id, tier: t.augments[0]?.tier, kills: t.kills })));
     this.scene.scene.stop(SCENES.hud);
