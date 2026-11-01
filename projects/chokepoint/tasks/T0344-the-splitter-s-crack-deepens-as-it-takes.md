@@ -3,10 +3,12 @@ id: T0344
 title: "The Splitter's crack deepens as it takes damage"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T07:03:24Z
+claimed_at: 2026-11-01T07:03:48Z
+designer: yoga
 ---
 
 ## Goal
