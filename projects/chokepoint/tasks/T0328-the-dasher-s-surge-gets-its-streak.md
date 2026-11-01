@@ -4,11 +4,12 @@ title: "The Dasher's surge gets its streak"
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T01:14:01Z
 claimed_at: 2026-11-01T01:24:38Z
+finished_at: 2026-11-01T02:04:37Z
 ---
 
 ## Goal
@@ -109,3 +110,17 @@ export const dasherStreak: MakeEnemyHook = ({ scene, enemies }) => {
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+Gave the Dasher's 0.3 s surge its speed streak. A new per-frame enemy hook (`src/systems/enemyHooks/dasherStreak.ts`) draws, only while a Dasher is in its dash leg, one flat triangle in the Dasher's own purple at ~40% alpha trailing one cell behind the token along the road, opposite its travel; it fades out over 100 ms of simulation dt the moment the dash ends and is destroyed (never just hidden) on kill, leak or slot reuse. The Dasher's numbers, 3-cell dash distance, white wind-up flash and token look are untouched, and the streak is board-only (under the token at `DEPTH.preview`). It is registered with one import plus one `ENEMY_HOOKS` line after the `bossPhase` anchor. No sound, no input, no gameplay change; `npm run check` and `npm run smoke` pass.
+
+- Self-review: APPROVE
+- Time: 40.0 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../game/src/systems/enemyHooks/dasherStreak.ts    | 57 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ 2 files changed, 59 insertions(+)
+```
