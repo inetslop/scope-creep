@@ -3,11 +3,13 @@ id: T0346
 title: "The flyer's line before the wave: the build phase shows where it crosses"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0317]
 attempts: 0
 created: 2026-11-01T07:42:15Z
+claimed_at: 2026-11-01T07:42:19Z
 epic: E10
+designer: desktop
 ---
 
 ## Goal
