@@ -3,11 +3,13 @@ id: T0376
 title: "The Flyer's sky note: the sky has its own quiet sound"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T19:38:40Z
+claimed_at: 2026-11-01T19:38:44Z
 epic: E10
+designer: desktop
 ---
 
 ## Goal
