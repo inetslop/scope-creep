@@ -24,7 +24,6 @@ import type { Sfx } from '../audio/Sfx';
 import { haptic } from '../input/haptics';
 import type { Board } from './Board';
 import type { FxSystem } from './FxSystem';
-import type { ProjectileSystem } from './ProjectileSystem';
 
 /** What one hit of a tower does (built by TowerSystem from the tower's spec). */
 export interface HitPayload {
@@ -44,8 +43,6 @@ export interface HitPayload {
   mark: { pct: number; x: number; y: number } | undefined;
   /** The burn this hit sets ablaze, `dps` per second for `sec` seconds (Ember); undefined without one. */
   burn: Burn | undefined;
-  /** This pellet of a Spray crits: it doubled its own damage and shows a chip at the impact (T0299). */
-  crit?: boolean;
   /** The tower's color, for the shot and the burst. */
   color: number;
   /** The tower that made the hit: its mints (and the mints around the kill) decide the extra kill gold. */
@@ -64,8 +61,6 @@ export class EnemySystem {
   private readonly sfx: Sfx | undefined;
   /** The run's towers (set by GameScene): a kill pays each mint tower that reaches it extra gold. */
   towers: () => readonly Tower[] = () => [];
-  /** The projectile pool (set by GameScene): a beam's kill needles fly through it (T0242). */
-  projectiles: () => ProjectileSystem | undefined = () => undefined;
   private readonly pool: Enemy[] = [];
   private readonly bars: Phaser.GameObjects.Graphics;
   /** What reacts to kills, leaks and every frame of a wave (systems/enemyHooks/), made fresh for this run. */
@@ -78,7 +73,7 @@ export class EnemySystem {
     this.fx = fx;
     this.sfx = sfx;
     this.bars = scene.add.graphics().setDepth(DEPTH.bars);
-    const ctx = { scene, board, run, fx, sfx, enemies: this, towers: () => this.towers(), projectiles: () => this.projectiles() };
+    const ctx = { scene, board, run, fx, sfx, enemies: this, towers: () => this.towers() };
     this.hooks = ENEMY_HOOKS.map((make) => make(ctx));
   }
 
@@ -120,20 +115,33 @@ export class EnemySystem {
   }
 
   /** One frame of the burn: its ticks this frame (one per TICK_SEC ablaze), each a small hit
-   * through the normal hit — no white flash, and the mints pay like a normal kill when one lands. */
+   * through the normal hit — no white flash, and the mints pay like a normal kill when one lands.
+   * Each tick rolls for a crit at the chance of the tower that set the enemy ablaze. */
   private tickBurn(e: Enemy, dt: number): void {
     for (const damage of burnStep(e.burn, dt)) {
       if (!e.active) break;
-      if (e.hit(damage, false)) { this.kill(e, e.burnSource); break; }
+      const crit = e.burnSource ? this.crit(e.burnSource.spec.critChance) : false;
+      const dealt = damage * (crit ? 2 : 1);
+      if (crit) critChip(this.fx, e.x, e.y);
+      if (e.hit(dealt, false)) { this.kill(e, e.burnSource); break; }
     }
   }
 
   /** One tick of a beam line: its damage this tick (a quarter of its per-second rate, dealt by
    * systems/BeamSystem.ts). No white flash, like the burn tick; gold, the combo, the mints and
-   * `source.kills` all pay. */
+   * `source.kills` all pay. The tick rolls for a crit at the beam's own chance. */
   beamTick(target: Enemy, damage: number, source: Tower): void {
     if (damage <= 0 || !target.active) return;
-    if (target.hit(damage, false)) this.kill(target, source);
+    const crit = this.crit(source.spec.critChance);
+    const dealt = damage * (crit ? 2 : 1);
+    if (crit) critChip(this.fx, target.x, target.y);
+    if (target.hit(dealt, false)) this.kill(target, source);
+  }
+
+  /** Rolls the tower's crit chance on the run's rng: true when this damage instance is a crit,
+   * which doubles its damage and shows the chip. No roll at all with no chance. */
+  private crit(chance: number): boolean {
+    return chance > 0 && this.run.rng.next() < chance;
   }
 
   /**
@@ -178,8 +186,6 @@ export class EnemySystem {
       this.fx.ring(target.x, target.y, payload.splash, payload.color);
     }
     for (const e of victims) this.strike(e, payload, flight);
-    // A critting pellet shows its moment where it landed (T0299); splash and pierce victims strike through and don't.
-    if (payload.crit) critChip(this.fx, target.x, target.y);
   }
 
   /** Damage and slow on one enemy, handling the kill. Returns true when it died. */
@@ -201,10 +207,14 @@ export class EnemySystem {
       if (fresh) this.sfx?.ignite();
     }
     // A plate halves a shot that flies into the face; the rear and flightless hits go whole (core/plate.ts).
-    const damage = payload.damage * (flight && e.def.plate !== undefined ? plateMul(e.def.plate, flight.x, flight.y, e.dirX, e.dirY) : 1);
-    if (payload.damage <= 0 || !e.hit(damage)) return false;
-    this.kill(e, payload.source);
-    return true;
+    if (payload.damage > 0) {
+      // The tower's crit chance (Spray): this hit rolls to land for double, with a chip where it lands.
+      const crit = this.crit(payload.source.spec.critChance);
+      const damage = payload.damage * (flight && e.def.plate !== undefined ? plateMul(e.def.plate, flight.x, flight.y, e.dirX, e.dirY) : 1) * (crit ? 2 : 1);
+      if (crit) critChip(this.fx, e.x, e.y);
+      if (e.hit(damage)) { this.kill(e, payload.source); return true; }
+    }
+    return false;
   }
 
   /** The one kill: its gold (with the mints at the death spot), the chips, the chain, the sound. */

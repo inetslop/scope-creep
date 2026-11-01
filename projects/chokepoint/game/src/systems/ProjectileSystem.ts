@@ -53,11 +53,11 @@ export class ProjectileSystem {
       this.take().firePellet(x, y, d > 1e-6 ? (lead.x - x) / d : 0, d > 1e-6 ? (lead.y - y) / d : -1, payload, speed, maxDist, ++this.blastSeq);
       return;
     }
-    this.take().fire(x, y, target, payload, speed, false, aim);
+    this.take().fire(x, y, target, payload, speed, aim);
   }
 
   /** A Spray's blast: one pellet per `payloads` entry from (x, y) in a 50-degree cone centred on the aim
-   * at `target`, each flying straight to `maxDist` board units (T0299: each payload carries its own crit roll). */
+   * at `target`, each flying straight to `maxDist` board units. */
   fireCone(x: number, y: number, target: Enemy, payloads: HitPayload[], speed: number, maxDist: number): void {
     const blast = ++this.blastSeq;
     const a0 = Math.atan2(target.x - x, target.y - y);
@@ -66,11 +66,6 @@ export class ProjectileSystem {
       const a = payloads.length > 1 ? a0 - half + (2 * half * i) / (payloads.length - 1) : a0;
       this.take().firePellet(x, y, Math.sin(a), Math.cos(a), payloads[i]!, speed, maxDist, blast);
     }
-  }
-
-  /** A Spray needle from a beam's kill (T0242): a homing bolt in the pellet's thin look. */
-  fireNeedle(x: number, y: number, target: Enemy, payload: HitPayload, speed: number): void {
-    this.take().fire(x, y, target, payload, speed, true); // true = asTracer
   }
 
   update(dt: number): void {

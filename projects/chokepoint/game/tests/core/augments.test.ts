@@ -113,15 +113,26 @@ describe('spray (Spray)', () => {
     expect(spec('spray').rate).toBeCloseTo(1 / 1.2);
   });
 
-  it('each added Spray adds two pellets per blast, and a Bolt adds one, in any slot', () => {
-    expect(spec('spray', 'spray')).toMatchObject({ spray: 7, sprayCount: 2 });
-    expect(spec('spray', 'spray', 'spray')).toMatchObject({ spray: 9, sprayCount: 3 });
-    expect(spec('spray', 'bolt')).toMatchObject({ spray: 6 });
-    expect(spec('spray', 'bolt', 'spray')).toMatchObject({ spray: 8, sprayCount: 2 });
+  it('a Bolt added to a spray adds one pellet, and an added Spray adds crit chance, not pellets', () => {
+    expect(spec('spray', 'spray')).toMatchObject({ spray: 5, sprayCount: 2 }); // the added Spray no longer grows the blast
+    expect(spec('spray', 'bolt')).toMatchObject({ spray: 6, sprayCount: 1 });
+    expect(spec('spray', 'bolt', 'spray')).toMatchObject({ spray: 6, sprayCount: 2 });
   });
 
-  it('a Spray added to a non-spray tower has no blast to grow: nothing changes', () => {
-    expect(spec('bolt', 'spray')).toMatchObject({ kind: 'shot', spray: 0 });
+  it('a tower\'s crit chance is its own (a Spray first\'s 15%) plus every added Spray, copies adding up, capped at 100%', () => {
+    expect(spec('spray').critChance).toBeCloseTo(SPRAY_CRIT_CHANCE); // a Spray's own 15%
+    expect(spec('bolt', 'spray').critChance).toBeCloseTo(0.05); // a non-spray first: only the added copy
+    expect(spec('bolt', 'spray', 'spray').critChance).toBeCloseTo(0.1); // two commons add up
+    expect(towerSpec([copy('bolt'), copy('spray', 'rare')]).critChance).toBeCloseTo(0.1);
+    expect(towerSpec([copy('spray'), copy('spray', 'epic')]).critChance).toBeCloseTo(SPRAY_CRIT_CHANCE + 0.15);
+    expect(towerSpec([copy('bolt'), ...Array.from({ length: 8 }, () => copy('spray', 'epic'))]).critChance).toBe(1); // capped at 100%
+  });
+
+  it('a support tower with an added Spray deals nothing to crit: its chance stays 0 and its line is unchanged', () => {
+    for (const first of ['mark', 'rally', 'frost']) {
+      expect(spec(first, 'spray').critChance).toBe(0);
+      expect(describeSpec(spec(first, 'spray'))).toBe(describeSpec(spec(first)));
+    }
   });
 
   it('rare and epic sprays deal 5 and 6 per pellet and fire faster', () => {
@@ -137,10 +148,12 @@ describe('spray (Spray)', () => {
     expect(towerDps(towerSpec([copy('spray', 'epic')]))).toBeCloseTo(6 * 5 / 0.9 * (1 + SPRAY_CRIT_CHANCE));
   });
 
-  it('the tower line says how many pellets the blast fires, and only for a spray', () => {
+  it('the tower line says how many pellets the blast fires and its crit, and only for a spray', () => {
     expect(describeSpec(spec('spray'))).toMatch(/Blasts 5 pellets at the enemy furthest along/);
-    expect(describeSpec(spec('spray', 'spray'))).toMatch(/Blasts 7 pellets/);
+    expect(describeSpec(spec('spray', 'spray'))).toMatch(/Blasts 5 pellets/);
     expect(describeSpec(spec('bolt', 'spray'))).not.toMatch(/pellets/);
+    expect(describeSpec(spec('spray'))).toMatch(/15% crit/); // a Spray tower shows its own crit
+    expect(describeSpec(spec('bolt', 'spray'))).toMatch(/5% crit/); // and a damage tower shows the added copy's
   });
 
   it('Lance, Splash, Rapid and Reach combine on a spray as on any tower', () => {

@@ -4,11 +4,12 @@ title: An added Spray is crit chance, on every damage tower
 assignee: desktop
 size: L
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T23:37:22Z
 claimed_at: 2026-11-01T00:27:19Z
+finished_at: 2026-11-01T01:06:14Z
 ---
 
 ## Goal
@@ -79,3 +80,38 @@ The owner's call: Spray's added form stops adding pellets. Put into any later sl
 
 9. Optional Next Step: Restate the exact beam-DPS specification (the intended new number/formula and whether `TowerPanel`/`SummaryScene` rounding or the `>= 1` hide-threshold is in scope). With that, the concrete change is: adjust the beam branch of `towerDps` in `src/core/towerDps.ts` (currently `dps += (1 + spec.beamRays) * spec.beamDps * (spec.beamRapidMul * rallyRateMul)`), update the pinned values in `tests/core/towerDps.test.ts`, and verify no behavior change is needed at the two call sites — while keeping `BeamSystem`'s per-tick feed consistent. I am holding this as a read-only design (no files edited); a developer agent applies it.
 </summary>
+
+## Result (attempt 1, desktop)
+
+An added Spray is now crit chance on any damage tower instead of added pellets: its added form grants +5/+10/+15% for Common/Rare/Epic, copies add up, and the tower's total is its first form's own chance (a Spray-first tower's 15%) plus every added Spray, capped at 100%. The crit is rolled per damage instance on the run's seeded rng — in one unified place in EnemySystem (projectile strikes incl. pierce/burst hits, Spray pellets, beam ticks, and Ember burn ticks) — and a hit deals double with the yellow critChip at the impact, while non-damage support towers (Mark/Rally/Frost-first) get critChance 0 so their spec and panel are byte-identical to without the Spray. describeSpec now ends with ", N% crit" and towerDps counts crits at expected value (×(1+chance)). Removed the per-pellet pre-roll (sprayPelletDamage), all added-Spray pellet logic, and the whole beam-kill needle feature (core module, enemy hook, its tests, registry line, and the projectiles plumbing it relied on). Added a towers.crit invariant. Verified: typecheck/lint/build clean and unit tests plus desktop/mobile smoke pass; the only failing typecheck/test files are the four listed for deletion.
+
+- Self-review: APPROVE
+- Time: 38.9 min
+- Deleted src/core/sprayNeedles.ts, as the agent asked.
+- Deleted src/systems/enemyHooks/sprayNeedles.ts, as the agent asked.
+- Deleted tests/core/sprayNeedles.test.ts, as the agent asked.
+- Deleted tests/core/sprayCrit.test.ts, as the agent asked.
+
+```
+.../chokepoint/game/src/content/augments/spray.ts  | 12 ++---
+ projects/chokepoint/game/src/content/types.ts      |  8 ++--
+ projects/chokepoint/game/src/core/augments.ts      | 21 +++++++-
+ projects/chokepoint/game/src/core/sprayCrit.ts     | 10 +---
+ projects/chokepoint/game/src/core/sprayNeedles.ts  | 19 --------
+ projects/chokepoint/game/src/core/tiers.ts         |  2 +-
+ projects/chokepoint/game/src/core/towerDps.ts      | 25 +++++-----
+ projects/chokepoint/game/src/debug/runChecks.ts    |  4 ++
+ .../chokepoint/game/src/entities/Projectile.ts     |  4 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  1 -
+ .../chokepoint/game/src/systems/EnemySystem.ts     | 42 +++++++++-------
+ .../game/src/systems/ProjectileSystem.ts           |  9 +---
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  8 +---
+ .../chokepoint/game/src/systems/enemyHooks/hook.ts |  3 --
+ .../game/src/systems/enemyHooks/index.ts           |  2 -
+ .../game/src/systems/enemyHooks/sprayNeedles.ts    | 26 ----------
+ .../chokepoint/game/tests/core/augments.test.ts    | 31 ++++++++----
+ .../chokepoint/game/tests/core/sprayCrit.test.ts   | 24 ----------
+ .../game/tests/core/sprayNeedles.test.ts           | 56 ----------------------
+ .../game/tests/core/tierStrength.test.ts           |  4 +-
+ 20 files changed, 104 insertions(+), 207 deletions(-)
+```

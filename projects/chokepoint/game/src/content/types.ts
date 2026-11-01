@@ -90,8 +90,8 @@ export interface TierValues {
   addedRangeMul?: number;
   /** Replaces this copy's added extra shots per attack (Bolt). */
   addedShots?: number;
-  /** Replaces this copy's added pellets per blast (Spray). */
-  addedSpray?: number;
+  /** Replaces this copy's added crit chance, as a fraction 0-1 (Spray). */
+  addedCrit?: number;
   /** Replaces this copy's added per-hit push-back cells (Push). */
   addedPush?: number;
   asAdded: string;
@@ -174,8 +174,8 @@ export interface AddedForm {
   splash?: number;
   /** Shot strikes this many more enemies behind the one it hit; a pulse fires that many bolts per pulse. */
   pierce?: number;
-  /** For a spray tower: this many more pellets per blast (Spray). */
-  spray?: number;
+  /** The crit chance the tower's damage gains, as a fraction 0-1: a rolled hit deals double (Spray). */
+  crit?: number;
   slow?: { pct: number; sec: number };
   /** Hits root (fully stop) enemies for `sec` seconds (Anchor). */
   root?: { sec: number };

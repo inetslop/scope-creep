@@ -69,7 +69,7 @@ export function tierAdded(def: AugmentDef, tier: Tier): AddedForm {
     splash: t.splash ?? a.splash,
     pierce: t.pierce ?? a.pierce,
     extraShots: t.addedShots ?? a.extraShots,
-    spray: t.addedSpray ?? a.spray,
+    crit: t.addedCrit ?? a.crit,
     push: t.addedPush ?? a.push,
     slow: a.slow ? { ...a.slow, pct: t.slowPct ?? a.slow.pct } : undefined,
     root: a.root ? { ...a.root, sec: t.addedRootSec ?? t.rootSec ?? a.root.sec } : undefined,

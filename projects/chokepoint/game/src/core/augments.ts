@@ -8,6 +8,7 @@ import { SPLASH_CAP } from '../content/augments/splash';
 import type { Bright } from '../content/palette';
 import type { AttackKind, AugmentCopy, AugmentDef, Burn } from '../content/types';
 import type { Rng } from './rng';
+import { SPRAY_CRIT_CHANCE } from './sprayCrit';
 import { rollTier, tierAdded, tierFirst, tierIndex } from './tiers';
 
 /** What a tower does, worked out from its augments in order (see towerSpec). Distances in cells. */
@@ -79,6 +80,8 @@ export interface TowerSpec {
   hastePct: number;
   /** Hastes in the tower: one aura, one base-ring tick each. */
   hasteCount: number;
+  /** The tower's crit chance, 0-1: each damage instance rolls for double at this (Spray's own 15% as a first, plus every Spray added). 0 when the tower deals no damage to crit. */
+  critChance: number;
 }
 
 const EMPTY: TowerSpec = {
@@ -117,6 +120,7 @@ const EMPTY: TowerSpec = {
   sprayCount: 0,
   hastePct: 0,
   hasteCount: 0,
+  critChance: 0,
 };
 
 /**
@@ -169,9 +173,13 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     sprayCount: 0,
     hastePct: 0,
     hasteCount: 0,
+    critChance: 0,
   };
   // Anchors in any slot: the first sets the root's duration, each extra one lengthens it.
   let rootSec = 0;
+  // Crit (Spray): the first Spray carries its own 15% (T0299); each added Spray adds its tier's
+  // chance to the tower. Capped at 100%; 0 for a tower that deals no damage (see dealsDamage).
+  let critChance = first.id === 'spray' ? SPRAY_CRIT_CHANCE : 0;
   const addRoot = (id: string, sec: number): void => {
     if (id !== anchor.id) return;
     rootSec += rootSec > 0 ? ANCHOR_EXTRA_ROOT_SEC : sec;
@@ -193,8 +201,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     // A Rapid on a beam tower: the beam's rate is its own stat (spec.damage is 0), so its net
     // factor per Rapid (rate × damage) is kept in its own accumulator, like the burn's rate.
     if (spec.kind === 'beam' && e.rateMul) spec.beamRapidMul *= e.rateMul * (e.damageMul ?? 1);
-    // A Spray only grows a blast of its own: added to a non-spray tower it has no blast to grow.
-    if (spec.kind === 'spray') spec.spray += e.spray ?? 0;
+    // A Spray added to a tower gives it crit chance, not pellets (core/sprayCrit.ts).
+    critChance += e.crit ?? 0;
     if (e.slow && (!spec.slow || e.slow.pct > spec.slow.pct)) spec.slow = { ...e.slow };
     if (e.root) addRoot(a.id, e.root.sec);
   }
@@ -264,7 +272,14 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     spec.range += spec.splash;
     spec.splash = 0;
   }
+  // Crit only where there is damage to roll: a support (no hit, bolt, line or burn) keeps 0.
+  spec.critChance = dealsDamage(spec) ? Math.min(1, critChance) : 0;
   return spec;
+}
+
+/** Whether the tower deals any damage a crit could double: a hit, a bolt, a beam line or a burn. */
+function dealsDamage(spec: TowerSpec): boolean {
+  return spec.damage > 0 || (spec.bolts > 0 && spec.boltDamage > 0) || spec.beamDps > 0 || spec.burn !== undefined;
 }
 
 /** How many enemies a Splash in the tower lets its hits strike: its copies times SPLASH_CAP. */
@@ -353,6 +368,8 @@ export function describeSpec(spec: TowerSpec): string {
     const reach = spec.range % 1 === 0 ? spec.range : spec.range.toFixed(1);
     line += `, and towers and enemies within ${reach} cells run ${Math.round(spec.hastePct * 100)}% faster`;
   }
+  // The tower's crit chance (Spray): a rolled hit deals double (0 for a support, which deals nothing to crit).
+  if (spec.critChance > 0) line += `, ${Math.round(spec.critChance * 100)}% crit`;
   return `${line}.`;
 }
 

@@ -72,6 +72,10 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
     for (const t of g.towers.towers) if (!Number.isInteger(t.spec.tollCount) || t.spec.tollCount < 0 || t.spec.tollCount > t.augments.length) return `toll ${t.spec.tollCount} at (${t.cell.col}, ${t.cell.row})`;
     return null;
   }],
+  ['towers.crit', (g) => {
+    for (const t of g.towers.towers) if (!Number.isFinite(t.spec.critChance) || t.spec.critChance < 0 || t.spec.critChance > 1) return `crit chance ${t.spec.critChance} at (${t.cell.col}, ${t.cell.row})`;
+    return null;
+  }],
   ['towers.quietDot', (g) => {
     for (const t of g.towers.towers) if (t.idleOn && (!t.spec.attacks || t.spec.kind === 'rally')) return `a ${t.spec.kind} tower shows its quiet dot`;
     return null;

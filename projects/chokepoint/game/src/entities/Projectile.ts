@@ -42,7 +42,7 @@ export class Projectile extends Phaser.GameObjects.Image {
     this.setActive(false).setVisible(false);
   }
 
-  fire(x: number, y: number, target: Enemy, payload: HitPayload, speed: number, asTracer = false, aim?: { x: number; y: number }): void {
+  fire(x: number, y: number, target: Enemy, payload: HitPayload, speed: number, aim?: { x: number; y: number }): void {
     this.target = target;
     this.targetSerial = target.serial;
     this.aimDX = aim?.x ?? 0;
@@ -54,7 +54,7 @@ export class Projectile extends Phaser.GameObjects.Image {
     this.traveled = 0;
     this.blast = 0;
     this.skip.length = 0;
-    this.tracer = asTracer || payload.pierce > 0;
+    this.tracer = payload.pierce > 0;
     this.setRotation(0);
     this.setTexture(this.tracer ? TRACER_TEXTURE : BOLT_TEXTURE);
     this.setTint(payload.color);
