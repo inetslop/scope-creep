@@ -243,3 +243,15 @@ Status: **done (2026-10-29)** — all five branches landed (run start, draft, po
 **Breakdown:**
 - T0274 (M, priority 2) — sell: the panel's "Sell · +N" line (build phase only; 70% of the slots' cost, floored; gold pop + coin trail; sold supports stop working; the pause's controls line) — the T0263 re-file (T0263 failed 2026-10-30 on an architect context overflow before any design; the line stood as written) — **done** (2026-10-30, desktop)
 - T0275 — take out — **dropped by hand 2026-10-30**; E7 closed 2026-10-30 when T0274 landed
+
+## Archived 2026-11-01
+
+### E11 — First run teaches itself (done — 2026-11-01; opened 2026-10-31)
+**Goal:** a first-time player never meets a mechanic unexplained: on the device's very first run, three plain white hint cards name the three first steps, each dismissed by doing it.
+**When done:** on runs with runsPlayed = 0 only — "Pick a card" above the pre-wave-1 draft until a pick; "Build beside the road" beside the first buildable cell in the first build phase until the first tower stands; "Hold the road" under the wave banner during wave 1 until the wave ends. Each re-derived from the run's state on resume, so a resumed first run that has already done a step never shows it; no sound, no input; nothing on any later run.
+**Breakdown:**
+- T0318 (M) — the first hint: "Pick a card" on the pre-wave-1 draft — done (2026-11-01, cachyos-x8664)
+- T0319 (S) — the second hint: "Build beside the road" beside the first buildable cell — done (2026-11-01, yoga)
+- T0320 (M) — the third hint: "Hold the road" under the wave 1 banner — done (2026-11-01, inet-racing)
+
+**All three E11 hints landed (T0318, T0319, T0320) — E11 done.**

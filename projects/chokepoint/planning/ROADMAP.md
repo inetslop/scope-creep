@@ -78,18 +78,10 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **When done:** the wave-50 boss never touches the road — it crosses the island in a straight line and banks to a new one at half health — and a small regular flyer in the wave mix teaches the same read; the flight line's telegraph is the enemy's own language, and the player learns to cover the island, not just the road.
 **Breakdown:**
 - The Flyer, the wave-50 boss: the fifth every-10 boss, the first that doesn't walk the road — a straight-line crossing from the island's edge to the exit, a bank at half health — **T0317 (L, priority 2, in the pool)**
-- (to task) the regular Flyer in the wave mix: a small fast shape that crosses straight, one every few waves; lands behind the enemy queue — the Feeder is T0334 (designing, the T0309 re-file), which lands the 10-regular cap at 10 of 10, so the Flyer's own task carries the removal or the merge
+- (to task) the regular Flyer in the wave mix: a small fast shape that crosses straight, one every few waves; lands behind the enemy queue — the Feeder is T0334 (in progress, the T0309 re-file), which lands the 10-regular cap at 10 of 10, so the Flyer's own task carries the removal or the merge
 - (to task) the crossing learns: the bank's line is chosen to cross where the run's towers don't reach — the boss banks into uncovered ground, its telegraph keeping it fair
 
-### E11 — First run teaches itself (done — 2026-11-01; opened 2026-10-31)
-**Goal:** a first-time player never meets a mechanic unexplained: on the device's very first run, three plain white hint cards name the three first steps, each dismissed by doing it.
-**When done:** on runs with runsPlayed = 0 only — "Pick a card" above the pre-wave-1 draft until a pick; "Build beside the road" beside the first buildable cell in the first build phase until the first tower stands; "Hold the road" under the wave banner during wave 1 until the wave ends. Each re-derived from the run's state on resume, so a resumed first run that has already done a step never shows it; no sound, no input; nothing on any later run.
-**Breakdown:**
-- T0318 (M) — the first hint: "Pick a card" on the pre-wave-1 draft — done (2026-11-01, cachyos-x8664)
-- T0319 (S) — the second hint: "Build beside the road" beside the first buildable cell — done (2026-11-01, yoga)
-- T0320 (M) — the third hint: "Hold the road" under the wave 1 banner — done (2026-11-01, inet-racing)
-
-**All three E11 hints landed (T0318, T0319, T0320) — E11 done.**
+### E11 — First run teaches itself (done; history in planning/archive/ROADMAP.md)
 
 ### E12 — The run's story: a run you can look back on (active — opened 2026-11-01)
 **Goal:** the end of a run shows the run's shape, not just its numbers: which waves were clean, which were held, which one fell.

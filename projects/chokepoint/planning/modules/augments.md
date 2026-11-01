@@ -49,10 +49,10 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 **By `added`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
-- `beam`: Beam
 - `burn`: Ember
 - `crit`: Spray
 - `damageMul + rateMul`: Rapid
+- `damagePct`: Beam
 - `extraShots`: Bolt
 - `goldPerKill`: Mint
 - `goldPerLeak`: Toll
@@ -194,14 +194,14 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - tiers: rare {burnDps 4, asAdded Hits set ablaze: 4 per second for 3 s.}, epic {burnDps 5, asAdded Hits set ablaze: 5 per second for 3 s.}
 
 ### Beam (`beam`)
-- description: "A continuous beam on the furthest enemy. Added: the beam deals 5 more per second."
+- description: "A continuous beam on the furthest enemy. Added: the beam deals 30% more per second."
 - asTower: "Beams the furthest enemy: 14 per second, range 3.5."
-- asAdded: The beam deals 5 more per second.
+- asAdded: The beam deals 30% more per second.
 - look: shape chevron, color green, size 0.22
 - first: kind beam, damage 0, range 3.5, rate 1, beam {dps 14}
-- added: beam {dps 5}
+- added: damagePct 1.3
 - opening: true
-- tiers: rare {beamDps 20, addedBeamDps 7, asAdded The beam deals 7 more per second.}, epic {beamDps 28, addedBeamDps 9, asAdded The beam deals 9 more per second.}
+- tiers: rare {beamDps 20, addedDamagePct 1.52, asAdded The beam deals 52% more per second.}, epic {beamDps 28, addedDamagePct 1.67, asAdded The beam deals 67% more per second.}
 
 ### Rapid (`rapid`)
 - description: "Shoots fast, light needles. Added: attacks 50% faster, hits 25% lighter."
