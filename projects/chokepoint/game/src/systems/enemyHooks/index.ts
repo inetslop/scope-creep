@@ -32,6 +32,7 @@ import { hivePops } from './hivePops';
 import { hivePopBurst } from './hivePopBurst';
 import { orbSplit } from './orbSplit';
 import { killCoin } from './killCoin';
+import { bountyCoin } from './bountyCoin';
 import { killMilestone } from './killMilestone';
 import { waveClose } from './waveClose';
 import { nearMiss } from './nearMiss';
@@ -63,6 +64,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   sprinterRamp,
   crackDeep,
   killCoin,
+  bountyCoin,
   killMilestone,
   waveClose,
   nearMiss,

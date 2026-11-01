@@ -4,11 +4,12 @@ title: "The kill trail weighs the bounty: a coin per 10 gold"
 assignee: desktop
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T23:16:36Z
 claimed_at: 2026-11-01T23:41:15Z
+finished_at: 2026-11-01T23:45:41Z
 ---
 
 ## Goal
@@ -72,3 +73,16 @@ export const bountyCoin: MakeEnemyHook = (ctx) => ({
 
 ### Tests
 - none (visual-only hook; `npm run check` and `npm run smoke` must pass).
+
+## Result (attempt 1, desktop)
+
+Added `src/systems/enemyHooks/bountyCoin.ts` — a kill hook that launches one extra gold-trail coin per 10 gold of the enemy's own data bounty (two extra at 20+), staggered 80 ms behind each other on the trail's own arc to the gold number, so a Hauler's 10-gold kill slides a two-coin trail and a boss's 20-gold kill a three-coin train while sub-10 kills slide exactly the one coin as before. Registered it in `src/systems/enemyHooks/index.ts` (one import + one array line, both right after `killCoin`); nothing else changed — kill gold, pop, chip burst and boss death moment are untouched. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 4.4 min
+
+```
+.../game/src/systems/enemyHooks/bountyCoin.ts      | 30 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ 2 files changed, 32 insertions(+)
+```
