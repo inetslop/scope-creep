@@ -3,12 +3,13 @@ id: T0380
 title: "The bank's rule, taught once: a chip at the first interest pay"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-01T21:18:04Z
 claimed_at: 2026-11-01T21:18:23Z
-designer: yoga
+finished_at: 2026-11-01T21:35:09Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -26,3 +27,7 @@ The "bank +N" line (T0374) shows the number without the rule. When the run's fir
 - [ ] The chip shows exactly once per run: later pays show nothing, a resumed run that already saw it never shows it again (the flag survives the save), and a fresh run sees it at its first pay.
 - [ ] Both pay paths trigger it — the countdown ending and the early send — whichever pays first.
 - [ ] No change to the stats card's size or layout, no sound, no new input; the "bank +N" line is untouched; npm run check and the desktop 1280×720 / mobile 412×915 smoke pass.
+
+## Rejected by architect (yoga)
+
+The bank's rule is already taught on screen — the next-wave preview's first-build line "bank pays 5% at wave start · up to +10" (`BANK_PAY` in ui/hud/NextWavePreview.ts) — so the chip shows information the screen already shows.
