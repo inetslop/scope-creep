@@ -89,7 +89,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Breakdown:**
 - T0333 (L) — the claim card's last page: the per-wave ledger record (leaks per wave, the death wave) plus the story card under the first card — done (2026-11-01, desktop)
 - T0336 (M) — the mid-run page: the story line on the pause's Summary (T0306) — the marks and the loudest wave while the run is happening — done (2026-11-01, inet-racing)
-- (to task, later) the ledger's damage terms: damage per tower, feeding the Summary's rows — after the E9 run files settle (core/run.ts is under edit)
+- the ledger's damage terms: damage per tower, feeding the Summary's rows — **tasked as T0345 (M, in the pool)**
 
 ### E13 — The island opens up: the road comes in from more than one gate (active — opened 2026-11-01)
 **Goal:** "every board is different" (Pillar 2) goes past the rock scatter and the path's shape: the road itself varies, so a build that held one island fails on the next for a new reason.
