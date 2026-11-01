@@ -14,6 +14,7 @@ import { mintRing } from './mintRing';
 import { tollLeak } from './tollLeak';
 import { muteJam } from './muteJam';
 import { flySpawn } from './flySpawn';
+import { skyNote } from './skyNote';
 import { wardDeny } from './wardDeny';
 import { bulwarkPlate } from './bulwarkPlate';
 import { nameTag } from './nameTag';
@@ -72,6 +73,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   burnLeap,
   muteJam,
   flySpawn,
+  skyNote,
   wardDeny,
   bulwarkPlate,
   mintRing,

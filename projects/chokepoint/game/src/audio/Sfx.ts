@@ -10,9 +10,11 @@ export class Sfx {
   private mutedFlag = false;
   /** Muting also stops every held beam hum (they resume only on the next lock). */
   get muted(): boolean { return this.mutedFlag; }
-  set muted(on: boolean) { if (on === this.mutedFlag) return; this.mutedFlag = on; if (on) this.stopBeamHums(); }
+  set muted(on: boolean) { if (on === this.mutedFlag) return; this.mutedFlag = on; if (on) { this.stopBeamHums(); this.skyNoteStop(); } }
   /** The quiet held hums under active beams: at most 3, keyed by the humming tower. */
   private readonly beamHums = new Map<unknown, { osc: OscillatorNode; gain: GainNode }>();
+  /** The sky's one shared held note: it exists while any regular Flyer is in the air, and only once. */
+  private skyNote: { osc: OscillatorNode; gain: GainNode } | undefined;
 
   /** Call from a user gesture (the first click/tap) so the browser lets audio start. */
   unlock(): void {
@@ -188,6 +190,35 @@ export class Sfx {
   /** Every held beam hum fades out: the scene goes away, but the Sfx singleton outlives the run. */
   stopBeamHums(): void {
     for (const k of [...this.beamHums.keys()]) this.beamHumStop(k);
+  }
+
+  /** The sky's quiet note: one shared held 660 Hz sine while any regular Flyer is in the air (pre-master 0.03, the beam hum's quiet class), fading in over 200 ms. A no-op while it is already held. */
+  skyNoteStart(): void {
+    const ctx = this.ctx;
+    if (!ctx || !this.master || this.muted || ctx.state !== 'running' || this.skyNote) return;
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 660;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.linearRampToValueAtTime(0.03, t + 0.2);
+    osc.connect(gain).connect(this.master);
+    osc.start(t);
+    this.skyNote = { osc, gain };
+  }
+
+  /** The sky's note fades out over 200 ms; an exact no-op when it is not held. */
+  skyNoteStop(): void {
+    const note = this.skyNote;
+    const ctx = this.ctx;
+    if (!note || !ctx) return;
+    this.skyNote = undefined;
+    const t = ctx.currentTime;
+    note.gain.gain.cancelScheduledValues(t);
+    note.gain.gain.setValueAtTime(note.gain.gain.value, t);
+    note.gain.gain.linearRampToValueAtTime(0.0001, t + 0.2);
+    note.osc.stop(t + 0.22);
   }
 
   waveStart(): void {

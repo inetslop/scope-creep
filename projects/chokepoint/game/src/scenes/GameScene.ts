@@ -191,6 +191,7 @@ export class GameScene extends Phaser.Scene {
     });
     this.events.once('shutdown', () => {
       sfx?.stopBeamHums(); // held hums must not outlive the run (the Sfx singleton does)
+      sfx?.skyNoteStop(); // the sky's note must not outlive the run, like the hums
       this.music.stop(); // the bed's fade and ringing notes must not outlive the run (the Sfx singleton does)
       this.buildBed.stop(); // the build bed's fade and ringing notes must not outlive the run
       hook.clearInvariants();

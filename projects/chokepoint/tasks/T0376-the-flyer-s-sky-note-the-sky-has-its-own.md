@@ -4,11 +4,12 @@ title: "The Flyer's sky note: the sky has its own quiet sound"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T19:38:40Z
 claimed_at: 2026-11-01T19:59:30Z
+finished_at: 2026-11-01T20:15:26Z
 epic: E10
 ---
 
@@ -118,3 +119,19 @@ export const skyNote: MakeEnemyHook = ({ run, enemies, sfx }) => ({
 
 ### Tests
 - none (audio task; no rule in src/core changes)
+
+## Result (attempt 1, inet-racing)
+
+The sky now has its own quiet sound: a new enemy hook (`src/systems/enemyHooks/skyNote.ts`, registered next to `flySpawn`) reconciles every frame during a wave — the moment at least one regular Flyer is in the air, Sfx holds one shared 660 Hz sine at 0.03 pre-master (the beam hum's quiet class), fading in/out over 200 ms via new `skyNoteStart()`/`skyNoteStop()` in `src/audio/Sfx.ts`; it refcounts to "at least one" so it never stacks, the boss Flyer is excluded via `bossId()`, and the note is stopped when sound is muted, when the run ends (`RunFlow.endRun()`), and on scene shutdown (`GameScene.ts`), mirroring the beam hums. No HUD, text, or gameplay changes.
+
+- Self-review: APPROVE
+- Time: 15.9 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          | 33 +++++++++++++++++++++-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  1 +
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  1 +
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../game/src/systems/enemyHooks/skyNote.ts         | 22 +++++++++++++++
+ 5 files changed, 58 insertions(+), 1 deletion(-)
+```
