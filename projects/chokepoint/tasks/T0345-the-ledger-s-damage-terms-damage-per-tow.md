@@ -3,11 +3,13 @@ id: T0345
 title: "The ledger's damage terms: damage per tower on the Summary's rows"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T07:03:24Z
+claimed_at: 2026-11-01T07:03:27Z
 epic: E12
+designer: desktop
 ---
 
 ## Goal
