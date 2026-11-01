@@ -3,12 +3,10 @@ id: T0335
 title: "The Ward shows its immunity: a ring when a control does not take"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-01T02:32:15Z
-claimed_at: 2026-11-01T02:32:54Z
-designer: yoga
 ---
 
 ## Goal
@@ -25,3 +23,37 @@ A Ward that shrugs off a slow, a root or a gust says so on the board: the contro
 - [ ] The ring is display-only: a Ward's hp, speed, gold, leak cost and control immunity are unchanged; the controls still do nothing to it.
 - [ ] No ring on any enemy that is not a Ward; no sound; no new input.
 - [ ] The hook is a new file registered in the enemy-hook list; typecheck, lint, unit tests and the smoke test pass.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/systems/enemyHooks/wardDeny.ts` - the Ward's shrug-off ring: one small red ring at its base when a control is ignored
+- edit `src/entities/Enemy.ts` - add a `deny` flag, set it where `ignoresControl` skips slow/root/push, reset in `spawn()`
+- edit `src/systems/enemyHooks/index.ts` - one import + one `ENEMY_HOOKS` line, both next to `muteJam`
+
+### Interfaces
+```ts
+// entities/Enemy.ts — new public field (display-only; only the Ward ever sets it)
+deny = false;
+
+// systems/enemyHooks/wardDeny.ts — new export (same shape as muteJam/bossPhase)
+export const wardDeny: MakeEnemyHook;
+```
+No signature changes: `slow()`, `root()`, `pushBack()` keep their params/returns; only their `ignoresControl` early-return now also sets `this.deny = true`.
+
+### Steps
+1. **`entities/Enemy.ts`** — add the field after `pushLeft` (line 58): `/** True on the frame a slow, root or push was applied and ignored (ignoresControl); the Ward's ring (systems/enemyHooks/wardDeny.ts) reads and clears it. */ deny = false;` Add `this.deny = false;` in `spawn()` after `this.pushLeft = 0;` (line 105). Then split the three early-returns so only the `ignoresControl` branch sets it:
+   - `slow()`: `if (this.def.ignoresControl) { this.deny = true; return; }` (keep the `pct < this.slowPct` line after it).
+   - `root()`: replace `if (this.def.ignoresControl || this.rootLeft > 0) return;` with `if (this.def.ignoresControl) { this.deny = true; return; }` then `if (this.rootLeft > 0) return;`.
+   - `pushBack()`: replace `if (!this.active || this.def.ignoresControl || units <= 0) return;` with `if (!this.active || units <= 0) return;` then `if (this.def.ignoresControl) { this.deny = true; return; }`.
+2. **Create `src/systems/enemyHooks/wardDeny.ts`** — model on `muteJam` (ring) + `bossPhase` (per-enemy `Map` + `drop` on kill/leak). `export const wardDeny: MakeEnemyHook = ({ fx, enemies }) => { ... }`. Constants: `RING_CELLS = 0.5`, `W = 2`, `A = 0.4`, `LIFE_MS = 400`, `REFRESH_MS = 500`. Closure: `rings = new Map<Enemy, { g: Phaser.GameObjects.Graphics; tw: Phaser.Tweens.Tween; last: number }>()`; `drop(e)` deletes + `tw.remove()` + `g.destroy()` (copy muteJam's); `bloom(e, now)`: if `r && now - r.last < REFRESH_MS` return; else `drop(e)`, then `R = RING_CELLS * CELL`, `g = fx.scene.add.graphics().setDepth(DEPTH.preview).setPosition(e.x, e.y)`, `fillRing(g, 0, 0, R, W, 0, Math.PI * 2, PALETTE[e.def.look.color], A)`, `g.setScale((e.def.look.size * CELL) / R)`, tween `{ targets: g, scale: 1, alpha: 0, duration: LIFE_MS, ease: 'Quad.easeOut', onComplete: drop-if-still-this-g }`, `rings.set(e, { g, tw, last: now })`. Return `{ update() { const now = fx.scene.time.now; for (const e of enemies.all) { if (!e.active) continue; const r = rings.get(e); if (r) r.g.setPosition(e.x, e.y); if (e.def.ignoresControl !== true || !e.deny) continue; e.deny = false; bloom(e, now); } }, onKill({ enemy }) { drop(enemy); }, onLeak(enemy) { drop(enemy); } }`.
+3. **`src/systems/enemyHooks/index.ts`** — add `import { wardDeny } from './wardDeny';` after the `muteJam` import; add `wardDeny,` after `muteJam,` in `ENEMY_HOOKS`.
+
+### Pitfalls
+- The ring is one per Ward: `bloom` must `drop` before recreating (never stack); the `REFRESH_MS` guard makes a Frost aura's re-apply refresh at most once per 0.5 s while a discrete gust/root/push restarts from the top.
+- `deny` is a pooled field: it MUST reset in `spawn()`, or a recycled Ward re-shows a stale ring; only the Ward sets it (only it has `ignoresControl`), so no other enemy rings.
+- Ring is display-only: never touch hp/speed/gold/rootLeft/slowPct/pushLeft; the early-returns still skip, controls still do nothing.
+- Ground level under the token = `DEPTH.preview` (5, below `enemies` 20), repositioned every frame so it stays on the walking Ward; gone the frame it dies/leaks via `drop`.
+
+### Tests
+none
