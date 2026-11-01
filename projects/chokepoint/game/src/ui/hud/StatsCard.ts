@@ -3,11 +3,12 @@ import { START } from '../../config';
 import { cssColor, PALETTE } from '../../content/palette';
 import { cleanWavePay, flawlessPay, heldPay } from '../../content/tech/claim';
 import { artScale, COIN_TEXTURE, LIFE_TEXTURE } from '../../art/textures';
+import { bankInterest } from '../../core/bankInterest';
 import { coinsForRun, loadProfile } from '../../core/profile';
 import { isLastStand } from '../../core/lastStand';
 import { isQuietWave } from '../../core/waves';
 import type { GameScene } from '../../scenes/GameScene';
-import { makeCard } from '../card';
+import { cardTexture, makeCard } from '../card';
 import { textStyle } from '../text';
 import { EDGE, type HudPart } from './hud';
 
@@ -18,7 +19,11 @@ export class StatsCard implements HudPart {
   private readonly lives: Phaser.GameObjects.Text;
   private readonly gold: Phaser.GameObjects.Text;
   private readonly coins: Phaser.GameObjects.Text;
+  private readonly card: Phaser.GameObjects.Image;
   private readonly coinTallyIcon: Phaser.GameObjects.Image;
+  private readonly bankIcon: Phaser.GameObjects.Image;
+  private readonly bank: Phaser.GameObjects.Text;
+  private bankShown = false;
   private readonly coinIcon: Phaser.GameObjects.Image;
   private readonly goldTag: Phaser.GameObjects.Text;
   private readonly cleanPay: number;
@@ -40,7 +45,7 @@ export class StatsCard implements HudPart {
     this.cleanPay = cleanWavePay(purchased);
     this.flawlessPay = flawlessPay(purchased);
     this.heldPay = heldPay(purchased);
-    const card = makeCard(scene, 0, 0, 196, 72, 24);
+    this.card = makeCard(scene, 0, 0, 196, 72, 24);
     const lifeIcon = artScale(scene.add.image(-74, -14, LIFE_TEXTURE), 1.25);
     this.lives = scene.add.text(-56, -13, '', textStyle(22, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
     this.coinIcon = artScale(scene.add.image(14, -14, COIN_TEXTURE), 1.25);
@@ -49,7 +54,11 @@ export class StatsCard implements HudPart {
     this.goldTag.setVisible(false);
     this.coinTallyIcon = artScale(scene.add.image(-74, 16, COIN_TEXTURE), 12 / 28);
     this.coins = scene.add.text(-60, 17, '', textStyle(13, PALETTE.muted)).setOrigin(0, 0.5);
-    this.box = scene.add.container(0, 0, [card, lifeIcon, this.lives, this.coinIcon, this.gold, this.goldTag, this.coinTallyIcon, this.coins]);
+    this.bankIcon = artScale(scene.add.image(-74, 36, COIN_TEXTURE), 12 / 28);
+    this.bank = scene.add.text(-60, 37, '', textStyle(13, PALETTE.muted)).setOrigin(0, 0.5);
+    this.bankIcon.setVisible(false);
+    this.bank.setVisible(false);
+    this.box = scene.add.container(0, 0, [this.card, lifeIcon, this.lives, this.coinIcon, this.gold, this.goldTag, this.coinTallyIcon, this.coins, this.bankIcon, this.bank]);
   }
 
   layout(): void {
@@ -68,6 +77,8 @@ export class StatsCard implements HudPart {
     const pay = this.scene.registry.pop('bankPay') as number | undefined; // the bank's pay, from RunFlow this frame
     if (pay !== undefined && pay > 0) this.popGold(pay);
     this.goldTagRow(game.run.phase === 'wave' && isQuietWave(game.run.wave) && isLastStand(game.run));
+    const interest = bankInterest(game.run.gold);
+    this.bankRow(game.run.phase === 'build' && !game.scene.isPaused() && interest >= 1, interest);
     const n = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed, bgen: game.run.bgen, held: game.run.heldLives }, this.cleanPay, game.run.mode === 'iron' ? 2 : 1, game.run.levelHpMul, this.flawlessPay, this.heldPay);
     this.coins.setText(`+${n} coins`);
     if (n > this.lastN) this.pop();
@@ -96,6 +107,20 @@ export class StatsCard implements HudPart {
     this.coinIcon.x = 14 - shift;
     this.gold.x = 32 - shift;
     this.goldTag.x = this.gold.x + this.gold.width + 6;
+  }
+
+  /** The "bank +N" line: the bank's pay for the run's gold (core/bankInterest) while the build's choice is open.
+   * Re-derived from the gold every frame, so a resumed run shows it from the restored gold; the card grows
+   * 72 to 92 while it is up and the level chips follow the new edge (ui/hud/LevelChips.ts reads 'statsCardBottom'). */
+  private bankRow(show: boolean, pay: number): void {
+    if (show) this.bank.setText(`bank +${pay}`); // live: the number falls as the bank falls
+    if (show === this.bankShown) return;
+    this.bankShown = show;
+    this.bankIcon.setVisible(show);
+    this.bank.setVisible(show);
+    this.card.setTexture(show ? cardTexture(this.scene, 196, 92, 24) : cardTexture(this.scene, 196, 72, 24));
+    this.card.y = show ? 10 : 0; // card top stays at y = 12 (box centre 48; half-heights 46 / 36)
+    this.scene.registry.set('statsCardBottom', 12 + (show ? 92 : 72));
   }
 
   /** One quiet pop per coin gain: tally and coin scale to 1.15 and back over ~150 ms; the coin

@@ -4,11 +4,12 @@ title: "The bank says what it pays: the build phase's 'bank +N' line on the stat
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T18:48:59Z
 claimed_at: 2026-11-01T19:09:33Z
+finished_at: 2026-11-01T19:50:34Z
 ---
 
 ## Goal
@@ -106,3 +107,16 @@ update(): void {
 
 ### Tests
 - none (UI-only; `bankInterest` is unchanged and already covered).
+
+## Result (attempt 1, inet-racing)
+
+The stats card now shows a muted "bank +N" line while the build phase's spend-vs-bank choice is open (gold ≥ 20, not paused): N is the run's gold read through the existing `core/bankInterest()` — 5%, floored, cap +10 — and updates live as gold is spent. `StatsCard.ts` grows the card 72→92 while the line is up (top fixed) and publishes the bottom edge to the registry; `LevelChips.ts` now follows that edge instead of a fixed constant, so chips shift when the line appears mid-run. No new core logic, save field, sound, button, or key.
+
+- Self-review: APPROVE
+- Time: 41.0 min
+
+```
+projects/chokepoint/game/src/ui/hud/LevelChips.ts | 32 +++++++++++++++++------
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts  | 31 +++++++++++++++++++---
+ 2 files changed, 52 insertions(+), 11 deletions(-)
+```
