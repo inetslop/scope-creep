@@ -213,6 +213,20 @@ describe('RunState', () => {
     expect(run.story).toEqual([{ wave: 1, leaks: 0 }, { wave: 2, leaks: 2 }]); // a leak after death records nothing
   });
 
+  it('counts the lives the run lost from the ledger, the death wave included', () => {
+    const run = new RunState(1);
+    expect(run.heldLives).toBe(0);
+    run.startWave();
+    run.leak(1);
+    run.clearWave();
+    expect(run.heldLives).toBe(1); // written when the ledger closes the wave
+    run.startBuild(5);
+    run.startWave();
+    run.leak(1);
+    expect(run.leak(START.lives - 1)).toBe(true);
+    expect(run.heldLives).toBe(3); // the death wave's two leaks count too
+  });
+
   it('says the clean streak in words: building, the paying wave, then only the coin', () => {
     const run = new RunState(1);
     const clean = (): string | undefined => {

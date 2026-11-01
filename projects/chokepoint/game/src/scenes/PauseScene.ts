@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { artScale, STAR_TEXTURE } from '../art/textures';
 import { cssColor, PALETTE } from '../content/palette';
-import { cleanWavePay, flawlessPay } from '../content/tech/claim';
+import { cleanWavePay, flawlessPay, heldPay } from '../content/tech/claim';
 import { REWARD_WAVE } from '../core/levels';
 import { coinsForRun, loadProfile, saveSound } from '../core/profile';
 import { flags } from '../debug/flags';
@@ -83,7 +83,7 @@ export class PauseScene extends Phaser.Scene {
     const profile = loadProfile(window.localStorage);
     const starred = profile.bestWave > 0 && game.run.wave >= profile.bestWave;
     const waveWord = game.run.wave > 0 ? `Wave ${game.run.wave}` : 'Ready';
-    const coins = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed, bgen: game.run.bgen }, cleanWavePay(profile.purchased), game.run.mode === 'iron' ? 2 : 1, game.run.levelHpMul, flawlessPay(profile.purchased));
+    const coins = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed, bgen: game.run.bgen, held: game.run.heldLives }, cleanWavePay(profile.purchased), game.run.mode === 'iron' ? 2 : 1, game.run.levelHpMul, flawlessPay(profile.purchased), heldPay(profile.purchased));
     const lineStyle = textStyle(13, PALETTE.muted);
     const waveText = this.add.text(0, 0, waveWord, lineStyle).setOrigin(0, 0.5);
     const restText = this.add.text(0, 0, ` · ${game.run.lives} lives · ${game.run.gold} gold`, lineStyle).setOrigin(0, 0.5);

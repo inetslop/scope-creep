@@ -4,11 +4,12 @@ title: "Held pays: the claim branch's third node"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T08:42:47Z
 claimed_at: 2026-11-01T09:03:40Z
+finished_at: 2026-11-01T09:55:38Z
 ---
 
 ## Goal
@@ -83,3 +84,25 @@ export function coinsForRun(result: RunResult, cleanPay = 1, mul = 1, levelMul =
 - `tests/core/profile.test.ts`: `coinsForRun` held term — `held:0→0`, `held:1→1`, `held:3→3` (one coin per life, one wave); `held:3` with `heldPay:0→0` (no node); `held:3,cleanPay:2,mul:2→20` (Iron), `held:3,levelMul:1.25→11`, `held:3,mul:2,levelMul:1.25→22`.
 - `tests/core/run.test.ts`: `heldLives` — 0 fresh; 1 after a wave that leaked 1 then cleared; 3 after a second wave that leaks 1 then `leak(START.lives - 1)` (death wave's 2 leaks included).
 - `tests/core/tech.test.ts`: update the claim-row test to 3 nodes incl. `heldPerLife` (`['held-pays','Held pays',30,0,0,1,'flawless']`); add `heldPay([])→0`, `heldPay(['clean2','flawless'])→0`, `heldPay(['held-pays'])→1`; add `expect(nodeCost(CLAIM_NODES, 'held-pays')).toBe(155)` (depth-3 price) next to the `nodeCost(... 'flawless')` check; import `heldPay`.
+
+## Result (attempt 1, asus)
+
+Added the "Held pays" claim-branch tech node (T0348): waves that lose lives pay 1 coin per life lost at wave end, including the death wave. `coinsForRun` gained the multiplied `held` term (Iron ×2 and level multipliers apply), the stats tally, pause worth line and claim recipe line all pick it up (the recipe shows "· held +N" only when it pays), and a held wave pays one small muted "+N" pop at the exit with the coin blip's low note via a new `RunFlow.heldMoment()`. Content lives in `src/content/tech/claim.ts` (new node, `heldPerLife`, `heldPay`), with the coin surfaces in StatsCard/PauseScene/RewardsScene/GameOverScene and unit tests in the profile, run and tech suites.
+
+- Self-review: APPROVE
+- Time: 52.0 min
+
+```
+projects/chokepoint/game/src/content/tech/claim.ts | 19 +++++++++++++++----
+ projects/chokepoint/game/src/core/profile.ts       | 16 ++++++++++------
+ projects/chokepoint/game/src/core/run.ts           |  7 +++++++
+ .../chokepoint/game/src/scenes/GameOverScene.ts    |  2 +-
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  4 ++--
+ .../chokepoint/game/src/scenes/RewardsScene.ts     |  7 +++++--
+ projects/chokepoint/game/src/systems/RunFlow.ts    | 17 +++++++++++++++++
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts   |  6 ++++--
+ .../chokepoint/game/tests/core/profile.test.ts     | 22 ++++++++++++++++++++++
+ projects/chokepoint/game/tests/core/run.test.ts    | 14 ++++++++++++++
+ projects/chokepoint/game/tests/core/tech.test.ts   | 18 +++++++++++++-----
+ 11 files changed, 110 insertions(+), 22 deletions(-)
+```

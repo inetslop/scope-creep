@@ -70,6 +70,28 @@ describe('profile', () => {
     expect(coinsForRun({ waves: 3, stopped: 0, clean: 3, seed: 1, bgen: 2 }, 2, 2, 1, 10)).toBe(38); // (3 + 6 + 10) * 2
   });
 
+  it('a life a wave lost pays 1 coin per life, and the term drops off without the node', () => {
+    expect(coinsForRun({ waves: 0, stopped: 0, clean: 0, seed: 1, bgen: 2, held: 0 }, 1, 1, 1, 0, 1)).toBe(0);
+    expect(coinsForRun({ waves: 0, stopped: 0, clean: 0, seed: 1, bgen: 2, held: 1 }, 1, 1, 1, 0, 1)).toBe(1);
+    expect(coinsForRun({ waves: 0, stopped: 0, clean: 0, seed: 1, bgen: 2, held: 3 }, 1, 1, 1, 0, 1)).toBe(3); // one coin per life lost
+    expect(coinsForRun({ waves: 0, stopped: 0, clean: 0, seed: 1, bgen: 2, held: 3 })).toBe(0); // no node: no term
+  });
+
+  it('the held term sits in the multiplied sum: Iron doubles it and the level multiplier scales it', () => {
+    expect(coinsForRun({ waves: 5, stopped: 0, clean: 1, seed: 1, bgen: 2, held: 3 }, 2, 2, 1, 0, 1)).toBe(20); // (5 + 2 + 3) * 2, the clean term doubled too
+    expect(coinsForRun({ waves: 5, stopped: 0, clean: 1, seed: 1, bgen: 2, held: 3 }, 1, 1, 1.25, 0, 1)).toBe(11); // floor 11.25
+    expect(coinsForRun({ waves: 5, stopped: 0, clean: 1, seed: 1, bgen: 2, held: 3 }, 1, 2, 1.25, 0, 1)).toBe(22); // Iron + Tough: floor 22.5
+  });
+
+  it('a recorded run pays the held term only while the Held pays node is owned, the death wave included', () => {
+    const store = memory();
+    store.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2', 'flawless', 'held-pays'] }));
+    expect(recordRun(store, { waves: 2, stopped: 0, clean: 0, seed: 107, bgen: 2, reached: 10, held: 2 }).coins).toBe(4); // 2 waves + 2 lives lost
+    const noNode = memory();
+    noNode.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2', 'flawless'] }));
+    expect(recordRun(noNode, { waves: 2, stopped: 0, clean: 0, seed: 108, bgen: 2, reached: 10, held: 2 }).coins).toBe(2); // the same run without the node
+  });
+
   it('a recorded flawless run pays the ten coins only while the Flawless node is owned', () => {
     const store = memory();
     store.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2', 'flawless'] }));

@@ -87,6 +87,13 @@ export class RunState {
     return Math.floor(this.score * this.levelHpMul);
   }
 
+  /** The lives the run lost: the ledger's leaks summed, the death wave included. */
+  get heldLives(): number {
+    let n = 0;
+    for (const r of this.story) n += r.leaks;
+    return n;
+  }
+
   canAfford(cost: number): boolean {
     return this.gold >= cost;
   }

@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { ART, artScale, COIN_TEXTURE, STAR_TEXTURE } from '../art/textures';
 import { LEVEL_AUGMENTS } from '../content/levels';
 import { cssColor, PALETTE } from '../content/palette';
-import { cleanWavePay, flawlessPay } from '../content/tech/claim';
+import { cleanWavePay, flawlessPay, heldPay } from '../content/tech/claim';
 import { boardCode } from '../core/boardCode';
 import { levelMultiplierLabel } from '../core/levels';
 import { coinsForRun, loadProfile } from '../core/profile';
@@ -71,13 +71,14 @@ export class RewardsScene extends Phaser.Scene {
     const lastRun = profile.lastRun;
     const cleanPay = cleanWavePay(profile.purchased);
     const flawlessCoins = flawlessPay(profile.purchased);
+    const heldPayCoins = heldPay(profile.purchased);
     const mul = run.mode === 'iron' ? 2 : 1; // Iron pays the doubled formula: node terms first, then doubled
     this.waves = lastRun ? lastRun.wave : run.wavesCleared;
     this.stopped = run.kills; // the ledger stores no stopped count; the card printed run.kills
     this.clean = run.cleanWaves;
     this.combo = run.bestCombo;
     this.score = run.finalScore; // the same number the end-of-run screen shows
-    this.coins = lastRun ? lastRun.coins : coinsForRun({ waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed, bgen: run.bgen }, cleanPay, mul, run.levelHpMul, flawlessCoins);
+    this.coins = lastRun ? lastRun.coins : coinsForRun({ waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed, bgen: run.bgen, held: run.heldLives }, cleanPay, mul, run.levelHpMul, flawlessCoins, heldPayCoins);
     this.elapsed = 0;
     this.cleanText = undefined;
     this.comboText = undefined;
@@ -125,6 +126,8 @@ export class RewardsScene extends Phaser.Scene {
     this.coinIcon = artScale(this.add.image(0, 0, COIN_TEXTURE), 1.5);
     const coinRecipeParts = [`waves +${this.waves * mul}`, `stopped +${Math.floor(this.stopped / 10) * mul}`, `clean +${this.clean * cleanPay * mul}`];
     if (flawless && flawlessCoins > 0) coinRecipeParts.push(`flawless +${flawlessCoins * mul}`);
+    const heldCoins = run.heldLives * heldPayCoins;
+    if (heldCoins > 0) coinRecipeParts.push(`held +${heldCoins * mul}`);
     const coinRecipe = recipe(coinRecipeParts.join(' · '));
     // The one factor both totals wear, said once under the coins; a create()-local like the iron tag,
     // so a line from a level run cannot linger into a next run's card.

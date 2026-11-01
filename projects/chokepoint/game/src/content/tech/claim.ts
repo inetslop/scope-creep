@@ -8,14 +8,18 @@ export interface ClaimNode {
   pay: number;
   /** Coins a flawless run pays in the run's coin formula while this node is owned. */
   flawless: number;
+  /** Coins one lost life pays in the run's coin formula while this node is owned. */
+  heldPerLife: number;
   requires: string | null;
 }
 
-/** The branch's two nodes: Clean ×2 doubles what each clean wave pays, then Flawless pays a
- * flawless run ten coins (it needs Clean ×2, like the deeper nodes of the other branches). */
+/** The branch's three nodes: Clean ×2 doubles what each clean wave pays, Flawless pays a flawless
+ * run ten coins, and Held pays a coin per life a wave lost (each needs the one before it, like
+ * the deeper nodes of the other branches). */
 export const CLAIM_NODES: readonly ClaimNode[] = [
-  { id: 'clean2', name: 'Clean ×2', line: 'each clean wave pays 2 coins instead of 1', price: 30, pay: 2, flawless: 0, requires: null },
-  { id: 'flawless', name: 'Flawless', line: 'a flawless run pays 10 coins', price: 30, pay: 0, flawless: 10, requires: 'clean2' },
+  { id: 'clean2', name: 'Clean ×2', line: 'each clean wave pays 2 coins instead of 1', price: 30, pay: 2, flawless: 0, heldPerLife: 0, requires: null },
+  { id: 'flawless', name: 'Flawless', line: 'a flawless run pays 10 coins', price: 30, pay: 0, flawless: 10, heldPerLife: 0, requires: 'clean2' },
+  { id: 'held-pays', name: 'Held pays', line: 'a wave that leaks pays 1 coin per life it lost', price: 30, pay: 0, flawless: 0, heldPerLife: 1, requires: 'flawless' },
 ];
 
 /** What one clean wave pays in the run's coin formula: the node's pay once it is owned, else 1. */
@@ -28,5 +32,12 @@ export function cleanWavePay(owned: readonly string[]): number {
 export function flawlessPay(owned: readonly string[]): number {
   let pay = 0;
   for (const node of CLAIM_NODES) if (owned.includes(node.id)) pay += node.flawless;
+  return pay;
+}
+
+/** What one life a wave lost pays in the run's coin formula: the owned claim nodes' held pays added, 0 when none has one. */
+export function heldPay(owned: readonly string[]): number {
+  let pay = 0;
+  for (const node of CLAIM_NODES) if (owned.includes(node.id)) pay += node.heldPerLife;
   return pay;
 }

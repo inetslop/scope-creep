@@ -27,7 +27,7 @@ export class GameOverScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
     const run = getRun(this);
     const intentional = this.registry.pop('runEnded') === true;
-    const result = recordRun(window.localStorage, { waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed, bgen: run.bgen, mul: run.mode === 'iron' ? 2 : 1, levelMul: run.levelHpMul, reached: run.wave, levelOn: run.level.length });
+    const result = recordRun(window.localStorage, { waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed, bgen: run.bgen, mul: run.mode === 'iron' ? 2 : 1, levelMul: run.levelHpMul, reached: run.wave, levelOn: run.level.length, held: run.heldLives });
     const again = (): void => {
       this.scene.start(SCENES.game);
     };

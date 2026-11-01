@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BOARD_NODES } from '../../src/content/tech/board';
-import { CLAIM_NODES, cleanWavePay, flawlessPay } from '../../src/content/tech/claim';
+import { CLAIM_NODES, cleanWavePay, flawlessPay, heldPay } from '../../src/content/tech/claim';
 import { POOL_NODES } from '../../src/content/tech/pool';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
 import { boardBends, boardChokes, boardLengthMul, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES } from '../../src/core/tech';
@@ -126,10 +126,11 @@ describe('tech', () => {
     expect(startBonuses(['haste'])).toEqual({ gold: 0, life: 0 });
   });
 
-  it('the claim row is two nodes: Clean ×2 at 30, then Flawless at 30 needing it', () => {
-    expect(CLAIM_NODES.map((n) => [n.id, n.name, n.price, n.pay, n.flawless, n.requires])).toEqual([
-      ['clean2', 'Clean ×2', 30, 2, 0, null],
-      ['flawless', 'Flawless', 30, 0, 10, 'clean2'],
+  it('the claim row is three nodes: Clean ×2 at 30, then Flawless, then Held paying 1 coin per life lost', () => {
+    expect(CLAIM_NODES.map((n) => [n.id, n.name, n.price, n.pay, n.flawless, n.heldPerLife, n.requires])).toEqual([
+      ['clean2', 'Clean ×2', 30, 2, 0, 0, null],
+      ['flawless', 'Flawless', 30, 0, 10, 0, 'clean2'],
+      ['held-pays', 'Held pays', 30, 0, 0, 1, 'flawless'],
     ]);
   });
 
@@ -143,6 +144,12 @@ describe('tech', () => {
     expect(flawlessPay([])).toBe(0);
     expect(flawlessPay(['clean2'])).toBe(0); // the first node does not pay the flawless run
     expect(flawlessPay(['flawless'])).toBe(10);
+  });
+
+  it('a life lost pays 1 coin only while the Held pays node is owned', () => {
+    expect(heldPay([])).toBe(0);
+    expect(heldPay(['clean2', 'flawless'])).toBe(0); // the siblings do not pay the held wave
+    expect(heldPay(['held-pays'])).toBe(1);
   });
 
   it('a claim node buys only when it is known, unowned, unlocked and affordable', () => {
@@ -255,6 +262,7 @@ describe('tech', () => {
     expect(nodeCost(TECH_NODES, 'gold-1')).toBe(5);
     expect(nodeCost(TECH_NODES, 'life-2')).toBe(55);
     expect(nodeCost(CLAIM_NODES, 'flawless')).toBe(85); // 30 at the claim branch's depth 2
+    expect(nodeCost(CLAIM_NODES, 'held-pays')).toBe(155); // 30 at the claim branch's depth 3
   });
 
   it('a later node buys at its depth price, deducted from the coins', () => {

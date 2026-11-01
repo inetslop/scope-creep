@@ -5,6 +5,7 @@ import type { AugmentCopy } from '../content/types';
 import { draftPool, rollOffer } from '../core/augments';
 import type { RunState } from '../core/run';
 import { draftCardsFor } from '../core/techEffects';
+import { heldPay } from '../content/tech/claim';
 import { LEVEL_UNLOCK_WAVE, levelBuildSeconds } from '../core/levels';
 import { clearSavedRun } from '../core/saveRun';
 import { flags } from '../debug/flags';
@@ -80,6 +81,7 @@ export class RunFlow {
       this.s.towers.update(dt);
       this.s.projectiles.update(dt);
       if (run.over) {
+        this.heldMoment(); // the death wave pays its held coins, like any other wave
         this.endRun();
         return;
       }
@@ -158,6 +160,20 @@ export class RunFlow {
     }
   }
 
+  /** Held pays (the claim branch): a wave that ended having lost lives pays one coin per life
+   * lost, with one small muted "+N" pop at the exit and the coin blip's low note. It reads the
+   * wave the ledger just closed — the story's last record — so it also pays the death wave from
+   * the run.over branch, once, and nothing when the node is not owned or the wave was clean. */
+  private heldMoment(): void {
+    const last = this.run.story[this.run.story.length - 1];
+    if (!last || last.leaks <= 0 || heldPay(this.run.techOwned) <= 0) return;
+    const pts = this.s.board.path.points; // the same exit anchor as the Toll blip's pop (tollLeak)
+    const ex = (pts[pts.length - 1]!.x + pts[pts.length - 2]!.x) / 2;
+    const ey = (pts[pts.length - 1]!.y + pts[pts.length - 2]!.y) / 2;
+    this.s.fx.popText(ex, ey, `+${last.leaks}`, PALETTE.muted);
+    this.s.sfx?.coinBlip();
+  }
+
   private clearWave(): void {
     const cleanBefore = this.run.cleanWaves;
     const streakPaidBefore = this.run.streakPaid;
@@ -172,6 +188,7 @@ export class RunFlow {
     const cx = this.s.board.width / 2;
     const cy = this.s.board.height / 2;
     this.s.fx.popText(cx, cy, `Wave ${this.run.wave} cleared  +${bonus}`, PALETTE.greenDeep);
+    this.heldMoment();
     if (clean) {
       const second = this.run.cleanStreakLine(!streakPaidBefore && this.run.streakPaid);
       // Under the wave-cleared text, for the beat before the draft veils the board.
