@@ -1,12 +1,14 @@
 ---
 id: T0337
 title: "The rush tag: the wave where every walker comes faster"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T03:39:37Z
+claimed_at: 2026-11-01T09:04:50Z
 ---
 
 ## Goal
