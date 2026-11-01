@@ -1,14 +1,14 @@
 ---
 id: T0345
 title: "The ledger's damage terms: damage per tower on the Summary's rows"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 1
+attempts: 2
 created: 2026-11-01T07:03:24Z
-claimed_at: 2026-11-01T08:06:36Z
-finished_at: 2026-11-01T08:23:52Z
+claimed_at: 2026-11-01T08:23:56Z
 epic: E12
 ---
 
