@@ -1,12 +1,14 @@
 ---
 id: T0062
 title: "Trap: the bomb that springs on the road"
+assignee: cachyos-x8664
 size: M
 priority: 3
-status: todo
+status: in-progress
 depends_on: [T0039]
-attempts: 0
+attempts: 1
 created: 2026-10-28T13:29:40Z
+claimed_at: 2026-11-01T05:34:21Z
 epic: E4
 ---
 
