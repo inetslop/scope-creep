@@ -15,6 +15,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Shield enemy: a ring that absorbs the first hits for its neighbours
 - Sprinter enemy: speeds up each time it is hit — built as T0006 (desktop)
 - Flyer: ignores the path and crosses the board in a straight line (only some towers can hit it) — **now E10 (opened 2026-10-31): the boss lands first (T0317, wave 50); the regular Flyer tasks behind the enemy queue and needs the 10-regular cap to open**
+- The flyer's line before the wave: the build phase before the flyer's wave shows its route on the board (the flyer's red, 2 px, ~50% alpha, spawn → exit), fading as the wave-start telegraph (T0317) takes over — the crossing's cover is chosen in the build, not learned at the wave's door — **tasked as T0346 (M, E10, in the pool, waits on T0317)**
 - Boss every 10 waves with a health bar and its own mechanic
 - Wave preview strip in the build phase: the shapes and counts of the next wave — built as T0015 (2026-10-28, narcissus)
 - Interest: unspent gold at the end of a build phase earns 5% (capped)
