@@ -63,6 +63,14 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the marked cell: one build cell that makes a tower built on it stronger — **tasked as T0340 (M, in the pool)**
 - the boards reference: the pause screen names the board's modifiers — mark, name, one dry line, and where each comes from (always / tech / some boards) — the vocabulary for the new islands — **done as T0350 (M, 2026-11-01, cachyos-x8664)**
 
+### E14 — The wave: a tech branch for what a wave does (active — opened 2026-11-01)
+**Goal:** the tech tree has covered the run start, the board, the pool and the payout — but not the wave itself: a fifth branch lets between-run coins buy how a run plays.
+**When done:** the tree's "The wave" branch has three nodes, each bought once and on for every run after: The door (the far gate on every board), The thin road (every enemy 10% slower) and The breather (quiet waves pay double the wave bonus).
+**Breakdown:**
+- the branch and its first node, The door: the tech screen's fifth branch plus a 30-coin node that puts the far gate (T0338) on every board — **tasked as T0357 (M, in the pool)**
+- (to task) The thin road: 40 coins, every enemy 10% slower
+- (to task) The breather: 60 coins, quiet waves pay 2× the wave bonus
+
 ### Enemy queue (non-epic)
 
 New enemies land one at a time: each new-enemy task chains behind the one before it so the enemy system, the wave mix and the art settle between additions.
@@ -87,12 +95,12 @@ Ideas that may become epics or tasks of one.
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
 - Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is T0292; the wave-50 Flyer, the first boss that doesn't walk the road, is **E10's T0317 (in the pool)**)
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
-- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **now E13 (opened 2026-11-01)**: the far gate is T0338 (M, in progress); the marked cell is T0340 (M, in the pool); the boards reference is T0350 (M, in the pool); the fork tasks behind them
+- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **now E13**: the far gate is done (T0338); the boards reference is done (T0350); the marked cell (T0340) and the fork (T0352) are in the pool
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **built as T0239 (L, non-epic, 2026-10-30, asus)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
 - Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**; the mid-run page **built as T0306 (2026-10-30, inet-racing)**; the per-wave leaks record landed with **E12's T0333 (2026-11-01)** and the mid-run story line with **T0336 (2026-11-01, inet-racing)**; damage per tower is **built as T0345 (2026-11-01, asus)**
 - The board shows its corners: a notch on the bend cells — **built as T0140 (2026-10-29), removed as T0227 (2026-10-29)**
 - Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **built as T0217 (2026-10-30, asus)**
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
-- The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **tasked as T0348 (M, in the pool)**
+- The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **done as T0348 (M, 2026-11-01, asus)**
 - More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **E9's later slice, parked**
