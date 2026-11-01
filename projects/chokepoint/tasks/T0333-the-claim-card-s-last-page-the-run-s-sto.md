@@ -3,11 +3,13 @@ id: T0333
 title: "The claim card's last page: the run's story, one mark per wave"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T02:32:15Z
+claimed_at: 2026-11-01T02:32:17Z
 epic: E12
+designer: desktop
 ---
 
 ## Goal
