@@ -3,11 +3,13 @@ id: T0384
 title: "The far gate says what it is: the first send's one-time chip"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T22:18:47Z
+claimed_at: 2026-11-01T22:18:53Z
 epic: E14
+designer: yoga
 ---
 
 ## Goal
