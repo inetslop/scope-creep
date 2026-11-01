@@ -3,10 +3,12 @@ id: T0372
 title: "The draft's bed: a quiet beat under the card pick"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T18:12:12Z
+claimed_at: 2026-11-01T18:12:15Z
+designer: desktop
 ---
 
 ## Goal
