@@ -3,13 +3,11 @@ id: T0361
 title: "Herd: the augment that grows with the crowd"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-01T13:25:34Z
-claimed_at: 2026-11-01T13:49:55Z
 design_attempts: 1
-designer: desktop
 ---
 
 ## Goal
@@ -48,3 +46,75 @@ Herd is `minTier: rare` (Rare or Epic, never Common) and not `opening` (never in
 - [ ] The feed multiplies the fed tower's own damage: shots, pellets (crits double the buffed base), blasts, beam per-second and its own burn ticks; 0-damage supports, a jumped burn, beam-kill needles and traps are not buffed; a marked enemy takes the mark on top of the buff; Reach on a Herd-fed tower grows its ring.
 - [ ] On registration, if the index is over 16, Anchor is removed from the draft index and the codex; a tower that already has an Anchor keeps it and works as before; the four E4 removals (Frost, Rally, Mint, Mark) are untouched.
 - [ ] The game is playable menu to game over with a Herd card in the draft, on desktop and mobile.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/augments/herd.ts` — the Herd `AugmentDef` (green hexagon, minTier rare, `kind: 'rally'`, no `opening`, no `tech`)
+- create `src/systems/HerdSystem.ts` — per-frame crowd reads → `herdDamageMul` per tower, relights each Herd ring
+- create `tests/core/herd.test.ts` — unit tests (see Tests)
+- edit `src/content/types.ts` — 3 fields: `FirstForm.herd`, `AddedForm.herd`, `TierValues.herdPerEnemy` (each next to the `haste` entry)
+- edit `src/core/tiers.ts` — `tierFirst`/`tierAdded` carry the tier's `herdPerEnemy`
+- edit `src/core/augments.ts` — import `herd`; 3 `TowerSpec` fields (+ `EMPTY` + spec literal, after `hasteCount`); accumulation loop after the haste loop; two `describeSpec` lines
+- edit `src/content/augments/index.ts` — `herd,` after `haste,` in `AUGMENTS`; `anchor` removed from `AUGMENTS`; new `RETIRED`/`KNOWN_AUGMENTS`
+- edit `src/core/saveRun.ts`, `src/debug/runChecks.ts`, `src/art/icons.ts`, `src/art/entities.ts` — accept/paint `KNOWN_AUGMENTS` (retired Anchor stays resolvable)
+- edit `src/entities/Tower.ts`, `src/entities/towerLook.ts` — `herdRing` graphics + `drawHerdRing()`
+- edit `src/systems/TowerSystem.ts`, `src/systems/BeamSystem.ts`, `src/systems/attacks/pulse.ts`, `src/systems/EnemySystem.ts` — apply `herdDamageMul` to the fed damage
+- edit `src/systems/towerGhost.ts` — Herd what-if marker
+- edit `src/scenes/GameScene.ts` — wire `HerdSystem` (4 one-line changes)
+- edit `src/scenes/DraftScene.ts` — 2×2 grid when a card's lines are too long for the phone column
+- edit `tests/content.test.ts`, `tests/core/augments.test.ts`, `tests/core/anchor.test.ts` — see Tests
+
+### Interfaces
+```ts
+// content/types.ts (exact additions)
+FirstForm.herd?: { perEnemy: number }        // "The feed's per-enemy damage fraction per enemy in the 2-cell ring, cap 5 (Herd first)."
+AddedForm.herd?: { perEnemy: number }        // "…added by this copy, per enemy in the tower's own ring, cap 5 (Herd)."
+TierValues.herdPerEnemy?: number             // "Replaces this copy's per-enemy feed fraction in both forms (Herd)."
+// core/tiers.ts — add to the non-common returns:
+//   tierFirst:  herd: f.herd ? { perEnemy: t.herdPerEnemy ?? f.herd.perEnemy } : undefined,
+//   tierAdded:  herd: a.herd ? { perEnemy: t.herdPerEnemy ?? a.herd.perEnemy } : undefined,
+// core/augments.ts — TowerSpec, after hasteCount:
+herdPct: number; herdFirstPct: number; herdCount: number   // EMPTY/literal: 0,0,0
+// core/augments.ts — after the haste loop:
+let nothing; for (let i = 0; i < augments.length; i++) { const c = augments[i]!; const a = getAugment(c.id);
+  if (a.id !== herd.id) continue;
+  const pct = i === 0 ? tierFirst(a, c.tier).herd?.perEnemy ?? 0 : tierAdded(a, c.tier).herd?.perEnemy ?? 0;
+  if (i === 0) spec.herdFirstPct = pct; spec.herdPct += pct; spec.herdCount += 1; }
+// content/augments/index.ts:
+export const KNOWN_AUGMENTS: readonly AugmentDef[] = [...AUGMENTS, ...RETIRED]; // RETIRED = [anchor]; byId = new Map(KNOWN_AUGMENTS.map(...))
+// entities/towerLook.ts:
+export function drawHerdRing(g: Phaser.GameObjects.Graphics, spec: TowerSpec, lit: number): void
+// entities/Tower.ts: herdRing: Phaser.GameObjects.Graphics | undefined;  herdDamageMul = 1;
+// systems/HerdSystem.ts: export class HerdSystem { constructor(towers: TowerSystem, enemies: EnemySystem); update(_dt: number): void }
+```
+
+### Steps
+1. `herd.ts`: `id 'herd'`, `name 'Herd'`, `look: { shape: 'hexagon', color: 'green', size: 0.22 }`, `first: { kind: 'rally', damage: 0, range: 2, rate: 1, herd: { perEnemy: 0.05 } }`, `added: { herd: { perEnemy: 0.05 } }`, `minTier: 'rare'`, `tiers.rare = { herdPerEnemy: 0.05, asTower: 'Towers within 2 cells deal +5% damage per enemy within 2 cells, up to 5. Does not attack itself.', asAdded: 'This tower deals +5% damage per enemy within 2 cells, up to 5. Each extra Herd +5% per enemy.' }`, `tiers.epic = { herdPerEnemy: 0.08, asTower: '…deal +8% damage…', asAdded: '…+8% damage…' }` (epic lines identical but +8%). Base `asTower: 'Towers in its ring deal +5% damage per enemy in it, up to 5.'`, base `asAdded: 'This tower deals +5% damage per enemy in its ring, up to 5.'` (base lines never show — no Common — and must stay ≤70 chars).
+2. `types.ts` + `tiers.ts` per Interfaces.
+3. `core/augments.ts`: import `herd` beside the `haste` import; spec fields; accumulation loop; in `describeSpec`'s `kind === 'rally'` branch add `spec.firstId === herd.id ? \`Towers within ${reach} cells deal ${Math.round(spec.herdFirstPct*100)}% more damage per enemy in the ring, up to 5\` :` before the Rally line, and after the haste trailing line add: `if (spec.herdCount > 0 && spec.firstId !== herd.id) line += \`, and deals ${Math.round(spec.herdPct*100)}% more damage per enemy within ${reach} cells (up to 5)\`;` (compute `reach` as the haste block does).
+4. `index.ts`: `herd,` after `haste,`; delete `anchor,`; `const RETIRED: readonly AugmentDef[] = [anchor];` + `KNOWN_AUGMENTS` + `byId` over it. Then the four sites: `saveRun.ts:83` and `runChecks.ts` `augments.valid` use `KNOWN_AUGMENTS.some(...)`; `art/icons.ts:10` and `art/entities.ts:43` iterate `KNOWN_AUGMENTS`.
+5. Damage: `Tower.ts` add `herdDamageMul = 1;` beside `hasteRatePct`. `TowerSystem.attack()`: `damage: spec.damage * t.herdDamageMul` and `burn: spec.burn ? { ...spec.burn, dps: spec.burn.dps * t.herdDamageMul } : undefined`. `BeamSystem` line 88: `const m = t.spec.beamRapidMul * t.rallyRateMul * t.herdDamageMul;`. `pulse.ts:23`: `damage: spec.boltDamage * tower.herdDamageMul`. `EnemySystem.beamEffects` line 166: `const mul = source.spec.damageMul * source.herdDamageMul;` — these four are the only damage edits; mark stacking, crits, 0-damage no-ops and kill-spawned secondaries fall out with no further work.
+6. `towerLook.ts` `drawHerdRing`: `g.clear(); if (spec.herdCount === 0) return;` const `r = BODY * 1.5`; `fillRing(g,0,0,r,2,0,Math.PI*2,PALETTE.greenDeep,0.9)`; five ticks at `a = (i/5)*Math.PI*2` (fillRing: 0 = up), lit `i < lit` → `fillRing(g,0,0,r,4,a-0.13,a+0.13,PALETTE.green,1)`, unlit → thickness 2.5 `PALETTE.greenDeep` alpha 0.7; if `lit > 0` also `fillRing(g,0,0,spec.range*CELL,4,0,Math.PI*2,PALETTE.green,0.2)` (the working-aura shimmer). `Tower.ts`: `refreshHerdRing(spec)` like `refreshHasteRing` (own Graphics at `this.base` center, `DEPTH.towers`, called with `lit = 0`), called in `refresh()` after `refreshHasteRing`; add the ring to `sellAway()` parts and `destroy()` like `hasteRing`.
+7. `HerdSystem.update`: `const list = this.towers.towers;` build `crowd = new Map<Tower, number>()`: for each `t` with `t.spec.herdCount > 0` count `e.active` with `(e.x - t.base.x)² + (e.y - t.base.y)² <= (t.spec.range*CELL)²`. Then for every `t`: `let mul = 1; if (t.spec.herdCount > 0) mul += t.spec.herdPct * Math.min(crowd.get(t) ?? 0, 5); for (const h of list) if (h.spec.firstId === herd.id && h !== t && inRallyReach(h.cell, t.cell, h.spec.range)) mul += h.spec.herdFirstPct * Math.min(crowd.get(h) ?? 0, 5); t.herdDamageMul = mul; if (t.herdRing) drawHerdRing(t.herdRing, t.spec, Math.min(crowd.get(t) ?? 0, 5));` Import `herd` from content, `inRallyReach` from `core/rally`, `drawHerdRing` from `towerLook`. No member state.
+8. `GameScene.ts`: import + `herd!: HerdSystem;` field + `this.herd = new HerdSystem(this.towers, this.enemies);` (after the haste line 156) + `this.herd.update(simDt);` after `this.haste.update(simDt)` (line 236).
+9. `towerGhost.ts` `drawMarker`: new branch before the final fallback: `else if (added.herd) { fillRing(g, 0, y, 9, 2, 0, Math.PI*2, color, 1); for (let i = 0; i < 5; i++) { const a = (i/5)*Math.PI*2; fillRing(g, 0, y, 9, 3, a-0.1, a+0.1, color, 1); } }`.
+10. `DraftScene.ts`: after `hasRow` add `let longOffer = false;`; at the top of `buildRow` set `longOffer = !four && copies.some((c) => { const b = getAugment(c.id); return tierTowerLine(b, c.tier).length > 70 || tierAddedLine(b, c.tier).length > 56; });`; `cardWidth`: `four ? 121 : (hasRow || longOffer) ? 178 : CARD_W`; `cardSlot` condition: `if (four || (w < 740 && (hasRow || longOffer)))`. The existing 2×2 grid (third card centered) then carries the tall card on phones.
+11. `runChecks.ts`: after `haste.aura` add `['herd.feed', (g) => { for (const t of g.towers.towers) if (!Number.isFinite(t.herdDamageMul) || t.herdDamageMul < 1 - 1e-9) return \`herd multiplier ${t.herdDamageMul} at (${t.cell.col}, ${t.cell.row})\`; return null; }],`.
+12. `npm run check`, then `npm run smoke`.
+
+### Pitfalls
+- Retiring Anchor means `getAugment('anchor')` must keep resolving (held towers, saved runs): missing any of the four `KNOWN_AUGMENTS` sites makes `augments.valid` fire every frame, wipes a saved run, or leaves anchor's icon/body unpainted.
+- Card lines are 96/93 chars: without step 10 the three-card draft column at 412×915 runs off-screen (`portrait()` top goes negative). Never hand-place a new line at a fixed y; the card grows from its measured lines.
+- `herdDamageMul` must be re-set on every tower every frame (a sold Herd tower must not leave a stale buff) and init to 1; it is read one frame late by `towers.update` (RunFlow runs before GameScene's `rally/haste/herd` updates) — same lag as Haste, do not "fix" it.
+- Burn is buffed by baking `herdDamageMul` into `payload.burn.dps` at ignition (and via `beamEffects`' `mul` for beam ignitions); do not scale burn ticks in `EnemySystem.tickBurn` — a second site would double-apply.
+- `fillRing` angles: 0 = up, clockwise — ticks start at the top.
+- Herd first is `kind 'rally'`: it never attacks (even with Bolt added), so its own feed is a no-op; a second Herd in it adds to `herdPct` but feeds nothing — expected.
+- The shimmer is drawn per frame on the tower's own `herdRing` Graphics (alpha via redraw), not via `fx.track`; do not add an `auraRing` call per frame.
+- `HerdSystem.update` takes `_dt` (unused) or lint fails.
+
+### Tests
+- new `tests/core/herd.test.ts`: `tierFirst/tierAdded` give 0.05/0.08 per tier; `towerSpec([copy('herd','rare')])` → kind rally, damage 0, `herdCount 1`, `herdPct 0.05`, `herdFirstPct 0.05`; two copies → `herdPct 0.13`; `towerSpec([copy('bolt'), copy('herd','rare')])` → `herdFirstPct 0` (no aura off a non-first); 300 seeds: every offered Herd is Rare or Epic and `rollOffer(rng, AUGMENTS, 3, 1, true)` never contains it; `AUGMENTS.length === 16`, `AUGMENTS.every(a => a.id !== 'anchor')`, `getAugment('anchor')` still resolves, `draftPool([])` has no anchor but has herd; card lines contain their tier's `+5%`/`+8%`.
+- `tests/content.test.ts`: the two tier-line caps `56` → `100`; pink-square family `['anchor','mark','mint']` → `['mark','mint']`.
+- `tests/core/augments.test.ts` ("Anchor never rolls as Common…"): drop the anchor count/`toBeGreaterThan(0)` (keep Push).
+- `tests/core/anchor.test.ts` ("rolls from Rare up…"): keep the spec/tier assertions, replace the roll loop with `expect(seen).toBe(0)` (retired: never rolls again).
