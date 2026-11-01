@@ -4,7 +4,7 @@ import { cssColor, PALETTE } from '../content/palette';
 import { loadProfile } from '../core/profile';
 import { clearSavedRun, loadSavedRun } from '../core/saveRun';
 import { nodeInReach } from '../core/tech';
-import { MENU_ROAD_SIZE } from '../art/menu';
+import { MENU_ROAD_SIZE, MENU_ROAD_TEX } from '../art/menu';
 import { artScale, augmentTexture } from '../art/textures';
 import { flags } from '../debug/flags';
 import { boardsOn } from '../net/boards';
@@ -177,7 +177,7 @@ export class MenuScene extends Phaser.Scene {
       if (boards) below += GAP + BUTTON_H;
       if (ghost && ghostLine) below += GAP + BUTTON_H + CAPTION_GAP + ghostLine.height + GAP;
       below += (ghost && ghostLine ? 0 : GAP) + hint.height; // the gap above the hint (the ghost's line adds its own)
-      const kMax = Math.min(1.4, (width - 24) / MENU_ROAD_SIZE.width);
+      const kMax = Math.min(1.4, (width - 24) / MENU_ROAD_TEX.width);
       const kMin = 0.35;
       const room = avail - below;
       let k: number;

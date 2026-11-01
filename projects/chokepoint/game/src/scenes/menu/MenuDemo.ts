@@ -2,11 +2,12 @@ import type Phaser from 'phaser';
 import { ENEMIES, getEnemy } from '../../content/enemies';
 import { PALETTE } from '../../content/palette';
 import type { EnemyDef } from '../../content/types';
+import { isFarGateSpawn } from '../../core/farGate';
 import { PathLine } from '../../core/path';
 import { Rng } from '../../core/rng';
 import { demoWave, planWave, type WavePlan } from '../../core/waves';
 import { barrelTexture } from '../../art/barrels';
-import { MENU_ROAD_POINTS, MENU_ROAD_SIZE, paintMenuRoad } from '../../art/menu';
+import { MENU_FAR_GATE_DISTANCE, MENU_ROAD_PAD, MENU_ROAD_POINTS, MENU_ROAD_SIZE, paintMenuRoad } from '../../art/menu';
 import { artScale, BOLT_TEXTURE, enemyTexture, TOWER_BASE, TOWER_BODY, towerTexture } from '../../art/textures';
 import { FxSystem } from '../../systems/FxSystem';
 import { fillRing } from '../../ui/ring';
@@ -36,9 +37,10 @@ const DEMO = {
 } as const;
 
 /**
- * The menu's live picture: a road where enemies walk in, a Bolt tower that turns and shoots them
- * down (bursts, gold popups), and a Frost tower that pulses and slows them. Purely for show: none
- * of it touches a run. MenuScene creates it, lays it out and calls update() every frame.
+ * The menu's live picture: a road with two gates where a third of the walkers come in through
+ * the far gate, a Bolt tower that turns and shoots them down (bursts, gold popups), and a Frost
+ * tower that pulses and slows them. Purely for show: none of it touches a run. MenuScene creates
+ * it, lays it out and calls update() every frame.
  */
 export class MenuDemo {
   private readonly scene: Phaser.Scene;
@@ -51,6 +53,7 @@ export class MenuDemo {
   private enemies: DemoEnemy[] = [];
   private bolts: DemoBolt[] = [];
   private spawnIn = 0.3;
+  private showOut = 0;
   private boltIn = 0;
   private frostIn = 0.6;
   /** Screen position of the road's top-left corner, and screen pixels per road unit. */
@@ -86,7 +89,7 @@ export class MenuDemo {
   /** Puts the road with its top center at (cx, top), `k` screen pixels per road unit. */
   layout(cx: number, top: number, k: number): void {
     this.k = k;
-    this.origin = { x: cx - (MENU_ROAD_SIZE.width / 2) * k, y: top };
+    this.origin = { x: cx - (MENU_ROAD_PAD + MENU_ROAD_SIZE.width / 2) * k, y: top };
     artScale(this.road, k).setPosition(this.origin.x, this.origin.y);
     for (const p of this.parts) {
       const s = this.toScreen(p.at.x, p.at.y + p.dy);
@@ -98,9 +101,9 @@ export class MenuDemo {
     fillRing(this.frostRing, f.x, f.y, TOWER_BODY * 64 * 1.45 * DEMO.towerScale * k, 3 * k, 0, Math.PI * 2, PALETTE.ice, 0.95);
   }
 
-  /** Road units to screen pixels. */
+  /** Road units to screen pixels (the texture is MENU_ROAD_PAD wide of pad left of the road). */
   private toScreen(x: number, y: number): { x: number; y: number } {
-    return { x: this.origin.x + x * this.k, y: this.origin.y + y * this.k };
+    return { x: this.origin.x + (MENU_ROAD_PAD + x) * this.k, y: this.origin.y + y * this.k };
   }
 
   update(dt: number): void {
@@ -134,7 +137,7 @@ export class MenuDemo {
     while (this.next < plan.spawns.length && this.spawnTimer >= plan.spawns[this.next]!.delaySec) {
       this.spawnTimer -= plan.spawns[this.next]!.delaySec;
       const def = getEnemy(plan.spawns[this.next]!.enemy);
-      this.spawnDef(def, Math.max(1, Math.round((def.livesCost > 1 ? 4 : 2) * plan.hpMul)));
+      this.spawnDef(def, Math.max(1, Math.round((def.livesCost > 1 ? 4 : 2) * plan.hpMul)), isFarGateSpawn(this.next, plan, true) ? MENU_FAR_GATE_DISTANCE : 0);
       this.next++;
     }
     if (this.next >= plan.spawns.length && this.enemies.length === 0) this.planNext();
@@ -144,13 +147,13 @@ export class MenuDemo {
     // The show only uses enemies that walk in alone (no splinters: they exist only as a split).
     const walkers = ENEMIES.filter((e) => !e.spawnOnly);
     const def = walkers[Math.floor(Math.random() * walkers.length)]!;
-    this.spawnDef(def, def.livesCost > 1 ? 4 : 2);
+    this.spawnDef(def, def.livesCost > 1 ? 4 : 2, this.showOut++ % 3 === 2 ? MENU_FAR_GATE_DISTANCE : 0);
   }
 
-  private spawnDef(def: EnemyDef, hp: number): void {
+  private spawnDef(def: EnemyDef, hp: number, distance = 0): void {
     const img = this.scene.add.image(0, 0, enemyTexture(def.id));
     artScale(img, DEMO.enemyScale * this.k);
-    this.enemies.push({ img, def, distance: 0, hp, slowLeft: 0 });
+    this.enemies.push({ img, def, distance, hp, slowLeft: 0 });
   }
 
   private walk(dt: number): void {

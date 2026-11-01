@@ -4,11 +4,12 @@ title: "The menu demo's far gate: the second entrance before the first run"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T12:52:50Z
 claimed_at: 2026-11-01T12:59:57Z
+finished_at: 2026-11-01T13:29:37Z
 ---
 
 ## Goal
@@ -90,3 +91,17 @@ function paintGate(ctx: CanvasRenderingContext2D, p: Point, dir: number): void {
 
 ### Tests
 - none (no `src/core` rule is added or changed; `isFarGateSpawn` is already covered by `tests/core/farGate.test.ts`).
+
+## Result (attempt 1, cachyos-x8664)
+
+The menu demo road is now a two-gate road: `src/art/menu.ts` bakes both the entrance gate and a far gate partway down the road (a faint token with a white chevron in the road's travel, same look as the board's gates) into the road texture, widening the texture by `MENU_ROAD_PAD` so the entrance gate isn't clipped. `MenuDemo.ts` now sends a third of every non-boss wave's walkers in through the far gate and out the exit, using the real `isFarGateSpawn` rule (boss waves send none) plus a matching every-third free show before the first run. `MenuScene.ts` fits the wider texture in the width cap so the gates and walkers are visible without zoom at 412x915 and 1280x720. The demo keeps its show behavior, speed, and purely-for-show status; no new HUD, sound, or text. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 29.7 min
+
+```
+projects/chokepoint/game/src/art/menu.ts           | 39 ++++++++++++++++++++--
+ projects/chokepoint/game/src/scenes/MenuScene.ts   |  4 +--
+ .../chokepoint/game/src/scenes/menu/MenuDemo.ts    | 25 ++++++++------
+ 3 files changed, 52 insertions(+), 16 deletions(-)
+```
