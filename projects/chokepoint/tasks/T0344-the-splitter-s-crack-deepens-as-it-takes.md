@@ -1,12 +1,14 @@
 ---
 id: T0344
 title: "The Splitter's crack deepens as it takes damage"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T07:03:24Z
+claimed_at: 2026-11-01T07:18:04Z
 ---
 
 ## Goal
