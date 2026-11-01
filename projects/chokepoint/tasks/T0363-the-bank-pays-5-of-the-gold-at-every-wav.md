@@ -1,12 +1,14 @@
 ---
 id: T0363
 title: "The bank pays: 5% of the gold at every wave start, capped at +10"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T15:28:41Z
+claimed_at: 2026-11-01T16:21:42Z
 ---
 
 ## Goal
