@@ -3,10 +3,12 @@ id: T0377
 title: "The loop: the board whose road circles the island once"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T20:21:14Z
+claimed_at: 2026-11-01T20:21:18Z
+designer: desktop
 ---
 
 ## Goal
