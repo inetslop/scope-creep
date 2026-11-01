@@ -109,7 +109,10 @@ export class TestHook {
     this.spots = fn;
   }
 
-  /** Screen positions (CSS pixels) of open cells beside the path, nearest the entrance first. */
+  /**
+   * Screen positions (CSS pixels) of open cells beside the path, nearest the entrance first.
+   * While a touch placement waits, the ✓'s point comes first: a tap on it builds the waiting tower.
+   */
   buildSpots(): ScreenPoint[] {
     try {
       return this.spots();

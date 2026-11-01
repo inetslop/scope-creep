@@ -13,26 +13,30 @@ import { hook } from '../../src/debug/testHook';
 import { SCENES } from '../../src/scenes/keys';
 import { RunFlow, type RunSystems } from '../../src/systems/RunFlow';
 
-/** A flow with only what startWaveNow touches; the wave start and sound are recorded. */
+/** A flow with only what startWaveNow touches; the wave start, sound and placement cancel are recorded. */
 function fakeFlow(active: boolean) {
   const run = new RunState(1);
   run.startBuild(8);
-  const state = { started: 0, sound: 0 };
+  const state = { started: 0, sound: 0, canceled: 0 };
   const flow = new RunFlow(
     { scene: { isActive: () => active } } as unknown as Phaser.Scene,
     run,
-    { waves: { start: () => (state.started += 1) }, sfx: { waveStart: () => (state.sound += 1) } } as unknown as RunSystems,
+    {
+      waves: { start: () => (state.started += 1) },
+      sfx: { waveStart: () => (state.sound += 1) },
+      building: { cancelPending: () => (state.canceled += 1) },
+    } as unknown as RunSystems,
   );
   return { run, flow, state };
 }
 
 describe('RunFlow.startWaveNow, the one start-wave path', () => {
-  it('banks 2 gold per whole second left and starts the wave', () => {
+  it('banks 2 gold per whole second left, cancels the waiting placement and starts the wave', () => {
     const { run, flow, state } = fakeFlow(true);
     expect(flow.startWaveNow()).toBe(16); // 8 s left
     expect(run.gold).toBe(START.gold + 16);
     expect(run.buildLeftSec).toBe(0);
-    expect(state).toEqual({ started: 1, sound: 1 });
+    expect(state).toEqual({ started: 1, sound: 1, canceled: 1 });
   });
   it('banks nothing with under a second left and still starts the wave', () => {
     const { run, flow, state } = fakeFlow(true);
@@ -79,6 +83,7 @@ function fakeClearFlow(wave: number) {
       board: { width: 100, height: 100 },
       waves: { waveEnded: () => calls.push('waveEnded') },
       towers: { towers: [] },
+      building: { cancelPending: () => calls.push('cancelPending') },
       fx: { popText: () => calls.push('popText'), cleanLines: () => calls.push('cleanLines') },
       sfx: { waveClear: () => calls.push('waveClear'), waveSweep: () => calls.push('waveSweep') },
     } as unknown as RunSystems,

@@ -26,6 +26,8 @@ export class Building {
   selectedAugment: number | undefined;
   /** The tower whose panel is open (ui/hud/TowerPanel.ts), if any. */
   selectedTower: Tower | undefined;
+  /** The cell a touch tap is waiting to build on (ui/hud/PlaceConfirm.ts's ✓/✗), if any. */
+  pendingCell: Cell | undefined;
   /** Bumped whenever the hand, a tower's slots or a selection changes, so the HUD redraws them. */
   uiVersion = 0;
   /** The tower the pointer is over (desktop hover; a tap is also a pointer position). */
@@ -59,23 +61,39 @@ export class Building {
    * - a tower: with a card held and a free slot, put the augment in; either way open its panel;
    * - an empty cell with a card held: build a tower with that augment (pays the first slot);
    * - an empty cell with nothing held: close the panel.
+   * On touch with a card held, a tap on an empty buildable cell builds nothing: it starts a
+   * waiting placement (the hover preview plus the ✓/✗ buttons of ui/hud/PlaceConfirm.ts), which
+   * `confirmPending` and `cancelPending` finish.
    */
-  tap(x: number, y: number): void {
+  tap(x: number, y: number, wasTouch: boolean): void {
     if (this.run.phase === 'over' || this.run.phase === 'draft') return;
     const cell = this.board.cellAt(x, y);
-    if (!cell) return;
+    if (!cell) {
+      if (wasTouch) this.cancelPending();
+      return;
+    }
     this.pointerTower = this.board.towerAt(cell); // a tap is also a pointer position
     this.board.showHover(undefined, false, 0);
     const held = this.heldCopy;
     const tower = this.board.towerAt(cell);
     if (tower) {
+      this.cancelPending(); // a tap on a tower ends the waiting placement, then does what it does today
       if (held && tower.freeSlots > 0) this.placeHeld(tower);
       this.selectTower(tower);
       return;
     }
     if (!held) {
+      this.cancelPending();
       this.closePanel();
       if (this.run.hand.length === 0) this.hint(cell, 'New augment after each wave');
+      return;
+    }
+    if (wasTouch) {
+      if (this.pendingCell && this.pendingCell.col === cell.col && this.pendingCell.row === cell.row) { this.syncPending(); return; } // same cell: keep it
+      if (!this.board.canBuild(cell)) { this.sfx?.deny(); return; }
+      if (!this.run.canAfford(slotCost(0)!)) { this.hint(cell, `Need ${slotCost(0)} gold`, PALETTE.red); return; }
+      this.pendingCell = cell;
+      this.syncPending();
       return;
     }
     const result = this.towers.build(cell, held);
@@ -126,7 +144,41 @@ export class Building {
     this.selectedAugment = index;
     this.refreshGhosts();
     if (tower && tower.freeSlots > 0) this.placeHeld(tower);
+    else if (this.pendingCell) this.syncPending(); // the same cell, the new card's range
     this.uiVersion += 1;
+  }
+
+  /** The ✓ button: builds the waiting cell exactly as a tap would (same refusal, panel and sounds). */
+  confirmPending(): void {
+    const cell = this.pendingCell;
+    const held = this.heldCopy;
+    if (!cell) return;
+    if (!held) { this.cancelPending(); return; }
+    const result = this.towers.build(cell, held);
+    if (typeof result === 'string') {
+      if (result === 'gold') this.hint(cell, `Need ${slotCost(0)} gold`, PALETTE.red);
+      else this.sfx?.deny();
+      return;
+    }
+    this.cancelPending();
+    this.run.useAugment(this.selectedAugment!);
+    this.afterHandChange();
+    this.selectTower(result);
+  }
+
+  /** The ✗ button (and anything else that ends the waiting placement): the preview goes, nothing changes. */
+  cancelPending(): void {
+    if (!this.pendingCell) return;
+    this.pendingCell = undefined;
+    this.board.showHover(undefined, false, 0);
+  }
+
+  /** The waiting placement's preview: the cell, and the range a new tower with the held card would have. */
+  syncPending(): void {
+    const cell = this.pendingCell;
+    const held = this.heldCopy;
+    if (!cell || !held) return;
+    this.board.showHover(cell, true, towerSpec([held]).range * CELL);
   }
 
   /** Opens the panel of `tower` and shows its range. */

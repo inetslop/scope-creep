@@ -12,6 +12,7 @@ import { LevelChips } from '../ui/hud/LevelChips';
 import { NextWaveButton } from '../ui/hud/NextWaveButton';
 import { NextWavePreview } from '../ui/hud/NextWavePreview';
 import { PauseButton } from '../ui/hud/PauseButton';
+import { PlaceConfirm } from '../ui/hud/PlaceConfirm';
 import { SpeedButton } from '../ui/hud/SpeedButton';
 import { StatsCard } from '../ui/hud/StatsCard';
 import { TowerPanel } from '../ui/hud/TowerPanel';
@@ -51,6 +52,7 @@ export class HudScene extends Phaser.Scene {
       preview,
       new HandBar(this),
       new TowerPanel(this),
+      new PlaceConfirm(this, game), // the ✓/✗ beside the cell a touch placement waits on
       new BossDeathBanner(this), // before the banners it beats: the boss death takes the top card
       new LastStandBanner(this), // last on purpose: slides in over the other cards
     ];

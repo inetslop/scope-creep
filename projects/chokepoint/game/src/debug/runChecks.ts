@@ -111,6 +111,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['pushWindup.valid', (g) => g.windup.broken()],
   ['comboBar.valid', (g) => g.comboBar.broken()],
   ['hand.selection', (g) => g.building.brokenSelection()],
+  ['building.pending', (g) => { const c = g.building.pendingCell; if (!c) return null; if (g.run.phase !== 'build') return `a placement waits in phase ${g.run.phase}`; return g.board.canBuild(c) ? null : `a placement waits on a taken or blocked cell (${c.col}, ${c.row})`; }],
   // The clean wave's chip keeps phase 'draft' with an empty offer for a second, so check while the draft overlay is up (the offer is filled before it launches).
   ['draft.offer', (g) => (hook.overlay !== SCENES.draft || g.flow.offer.length === draftCardCount(g.flow.draftWave) ? null : `draft offers ${g.flow.offer.length} cards, expected ${draftCardCount(g.flow.draftWave)}`)],
   ['level.choice', (g) => (new Set(g.run.level).size === g.run.level.length && g.run.level.every((id) => getLevelAugment(id) !== undefined) ? null : `level choice ${g.run.level.join(',')}`)],

@@ -4,11 +4,12 @@ title: On touch, a tap previews the tower; a ✓ builds it, an ✗ cancels
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T06:40:31Z
 claimed_at: 2026-11-01T09:56:22Z
+finished_at: 2026-11-01T11:55:17Z
 ---
 
 ## Goal
@@ -114,3 +115,25 @@ Registry key `placeButtons` (shared scene registry, like `statsGold`): `PlaceBut
 
 ### Tests
 - `tests/core/placeConfirm.test.ts` (vitest, idiom of `tests/core/view.test.ts`): normally above the cell, centered, ✗ left of ✓, `GAP` spacing; below the cell when the cell is within `size + GAP` of the top (and above at the exact boundary); for off-screen rects (far top-left, right of screen, below screen, bottom-left corner at 412×915) both centers stay within `[size/2, view - size/2]`.
+
+## Result (attempt 1, asus)
+
+On touch, a tap on an empty cell now starts a waiting placement instead of building: the cell gets the same hover preview a mouse sees (outline + range), with a 56 px ✓ button (builds, pays gold, opens the panel) and ✗ button (cancels) that follow the cell through drags and zooms and stay on screen. The mouse path is unchanged (hover previews, click builds at once), the placement is cancelled by wave start, the draft, pause, or a tap on a tower, and the phone smoke run builds through `buildSpots()`, which returns the ✓'s point first while a placement waits. Verified with new unit tests on the button geometry and the Building tap/confirm/cancel flow, a new `building.pending` invariant, and passing check + desktop/phone smoke.
+
+- Self-review: NO VERDICT
+- Time: 118.9 min
+
+```
+projects/chokepoint/game/src/core/placeConfirm.ts  |  31 ++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |   1 +
+ projects/chokepoint/game/src/debug/testHook.ts     |   5 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  28 +++-
+ projects/chokepoint/game/src/scenes/HudScene.ts    |   2 +
+ projects/chokepoint/game/src/systems/Building.ts   |  56 ++++++-
+ projects/chokepoint/game/src/systems/RunFlow.ts    |   4 +
+ .../chokepoint/game/src/ui/hud/PlaceConfirm.ts     |  75 ++++++++++
+ .../game/tests/core/placeConfirm.test.ts           |  45 ++++++
+ .../chokepoint/game/tests/systems/building.test.ts | 163 +++++++++++++++++++++
+ .../chokepoint/game/tests/systems/runFlow.test.ts  |  15 +-
+ 11 files changed, 411 insertions(+), 14 deletions(-)
+```

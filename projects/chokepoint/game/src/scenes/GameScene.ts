@@ -35,6 +35,7 @@ import { TowerSystem } from '../systems/TowerSystem';
 import { WaveSpeed } from '../systems/WaveSpeed';
 import { WaveSystem } from '../systems/WaveSystem';
 import { pointerCss, viewSize } from '../ui/display';
+import type { PlaceButtonsOnScreen } from '../ui/hud/PlaceConfirm';
 import { getSfx, onResize, SCENES } from './keys';
 
 /**
@@ -163,25 +164,30 @@ export class GameScene extends Phaser.Scene {
     onResize(this, (w, h) => this.board.layout(w, h));
     new BoardGestures(this, this.board, {
       tap: (p) => {
-        if (this.inPlayArea(p)) this.building.tap(p.worldX, p.worldY);
+        if (this.overPlaceButtons(p)) return; // a tap on the ✓/✗ is the buttons', not the board's
+        if (this.inPlayArea(p)) this.building.tap(p.worldX, p.worldY, p.wasTouch);
       },
       hover: (p) => this.building.hover(this.inPlayArea(p) ? p.worldX : undefined, p.worldY),
       dragStart: () => { this.board.showHover(undefined, false, 0); this.building.dragStarted(); },
     });
     bindHotkeys(this);
     registerRunChecks(this);
-    // Only spots on screen between the HUD bars: zoomed in, some cells are out of view.
-    hook.setBuildSpots(() =>
-      cellsBesidePath(map)
+    // Only spots on screen between the HUD bars: zoomed in, some cells are out of view. While a
+    // touch placement waits, the ✓'s point comes first: a tap on it builds the waiting tower.
+    hook.setBuildSpots(() => {
+      const spots = cellsBesidePath(map)
         .filter((c) => this.board.canBuild(c))
         .map((c) => this.board.toScreen(this.board.centerOf(c)))
-        .filter((p) => p.x > 0 && p.x < viewSize(this).width && p.y > HUD.top && p.y < viewSize(this).height - HUD.bottom),
-    );
+        .filter((p) => p.x > 0 && p.x < viewSize(this).width && p.y > HUD.top && p.y < viewSize(this).height - HUD.bottom);
+      const b = this.registry.get('placeButtons') as { confirm: { x: number; y: number } } | undefined;
+      return b ? [{ x: b.confirm.x, y: b.confirm.y }, ...spots] : spots;
+    });
     this.events.once('shutdown', () => {
       sfx?.stopBeamHums(); // held hums must not outlive the run (the Sfx singleton does)
       this.music.stop(); // the bed's fade and ringing notes must not outlive the run (the Sfx singleton does)
       hook.clearInvariants();
       hook.setBuildSpots(() => []);
+      this.registry.set('placeButtons', undefined); // a stale skip must not leak into the next run
     });
 
     this.scene.launch(SCENES.hud);
@@ -197,8 +203,18 @@ export class GameScene extends Phaser.Scene {
     return y > HUD.top && y < viewSize(this).height - HUD.bottom;
   }
 
+  /** On the ✓/✗ of the waiting touch placement (ui/hud/PlaceConfirm.ts): the tap is theirs, not the board's. */
+  private overPlaceButtons(p: Phaser.Input.Pointer): boolean {
+    const b = this.registry.get('placeButtons') as PlaceButtonsOnScreen | undefined;
+    if (!b) return false;
+    const at = pointerCss(p);
+    return Phaser.Math.Distance.Between(at.x, at.y, b.confirm.x, b.confirm.y) <= b.confirm.r
+      || Phaser.Math.Distance.Between(at.x, at.y, b.cancel.x, b.cancel.y) <= b.cancel.r;
+  }
+
   openPause(): void {
     if (!this.scene.isActive() || this.run.phase === 'over') return;
+    this.building.cancelPending();
     this.scene.launch(SCENES.pause);
     this.scene.pause();
   }

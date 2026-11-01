@@ -68,9 +68,11 @@ export class RunFlow {
   update(dt: number): void {
     const run = this.run;
     this.s.building.syncTeach(); // the first run's build teach re-derives each frame (T0319)
+    this.s.building.syncPending(); // a drag or hover cleared the waiting placement's preview
     if (run.phase === 'build') {
       run.buildLeftSec -= dt;
       if (run.buildLeftSec <= 0) {
+        this.s.building.cancelPending();
         this.s.waves.start();
         this.s.sfx?.waveStart();
       }
@@ -99,6 +101,7 @@ export class RunFlow {
   startWaveNow(): number {
     if (this.run.phase !== 'build' || !this.scene.scene.isActive()) return 0;
     const banked = this.run.bankSend();
+    this.s.building.cancelPending();
     this.s.waves.start();
     this.s.sfx?.waveStart();
     return banked;
@@ -106,6 +109,7 @@ export class RunFlow {
 
   /** Offers the draft's cards — three, four on every fifth draft (DraftScene); finishDraft starts the next build phase. */
   openDraft(): void {
+    this.s.building.cancelPending();
     this.run.phase = 'draft';
     this.draftWave = this.run.wave + 1;
     // The pool respects the tech-gated augments (Haste): owned at run start, or not at all.
