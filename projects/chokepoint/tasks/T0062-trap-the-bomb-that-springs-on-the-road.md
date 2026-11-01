@@ -1,14 +1,14 @@
 ---
 id: T0062
 title: "Trap: the bomb that springs on the road"
-assignee: cachyos-x8664
 size: M
 priority: 3
-status: in-progress
+status: todo
 depends_on: [T0039]
 attempts: 1
 created: 2026-10-28T13:29:40Z
 claimed_at: 2026-11-01T05:34:21Z
+finished_at: 2026-11-01T06:27:25Z
 epic: E4
 ---
 
@@ -115,3 +115,11 @@ Trap content (`src/content/augments/trap.ts`): `id:'trap'`, `look:{shape:'circle
 ## Note (by hand, 2026-10-28)
 
 No longer waits on T0054, T0055: that only kept the tasks from editing the same files at once, and the runner now does that itself (a task can't start while another task that edits one of its files is being built). Where this task's text says another task lands first, it may land before or after: build against the code as it is when you start.
+
+## Attempt 1 failed (cachyos-x8664)
+
+The agent made no changes to the game (success).
+
+```
+Prompt is too long
+```
