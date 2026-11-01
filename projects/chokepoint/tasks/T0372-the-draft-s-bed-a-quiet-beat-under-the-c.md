@@ -1,12 +1,14 @@
 ---
 id: T0372
 title: "The draft's bed: a quiet beat under the card pick"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T18:12:12Z
+claimed_at: 2026-11-01T18:53:15Z
 ---
 
 ## Goal
