@@ -84,8 +84,8 @@ export interface TierValues {
   burnDps?: number;
   /** Replaces this copy's beam rate in its first form (Beam). */
   beamDps?: number;
-  /** Replaces this copy's added beam rate (Beam). */
-  addedBeamDps?: number;
+  /** Replaces this copy's added damage boost, as a fraction (Beam). */
+  addedDamagePct?: number;
   addedRateMul?: number;
   addedRangeMul?: number;
   /** Replaces this copy's added extra shots per attack (Bolt). */
@@ -183,11 +183,11 @@ export interface AddedForm {
   mark?: number;
   /** Hits set ablaze: the burn they apply, `dps` per second for `sec` seconds (Ember). */
   burn?: Burn;
-  /** A flat per-second addition to the tower's own beam, on a beam tower; nothing on other kinds (Beam). */
-  beam?: { dps: number };
   /** Hits push enemies back this many cells along the road (Push). */
   push?: number;
   damageMul?: number;
+  /** Adds a flat damage boost to the tower's own beam: damage dealt per second grows by this fraction (Beam). */
+  damagePct?: number;
   rateMul?: number;
   rangeMul?: number;
   /** Joins the tower's own rally (flat, never stacks; applied by systems/RallySystem.ts). */

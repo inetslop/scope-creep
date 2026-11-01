@@ -233,15 +233,17 @@ describe('beam (Beam)', () => {
     expect(towerSpec([copy('beam', 'epic')]).beamDps).toBe(28);
   });
 
-  it('a Beam added to a beam tower fattens the main line, one step per copy', () => {
-    expect(spec('beam', 'beam')).toMatchObject({ kind: 'beam', beamDps: 19, beamAdds: 1 });
-    expect(spec('beam', 'beam', 'beam')).toMatchObject({ beamDps: 24, beamAdds: 2 });
-    expect(towerSpec([copy('beam', 'rare'), copy('beam', 'epic')]).beamDps).toBe(29); // 20 + 9
+  it('a Beam added to a beam tower boosts the main line, one width step per copy', () => {
+    expect(spec('beam', 'beam')).toMatchObject({ kind: 'beam', beamAdds: 1 });
+    expect(spec('beam', 'beam').beamDps).toBeCloseTo(14 * 1.3);
+    expect(spec('beam', 'beam', 'beam')).toMatchObject({ beamAdds: 2 });
+    expect(spec('beam', 'beam', 'beam').beamDps).toBeCloseTo(14 * 1.3 * 1.3);
+    expect(towerSpec([copy('beam', 'rare'), copy('beam', 'epic')]).beamDps).toBeCloseTo(20 * 1.67); // 20, × 1.67
   });
 
-  it('a tiered added Beam fattens by its tier amount', () => {
-    expect(towerSpec([copy('beam'), copy('beam', 'rare')]).beamDps).toBe(21); // 14 + 7
-    expect(towerSpec([copy('beam'), copy('beam', 'epic')]).beamDps).toBe(23); // 14 + 9
+  it('a tiered added Beam boosts by its tier amount', () => {
+    expect(towerSpec([copy('beam'), copy('beam', 'rare')]).beamDps).toBeCloseTo(14 * 1.52); // 14 × 1.52
+    expect(towerSpec([copy('beam'), copy('beam', 'epic')]).beamDps).toBeCloseTo(14 * 1.67); // 14 × 1.67
   });
 
   it('a Beam added to a non-beam tower does nothing: there is no beam to fatten', () => {
@@ -255,16 +257,16 @@ describe('beam (Beam)', () => {
     expect(tierTowerLine(beam, 'common')).toBe('Beams the furthest enemy: 14 per second, range 3.5.');
     expect(tierTowerLine(beam, 'rare')).toBe('Beams the furthest enemy: 20 per second, range 3.5.');
     expect(tierTowerLine(beam, 'epic')).toBe('Beams the furthest enemy: 28 per second, range 3.5.');
-    expect(tierAddedLine(beam, 'common')).toBe('The beam deals 5 more per second.');
-    expect(tierAddedLine(beam, 'rare')).toBe('The beam deals 7 more per second.');
-    expect(tierAddedLine(beam, 'epic')).toBe('The beam deals 9 more per second.');
+    expect(tierAddedLine(beam, 'common')).toBe('The beam deals 30% more per second.');
+    expect(tierAddedLine(beam, 'rare')).toBe('The beam deals 52% more per second.');
+    expect(tierAddedLine(beam, 'epic')).toBe('The beam deals 67% more per second.');
   });
 
   it('the tower line says what it beams, at the boosted rate when Beams are added', () => {
     expect(describeSpec(spec('beam'))).toBe('Beams the furthest enemy: 14 per second.');
     expect(describeSpec(towerSpec([copy('beam', 'epic')]))).toBe('Beams the furthest enemy: 28 per second.');
-    expect(describeSpec(spec('beam', 'beam'))).toBe('Beams the furthest enemy: 19 per second.');
-    expect(describeSpec(towerSpec([copy('beam', 'rare'), copy('beam', 'epic')]))).toBe('Beams the furthest enemy: 29 per second.');
+    expect(describeSpec(spec('beam', 'beam'))).toBe(`Beams the furthest enemy: ${14 * 1.3} per second.`);
+    expect(describeSpec(towerSpec([copy('beam', 'rare'), copy('beam', 'epic')]))).toBe(`Beams the furthest enemy: ${20 * 1.67} per second.`);
     expect(describeSpec(spec('bolt', 'beam'))).toBe(describeSpec(spec('bolt')));
   });
 

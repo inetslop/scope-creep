@@ -4,11 +4,12 @@ title: An added Beam is more damage, on every damage tower
 assignee: cachyos-x8664
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T23:37:22Z
 claimed_at: 2026-11-01T01:07:29Z
+finished_at: 2026-11-01T05:33:46Z
 ---
 
 ## Goal
@@ -98,3 +99,24 @@ Add a module function near `splashHits`: `/** The cleanest form of a number for 
 
 ### Tests
 - Rewritten/added unit tests as listed in Steps 8-9 (tests/core/augments.test.ts, tests/core/towerDps.test.ts): per-hit boost N%/2N% on a Bolt tower, per-second boost on a Beam tower, burn rate +N% on Ember, zero effect on mark/rally/frost-first, no flat addition left (beamDps ≈ 15.4, not 19) with beamAdds still 1/2, and the tier card lines.
+
+## Result (attempt 1, cachyos-x8664)
+
+Beam's added form is a damage-percentage on the tower's beam line (default ×1), not a flat dps add; content, type, tier-scaling, spec-combining code, docs and tests updated to the multiplicative model, and the leftover `beam`/`addedBeamDps` consumers in `core/tiers.ts`, `core/augments.ts` and `tests/content.test.ts` that broke typecheck are fixed. `npm run check` (typecheck + lint + 467 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: NO VERDICT
+- Time: 266.3 min
+- Gate failed at "check"; fix round 1.
+- Did not delete none: only files in src/, tests/, docs/, public/ can be deleted.
+
+```
+.../chokepoint/game/src/content/augments/beam.ts   | 18 +++++----------
+ projects/chokepoint/game/src/content/types.ts      |  8 +++----
+ projects/chokepoint/game/src/core/augments.ts      | 20 +++++++++--------
+ projects/chokepoint/game/src/core/tiers.ts         |  6 ++---
+ projects/chokepoint/game/src/core/towerDps.ts      |  6 ++---
+ projects/chokepoint/game/tests/content.test.ts     |  2 +-
+ .../chokepoint/game/tests/core/augments.test.ts    | 26 ++++++++++++----------
+ .../chokepoint/game/tests/core/towerDps.test.ts    |  6 ++---
+ 8 files changed, 44 insertions(+), 48 deletions(-)
+```

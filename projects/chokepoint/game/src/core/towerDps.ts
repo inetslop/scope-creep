@@ -7,7 +7,7 @@ import type { TowerSpec } from './augments';
  * adds nothing - Frost, Push, Anchor, Mark, Mint, Rally - and an empty tower (no augment) is 0.
  * Extra shots and splash hit more enemies, but the damage to one is still damage times rate. A
  * spray's pellets all fly at the one enemy up close, so every pellet counts: damage times pellets
- * times rate. A beam tower's lines count too: the main line — already fatter by each Beam added to
+ * times rate. A beam tower's lines count too: the main line — already boosted by each Beam added to
  * it — plus a ray per Bolt, every one scaled by Rapid's net factor on the beam and the Rally's
  * speed (`rallyRateMul`). Every one of a tower's damage instances can roll for a crit (Spray,
  * core/augments.ts), so its whole output runs (1 + its crit chance) high at its expected value.
@@ -15,8 +15,8 @@ import type { TowerSpec } from './augments';
 export function towerDps(spec: TowerSpec, rallyRateMul = 1): number {
   if (!spec.attacks) return 0;
   let dps = 0;
-  // A beam's term: every line at its per-second rate (the main line already includes the
-  // additions of its Beams added), the same factor (Rapid x Rally) on all.
+  // A beam's term: every line at its per-second rate (the main line already boosted by its
+  // Beams added), the same factor (Rapid x Rally) on all.
   if (spec.kind === 'beam') {
     const m = spec.beamRapidMul * rallyRateMul;
     dps += (1 + spec.beamRays) * spec.beamDps * m;

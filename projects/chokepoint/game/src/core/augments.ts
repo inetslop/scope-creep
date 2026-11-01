@@ -48,7 +48,7 @@ export interface TowerSpec {
   burn: Burn | undefined;
   /** Embers in the tower: a muzzle dot when one is the first, one barrel tick each added. */
   burnCount: number;
-  /** The main line's rate: its own tier rate + each added Beam's flat addition (0: no beam). */
+  /** The main line's rate: its own tier rate, each added Beam a damage boost on it (× its damagePct, 1 when unset); 0: no beam. */
   beamDps: number;
   /** Beams added to a beam tower (rate already in beamDps; line width step per copy). */
   beamAdds: number;
@@ -224,16 +224,18 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     spec.burnCount += 1;
     if (!spec.burn || b.dps > spec.burn.dps) spec.burn = { ...b };
   }
-  // Beams in any slot: the first is the tower's own line, each added one fattens it — a flat
-  // per-second addition per copy, one width step. The rate is its own stat (like burnDps): never
-  // scaled by damage or rate. Added to any other kind it does nothing — no beam to fatten.
-  for (let i = 0; i < augments.length; i++) {
+  // Beams in any slot: the first is the tower's own line; each added Beam, on a beam tower, is a
+  // damage boost on that line — x its added damagePct (1 when unset), one width step. The rate is
+  // its own stat (like burnDps): never scaled by damage or rate. Added to any other kind it does
+  // nothing: there is no beam to boost.
+  let beamBoost = 1;
+  for (let i = 1; i < augments.length; i++) {
     const c = augments[i]!;
-    const dps = i === 0 ? f.beam?.dps ?? 0 : tierAdded(getAugment(c.id), c.tier).beam?.dps ?? 0;
-    if (dps <= 0) continue;
-    if (i === 0) spec.beamDps = dps;
-    else if (spec.kind === 'beam') { spec.beamDps += dps; spec.beamAdds += 1; }
+    if (spec.kind !== 'beam' || c.id !== 'beam') continue;
+    beamBoost *= tierAdded(getAugment(c.id), c.tier).damagePct ?? 1;
+    spec.beamAdds += 1;
   }
+  spec.beamDps = (f.beam?.dps ?? 0) * beamBoost;
   // Pushes in any slot: the first is the tower's gust, each extra one adds per-hit push.
   for (let i = 0; i < augments.length; i++) {
     const a = getAugment(augments[i]!.id);

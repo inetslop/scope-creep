@@ -91,7 +91,7 @@ describe('content', () => {
         if (t.splash !== undefined) expect(t.splash).toBeGreaterThan(0);
         if (t.burnDps !== undefined) expect(t.burnDps).toBeGreaterThan(0);
         if (t.beamDps !== undefined) expect(t.beamDps).toBeGreaterThan(0);
-        if (t.addedBeamDps !== undefined) expect(t.addedBeamDps).toBeGreaterThan(0);
+        if (t.addedDamagePct !== undefined) expect(t.addedDamagePct).toBeGreaterThan(1);
         if (t.rootSec !== undefined) expect(t.rootSec).toBeGreaterThan(0);
         if (t.addedRootSec !== undefined) expect(t.addedRootSec).toBeGreaterThan(0);
         if (t.asTower !== undefined) {

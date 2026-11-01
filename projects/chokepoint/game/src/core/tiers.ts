@@ -56,11 +56,11 @@ export function tierFirst(def: AugmentDef, tier: Tier): FirstForm {
 
 /**
  * The added form of this copy of the augment at `tier` (Common: the base form). A new object:
- * the added multipliers, extra shots, pellets, push cells, splash and pierce are replaced, the slow % replaced.
+ * the added multipliers, extra shots, pellets, push cells, splash, pierce and damagePct are replaced, the slow % replaced.
  */
 export function tierAdded(def: AugmentDef, tier: Tier): AddedForm {
   const a = def.added;
-  if (tier === 'common') return { ...a, slow: a.slow ? { ...a.slow } : undefined, root: a.root ? { ...a.root } : undefined, burn: a.burn ? { ...a.burn } : undefined, beam: a.beam ? { ...a.beam } : undefined };
+  if (tier === 'common') return { ...a, slow: a.slow ? { ...a.slow } : undefined, root: a.root ? { ...a.root } : undefined, burn: a.burn ? { ...a.burn } : undefined };
   const t = def.tiers[tier];
   return {
     ...a,
@@ -74,7 +74,7 @@ export function tierAdded(def: AugmentDef, tier: Tier): AddedForm {
     slow: a.slow ? { ...a.slow, pct: t.slowPct ?? a.slow.pct } : undefined,
     root: a.root ? { ...a.root, sec: t.addedRootSec ?? t.rootSec ?? a.root.sec } : undefined,
     burn: a.burn ? { ...a.burn, dps: t.burnDps ?? a.burn.dps } : undefined,
-    beam: a.beam ? { ...a.beam, dps: t.addedBeamDps ?? a.beam.dps } : undefined,
+    damagePct: t.addedDamagePct ?? a.damagePct,
   };
 }
 
