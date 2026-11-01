@@ -1,12 +1,14 @@
 ---
 id: T0321
 title: An added Spray is crit chance, on every damage tower
+assignee: desktop
 size: L
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T23:37:22Z
+claimed_at: 2026-11-01T00:27:19Z
 ---
 
 ## Goal
