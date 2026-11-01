@@ -1,12 +1,14 @@
 ---
 id: T0356
 title: "The Colossus's return gets its flash"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T11:49:16Z
+claimed_at: 2026-11-01T12:23:46Z
 ---
 
 ## Goal
