@@ -3,10 +3,12 @@ id: T0347
 title: "The Orb's split gets its moment"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T08:02:39Z
+claimed_at: 2026-11-01T08:05:36Z
+designer: yoga
 ---
 
 ## Goal
