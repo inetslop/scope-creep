@@ -3,13 +3,11 @@ id: T0352
 title: "The fork: the road that splits into two lanes"
 size: L
 priority: 2
-status: designing
-depends_on: []
+status: todo
+depends_on: [T0350]
 attempts: 0
 created: 2026-11-01T10:31:35Z
-claimed_at: 2026-11-01T10:31:38Z
 epic: E13
-designer: desktop
 ---
 
 ## Goal
@@ -30,3 +28,42 @@ On some boards the road splits into two lanes and rejoins, and each enemy takes 
 - [ ] On a fork board with the far gate, the far gate's entrance is before the split and its enemies take a lane at the split; its share of the wave is unchanged.
 - [ ] The board preview shows the fork's shape, and the board trait data carries the fork's name, dry line and "some boards" source for the boards reference's row.
 - [ ] A full run on a fork board plays to game over and pays out like any other run (smoke test).
+
+## Design (architect, desktop)
+
+### Files
+- create `src/core/fork.ts` — `Fork` type, `forkLane()` (the per-spawn lane coin), `placeFork()` (placement + kinds rebuild, no rng)
+- create `tests/core/fork.test.ts` — placement shape, rate, equal lanes, `forkLane`
+- edit `src/core/map.ts` — `GameMap.fork?: Fork`; `generateMap` tail: keep the far-gate draw exactly as today, then `const fork = fold ? undefined : (rng.chance(1/3) ? placeFork({ ...result, farGate }) : undefined)` and return `{ ...result, farGate, fork }` (the fork roll is after the far-gate roll, so no-fork seeds stay byte-identical; switchback boards never fork); `cellsBesidePath` walks `[...map.path, ...(map.fork?.laneB ?? [])]`
+- edit `src/core/path.ts` — `pathLineForLane(map, cellSize, lane)`: lane 0 is `pathLineFor`; lane 1 splices `map.fork.laneB` between `path[split]` and `path[rejoin]`, same before/after cells
+- edit `src/entities/Enemy.ts` — field `lane: 0 | 1 = 0` (reset in `spawn()`), `spawn()` gains trailing `lane: 0 | 1 = 0`
+- edit `src/systems/EnemySystem.ts` — `readonly routes: [PathLine, PathLine]` (lane 1 via `pathLineForLane` only when `board.map.fork`, else same line); `spawn(..., lane = 0)` passes `this.routes[lane]!` and the lane; `update()` advances `e.advance(dt, this.routes[e.lane]!)`; getter `routeForLane(lane)`
+- edit `src/systems/WaveSystem.ts` — constructor param `hasFork = false`; spawn passes `this.hasFork ? forkLane(this.run.seed, this.run.wave, this.next) : 0`
+- edit `src/scenes/GameScene.ts` — one line: `new WaveSystem(this.run, this.enemies, farGateDistance(map), map.fork !== undefined)`
+- edit `src/systems/enemyHooks/split.ts` — pass `enemy.lane` to both children; `midSplit.ts` — capture `lane = e.lane` in the pre-`despawn()` capture line, pass it; `leakEcho.ts` — ghost walks `enemies.routeForLane(enemy.lane)`
+- edit `src/art/board.ts` — `drawBoard`: when `map.fork`, stroke a second road polyline `[center(path[split]), ...laneB centers, center(path[rejoin])]` in the same style (width `CELL*0.58`, `PALETTE.road`, `setShadow(ctx, 0.7)`)
+- edit `src/debug/runChecks.ts` — `board.fork` invariant after `board.fold`: no fork → no active enemy with `lane !== 0`; fork → `laneB.length === rejoin - split - 1` and every `laneB` cell is `'path'`
+- edit `src/core/boardFacts.ts` (T0350's board-facts data) — one row next to the far gate's, same shape: name `'The fork'`, line `'the road splits into two lanes and rejoins'`, source `'some boards'`, present when `map.fork`
+### Interfaces
+```ts
+// core/fork.ts
+export interface Fork { split: number; rejoin: number; laneB: Cell[] } // split/rejoin: path indices; laneB: lane-2 cells between them, neither end
+export function forkLane(seed: number, wave: number, index: number): 0 | 1
+export function placeFork(map: GameMap): Fork | undefined
+// GameMap: fork?: Fork  ·  pathLineForLane(map: GameMap, cellSize: number, lane: 0 | 1): PathLine
+```
+### Steps
+1. `forkLane`: FNV-1a 31-bit hash of `` `${seed}:${wave}:${index}` `` (same pattern as `dailySeeds` in `core/daily.ts`), return `(h >>> 0) & 1 ? 1 : 0`. Pure — never draws on `run.rng` (see Pitfalls).
+2. `placeFork`: work in along/across space with `A/B/cell` helpers (copy the idiom from `core/switchback.ts`). Scan split candidates `iP` outward from `Math.round(0.35 * n)` (far-gate's `[target-d, target+d]` pattern, `iP` in `[2, n-6]`). Accept `iP` only when `path[iP]` starts a run (`A(path[iP-1]) === A(P)` and `B(path[iP-1]) !== B(P)`). For `dir` in `[1, -1]`: skip if `B(path[iP-1]) === b + dir` (lane B would step back into the entry cell) or `b + 2*dir` out of range; scan `iR` from `iP+1` to `n-2`: `R = path[iR]` must have `B(R) === b + 2*dir` and `a1 - a0 >= 5` (parallel stretch and buildable row are both `a1-a0-1 >= 4`); let `span = a1 - a0 + 2`, `newN = n - (iR - iP) + span`; accept the first with `iP/newN` in [0.30, 0.42] and `(iP + span)/newN` in [0.72, 0.82] (phase 1 relaxes to [0.28, 0.45] / [0.70, 0.85]), and `iP >= gate + 2` when `map.farGate` is at index `gate`. New path = `path.slice(0, iP+1)` + lane A `[(a0+1..a1, b), (a1, b+dir), (a1, b+2*dir)]` + `path.slice(iR+1)`; `laneB = [(a0, b+dir), (a0..a1-1 at b+2*dir)]`. Defensive check: newPath and laneB connected, in range, no duplicate cell, exit edge. Kinds (copy switchback's block): old middle cells not in the new path → `'open'`; move rocks found on newPath ∪ laneB ∪ strip `(a0+1..a1-1 at b+dir)` to the first open cell outside all of them (drop if none); newPath and laneB → `'path'`. Return `{ split: iP, rejoin: iP + span, laneB }`, else `undefined`.
+3. Wire per Files (Enemy → EnemySystem → WaveSystem → GameScene → hooks → art → invariant → data row), in that order.
+4. Tests, then `npm run check`.
+### Pitfalls
+- **Never draw the lane on `run.rng`.** A resumed wave is replanned from the post-map rng state, so sequential draws would shift every later seeded roll and not replay the same lanes; `forkLane`'s (seed, wave, index) hash is what makes a resumed wave replay the same lanes.
+- **Roll order**: the fork roll must stay after the far-gate roll; moving it (or making it consume draws when the fork is skipped… it doesn't — placement is rng-free) would change existing seeds' far gates. A seed without the fork must generate the exact board of today.
+- **Equal length**: lane walk P→R is `laneB.length + 1` steps; the main walk is `rejoin - split`. Off-by-one here breaks "same distance either lane" and the invariant.
+- Pooled `Enemy`: `lane` reset in `spawn()`; in `midSplit` capture `e.lane` before `e.despawn()` (the slot may be recycled).
+- `laneB` cells are road (`'path'`): a rock on one must be relocated, and rocks must never be relocated onto laneB/strip cells.
+- Vertical boards: only through the `A/B/cell` helpers; the far-gate token, gates and exit anchor all live on the shared prefix/tail and stay untouched.
+- The fork shortens the road (the old middle becomes buildable); wave pacing is unchanged only because both lanes are equal length — keep them so.
+### Tests
+- `tests/core/fork.test.ts`: over 400 seeds at 14x8 and 8x14 — fork on a minority of boards (>= 15, < 200) and some without; when forking: `laneB.length === rejoin - split - 1`, new path connected/duplicate-free/exit edge, split fraction in [0.28, 0.45] and rejoin in [0.70, 0.85], both straight runs parallel two lanes apart with `a1-a0-1 >= 4`, the whole between-row `'open'`, far gate (when both) at index <= `split - 2`; `generateMap(..., fold=true)` never forks; `forkLane` deterministic, ~50/50 over 200 spawns, differs by seed; `pathLineForLane` routes equal length and point-for-point identical before the split and after the rejoin.
