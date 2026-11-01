@@ -58,8 +58,8 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Goal:** "every board is different" (Pillar 2) goes past the rock scatter and the path's shape: the road itself varies, so a build that held one island fails on the next for a new reason.
 **When done:** on some boards the road has a second gate partway along, and a share of every wave's enemies comes in through it — the player covers the road from two entry points, and the far gate's shorter run shifts where the pressure lands. Later slices: a road that forks into two lanes, and a marked cell that makes its tower stronger.
 **Breakdown:**
-- the far gate: a second entrance partway down the road; a third of each non-boss wave comes through it; the board, the board preview and the next-wave preview show it — **T0338 (M, in progress)**
-- (to task, behind T0338) the fork: the road splits into two lanes and re-joins; enemies take either lane
+- the far gate: a second entrance partway down the road; a third of each non-boss wave comes through it; the board, the board preview and the next-wave preview show it — **T0338 (M, done 2026-11-01)**
+- (to task) the fork: the road splits into two lanes and re-joins; enemies take either lane
 - the marked cell: one build cell that makes a tower built on it stronger — **tasked as T0340 (M, in the pool)**
 - the boards reference: the pause screen names the board's modifiers — mark, name, one dry line, and where each comes from (always / tech / some boards) — the vocabulary for the new islands — **tasked as T0350 (M, in the pool)**
 
