@@ -23,6 +23,7 @@ export const SCENES = {
   bosses: 'Bosses',
   summary: 'Summary',
   coins: 'Coins',
+  boardFacts: 'BoardFacts',
   gameOver: 'GameOver',
   rewards: 'Rewards',
 } as const;

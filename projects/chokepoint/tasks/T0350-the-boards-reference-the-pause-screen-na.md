@@ -4,11 +4,12 @@ title: "The boards reference: the pause screen names the board's modifiers"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T09:12:53Z
 claimed_at: 2026-11-01T10:01:22Z
+finished_at: 2026-11-01T10:50:45Z
 epic: E13
 ---
 
@@ -98,3 +99,24 @@ Scene `build()` (in `BoardFactsScene`, `panelW = 340`): `PAD 16, MARK 24, GAP 10
 
 ### Tests
 - `tests/core/boardFacts.test.ts`: rows in order with their mark keys; tech tags point at real `BOARD_NODES` ids `['one-more-bend','long-way','two-chokes','switchback']`; `boardFactTag` → `'always'` (choke), `'some boards'` (far gate, marked cell), tree's own name when unowned (`'One more bend'`), `'owned'` when `purchased` contains the id.
+
+## Result (attempt 1, cachyos-x8664)
+
+The pause card now offers a "Boards" reference (a sibling of the Coins reference). A new `BoardFactsScene` (off the pause, modeled on `BossesScene`) lists the board's seven modifiers in one scaling white card, each row = a 24px flat mark in muted ink, the bold 14px name, its dry 12px meaning, and its 11px tag at the row's end: "always" (choke), "some boards" (far gate, marked cell), and "tech · <the tech tree's own node name>" / "owned" while the profile owns it. The rows, mark keys, and the pure tech-tag read live in a new pure module (`src/core/boardFacts.ts`) with its unit test (`tests/core/boardFacts.test.ts`); the seven flat marks are painted in `src/ui/boardFactMarks.ts`; wiring is one `CONTROLS` line + button in `PauseScene`, one `SCENES` key in `keys.ts`, and the scene registration in `main.ts` — so a later modifier lands as one `BOARD_FACTS` entry plus one mark case with no change to the pause card or the sibling references.
+
+(One deviation to flag: the task's literal `boardFactTag` code reads `row.tag.node` directly, which does not compile under this TypeScript 6.0.3 toolchain — property-path discriminant narrowing on `row.tag` does not survive into the `.find()`/`.map()` closures, so `row.tag.node` errors as "Property 'node' does not exist on type 'BoardFactTag'". I bound to a local const instead — `const tag = row.tag; ... const node = tag.node;` — which is the identical runtime behavior and exactly what the unit test asserts. The same fix was needed in the test f…
+
+- Self-review: APPROVE
+- Time: 49.4 min
+- Did not delete none: only files in src/, tests/, docs/, public/ can be deleted.
+
+```
+projects/chokepoint/game/src/core/boardFacts.ts    |  38 ++++++++
+ projects/chokepoint/game/src/main.ts               |   3 +-
+ .../chokepoint/game/src/scenes/BoardFactsScene.ts  | 107 +++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  13 ++-
+ projects/chokepoint/game/src/scenes/keys.ts        |   1 +
+ projects/chokepoint/game/src/ui/boardFactMarks.ts  |  59 ++++++++++++
+ .../chokepoint/game/tests/core/boardFacts.test.ts  |  35 +++++++
+ 7 files changed, 253 insertions(+), 3 deletions(-)
+```

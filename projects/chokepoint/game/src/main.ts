@@ -3,6 +3,7 @@ import { cssColor, PALETTE } from './content/palette';
 import { hook, installTestHook } from './debug/testHook';
 import { display, pixelRatio } from './ui/display';
 import { startUpdateCheck } from './ui/updateNotice';
+import { BoardFactsScene } from './scenes/BoardFactsScene';
 import { BoardsScene } from './scenes/BoardsScene';
 import { BootScene } from './scenes/BootScene';
 import { BossesScene } from './scenes/BossesScene';
@@ -54,7 +55,7 @@ const game = new Phaser.Game({
   disableContextMenu: true,
   banner: false,
   // Order is draw order: later scenes draw on top (the HUD over the board, overlays over the HUD).
-  scene: [BootScene, MenuScene, PickScene, GameScene, HudScene, DraftScene, PauseScene, MilestoneScene, EnemiesScene, WavesScene, BossesScene, SummaryScene, CoinsScene, GameOverScene, RewardsScene, TechScene, CodexScene, BoardsScene, NameScene],
+  scene: [BootScene, MenuScene, PickScene, GameScene, HudScene, DraftScene, PauseScene, MilestoneScene, EnemiesScene, WavesScene, BossesScene, SummaryScene, CoinsScene, BoardFactsScene, GameOverScene, RewardsScene, TechScene, CodexScene, BoardsScene, NameScene],
 });
 
 /** Follows the page size and the pixel density (browser zoom, moving to another screen). */
