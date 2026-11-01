@@ -4,7 +4,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 
 - Sell a tower for 70% of what its slots cost (tap it, then Sell) — **built as T0274 (2026-10-30, desktop); the take-out (T0275) dropped by hand 2026-10-30; E7 done**
 - Take an augment back out of a tower into the hand, for a fee — **dropped with E7's close (T0275, dropped by hand 2026-10-30); don't re-task**
-- Targeting modes per tower (First / Strongest / Closest) — **built as T0114 (L, non-epic, 2026-11-01, inet-racing)**; its follow-up (the plinth notch, the one-time chip, T0092's pattern) — **tasked as T0368 (S, non-epic, in the pool, 2026-11-01)**
+- Targeting modes per tower (First / Strongest / Closest) — **built as T0114 (L, non-epic, 2026-11-01, inet-racing)**; its follow-up (the plinth notch, the one-time chip, T0092's pattern) — the plinth notch **built as T0368 (S, non-epic, 2026-11-01, cachyos-x8664)**
 - Lance augment: first, a long piercing line that hits everything along it; added, shots pierce one more enemy — built as T0004 (asus)
 - Chain augment — **dropped 2026-11-01** (T0025 failed, no re-file; T0150's leap re-tune dies with it): was a zap that struck the furthest and leapt to the nearest unstruck; don't re-task
 - Push augment: first, a gust that pushes everything within 2.5 cells back along the road, no damage (a support pulse, like Frost's slow and Mark's mark); added, hits push struck enemies back 0.4 cells (+0.4 per Push) — the first augment that moves enemies along the road instead of slowing or stopping them — built as T0027 (2026-10-28, desktop)
@@ -18,7 +18,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The flyer's line before the wave: the build phase before the flyer's wave shows its route on the board (the flyer's red, 2 px, ~50% alpha, spawn → exit), fading as the wave-start telegraph (T0317) takes over — the crossing's cover is chosen in the build, not learned at the wave's door — **tasked as T0346 (M, E10, in the pool, waits on T0317)**
 - Boss every 10 waves with a health bar and its own mechanic
 - Wave preview strip in the build phase: the shapes and counts of the next wave — built as T0015 (2026-10-28, narcissus)
-- Interest: at every wave start the gold bank pays 5% of itself (floor, +1 up, cap +10) — **built as T0363 (2026-11-01)**; the "bank +N" line **built as T0374**; the first-pay chip **T0380 (S)**; the coin blip **T0381 (S)**; the gold pop + trail stay parked
+- Interest: at every wave start the gold bank pays 5% of itself (floor, +1 up, cap +10) — **built as T0363 (2026-11-01)**; the "bank +N" line **built as T0374**; the first-pay chip **dropped (rejected as T0380: the line already teaches the rule)**; the coin blip **already played (rejected as T0381)**; the pay's gold pop at the number **tasked as T0385 (S, non-epic, in the pool, 2026-11-01)**; the trail stays parked
 - Fast-forward (2x) for the wave phase — **built as T0019 (2026-10-28)**: the SpeedButton, one scaled clock for the whole wave phase
 - Daily seeded run with a shareable result — the leaderboard (Today / Forever, added by hand 2026-10-30) is where a shared result lands — was **E8 — dropped by hand 2026-10-30** (T0278 dropped); do not re-task
 - Colorblind mode: patterns on the shapes, not just color
@@ -182,6 +182,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The Colossus's return gets its flash — **built as T0356 (S, non-epic, 2026-11-01, yoga)**: the token wears its telegraph's white for ~0.3 s when the out-of-reach beat ends
 - The menu demo's far gate — **built as T0359 (M, 2026-11-01)**: the fixed demo road gets a second entrance, a third of the demo wave's walkers coming in through it
 - The far gate's send — **built as T0360 (S, 2026-11-01)**: one muted ring at the far gate when a non-boss wave starts
+- The far gate says what it is — a one-time chip at the gate when the run's first far-gate send happens (the send ring's own moment, T0360): "walkers come in here too", the first-leak chip's own look, ~1.5 s, once per run, never on a board without the gate — **tasked as T0384 (S, E14, in the pool, 2026-11-01)**
 - Herd augment (Rare or Epic) — **tasked as T0361 (M, in the pool)**: a support that never attacks — +5% (Rare) / +8% (Epic) damage per enemy within 2 cells, up to 5; its first copy does the same for every tower in its ring; look: a green hexagon, a five-tick ring; its registration retires Anchor (the fifth removal)
 - The run's end gets its note — **built as T0367 (S, non-epic, 2026-11-01, inet-racing)**: the moment the game-over card lands, one quiet two-note fall (B2→G2: the boss horn's own two low notes, T0302, falling instead of rising) — the run's end is heard before it is read; the death and the quit paths (T0325), silent with sound off, no screen change
 - The loop: on some boards (~1 in 4, exclusive with the fork) the road makes one closed loop mid-island; the cells inside cover more road than any other cell, but no single cell covers the whole loop, so its mouth still needs cover; the board facts and the boards reference name it — **tasked as T0377 (L, in progress)**
