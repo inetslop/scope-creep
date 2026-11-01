@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { MusicBed } from '../audio/music';
+import { BuildBed } from '../audio/buildBed';
 import { GRID, HUD, ROCKS } from '../config';
 import { cssColor, PALETTE } from '../content/palette';
 import type { DailyPick } from '../core/daily';
@@ -73,6 +74,7 @@ export class GameScene extends Phaser.Scene {
   fx!: FxSystem;
   exitWarn!: ExitWarning;
   music!: MusicBed;
+  buildBed!: BuildBed;
   leakCost!: LeakCost;
   windup!: PushWindup;
   comboBar!: ComboBar;
@@ -134,6 +136,7 @@ export class GameScene extends Phaser.Scene {
     this.enemies = new EnemySystem(this, this.board, this.run, this.fx, sfx);
     this.exitWarn = new ExitWarning(this, this.board, this.enemies, sfx);
     this.music = new MusicBed(sfx);
+    this.buildBed = new BuildBed(sfx);
     this.leakCost = new LeakCost(this.run, this.fx, this.board);
     this.waves = new WaveSystem(this.run, this.enemies, farGateDistance(map), map.fork !== undefined);
     this.projectiles = new ProjectileSystem(this, this.enemies);
@@ -187,6 +190,7 @@ export class GameScene extends Phaser.Scene {
     this.events.once('shutdown', () => {
       sfx?.stopBeamHums(); // held hums must not outlive the run (the Sfx singleton does)
       this.music.stop(); // the bed's fade and ringing notes must not outlive the run (the Sfx singleton does)
+      this.buildBed.stop(); // the build bed's fade and ringing notes must not outlive the run
       hook.clearInvariants();
       hook.setBuildSpots(() => []);
       this.registry.set('placeButtons', undefined); // a stale skip must not leak into the next run
@@ -233,6 +237,7 @@ export class GameScene extends Phaser.Scene {
     this.saver.update();
     this.exitWarn.update(simDt);
     this.music.update(dt, simDt, this.run.phase === 'wave', isLastStand(this.run), this.exitWarn.live); // after, so `live` is this frame's
+    this.buildBed.update(dt, this.run.phase === 'build', isLastStand(this.run)); // real seconds: the build countdown never fast-forwards
     this.leakCost.update(simDt);
     this.rally.update(simDt);
     this.haste.update(simDt);

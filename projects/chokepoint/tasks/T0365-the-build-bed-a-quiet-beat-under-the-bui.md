@@ -4,11 +4,12 @@ title: "The build bed: a quiet beat under the build phase"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T16:18:26Z
 claimed_at: 2026-11-01T17:03:47Z
+finished_at: 2026-11-01T17:09:29Z
 ---
 
 ## Goal
@@ -155,3 +156,17 @@ export class BuildBed {
 
 ### Tests
 - none (audio task; no core rule added)
+
+## Result (attempt 1, desktop)
+
+Added a quiet generative build bed (`src/audio/buildBed.ts`) — a 4-note sine loop (E2, B2, E3, G3) at 0.8 s steps, 0.03 volume, with 0.6 s fades and a one-octave-lower last-stand form — that plays only during the build phase so planning feels continuous and the wave start lands as a shift. Wired it into `GameScene.ts` with five single-line additions next to the existing `MusicBed` lines (import, field, construct, shutdown stop, update with real seconds), and added a `buildBed.valid` invariant next to `music.bed` in `debug/runChecks.ts`. No screen changes: check and smoke (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 5.7 min
+
+```
+projects/chokepoint/game/src/audio/buildBed.ts   | 89 ++++++++++++++++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts  |  1 +
+ projects/chokepoint/game/src/scenes/GameScene.ts |  5 ++
+ 3 files changed, 95 insertions(+)
+```
