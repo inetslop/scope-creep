@@ -1,12 +1,14 @@
 ---
 id: T0353
 title: "The Flyer: the small crosser that flies the sky"
+assignee: asus
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T11:14:54Z
+claimed_at: 2026-11-01T16:09:58Z
 epic: E10
 ---
 
