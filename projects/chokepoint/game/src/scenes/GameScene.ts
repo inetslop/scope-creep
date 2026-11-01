@@ -153,7 +153,7 @@ export class GameScene extends Phaser.Scene {
     });
     this.speed = new WaveSpeed(sfx);
     this.rally = new RallySystem(this, this.towers, this.fx);
-    this.haste = new HasteSystem(this.towers, this.enemies);
+    this.haste = new HasteSystem(this, this.towers, this.enemies);
     this.beams = new BeamSystem(this, this.towers, this.enemies, sfx);
     this.saver = new RunSave(this, window.localStorage);
     if (saved) this.saver.restore(saved);

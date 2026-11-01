@@ -4,11 +4,12 @@ title: The Haste shows its working aura
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T11:14:54Z
 claimed_at: 2026-11-01T16:10:48Z
+finished_at: 2026-11-01T16:44:01Z
 ---
 
 ## Goal
@@ -92,3 +93,17 @@ and add the method:
 
 ### Tests
 none (display only, no core rule).
+
+## Result (attempt 1, yoga)
+
+A Haste tower now shows its working aura: while any enemy is inside its 2-cell radius, a thin ring in the tower's own color re-pulses once a second of scene.time at ground level under the tower, from its body out to the full radius — the same shape and timing as the Mute ring (T0219), wired from the one place HasteSystem already knows an enemy is inside. New file `src/systems/fx/hasteRing.ts` (one beat: fillRing + its in-and-out tween); `HasteSystem.ts` gained the scene param, per-tower `pulse` beat field and `rings` map with a `dropRing()` that also covers sold/re-grown towers (fixing the old cleanup that referenced a nonexistent `active` field); `GameScene.ts` passes the scene through. Purely display — no sound, text or HUD, all aura numbers unchanged, and a run with no Haste towers is byte-identical.
+
+- Self-review: APPROVE
+- Time: 33.2 min
+
+```
+projects/chokepoint/game/src/scenes/GameScene.ts   |  2 +-
+ .../chokepoint/game/src/systems/HasteSystem.ts     | 39 +++++++++++++++++++---
+ .../chokepoint/game/src/systems/fx/hasteRing.ts    | 30 +++++++++++++++++
+ 3 files changed, 65 insertions(+), 6 deletions(-)
+```
