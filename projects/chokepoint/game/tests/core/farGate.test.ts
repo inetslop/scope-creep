@@ -50,11 +50,21 @@ describe('farGate', () => {
           const i = farGateIndex(map);
           if (i === -1) continue; // no far gate: the board's roll missed, or the window found no cell
           withGate++;
-          // The board's own far gate is what farGateCell stamps (the roll is the board's last rng draw).
-          expect(farGateCell(map)).toEqual(map.farGate);
-          // On the path, at least two steps in, at most halfway down.
+          // On the path, at least two steps in.
           expect(kindAt(map, map.farGate!.col, map.farGate!.row)).toBe('path');
           expect(i).toBeGreaterThanOrEqual(2);
+          if (map.fork) {
+            // On a fork board the gate is stamped on the pre-fork road (the roll is the board's
+            // last draw before the fork): it stays on the shared prefix, before the split, straight
+            // (its neighbours are the prefix' unchanged ones).
+            expect(i).toBeLessThanOrEqual(map.fork.split - 2);
+            const a = map.path[i - 1]!, b = map.path[i]!, c = map.path[i + 1]!;
+            expect((b.col - a.col) * (c.row - b.row) === (b.row - a.row) * (c.col - b.col)).toBe(true);
+            continue;
+          }
+          // The board's own far gate is what farGateCell stamps (the roll is the board's last rng draw).
+          expect(farGateCell(map)).toEqual(map.farGate);
+          // At most halfway down.
           expect(i).toBeLessThanOrEqual(Math.floor(map.path.length / 2));
           // Straight: its two path neighbours are along the same line as itself.
           const a = map.path[i - 1]!, b = map.path[i]!, c = map.path[i + 1]!;

@@ -48,7 +48,17 @@ export function cellCenter(cell: Cell, cellSize: number): Point {
 
 /** The walking route of a map: one cell before the entrance, every path cell, one cell past the exit. */
 export function pathLineFor(map: GameMap, cellSize: number): PathLine {
-  const cells = map.path;
+  return pathLineForLane(map, cellSize, 0);
+}
+
+/**
+ * The walking route of a map's lane (core/fork.ts): lane 0 is the road itself; lane 1 splices the
+ * fork's lane B between the split cell and the rejoin cell, the same cells before and after. Both
+ * lanes walk the same distance and end at the same exit.
+ */
+export function pathLineForLane(map: GameMap, cellSize: number, lane: 0 | 1): PathLine {
+  const path = map.path;
+  const cells = lane === 1 && map.fork ? [...path.slice(0, map.fork.split + 1), ...map.fork.laneB, ...path.slice(map.fork.rejoin)] : path;
   const first = cells[0]!;
   const last = cells[cells.length - 1]!;
   const before: Cell = map.vertical ? { col: first.col, row: first.row - 1 } : { col: first.col - 1, row: first.row };

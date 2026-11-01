@@ -1,4 +1,5 @@
 import { ENEMIES, getEnemy } from '../content/enemies';
+import { forkLane } from '../core/fork';
 import { isFarGateSpawn } from '../core/farGate';
 import { levelCountMul, levelSpeedMul } from '../core/levels';
 import type { RunState } from '../core/run';
@@ -12,6 +13,8 @@ export class WaveSystem {
   private readonly enemies: EnemySystem;
   /** Board units from the route start to the far gate (core/farGate.ts); 0 with no far gate. */
   private readonly farGateDistance: number;
+  /** The board splits its road: each spawn takes a lane at the split (core/fork.ts). */
+  private readonly hasFork: boolean;
   private plan: WavePlan | undefined;
   private next = 0;
   private timer = 0;
@@ -20,10 +23,11 @@ export class WaveSystem {
   heldLost = 0;
   private livesAtStart = 0;
 
-  constructor(run: RunState, enemies: EnemySystem, farGateDistance = 0) {
+  constructor(run: RunState, enemies: EnemySystem, farGateDistance = 0, hasFork = false) {
     this.run = run;
     this.enemies = enemies;
     this.farGateDistance = farGateDistance;
+    this.hasFork = hasFork;
   }
 
   /** The wave the build phase leads to (the HUD's preview reads it; it is planned once at build start). */
@@ -77,7 +81,8 @@ export class WaveSystem {
     while (this.next < plan.spawns.length && this.timer >= plan.spawns[this.next]!.delaySec) {
       const spawn = plan.spawns[this.next]!;
       this.timer -= spawn.delaySec;
-      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul, speedMul, waveMul, isFarGateSpawn(this.next, plan, this.farGateDistance > 0) ? this.farGateDistance : 0);
+      // The fork's lane is the spawn's (seed, wave, index) hash (core/fork.ts), never a draw on the run's rng.
+      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul, speedMul, waveMul, isFarGateSpawn(this.next, plan, this.farGateDistance > 0) ? this.farGateDistance : 0, this.hasFork ? forkLane(this.run.seed, this.run.wave, this.next) : 0);
       this.next += 1;
     }
   }

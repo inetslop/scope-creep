@@ -26,6 +26,13 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['run.story', (g) => (g.run.story.every((r, i) => r.wave === i + 1) ? null : `story waves ${g.run.story.map((r) => r.wave).join(',')}`)],
   ['board.choke', (g) => (g.run.bgen < 2 || chokeCells(g.board.map).length > 0 ? null : 'a gen-2 board has no choke cell')],
   ['board.fold', (g) => (g.mapFold === 0 || switchbackFold(g.board.map) !== null ? null : 'a switchback board has no fold in its road')],
+  ['board.fork', (g) => {
+    const fork = g.board.map.fork;
+    if (!fork) return g.enemies.all.some((e) => e.active && e.lane !== 0) ? 'an enemy is on a lane with no fork' : null;
+    if (fork.laneB.length !== fork.rejoin - fork.split - 1) return `lane B has ${fork.laneB.length} cells, expected ${fork.rejoin - fork.split - 1}`;
+    for (const c of fork.laneB) if (g.board.map.kinds[c.row]![c.col] !== 'path') return `a lane B cell is not road at (${c.col}, ${c.row})`;
+    return null;
+  }],
   ['resume.taken', (g) => (g.registry.get('resumeRun') ? 'a saved run is waiting for the game that never took it' : null)],
   ['ghost.taken', (g) => (g.registry.get('ghostSeed') ? 'a ghost seed is waiting for the game that never took it' : null)],
   ['iron.taken', (g) => (g.registry.get('ironMode') ? 'an iron flag is waiting for the game that never took it' : null)],

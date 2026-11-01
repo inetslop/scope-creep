@@ -4,11 +4,12 @@ title: "The fork: the road that splits into two lanes"
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0350]
 attempts: 1
 created: 2026-11-01T10:31:35Z
 claimed_at: 2026-11-01T11:56:03Z
+finished_at: 2026-11-01T16:09:15Z
 epic: E13
 ---
 
@@ -69,3 +70,36 @@ export function placeFork(map: GameMap): Fork | undefined
 - The fork shortens the road (the old middle becomes buildable); wave pacing is unchanged only because both lanes are equal length — keep them so.
 ### Tests
 - `tests/core/fork.test.ts`: over 400 seeds at 14x8 and 8x14 — fork on a minority of boards (>= 15, < 200) and some without; when forking: `laneB.length === rejoin - split - 1`, new path connected/duplicate-free/exit edge, split fraction in [0.28, 0.45] and rejoin in [0.70, 0.85], both straight runs parallel two lanes apart with `a1-a0-1 >= 4`, the whole between-row `'open'`, far gate (when both) at index <= `split - 2`; `generateMap(..., fold=true)` never forks; `forkLane` deterministic, ~50/50 over 200 spawns, differs by seed; `pathLineForLane` routes equal length and point-for-point identical before the split and after the rejoin.
+
+## Result (attempt 1, asus)
+
+Some boards (~1 in 3) now grow "The fork": the road splits into two equal straight lanes that rejoin before the exit, with a full buildable row of at least four cells between them, and each enemy takes a lane by a hash of (seed, wave, spawn index) that never touches the run's rng, so resumed waves replay the same lanes. The roll is the board's last draw, after the far gate's, and placement is rng-free, so boards without the fork are byte-identical to today, switchback boards never fork, and the far gate always sits before the split with its one-third of spawns unchanged. Enemies walk per-lane routes of identical length (so wave pacing, the exit warning and "The long way" are unaffected), split children inherit their parent's lane, and the leak-echo ghost walks back the lane the leaker took; the second lane is painted as the road's own stroke so it shows in the run and the pick preview, and the board reference gains its "The fork" row plus a board.fork invariant. One minimal deviation from the design: placeFork must return the amended GameMap (road and cells change, not just a Fork record), and a one-line mark case was added to boardFactMarks.ts so the reference row paints.
+
+- Self-review: NO VERDICT
+- Time: 253.2 min
+- Deleted tests/core/zz_pin_scratch.test.ts, as the agent asked.
+- Deleted tests/core/zz_choke_scratch.test.ts, as the agent asked.
+- Self-review edits were discarded (checks failed at "check").
+
+```
+projects/chokepoint/game/src/art/board.ts          |   9 ++
+ projects/chokepoint/game/src/core/boardFacts.ts    |   3 +-
+ projects/chokepoint/game/src/core/fork.ts          | 155 +++++++++++++++++++++
+ projects/chokepoint/game/src/core/map.ts           |  12 +-
+ projects/chokepoint/game/src/core/path.ts          |  12 +-
+ projects/chokepoint/game/src/debug/runChecks.ts    |   7 +
+ projects/chokepoint/game/src/entities/Enemy.ts     |   5 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |   2 +-
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  17 ++-
+ projects/chokepoint/game/src/systems/WaveSystem.ts |   9 +-
+ .../game/src/systems/enemyHooks/leakEcho.ts        |   4 +-
+ .../game/src/systems/enemyHooks/midSplit.ts        |   4 +-
+ .../game/src/systems/enemyHooks/split.ts           |   2 +-
+ projects/chokepoint/game/src/ui/boardFactMarks.ts  |   6 +
+ .../chokepoint/game/tests/core/boardFacts.test.ts  |   5 +-
+ .../chokepoint/game/tests/core/farGate.test.ts     |  16 ++-
+ projects/chokepoint/game/tests/core/fork.test.ts   | 154 ++++++++++++++++++++
+ projects/chokepoint/game/tests/core/map.test.ts    |  52 ++++---
+ .../game/tests/core/temp_bend_sweep.test.ts        |  10 +-
+ 19 files changed, 440 insertions(+), 44 deletions(-)
+```

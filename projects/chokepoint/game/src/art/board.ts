@@ -5,6 +5,7 @@ import type { GameMap } from '../core/map';
 import type { PathLine } from '../core/path';
 import { paintToken, roundRectPath, setShadow, shapePath } from './paint';
 import { paintTexture } from './textures';
+import { cellCenter } from '../core/path';
 
 /** Board units of empty space around the island in the board texture, for its shadow. */
 export const BOARD_MARGIN = 40;
@@ -60,6 +61,14 @@ function drawBoard(ctx: CanvasRenderingContext2D, map: GameMap, path: PathLine):
   ctx.lineWidth = CELL * 0.58;
   ctx.strokeStyle = rgba(PALETTE.road, 1);
   ctx.stroke();
+  // The fork (core/fork.ts): the road's second lane, the road's own stroke from the split cell to the rejoin.
+  const fork = map.fork;
+  if (fork) {
+    const lanes = [cellCenter(map.path[fork.split]!, CELL), ...fork.laneB.map((c) => cellCenter(c, CELL)), cellCenter(map.path[fork.rejoin]!, CELL)];
+    ctx.beginPath();
+    lanes.forEach((p, i) => (i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)));
+    ctx.stroke();
+  }
   ctx.restore();
 
   // Gates: where enemies come in (grey, a white chevron) and the exit you defend (ink, a white ring).

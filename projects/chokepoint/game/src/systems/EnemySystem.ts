@@ -10,6 +10,7 @@ import { mintGoldBonus } from '../core/mint';
 import { burnRate, burnStep } from '../core/burn';
 import { TICK_SEC } from '../config';
 import { plateMul } from '../core/plate';
+import { pathLineForLane, type PathLine } from '../core/path';
 import { shieldMul } from '../core/shield';
 import { CONTROL_WINDOW_SEC } from '../core/control';
 import { pickNearest } from '../core/targeting';
@@ -56,7 +57,6 @@ const JOLT_BASE_SIZE = 0.26;
 /** Owns the enemy pool: spawning, walking, hits, kills, leaks, and the health bars. */
 export class EnemySystem {
   private readonly scene: Phaser.Scene;
-  private readonly board: Board;
   private readonly run: RunState;
   private readonly fx: FxSystem;
   private readonly sfx: Sfx | undefined;
@@ -66,16 +66,23 @@ export class EnemySystem {
   private readonly bars: Phaser.GameObjects.Graphics;
   /** What reacts to kills, leaks and every frame of a wave (systems/enemyHooks/), made fresh for this run. */
   private readonly hooks: readonly EnemyHook[];
+  /** The fork's two walking routes (core/fork.ts): lane 0 the road itself, lane 1 its lane B (the same line without a fork). */
+  readonly routes: [PathLine, PathLine];
 
   constructor(scene: Phaser.Scene, board: Board, run: RunState, fx: FxSystem, sfx: Sfx | undefined) {
     this.scene = scene;
-    this.board = board;
     this.run = run;
     this.fx = fx;
     this.sfx = sfx;
     this.bars = scene.add.graphics().setDepth(DEPTH.bars);
+    this.routes = [board.path, board.map.fork ? pathLineForLane(board.map, CELL, 1) : board.path];
     const ctx = { scene, board, run, fx, sfx, enemies: this, towers: () => this.towers() };
     this.hooks = ENEMY_HOOKS.map((make) => make(ctx));
+  }
+
+  /** The walking route of `lane` (the fork's lane B when the board forks, else the road itself). */
+  routeForLane(lane: 0 | 1): PathLine {
+    return this.routes[lane]!;
   }
 
   /** Every pooled enemy (check `active`). Targeting reads this. */
@@ -89,14 +96,14 @@ export class EnemySystem {
     return n;
   }
 
-  spawn(def: EnemyDef, hpMul: number, speedMul = 1, waveSpeedMul = 1, distance = 0): Enemy {
+  spawn(def: EnemyDef, hpMul: number, speedMul = 1, waveSpeedMul = 1, distance = 0, lane: 0 | 1 = 0): Enemy {
     let enemy = this.pool.find((e) => !e.active);
     if (!enemy) {
       enemy = new Enemy(this.scene);
       this.scene.add.existing(enemy);
       this.pool.push(enemy);
     }
-    enemy.spawn(def, hpMul, this.board.path, speedMul, waveSpeedMul, distance);
+    enemy.spawn(def, hpMul, this.routes[lane]!, speedMul, waveSpeedMul, distance, lane);
     hook.stats.enemiesSpawned += 1;
     return enemy;
   }
@@ -104,7 +111,7 @@ export class EnemySystem {
   update(dt: number): void {
     for (const e of this.pool) {
       if (!e.active) continue;
-      const leaked = e.advance(dt, this.board.path);
+      const leaked = e.advance(dt, this.routes[e.lane]!);
       // The burn keeps ticking after the last shot; an enemy that leaks this frame is done.
       if (!leaked) this.tickBurn(e, dt);
       if (leaked) {

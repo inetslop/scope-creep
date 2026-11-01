@@ -30,7 +30,8 @@ const rockCells = (kinds: CellKind[][]): [number, number][] => {
 /**
  * The unowned boards before "The long way" existed: the road and the rocks, pinned per
  * orientation, seed and bends. With the node not owned, generation must stay byte-identical
- * to these, with or without "One more bend" owned.
+ * to these, with or without "One more bend" owned. The pins carry the board traits that sit
+ * on them (the fork, core/fork.ts, on the seeds that roll it).
  */
 const PLAIN_BOARDS: Record<string, { path: [number, number][]; rocks: [number, number][] }> = {
   '14x8/seed-1/bends-0': {
@@ -42,8 +43,8 @@ const PLAIN_BOARDS: Record<string, { path: [number, number][]; rocks: [number, n
     rocks: [[8, 0], [11, 4], [4, 6], [11, 6], [0, 7]],
   },
   '14x8/seed-2/bends-0': {
-    path: [[0, 5], [1, 5], [2, 5], [2, 4], [2, 3], [2, 2], [2, 1], [3, 1], [4, 1], [5, 1], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [6, 6], [7, 6], [8, 6], [8, 5], [8, 4], [8, 3], [8, 2], [9, 2], [10, 2], [10, 3], [10, 4], [10, 5], [10, 6], [11, 6], [12, 6], [13, 6]],
-    rocks: [[1, 0], [7, 1], [9, 3], [3, 4], [7, 7]],
+    path: [[0, 5], [1, 5], [2, 5], [2, 4], [2, 3], [2, 2], [2, 1], [3, 1], [4, 1], [5, 1], [5, 2], [6, 2], [7, 2], [8, 2], [9, 2], [10, 2], [10, 3], [10, 4], [10, 5], [10, 6], [11, 6], [12, 6], [13, 6]],
+    rocks: [[0, 0], [1, 0], [7, 1], [3, 4], [7, 7]],
   },
   '14x8/seed-2/bends-1': {
     path: [[0, 5], [0, 6], [1, 6], [2, 6], [2, 5], [2, 4], [2, 3], [2, 2], [3, 2], [4, 2], [5, 2], [5, 3], [5, 4], [5, 5], [5, 6], [6, 6], [7, 6], [8, 6], [8, 5], [8, 4], [8, 3], [8, 2], [9, 2], [10, 2], [10, 3], [10, 4], [10, 5], [10, 6], [11, 6], [12, 6], [13, 6]],
@@ -66,8 +67,8 @@ const PLAIN_BOARDS: Record<string, { path: [number, number][]; rocks: [number, n
     rocks: [[6, 1], [0, 9], [6, 10], [2, 11], [3, 11]],
   },
   '8x14/seed-2/bends-0': {
-    path: [[5, 0], [5, 1], [5, 2], [4, 2], [3, 2], [2, 2], [1, 2], [1, 3], [1, 4], [1, 5], [2, 5], [3, 5], [4, 5], [5, 5], [6, 5], [6, 6], [6, 7], [6, 8], [5, 8], [4, 8], [3, 8], [2, 8], [2, 9], [2, 10], [3, 10], [4, 10], [5, 10], [6, 10], [6, 11], [6, 12], [6, 13]],
-    rocks: [[1, 0], [5, 3], [3, 7], [0, 8], [0, 13]],
+    path: [[5, 0], [5, 1], [5, 2], [4, 2], [3, 2], [2, 2], [1, 2], [1, 3], [1, 4], [1, 5], [2, 5], [2, 6], [2, 7], [2, 8], [2, 9], [2, 10], [3, 10], [4, 10], [5, 10], [6, 10], [6, 11], [6, 12], [6, 13]],
+    rocks: [[0, 0], [1, 0], [5, 3], [0, 8], [0, 13]],
   },
   '8x14/seed-2/bends-1': {
     path: [[5, 0], [6, 0], [6, 1], [6, 2], [5, 2], [4, 2], [3, 2], [2, 2], [2, 3], [2, 4], [2, 5], [3, 5], [4, 5], [5, 5], [6, 5], [6, 6], [6, 7], [6, 8], [5, 8], [4, 8], [3, 8], [2, 8], [2, 9], [2, 10], [3, 10], [4, 10], [5, 10], [6, 10], [6, 11], [6, 12], [6, 13]],
@@ -154,17 +155,23 @@ describe('generateMap with extra bends', () => {
     [14, 8],
     [8, 14],
   ] as const) {
-    for (const seed of [1, 2, 3, 4, 5, 42]) {
-      it(`on ${cols}x${rows} seed ${seed}: the jog adds exactly one bend and keeps the board valid`, () => {
+    it(`on ${cols}x${rows}: 60 seeds keep the jog's extra bend (on the fork-free boards) and stay valid`, () => {
+      let checked = 0;
+      for (let seed = 1; seed <= 60; seed++) {
         const plain = generateMap(new Rng(seed), cols, rows, 5);
         const windy = generateMap(new Rng(seed), cols, rows, 5, 1);
-        expect(countBends(windy)).toBe(countBends(plain) + 1);
         expect(mapExtraBends(plain)).toBe(0);
         expect(mapExtraBends(windy)).toBe(1);
         expectValidBoard(plain, cols, rows);
         expectValidBoard(windy, cols, rows);
-      });
-    }
+        // The fork (core/fork.ts) reshapes the road it sits on, so the jog's +1 bend is counted where it is out.
+        if (!plain.fork && !windy.fork) {
+          expect(countBends(windy)).toBe(countBends(plain) + 1);
+          checked++;
+        }
+      }
+      expect(checked).toBeGreaterThanOrEqual(40);
+    });
   }
 });
 
@@ -191,34 +198,41 @@ describe('generateMap with the longer road', () => {
     [14, 8],
     [8, 14],
   ] as const) {
-    for (const seed of [1, 2, 3, 4, 5, 42]) {
-      for (const bends of [0, 1]) {
-        it(`on ${cols}x${rows} seed ${seed} with ${bends} bend(s): the owned road is strictly longer and both boards stay valid`, () => {
+    it(`on ${cols}x${rows}: 60 seeds keep the owned road strictly longer (where the fork stays out) and both boards valid`, () => {
+      let checked = 0;
+      for (let seed = 1; seed <= 60; seed++) {
+        for (const bends of [0, 1]) {
           const plain = generateMap(new Rng(seed), cols, rows, 5, bends);
           const long = generateMap(new Rng(seed), cols, rows, 5, bends, 1.25);
-          expect(long.path.length).toBeGreaterThan(plain.path.length);
           expectValidBoard(plain, cols, rows);
           expectValidBoard(long, cols, rows);
-        });
+          // The fork (core/fork.ts) shortens the road it sits on, so the long-way comparison is on the fork-free boards.
+          if (!plain.fork && !long.fork) {
+            expect(long.path.length).toBeGreaterThan(plain.path.length);
+            checked++;
+          }
+        }
       }
-    }
+      expect(checked).toBeGreaterThanOrEqual(40);
+    });
   }
 
-  it('comes out about 25% longer: the mean length ratio over the seeds sits between 1.2 and 1.4', () => {
+  it('comes out about 25% longer where the fork stays out: the mean ratio over the seeds sits between 1.2 and 1.4', () => {
     const ratios: number[] = [];
     for (const [cols, rows] of [
       [14, 8],
       [8, 14],
     ] as const) {
-      for (const seed of [1, 2, 3, 4, 5]) {
+      for (let seed = 1; seed <= 20; seed++) {
         for (const bends of [0, 1]) {
           const plain = generateMap(new Rng(seed), cols, rows, 5, bends);
           const long = generateMap(new Rng(seed), cols, rows, 5, bends, 1.25);
+          if (plain.fork || long.fork) continue; // the fork shortens the road it sits on
           ratios.push(long.path.length / plain.path.length);
         }
       }
     }
-    expect(ratios.length).toBe(20); // 5 seeds x both orientations x both bend states
+    expect(ratios.length).toBeGreaterThanOrEqual(15); // 80 seed pairs, the fork-free majority
     const mean = ratios.reduce((a, b) => a + b, 0) / ratios.length;
     expect(mean).toBeGreaterThan(1.2);
     expect(mean).toBeLessThan(1.4);

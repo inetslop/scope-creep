@@ -17,13 +17,13 @@ const MAX_GHOSTS = 3;
  * nothing; the leak's own effects (life, gold, jolt, warning, combo break, toll) are untouched.
  * It is a live-run transient (a scene object, never saved): a resumed run shows none.
  */
-export const leakEcho: MakeEnemyHook = ({ scene, board, fx }) => {
+export const leakEcho: MakeEnemyHook = ({ scene, fx, enemies }) => {
   let live = 0;
   return {
     onLeak(enemy) {
       if (live >= MAX_GHOSTS || fx.full) return;
       live += 1;
-      const path = board.path;
+      const path = enemies.routeForLane(enemy.lane); // the ghost walks back the lane the leaker took
       const start = path.pointAt(path.length);
       const ghost = artScale(scene.add.image(start.x, start.y, enemyTexture(enemy.def.id)))
         .setDepth(DEPTH.enemies)

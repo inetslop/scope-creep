@@ -133,7 +133,7 @@ export class GameScene extends Phaser.Scene {
     this.exitWarn = new ExitWarning(this, this.board, this.enemies, sfx);
     this.music = new MusicBed(sfx);
     this.leakCost = new LeakCost(this.run, this.fx, this.board);
-    this.waves = new WaveSystem(this.run, this.enemies, farGateDistance(map));
+    this.waves = new WaveSystem(this.run, this.enemies, farGateDistance(map), map.fork !== undefined);
     this.projectiles = new ProjectileSystem(this, this.enemies);
     this.towers = new TowerSystem(this, this.board, this.run, this.enemies, this.projectiles, this.fx, sfx);
     this.enemies.towers = () => this.towers.towers; // a kill pays the mints around it (core/mint.ts)

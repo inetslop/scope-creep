@@ -32,10 +32,10 @@ export const midSplit: MakeEnemyHook = ({ board, enemies, fx }) => {
         if (e.splitClock < SPLIT_TELEGRAPH_SEC) continue;
         const child = getEnemy(e.def.splitsAt!.into); // atSplitLine guarantees it
         const half = splitChildHp(hpAt.get(e) ?? e.hp);
-        const x = e.x, y = e.y, d = e.distance, size = e.def.look.size * CELL, sm = e.speedMul, wm = e.waveSpeedMul; // capture before spawning: spawn may recycle this slot
+        const x = e.x, y = e.y, d = e.distance, size = e.def.look.size * CELL, sm = e.speedMul, wm = e.waveSpeedMul, lane = e.lane; // capture before spawning: spawn may recycle this slot
         e.despawn();
         hpAt.delete(e); // gone with no kill: no gold, no combo, no onKill, no name tag, no Toll, no count
-        for (const dd of splitDistances(d, board.path.length)) enemies.spawn(child, half / child.hp, sm, wm, dd);
+        for (const dd of splitDistances(d, board.path.length)) enemies.spawn(child, half / child.hp, sm, wm, dd, lane);
         clearRing(fx, x, y, size); // T0229's soft white ring, 300 ms
       }
     },

@@ -1,5 +1,6 @@
 import { ensureChokes } from './choke';
 import { farGateCell } from './farGate';
+import { placeFork, type Fork } from './fork';
 import { foldSwitchback } from './switchback';
 import type { Rng } from './rng';
 
@@ -20,6 +21,8 @@ export interface GameMap {
   path: Cell[];
   /** The far gate's cell (core/farGate.ts): a second entrance about a third of the way in, on about one board in three. */
   farGate?: Cell;
+  /** The fork (core/fork.ts): the road splits into two equal lanes that rejoin before the exit, on about one board in three. */
+  fork?: Fork;
   /** True when the path runs top to bottom (portrait boards), false for left to right. */
   vertical: boolean;
 }
@@ -92,7 +95,12 @@ export function generateMap(rng: Rng, cols: number, rows: number, rocks: number,
   const folded = fold ? foldSwitchback(map) : map;
   const result = bgen >= 2 ? ensureChokes(folded, chokes) : folded;
   // The far gate (core/farGate.ts): one board in three grows a second entrance. The roll is the seed's last draw, so the road keeps this seed's usual shape.
-  return { ...result, farGate: rng.chance(1 / 3) ? farGateCell(result) : undefined };
+  const farGate = rng.chance(1 / 3) ? farGateCell(result) : undefined;
+  // The fork (core/fork.ts): one board in three splits the road into two lanes that rejoin before the
+  // exit, a full build row between them. The roll is after the far gate's and the placement is
+  // rng-free, so a board without it is today's exact board; a switchback board keeps its fold.
+  const forked = fold ? undefined : rng.chance(1 / 3) ? placeFork({ ...result, farGate }) : undefined;
+  return { ...(forked ?? result), farGate };
 }
 
 /** 1 when the road's second cell is the entrance jog (not one step along the entrance axis), else 0. */
@@ -111,7 +119,7 @@ export function kindAt(map: GameMap, col: number, row: number): CellKind | undef
 export function cellsBesidePath(map: GameMap): Cell[] {
   const seen = new Set<string>();
   const out: Cell[] = [];
-  for (const p of map.path) {
+  for (const p of [...map.path, ...(map.fork?.laneB ?? [])]) {
     for (let dr = -1; dr <= 1; dr++) {
       for (let dc = -1; dc <= 1; dc++) {
         const col = p.col + dc;

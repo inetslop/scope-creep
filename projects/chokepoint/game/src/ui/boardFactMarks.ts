@@ -39,6 +39,12 @@ export function paintBoardFactMark(g: Phaser.GameObjects.Graphics, mark: BoardFa
       road(g, -10, -4, -10, 4);
       g.fillTriangle(2, -4, 2, 4, 7, 0);
       break;
+    case 'fork': // the road splits into two lanes
+      road(g, -10, 0, -4, 0);
+      road(g, -4, -5, -4, 5);
+      road(g, -4, -5, 10, -5);
+      road(g, -4, 5, 10, 5);
+      break;
     case 'markedcell': // a build cell with a small dot on it
       g.fillRoundedRect(-5, -5, 10, 10, 3);
       g.fillStyle(PALETTE.card, 1);

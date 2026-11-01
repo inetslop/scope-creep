@@ -8,7 +8,7 @@ import { BOARD_NODES } from '../content/tech/board';
  * sibling references. Pure: read once from the live profile, no state.
  */
 
-export type BoardFactMark = 'choke' | 'bend' | 'longway' | 'twochokes' | 'switchback' | 'fargate' | 'markedcell';
+export type BoardFactMark = 'choke' | 'bend' | 'longway' | 'twochokes' | 'switchback' | 'fargate' | 'fork' | 'markedcell';
 export type BoardFactTag = { kind: 'always' } | { kind: 'some' } | { kind: 'tech'; node: string };
 export interface BoardFactRow {
   mark: BoardFactMark;
@@ -24,6 +24,7 @@ export const BOARD_FACTS: readonly BoardFactRow[] = [
   { mark: 'twochokes', name: 'Two chokes', meaning: 'two cells that reach the road twice', tag: { kind: 'tech', node: 'two-chokes' } },
   { mark: 'switchback', name: 'The switchback', meaning: 'the road folds back into double cover', tag: { kind: 'tech', node: 'switchback' } },
   { mark: 'fargate', name: 'The far gate', meaning: 'a second gate; a third of each non-boss wave comes through it', tag: { kind: 'some' } },
+  { mark: 'fork', name: 'The fork', meaning: 'the road splits into two lanes and rejoins', tag: { kind: 'some' } },
   { mark: 'markedcell', name: 'The marked cell', meaning: 'one build cell that makes its tower stronger', tag: { kind: 'some' } },
 ];
 

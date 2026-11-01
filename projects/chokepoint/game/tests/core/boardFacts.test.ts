@@ -3,8 +3,8 @@ import { BOARD_FACTS, boardFactTag } from '../../src/core/boardFacts';
 import { BOARD_NODES } from '../../src/content/tech/board';
 
 describe('the board facts', () => {
-  it('lists the seven modifiers in order, each with its mark key', () => {
-    expect(BOARD_FACTS.map((r) => r.mark)).toEqual(['choke', 'bend', 'longway', 'twochokes', 'switchback', 'fargate', 'markedcell']);
+  it('lists the eight modifiers in order, each with its mark key', () => {
+    expect(BOARD_FACTS.map((r) => r.mark)).toEqual(['choke', 'bend', 'longway', 'twochokes', 'switchback', 'fargate', 'fork', 'markedcell']);
   });
 
   it('the tech tags point at the tech tree\'s own node ids, read from its data', () => {
@@ -26,6 +26,7 @@ describe('the board facts', () => {
     expect(boardFactTag(BOARD_FACTS[0]!, [])).toBe('always');
     expect(boardFactTag(BOARD_FACTS[5]!, [])).toBe('some boards');
     expect(boardFactTag(BOARD_FACTS[6]!, [])).toBe('some boards');
+    expect(boardFactTag(BOARD_FACTS[7]!, [])).toBe('some boards');
     // Unowned: the tree's own node name, never retyped.
     expect(boardFactTag(BOARD_FACTS[1]!, [])).toBe('One more bend');
     expect(boardFactTag(BOARD_FACTS[1]!, ['one-more-bend'])).toBe('owned');
