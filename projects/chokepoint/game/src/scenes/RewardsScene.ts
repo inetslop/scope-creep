@@ -6,6 +6,7 @@ import { cleanWavePay } from '../content/tech/claim';
 import { boardCode } from '../core/boardCode';
 import { levelMultiplierLabel } from '../core/levels';
 import { coinsForRun, loadProfile } from '../core/profile';
+import { loudestWave } from '../core/waveStory';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { Board } from '../systems/Board';
@@ -160,6 +161,59 @@ export class RewardsScene extends Phaser.Scene {
     rows.push({ height: menuButton.container.height, after: 0 });
 
     const col = stack(rows, pad);
+
+    // The run's story: one small mark per wave faced, in run order — green clean, muted held,
+    // red on the death wave. A create()-local set (like the flawless star) so nothing lingers
+    // into the next run's scene.
+    const story = run.story;
+    const deathWave = run.over ? run.wave : -1;
+    const loudest = loudestWave(story);
+    const CARD_GAP = 16; const MARK = 6; const MARK_GAP = 3; const MARKS_PER_ROW = 14;
+    const storyTitle = this.add.text(0, 0, 'Waves', titleStyle(22)).setOrigin(0.5);
+    const legendStyle = textStyle(13, PALETTE.muted);
+    const cleanT = this.add.text(0, 0, 'clean', legendStyle).setOrigin(0, 0.5);
+    const heldT = this.add.text(0, 0, 'held', legendStyle).setOrigin(0, 0.5);
+    const lostT = this.add.text(0, 0, 'lost', legendStyle).setOrigin(0, 0.5);
+    const loudestText = loudest ? this.add.text(0, 0, `loudest · wave ${loudest.wave} · ${loudest.leaks} leaks`, legendStyle).setOrigin(0.5) : undefined;
+    const marksRows = Math.ceil(story.length / MARKS_PER_ROW);
+    const marksH = marksRows * MARK + Math.max(0, marksRows - 1) * MARK_GAP;
+    const storyRows: Array<{ height: number; after: number }> = [{ height: storyTitle.height, after: 12 }];
+    let marksIdx = -1;
+    if (story.length > 0) { marksIdx = storyRows.length; storyRows.push({ height: marksH, after: 12 }); }
+    const legendIdx = storyRows.length;
+    storyRows.push({ height: Math.max(cleanT.height, heldT.height, lostT.height), after: loudest ? 10 : 0 });
+    let loudestIdx = -1;
+    if (loudest && loudestText) { loudestIdx = storyRows.length; storyRows.push({ height: loudestText.height, after: 0 }); }
+    const storyCol = stack(storyRows, 20);
+    const storyY = col.height / 2 + CARD_GAP + storyCol.height / 2;
+    const storyTop = storyY - storyCol.height / 2;
+    const storyPanel = makeCard(this, 0, storyY, panelW, storyCol.height, 28);
+    storyTitle.setY(storyTop + storyCol.ys[0]);
+    const marksG = this.add.graphics().setPosition(0, storyY);
+    if (marksIdx >= 0) {
+      const markCenterY = storyCol.ys[marksIdx] - storyCol.height / 2;
+      story.forEach((r, i) => {
+        const row = (i / MARKS_PER_ROW) | 0;
+        const inRow = Math.min(MARKS_PER_ROW, story.length - row * MARKS_PER_ROW);
+        const w = inRow * MARK + (inRow - 1) * MARK_GAP;
+        const x = -w / 2 + (i % MARKS_PER_ROW) * (MARK + MARK_GAP);
+        const y = markCenterY - marksH / 2 + row * (MARK + MARK_GAP);
+        const color = r.wave === deathWave ? PALETTE.red : r.leaks === 0 ? PALETTE.green : PALETTE.muted; // red wins over gray
+        marksG.fillStyle(color);
+        marksG.fillRoundedRect(x, y, MARK, MARK, 2);
+      });
+    }
+    {
+      const items = [cleanT, heldT, lostT];
+      const colors = [PALETTE.green, PALETTE.muted, PALETTE.red];
+      const itemW = items.map((t) => MARK + 4 + t.width);
+      let lx = -(itemW[0] + 12 + itemW[1] + 12 + itemW[2]) / 2;
+      const legendY = storyTop + storyCol.ys[legendIdx];
+      const legendLocalY = storyCol.ys[legendIdx] - storyCol.height / 2; // marksG sits on the card's center, not its top
+      items.forEach((t, i) => { marksG.fillStyle(colors[i]); marksG.fillRoundedRect(lx, legendLocalY - MARK / 2, MARK, MARK, 2); t.setPosition(lx + MARK + 4, legendY); lx += itemW[i] + 12; });
+    }
+    if (loudestText && loudestIdx >= 0) loudestText.setPosition(0, storyTop + storyCol.ys[loudestIdx]);
+
     const top = -col.height / 2; // the column is centered on the box's origin, so the card's top sits here
     const panel = makeCard(this, 0, 0, panelW, col.height, 28);
     title.setY(top + col.ys[0]);
@@ -203,6 +257,8 @@ export class RewardsScene extends Phaser.Scene {
     if (slotText) parts.push(slotText);
     parts.push(menuButton.container);
     if (this.ironTag) parts.push(this.ironTag);
+    parts.push(storyPanel, storyTitle, marksG, cleanT, heldT, lostT);
+    if (loudestText) parts.push(loudestText);
     const box = this.add.container(0, 0, parts).setDepth(2);
 
     const layout = (width: number, height: number): void => {
@@ -210,7 +266,7 @@ export class RewardsScene extends Phaser.Scene {
       shade.input?.hitArea.setTo(0, 0, width, height);
       const k = Math.min(((width - 16) * display.ratio) / boardSize.width, ((height - 16) * display.ratio) / boardSize.height);
       artScale(board, k * ART);
-      box.setPosition(width / 2, height / 2).setScale(Math.min(1, (width - 24) / panelW, (height - 24) / col.height));
+      box.setPosition(width / 2, height / 2 - (CARD_GAP + storyCol.height) / 2).setScale(Math.min(1, (width - 24) / panelW, (height - 24) / (col.height + CARD_GAP + storyCol.height)));
     };
     layout(viewSize(this).width, viewSize(this).height);
     onResize(this, layout);

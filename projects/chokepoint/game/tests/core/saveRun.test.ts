@@ -24,6 +24,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   hand: [{ id: 'frost', tier: 'rare' }],
   kills: 42,
   cleanWaves: 2,
+  story: [{ wave: 1, leaks: 0 }, { wave: 2, leaks: 1 }, { wave: 3, leaks: 0 }],
   streakPaid: false,
   haulerTold: false,
   rerollsUsed: 1,
@@ -222,6 +223,19 @@ describe('saveRun', () => {
     junk.rerollUsed = 'x';
     store.setItem(SAVED_RUN_KEY, JSON.stringify(junk));
     expect(loadSavedRun(store)).toBeUndefined();
+  });
+
+  it('rejects a broken story, but a save written without the key loads with an empty one', () => {
+    const store = memory();
+    saveRun(store, sample());
+    expect(loadSavedRun(store)).toEqual(sample());
+    const without = { ...sample() } as Record<string, unknown>;
+    delete without.story; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
+    expect(loadSavedRun(store)).toEqual({ ...sample(), story: [] });
+    broken({ story: 'no' });
+    broken({ story: [{ wave: 0, leaks: 0 }] });
+    broken({ story: [{ wave: 1, leaks: -1 }] });
   });
 
   it('rejects a broken hand or towers', () => {

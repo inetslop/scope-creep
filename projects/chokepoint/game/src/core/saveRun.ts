@@ -2,7 +2,7 @@ import { MAX_SLOTS } from '../config';
 import { AUGMENTS } from '../content/augments';
 import { getLevelAugment } from '../content/levels';
 import type { AugmentCopy, Tier } from '../content/types';
-import type { RunMode } from './run';
+import type { RunMode, WaveRecord } from './run';
 import { TIER_ORDER } from './tiers';
 
 /**
@@ -52,6 +52,8 @@ export interface SavedRun {
   hand: AugmentCopy[];
   kills: number;
   cleanWaves: number;
+  /** The run's per-wave story so far; older saves predate the field. */
+  story: WaveRecord[];
   /** The run's one +1 life for a streak of 3 was paid; older saves predate the field. */
   streakPaid: boolean;
   haulerTold: boolean; // the Hauler's extra-cost teach was shown; older saves predate the field
@@ -108,6 +110,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
   if (p.mode !== undefined && p.mode !== 'play' && p.mode !== 'iron') return undefined;
   // Older saves predate the field; a present one must be a short list of known level-augment ids.
   if (p.level !== undefined && (!Array.isArray(p.level) || p.level.length > 16 || !p.level.every((id) => typeof id === 'string' && getLevelAugment(id) !== undefined))) return undefined;
+  if (p.story !== undefined && (!Array.isArray(p.story) || p.story.length > 1e6 || !p.story.every((r) => !!r && typeof r === 'object' && inInt((r as { wave?: unknown }).wave, 1, 1e6) && inInt((r as { leaks?: unknown }).leaks, 0, 1e6)))) return undefined;
   const rerollsUsed = inInt(p.rerollsUsed, 0, 1e6)
     ? p.rerollsUsed
     : p.rerollUsed === true ? 1 : p.rerollUsed === false ? 0 : undefined; // older saves carried the one-reroll flag
@@ -140,6 +143,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
     hand: p.hand as AugmentCopy[],
     kills: p.kills,
     cleanWaves: p.cleanWaves,
+    story: Array.isArray(p.story) ? (p.story as WaveRecord[]) : [],
     streakPaid: p.streakPaid === true,
     haulerTold: p.haulerTold === true,
     rerollsUsed,

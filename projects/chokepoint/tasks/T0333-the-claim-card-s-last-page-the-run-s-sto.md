@@ -4,11 +4,12 @@ title: "The claim card's last page: the run's story, one mark per wave"
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T02:32:15Z
 claimed_at: 2026-11-01T02:40:42Z
+finished_at: 2026-11-01T02:52:42Z
 epic: E12
 ---
 
@@ -137,3 +138,23 @@ box.setPosition(width / 2, height / 2 - (CARD_GAP + storyCol.height) / 2).setSca
 
 ### Tests
 - `tests/core/run.test.ts` (3 recording cases), `tests/core/waveStory.test.ts` (loudest/tie/empty), `tests/core/saveRun.test.ts` (story round-trip + broken rejections).
+
+## Result (attempt 1, desktop)
+
+The rewards screen now shows the run's story under the claim card: a second white card with one small mark per wave faced (green = clean, muted gray = held, red on the death wave), a legend, and the "loudest · wave N · M leaks" line. The story is written to the run as each wave ends (and on the fatal wave), carried through the resume save so resumed runs keep their whole history, and validated on load with a new smoke invariant that records are waves 1..n. All checks and the desktop + mobile smoke test pass.
+
+- Self-review: APPROVE
+- Time: 12.0 min
+
+```
+projects/chokepoint/game/src/core/run.ts           | 10 +++-
+ projects/chokepoint/game/src/core/saveRun.ts       |  6 ++-
+ projects/chokepoint/game/src/core/waveStory.ts     |  8 +++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ .../chokepoint/game/src/scenes/RewardsScene.ts     | 58 +++++++++++++++++++++-
+ projects/chokepoint/game/src/systems/RunSave.ts    |  2 +
+ projects/chokepoint/game/tests/core/run.test.ts    | 26 ++++++++++
+ .../chokepoint/game/tests/core/saveRun.test.ts     | 14 ++++++
+ .../chokepoint/game/tests/core/waveStory.test.ts   | 22 ++++++++
+ 9 files changed, 144 insertions(+), 3 deletions(-)
+```

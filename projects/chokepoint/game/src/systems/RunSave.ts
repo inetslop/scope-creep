@@ -48,6 +48,7 @@ export class RunSave {
       hand: run.hand.map((c) => ({ id: c.id, tier: c.tier })),
       kills: run.kills,
       cleanWaves: run.cleanWaves,
+      story: run.story.map((r) => ({ wave: r.wave, leaks: r.leaks })),
       streakPaid: run.streakPaid,
       haulerTold: run.haulerTold,
       rerollsUsed: run.rerollsUsed,
@@ -72,6 +73,7 @@ export class RunSave {
     run.wave = saved.wave;
     run.kills = saved.kills;
     run.cleanWaves = saved.cleanWaves;
+    run.story = saved.story.map((r) => ({ wave: r.wave, leaks: r.leaks }));
     run.streakPaid = saved.streakPaid;
     run.haulerTold = saved.haulerTold;
     run.rerollsUsed = saved.rerollsUsed;

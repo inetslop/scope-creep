@@ -15,6 +15,9 @@ export type RunPhase = 'build' | 'wave' | 'draft' | 'over';
 /** How the run was started: a normal run, or the Iron mode (one life, doubled coins). */
 export type RunMode = 'play' | 'iron';
 
+/** The run's story, one record per wave faced, written as the run goes. */
+export interface WaveRecord { wave: number; leaks: number; }
+
 /** Everything about the current run that isn't an engine object. Shared through the registry as 'run'. */
 export class RunState {
   readonly seed: number;
@@ -44,6 +47,7 @@ export class RunState {
   bestCombo = 0; // the longest kill chain the run reached (the ×N counter's high mark)
   goldEarned = 0; // gold earned this run: kill gold + wave bonuses
   cleanWaves = 0; // waves that ended without a leak
+  story: WaveRecord[] = []; // the run's per-wave story, one record per wave faced (the death wave ends it)
   rerollsUsed = 0; // rerolls the run has bought; the next one costs rerollCost(rerollsUsed)
   cleanStreak = 0; // clean waves in a row; a leak resets it to 0
   streakPaid = false; // the run's one +1 life for a streak of 3 was paid
@@ -120,7 +124,10 @@ export class RunState {
     this.lives = Math.max(0, this.lives - livesCost);
     this.leaksThisWave += 1;
     this.cleanStreak = 0;
-    if (this.lives === 0) this.phase = 'over';
+    if (this.lives === 0) {
+      this.phase = 'over';
+      this.story.push({ wave: this.wave, leaks: this.leaksThisWave }); // the death wave, fatal leak included
+    }
     return this.phase === 'over';
   }
 
@@ -148,6 +155,7 @@ export class RunState {
         this.streakPaid = true;
       }
     }
+    this.story.push({ wave: this.wave, leaks: this.leaksThisWave });
     this.leaksThisWave = 0;
     this.phase = 'draft';
     return bonus;

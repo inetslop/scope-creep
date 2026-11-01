@@ -187,6 +187,32 @@ describe('RunState', () => {
     expect(run.streakPaid).toBe(false);
   });
 
+  it('writes the story as it goes: one record per cleared wave, in order, with its leaks', () => {
+    const run = new RunState(1);
+    expect(run.story).toEqual([]);
+    run.startWave();
+    run.leak(1);
+    run.clearWave();
+    run.startBuild(5);
+    run.startWave();
+    run.clearWave();
+    expect(run.story).toEqual([{ wave: 1, leaks: 1 }, { wave: 2, leaks: 0 }]);
+  });
+
+  it('records the death wave with the leaks it had taken, the fatal one included, and nothing after death', () => {
+    const run = new RunState(1);
+    run.startWave();
+    run.clearWave();
+    run.startBuild(5);
+    run.startWave();
+    run.leak(1);
+    expect(run.over).toBe(false);
+    expect(run.leak(START.lives - 1)).toBe(true);
+    expect(run.story).toEqual([{ wave: 1, leaks: 0 }, { wave: 2, leaks: 2 }]);
+    run.leak(1);
+    expect(run.story).toEqual([{ wave: 1, leaks: 0 }, { wave: 2, leaks: 2 }]); // a leak after death records nothing
+  });
+
   it('says the clean streak in words: building, the paying wave, then only the coin', () => {
     const run = new RunState(1);
     const clean = (): string | undefined => {
