@@ -1,12 +1,14 @@
 ---
 id: T0319
 title: The first run says build beside the road
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T01:13:09Z
+claimed_at: 2026-11-01T04:07:37Z
 epic: E11
 ---
 
