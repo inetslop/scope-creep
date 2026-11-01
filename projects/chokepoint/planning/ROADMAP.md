@@ -49,8 +49,8 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - The Flyer, the wave-50 boss: the fifth every-10 boss, the first that doesn't walk the road — a straight-line crossing from the island's edge to the exit, a bank at half health — **T0317 (L, priority 2, in progress, asus)**
 - the build phase shows the line: before the flyer's wave, its route is on the board through the build — the crossing's cover is chosen in the build, not learned at the wave's door — **tasked as T0346 (M, in the pool, waits on T0317)**
 - the regular Flyer in the wave mix: the first enemy that doesn't walk the road — a small fast shape that crosses the island in a straight line from its edge to the exit, one on the Feeder's old waves (13, 17, 21, …); carries the Feeder's removal, the regular cap stays 10 of 10 — **done as T0353 (L, 2026-11-01, asus)**; its one-time preview teach — **done as T0373 (S, 2026-11-01, yoga)**
-- the Flyer's motion reads as flight: a short fading streak in its own color trails the regular Flyer through the sky — **tasked as T0375 (S, in the pool, 2026-11-01)**
-- the sky wears its own note: one soft sustained tone plays while any regular Flyer is in the air, heard as distinct from the road's thuds — **tasked as T0376 (M, in the pool, 2026-11-01)**
+- the Flyer's motion reads as flight: a short fading streak in its own color trails the regular Flyer through the sky — **done as T0375 (S, 2026-11-01, yoga)**
+- the sky wears its own note: one soft sustained tone plays while any regular Flyer is in the air, heard as distinct from the road's thuds — **done as T0376 (M, 2026-11-01, inet-racing)**
 - the crossing learns: at 50% hp the bank's line is chosen to cross where the run's towers cover least — the boss banks into the uncovered ground, the 0.8 s preview keeping it fair — **tasked as T0379 (L, in the pool, waits on T0317)**
 
 ### E11 — First run teaches itself (done; history in planning/archive/ROADMAP.md)
@@ -67,7 +67,22 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - The thin road: 85 coins by the depth rule, every enemy 10% slower — **tasked as T0369 (M, in the pool)**
 - The breather: 155 coins by the depth rule, quiet waves pay 2× the wave bonus — **tasked as T0370 (S, in the pool)** (no buy-gate inside the branch: each node buys independently at its depth price)
 
-### Enemy queue (non-epic)
+#### E15 — The move: a misplaced tower goes where it should (active — opened 2026-11-01)
+**Goal:** a misplaced tower is not permanent, and it doesn't have to be sold: in the build phase a tower can move to a free build cell for a fee, keeping its augments and kills — repositioning against the wave preview is a real decision with a price, not a free reposition or a sell-and-rebuild.
+**When done:** the tower panel wears a "Move · −N" line (N = 60% of its slots' cost, floored, minimum 5, the sell's own rule); tapping it opens the move state — the tower dims, the free build cells outline, and the what-if's range ring shows at the tapped cell with the placement's own ✓/✗ — and ✓ slides the tower over in ~300 ms and pays the fee (the −N chip at the old cell, the drop-in bounce, the place haptic); one move per tower per build phase, the line reading "moved" until the next; a tap elsewhere cancels.
+**Breakdown:**
+- the move itself: the panel line, the move state, the slide, the fee, the per-build-phase limit, the resume flag, the one-time teach line — **tasked as T0382 (L, in the pool)**
+- the move's note: one quiet blip on the commit (the speed toggle's note pattern, T0315) — **parked, S**
+
+### E16 — The tower: a tech branch for how towers are managed (active — opened 2026-11-01)
+**Goal:** the tech tree has covered run start, the board, the pool, the claim and the wave — but not the tower itself: a sixth branch lets between-run coins buy how towers are managed.
+**When done:** the tree's "The tower" branch has three nodes, each bought once and on for every run after: Soft sell (a sell refunds 80% of slot cost, not 70%), The light move (a move's fee 30% instead of 60%) and The rich cell (the marked cell's buff 1.25× → 1.5×).
+**Breakdown:**
+- the branch and its first node, Soft sell: the tech screen's sixth row plus a 30-coin node that raises the sell's refund 70% → 80% of slot cost — **tasked as T0383 (M, in the pool)**
+- The light move: 85 coins by the depth rule, a move's fee 60% → 30% — **waits on T0382 (E15); task when it can start**
+- The rich cell: 155 coins by the depth rule, the marked cell's buff 1.25× → 1.5× — **parked**
+
+## Enemy queue (non-epic)
 
 New enemies land one at a time: each new-enemy task chains behind the one before it so the enemy system, the wave mix and the art settle between additions.
 
