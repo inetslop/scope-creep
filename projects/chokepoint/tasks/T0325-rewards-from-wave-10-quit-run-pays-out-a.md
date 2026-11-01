@@ -1,12 +1,14 @@
 ---
 id: T0325
 title: Rewards from wave 10; Quit run pays out and ends it; Main menu keeps it
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T23:37:22Z
+claimed_at: 2026-11-01T04:58:18Z
 epic: E9
 ---
 
