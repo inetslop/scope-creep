@@ -3,13 +3,12 @@ id: T0382
 title: "The move: a misplaced tower goes where it should"
 size: L
 priority: 2
-status: designing
+status: design
 depends_on: []
 attempts: 0
 created: 2026-11-01T21:57:55Z
-claimed_at: 2026-11-01T21:57:59Z
 epic: E15
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
