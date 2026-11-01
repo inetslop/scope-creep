@@ -19,7 +19,7 @@ import { bossOut } from './bossOut';
 import { bossPhase } from './bossPhase';
 import { dasherStreak } from './dasherStreak';
 import { sprinterRamp } from './sprinterRamp';
-import { crackTick } from './crackTick';
+import { crackDeep } from './crackDeep';
 import { split } from './split';
 import { midSplit } from './midSplit';
 import { killCoin } from './killCoin';
@@ -47,7 +47,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   bossPhase,
   dasherStreak,
   sprinterRamp,
-  crackTick,
+  crackDeep,
   killCoin,
   killMilestone,
   waveClose,

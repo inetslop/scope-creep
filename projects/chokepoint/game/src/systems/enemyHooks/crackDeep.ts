@@ -5,13 +5,12 @@ import type { Enemy } from '../../entities/Enemy';
 import type { FxSystem } from '../FxSystem';
 import type { MakeEnemyHook } from './hook';
 
-// The Splitter's crack is its whole deal, and there are no hp bars: at half hp or less the
-// token's own crack line is redrawn twice as thick in the token's own deep color, so
-// "about to split" reads before it happens. Above half hp nothing is drawn. The split
-// itself is unchanged: still on death from any source (split.ts). The line's numbers copy
-// the crack painted in art/entities.ts (same path, same width formula, doubled).
-
-export const crackTick: MakeEnemyHook = ({ fx, enemies }) => {
+/** The Splitter's crack, always on: alpha = 0.25 + 0.75 * (1 - hp / maxHp), re-derived from the live
+ *  hp every frame, so a spawn or a resumed run's Splitter matches its hp from the first frame, no
+ *  replay. One line per Splitter, the same path/width as the crack the token used to bake
+ *  (art/entities.ts), in its own deep color. Display only: the split (split.ts), the Splinter,
+ *  the numbers and the wave mix stay as they are. */
+export const crackDeep: MakeEnemyHook = ({ fx, enemies }) => {
   const lines = new Map<Enemy, Phaser.GameObjects.Graphics>();
   const drop = (e: Enemy) => {
     const g = lines.get(e);
@@ -22,9 +21,9 @@ export const crackTick: MakeEnemyHook = ({ fx, enemies }) => {
   return {
     update() {
       for (const e of enemies.all) {
-        // Only the enemy whose token paints a crack, at half hp or less (a dead one too,
-        // so a same-frame kill can't leave a line on a corpse).
-        if (!e.active || e.def.splitsInto === undefined || e.hp <= 0 || e.hp * 2 > e.maxHp) {
+        // Only the enemy whose token paints a crack (the splitter; `splitsInto` is the only one),
+        // alive (a dead one too, so a same-frame kill can't leave a line on a corpse).
+        if (!e.active || e.def.splitsInto === undefined || e.hp <= 0) {
           drop(e);
           continue;
         }
@@ -36,14 +35,11 @@ export const crackTick: MakeEnemyHook = ({ fx, enemies }) => {
         // The face's center: the token's face sits depth/2 above the enemy's point (art/entities.ts).
         const r = e.def.look.size * CELL;
         g.setPosition(e.x, e.y - Math.max(2, r * 0.18) / 2);
+        g.setAlpha(0.25 + 0.75 * (1 - e.hp / e.maxHp));
       }
     },
-    onKill({ enemy }) {
-      drop(enemy); // gone the frame it dies, even on the wave's last frame
-    },
-    onLeak(enemy) {
-      drop(enemy);
-    },
+    onKill({ enemy }) { drop(enemy); }, // gone the frame it dies, even on the wave's last frame
+    onLeak(enemy) { drop(enemy); },
   };
 };
 
@@ -51,11 +47,12 @@ export const crackTick: MakeEnemyHook = ({ fx, enemies }) => {
 function makeLine(fx: FxSystem, e: Enemy): Phaser.GameObjects.Graphics {
   const r = e.def.look.size * CELL;
   const g = fx.scene.add.graphics().setDepth(DEPTH.fx);
-  g.lineStyle(2 * Math.max(1, r * 0.1), deepOf(e.def.look.color), 1); // twice the painted crack, in its own deep
+  g.lineStyle(Math.max(1, r * 0.1), deepOf(e.def.look.color), 1); // the painted crack's width, its own deep
   g.beginPath();
   g.moveTo(-r * 0.55, -r * 0.1);
   g.lineTo(r * 0.05, r * 0.12);
   g.lineTo(r * 0.55, -r * 0.02);
   g.strokePath();
+  g.setAlpha(0.25 + 0.75 * (1 - e.hp / e.maxHp));
   return g;
 }

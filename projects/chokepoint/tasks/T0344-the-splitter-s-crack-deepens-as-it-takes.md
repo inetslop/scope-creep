@@ -4,11 +4,12 @@ title: "The Splitter's crack deepens as it takes damage"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T07:03:24Z
 claimed_at: 2026-11-01T07:18:04Z
+finished_at: 2026-11-01T07:31:11Z
 ---
 
 ## Goal
@@ -118,3 +119,18 @@ function makeLine(fx: FxSystem, e: Enemy): Phaser.GameObjects.Graphics {
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+The Splitter's crack is now a live countdown: a new enemy hook `crackDeep` draws one crack line per Splitter (replacing the baked-in token crack removed from `art/entities.ts` and the superseded `crackTick` hook), and its alpha re-derives every frame from live hp — `0.25 + 0.75 × (1 − hp/maxHp)` — so a full-health Splitter shows a faint 25% crack that deepens to full strength as it nears splitting, with spawn and resumed-run Splitters matching hp from frame one. Only the Splitter is affected (selector: the `splitsInto` field, unique to it); the split rule, the Splinter, the numbers, the wave mix, and all other tokens are unchanged.
+
+- Self-review: APPROVE
+- Time: 13.1 min
+- Deleted src/systems/enemyHooks/crackTick.ts, as the agent asked.
+
+```
+projects/chokepoint/game/src/art/entities.ts       | 13 ---------
+ .../enemyHooks/{crackTick.ts => crackDeep.ts}      | 31 ++++++++++------------
+ .../game/src/systems/enemyHooks/index.ts           |  4 +--
+ 3 files changed, 16 insertions(+), 32 deletions(-)
+```
