@@ -165,14 +165,15 @@ export function nodeInReach(purchased: readonly string[], coins: number): boolea
 }
 
 /**
- * Buys a claim node from the saved profile's coins. Refuses an unknown or already owned id and a
- * price the coins don't cover (they never go below zero); a claim node has no prerequisites and
- * no gate — its effect is in the run the moment it is bought.
+ * Buys a claim node from the saved profile's coins. Refuses an unknown or already owned id, a
+ * node whose previous one is not owned, and a price the coins don't cover (they never go below
+ * zero); the node's effect is in the run the moment it is bought.
  */
 export function buyClaimNode(store: KeyValueStore | undefined, id: string): boolean {
   const profile = loadProfile(store);
   const node = CLAIM_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
+  if (node.requires !== null && !profile.purchased.includes(node.requires)) return false;
   const price = nodeCost(CLAIM_NODES, id);
   if (profile.coins < price) return false;
   profile.coins -= price;

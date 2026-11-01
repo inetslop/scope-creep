@@ -60,6 +60,25 @@ describe('profile', () => {
     expect(recordRun(memory(), { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2 }).coins).toBe(5);
   });
 
+  it('the Flawless node adds ten coins when every held wave is clean, and the term drops off when one is not', () => {
+    expect(coinsForRun({ waves: 3, stopped: 0, clean: 3, seed: 1, bgen: 2 }, 1, 1, 1, 10)).toBe(16); // 3 + 3 + 10
+    expect(coinsForRun({ waves: 3, stopped: 0, clean: 2, seed: 1, bgen: 2 }, 1, 1, 1, 10)).toBe(5); // the term drops off
+    expect(coinsForRun({ waves: 0, stopped: 0, clean: 0, seed: 1, bgen: 2 }, 1, 1, 1, 10)).toBe(0); // no wave held
+  });
+
+  it('the Iron multiplier doubles the flawless term, like the clean term', () => {
+    expect(coinsForRun({ waves: 3, stopped: 0, clean: 3, seed: 1, bgen: 2 }, 2, 2, 1, 10)).toBe(38); // (3 + 6 + 10) * 2
+  });
+
+  it('a recorded flawless run pays the ten coins only while the Flawless node is owned', () => {
+    const store = memory();
+    store.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2', 'flawless'] }));
+    expect(recordRun(store, { waves: 3, stopped: 0, clean: 3, seed: 106, bgen: 2 }).coins).toBe(19); // 3 waves + 3 clean at two each + 10
+    const noNode = memory();
+    noNode.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2'] }));
+    expect(recordRun(noNode, { waves: 3, stopped: 0, clean: 3, seed: 106, bgen: 2 }).coins).toBe(9); // the same run without the node
+  });
+
   it('loads an empty profile from missing or broken storage', () => {
     const empty = { bestWave: 0, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true, levelSlots: 0, levelOn: [] };
     expect(loadProfile(undefined)).toEqual(empty);

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { BOARD_NODES } from '../../src/content/tech/board';
-import { CLAIM_NODES, cleanWavePay } from '../../src/content/tech/claim';
+import { CLAIM_NODES, cleanWavePay, flawlessPay } from '../../src/content/tech/claim';
 import { POOL_NODES } from '../../src/content/tech/pool';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
 import { boardBends, boardChokes, boardLengthMul, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES } from '../../src/core/tech';
@@ -126,8 +126,11 @@ describe('tech', () => {
     expect(startBonuses(['haste'])).toEqual({ gold: 0, life: 0 });
   });
 
-  it('the claim row is one node: Clean ×2 at 30, paying two coins per clean wave', () => {
-    expect(CLAIM_NODES.map((n) => [n.id, n.name, n.price, n.pay])).toEqual([['clean2', 'Clean ×2', 30, 2]]);
+  it('the claim row is two nodes: Clean ×2 at 30, then Flawless at 30 needing it', () => {
+    expect(CLAIM_NODES.map((n) => [n.id, n.name, n.price, n.pay, n.flawless, n.requires])).toEqual([
+      ['clean2', 'Clean ×2', 30, 2, 0, null],
+      ['flawless', 'Flawless', 30, 0, 10, 'clean2'],
+    ]);
   });
 
   it('a clean wave pays one coin until the claim node is owned', () => {
@@ -136,7 +139,13 @@ describe('tech', () => {
     expect(cleanWavePay(['clean2'])).toBe(2);
   });
 
-  it('a claim node buys only when it is known, unowned and affordable', () => {
+  it('a flawless run pays 10 coins only while the Flawless node is owned', () => {
+    expect(flawlessPay([])).toBe(0);
+    expect(flawlessPay(['clean2'])).toBe(0); // the first node does not pay the flawless run
+    expect(flawlessPay(['flawless'])).toBe(10);
+  });
+
+  it('a claim node buys only when it is known, unowned, unlocked and affordable', () => {
     expect(buyClaimNode(withCoins(60), 'nope')).toBe(false);
     const broke = withCoins(29);
     expect(buyClaimNode(broke, 'clean2')).toBe(false); // unaffordable: 29 < 30
@@ -144,6 +153,14 @@ describe('tech', () => {
     const owned = withCoins(60, ['clean2']);
     expect(buyClaimNode(owned, 'clean2')).toBe(false); // already owned
     expect(loadProfile(owned).coins).toBe(60);
+    expect(buyClaimNode(withCoins(85), 'flawless')).toBe(false); // Clean ×2 is not owned
+    const brokeF = withCoins(84, ['clean2']);
+    expect(buyClaimNode(brokeF, 'flawless')).toBe(false); // unaffordable: 84 < 85
+    expect(loadProfile(brokeF).coins).toBe(84);
+    const storeF = withCoins(85, ['clean2']);
+    expect(buyClaimNode(storeF, 'flawless')).toBe(true);
+    expect(loadProfile(storeF).coins).toBe(0);
+    expect(loadProfile(storeF).purchased).toEqual(['clean2', 'flawless']);
   });
 
   it('a claim purchase deducts exactly 30 and saves the id alongside the other branches', () => {
@@ -237,6 +254,7 @@ describe('tech', () => {
   it('nodeCost: the first node is the base, later nodes scale by their position', () => {
     expect(nodeCost(TECH_NODES, 'gold-1')).toBe(5);
     expect(nodeCost(TECH_NODES, 'life-2')).toBe(55);
+    expect(nodeCost(CLAIM_NODES, 'flawless')).toBe(85); // 30 at the claim branch's depth 2
   });
 
   it('a later node buys at its depth price, deducted from the coins', () => {

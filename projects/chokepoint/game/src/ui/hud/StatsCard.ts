@@ -1,7 +1,7 @@
 import type Phaser from 'phaser';
 import { START } from '../../config';
 import { cssColor, PALETTE } from '../../content/palette';
-import { cleanWavePay } from '../../content/tech/claim';
+import { cleanWavePay, flawlessPay } from '../../content/tech/claim';
 import { artScale, COIN_TEXTURE, LIFE_TEXTURE } from '../../art/textures';
 import { coinsForRun, loadProfile } from '../../core/profile';
 import { isLastStand } from '../../core/lastStand';
@@ -22,6 +22,7 @@ export class StatsCard implements HudPart {
   private readonly coinIcon: Phaser.GameObjects.Image;
   private readonly goldTag: Phaser.GameObjects.Text;
   private readonly cleanPay: number;
+  private readonly flawlessPay: number;
   private lastN = 0;
   private popping = false;
   private lastLives: number = START.lives;
@@ -32,8 +33,10 @@ export class StatsCard implements HudPart {
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
     // The profile can't change mid-run (the tech screen is only reachable from the menu), so the
-    // clean pay is read once here, not on every frame of update().
-    this.cleanPay = cleanWavePay(loadProfile(window.localStorage).purchased);
+    // node pays are read once here, not on every frame of update().
+    const purchased = loadProfile(window.localStorage).purchased;
+    this.cleanPay = cleanWavePay(purchased);
+    this.flawlessPay = flawlessPay(purchased);
     const card = makeCard(scene, 0, 0, 196, 72, 24);
     const lifeIcon = artScale(scene.add.image(-74, -14, LIFE_TEXTURE), 1.25);
     this.lives = scene.add.text(-56, -13, '', textStyle(22, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
@@ -60,7 +63,7 @@ export class StatsCard implements HudPart {
     this.lastLives = game.run.lives;
     this.gold.setText(String(game.run.gold));
     this.goldTagRow(game.run.phase === 'wave' && isQuietWave(game.run.wave) && isLastStand(game.run));
-    const n = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed, bgen: game.run.bgen }, this.cleanPay, game.run.mode === 'iron' ? 2 : 1, game.run.levelHpMul);
+    const n = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed, bgen: game.run.bgen }, this.cleanPay, game.run.mode === 'iron' ? 2 : 1, game.run.levelHpMul, this.flawlessPay);
     this.coins.setText(`+${n} coins`);
     if (n > this.lastN) this.pop();
     this.lastN = n;

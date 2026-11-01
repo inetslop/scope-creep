@@ -4,11 +4,12 @@ title: "The claim branch's second node: Flawless pays 10 coins"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T00:11:52Z
 claimed_at: 2026-11-01T03:35:27Z
+finished_at: 2026-11-01T04:08:33Z
 epic: E9
 ---
 
@@ -91,3 +92,23 @@ const coinRecipe = recipe(coinRecipeParts.join(' · '));
 ### Tests
 - `tests/core/tech.test.ts`: node list (id/name/price/pay/flawless/requires), `flawlessPay` ownership, `nodeCost(CLAIM_NODES,'flawless')` = 85, `buyClaimNode` gating (no clean2 / 84 coins refuse, 85 buys).
 - `tests/core/profile.test.ts`: the term's presence/drop-off/zero-waves, Iron doubling of the term, and `recordRun` reading the node from the profile (16 with, 6 without).
+
+## Result (attempt 1, asus)
+
+The claim branch's second node "Flawless" (85 coins by the depth rule, gated on Clean ×2) now pays a flawless run +10 coins: the term lives in `coinsForRun` (inside the multiplied sum, read from the run's held/clean ledger — no new save field), flows through the live stats tally, the pause's worth line, the claim coins and the "flawless +10" recipe term on the rewards card, and the tech screen shows the node locked until Clean ×2 is owned, then buyable with the owned mark. Three small deviations from the design (a buggy `flawlessPay` one-liner, two miscomputed test expectations) are documented above. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 33.1 min
+
+```
+projects/chokepoint/game/src/content/tech/claim.ts | 16 +++++++++++--
+ projects/chokepoint/game/src/core/profile.ts       | 15 +++++++------
+ projects/chokepoint/game/src/core/tech.ts          |  7 +++---
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  4 ++--
+ .../chokepoint/game/src/scenes/RewardsScene.ts     |  9 +++++---
+ projects/chokepoint/game/src/scenes/TechScene.ts   |  2 +-
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts   | 11 +++++----
+ .../chokepoint/game/tests/core/profile.test.ts     | 19 ++++++++++++++++
+ projects/chokepoint/game/tests/core/tech.test.ts   | 26 ++++++++++++++++++----
+ 9 files changed, 83 insertions(+), 26 deletions(-)
+```

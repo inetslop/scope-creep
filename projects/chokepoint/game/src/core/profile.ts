@@ -1,5 +1,5 @@
 /** The device's profile: best wave, runs played, coins, and the four most recent runs. Storage is passed in, so this stays pure and testable. */
-import { cleanWavePay } from '../content/tech/claim';
+import { cleanWavePay, flawlessPay } from '../content/tech/claim';
 import { LEVEL_AUGMENTS, getLevelAugment } from '../content/levels';
 import { levelSlotsAfter } from './levels';
 
@@ -114,17 +114,18 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
   }
 }
 
-/** What a run is worth in coins: the waves held, a coin per ten stopped, and one per clean wave
- * (two with the claim node), then the mode's multiplier (2 for Iron), and the level augments'
- * multiplier, over the whole sum, rounded down. */
-export function coinsForRun(result: RunResult, cleanPay = 1, mul = 1, levelMul = 1): number {
-  return Math.floor((result.waves + Math.floor(result.stopped / 10) + result.clean * cleanPay) * mul * levelMul);
+/** What a run is worth in coins: the waves held, a coin per ten stopped, one per clean wave
+ * (two with the claim node), ten for a flawless run (with the Flawless node), then the mode's
+ * multiplier (2 for Iron), and the level augments' multiplier, over the whole sum, rounded down. */
+export function coinsForRun(result: RunResult, cleanPay = 1, mul = 1, levelMul = 1, flawlessPay = 0): number {
+  const flawless = result.waves > 0 && result.clean === result.waves ? flawlessPay : 0;
+  return Math.floor((result.waves + Math.floor(result.stopped / 10) + result.clean * cleanPay + flawless) * mul * levelMul);
 }
 
 /** Folds a finished run into the saved profile and saves it. */
 export function recordRun(store: KeyValueStore | undefined, result: RunResult): RecordResult {
   const old = loadProfile(store);
-  const coins = coinsForRun(result, cleanWavePay(old.purchased), result.mul ?? 1, result.levelMul ?? 1);
+  const coins = coinsForRun(result, cleanWavePay(old.purchased), result.mul ?? 1, result.levelMul ?? 1, flawlessPay(old.purchased));
   const newBest = result.waves > old.bestWave;
   const levelSlots = levelSlotsAfter(old.levelSlots, result.reached ?? result.waves, result.levelOn ?? old.levelOn.length, LEVEL_AUGMENTS.length);
   const profile: Profile = {
