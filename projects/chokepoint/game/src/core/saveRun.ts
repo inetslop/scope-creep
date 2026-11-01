@@ -65,6 +65,7 @@ export interface SavedRun {
   modeStrongestTold: boolean; // the run's one strongest-mode chip showed (T0368); older saves predate the field
   modeClosestTold: boolean; // the run's one closest-mode chip showed (T0368)
   milestone30Asked: boolean; // the wave-30 milestone card was shown; older saves predate the field
+  farGateTold: boolean; // the far gate's first-send chip showed; older saves predate the field
   rerollsUsed: number; // how many rerolls the run has bought; older saves carried rerollUsed: boolean
   /** The level augments on for the run; older saves predate the field. */
   level: string[];
@@ -117,6 +118,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
   if (p.modeStrongestTold !== undefined && typeof p.modeStrongestTold !== 'boolean') return undefined;
   if (p.modeClosestTold !== undefined && typeof p.modeClosestTold !== 'boolean') return undefined;
   if (p.milestone30Asked !== undefined && typeof p.milestone30Asked !== 'boolean') return undefined;
+  if (p.farGateTold !== undefined && typeof p.farGateTold !== 'boolean') return undefined;
   if (!inRange(p.gold, 0, 1e6)) return undefined;
   if (!inInt(p.lives, 0, 1e6) || !inInt(p.kills, 0, 1e6) || !inInt(p.cleanWaves, 0, 1e6)) return undefined;
   if (p.mode !== undefined && p.mode !== 'play' && p.mode !== 'iron') return undefined;
@@ -163,6 +165,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
     modeStrongestTold: p.modeStrongestTold === true,
     modeClosestTold: p.modeClosestTold === true,
     milestone30Asked: p.milestone30Asked === true || p.wave > LEVEL_UNLOCK_WAVE, // older saves count as asked once their wave is past 30
+    farGateTold: p.farGateTold === true,
     rerollsUsed,
     level: Array.isArray(p.level) ? (p.level as string[]) : [],
     towers: p.towers as SavedTower[],

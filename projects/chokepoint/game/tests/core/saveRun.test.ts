@@ -31,6 +31,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   modeStrongestTold: false,
   modeClosestTold: false,
   milestone30Asked: false,
+  farGateTold: false,
   rerollsUsed: 1,
   level: [],
   towers: [
@@ -217,6 +218,17 @@ describe('saveRun', () => {
     store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
     expect(loadSavedRun(store)).toEqual(sample());
     broken({ blockTold: 'x' });
+  });
+
+  it('round-trips a far-gate-told save, and a save written without the key loads as untold', () => {
+    const store = memory();
+    saveRun(store, sample({ farGateTold: true }));
+    expect(loadSavedRun(store)).toEqual(sample({ farGateTold: true }));
+    const without = { ...sample() } as Record<string, unknown>;
+    delete without.farGateTold; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
+    expect(loadSavedRun(store)).toEqual(sample());
+    broken({ farGateTold: 'x' });
   });
 
   it('round-trips a mode-told save, and a save written without the keys loads as untold', () => {

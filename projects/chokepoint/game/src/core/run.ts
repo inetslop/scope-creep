@@ -56,6 +56,7 @@ export class RunState {
   modeStrongestTold = false; // the run's one strongest-mode chip showed (T0368): a resumed run never re-teaches
   modeClosestTold = false; // the run's one closest-mode chip showed (T0368)
   milestone30Asked = false; // the wave-30 milestone card was shown once this run
+  farGateTold = false; // the run's one far-gate first-send chip showed (T0384)
   /** The Dots a live Hive will still pop this wave (the hivePops hook rewrites it every wave frame): the enemies-left count keeps them in. */
   pendingPops = 0;
   private leaksThisWave = 0;

@@ -22,6 +22,7 @@ import type { Building } from './Building';
 import type { EnemySystem } from './EnemySystem';
 import type { FxSystem } from './FxSystem';
 import { farGateSend } from './fx/farGateSend';
+import { farGateTell } from './fx/farGateTell';
 import { goldCoin } from './fx/goldCoin';
 import { buildHoldRoad, fadeHoldRoad, placeHoldRoad } from './fx/holdRoad';
 import { streakTeach } from './fx/streakTeach';
@@ -213,6 +214,10 @@ export class RunFlow {
     if (!fg || !plan || isBossWave(plan.number) || farGateSplit(plan.spawns.length) <= 0) return;
     const c = this.s.board.centerOf(fg); // the far gate's own cell: where the art draws it (art/board.ts) and its walkers come in
     farGateSend(this.s.fx, c.x, c.y);
+    if (!this.run.farGateTold) {
+      this.run.farGateTold = true;
+      farGateTell(this.s.fx, c.x, c.y);
+    }
   }
 
   private clearWave(): void {

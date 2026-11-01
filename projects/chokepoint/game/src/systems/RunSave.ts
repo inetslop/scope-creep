@@ -56,6 +56,7 @@ export class RunSave {
       modeStrongestTold: run.modeStrongestTold,
       modeClosestTold: run.modeClosestTold,
       milestone30Asked: run.milestone30Asked,
+      farGateTold: run.farGateTold,
       rerollsUsed: run.rerollsUsed,
       level: [...run.level],
       towers: this.game.towers.towers.map((t) => ({
@@ -86,6 +87,7 @@ export class RunSave {
     run.modeStrongestTold = saved.modeStrongestTold;
     run.modeClosestTold = saved.modeClosestTold;
     run.milestone30Asked = saved.milestone30Asked;
+    run.farGateTold = saved.farGateTold;
     run.rerollsUsed = saved.rerollsUsed;
     run.hand = saved.hand.map((c) => ({ id: c.id, tier: c.tier }));
     for (const t of saved.towers) {

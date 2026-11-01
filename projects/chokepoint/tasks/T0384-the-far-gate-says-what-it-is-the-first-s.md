@@ -4,11 +4,12 @@ title: "The far gate says what it is: the first send's one-time chip"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T22:18:47Z
 claimed_at: 2026-11-01T22:52:30Z
+finished_at: 2026-11-01T23:10:41Z
 epic: E14
 ---
 
@@ -67,3 +68,20 @@ No other signatures change; `farGateSend` and the ring are untouched.
 
 ### Tests
 - `tests/core/saveRun.test.ts`: the `sample()` field plus the round-trip/missing-key/broken `it` (the save-run field is a core rule later refactors could break).
+
+## Result (attempt 1, yoga)
+
+On a board with the far gate, the first time its send ring fires (the run's first non-boss wave that sends walkers through it), a small white chip reading "walkers come in here too" now pops just above the gate and fades after ~1.5 s, in the same muted-ink chip look as the first-leak chip. It shows exactly once per run: the flag is set before the effect and is saved/resumed through the run save like the other *Told fields, so a resumed run past the moment never replays it. The ring itself is untouched, and there is no new sound, button, card line or permanent board mark; the wave preview card and boards reference are unchanged.
+
+- Self-review: APPROVE
+- Time: 18.2 min
+
+```
+projects/chokepoint/game/src/core/run.ts           |  1 +
+ projects/chokepoint/game/src/core/saveRun.ts       |  3 +++
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  5 +++++
+ projects/chokepoint/game/src/systems/RunSave.ts    |  2 ++
+ .../chokepoint/game/src/systems/fx/farGateTell.ts  | 26 ++++++++++++++++++++++
+ .../chokepoint/game/tests/core/saveRun.test.ts     | 12 ++++++++++
+ 6 files changed, 49 insertions(+)
+```
