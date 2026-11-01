@@ -67,7 +67,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Goal:** the tech tree has covered the run start, the board, the pool and the payout — but not the wave itself: a fifth branch lets between-run coins buy how a run plays.
 **When done:** the tree's "The wave" branch has three nodes, each bought once and on for every run after: The door (the far gate on every board), The thin road (every enemy 10% slower) and The breather (quiet waves pay double the wave bonus).
 **Breakdown:**
-- the branch and its first node, The door: the tech screen's fifth branch plus a 30-coin node that puts the far gate (T0338) on every board — **T0357 rejected 2026-11-01 (the menu's live demo is a fixed one-entrance road, no gate there — the demo's second entrance is its own task, IDEAS); re-filed as T0358 (M, no dependency, next pool) without the demo clause**
+- the branch and its first node, The door: the tech screen's fifth branch plus a 30-coin node that puts the far gate (T0338) on every board — **tasked as T0358 (M, in the pool)** (the demo clause is out: the demo's own gate is parked in IDEAS)
 - (to task) The thin road: 40 coins, every enemy 10% slower
 - (to task) The breather: 60 coins, quiet waves pay 2× the wave bonus
 
