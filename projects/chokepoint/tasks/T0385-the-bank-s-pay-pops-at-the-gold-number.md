@@ -3,10 +3,12 @@ id: T0385
 title: "The bank's pay pops at the gold number"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T22:18:47Z
+claimed_at: 2026-11-01T22:40:55Z
+designer: yoga
 ---
 
 ## Goal
