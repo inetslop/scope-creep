@@ -1,12 +1,14 @@
 ---
 id: T0351
 title: "How to play: the menu card that re-teaches the run's loop"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T09:37:42Z
+claimed_at: 2026-11-01T10:51:20Z
 ---
 
 ## Goal
