@@ -1,12 +1,14 @@
 ---
 id: T0383
 title: The tower branch and its first node, Soft sell
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T21:57:55Z
+claimed_at: 2026-11-01T22:18:50Z
 epic: E16
 ---
 
