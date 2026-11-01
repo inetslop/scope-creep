@@ -3,10 +3,12 @@ id: T0365
 title: "The build bed: a quiet beat under the build phase"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T16:18:26Z
+claimed_at: 2026-11-01T16:18:30Z
+designer: desktop
 ---
 
 ## Goal
