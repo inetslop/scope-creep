@@ -4,11 +4,12 @@ title: "The Flyer's streak: the sky shows its motion"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T19:38:40Z
 claimed_at: 2026-11-01T19:54:56Z
+finished_at: 2026-11-01T20:12:02Z
 epic: E10
 ---
 
@@ -103,3 +104,16 @@ export const flyerStreak: MakeEnemyHook = ({ scene, enemies, run }) => {
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The Flyer now flies with a short flat streak in its own purple trailing it through the air: new per-frame enemy hook `src/systems/enemyHooks/flyerStreak.ts` draws one soft triangle (25% alpha, 1.5× the token's length, tapering to a point at the back) at ground level under the token, re-derived from the enemy's own `dirX`/`dirY` every frame so it always points where it came from; it is dropped the frame the Flyer dies, leaks, or its pooled slot is gone, and the wave-50 boss Flyer is excluded via `bossId(run.wave) === 'flyer'` so it keeps its own telegraph. Registered with one import and one `ENEMY_HOOKS` line next to `dasherStreak`. One minimal deviation from the architect's exact content: the create-frame `draw(e, g)` failed typecheck (TS can't narrow the stale `g` after `streaks.set`), so it now uses `draw(e, streaks.get(e)!)` — the exact idiom `dasherStreak.ts` already uses. Display only: no sound, text, chip, hitbox or gameplay change. `npm run check` and desktop+mobile `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 17.1 min
+
+```
+.../game/src/systems/enemyHooks/flyerStreak.ts     | 47 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ 2 files changed, 49 insertions(+)
+```
