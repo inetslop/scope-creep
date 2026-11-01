@@ -1,12 +1,14 @@
 ---
 id: T0292
 title: "The Hive: the wave-40 boss that grows the group"
+assignee: desktop
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-30T17:15:59Z
+claimed_at: 2026-11-01T14:54:18Z
 ---
 
 ## Goal
