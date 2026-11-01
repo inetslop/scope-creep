@@ -47,7 +47,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Breakdown:**
 - The Flyer, the wave-50 boss: the fifth every-10 boss, the first that doesn't walk the road — a straight-line crossing from the island's edge to the exit, a bank at half health — **T0317 (L, priority 2, in the pool)**
 - the build phase shows the line: before the flyer's wave, its route is on the board through the build — the crossing's cover is chosen in the build, not learned at the wave's door — **tasked as T0346 (M, in the pool, waits on T0317)**
-- (to task) the regular Flyer in the wave mix: a small fast shape that crosses straight, one every few waves; the Feeder landed (T0334, 2026-11-01) and the regular cap is 10 of 10, so the Flyer's own task carries the removal or the merge
+- the regular Flyer in the wave mix: the first enemy that doesn't walk the road — a small fast shape that crosses the island in a straight line from its edge to the exit, one on the Feeder's old waves (13, 17, 21, …); carries the Feeder's removal, the regular cap stays 10 of 10 — **tasked as T0353 (L, in the pool)**; its one-time preview teach — **T0355 (S, in the pool, waits on T0353)**
 - (to task) the crossing learns: the bank's line is chosen to cross where the run's towers don't reach — the boss banks into uncovered ground, its telegraph keeping it fair
 
 ### E11 — First run teaches itself (done; history in planning/archive/ROADMAP.md)
@@ -71,11 +71,11 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Splitter (T0068, M) — **done** (2026-10-28, desktop-4070): breaks into two fast splinters at its spot.
 - Hauler (T0057, M) — **done** (2026-10-28, cachyos-x8664): a big slow hexagon — worth 10 gold, a leak costs a life plus 5 gold.
 - Mute (T0074, M) — **done** (2026-10-29, desktop-4070): silences every tower within 2 cells. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
-- Feeder (IDEAS) — **done as T0334 (2026-11-01, desktop, the T0309 re-file)**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring — the regular-enemy cap is 10 of 10 (the Wall is next).
+- Feeder (IDEAS) — **done as T0334 (2026-11-01, desktop, the T0309 re-file)**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring — the regular-enemy cap is 10 of 10; its slot and removal ride the Flyer (T0353, tasked 2026-11-01).
 - The Hive (IDEAS) — **tasked as T0292 (L, in the pool)**: the wave-40 boss, the next peak after the Orb — the first boss that grows the group (a Dot every 6 s, up to 5); `spawnOnly`, so the 10-regular cap is untouched (the Feeder fills it).
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
-Queue order: the Bulwark (T0102), the Ward (T0111), the Dart's removal (T0237) and the Feeder (T0334) are done — the regular-enemy cap (10, the bar in modules/enemies.md) is 10 of 10; the Wall is next. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
+Queue order: the Bulwark (T0102), the Ward (T0111), the Dart's removal (T0237) and the Feeder (T0334) are done — the regular-enemy cap (10, the bar in modules/enemies.md) is 10 of 10; the Flyer (T0353) takes the Feeder's slot and carries its removal, so the Wall (parked, IDEAS) stays parked behind it — it needs a slot. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
 
 ## Later
 
