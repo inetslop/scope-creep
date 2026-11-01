@@ -1,12 +1,14 @@
 ---
 id: T0329
 title: "The coins reference: how a run pays, off the pause"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0313]
-attempts: 0
+attempts: 1
 created: 2026-11-01T01:46:07Z
+claimed_at: 2026-11-01T04:09:16Z
 epic: E9
 ---
 
