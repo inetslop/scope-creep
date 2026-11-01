@@ -3,13 +3,13 @@ id: T0364
 title: "The Blinker: the wave-60 boss that skips the road"
 size: L
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-01T15:28:41Z
 claimed_at: 2026-11-01T16:40:29Z
-design_attempts: 1
-designer: cachyos-x8664
+finished_at: 2026-11-01T17:13:00Z
+design_attempts: 2
 ---
 
 ## Goal
@@ -52,3 +52,11 @@ The boss queue's next peak: wave 60 sends the Blinker — the first boss that sk
 - [ ] The next-wave button's enemies-left count, the exit warning and the wave-end check treat the Blinker as an ordinary road enemy: its progress is its road distance, and a blink advances it, never undoes it.
 - [ ] The arrival horn, the boss card, the death burst and name card and the escape note all fire from the existing boss hooks; the name tag says "Blinker"; the wave preview shows its token ×1; the bosses reference lists it in wave order with the teach line.
 - [ ] The look is a pink almond at 0.5 — a shape no enemy has; unit tests pin the wave-60 plan, the blink schedule (4.0 s apart, 1.0 s telegraph, 2.5 cells, the no-blink tail) and the committed-while-rooted rule; npm run check and the desktop 1280×720 / mobile 412×915 smoke pass.
+
+## Architect could not design it (cachyos-x8664)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+Prompt is too long · automatic compaction failed: summarization produced empty response
+```
