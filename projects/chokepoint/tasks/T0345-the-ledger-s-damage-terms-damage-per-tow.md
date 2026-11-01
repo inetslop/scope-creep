@@ -1,14 +1,14 @@
 ---
 id: T0345
 title: "The ledger's damage terms: damage per tower on the Summary's rows"
-assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-11-01T07:03:24Z
 claimed_at: 2026-11-01T08:06:36Z
+finished_at: 2026-11-01T08:23:52Z
 epic: E12
 ---
 
@@ -84,3 +84,20 @@ No other type changes. It is NOT added to `SavedRun`/`SavedTower` in `core/saveR
 
 ### Tests
 none (no `src/core` rule changes; the tallying lives in `EnemySystem`, which the project does not unit-test).
+
+## Attempt 1 failed (asus)
+
+Runner error: git fetch --quiet --prune origin failed (exit 1):
+error: cannot lock ref 'refs/remotes/origin/main': is at bb9d34aab10ca2da77985cda87f30a0782a4c0a0 but expected b5a521cf830400191d97a73cf7ea5e16eb5f3d4b
+
+
+```
+Error: git fetch --quiet --prune origin failed (exit 1):
+error: cannot lock ref 'refs/remotes/origin/main': is at bb9d34aab10ca2da77985cda87f30a0782a4c0a0 but expected b5a521cf830400191d97a73cf7ea5e16eb5f3d4b
+
+    at Git.fetch (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/git.ts:134:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:260:5)
+    at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
+    at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
