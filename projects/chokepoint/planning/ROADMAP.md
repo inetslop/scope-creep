@@ -40,7 +40,7 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
 ### E9 — Level augments: harder runs for a bigger payout (active, **top priority** — opened 2026-10-30, by hand)
-**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0285, T0291 (the payout), T0294 (Swift and Crowded), T0295 (Lean and Short fuse), the reprice T0288, the third node T0297 and the slot ladder T0305 landed; T0310 (the switchback) landed 2026-11-01; the claim branch's second node (Flawless pays 10 coins) landed as T0313 (2026-11-01, asus). Every E9 task is now written (T0325, T0326 and T0329 in the pool) — it counts as finished while they land.
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0285, T0291 (the payout), T0294 (Swift and Crowded), T0295 (Lean and Short fuse), the reprice T0288, the third node T0297 and the slot ladder T0305 landed; T0310 (the switchback) landed 2026-11-01; the claim branch's second node (Flawless pays 10 coins) landed as T0313 (2026-11-01, asus). Every E9 task is now written: T0329 landed (2026-11-01, asus); T0325 is in progress and T0326 waits on it — it counts as finished while they land.
 **The owner's redesign (by hand, 2026-10-31):** six owner tasks, priority 1, numbered T0321–T0326 from the inbox: an added Spray is crit chance and an added Beam is +damage, both on every damage tower (T0321, T0322); Play opens a daily board pick, three boards seeded on the UTC date with their level augments and a level row from 0 to the slots, replacing the menu picker (T0323); the boards rank by level, then score, and Today is the UTC day (T0324; the server side is the owner's, done); rewards need wave 10, Quit run pays out and ends the run, a new Main menu keeps it (T0325); the wave-30 card offers to claim now or keep going (T0326). Where the "When done" list below says the menu picker, the saved preselected choice or a rolling Today, these tasks replace it; don't plan around the old picker.
 **Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
 **When done:**
@@ -70,7 +70,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned — **done as T0288 (M, 2026-10-30, cachyos-x8664)**
 - deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **done as T0297 (M, 2026-10-30, desktop)**; the claim branch's second node (Flawless pays 10 coins, T0076's open door) — **T0313 (M) — done** (2026-11-01, asus); the board branch's fourth node (The switchback, the road's fold) — **T0310 (M) — done** (2026-11-01, asus)
 - the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line) — **T0305 (M, priority 1) — done** (2026-10-30, asus)
-- the coins reference: how a run pays, off the pause (the rates, this run's terms, the multipliers — the payout math in one card) — **T0329 (M, E9, in the pool, waits on T0313)**
+- the coins reference: how a run pays, off the pause (the rates, this run's terms, the multipliers — the payout math in one card) — **T0329 (M, E9) — done** (2026-11-01, asus)
 - (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set
 
 ### E10 — The sky: not everything walks the road (active — opened 2026-10-31)
@@ -81,22 +81,22 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - (to task) the regular Flyer in the wave mix: a small fast shape that crosses straight, one every few waves; lands behind the enemy queue — the Feeder is T0334 (designing, the T0309 re-file), which lands the 10-regular cap at 10 of 10, so the Flyer's own task carries the removal or the merge
 - (to task) the crossing learns: the bank's line is chosen to cross where the run's towers don't reach — the boss banks into uncovered ground, its telegraph keeping it fair
 
-### E11 — First run teaches itself (active — opened 2026-10-31)
+### E11 — First run teaches itself (done — 2026-11-01; opened 2026-10-31)
 **Goal:** a first-time player never meets a mechanic unexplained: on the device's very first run, three plain white hint cards name the three first steps, each dismissed by doing it.
 **When done:** on runs with runsPlayed = 0 only — "Pick a card" above the pre-wave-1 draft until a pick; "Build beside the road" beside the first buildable cell in the first build phase until the first tower stands; "Hold the road" under the wave banner during wave 1 until the wave ends. Each re-derived from the run's state on resume, so a resumed first run that has already done a step never shows it; no sound, no input; nothing on any later run.
 **Breakdown:**
 - T0318 (M) — the first hint: "Pick a card" on the pre-wave-1 draft — done (2026-11-01, cachyos-x8664)
-- T0319 (S) — the second hint: "Build beside the road" beside the first buildable cell — in progress (yoga)
+- T0319 (S) — the second hint: "Build beside the road" beside the first buildable cell — done (2026-11-01, yoga)
 - T0320 (M) — the third hint: "Hold the road" under the wave 1 banner — done (2026-11-01, inet-racing)
 
-**All three E11 hints are now written (T0318, T0319, T0320) — it counts as finished while they land.**
+**All three E11 hints landed (T0318, T0319, T0320) — E11 done.**
 
 ### E12 — The run's story: a run you can look back on (active — opened 2026-11-01)
 **Goal:** the end of a run shows the run's shape, not just its numbers: which waves were clean, which were held, which one fell.
 **When done:** the claim card carries a small second card under the first — one small mark per wave faced (green = a clean wave, muted gray = a held wave with leaks, red = the wave the run ended on), a muted legend, and the run's loudest wave (the one that leaked most); the per-wave record is written as the run goes and carried through the resume save, so a resumed run's story is whole.
 **Breakdown:**
 - T0333 (L) — the claim card's last page: the per-wave ledger record (leaks per wave, the death wave) plus the story card under the first card — done (2026-11-01, desktop)
-- T0336 (M) — the mid-run page: the story line on the pause's Summary (T0306) — the marks and the loudest wave while the run is happening — in the pool
+- T0336 (M) — the mid-run page: the story line on the pause's Summary (T0306) — the marks and the loudest wave while the run is happening — done (2026-11-01, inet-racing)
 - (to task, later) the ledger's damage terms: damage per tower, feeding the Summary's rows — after the E9 run files settle (core/run.ts is under edit)
 
 ### E13 — The island opens up: the road comes in from more than one gate (active — opened 2026-11-01)
@@ -119,7 +119,7 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - The Hive (IDEAS) — **tasked as T0292 (L, in the pool)**: the wave-40 boss, the next peak after the Orb — the first boss that grows the group (a Dot every 6 s, up to 5); `spawnOnly`, so the 10-regular cap is untouched (the Feeder fills it).
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
-Queue order: the Bulwark (T0102), the Ward (T0111) and the Dart's removal (T0237) are done; the Feeder is **T0334 (designing)** — it brings the regular-enemy cap (10, the bar in modules/enemies.md) to 10 of 10; the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
+Queue order: the Bulwark (T0102), the Ward (T0111) and the Dart's removal (T0237) are done; the Feeder is **T0334 (in progress)** — it brings the regular-enemy cap (10, the bar in modules/enemies.md) to 10 of 10; the Wall parks behind it. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
 
 ## Later
 
