@@ -1,12 +1,14 @@
 ---
 id: T0350
 title: "The boards reference: the pause screen names the board's modifiers"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T09:12:53Z
+claimed_at: 2026-11-01T10:01:22Z
 epic: E13
 ---
 
