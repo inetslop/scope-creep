@@ -3,10 +3,12 @@ id: T0364
 title: "The Blinker: the wave-60 boss that skips the road"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T15:28:41Z
+claimed_at: 2026-11-01T15:28:46Z
+designer: cachyos-x8664
 ---
 
 ## Goal
