@@ -1,12 +1,14 @@
 ---
 id: T0334
 title: "The Feeder: the enemy that pushes the pack"
+assignee: desktop-4070
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T02:32:15Z
+claimed_at: 2026-11-01T04:00:26Z
 ---
 
 ## Goal
