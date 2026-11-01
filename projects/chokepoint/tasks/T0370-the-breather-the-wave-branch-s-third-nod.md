@@ -3,11 +3,13 @@ id: T0370
 title: "The breather: the wave branch's third node, quiet waves pay 2× the wave bonus"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T17:47:11Z
+claimed_at: 2026-11-01T18:07:23Z
 epic: E14
+designer: inet-racing
 ---
 
 ## Goal
