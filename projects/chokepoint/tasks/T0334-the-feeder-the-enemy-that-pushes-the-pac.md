@@ -1,14 +1,12 @@
 ---
 id: T0334
 title: "The Feeder: the enemy that pushes the pack"
-assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 2
 created: 2026-11-01T02:32:15Z
-claimed_at: 2026-11-01T05:26:47Z
 ---
 
 ## Goal
@@ -97,3 +95,7 @@ The agent made no changes to the game (success).
 ```
 Autocompact is thrashing: the context refilled to the limit within 3 turns of the previous compact, 3 times in a row. A file being read or a tool output is likely too large for the context window. Try reading in smaller chunks, or use /clear to start fresh.
 ```
+
+## Attempt 2 released (desktop-4070)
+
+The machine was paused for over 60 minutes holding this task, which kept its files locked for the others. Requeued.
