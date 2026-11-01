@@ -4,11 +4,12 @@ title: "The flyer's preview teach: the first flyer preview says it doesn't walk 
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T18:48:59Z
 claimed_at: 2026-11-01T19:01:04Z
+finished_at: 2026-11-01T19:22:28Z
 epic: E10
 ---
 
@@ -55,3 +56,15 @@ if (plan.spawns.some((s) => s.enemy === 'flyer') && run.wavesCleared < getEnemy(
 
 ### Tests
 - none (UI teach line, no `core/` rule change).
+
+## Result (attempt 1, yoga)
+
+The next-wave preview card now teaches the Flyer's one-time read: a muted line "the flyer doesn't walk the road" under the card's tokens, shown exactly during the build phase before wave 13 (when `wavesCleared` is 12) and never again. It's a pure function of the next plan + `run.wavesCleared` re-derived each frame, so resumed runs before wave 13 show it and runs from wave 14 on never do — no save field or run-state flag. One new constant `FLYER_TEACH` and one branch in `teachLines()` in `src/ui/hud/NextWavePreview.ts`; it reuses the existing 14px muted teach-line render and card sizing, so tokens, counts, placement and the tag/early lines are untouched. `npm run check` and `npm run smoke` (desktop + phone) pass.
+
+- Self-review: APPROVE
+- Time: 21.4 min
+
+```
+projects/chokepoint/game/src/ui/hud/NextWavePreview.ts | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+```

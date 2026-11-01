@@ -33,6 +33,9 @@ const EARLY_SEND = 'start early — the button banks the seconds left as gold';
 /** The one-time teach for the run's first build phase: the bank pays 5% of the gold at the wave start, capped. Shown while `wavesCleared` is 0, re-derived from the run, never stored. */
 const BANK_PAY = 'bank pays 5% at wave start · up to +10';
 
+/** The Flyer's one-time teach: the build before its first wave names that it doesn't walk the road. Shown while the next plan carries a Flyer and `wavesCleared` is below the Flyer's `fromWave` (13), re-derived from the run, never stored. */
+const FLYER_TEACH = "the flyer doesn't walk the road";
+
 /**
  * Directly above the next-wave button while the build phase runs: what the next wave sends, straight from its
  * plan (game.waves.nextPlan), so a new enemy shows up here with no change to this file. Each type
@@ -104,12 +107,14 @@ export class NextWavePreview implements HudPart {
   }
 
   /** The one-time lines under the counts: the first build phase (no wave cleared yet) teaches the early send
-   *  and the bank's pay; after that, this wave's tag on first preview. Re-derived from the run, never stored. */
+   *  and the bank's pay; after that, this wave's tag on first preview; the build before the Flyer's first wave
+   *  names that it doesn't walk the road. Re-derived from the run, never stored. */
   private teachLines(plan: WavePlan, run: RunState): string[] {
     if (run.wavesCleared === 0) return [EARLY_SEND, BANK_PAY];
     for (const t of TEACH) {
       if (plan.tags.includes(t.tag) && run.wavesCleared < t.first) return [t.text];
     }
+    if (plan.spawns.some((s) => s.enemy === 'flyer') && run.wavesCleared < getEnemy('flyer').fromWave) return [FLYER_TEACH];
     return [];
   }
 
