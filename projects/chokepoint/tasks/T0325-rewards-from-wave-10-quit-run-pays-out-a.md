@@ -3,11 +3,13 @@ id: T0325
 title: Rewards from wave 10; Quit run pays out and ends it; Main menu keeps it
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T23:37:22Z
+claimed_at: 2026-11-01T00:10:01Z
 epic: E9
+designer: inet-racing
 ---
 
 ## Goal
