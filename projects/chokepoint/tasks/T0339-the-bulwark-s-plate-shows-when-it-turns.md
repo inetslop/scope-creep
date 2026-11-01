@@ -1,12 +1,14 @@
 ---
 id: T0339
 title: "The Bulwark's plate shows when it turns a hit"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T04:12:33Z
+claimed_at: 2026-11-01T07:48:15Z
 ---
 
 ## Goal
