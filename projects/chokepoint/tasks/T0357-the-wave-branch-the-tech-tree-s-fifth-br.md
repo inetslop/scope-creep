@@ -3,13 +3,14 @@ id: T0357
 title: "The wave branch: the tech tree's fifth branch, and The door node"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-01T12:09:03Z
 claimed_at: 2026-11-01T12:09:07Z
+finished_at: 2026-11-01T12:14:54Z
 epic: E14
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -30,3 +31,7 @@ The tech tree grows a fifth branch, "The wave", whose nodes change what a wave d
 - [ ] After the buy, a new run's board has the far gate, shown where today's far-gate boards show it (the board, the board preview and the next-wave preview), and a third of each non-boss wave's enemies come in through it; without the node, the "some boards" gate roll is exactly as today.
 - [ ] The pause screen's boards reference shows the far gate's source as the node (owned) while The door is bought, and "some boards" while it is not.
 - [ ] A resumed run and a ghost run keep the board's own gate; the coin formula, the live coin tally and the claim card are unchanged by the node.
+
+## Rejected by architect (desktop)
+
+the menu's live demo is a fixed decorative road (scenes/menu/MenuDemo.ts, "purely for show"), not a grown board, and all of its enemies walk in at one entrance — the far gate (T0338) has no place there today, so the detail asking that the demo "has the far gate" contradicts the code and is unbuildable as written (a gate on the fixed demo road would be its own specced task; the tech branch, The door node, the per-board gate fact and the pause reference are otherwise buildable).
