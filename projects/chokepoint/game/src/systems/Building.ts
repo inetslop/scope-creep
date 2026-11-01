@@ -1,3 +1,4 @@
+import type Phaser from 'phaser';
 import { CELL } from '../config';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
@@ -10,6 +11,7 @@ import type { Sfx } from '../audio/Sfx';
 import type { Board } from './Board';
 import type { FxSystem } from './FxSystem';
 import { goldCoin } from './fx/goldCoin';
+import { buildTeach } from './fx/buildTeach';
 import { TowerGhost } from './towerGhost';
 import type { TowerSystem } from './TowerSystem';
 
@@ -30,6 +32,10 @@ export class Building {
   private pointerTower: Tower | undefined;
   /** A desktop hover has happened; touch never does, so every free tower shows the ghost. */
   private hoverSeen = false;
+  /** The first run's "Build beside the road" chip (systems/fx/buildTeach.ts), while it is up. */
+  private teachChip: Phaser.GameObjects.Container | null = null;
+  /** Derived on the first sync (a resumed run may start with a tower standing); latched when the card shows. */
+  private teachOver?: boolean;
 
   constructor(
     private readonly run: RunState,
@@ -38,6 +44,7 @@ export class Building {
     private readonly fx: FxSystem,
     private readonly sfx: Sfx | undefined,
     private readonly ghost: TowerGhost,
+    private readonly runsPlayed: number,
   ) {
     this.selectedAugment = run.hand.length > 0 ? 0 : undefined;
   }
@@ -197,6 +204,31 @@ export class Building {
   brokenSelection(): string | undefined {
     const i = this.selectedAugment;
     return i !== undefined && i >= this.run.hand.length ? `selected card ${i} of ${this.run.hand.length}` : undefined;
+  }
+
+  /**
+   * The first run's build teach, "Build beside the road": re-derived from the run each frame
+   * (T0272's pattern) — up beside the first buildable cell only while the first run's first build
+   * phase has no tower, faded the moment one stands. `teachOver` latches on show, so selling the
+   * first tower back never brings the card again.
+   */
+  syncTeach(): void {
+    if (this.teachOver === undefined) this.teachOver = this.towers.towers.length > 0;
+    const should = this.run.phase === 'build' && this.run.wave === 0 && this.runsPlayed === 0 && this.towers.towers.length === 0;
+    if (this.teachChip !== null) {
+      if (should) return;
+      this.fx.track(this.teachChip, 300, { alpha: 0, ease: 'Quad.easeOut' });
+      this.teachChip = null;
+      return;
+    }
+    if (!should || this.teachOver) return;
+    const cell = cellsBesidePath(this.board.map).find((c) => this.board.canBuild(c)); // the cell autoBuild picks
+    if (!cell) return;
+    const c = this.board.centerOf(cell);
+    const chip = buildTeach(this.fx, c.x, c.y - 44);
+    if (!chip) return; // fx.full: next frame retries
+    this.teachChip = chip;
+    this.teachOver = true; // shown: never comes back, even if the first tower is sold
   }
 
   /** Puts the held augment copy into `tower`'s free slot. */

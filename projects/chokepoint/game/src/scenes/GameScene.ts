@@ -136,7 +136,7 @@ export class GameScene extends Phaser.Scene {
     this.enemies.towers = () => this.towers.towers; // a kill pays the mints around it (core/mint.ts)
     this.registry.set('waves', this.waves);
     this.ghost = new TowerGhost(this);
-    this.building = new Building(this.run, this.board, this.towers, this.fx, sfx, this.ghost);
+    this.building = new Building(this.run, this.board, this.towers, this.fx, sfx, this.ghost, loadProfile(window.localStorage).runsPlayed);
     this.flow = new RunFlow(this, this.run, {
       board: this.board,
       building: this.building,

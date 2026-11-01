@@ -65,6 +65,7 @@ export class RunFlow {
 
   update(dt: number): void {
     const run = this.run;
+    this.s.building.syncTeach(); // the first run's build teach re-derives each frame (T0319)
     if (run.phase === 'build') {
       run.buildLeftSec -= dt;
       if (run.buildLeftSec <= 0) {

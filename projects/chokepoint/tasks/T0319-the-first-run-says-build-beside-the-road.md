@@ -4,11 +4,12 @@ title: The first run says build beside the road
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T01:13:09Z
 claimed_at: 2026-11-01T04:07:37Z
+finished_at: 2026-11-01T04:57:16Z
 epic: E11
 ---
 
@@ -87,3 +88,18 @@ RunFlow.ts `update()`, after `const run = this.run;`: `this.s.building.syncTeach
 - Untouched: `tap`, `autoBuild`, `pickCard`, `showHover`, `buildLeftSec`. No sound, no input, no registration in MARKS/DECORATIONS/HUD parts/INVARIANTS.
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+A first-time player now sees a small white "Build beside the road" card floating beside the first buildable cell next to the entrance during the first run's first build phase, and it fades the moment the first tower stands. It is re-derived from run state each frame (never stored), so it never shows in later build phases, in any run with runsPlayed ≥ 1, in a resumed first run that already has a tower, during a wave, or after the first tower is sold back. Two minimal fixes to the design's code: the show/fade `should` no longer includes the `teachOver` latch (which would have faded the card one frame after it appeared), and the chip container uses `(x, y)` instead of nameLabel's `y - 30` offset (the design's -44 placement math only holds without it). Files: new `src/systems/fx/buildTeach.ts`; `Building.ts` (fields, ctor param, `syncTeach()`); one line each in `RunFlow.update()` and `GameScene` ctor. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 49.7 min
+
+```
+projects/chokepoint/game/src/scenes/GameScene.ts   |  2 +-
+ projects/chokepoint/game/src/systems/Building.ts   | 32 ++++++++++++++++++++++
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  1 +
+ .../chokepoint/game/src/systems/fx/buildTeach.ts   | 27 ++++++++++++++++++
+ 4 files changed, 61 insertions(+), 1 deletion(-)
+```
