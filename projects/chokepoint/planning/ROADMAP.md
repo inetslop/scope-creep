@@ -49,7 +49,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - The Flyer, the wave-50 boss: the fifth every-10 boss, the first that doesn't walk the road — a straight-line crossing from the island's edge to the exit, a bank at half health — **T0317 (L, priority 2, in the pool)**
 - the build phase shows the line: before the flyer's wave, its route is on the board through the build — the crossing's cover is chosen in the build, not learned at the wave's door — **tasked as T0346 (M, in the pool, waits on T0317)**
 - the regular Flyer in the wave mix: the first enemy that doesn't walk the road — a small fast shape that crosses the island in a straight line from its edge to the exit, one on the Feeder's old waves (13, 17, 21, …); carries the Feeder's removal, the regular cap stays 10 of 10 — **tasked as T0353 (L, in the pool)**; its one-time preview teach — **T0355 (S, in the pool, waits on T0353)**
-- (to task) the crossing learns: the bank's line is chosen to cross where the run's towers don't reach — the boss banks into uncovered ground, its telegraph keeping it fair
+- (to task) the crossing learns: the bank's line is chosen to cross where the run's towers don't reach — the boss banks into uncovered ground, its telegraph keeping it fair (waits on T0317)
 
 ### E11 — First run teaches itself (done; history in planning/archive/ROADMAP.md)
 
@@ -69,8 +69,8 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **When done:** the tree's "The wave" branch has three nodes, each bought once and on for every run after: The door (the far gate on every board), The thin road (every enemy 10% slower) and The breather (quiet waves pay double the wave bonus).
 **Breakdown:**
 - the branch and its first node, The door: the tech screen's fifth branch plus a 30-coin node that puts the far gate (T0338) on every board — **tasked as T0358 (M, in the pool)** (the demo clause is out: the demo's own gate is parked in IDEAS)
-- (to task) The thin road: 40 coins, every enemy 10% slower
-- (to task) The breather: 60 coins, quiet waves pay 2× the wave bonus
+- (to task) The thin road: 40 coins, every enemy 10% slower (waits on T0358's branch)
+- (to task) The breather: 60 coins, quiet waves pay 2× the wave bonus (waits on T0358's branch)
 
 ### Enemy queue (non-epic)
 
@@ -100,7 +100,7 @@ Ideas that may become epics or tasks of one.
 - Targeting modes per tower (first, strongest, closest) — **tasked as T0114 (L, non-epic, in the pool)** — the spec and its parked follow-ups (the plinth notch, the chip's teach line) stand in IDEAS
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
-- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is T0292; the wave-50 Flyer, the first boss that doesn't walk the road, is **E10's T0317 (in the pool)**)
+- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is **done as T0292 (2026-11-01, desktop)**; the wave-50 Flyer, the first boss that doesn't walk the road, is **E10's T0317 (in the pool)**; the wave-60 Blinker, the first that skips the road, is **tasked as T0364 (L, in the pool)**)
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **now E13**: the far gate is done (T0338); the boards reference is done (T0350); the marked cell (T0340) and the fork (T0352) are in the pool
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
@@ -111,3 +111,4 @@ Ideas that may become epics or tasks of one.
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
 - The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **done as T0348 (M, 2026-11-01, asus)**
 - More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **E9's later slice, parked**
+- Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **tasked as T0363 (M, non-epic, in the pool)**

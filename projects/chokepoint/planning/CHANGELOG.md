@@ -247,3 +247,4 @@ the PO reads this instead of the code.
 - T0356 The Colossus's return gets its flash (yoga, 2026-11-01): The Colossus's return from its out-of-reach beat now flashes its token white for 0.3 s — the telegraph's own white — the frame it becomes hittable again.
 - T0359 The menu demo's far gate: the second entrance before the first run (cachyos-x8664, 2026-11-01): The menu demo road is now a two-gate road: `src/art/menu.ts` bakes both the entrance gate and a far gate partway down the road (a faint token with a white chevron in the road's travel, same look as the board's gates) int
 - T0360 The far gate's send: one ring when its walkers come in (yoga, 2026-11-01): **
+- T0292 The Hive: the wave-40 boss that grows the group (desktop, 2026-11-01): Wave 40 now sends the Hive — a purple-pentagon boss carrying the wave's whole 200-point budget that pops a telegraphed, wave- and level-scaled Dot at its spot every 6 s (five max, stopping the instant it dies) while it w
