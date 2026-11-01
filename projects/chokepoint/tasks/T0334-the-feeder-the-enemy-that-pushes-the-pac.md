@@ -3,12 +3,10 @@ id: T0334
 title: "The Feeder: the enemy that pushes the pack"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-01T02:32:15Z
-claimed_at: 2026-11-01T02:32:40Z
-designer: desktop-4070
 ---
 
 ## Goal
@@ -50,3 +48,42 @@ The first enemy that works on other enemies: a slow shape that hangs at the back
 - [ ] The orange aura ring pulses out to 2 cells once every 1.2 s at ground level while the Feeder lives.
 - [ ] First sight pops the "Feeder" name tag; the wave preview and the Enemies reference show it with no change to those files.
 - [ ] The regular-enemy count is 10 (the cap); nothing is removed or merged.
+
+## Design (architect, desktop-4070)
+
+### Files
+- CREATE `src/content/enemies/feeder.ts` — the EnemyDef (exact object below).
+- EDIT `src/content/enemies/index.ts` — `import { feeder } from './feeder';` after the dot import; array entry `feeder,` after `mute,`.
+- EDIT `src/content/types.ts:4` — append `| 'crescent'` to the Shape union.
+- EDIT `src/art/shapes.ts:15` — add `crescent: 0` to the `sides` Record (compile-forced).
+- EDIT `src/art/paint.ts` — crescent early-return in `shapePath`, before the generic tail (~line 62).
+- CREATE `src/systems/enemyHooks/feederPack.ts` — the per-frame push + ring hook.
+- EDIT `src/systems/enemyHooks/index.ts` — import near line 14, entry near `muteJam,`.
+- EDIT `src/entities/Enemy.ts` — `packPct` field, spawn reset, advance() factor at lines 166 AND 192.
+- EDIT `src/core/waves.ts` — walkers exclusion (137), pre-deduction (after 148), reserved push (after Ward, ~177).
+- EDIT `src/debug/runChecks.ts` — one invariant after `enemies.speedCap`.
+- EDIT `tests/core/waves.test.ts` — new Feeder series test + line-83 exclusion.
+
+### Interfaces
+`feeder` = `{ id:'feeder', name:'Feeder', description:'The slow one that pushes the pack: everything within two cells walks a quarter faster while it lives.', behavior:'walk', hp:90, speed:0.8, gold:8, livesCost:1, threat:3, fromWave:13, look:{ shape:'crescent', color:'orange', size:0.26 } }`.
+Enemy field: `packPct = 0` beside `hastePct`; advance(): append `* (1 + this.packPct)` to the walk product at line 166 AND the dash surge at line 192; reset `this.packPct = 0` in spawn() after `this.hastePct = 0`.
+`feederPack.ts`: `MakeEnemyHook = ({ enemies, scene }) => ...`; constants `REACH = 2`, `BEAT_MS = 1200`.
+
+### Steps
+1. Content: create feeder.ts (import `type { EnemyDef } from '../types'`); register in index.ts.
+2. Art: types union + shapes.ts Record + shapePath crescent early-return: outer semicircle r at center (x, y−0.25r) angle 0→π (13 pts), then inner arc radius `radius*1.25` centered (x, y−radius) from `Math.acos(0.8)` to `Math.PI - Math.acos(0.8)` traced reversed (13 pts), close via `roundedPolygon(ctx, pts, radius*0.28); return;`. (paintToken side face/shadow are automatic.)
+3. Enemy.ts: add field/reset/factor (three edits).
+4. Hook feederPack.ts (model on muteJam): per-frame set every active enemy's `packPct = feeders.some(f => distSq <= REACH²·CELL²) ? 0.25 : 0` (dist from feeder, itself included); move each ring to its Feeder; on `scene.time.now - lastPulse >= BEAT_MS && feeders.length>0` per-Feeder `drop`, add Graphics at DEPTH.preview `fillRing(g,0,0,REACH*CELL,3,0,Math.PI*2,PALETTE.orange,0.4)`, start scale `(0.26*CELL)/(REACH*CELL)`, tween `{scale:1,alpha:0,duration:BEAT_MS,ease:'Quad.easeOut'}` with muteJam's onComplete cleanup; `onKill`/`onLeak` → drop(enemy). Register one line in index.ts.
+5. waves.ts: (a) line 137 walkers filter add `&& e.id !== 'feeder'`; (b) after the dasher loop (line 148), before `const spawns` (149): `if (wave >= 13 && (wave - 13) % 4 === 0) budget -= unlocked.find((e) => e.id === 'feeder')!.threat;`; (c) after the Ward push (~line 177), before `let finalSpawns`: `if (wave >= 13 && (wave - 13) % 4 === 0) reserved.push('feeder');`.
+6. runChecks.ts: after `enemies.speedCap` add `['enemies.pack', (g) => (g.enemies.all.some((e) => e.active && e.packPct !== 0 && e.packPct !== 0.25) ? 'an enemy packs at the wrong fraction' : null)],`.
+
+### Pitfalls
+- Pre-deduction MUST sit after ramp/dash reservation and BEFORE `const spawns` (line 149) so walker budget stays correct; the push MUST stay after the splitter count (line 167) — that is why the line-83 test needs the exclusion below. Do NOT add a Hauler-style re-add: the series ≡1 mod 4 is never quiet nor boss.
+- `packPct` is its OWN field (HasteSystem resets hastePct each frame; a shared field would be clobbered). Values are only 0/0.25, so multiple Feeders OR to exactly one push — never stacks; no nearest-enemy tie-break code needed.
+- Ring timing uses `scene.time.now`, not dt (muteJam precedent); cosmetic only, `run.rng` not involved. Do not rotate a token with a side face — the crescent mouth points up like chevron/triangle.
+- Crescent must use exactly r / 1.25r / a0=acos(0.8) or the tips won't meet and it won't close.
+
+### Tests
+- waves.test.ts line 83: extend the `others` exclusion with `&& s.enemy !== 'feeder'`.
+- New test, modeled on the Mute one (lines 99–106): loop wave 1..30, `expected = wave >= 13 && (wave - 13) % 4 === 0 ? 1 : 0`, expect exactly that many `feeder` spawns, and when 1 assert the wave also sends a non-feeder.
+- `npm run check` must pass (content.test.ts auto-validates feeder; typecheck forces the crescent additions).
