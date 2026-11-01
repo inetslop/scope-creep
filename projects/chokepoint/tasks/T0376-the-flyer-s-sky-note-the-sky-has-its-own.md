@@ -1,12 +1,14 @@
 ---
 id: T0376
 title: "The Flyer's sky note: the sky has its own quiet sound"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T19:38:40Z
+claimed_at: 2026-11-01T19:59:30Z
 epic: E10
 ---
 
