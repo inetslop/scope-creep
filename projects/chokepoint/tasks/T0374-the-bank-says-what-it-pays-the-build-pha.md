@@ -1,12 +1,14 @@
 ---
 id: T0374
 title: "The bank says what it pays: the build phase's 'bank +N' line on the stats card"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T18:48:59Z
+claimed_at: 2026-11-01T19:09:33Z
 ---
 
 ## Goal
