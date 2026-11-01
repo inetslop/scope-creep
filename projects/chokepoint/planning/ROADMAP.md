@@ -29,6 +29,7 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 **E4 closes when T0062, T0064, T0095, T0235 and T0248 land — every E4 task is written (Chain and its re-tune dropped with T0025's failure); it counts as finished while the pool lands.**
 
 **16-cap (protocol):** the four queued registrations (T0062, T0064, T0095, T0235) land exactly four removals: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark**, and say which in the result (the canonical statement is in T0064's task; Anchor is out of reach at four registrations). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
+**16-cap (fifth removal):** the fifth is **Anchor**, carried outside E4 by T0361 (Herd's registration, non-epic, 2026-11-01) — order-independent with the four (none of them names Anchor). After all five land the index is: Beam, Bolt, Ember, Haste, Lance, Mend, Momentum, Push, Rapid, Reach, Splash, Spray, Toll, Trap, Feast, Herd.
 
 ### E5 — Bosses: every 10th wave is something you remember (done; history in planning/archive/ROADMAP.md)
 
@@ -84,6 +85,12 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
 Queue order: the Bulwark (T0102), the Ward (T0111), the Dart's removal (T0237) and the Feeder (T0334) are done — the regular-enemy cap (10, the bar in modules/enemies.md) is 10 of 10; the Flyer (T0353) takes the Feeder's slot and carries its removal, so the Wall (parked, IDEAS) stays parked behind it — it needs a slot. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
+
+## Augment queue (non-epic)
+
+New augments land one at a time, the enemy queue's way: each registration keeps the draft at the 16-cap and says which augment it retires.
+
+- Herd (T0361, M) — **in the pool (2026-11-01)**: the first augment that scales with the crowd — +5%/+8% (Rare/Epic) damage per enemy within 2 cells, cap 5; its registration retires Anchor (the fifth removal, after E4's four).
 
 ## Later
 
