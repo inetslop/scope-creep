@@ -79,9 +79,9 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Goal:** the tech tree has covered run start, the board, the pool, the claim and the wave — but not the tower itself: a sixth branch lets between-run coins buy how towers are managed.
 **When done:** the tree's "The tower" branch has three nodes, each bought once and on for every run after: Soft sell (a sell refunds 80% of slot cost, not 70%), The light move (a move's fee 30% instead of 60%) and The rich cell (the marked cell's buff 1.25× → 1.5×).
 **Breakdown:**
-- the branch and its first node, Soft sell: the tech screen's sixth row plus a 30-coin node that raises the sell's refund 70% → 80% of slot cost — **tasked as T0383 (M, in the pool)**
-- The light move: 85 coins by the depth rule, a move's fee 60% → 30% — **waits on T0382 (E15); task when it can start**
-- The rich cell: 155 coins by the depth rule, the marked cell's buff 1.25× → 1.5× — **parked**
+- the branch and its first node, Soft sell: the tech screen's sixth row plus a 30-coin node that raises the sell's refund 70% → 80% of slot cost — **done as T0383 (M, 2026-11-01, desktop)**
+- The rich cell: the branch's second node, 85 coins by the depth rule, the marked cell's buff 1.25× → 1.5× — **tasked as T0386 (M, in the pool)**
+- The light move: the branch's third node, 155 coins by the depth rule, a move's fee 60% → 30% — **waits on T0382 (E15); task when it can start (the rich cell takes the depth-2 slot ahead of it)**
 
 ## Enemy queue (non-epic)
 
