@@ -1,12 +1,14 @@
 ---
 id: T0347
 title: "The Orb's split gets its moment"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T08:02:39Z
+claimed_at: 2026-11-01T10:16:08Z
 ---
 
 ## Goal
