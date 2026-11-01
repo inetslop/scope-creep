@@ -3,10 +3,12 @@ id: T0337
 title: "The rush tag: the wave where every walker comes faster"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T03:39:37Z
+claimed_at: 2026-11-01T04:12:37Z
+designer: desktop
 ---
 
 ## Goal
