@@ -27,6 +27,7 @@ import { crackDeep } from './crackDeep';
 import { split } from './split';
 import { midSplit } from './midSplit';
 import { hivePops } from './hivePops';
+import { hivePopBurst } from './hivePopBurst';
 import { orbSplit } from './orbSplit';
 import { killCoin } from './killCoin';
 import { killMilestone } from './killMilestone';
@@ -48,6 +49,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   split,
   midSplit,
   hivePops,
+  hivePopBurst,
   orbSplit,
   nameTag,
   bossArrival,

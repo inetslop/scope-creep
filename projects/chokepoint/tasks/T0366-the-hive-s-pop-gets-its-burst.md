@@ -4,11 +4,12 @@ title: "The Hive's pop gets its burst"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T16:18:26Z
 claimed_at: 2026-11-01T17:12:04Z
+finished_at: 2026-11-01T17:23:56Z
 ---
 
 ## Goal
@@ -91,3 +92,16 @@ export const hivePopBurst: MakeEnemyHook = ({ fx, enemies }) => {
 
 ### Tests
 - none (juice)
+
+## Result (attempt 1, yoga)
+
+The Hive's popped Dot now lands with a small purple 4-chip burst at the pop spot — a new enemy hook (`src/systems/enemyHooks/hivePopBurst.ts`) that ticks the same pop clock as `hivePops`, so each of the up-to-5 telegraphed Dots gets one ~0.3 s burst in the Hive's own color the moment it arrives, a two-beat moment after the unchanged telegraph ring. Registered in `src/systems/enemyHooks/index.ts` directly after its kin; no Hive, Dot, wave or hp numbers changed, no sound, text or HUD. Typecheck, lint, unit tests and the real-browser smoke (desktop + mobile) all pass.
+
+- Self-review: APPROVE
+- Time: 11.9 min
+
+```
+.../game/src/systems/enemyHooks/hivePopBurst.ts    | 38 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ 2 files changed, 40 insertions(+)
+```
