@@ -27,6 +27,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   story: [{ wave: 1, leaks: 0 }, { wave: 2, leaks: 1 }, { wave: 3, leaks: 0 }],
   streakPaid: false,
   haulerTold: false,
+  blockTold: false,
   milestone30Asked: false,
   rerollsUsed: 1,
   level: [],
@@ -203,6 +204,17 @@ describe('saveRun', () => {
     store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
     expect(loadSavedRun(store)).toEqual(sample());
     broken({ haulerTold: 'x' });
+  });
+
+  it('round-trips a block-told save, and a save written without the key loads as untold', () => {
+    const store = memory();
+    saveRun(store, sample({ blockTold: true }));
+    expect(loadSavedRun(store)).toEqual(sample({ blockTold: true }));
+    const without = { ...sample() } as Record<string, unknown>;
+    delete without.blockTold; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
+    expect(loadSavedRun(store)).toEqual(sample());
+    broken({ blockTold: 'x' });
   });
 
   it('round-trips the wave-30 flag, and an older save loads as asked once its wave is past 30', () => {

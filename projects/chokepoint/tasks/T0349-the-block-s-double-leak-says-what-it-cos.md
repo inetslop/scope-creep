@@ -4,11 +4,12 @@ title: "The Block's double leak says what it costs"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T09:12:53Z
 claimed_at: 2026-11-01T09:56:27Z
+finished_at: 2026-11-01T10:15:24Z
 ---
 
 ## Goal
@@ -60,3 +61,21 @@ A first-time player who loses two lives to a Block learns why at the moment it h
 
 ### Tests
 - `tests/core/saveRun.test.ts`: the `blockTold` round-trip mirroring the hauler-told test (persisted, older-save-without-key loads as untold, wrong type rejected). `tests/systems/enomalyHooks.test.ts`… `tests/systems/enemyHooks.test.ts` already builds every registered hook, no edit needed.
+
+## Result (attempt 1, yoga)
+
+A first-time player who loses two lives to a Block now learns why at the moment it happens: on the run's first Block leak, a muted chip in the first-leak chip's own look pops "the Block takes 2 lives" at the exit gate for ~1.5 s (new `systems/fx/blockTold.ts` painter, verbatim from the Hauler's teach chip), driven by a new enemy hook `systems/enemyHooks/blockTeach.ts` registered in `ENEMY_HOOKS` after `haulerTeach` — once per run, flag-set before the chip and persisted as `blockTold` through `RunState`/`RunSave`/`SavedRun` so a resumed run never shows it, and when the Block is the run's very first leak its chip starts 1.2 s after "leaks cost a life" at the same spot, exactly mirroring the Hauler's teach (T0307). The Block itself, non-Block leaks, the Hauler's chip and all leak sounds are unchanged; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 19.0 min
+
+```
+projects/chokepoint/game/src/core/run.ts           |  1 +
+ projects/chokepoint/game/src/core/saveRun.ts       |  3 +++
+ projects/chokepoint/game/src/systems/RunSave.ts    |  2 ++
+ .../game/src/systems/enemyHooks/blockTeach.ts      | 23 +++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../chokepoint/game/src/systems/fx/blockTold.ts    | 26 ++++++++++++++++++++++
+ .../chokepoint/game/tests/core/saveRun.test.ts     | 12 ++++++++++
+ 7 files changed, 69 insertions(+)
+```
