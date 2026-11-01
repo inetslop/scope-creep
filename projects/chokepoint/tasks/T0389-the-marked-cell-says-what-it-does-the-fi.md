@@ -3,10 +3,12 @@ id: T0389
 title: "The marked cell says what it does: the first build's one-time chip"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T23:40:10Z
+claimed_at: 2026-11-01T23:40:48Z
+designer: yoga
 ---
 
 ## Goal
