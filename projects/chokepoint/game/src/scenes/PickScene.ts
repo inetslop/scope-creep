@@ -81,6 +81,9 @@ export class PickScene extends Phaser.Scene {
     hook.scene = SCENES.pick;
     hook.overlay = '';
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
+    // Phaser reuses the scene object: a second visit starts open, with the last visit's box gone.
+    this.closed = false;
+    this.box = undefined;
     const p = loadProfile(window.localStorage);
     this.slots = Math.min(p.levelSlots, LEVEL_AUGMENTS.length);
     this.level = this.slots; // the highest, by default
