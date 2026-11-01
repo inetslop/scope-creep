@@ -19,14 +19,14 @@ const ROW_H = 26;
 const LIST_H = ROWS * ROW_H + 8 + ROW_H;
 
 const SUBTITLE: Record<BoardName, string> = {
-  today: 'The best run of every name in the last 24 hours.',
+  today: 'The best run of every name since 00:00 UTC.',
   forever: 'The best run of every name, ever.',
 };
 
 /**
- * The leaderboards, over the dimmed start screen: Today (each name's best run of the last 24
- * hours) and Forever. Each lists the top ten, with the player's own place under them when it is
- * lower. The player's name is changed here too (NameScene).
+ * The leaderboards, over the dimmed start screen: Today (each name's best run since 00:00 UTC)
+ * and Forever. Each lists the top ten, with the player's own place under them when it is lower.
+ * The player's name is changed here too (NameScene).
  */
 export class BoardsScene extends Phaser.Scene {
   private tab: BoardName = 'today';
@@ -141,7 +141,7 @@ export class BoardsScene extends Phaser.Scene {
       return;
     }
     if (board.entries.length === 0) {
-      this.renderMessage(board.board === 'today' ? 'No runs in the last 24 hours.\nBe the first.' : 'No runs yet.');
+      this.renderMessage(board.board === 'today' ? 'No runs since 00:00 UTC.\nBe the first.' : 'No runs yet.');
       return;
     }
     this.listBox.removeAll(true);
@@ -167,12 +167,16 @@ export class BoardsScene extends Phaser.Scene {
     // the iron star; rows without one keep the score exactly where it always sat.
     const tag = e.mul !== undefined && e.mul > 1.0001 ? this.add.text(right - 54, y, levelMultiplierTag(e.mul), style(11, false, PALETTE.muted)).setOrigin(1, 0.5) : undefined;
     const scoreX = right - 54 - (tag ? tag.width + 6 : 0);
+    const score = this.add.text(scoreX, y, e.score.toLocaleString('en-US'), style(15, mine)).setOrigin(1, 0.5);
+    // A run that wore a level wears it as a small tag before its score; level 0 wears none.
+    const levelTag = e.level > 0 ? this.add.text(scoreX - score.width - 6, y, `L${e.level}`, style(11, false, PALETTE.muted)).setOrigin(1, 0.5) : undefined;
     this.listBox.add([
       this.add.text(left + 22, y, `${e.rank}`, style(14, false, PALETTE.muted)).setOrigin(1, 0.5),
       this.add.text(left + 36, y, e.name, style(16, true)).setOrigin(0, 0.5),
-      this.add.text(scoreX, y, e.score.toLocaleString('en-US'), style(15, mine)).setOrigin(1, 0.5),
+      score,
       this.add.text(right, y, `W${e.waves}`, style(13, false, PALETTE.muted)).setOrigin(1, 0.5),
     ]);
     if (tag) this.listBox.add(tag);
+    if (levelTag) this.listBox.add(levelTag);
   }
 }

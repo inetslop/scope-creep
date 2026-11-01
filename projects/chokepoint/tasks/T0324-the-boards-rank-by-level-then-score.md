@@ -4,11 +4,12 @@ title: The boards rank by level, then score
 assignee: cachyos-x8664
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T23:37:22Z
 claimed_at: 2026-11-01T00:44:39Z
+finished_at: 2026-11-01T00:53:18Z
 epic: E9
 ---
 
@@ -94,3 +95,18 @@ describe('the boards post', () => {
 
 ### Tests
 - The new test pins the body: the parsed POST body deep-equals the run (`mul: 1.5`, `level: 2`) and the URL is `http://boards.test/submit`; then `npm run check` and `npm run smoke`.
+
+## Result (attempt 1, cachyos-x8664)
+
+The boards now rank by level, then score: `RunForBoards`, `BoardEntry` and `Place` in `src/net/boards.ts` carry a required `level` field (documented as the level augments on, 0 with none), `submitRun` in `src/ui/boardsLine.ts` posts `level: run.level.length` alongside the existing `mul: run.levelHpMul`, and `BoardsScene` rows wear a small muted "L\<n>" tag before the score for any level-1-and-up run (`me` included), with the ×mul tag unchanged. "Last 24 hours" wording is now "since 00:00 UTC" in the client doc, the Today subtitle, the class doc and the empty state. A new `tests/net/boards.test.ts` pins that the posted body deep-equals the run (mul 1.5, level 2) at `http://boards.test/submit`; boards-off behavior is untouched (fields + one request field behind `boardsOn()` only).
+
+- Self-review: APPROVE
+- Time: 8.7 min
+
+```
+projects/chokepoint/game/src/net/boards.ts         |  8 +++++++-
+ projects/chokepoint/game/src/scenes/BoardsScene.ts | 16 ++++++++++------
+ projects/chokepoint/game/src/ui/boardsLine.ts      |  2 +-
+ projects/chokepoint/game/tests/net/boards.test.ts  | 18 ++++++++++++++++++
+ 4 files changed, 36 insertions(+), 8 deletions(-)
+```

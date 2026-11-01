@@ -1,7 +1,7 @@
 import { flags } from '../debug/flags';
 
 /**
- * The leaderboard client: today's board (each name's best run of the last 24 hours) and the
+ * The leaderboard client: today's board (each name's best run since 00:00 UTC) and the
  * forever board, kept by a small server (leaderboard/ at the repo root, a Cloudflare Worker).
  * Its address comes from the build (VITE_BOARDS_URL); without one, and always in ?smoke mode,
  * the boards are off: no button, no submission, no network (boardsOn).
@@ -20,6 +20,8 @@ export interface BoardEntry {
   waves: number;
   /** The run's level-augment multiplier; older boards don't echo it, and 1 wears no tag. */
   mul?: number;
+  /** The level the run was played at: the level augments on (0 with none). */
+  level: number;
 }
 
 export type BoardName = 'today' | 'forever';
@@ -39,6 +41,8 @@ export interface Place {
   score: number;
   /** This run is the name's best on that board. */
   best: boolean;
+  /** The level the run was played at: the level augments on (0 with none). */
+  level: number;
 }
 
 export interface Submitted {
@@ -54,6 +58,8 @@ export interface RunForBoards {
   seed: number;
   /** The run's level-augment multiplier: the score it wears on the board (1 with none on). */
   mul: number;
+  /** The level the run was played at: the level augments on (0 with none). */
+  level: number;
 }
 
 /** Why a call failed: the server refused the name, a rate limit, or anything else (offline, server down). */
