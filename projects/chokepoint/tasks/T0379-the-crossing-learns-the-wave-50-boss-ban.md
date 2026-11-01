@@ -3,13 +3,11 @@ id: T0379
 title: "The crossing learns: the wave-50 boss banks into the uncovered ground"
 size: L
 priority: 2
-status: designing
+status: todo
 depends_on: [T0317]
 attempts: 0
 created: 2026-11-01T21:18:04Z
-claimed_at: 2026-11-01T21:18:07Z
 epic: E10
-designer: desktop
 ---
 
 ## Goal
@@ -36,3 +34,51 @@ T0317's Flyer boss banks to a seeded line — the same bank on every board, what
 - [ ] The regular Flyer in the mix waves never banks; the wave-50 plan, the first line, the 3 s start telegraph, the seeded plans for waves 1–50 and every existing boss beat are unchanged.
 - [ ] Unit tests pin the pure choice on a fixture board: no towers → the seeded point; one wide tower near the island's center → the candidate whose line avoids its ring; a board covered on one side and bare on the other → the candidate that crosses the bare side; the same inputs twice → the same point.
 - [ ] npm run check and the desktop 1280×720 / mobile 412×915 smoke pass.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/core/bankChoice.ts` - the pure bank choice: candidates along the edge, uncovered-fraction scoring, seeded-first tie-break. No Phaser, no rng.
+- edit `src/systems/enemyHooks/flyLine.ts` - at the bank moment, replace the seeded point with the `chooseBank(...)` result (the file lands with T0317 first).
+- create `tests/core/bankChoice.test.ts` - pin the pure choice on a fixture board.
+
+### Interfaces
+```ts
+// src/core/bankChoice.ts
+import type { GameMap } from './map';
+import type { Point } from './path';
+
+/** A standing tower as the bank read needs it (board units); range 0 covers nothing. */
+export interface BankTower { x: number; y: number; range: number; } // range = spec.range * CELL, the ring a placed tower shows
+
+/** The bank point the wave-50 Flyer turns into: the least-covered candidate. Pure; the same board, from, seeded and towers pick the same point. */
+export function chooseBank(map: GameMap, cellSize: number, from: Point, seeded: Point, exit: Point, towers: readonly BankTower[]): Point
+
+/** Uncovered fraction (0-1) of the two segments from -> candidate -> exit: quarter-cell samples, the same grid as openFraction. */
+export function bankScore(cellSize: number, from: Point, exit: Point, candidate: Point, towers: readonly BankTower[]): number
+```
+Algorithm (fixed, in the file):
+- Edge: `w = cols*cellSize`, `h = rows*cellSize`; the candidate edge is the board side nearest the seeded point (min of `seeded.x`, `w-seeded.x`, `seeded.y`, `h-seeded.y`, ties in that left/right/top/bottom order). 9 candidates evenly on it, corners included: vertical edge `{x: edgeX, y: (i/8)*h}`, horizontal `{x: (i/8)*w, y: edgeY}`, i = 0..8; then append `seeded` as its own last entry even if it coincides with a sample.
+- `bankScore`: `L1 = |from-c|`, `L2 = |c-exit|`, `n = max(1, ceil((L1+L2)/(cellSize/4)))`; for j = 0..n, point at distance `(j/n)*(L1+L2)` walking segment 1 then 2. Covered if inside any tower with `range > 0` (`dx²+dy² <= r²`, same convention as `targeting.inRange`). Score = uncovered / (n+1).
+- `chooseBank`: `best = max` score; among candidates with `score >= best - 0.02` (module const `TIE`) return `seeded` if it is among them, else the first in list order. No standing towers (or all range 0) → every score 1 → seeded → byte-identical to T0317.
+
+### Steps
+1. Create `src/core/bankChoice.ts` exactly as above.
+2. In `flyLine.ts` (read it first — it is T0317's): at the moment the hp first drops to 50%, the same frame the preview starts, compute once and store: `const point = chooseBank(this.board.map, CELL, { x: e.x, y: e.y }, <the seeded bank point T0317 uses>, <the exit point it uses>, this.towers().map(t => ({ x: t.x, y: t.y, range: t.spec.range * CELL })));` — `towers` from the hook's `EnemyHookContext`. Build the 0.8 s preview, the tone and the turn from `point`, not the seeded point. The seeded point becomes only the fallback and the tie-break. Everything else in the beat (once-only, rooted/slowed still on its hp clock) is unchanged.
+3. Write `tests/core/bankChoice.test.ts` (fixtures: `generateMap(new Rng(7), 14, 8, 0)`, `CELL` from `src/config`, `exitPoint` from `core/flyRoute`).
+4. `npm run check`, then `npm run smoke` (desktop 1280×720 and phone 412×915).
+
+### Pitfalls
+- No rng at bank time and no sorting by score: ties resolve by the fixed candidate order (seeded first), so keep the list in construction order.
+- Choose exactly once at the bank frame and reuse the stored point for preview and turn — the preview never changes once shown; towers cannot change mid-wave anyway.
+- Skip `range <= 0` towers in the coverage test: a 0-ring must cover nothing (otherwise a sample exactly on a Frost-only tower's center would count as covered), and the no-towers fallback stays exact.
+- Derive the edge from the seeded point's nearest board side — do not hard-code T0317's edge coordinates; its seeded point sits strictly inside the opposite edge, never at a corner.
+- Do not touch `pickFlyLine`, `core/waves.ts` or the plan: the regular Flyer never banks, seeded plans for waves 1–50 stay byte-identical. No new UI, sound or content — nothing to lay out at 412×915.
+
+### Tests
+`tests/core/bankChoice.test.ts`, 14×8 landscape fixture, `seeded = { x: 14*CELL, y: 4*CELL }` (mid right edge), `from = { x: CELL, y: 4*CELL }`, `exit = exitPoint(map, CELL)`:
+- No towers → `chooseBank(..., [], ...)` `toEqual(seeded)`; result is always on the edge (`x === 14*CELL`).
+- One wide tower `{ x: 7*CELL, y: 4*CELL, range: 3*CELL }` → chosen ≠ seeded, on the edge, and `bankScore(chosen) > bankScore(seeded)` (the middle line runs through the ring).
+- Covered top / bare bottom: towers `{ x: (2+k)*CELL, y: 1.5*CELL, range: 3*CELL }` for k = 0..10 → chosen is the bare side: `chosen.y >= 6*CELL` and `bankScore(chosen) >= bankScore(c)` for every candidate `c`.
+- Total coverage (one tower `range: 20*CELL` at center) → every score 0, tie → `toEqual(seeded)` (pins the tie-break).
+- Determinism: the same inputs twice → `toEqual`; the towers array in a different order → same point (the score counts, it never depends on tower order).
