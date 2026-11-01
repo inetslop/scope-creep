@@ -3,10 +3,12 @@ id: T0335
 title: "The Ward shows its immunity: a ring when a control does not take"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T02:32:15Z
+claimed_at: 2026-11-01T02:32:54Z
+designer: yoga
 ---
 
 ## Goal
