@@ -1,12 +1,14 @@
 ---
 id: T0327
 title: "The Hauler's leak pays its gold: a -5 chip at the exit"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T23:47:13Z
+claimed_at: 2026-11-01T00:22:02Z
 ---
 
 ## Goal
