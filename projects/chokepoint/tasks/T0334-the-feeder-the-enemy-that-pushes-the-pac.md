@@ -3,10 +3,12 @@ id: T0334
 title: "The Feeder: the enemy that pushes the pack"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T02:32:15Z
+claimed_at: 2026-11-01T02:32:40Z
+designer: desktop-4070
 ---
 
 ## Goal
