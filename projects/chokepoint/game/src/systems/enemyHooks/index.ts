@@ -12,6 +12,7 @@ import { haulerTeach } from './haulerTeach';
 import { mintRing } from './mintRing';
 import { tollLeak } from './tollLeak';
 import { muteJam } from './muteJam';
+import { feederPack } from './feederPack';
 import { wardDeny } from './wardDeny';
 import { bulwarkPlate } from './bulwarkPlate';
 import { nameTag } from './nameTag';
@@ -58,6 +59,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   tollLeak,
   burnLeap,
   muteJam,
+  feederPack,
   wardDeny,
   bulwarkPlate,
   mintRing,

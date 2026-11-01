@@ -8,6 +8,7 @@ import { titan } from './titan';
 import { bulwark } from './bulwark';
 import { dasher } from './dasher';
 import { dot } from './dot';
+import { feeder } from './feeder';
 import { hauler } from './hauler';
 import { mute } from './mute';
 import { splinter } from './splinter';
@@ -29,6 +30,7 @@ export const ENEMIES: readonly EnemyDef[] = [
   splitter,
   hauler,
   mute,
+  feeder,
   ward,
   bulwark,
   splinter,

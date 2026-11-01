@@ -59,6 +59,24 @@ export function shapePath(ctx: CanvasRenderingContext2D, shape: Shape, x: number
     ctx.arc(x, y, radius * 0.45, 0, Math.PI * 2, true);
     return;
   }
+  // A crescent: a thick rounded arc, open on top (the Feeder's bow wave, pushing things ahead).
+  // The outer lower semicircle (r around (x, y - 0.25r)) and the inner arc (1.25r around
+  // (x, y - r)) meet at the two tips only when a0 = acos(0.8), so the polygon closes; the tips
+  // and the closing chord are left to the rounding.
+  if (shape === 'crescent') {
+    const a0 = Math.acos(0.8);
+    const pts: { x: number; y: number }[] = [];
+    for (let i = 0; i < 13; i++) {
+      const a = (i / 12) * Math.PI; // 0 -> π: the right tip, over the bottom, to the left tip
+      pts.push({ x: x + radius * Math.cos(a), y: y - radius * 0.25 + radius * Math.sin(a) });
+    }
+    for (let i = 1; i <= 11; i++) {
+      const a = Math.PI - a0 - (i / 12) * (Math.PI - 2 * a0); // back from the left tip, one chord short of the right
+      pts.push({ x: x + radius * 1.25 * Math.cos(a), y: y - radius + radius * 1.25 * Math.sin(a) });
+    }
+    roundedPolygon(ctx, pts, radius * 0.28);
+    return;
+  }
   const pts = shapePoints(shape, radius).map((p) => ({ x: p.x + x, y: p.y + y }));
   roundedPolygon(ctx, pts, radius * 0.28);
 }

@@ -48,6 +48,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   slowLeft = 0;
   /** Fraction the haste aura adds to its speed while it is inside (Haste); set by systems/HasteSystem.ts. */
   hastePct = 0;
+  /** Fraction the Feeder's pack push adds to its speed while it is inside one (0 or a quarter); set by systems/enemyHooks/feederPack.ts. */
+  packPct = 0;
   /** Seconds of a full stop left (Anchor): a rooted enemy does not move at all. */
   rootLeft = 0;
   /** Pushes and roots taken in the current streak (core/control.ts); each halves the next one. */
@@ -103,6 +105,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.slowPct = 0;
     this.slowLeft = 0;
     this.hastePct = 0;
+    this.packPct = 0;
     this.rootLeft = 0;
     this.controlCount = 0;
     this.controlQuietSec = 0;
@@ -169,7 +172,7 @@ export class Enemy extends Phaser.GameObjects.Image {
       this.pushLeft -= pushed;
     }
     // The slow first, then the haste aura (a 40% slow + 30% haste walks at 0.6 × 1.3 of base).
-    const speed = this.rootLeft > 0 ? 0 : this.speed * (1 - this.slowPct) * (1 + this.hastePct);
+    const speed = this.rootLeft > 0 ? 0 : this.speed * (1 - this.slowPct) * (1 + this.hastePct) * (1 + this.packPct);
     switch (this.def.behavior) {
       case 'walk':
         this.distance += speed * dt;
@@ -195,7 +198,7 @@ export class Enemy extends Phaser.GameObjects.Image {
               this.dashLeft = c.dashSec;
             }
           } else {
-            this.distance += (c.dashCells / c.dashSec) * CELL * (1 + this.hastePct) * dt;
+            this.distance += (c.dashCells / c.dashSec) * CELL * (1 + this.hastePct) * (1 + this.packPct) * dt;
             this.dashLeft -= dt;
             if (this.dashLeft <= 0) {
               this.dashLeg = 'crawl';

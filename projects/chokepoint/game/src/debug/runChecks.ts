@@ -56,6 +56,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['enemies.count', (g) => (g.enemies.aliveCount > 400 ? `${g.enemies.aliveCount} enemies alive` : null)],
   ['enemies.root', (g) => g.enemies.brokenRoot()],
   ['enemies.speedCap', (g) => (g.enemies.all.some((e) => e.active && e.def.speedRamp && e.speed > e.def.speedRamp.max * CELL + 0.01) ? 'a ramping enemy is over its speed cap' : null)],
+  ['enemies.pack', (g) => (g.enemies.all.some((e) => e.active && e.packPct !== 0 && e.packPct !== 0.25) ? 'an enemy packs at the wrong fraction' : null)],
   ['enemies.mark', (g) => g.enemies.brokenMark()],
   ['enemies.burn', (g) => g.enemies.brokenBurn()],
   ['enemies.push', (g) => g.enemies.brokenPush()],

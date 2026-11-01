@@ -4,11 +4,12 @@ title: "The Feeder: the enemy that pushes the pack"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 3
 created: 2026-11-01T02:32:15Z
 claimed_at: 2026-11-01T08:05:45Z
+finished_at: 2026-11-01T08:18:09Z
 ---
 
 ## Goal
@@ -101,3 +102,25 @@ Autocompact is thrashing: the context refilled to the limit within 3 turns of th
 ## Attempt 2 released (desktop-4070)
 
 The machine was paused for over 60 minutes holding this task, which kept its files locked for the others. Requeued.
+
+## Result (attempt 3, desktop)
+
+Added the Feeder, the 10th regular enemy and the first that works on other enemies: an orange crescent token (a new `crescent` shape in the art) that walks at 0.8 cells/s and pushes every enemy within two cells — itself included — a quarter faster, read by a soft orange ring pulsing out to 2 cells every 1.2 s (new `feederPack` enemy hook on the Mute's pattern; a new `packPct` field on Enemy multiplies with slows and the Sprinter's ramp and never stacks). Waves 13, 17, 21, … send exactly one, its 3 threat reserved out of the wave's budget ahead of the normal mix. Content, the hook, waves, one invariant, and the wave tests changed; the name tag, preview and Enemies reference pick it up from content unchanged. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 12.4 min
+
+```
+projects/chokepoint/game/src/art/paint.ts          | 18 +++++
+ projects/chokepoint/game/src/art/shapes.ts         |  2 +-
+ .../chokepoint/game/src/content/enemies/feeder.ts  | 15 ++++
+ .../chokepoint/game/src/content/enemies/index.ts   |  2 +
+ projects/chokepoint/game/src/content/types.ts      |  2 +-
+ projects/chokepoint/game/src/core/waves.ts         |  7 +-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/entities/Enemy.ts     |  7 +-
+ .../game/src/systems/enemyHooks/feederPack.ts      | 80 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ projects/chokepoint/game/tests/core/waves.test.ts  | 13 +++-
+ 11 files changed, 142 insertions(+), 7 deletions(-)
+```

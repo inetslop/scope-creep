@@ -79,8 +79,8 @@ describe('planWave', () => {
     }
     for (const wave of [9, 13, 15, 21]) { // non-quiet: a quiet wave halves the plan
       const plan = planWave(wave, new Rng(wave), ENEMIES);
-      // The Hauler is reserved after the splitters are counted, so it doesn't count toward them.
-      const others = plan.spawns.filter((s) => s.enemy !== 'splitter' && s.enemy !== 'hauler').length;
+      // The Hauler is reserved after the splitters are counted, so it doesn't count toward them. The Feeder is too.
+      const others = plan.spawns.filter((s) => s.enemy !== 'splitter' && s.enemy !== 'hauler' && s.enemy !== 'feeder').length;
       expect(plan.spawns.filter((s) => s.enemy === 'splitter').length).toBe(Math.floor(others / 7));
       expect(plan.spawns.filter((s) => s.enemy === 'splitter').length).toBeGreaterThan(0);
     }
@@ -102,6 +102,15 @@ describe('planWave', () => {
       const expected = wave >= 11 && (wave - 11) % 3 === 0 && wave % 10 !== 0 ? 1 : 0; // a boss wave sends only its Colossus
       expect(plan.spawns.filter((s) => s.enemy === 'mute').length).toBe(expected);
       if (expected === 1) expect(plan.spawns.some((s) => s.enemy !== 'mute')).toBe(true); // never a Mute-only wave
+    }
+  });
+
+  it('sends exactly one Feeder on 13, 17, 21, ... — the series is ≡ 1 mod 4, so never a quiet wave and never a boss wave', () => {
+    for (let wave = 1; wave <= 30; wave++) {
+      const plan = planWave(wave, new Rng(wave), ENEMIES);
+      const expected = wave >= 13 && (wave - 13) % 4 === 0 ? 1 : 0;
+      expect(plan.spawns.filter((s) => s.enemy === 'feeder').length).toBe(expected);
+      if (expected === 1) expect(plan.spawns.some((s) => s.enemy !== 'feeder')).toBe(true); // never a Feeder-only wave
     }
   });
 
