@@ -4,11 +4,12 @@ title: "The Hauler's leak pays its gold: a -5 chip at the exit"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T23:47:13Z
 claimed_at: 2026-11-01T00:22:02Z
+finished_at: 2026-11-01T00:54:05Z
 ---
 
 ## Goal
@@ -98,3 +99,15 @@ export const haulerLeak: MakeEnemyHook = ({ run, fx, board }) => ({
 - Readability: the chip reuses the exit chip's exact body (20 tall, 14 padding) at the teach chip's anchor, so 412x915 and 1280x720 are covered by T0307's footprint; it is shorter than the teach chip, nothing else lives at that anchor.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+Every Hauler leak after the run's first now pays its gold visibly: the red "-5" pop in `haulerLeak.ts` was replaced by a small white rounded chip — the HUD's own ~10 px coin icon plus a bold "-5" in muted ink — that pops ~100 ms after the leak just above the exit gate (same anchor as T0307's teach chip), holds ~1.5 s and fades. The run's first Hauler leak is suppressed (state read before `haulerTeach` sets it, registry order untouched) so the teach chip stays alone there, and in a resumed run where a Hauler already leaked the chip shows and the teach never re-shows; the gold rule itself is unchanged. The Toll's gold pop stacks beside it without overlap.
+
+- Self-review: APPROVE
+- Time: 32.1 min
+
+```
+.../game/src/systems/enemyHooks/haulerLeak.ts      | 46 +++++++++++++++++++---
+ 1 file changed, 40 insertions(+), 6 deletions(-)
+```
