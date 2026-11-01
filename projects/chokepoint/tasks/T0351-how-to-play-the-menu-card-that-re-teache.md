@@ -3,10 +3,12 @@ id: T0351
 title: "How to play: the menu card that re-teaches the run's loop"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T09:37:42Z
+claimed_at: 2026-11-01T09:37:46Z
+designer: desktop
 ---
 
 ## Goal
