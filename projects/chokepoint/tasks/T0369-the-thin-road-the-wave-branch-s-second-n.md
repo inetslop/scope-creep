@@ -3,11 +3,13 @@ id: T0369
 title: "The thin road: the wave branch's second node, every enemy 10% slower"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T17:47:11Z
+claimed_at: 2026-11-01T17:47:15Z
 epic: E14
+designer: desktop
 ---
 
 ## Goal
