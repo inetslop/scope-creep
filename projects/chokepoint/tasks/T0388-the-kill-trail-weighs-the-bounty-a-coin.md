@@ -1,12 +1,14 @@
 ---
 id: T0388
 title: "The kill trail weighs the bounty: a coin per 10 gold"
+assignee: desktop
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T23:16:36Z
+claimed_at: 2026-11-01T23:41:15Z
 ---
 
 ## Goal
