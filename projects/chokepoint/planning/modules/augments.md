@@ -51,6 +51,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 
 - `beam`: Beam
 - `burn`: Ember
+- `crit`: Spray
 - `damageMul + rateMul`: Rapid
 - `extraShots`: Bolt
 - `goldPerKill`: Mint
@@ -64,7 +65,6 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - `root`: Anchor
 - `slow`: Frost
 - `splash`: Splash
-- `spray`: Spray
 
 ### Bolt (`bolt`)
 - description: "Shoots the enemy furthest along. Added: one more shot at the same enemy each attack."
@@ -94,13 +94,13 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - tiers: rare {damageMul 1.3, cooldownMul 0.85, splash 1.5}, epic {damageMul 1.7, cooldownMul 0.7, splash 2}
 
 ### Spray (`spray`)
-- description: "Blasts 5 pellets in a cone: deadly up close, 15% hit for double. Added: +2 pellets per blast."
+- description: "Blasts 5 pellets in a cone: deadly up close, 15% hit for double. Added: +5% crit on any damage."
 - asTower: "Blasts 5 pellets in a cone: 15% hit for double."
-- asAdded: +2 pellets per blast.
+- asAdded: +5% crit chance on any damage.
 - look: shape diamond, color yellow, size 0.24
 - first: kind spray, damage 4, range 2.5, rate 0.833, spray 5
-- added: spray 2
-- tiers: rare {damageMul 1.25, cooldownMul 0.875, addedSpray 3, asAdded +3 pellets per blast.}, epic {damageMul 1.5, cooldownMul 0.75, addedSpray 4, asAdded +4 pellets per blast.}
+- added: crit 0.05
+- tiers: rare {damageMul 1.25, cooldownMul 0.875, addedCrit 0.1, asAdded +10% crit chance on any damage.}, epic {damageMul 1.5, cooldownMul 0.75, addedCrit 0.15, asAdded +15% crit chance on any damage.}
 
 ### Frost (`frost`)
 - description: "Slows everything around it. Added: hits slow enemies by 40%."
