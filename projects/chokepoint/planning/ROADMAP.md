@@ -63,14 +63,15 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the fork: the road splits into two lanes and re-joins; enemies take either lane — **done as T0352 (L, 2026-11-01, asus)**
 - the marked cell: one build cell that makes a tower built on it stronger — **tasked as T0340 (M, in the pool)**
 - the boards reference: the pause screen names the board's modifiers — mark, name, one dry line, and where each comes from (always / tech / some boards) — the vocabulary for the new islands — **done as T0350 (M, 2026-11-01, cachyos-x8664)**
+- the preview says which gate sends what: on a far-gate board the next-wave preview names the wave's far-gate share — the two lanes' cover is chosen in the build — **tasked as T0371 (M, in the pool)**
 
-### E14 — The wave: a tech branch for what a wave does (active — opened 2026-11-01)
+### E14 — The wave: a tech branch for what a wave does (active — fully tasked 2026-11-01, closing on the pool's landings)
 **Goal:** the tech tree has covered the run start, the board, the pool and the payout — but not the wave itself: a fifth branch lets between-run coins buy how a run plays.
 **When done:** the tree's "The wave" branch has three nodes, each bought once and on for every run after: The door (the far gate on every board), The thin road (every enemy 10% slower) and The breather (quiet waves pay double the wave bonus).
 **Breakdown:**
 - the branch and its first node, The door: the tech screen's fifth branch plus a 30-coin node that puts the far gate (T0338) on every board — **done as T0358 (M, 2026-11-01, desktop)** (the demo clause is out: the demo's own gate is parked in IDEAS)
-- (to task) The thin road: 40 coins, every enemy 10% slower — **the branch is in; task next**
-- (to task) The breather: 60 coins, quiet waves pay 2× the wave bonus (the branch is in)
+- The thin road: 85 coins by the depth rule, every enemy 10% slower — **tasked as T0369 (M, in the pool)**
+- The breather: 155 coins by the depth rule, quiet waves pay 2× the wave bonus — **tasked as T0370 (S, in the pool)** (no buy-gate inside the branch: each node buys independently at its depth price)
 
 ### Enemy queue (non-epic)
 
@@ -100,7 +101,7 @@ Ideas that may become epics or tasks of one.
 - Targeting modes per tower (first, strongest, closest) — **built as T0114 (L, non-epic, 2026-11-01, inet-racing)**; its follow-up (the plinth notch, the one-time chip) — **tasked as T0368 (S, non-epic, in the pool, 2026-11-01)**
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
-- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is **done as T0292 (2026-11-01, desktop)**; the wave-50 Flyer, the first boss that doesn't walk the road, is **E10's T0317 (in the pool)**; the wave-60 Blinker, the first that skips the road, is **tasked as T0364 (L, in the pool)**)
+- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is **done as T0292 (2026-11-01, desktop)**; the wave-50 Flyer, the first boss that doesn't walk the road, is **E10's T0317 (in the pool)**; the wave-60 Blinker, the first that skips the road, **failed as T0364 (L, 2026-11-01: architect context overflow, not a design rejection) — re-file smaller next cycle**)
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **now E13**: the far gate is done (T0338); the boards reference is done (T0350); the marked cell (T0340) and the fork (T0352) are in the pool
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
