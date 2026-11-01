@@ -3,12 +3,13 @@ id: T0385
 title: "The bank's pay pops at the gold number"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-01T22:18:47Z
 claimed_at: 2026-11-01T22:40:55Z
-designer: yoga
+finished_at: 2026-11-01T22:52:26Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -26,3 +27,7 @@ The bank's pay (T0363) is predicted (the "bank +N" line, T0374) and heard (the c
 - [ ] At a wave start where the bank pays 0, nothing pops.
 - [ ] The pop stays inside the stats card and never overlaps another line (the layout check in the gate); the card fits at 412x915 and 1280x720.
 - [ ] No new sound (the coin blip unchanged), no new line or button on the stats card, and the "bank +N" build-phase line is unchanged.
+
+## Rejected by architect (yoga)
+
+the pop already exists — at both wave starts `RunFlow.bankPay` (RunFlow.ts:122-134, called from the countdown end and `startWaveNow`) already adds the exact interest pay, sets `registry 'bankPay'` and plays the coin blip, and `StatsCard.popGold` (StatsCard.ts:139-147) already wears the gold "+N" on the gold number for that exact pay (nothing pops on a 0 pay, the early-send's seconds-gold is excluded, the coin trail and "bank +N" line already run), so T0385 is already built.
