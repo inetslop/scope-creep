@@ -1,14 +1,14 @@
 ---
 id: T0317
 title: "The Flyer: the wave-50 boss that crosses the sky"
+assignee: asus
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 1
+attempts: 2
 created: 2026-10-31T00:35:25Z
-claimed_at: 2026-11-01T17:52:17Z
-finished_at: 2026-11-01T21:38:41Z
+claimed_at: 2026-11-01T21:38:45Z
 epic: E10
 ---
 
