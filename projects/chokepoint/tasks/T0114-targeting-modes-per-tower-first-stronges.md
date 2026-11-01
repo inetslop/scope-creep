@@ -1,12 +1,14 @@
 ---
 id: T0114
 title: "Targeting modes per tower: first, strongest, closest"
+assignee: inet-racing
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T09:55:07Z
+claimed_at: 2026-11-01T14:34:53Z
 ---
 
 ## Goal
