@@ -3,10 +3,12 @@ id: T0342
 title: "The last stand's bed: the wave's music knows the run is at one life"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T05:50:54Z
+claimed_at: 2026-11-01T06:11:40Z
+designer: inet-racing
 ---
 
 ## Goal
