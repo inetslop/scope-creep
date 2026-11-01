@@ -3,11 +3,13 @@ id: T0373
 title: "The flyer's preview teach: the first flyer preview says it doesn't walk the road"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T18:48:59Z
+claimed_at: 2026-11-01T18:49:36Z
 epic: E10
+designer: yoga
 ---
 
 ## Goal
