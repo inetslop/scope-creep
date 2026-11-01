@@ -23,6 +23,7 @@ function fakeFlow(active: boolean) {
     run,
     {
       waves: { start: () => (state.started += 1) },
+      board: { map: { farGate: undefined }, path: { points: [] } }, // the far gate's send early-outs: no gate
       sfx: { waveStart: () => (state.sound += 1) },
       building: { cancelPending: () => (state.canceled += 1) },
     } as unknown as RunSystems,

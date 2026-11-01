@@ -4,11 +4,12 @@ title: "The far gate's send: one ring when its walkers come in"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T12:52:50Z
 claimed_at: 2026-11-01T13:09:11Z
+finished_at: 2026-11-01T13:54:25Z
 ---
 
 ## Goal
@@ -87,3 +88,24 @@ private farGatePulse(): void {
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+**
+- `npm run check` — typecheck + lint + 535 unit tests all pass (after extending the `fakeFlow` mock in `tests/systems/runFlow.test.ts`, which lacked the `board` field the new pulse reads; the mock now early-outs with `farGate: undefined`).
+- `npm run smoke` — PASS on both desktop (1280x720) and mobile (412x915).
+
+The ring is drawn in board units at the same gate anchor `art/board.ts` uses (`(pts[i+1]+pts[i+2])/2`), one thin muted-ink ring growing out from the far gate over 600 ms, fired once per wave start (both the countdown end and Space/Next-wave paths), only when the plan actually sends walkers through the gate (no far gate, boss waves, and sub-3-spawn waves all skip). No sound, text, HUD, or gameplay changes.
+
+SUMMARY: The far gate now announces its walkers: on a far-gate board, the moment each non-boss wave with a gate share starts, one quiet thin muted-ink ring blooms out from the far gate's edge and fades over 0.6 s — the ring language of the boss's arrival, one cell and quieter. It fires at both wave-start paths (countdown end and Space/Next-wave button) and skips boss waves, boards without a far gate, and waves under three spawns. Purely display-only: no sound, text, HUD element, and no change to spawns, timing or gold. Files: new `src/systems/fx/farGateSend.ts` plus the one-line call and `farGatePulse()` in `src/systems/RunFlow.ts`; one line added to the `startWaveNow` test's fake systems so the mock has the board the pulse reads.
+
+- Self-review: APPROVE
+- Time: 45.2 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/systems/RunFlow.ts        | 16 ++++++++++++++++
+ projects/chokepoint/game/src/systems/fx/farGateSend.ts | 14 ++++++++++++++
+ projects/chokepoint/game/tests/systems/runFlow.test.ts |  1 +
+ 3 files changed, 31 insertions(+)
+```

@@ -3,7 +3,9 @@ import { BUILD_SEC } from '../config';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
 import { draftPool, rollOffer } from '../core/augments';
+import { farGateSplit } from '../core/farGate';
 import type { RunState } from '../core/run';
+import { isBossWave } from '../core/waves';
 import { draftCardsFor } from '../core/techEffects';
 import { heldPay } from '../content/tech/claim';
 import { LEVEL_UNLOCK_WAVE, levelBuildSeconds } from '../core/levels';
@@ -17,6 +19,7 @@ import type { Board } from './Board';
 import type { Building } from './Building';
 import type { EnemySystem } from './EnemySystem';
 import type { FxSystem } from './FxSystem';
+import { farGateSend } from './fx/farGateSend';
 import { buildHoldRoad, fadeHoldRoad, placeHoldRoad } from './fx/holdRoad';
 import { streakTeach } from './fx/streakTeach';
 import type { ProjectileSystem } from './ProjectileSystem';
@@ -75,6 +78,7 @@ export class RunFlow {
         this.s.building.cancelPending();
         this.s.waves.start();
         this.s.sfx?.waveStart();
+        this.farGatePulse();
       }
     }
     if (run.phase === 'wave') {
@@ -104,6 +108,7 @@ export class RunFlow {
     this.s.building.cancelPending();
     this.s.waves.start();
     this.s.sfx?.waveStart();
+    this.farGatePulse();
     return banked;
   }
 
@@ -176,6 +181,17 @@ export class RunFlow {
     const ey = (pts[pts.length - 1]!.y + pts[pts.length - 2]!.y) / 2;
     this.s.fx.popText(ex, ey, `+${last.leaks}`, PALETTE.muted);
     this.s.sfx?.coinBlip();
+  }
+
+  /** The far gate's send: one muted ring at the far gate when this wave sends its walkers out of it (T0360). */
+  private farGatePulse(): void {
+    const map = this.s.board.map;
+    const fg = map.farGate;
+    const plan = this.s.waves.currentPlan;
+    // A boss wave sends none through it, and a wave under three has no gate share at all.
+    if (!fg || !plan || isBossWave(plan.number) || farGateSplit(plan.spawns.length) <= 0) return;
+    const c = this.s.board.centerOf(fg); // the far gate's own cell: where the art draws it (art/board.ts) and its walkers come in
+    farGateSend(this.s.fx, c.x, c.y);
   }
 
   private clearWave(): void {
