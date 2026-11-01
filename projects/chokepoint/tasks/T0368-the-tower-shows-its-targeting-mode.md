@@ -4,11 +4,12 @@ title: The tower shows its targeting mode
 assignee: cachyos-x8664
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T17:18:47Z
 claimed_at: 2026-11-01T19:15:13Z
+finished_at: 2026-11-01T20:29:33Z
 ---
 
 ## Goal
@@ -97,3 +98,21 @@ if (mode !== 'first') {
 
 ### Tests
 - `tests/core/saveRun.test.ts`: the new round-trip/older-save/corrupt test above (the save fields are the only new rule).
+
+## Result (attempt 1, cachyos-x8664)
+
+T0368 makes the per-tower targeting mode readable across the board: a `Tower.setModeTick()` muted plinth tick that redraws from `targetMode` (so a resumed non-First tower shows it, and a First tower clears it byte-identically) plus a one-time `systems/fx/modeChip.ts` chip on the first switch to Strongest/Closest, remembered through resume via two new run flags persisted through `saveRun`/`RunSave`. The one minimal deviation from the design: the `SavedRun` fields are required `boolean` rather than optional, because the design's own `RunSave.restore` direct assignment only typechecks under `strict: true` (and matches `haulerTold`/`blockTold` exactly).
+
+- Self-review: APPROVE
+- Time: 74.4 min
+
+```
+projects/chokepoint/game/src/core/run.ts           |  2 ++
+ projects/chokepoint/game/src/core/saveRun.ts       |  6 ++++
+ projects/chokepoint/game/src/entities/Tower.ts     | 15 +++++++++-
+ projects/chokepoint/game/src/systems/RunSave.ts    |  4 +++
+ .../chokepoint/game/src/systems/fx/modeChip.ts     | 32 ++++++++++++++++++++++
+ projects/chokepoint/game/src/ui/hud/TowerPanel.ts  |  8 ++++++
+ .../chokepoint/game/tests/core/saveRun.test.ts     | 15 ++++++++++
+ 7 files changed, 81 insertions(+), 1 deletion(-)
+```

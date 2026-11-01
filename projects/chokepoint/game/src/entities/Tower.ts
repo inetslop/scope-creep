@@ -32,6 +32,7 @@ export class Tower extends Phaser.GameObjects.Image {
   private readonly pips: Phaser.GameObjects.Graphics;
   private readonly jamDot: Phaser.GameObjects.Graphics;
   private readonly idleDot: Phaser.GameObjects.Graphics;
+  private readonly modeTick: Phaser.GameObjects.Graphics; // the plinth's muted tick while not First (T0368)
   private poppingSlot = -1; // slot mid pop-in; drawPips skips it until its tween lands
   private pipPop: Phaser.GameObjects.Graphics | undefined;
   /** Augment copies (id + tier) in its slots, in the order they were put in. */
@@ -87,6 +88,7 @@ export class Tower extends Phaser.GameObjects.Image {
     this.idleDot.fillStyle(PALETTE.muted, 1);
     this.idleDot.fillCircle(0, -32, 3);
     this.idleDot.setVisible(false);
+    this.modeTick = scene.add.graphics().setDepth(DEPTH.towers + 3).setPosition(x, y);
     this.setDepth(DEPTH.towers + 2);
     artScale(this);
     scene.add.existing(this);
@@ -133,6 +135,7 @@ export class Tower extends Phaser.GameObjects.Image {
     drawDecorations(this.deco, spec);
     this.refreshHasteRing(spec);
     this.drawPips();
+    this.setModeTick();
   }
 
   /** The flat red base ring, one tick per Haste copy; created once at the plinth's center. */
@@ -177,6 +180,15 @@ export class Tower extends Phaser.GameObjects.Image {
   private pipX(i: number): number {
     const gap = 10;
     return -((this.slots - 1) * gap) / 2 + i * gap;
+  }
+
+  /** The plinth's muted tick: off First (T0368), drawn from `targetMode` each frame. */
+  setModeTick(): void {
+    const g = this.modeTick;
+    g.clear();
+    if (this.targetMode === 'first') return;
+    g.fillStyle(PALETTE.muted, 1);
+    g.fillRoundedRect(-3.5, -21.7, 7, 2.4, 1.2); // plinth's top edge, centred: clears the pip row (y + 22) and the Frost ring (r 20.4 ± 1.5 at y - 4)
   }
 
   private drawPips(): void {
@@ -235,7 +247,7 @@ export class Tower extends Phaser.GameObjects.Image {
 
   /** Sold: the whole token rises and fades out in the drop-in's bounce tempo, then it is gone. */
   sellAway(): void {
-    const parts: Phaser.GameObjects.GameObject[] = [this, this.base, this.gun, this.deco, this.pips, this.jamDot, this.idleDot];
+    const parts: Phaser.GameObjects.GameObject[] = [this, this.base, this.gun, this.deco, this.pips, this.jamDot, this.idleDot, this.modeTick];
     if (this.hasteRing) parts.push(this.hasteRing);
     this.scene.tweens.add({ targets: parts, y: '-=12', alpha: 0, duration: 200, ease: 'Back.easeOut', onComplete: () => this.destroy() });
   }
@@ -290,6 +302,7 @@ export class Tower extends Phaser.GameObjects.Image {
     this.gun.destroy();
     this.deco.destroy();
     this.pips.destroy();
+    this.modeTick.destroy();
     this.jamDot.destroy();
     if (this.hasteRing) this.hasteRing.destroy();
     this.scene.tweens.killTweensOf(this.idleDot);

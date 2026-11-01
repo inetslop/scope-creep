@@ -12,6 +12,7 @@ import { artScale, augmentTexture, COIN_TEXTURE } from '../../art/textures';
 import type { Tower } from '../../entities/Tower';
 import { getSfx } from '../../scenes/keys';
 import type { GameScene } from '../../scenes/GameScene';
+import { modeChip } from '../../systems/fx/modeChip';
 import { makeButton, type Button } from '../button';
 import { makeCard } from '../card';
 import { drawTierFrame, gemRow, tierGemCount, tierName } from '../tierLook';
@@ -106,6 +107,13 @@ export class TowerPanel implements HudPart {
       const order: TargetMode[] = ['first', 'strongest', 'closest'];
       tower.targetMode = order[(order.indexOf(tower.targetMode) + 1) % order.length]!;
       chipLabel.setText(modeWord[tower.targetMode]);
+      tower.setModeTick(); // the plinth's tick appears/clears the moment the mode changes (T0368)
+      const mode = tower.targetMode;
+      if (mode === 'strongest') {
+        if (!game.run.modeStrongestTold) { game.run.modeStrongestTold = true; modeChip(game.fx, tower.x, tower.y, 'strongest'); }
+      } else if (mode === 'closest') {
+        if (!game.run.modeClosestTold) { game.run.modeClosestTold = true; modeChip(game.fx, tower.x, tower.y, 'closest'); }
+      }
       getSfx(scene)?.blip();
     });
     items.push(chip);

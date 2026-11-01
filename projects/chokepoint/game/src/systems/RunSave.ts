@@ -53,6 +53,8 @@ export class RunSave {
       streakPaid: run.streakPaid,
       haulerTold: run.haulerTold,
       blockTold: run.blockTold,
+      modeStrongestTold: run.modeStrongestTold,
+      modeClosestTold: run.modeClosestTold,
       milestone30Asked: run.milestone30Asked,
       rerollsUsed: run.rerollsUsed,
       level: [...run.level],
@@ -81,6 +83,8 @@ export class RunSave {
     run.streakPaid = saved.streakPaid;
     run.haulerTold = saved.haulerTold;
     run.blockTold = saved.blockTold;
+    run.modeStrongestTold = saved.modeStrongestTold;
+    run.modeClosestTold = saved.modeClosestTold;
     run.milestone30Asked = saved.milestone30Asked;
     run.rerollsUsed = saved.rerollsUsed;
     run.hand = saved.hand.map((c) => ({ id: c.id, tier: c.tier }));

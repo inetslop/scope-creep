@@ -62,6 +62,8 @@ export interface SavedRun {
   streakPaid: boolean;
   haulerTold: boolean; // the Hauler's extra-cost teach was shown; older saves predate the field
   blockTold: boolean; // the Block's double-leak teach was shown; older saves predate the field
+  modeStrongestTold: boolean; // the run's one strongest-mode chip showed (T0368); older saves predate the field
+  modeClosestTold: boolean; // the run's one closest-mode chip showed (T0368)
   milestone30Asked: boolean; // the wave-30 milestone card was shown; older saves predate the field
   rerollsUsed: number; // how many rerolls the run has bought; older saves carried rerollUsed: boolean
   /** The level augments on for the run; older saves predate the field. */
@@ -112,6 +114,8 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
   if (p.streakPaid !== undefined && typeof p.streakPaid !== 'boolean') return undefined;
   if (p.haulerTold !== undefined && typeof p.haulerTold !== 'boolean') return undefined;
   if (p.blockTold !== undefined && typeof p.blockTold !== 'boolean') return undefined;
+  if (p.modeStrongestTold !== undefined && typeof p.modeStrongestTold !== 'boolean') return undefined;
+  if (p.modeClosestTold !== undefined && typeof p.modeClosestTold !== 'boolean') return undefined;
   if (p.milestone30Asked !== undefined && typeof p.milestone30Asked !== 'boolean') return undefined;
   if (!inRange(p.gold, 0, 1e6)) return undefined;
   if (!inInt(p.lives, 0, 1e6) || !inInt(p.kills, 0, 1e6) || !inInt(p.cleanWaves, 0, 1e6)) return undefined;
@@ -156,6 +160,8 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
     streakPaid: p.streakPaid === true,
     haulerTold: p.haulerTold === true,
     blockTold: p.blockTold === true,
+    modeStrongestTold: p.modeStrongestTold === true,
+    modeClosestTold: p.modeClosestTold === true,
     milestone30Asked: p.milestone30Asked === true || p.wave > LEVEL_UNLOCK_WAVE, // older saves count as asked once their wave is past 30
     rerollsUsed,
     level: Array.isArray(p.level) ? (p.level as string[]) : [],

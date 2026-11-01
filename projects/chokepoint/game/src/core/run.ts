@@ -53,6 +53,8 @@ export class RunState {
   streakPaid = false; // the run's one +1 life for a streak of 3 was paid
   haulerTold = false; // the run's one Hauler teach showed (T0307): a Hauler that leaked has paid
   blockTold = false; // the run's one Block teach showed (T0349): a Block that leaked has paid
+  modeStrongestTold = false; // the run's one strongest-mode chip showed (T0368): a resumed run never re-teaches
+  modeClosestTold = false; // the run's one closest-mode chip showed (T0368)
   milestone30Asked = false; // the wave-30 milestone card was shown once this run
   /** The Dots a live Hive will still pop this wave (the hivePops hook rewrites it every wave frame): the enemies-left count keeps them in. */
   pendingPops = 0;
