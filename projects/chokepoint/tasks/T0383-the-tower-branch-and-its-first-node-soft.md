@@ -3,11 +3,13 @@ id: T0383
 title: The tower branch and its first node, Soft sell
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T21:57:55Z
+claimed_at: 2026-11-01T21:58:02Z
 epic: E16
+designer: desktop
 ---
 
 ## Goal
