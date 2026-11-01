@@ -3,11 +3,13 @@ id: T0387
 title: The panel says which tower rides the marked cell
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T23:16:36Z
+claimed_at: 2026-11-01T23:16:54Z
 epic: E16
+designer: yoga
 ---
 
 ## Goal
