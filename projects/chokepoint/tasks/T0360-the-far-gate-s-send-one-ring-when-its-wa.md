@@ -1,12 +1,14 @@
 ---
 id: T0360
 title: "The far gate's send: one ring when its walkers come in"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T12:52:50Z
+claimed_at: 2026-11-01T13:09:11Z
 ---
 
 ## Goal
