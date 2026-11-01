@@ -14,6 +14,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   bends: 0,
   lengthMul: 1,
   chokes: 1,
+  fold: 0,
   bgen: 2,
   gold: 260,
   lives: 17,
@@ -116,6 +117,19 @@ describe('saveRun', () => {
     const store = memory();
     saveRun(store, sample({ chokes: 2 }));
     expect(loadSavedRun(store)).toEqual(sample({ chokes: 2 }));
+  });
+
+  it('round-trips a switchback save, and a save written without the key loads as 0', () => {
+    const store = memory();
+    saveRun(store, sample({ fold: 1 }));
+    expect(loadSavedRun(store)).toEqual(sample({ fold: 1 }));
+    broken({ fold: 2 });
+    broken({ fold: -1 });
+    broken({ fold: 1.5 });
+    const without = { ...sample() } as Record<string, unknown>;
+    delete without.fold; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
+    expect(loadSavedRun(store)).toEqual(sample());
   });
 
   it('rejects a broken board-generation version, but a save written without the key loads as 1', () => {

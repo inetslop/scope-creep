@@ -38,6 +38,8 @@ export interface SavedRun {
   lengthMul: number;
   /** The board's choke cells at generation: 2 when "Two chokes" was owned, 1 in older saves. */
   chokes: number;
+  /** The board's switchback fold at generation: 1 when "The switchback" was owned, 0 in older saves. */
+  fold: number;
   /** The board's generation version: 2 when the board carries a guaranteed choke cell, 1 in older saves. */
   bgen: number;
   gold: number;
@@ -97,6 +99,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
   if (p.bends !== undefined && p.bends !== 0 && p.bends !== 1) return undefined;
   if (p.lengthMul !== undefined && p.lengthMul !== 1 && p.lengthMul !== 1.25) return undefined;
   if (p.chokes !== undefined && p.chokes !== 1 && p.chokes !== 2) return undefined;
+  if (p.fold !== undefined && p.fold !== 0 && p.fold !== 1) return undefined;
   if (p.bgen !== undefined && !inInt(p.bgen, 1, 8)) return undefined;
   if (p.streakPaid !== undefined && typeof p.streakPaid !== 'boolean') return undefined;
   if (p.haulerTold !== undefined && typeof p.haulerTold !== 'boolean') return undefined;
@@ -127,6 +130,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
     bends: p.bends === 1 ? 1 : 0,
     lengthMul: p.lengthMul === 1.25 ? 1.25 : 1,
     chokes: p.chokes === 2 ? 2 : 1,
+    fold: p.fold === 1 ? 1 : 0,
     bgen: inInt(p.bgen, 1, 8) ? p.bgen : 1,
     gold: p.gold,
     lives: p.lives,

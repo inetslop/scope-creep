@@ -1,4 +1,5 @@
 import { ensureChokes } from './choke';
+import { foldSwitchback } from './switchback';
 import type { Rng } from './rng';
 
 export interface Cell {
@@ -28,9 +29,11 @@ export interface GameMap {
  * With `lengthMul` above 1 the runs are 1–2 cells, so the road turns more often and comes out
  * about 25% longer (the realized length follows the grid). `bgen` 1 boards (old saves, old ghosts)
  * are the board as grown; `bgen` 2 boards always have a choke cell, and with `chokes` 2 they
- * carry two (the road folds back twice, when its tail has room).
+ * carry two (the road folds back twice, when its tail has room). With `fold` the road gets one
+ * switchback fold mid-board: a straight stretch running alongside its own return, a cell of
+ * island between (see `core/switchback.ts`).
  */
-export function generateMap(rng: Rng, cols: number, rows: number, rocks: number, extraBends = 0, lengthMul = 1, bgen = 2, chokes = 1): GameMap {
+export function generateMap(rng: Rng, cols: number, rows: number, rocks: number, extraBends = 0, lengthMul = 1, bgen = 2, chokes = 1, fold = false): GameMap {
   const vertical = rows > cols;
   // Work in "along x across" space, then map to cells.
   const length = vertical ? rows : cols;
@@ -83,7 +86,8 @@ export function generateMap(rng: Rng, cols: number, rows: number, rocks: number,
   for (const c of rng.shuffle(candidates).slice(0, rocks)) kinds[c.row]![c.col] = 'rock';
 
   const map: GameMap = { cols, rows, kinds, path, vertical };
-  return bgen >= 2 ? ensureChokes(map, chokes) : map;
+  const folded = fold ? foldSwitchback(map) : map;
+  return bgen >= 2 ? ensureChokes(folded, chokes) : folded;
 }
 
 /** 1 when the road's second cell is the entrance jog (not one step along the entrance axis), else 0. */

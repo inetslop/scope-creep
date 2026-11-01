@@ -1,0 +1,84 @@
+import { describe, expect, it } from 'vitest';
+import { chokeCells } from '../../src/core/choke';
+import { generateMap, kindAt, type GameMap } from '../../src/core/map';
+import { Rng } from '../../src/core/rng';
+import { switchbackFold } from '../../src/core/switchback';
+
+function expectValidPath(map: GameMap): void {
+  const { path, vertical, cols, rows } = map;
+  if (vertical) {
+    expect(path[0]!.row).toBe(0);
+    expect(path[path.length - 1]!.row).toBe(rows - 1);
+  } else {
+    expect(path[0]!.col).toBe(0);
+    expect(path[path.length - 1]!.col).toBe(cols - 1);
+  }
+  const seen = new Set<string>();
+  path.forEach((c, i) => {
+    expect(c.col >= 0 && c.col < cols && c.row >= 0 && c.row < rows).toBe(true);
+    expect(kindAt(map, c.col, c.row)).toBe('path');
+    const key = `${c.col},${c.row}`;
+    expect(seen.has(key)).toBe(false);
+    seen.add(key);
+    if (i > 0) expect(Math.abs(c.col - path[i - 1]!.col) + Math.abs(c.row - path[i - 1]!.row)).toBe(1);
+  });
+}
+
+describe('switchback stress (temporary)', () => {
+  it('1000 seeds, both orientations, all bend/length/choke combos: the fold is always in the middle third', () => {
+    for (const [cols, rows] of [[14, 8], [8, 14]] as const) {
+      for (const bends of [0, 1]) {
+        for (const mul of [1, 1.25]) {
+          for (const chokes of [1, 2]) {
+            for (let seed = 1; seed <= 1000; seed++) {
+              const map = generateMap(new Rng(seed), cols, rows, 5, bends, mul, 2, chokes, true);
+              expectValidPath(map);
+              const fold = switchbackFold(map);
+              expect(fold, `seed ${seed} ${cols}x${rows} b${bends} m${mul} c${chokes}: no fold`).not.toBeNull();
+              expect(fold!.gap).toBeGreaterThanOrEqual(1);
+              expect(fold!.gap).toBeLessThanOrEqual(2);
+              expect(fold!.a.length).toBeGreaterThanOrEqual(3);
+              expect(fold!.a.length).toBeLessThanOrEqual(5);
+              expect(fold!.b.length).toBeGreaterThanOrEqual(3);
+              expect(fold!.b.length).toBeLessThanOrEqual(5);
+              // middle third of the final road
+              expect(fold!.start * 3).toBeGreaterThanOrEqual(map.path.length);
+              expect(fold!.start * 3).toBeLessThanOrEqual(map.path.length * 2);
+              // the island strip between the two runs: no rock anywhere, the middle cells buildable
+              const laneA = map.vertical ? fold!.a[0]!.col : fold!.a[0]!.row;
+              const laneB = map.vertical ? fold!.b[0]!.col : fold!.b[0]!.row;
+              expect(Math.abs(laneA - laneB)).toBeGreaterThanOrEqual(2);
+              expect(Math.abs(laneA - laneB)).toBeLessThanOrEqual(3);
+              const lo = Math.min(laneA, laneB);
+              const hi = Math.max(laneA, laneB);
+              const alongs = new Set<number>();
+              for (const c of fold!.a) alongs.add(map.vertical ? c.row : c.col);
+              let openCount = 0;
+              for (const a of alongs) {
+                for (let m = lo + 1; m < hi; m++) {
+                  const cell = map.vertical ? { col: m, row: a } : { col: a, row: m };
+                  const k = kindAt(map, cell.col, cell.row);
+                  expect(k, `strip cell (${cell.col},${cell.row}) is a rock, seed ${seed}`).not.toBe('rock');
+                  if (k === 'open') openCount++;
+                }
+              }
+              expect(openCount, `seed ${seed}: strip has only ${openCount} buildable cells`).toBeGreaterThanOrEqual(2);
+              // a guarantee: at least one choke cell, and the strip cells are choke cells (double cover)
+              expect(chokeCells(map).length).toBeGreaterThanOrEqual(openCount);
+            }
+          }
+        }
+      }
+    }
+  }, 60000);
+
+  it('without the node: byte-identical boards for 2000 seeds', () => {
+    for (const [cols, rows] of [[14, 8], [8, 14]] as const) {
+      for (let seed = 1; seed <= 2000; seed++) {
+        const plain = generateMap(new Rng(seed), cols, rows, 5, 0, 1, 2, 1, false);
+        expect(plain, `seed ${seed}`).toEqual(generateMap(new Rng(seed), cols, rows, 5, 0, 1, 2, 1));
+        expect(switchbackFold(plain), `seed ${seed}: plain board detected as folded`).toBeNull();
+      }
+    }
+  });
+});

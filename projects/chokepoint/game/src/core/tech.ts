@@ -86,6 +86,19 @@ export function boardChokes(owned: readonly string[]): number {
   return chokes;
 }
 
+/** Whether a new run's road gets the switchback fold: true when an owned node has it; each node counts once, unknown ids count for nothing. */
+export function boardFold(owned: readonly string[]): boolean {
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = BOARD_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    if (node.fold) return true;
+  }
+  return false;
+}
+
 /** A branch's first-node price scaled by depth^1.5 and rounded to the nearest multiple of 5 (halves up). */
 export function nodePrice(base: number, depth: number): number {
   return Math.round((base * Math.pow(depth, 1.5)) / 5) * 5;

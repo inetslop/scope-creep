@@ -4,11 +4,12 @@ title: "The switchback: the board branch's fourth node, a fold in the road"
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 3
 created: 2026-10-30T22:00:22Z
 claimed_at: 2026-10-31T23:04:28Z
+finished_at: 2026-11-01T01:38:56Z
 epic: E9
 ---
 
@@ -104,4 +105,28 @@ tests/core/saveRun.test.ts(9,61): error TS2322: Type '{ v: 1; seed: number; cols
   Types of property 'fold' are incompatible.
     Type 'number | undefined' is not assignable to type 'number'.
       Type 'undefined' is not assignable to type 'number'.
+```
+
+## Result (attempt 3, asus)
+
+Added "The switchback" as the fourth node on the tech tree's board branch (80 coins at depth 4; the branch base was re-priced 30→10 so the row reads 10/30/50/80, as the task requires), and made owned new, ghost and resumed runs generate their board with one deterministic mid-road fold: a straight 3–5 cell stretch running alongside its own return with a buildable island strip between, placed in the middle third (new pure `core/switchback.ts` with `foldSwitchback`/`switchbackFold`, wired through `generateMap`'s new `fold` param, a `boardFold` reducer, and the run save). Three small deviations from the design, each forced by the code: the design's `gap` loop is inert in its own shape (which is always a 1-cell strip), so I dropped it; the fold point must start its road run so both fold runs are exactly 3–5 cells as the detector and acceptance criteria require; and the rebuild keeps the whole island strip rock-free (not just one choke cell) so every strip cell is buildable. Also: `GameScene` normalizes the saved `fold` to a boolean (the design's literal expression was the `number | boolean` type error that failed attempt 2), and `tests/core/tech.test.ts` / `saveRun.test.ts` were updated where the price change and new required save field forced it. Seeded tests cover both orientations × 50 seeds plus a bends/length sweep, byte-identity without the node, the 80-coin purchase, and save round-trips; `check` and both smoke runs pass.
+
+- Self-review: NO VERDICT
+- Time: 154.5 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/content/tech/board.ts |  13 +-
+ projects/chokepoint/game/src/core/map.ts           |  10 +-
+ projects/chokepoint/game/src/core/saveRun.ts       |   4 +
+ projects/chokepoint/game/src/core/switchback.ts    | 175 +++++++++++++++++++++
+ projects/chokepoint/game/src/core/tech.ts          |  13 ++
+ projects/chokepoint/game/src/debug/runChecks.ts    |   2 +
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  17 +-
+ projects/chokepoint/game/src/systems/RunSave.ts    |   1 +
+ .../chokepoint/game/tests/core/saveRun.test.ts     |  14 ++
+ .../chokepoint/game/tests/core/switchback.test.ts  | 119 ++++++++++++++
+ projects/chokepoint/game/tests/core/tech.test.ts   |  45 +++---
+ .../game/tests/core/zz-stress-tmp.ts.bak           |  84 ++++++++++
+ 12 files changed, 461 insertions(+), 36 deletions(-)
 ```

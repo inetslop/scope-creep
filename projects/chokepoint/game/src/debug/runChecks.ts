@@ -5,6 +5,7 @@ import { getLevelAugment } from '../content/levels';
 import { levelSpeedMul } from '../core/levels';
 import { draftCardCount } from '../core/augments';
 import { chokeCells } from '../core/choke';
+import { switchbackFold } from '../core/switchback';
 import { TIER_ORDER } from '../core/tiers';
 import { bossId } from '../core/waves';
 import type { GameScene } from '../scenes/GameScene';
@@ -22,6 +23,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['iron.lives', (g) => (g.run.mode !== 'iron' || (g.techLife === 0 && g.run.lives <= 2) ? null : `iron run at ${g.run.lives} lives with techLife ${g.techLife}`)],
   ['run.ledger', (g) => (Number.isInteger(g.run.goldEarned) && g.run.goldEarned >= 0 && g.run.cleanWaves >= 0 && g.run.cleanWaves <= g.run.wavesCleared ? null : 'ledger')],
   ['board.choke', (g) => (g.run.bgen < 2 || chokeCells(g.board.map).length > 0 ? null : 'a gen-2 board has no choke cell')],
+  ['board.fold', (g) => (g.mapFold === 0 || switchbackFold(g.board.map) !== null ? null : 'a switchback board has no fold in its road')],
   ['resume.taken', (g) => (g.registry.get('resumeRun') ? 'a saved run is waiting for the game that never took it' : null)],
   ['ghost.taken', (g) => (g.registry.get('ghostSeed') ? 'a ghost seed is waiting for the game that never took it' : null)],
   ['iron.taken', (g) => (g.registry.get('ironMode') ? 'an iron flag is waiting for the game that never took it' : null)],

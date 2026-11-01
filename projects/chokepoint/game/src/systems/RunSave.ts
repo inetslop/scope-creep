@@ -39,6 +39,7 @@ export class RunSave {
       bends: mapExtraBends(this.game.board.map),
       lengthMul: this.game.mapLengthMul,
       chokes: this.game.mapChokes,
+      fold: this.game.mapFold,
       gold: run.gold,
       lives: run.lives,
       mode: run.mode,

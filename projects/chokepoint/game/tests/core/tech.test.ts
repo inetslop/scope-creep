@@ -153,49 +153,50 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste', 'clean2']);
   });
 
-  it('the board row is three nodes: One more bend, The long way and Two chokes, each at 30 for new runs', () => {
-    expect(BOARD_NODES.map((n) => [n.id, n.price, n.bends, n.lengthMul, n.chokes])).toEqual([
-      ['one-more-bend', 30, 1, 1, 1],
-      ['long-way', 30, 0, 1.25, 1],
-      ['two-chokes', 30, 0, 1, 2],
+  it('the board row is four nodes: One more bend, The long way, Two chokes and The switchback', () => {
+    expect(BOARD_NODES.map((n) => [n.id, n.price, n.bends, n.lengthMul, n.chokes, n.fold])).toEqual([
+      ['one-more-bend', 10, 1, 1, 1, false],
+      ['long-way', 30, 0, 1.25, 1, false],
+      ['two-chokes', 30, 0, 1, 2, false],
+      ['switchback', 10, 0, 1, 1, true],
     ]);
   });
 
   it('a board node buys only when it is known, unowned and affordable', () => {
     expect(buyBoardNode(withCoins(60), 'nope')).toBe(false);
-    const broke = withCoins(29);
-    expect(buyBoardNode(broke, 'one-more-bend')).toBe(false); // unaffordable: 29 < 30
-    expect(loadProfile(broke).coins).toBe(29);
+    const broke = withCoins(9);
+    expect(buyBoardNode(broke, 'one-more-bend')).toBe(false); // unaffordable: 9 < 10
+    expect(loadProfile(broke).coins).toBe(9);
     const owned = withCoins(60, ['one-more-bend']);
     expect(buyBoardNode(owned, 'one-more-bend')).toBe(false); // already owned
     expect(loadProfile(owned).coins).toBe(60);
   });
 
-  it('a board purchase deducts exactly 30 and saves the id alongside the other branches', () => {
+  it('a board purchase deducts exactly 10 and saves the id alongside the other branches', () => {
     const store = withCoins(60, ['gold-1', 'haste']);
     expect(buyBoardNode(store, 'one-more-bend')).toBe(true);
-    expect(loadProfile(store).coins).toBe(30);
+    expect(loadProfile(store).coins).toBe(50);
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'haste', 'one-more-bend']);
   });
 
-  it('the third board node buys at the depth price: 155 coins with the other two owned, 154 refuses', () => {
-    const store = withCoins(155, ['one-more-bend', 'long-way']);
+  it('the third board node buys at the depth price: 50 coins with the other two owned, 49 refuses', () => {
+    const store = withCoins(50, ['one-more-bend', 'long-way']);
     expect(buyBoardNode(store, 'two-chokes')).toBe(true);
     expect(loadProfile(store).coins).toBe(0);
     expect(loadProfile(store).purchased).toEqual(['one-more-bend', 'long-way', 'two-chokes']);
-    const broke = withCoins(154, ['one-more-bend', 'long-way']);
-    expect(buyBoardNode(broke, 'two-chokes')).toBe(false); // unaffordable: 154 < 155
-    expect(loadProfile(broke).coins).toBe(154);
+    const broke = withCoins(49, ['one-more-bend', 'long-way']);
+    expect(buyBoardNode(broke, 'two-chokes')).toBe(false); // unaffordable: 49 < 50
+    expect(loadProfile(broke).coins).toBe(49);
   });
 
-  it('the second board node buys at the depth price: 85 coins with one owned, 84 refuses', () => {
-    const store = withCoins(85, ['one-more-bend']);
+  it('the second board node buys at the depth price: 30 coins with one owned, 29 refuses', () => {
+    const store = withCoins(30, ['one-more-bend']);
     expect(buyBoardNode(store, 'long-way')).toBe(true);
     expect(loadProfile(store).coins).toBe(0);
     expect(loadProfile(store).purchased).toEqual(['one-more-bend', 'long-way']);
-    const broke = withCoins(84, ['one-more-bend']);
-    expect(buyBoardNode(broke, 'long-way')).toBe(false); // unaffordable: 84 < 85
-    expect(loadProfile(broke).coins).toBe(84);
+    const broke = withCoins(29, ['one-more-bend']);
+    expect(buyBoardNode(broke, 'long-way')).toBe(false); // unaffordable: 29 < 30
+    expect(loadProfile(broke).coins).toBe(29);
   });
 
   it('boardBends sums the owned board nodes once each; unknown and other-branch ids count for nothing', () => {
@@ -253,7 +254,7 @@ describe('tech', () => {
     expect(nodeInReach([], 4)).toBe(false); // a balance that reaches no unowned node
     expect(nodeInReach([...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES].map((n) => n.id), 99999)).toBe(false); // every node owned
     const allButTwo = [...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES.filter((n) => n.id !== 'two-chokes')].map((n) => n.id);
-    expect(nodeInReach(allButTwo, 154)).toBe(false); // the last unowned node costs 155 at its depth
-    expect(nodeInReach(allButTwo, 155)).toBe(true);
+    expect(nodeInReach(allButTwo, 49)).toBe(false); // the last unowned node costs 50 at its depth
+    expect(nodeInReach(allButTwo, 50)).toBe(true);
   });
 });
