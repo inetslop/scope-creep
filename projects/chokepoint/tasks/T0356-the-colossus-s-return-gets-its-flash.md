@@ -3,10 +3,12 @@ id: T0356
 title: "The Colossus's return gets its flash"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T11:49:16Z
+claimed_at: 2026-11-01T12:14:56Z
+designer: desktop
 ---
 
 ## Goal
