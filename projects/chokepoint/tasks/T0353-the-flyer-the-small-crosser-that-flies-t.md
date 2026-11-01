@@ -3,11 +3,13 @@ id: T0353
 title: "The Flyer: the small crosser that flies the sky"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T11:14:54Z
+claimed_at: 2026-11-01T11:14:57Z
 epic: E10
+designer: desktop
 ---
 
 ## Goal
