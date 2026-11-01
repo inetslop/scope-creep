@@ -48,7 +48,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Breakdown:**
 - The Flyer, the wave-50 boss: the fifth every-10 boss, the first that doesn't walk the road — a straight-line crossing from the island's edge to the exit, a bank at half health — **T0317 (L, priority 2, in progress, asus)**
 - the build phase shows the line: before the flyer's wave, its route is on the board through the build — the crossing's cover is chosen in the build, not learned at the wave's door — **tasked as T0346 (M, in the pool, waits on T0317)**
-- the regular Flyer in the wave mix: the first enemy that doesn't walk the road — a small fast shape that crosses the island in a straight line from its edge to the exit, one on the Feeder's old waves (13, 17, 21, …); carries the Feeder's removal, the regular cap stays 10 of 10 — **done as T0353 (L, 2026-11-01, asus)**; its one-time preview teach — **T0355's file is gone (2026-11-01); due now that T0353 landed — re-task next cycle**
+- the regular Flyer in the wave mix: the first enemy that doesn't walk the road — a small fast shape that crosses the island in a straight line from its edge to the exit, one on the Feeder's old waves (13, 17, 21, …); carries the Feeder's removal, the regular cap stays 10 of 10 — **done as T0353 (L, 2026-11-01, asus)**; its one-time preview teach — **tasked as T0373 (S, in the pool, 2026-11-01)**
 - (to task) the crossing learns: the bank's line is chosen to cross where the run's towers don't reach — the boss banks into uncovered ground, its telegraph keeping it fair (waits on T0317)
 
 ### E11 — First run teaches itself (done; history in planning/archive/ROADMAP.md)
@@ -63,7 +63,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the fork: the road splits into two lanes and re-joins; enemies take either lane — **done as T0352 (L, 2026-11-01, asus)**
 - the marked cell: one build cell that makes a tower built on it stronger — **tasked as T0340 (M, in the pool)**
 - the boards reference: the pause screen names the board's modifiers — mark, name, one dry line, and where each comes from (always / tech / some boards) — the vocabulary for the new islands — **done as T0350 (M, 2026-11-01, cachyos-x8664)**
-- the preview says which gate sends what: on a far-gate board the next-wave preview names the wave's far-gate share — the two lanes' cover is chosen in the build — **tasked as T0371 (M, in the pool)**
+- the preview says which gate sends what: on a far-gate board the next-wave preview names the wave's far-gate share — the two lanes' cover is chosen in the build — **T0371 (M) rejected 2026-11-01: the preview already shows the far-gate share — the slice is done**
 
 ### E14 — The wave: a tech branch for what a wave does (active — fully tasked 2026-11-01, closing on the pool's landings)
 **Goal:** the tech tree has covered the run start, the board, the pool and the payout — but not the wave itself: a fifth branch lets between-run coins buy how a run plays.
@@ -101,7 +101,7 @@ Ideas that may become epics or tasks of one.
 - Targeting modes per tower (first, strongest, closest) — **built as T0114 (L, non-epic, 2026-11-01, inet-racing)**; its follow-up (the plinth notch, the one-time chip) — **tasked as T0368 (S, non-epic, in the pool, 2026-11-01)**
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
-- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is **done as T0292 (2026-11-01, desktop)**; the wave-50 Flyer, the first boss that doesn't walk the road, is **E10's T0317 (in progress, asus)**; the wave-60 Blinker, the first that skips the road, **failed as T0364 (L, 2026-11-01: architect context overflow, not a design rejection) — re-file smaller next cycle**)
+- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is **done as T0292 (2026-11-01, desktop)**; the wave-50 Flyer, the first boss that doesn't walk the road, is **E10's T0317 (in progress, asus)**; the wave-60 Blinker, the first that skips the road, **failed as T0364 (L, 2026-11-01: architect context overflow, not a design rejection) — re-file smaller after T0317 lands (the enemy's files are busy with the Flyer)**)
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **now E13**: the far gate is done (T0338); the boards reference is done (T0350); the marked cell (T0340) and the fork (T0352) are in the pool
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
@@ -112,4 +112,4 @@ Ideas that may become epics or tasks of one.
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
 - The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **done as T0348 (M, 2026-11-01, asus)**
 - More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **E9's later slice, parked**
-- Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**
+- Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**; the choice's payoff as a live line — "bank +N" on the stats card, build phase only — **tasked as T0374 (M, non-epic, in the pool, 2026-11-01)**
