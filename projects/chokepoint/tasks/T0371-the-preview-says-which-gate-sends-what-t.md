@@ -3,13 +3,14 @@ id: T0371
 title: "The preview says which gate sends what: the far-gate share on the next-wave card"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-01T17:47:11Z
 claimed_at: 2026-11-01T17:47:42Z
+finished_at: 2026-11-01T17:56:10Z
 epic: E13
-designer: inet-racing
+design_attempts: 1
 ---
 
 ## Goal
@@ -25,3 +26,7 @@ On a board with the far gate (T0338, or every board with The door owned, T0358),
 - [ ] On a far-gate board, the build-phase preview before a non-boss wave shows one muted "far gate ×N" line under the per-type counts; N equals the plan's gate split for that wave.
 - [ ] Boards without the far gate and every boss wave's preview are byte-identical to today (no line); a resumed far-gate run shows the line again in its next build phase.
 - [ ] The preview's per-type counts, tag chips and the card's fit at 412x915 and 1280x720 are unchanged; the game is playable menu to game over on desktop and mobile.
+
+## Rejected by architect (inet-racing)
+
+The feature already exists — NextWavePreview.ts:76-77/150 already shows the muted "far gate ×N" line on far-gate boards before non-boss waves, reading the existing pure count farGateSplit() from core/farGate.ts, and all acceptance criteria are met by the current tree.
