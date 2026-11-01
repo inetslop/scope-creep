@@ -1,7 +1,6 @@
 import Phaser from 'phaser';
-import { PALETTE } from '../content/palette';
+import { deepOf, PALETTE, type Bright } from '../content/palette';
 import { loadBoardName } from '../core/boardName';
-import { levelMultiplierTag } from '../core/levels';
 import { hook } from '../debug/testHook';
 import { fetchBoard, isBoardError, type Board, type BoardEntry, type BoardError, type BoardName } from '../net/boards';
 import { makeButton, type Button } from '../ui/button';
@@ -15,8 +14,17 @@ const PANEL_W = 360;
 const PAD = 24;
 const ROWS = 10;
 const ROW_H = 26;
-/** The list's height: ten rows, a gap, and the player's own row when it is below the ten. */
-const LIST_H = ROWS * ROW_H + 8 + ROW_H;
+const HEADER_H = 24;
+/** Level headers the ranked part makes room for: a top ten rarely spans more levels. */
+const MAX_HEADERS = 3;
+/** The ranked part: ten rows under their level headers. */
+const TOP_H = ROWS * ROW_H + MAX_HEADERS * HEADER_H;
+/** The list's height: the ranked part, a gap, and the player's own row (with its header) when it is below the ten. */
+const LIST_H = TOP_H + 8 + HEADER_H + ROW_H;
+
+/** The level headers' colors, from level 1 up; level 0 ("No level") is muted. */
+const LEVEL_BRIGHTS: readonly Bright[] = ['teal', 'blue', 'purple', 'pink', 'orange'];
+const levelBright = (level: number): Bright => LEVEL_BRIGHTS[(level - 1) % LEVEL_BRIGHTS.length]!;
 
 const SUBTITLE: Record<BoardName, string> = {
   today: 'The best run of every name since 00:00 UTC.',
@@ -25,8 +33,9 @@ const SUBTITLE: Record<BoardName, string> = {
 
 /**
  * The leaderboards, over the dimmed start screen: Today (each name's best run since 00:00 UTC)
- * and Forever. Each lists the top ten, with the player's own place under them when it is lower.
- * The player's name is changed here too (NameScene).
+ * and Forever. Each lists the top ten under level headers (the server ranks by level, then
+ * score, so a level-2 run sits above a bigger level-0 score), with the player's own place under
+ * them when it is lower. The player's name is changed here too (NameScene).
  */
 export class BoardsScene extends Phaser.Scene {
   private tab: BoardName = 'today';
@@ -145,10 +154,42 @@ export class BoardsScene extends Phaser.Scene {
       return;
     }
     this.listBox.removeAll(true);
-    board.entries.forEach((e, i) => this.addRow(e, i * ROW_H + ROW_H / 2));
-    const meListed = board.me && board.entries.some((e) => e.name === board.me!.name);
-    if (board.me && !meListed) this.addRow(board.me, ROWS * ROW_H + 8 + ROW_H / 2);
-    else this.listBox.add(this.add.text(0, LIST_H - 2, `${board.total} ${board.total === 1 ? 'name' : 'names'}`, textStyle(12, PALETTE.faint)).setOrigin(0.5, 1));
+    // The ranked rows, a header wherever the level changes. A ten spanning more levels than
+    // there are headers' room for shows the rows that fit.
+    const shown = new Set<string>();
+    let y = 0;
+    let level: number | undefined;
+    for (const e of board.entries) {
+      const header = e.level !== level;
+      if (y + (header ? HEADER_H : 0) + ROW_H > TOP_H) break;
+      if (header) {
+        this.addHeader(e.level, y + HEADER_H / 2);
+        y += HEADER_H;
+        level = e.level;
+      }
+      this.addRow(e, y + ROW_H / 2);
+      shown.add(e.name);
+      y += ROW_H;
+    }
+    if (board.me && !shown.has(board.me.name)) {
+      let meY = TOP_H + 8;
+      if (board.me.level !== level) {
+        this.addHeader(board.me.level, meY + HEADER_H / 2);
+        meY += HEADER_H;
+      }
+      this.addRow(board.me, meY + ROW_H / 2);
+    } else this.listBox.add(this.add.text(0, LIST_H - 2, `${board.total} ${board.total === 1 ? 'name' : 'names'}`, textStyle(12, PALETTE.faint)).setOrigin(0.5, 1));
+  }
+
+  /** A level header: a dot in the level's color, "Level N" (or "No level") in its deep shade, and a hairline to the edge. */
+  private addHeader(level: number, y: number): void {
+    const left = -PANEL_W / 2 + PAD;
+    const right = PANEL_W / 2 - PAD;
+    const dot = this.add.circle(left + 4, y, 4.5, level > 0 ? PALETTE[levelBright(level)] : PALETTE.faint);
+    const label = this.add.text(left + 14, y, level > 0 ? `Level ${level}` : 'No level', textStyle(13, level > 0 ? deepOf(levelBright(level)) : PALETTE.muted, { fontStyle: 'bold' })).setOrigin(0, 0.5);
+    const lineX = left + 14 + label.width + 8;
+    const line = this.add.rectangle(lineX, y, right - lineX, 1, PALETTE.cardDeep).setOrigin(0, 0.5);
+    this.listBox.add([dot, label, line]);
   }
 
   /** One row: rank, name, score, waves; the player's own on a soft highlight. */
@@ -163,20 +204,12 @@ export class BoardsScene extends Phaser.Scene {
       this.listBox.add(hl);
     }
     const style = (size: number, bold: boolean, color: number = PALETTE.ink) => textStyle(size, color, { fontStyle: bold ? 'bold' : 'normal' });
-    // A run that wore level augments shows the factor beside its score, in the muted language of
-    // the iron star; rows without one keep the score exactly where it always sat.
-    const tag = e.mul !== undefined && e.mul > 1.0001 ? this.add.text(right - 54, y, levelMultiplierTag(e.mul), style(11, false, PALETTE.muted)).setOrigin(1, 0.5) : undefined;
-    const scoreX = right - 54 - (tag ? tag.width + 6 : 0);
-    const score = this.add.text(scoreX, y, e.score.toLocaleString('en-US'), style(15, mine)).setOrigin(1, 0.5);
-    // A run that wore a level wears it as a small tag before its score; level 0 wears none.
-    const levelTag = e.level > 0 ? this.add.text(scoreX - score.width - 6, y, `L${e.level}`, style(11, false, PALETTE.muted)).setOrigin(1, 0.5) : undefined;
+    // The level is the header above the row; the score already carries the level's multiplier.
     this.listBox.add([
       this.add.text(left + 22, y, `${e.rank}`, style(14, false, PALETTE.muted)).setOrigin(1, 0.5),
       this.add.text(left + 36, y, e.name, style(16, true)).setOrigin(0, 0.5),
-      score,
+      this.add.text(right - 54, y, e.score.toLocaleString('en-US'), style(15, mine)).setOrigin(1, 0.5),
       this.add.text(right, y, `W${e.waves}`, style(13, false, PALETTE.muted)).setOrigin(1, 0.5),
     ]);
-    if (tag) this.listBox.add(tag);
-    if (levelTag) this.listBox.add(levelTag);
   }
 }
