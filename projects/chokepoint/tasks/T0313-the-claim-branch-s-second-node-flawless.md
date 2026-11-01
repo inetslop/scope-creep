@@ -1,12 +1,14 @@
 ---
 id: T0313
 title: "The claim branch's second node: Flawless pays 10 coins"
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T00:11:52Z
+claimed_at: 2026-11-01T03:35:27Z
 epic: E9
 ---
 
