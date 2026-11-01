@@ -1,12 +1,14 @@
 ---
 id: T0375
 title: "The Flyer's streak: the sky shows its motion"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T19:38:40Z
+claimed_at: 2026-11-01T19:54:56Z
 epic: E10
 ---
 
