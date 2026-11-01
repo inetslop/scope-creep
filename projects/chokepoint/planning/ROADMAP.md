@@ -49,6 +49,8 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - The Flyer, the wave-50 boss: the fifth every-10 boss, the first that doesn't walk the road — a straight-line crossing from the island's edge to the exit, a bank at half health — **T0317 (L, priority 2, in progress, asus)**
 - the build phase shows the line: before the flyer's wave, its route is on the board through the build — the crossing's cover is chosen in the build, not learned at the wave's door — **tasked as T0346 (M, in the pool, waits on T0317)**
 - the regular Flyer in the wave mix: the first enemy that doesn't walk the road — a small fast shape that crosses the island in a straight line from its edge to the exit, one on the Feeder's old waves (13, 17, 21, …); carries the Feeder's removal, the regular cap stays 10 of 10 — **done as T0353 (L, 2026-11-01, asus)**; its one-time preview teach — **tasked as T0373 (S, in the pool, 2026-11-01)**
+- the Flyer's motion reads as flight: a short fading streak in its own color trails the regular Flyer through the sky — **tasked as T0375 (S, in the pool, 2026-11-01)**
+- the sky wears its own note: one soft sustained tone plays while any regular Flyer is in the air, heard as distinct from the road's thuds — **tasked as T0376 (M, in the pool, 2026-11-01)**
 - (to task) the crossing learns: the bank's line is chosen to cross where the run's towers don't reach — the boss banks into uncovered ground, its telegraph keeping it fair (waits on T0317)
 
 ### E11 — First run teaches itself (done; history in planning/archive/ROADMAP.md)
