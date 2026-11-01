@@ -24,7 +24,7 @@ describe('content', () => {
       expect(e.fromWave).toBeGreaterThanOrEqual(1);
       expect(BRIGHTS).toContain(e.look.color);
       expect(e.look.size).toBeGreaterThan(0);
-      expect(e.look.size).toBeLessThanOrEqual(e.id === 'titan' || e.id === 'orb' ? 0.5 : 0.45);
+      expect(e.look.size).toBeLessThanOrEqual(e.id === 'titan' || e.id === 'orb' || e.id === 'hive' ? 0.5 : 0.45);
       if (e.speedRamp) {
         expect(e.speedRamp.perHit).toBeGreaterThan(0);
         expect(e.speedRamp.max).toBeGreaterThan(e.speed);
@@ -50,6 +50,14 @@ describe('content', () => {
         expect(split.hpFrac).toBeGreaterThan(0);
         expect(split.hpFrac).toBeLessThanOrEqual(1);
         expect(ENEMIES.some((d) => d.id === split.into)).toBe(true);
+      }
+      const pops = e.pops;
+      if (pops) {
+        expect(pops.everySec).toBeGreaterThan(0);
+        expect(pops.max).toBeGreaterThan(0);
+        expect(pops.telegraphSec).toBeGreaterThan(0);
+        expect(pops.telegraphSec).toBeLessThan(pops.everySec);
+        expect(ENEMIES.some((d) => d.id === pops.into)).toBe(true);
       }
     }
   });

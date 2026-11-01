@@ -4,11 +4,12 @@ title: "The Hive: the wave-40 boss that grows the group"
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-30T17:15:59Z
 claimed_at: 2026-11-01T14:54:18Z
+finished_at: 2026-11-01T15:09:16Z
 ---
 
 ## Goal
@@ -96,3 +97,28 @@ The run's next peak past the Orb: wave 40 sends a boss that answers a single-tar
 - `waves.test.ts`: `bossId(40)` is `'hive'`; wave-40 plan `[{ enemy: 'hive', delaySec: 0 }]` with the boss tag and `waveHpMul(40)`; same plan on every rng stream; no wave but 40 sends a Hive; fix line 172's comment.
 - `content.test.ts`: line 27 gains `|| e.id === 'hive'`; a `pops` block mirrors `splitsAt`'s (`everySec > 0`, `max > 0`, `0 < telegraphSec < everySec`, `into` exists in `ENEMIES`).
 - `npm run check` and `npm run smoke` (1280×720 + 412×915) pass.
+
+## Result (attempt 1, desktop)
+
+Wave 40 now sends the Hive — a purple-pentagon boss carrying the wave's whole 200-point budget that pops a telegraphed, wave- and level-scaled Dot at its spot every 6 s (five max, stopping the instant it dies) while it walks. It is new data plus one enemy hook (`hivePops`) and a `pendingPops` term in the enemies-left count, so the arrival horn, boss card, death burst/name card, escape note, wave preview, name tag and bosses reference all follow from the def and `bossId` with no new HUD. Pinned by a new `hivePops` unit test and updated wave/content tests; `npm run check` and the desktop + phone smoke both pass.
+
+- Self-review: APPROVE
+- Time: 15.0 min
+- Self-review made fixes (kept; checks pass).
+
+```
+.../chokepoint/game/src/content/enemies/hive.ts    | 17 +++++++
+ .../chokepoint/game/src/content/enemies/index.ts   |  2 +
+ projects/chokepoint/game/src/content/types.ts      |  2 +
+ projects/chokepoint/game/src/core/hivePops.ts      | 22 +++++++++
+ projects/chokepoint/game/src/core/run.ts           |  3 ++
+ projects/chokepoint/game/src/core/waves.ts         |  8 ++--
+ projects/chokepoint/game/src/debug/runChecks.ts    |  2 +
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  4 +-
+ .../game/src/systems/enemyHooks/hivePops.ts        | 53 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ projects/chokepoint/game/tests/content.test.ts     | 10 +++-
+ .../chokepoint/game/tests/core/hivePops.test.ts    | 26 +++++++++++
+ projects/chokepoint/game/tests/core/waves.test.ts  | 14 ++++--
+ 13 files changed, 154 insertions(+), 11 deletions(-)
+```

@@ -110,7 +110,7 @@ export function waveSpeedMul(wave: number): number {
   return isRushWave(wave) ? 1.5 : 1;
 }
 
-/** Every 10th wave is the boss wave: one Colossus (the Guard and the Titan on wave 20, the Orb on wave 30), nothing else. */
+/** Every 10th wave is the boss wave: one Colossus (the Guard and the Titan on wave 20, the Orb on wave 30, the Hive on wave 40), nothing else. */
 export function isBossWave(wave: number): boolean {
   return wave > 0 && wave % 10 === 0;
 }
@@ -118,12 +118,12 @@ export function isBossWave(wave: number): boolean {
 /** The enemy the plan declares as the boss of wave `wave`; undefined on non-boss waves. */
 export function bossId(wave: number): string | undefined {
   if (!isBossWave(wave)) return undefined;
-  return wave === 30 ? 'orb' : wave === 20 ? 'titan' : 'colossus';
+  return wave === 40 ? 'hive' : wave === 30 ? 'orb' : wave === 20 ? 'titan' : 'colossus';
 }
 
 /**
  * Which enemies a wave sends, in order, and when. A boss wave is exactly one boss — the Colossus,
- * the Guard and the Titan on wave 20, the Orb on wave 30 — and nothing else; every other wave
+ * the Guard and the Titan on wave 20, the Orb on wave 30, the Hive on wave 40 — and nothing else; every other wave
  * spends the wave's budget on enemies
  * that are unlocked (fromWave) and
  * affordable, groups of the same type come in quick succession, and ramping enemies are reserved
@@ -135,7 +135,7 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
     planNormalWave(wave, rng, enemies);
     // Wave 20 is the Titan's wave: the Guard walks in ahead of it, carrying the Titan's shield (core/shield.ts).
     if (wave === 20) return { number: wave, spawns: [{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }], hpMul: waveHpMul(wave), tags: ['boss'] };
-    // Wave 30 is the Orb's wave: the boss wave's shape is its own (the Colossus on every other boss wave).
+    // Wave 30 is the Orb's wave and wave 40 the Hive's: the boss wave's shape is its own (the Colossus on every other boss wave).
     return { number: wave, spawns: [{ enemy: bossId(wave)!, delaySec: 0 }], hpMul: waveHpMul(wave), tags: ['boss'] };
   }
   return planNormalWave(wave, rng, enemies);

@@ -33,6 +33,8 @@ export interface EnemyDef {
   splitsInto?: string;
   /** The mid-life split (the Orb): when its hp first drops to `hpFrac` of its max after a hit and it survives, it vanishes with no kill and leaves two of `into` at its road spot, 0.25 cells either side (core/split.ts), each with half its hp after the triggering hit (core/midSplit.ts). */
   splitsAt?: { hpFrac: number; into: string };
+  /** The periodic pop (the Hive): every `everySec` after its own spawn it pops one `into` at its spot, up to `max`, each telegraphed `telegraphSec` early; the popping stops the moment it dies (core/hivePops.ts, systems/enemyHooks/hivePops.ts). */
+  pops?: { everySec: number; max: number; telegraphSec: number; into: string };
   /** Multiplies damage from a directed shot that strikes its front (flying against its travel); the rear and flightless hits go whole (core/plate.ts). */
   plate?: number;
   /** Its shield is carried by enemies of this id: until one is killed, every damage it takes lands at half, after every other modifier (core/shield.ts). */

@@ -3,6 +3,7 @@ import { block } from './block';
 import { colossus } from './colossus';
 import { guard } from './guard';
 import { orb } from './orb';
+import { hive } from './hive';
 import { shard } from './shard';
 import { titan } from './titan';
 import { bulwark } from './bulwark';
@@ -24,6 +25,7 @@ export const ENEMIES: readonly EnemyDef[] = [
   guard,
   titan,
   orb,
+  hive,
   shard,
   dasher,
   sprinter,

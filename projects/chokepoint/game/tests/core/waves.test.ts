@@ -155,7 +155,7 @@ describe('boss waves (every 10th)', () => {
     expect(bossId(10)).toBe('colossus');
     expect(bossId(20)).toBe('titan');
     expect(bossId(30)).toBe('orb');
-    expect(bossId(40)).toBe('colossus');
+    expect(bossId(40)).toBe('hive');
     expect(bossId(1)).toBeUndefined();
     expect(bossId(9)).toBeUndefined();
     for (const wave of [10, 30, 40]) {
@@ -163,10 +163,10 @@ describe('boss waves (every 10th)', () => {
     }
     expect(planWave(20, new Rng(20), ENEMIES).spawns[1]!.enemy).toBe(bossId(20)); // wave 20's boss walks in behind its Guard
   });
-  it('a boss wave is exactly its boss — the Colossus, the Guard and Titan on wave 20, the Orb on wave 30 — nothing else: the boss tag, the wave-scaled hp', () => {
+  it('a boss wave is exactly its boss — the Colossus, the Guard and Titan on wave 20, the Orb on wave 30, the Hive on wave 40 — nothing else: the boss tag, the wave-scaled hp', () => {
     for (const wave of [10, 20, 30, 40]) {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
-      expect(plan.spawns).toEqual(wave === 20 ? [{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }] : [{ enemy: wave === 30 ? 'orb' : 'colossus', delaySec: 0 }]);
+      expect(plan.spawns).toEqual(wave === 20 ? [{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }] : [{ enemy: wave === 30 ? 'orb' : wave === 40 ? 'hive' : 'colossus', delaySec: 0 }]);
       expect(plan.tags).toEqual(['boss']);
       expect(plan.hpMul).toBe(waveHpMul(wave));
     }
@@ -179,10 +179,15 @@ describe('boss waves (every 10th)', () => {
     expect(plan.spawns).toEqual([{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }]);
     expect(bossId(20)).toBe('titan');
   });
-  it('no wave but 20 sends a Titan or a Guard (10 and 40 send the Colossus, 30 the Orb)', () => {
+  it('no wave but 20 sends a Titan or a Guard (10 the Colossus, 30 the Orb, 40 the Hive)', () => {
     for (let wave = 1; wave <= 40; wave++) {
       if (wave === 20) continue;
       expect(planWave(wave, new Rng(wave), ENEMIES).spawns.some((s) => s.enemy === 'titan' || s.enemy === 'guard')).toBe(false);
+    }
+  });
+  it('no wave but 40 sends a Hive (the wave-40 boss; its popped Dots are not a plan spawn)', () => {
+    for (let wave = 1; wave <= 40; wave++) {
+      expect(planWave(wave, new Rng(wave), ENEMIES).spawns.filter((s) => s.enemy === 'hive').length).toBe(wave === 40 ? 1 : 0);
     }
   });
   it('non-boss waves never send a Colossus', () => {
@@ -202,6 +207,7 @@ describe('boss waves (every 10th)', () => {
       expect(planWave(10, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'colossus', delaySec: 0 }]);
       expect(planWave(20, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }]);
       expect(planWave(30, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'orb', delaySec: 0 }]);
+      expect(planWave(40, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'hive', delaySec: 0 }]);
     }
   });
 });

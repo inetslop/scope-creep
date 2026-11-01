@@ -63,9 +63,9 @@ export class RunFlow {
     private readonly s: RunSystems,
   ) {}
 
-  /** Enemies of the current wave still to come or alive. */
+  /** Enemies of the current wave still to come, alive, or still to pop from a live Hive. */
   get enemiesLeft(): number {
-    return this.s.waves.remaining + this.s.enemies.aliveCount;
+    return this.s.waves.remaining + this.s.enemies.aliveCount + this.run.pendingPops;
   }
 
   update(dt: number): void {

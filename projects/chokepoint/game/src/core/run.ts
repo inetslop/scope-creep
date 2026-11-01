@@ -54,6 +54,8 @@ export class RunState {
   haulerTold = false; // the run's one Hauler teach showed (T0307): a Hauler that leaked has paid
   blockTold = false; // the run's one Block teach showed (T0349): a Block that leaked has paid
   milestone30Asked = false; // the wave-30 milestone card was shown once this run
+  /** The Dots a live Hive will still pop this wave (the hivePops hook rewrites it every wave frame): the enemies-left count keeps them in. */
+  pendingPops = 0;
   private leaksThisWave = 0;
 
   constructor(seed: number, techOwned: readonly string[] = [], bgen: number = 2) {
@@ -166,6 +168,7 @@ export class RunState {
     }
     this.story.push({ wave: this.wave, leaks: this.leaksThisWave });
     this.leaksThisWave = 0;
+    this.pendingPops = 0; // the hook rewrites it only while a wave runs: a hive that died on the last frame must not count on
     this.phase = 'draft';
     return bonus;
   }
