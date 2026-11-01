@@ -3,11 +3,13 @@ id: T0358
 title: "The wave branch and its first node, The door: the far gate on every board"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T12:34:19Z
+claimed_at: 2026-11-01T12:34:21Z
 epic: E14
+designer: desktop
 ---
 
 ## Goal
