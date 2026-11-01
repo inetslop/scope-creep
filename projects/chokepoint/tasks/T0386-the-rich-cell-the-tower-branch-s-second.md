@@ -3,11 +3,13 @@ id: T0386
 title: "The rich cell: the tower branch's second node, the marked cell 1.25× to 1.5×"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T22:53:02Z
+claimed_at: 2026-11-01T22:53:05Z
 epic: E16
+designer: desktop
 ---
 
 ## Goal
