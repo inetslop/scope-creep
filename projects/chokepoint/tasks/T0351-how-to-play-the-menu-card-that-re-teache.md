@@ -4,11 +4,12 @@ title: "How to play: the menu card that re-teaches the run's loop"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T09:37:42Z
 claimed_at: 2026-11-01T10:51:20Z
+finished_at: 2026-11-01T11:41:38Z
 ---
 
 ## Goal
@@ -160,3 +161,18 @@ howRow.container.setPosition(cx, put(BUTTON_H));
 
 ### Tests
 none (UI-only task; the four lines are static text verified against `SLOT_COSTS` in `src/config.ts:20`, `REWARD_WAVE` in `src/core/levels.ts:7`, and the Tech scene).
+
+## Result (attempt 1, cachyos-x8664)
+
+The menu now has a How row, under the Augments row (and above Boards when it is on), that opens a HowScene card over the dimmed menu: the run's loop in four dry lines, then a pointer to the pause's keys. The lines state only rules the game has — cards make the towers and the first card decides the attack, gold buys the slots and each one is dearer, a leak costs a life and the run ends out of lives, coins pay from wave 10 on and buy the tech between runs — with no new numbers, state, sound or profile write. Tapping the dim area (the row itself is under the shade, so it counts) closes back to the menu; in smoke the card also closes on its own after 800 ms so a stray tap on the new row can't strand a run. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 50.3 min
+
+```
+projects/chokepoint/game/src/main.ts             |  3 +-
+ projects/chokepoint/game/src/scenes/HowScene.ts  | 84 ++++++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/MenuScene.ts |  9 +++
+ projects/chokepoint/game/src/scenes/keys.ts      |  1 +
+ 4 files changed, 96 insertions(+), 1 deletion(-)
+```
