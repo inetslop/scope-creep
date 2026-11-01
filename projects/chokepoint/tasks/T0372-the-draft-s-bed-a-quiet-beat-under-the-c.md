@@ -4,11 +4,12 @@ title: "The draft's bed: a quiet beat under the card pick"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T18:12:12Z
 claimed_at: 2026-11-01T18:53:15Z
+finished_at: 2026-11-01T19:02:24Z
 ---
 
 ## Goal
@@ -89,3 +90,17 @@ export class DraftScene extends Phaser.Scene {
 
 ### Tests
 - none (audio task; no `src/core` rule changes)
+
+## Result (attempt 1, desktop)
+
+Added the draft's quiet generative bed — a new `src/audio/draftBed.ts` (`DraftBed`, a 3-note G2/E3/G3 sine loop at 1.2 s steps and 0.025 volume, 0.6 s fades, no forms), owned by `DraftScene` (constructed in `create()`, driven by a new `update()` gated on the pause screen, stopped on scene shutdown) and guarded by a new `draftBed.valid` invariant in `runChecks.ts`. Two minimal deviations from the design, both forced by the real code: the `bed` field needs the `!` definite-assignment marker (strict property initialization; matches `GameScene.buildBed!`), and the stop is wired as `this.events.once('shutdown', …)` in `create()` instead of a `shutdown()` method override, because Phaser 3.90 dispatches `shutdown` only as an event and would never call a user scene's `shutdown()` method (verified in the Phaser dist; every other scene here uses the same `events.once` convention). `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 9.2 min
+
+```
+projects/chokepoint/game/src/audio/draftBed.ts    | 80 +++++++++++++++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts   |  2 +
+ projects/chokepoint/game/src/scenes/DraftScene.ts |  9 +++
+ 3 files changed, 91 insertions(+)
+```

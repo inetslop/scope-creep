@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { DraftBed } from '../audio/draftBed';
 import { rerollCost } from '../config';
 import { artScale, augmentTexture, COIN_TEXTURE, GEM_TEXTURE } from '../art/textures';
 import { getAugment } from '../content/augments';
@@ -31,14 +32,22 @@ const HINT_GAP = 12;
  */
 export class DraftScene extends Phaser.Scene {
   private picked = false;
+  bed!: DraftBed; // the draft's quiet bed: its shutdown stops it, runChecks reads it while the draft is open
 
   constructor() {
     super(SCENES.draft);
   }
 
+  update(_time: number, deltaMs: number): void {
+    const dt = Math.min(deltaMs / 1000, 0.05);
+    this.bed.update(dt, !this.scene.isActive(SCENES.pause)); // silent under the pause screen, like the other beds
+  }
+
   create(): void {
     uiCamera(this);
     hook.overlay = SCENES.draft;
+    this.bed = new DraftBed(getSfx(this));
+    this.events.once('shutdown', () => this.bed.stop()); // the pick's fade-out and ringing notes must not outlive the draft (the Sfx context is the singleton's)
     this.picked = false;
     const game = getGameScene(this);
     const four = game.flow.offer.length === 4;

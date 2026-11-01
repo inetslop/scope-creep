@@ -8,6 +8,7 @@ import { chokeCells } from '../core/choke';
 import { switchbackFold } from '../core/switchback';
 import { TIER_ORDER } from '../core/tiers';
 import { bossId, waveSpeedMul } from '../core/waves';
+import { DraftScene } from '../scenes/DraftScene';
 import type { GameScene } from '../scenes/GameScene';
 import { SCENES } from '../scenes/keys';
 import { SPLIT_TELEGRAPH_SEC } from '../systems/enemyHooks/midSplit';
@@ -78,6 +79,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['exitWarn.valid', (g) => g.exitWarn.broken()],
   ['music.bed', (g) => g.music.broken()],
   ['buildBed.valid', (g) => g.buildBed.broken()],
+  ['draftBed.valid', (g) => (g.scene.isActive(SCENES.draft) ? (g.scene.get(SCENES.draft) as DraftScene).bed.broken() : null)],
   ['leakCost.valid', (g) => g.leakCost.broken()],
   ['projectiles.count', (g) => (g.projectiles.activeCount > 600 ? `${g.projectiles.activeCount} projectiles in flight` : null)],
   ['projectiles.stuck', (g) => g.projectiles.brokenProjectile()],
