@@ -1,12 +1,14 @@
 ---
 id: T0354
 title: The Haste shows its working aura
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T11:14:54Z
+claimed_at: 2026-11-01T16:10:48Z
 ---
 
 ## Goal
