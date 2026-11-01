@@ -1,14 +1,14 @@
 ---
 id: T0334
 title: "The Feeder: the enemy that pushes the pack"
-assignee: desktop-4070
 size: M
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-11-01T02:32:15Z
 claimed_at: 2026-11-01T04:00:26Z
+finished_at: 2026-11-01T05:26:45Z
 ---
 
 ## Goal
@@ -89,3 +89,11 @@ Enemy field: `packPct = 0` beside `hastePct`; advance(): append `* (1 + this.pac
 - waves.test.ts line 83: extend the `others` exclusion with `&& s.enemy !== 'feeder'`.
 - New test, modeled on the Mute one (lines 99–106): loop wave 1..30, `expected = wave >= 13 && (wave - 13) % 4 === 0 ? 1 : 0`, expect exactly that many `feeder` spawns, and when 1 assert the wave also sends a non-feeder.
 - `npm run check` must pass (content.test.ts auto-validates feeder; typecheck forces the crescent additions).
+
+## Attempt 1 failed (desktop-4070)
+
+The agent made no changes to the game (success).
+
+```
+Autocompact is thrashing: the context refilled to the limit within 3 turns of the previous compact, 3 times in a row. A file being read or a tool output is likely too large for the context window. Try reading in smaller chunks, or use /clear to start fresh.
+```
