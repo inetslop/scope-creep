@@ -24,6 +24,7 @@ const ROW_H = 64;
 const ROW_GAP = 6;
 const SLOT = 50;
 const DPS_LINE = 14; // one muted line of 11px
+const MARKED_LINE = 14; // one muted line, like DPS_LINE
 const SELL_H = 44; // the "Sell · +N" line, build phase only
 
 /**
@@ -38,6 +39,7 @@ export class TowerPanel implements HudPart {
   private box: Phaser.GameObjects.Container | undefined;
   private unlock: { button: Button; cost: number; price: Phaser.GameObjects.Text } | undefined;
   private killsText: Phaser.GameObjects.Text | undefined;
+  private markedText: Phaser.GameObjects.Text | undefined;
   private size = { width: 0, height: 0 };
   private builtVersion = -1;
   /** The phase the panel was built for: the sell line wears only in the build phase, and a phase change does not bump `uiVersion`. */
@@ -59,7 +61,14 @@ export class TowerPanel implements HudPart {
       this.build(game);
     }
     const tower = game.building.selectedTower;
+    if (this.markedText !== undefined !== (tower !== undefined && tower.cellMul > 1)) {
+      // the cell's multiplier flipped without a selection or phase change: rebuild so the line appears or clears
+      this.builtVersion = game.building.uiVersion;
+      this.builtPhase = game.run.phase;
+      this.build(game);
+    }
     if (this.killsText && tower) this.killsText.setText(`kills ${tower.kills}`); // no-op while unchanged
+    if (this.markedText && tower) this.markedText.setText(markedLine(tower)); // no-op while unchanged
     if (this.unlock) {
       const affordable = game.run.canAfford(this.unlock.cost);
       this.unlock.price.setColor(cssColor(affordable ? PALETTE.ink : PALETTE.red));
@@ -72,6 +81,7 @@ export class TowerPanel implements HudPart {
     this.box = undefined;
     this.unlock = undefined;
     this.killsText = undefined;
+    this.markedText = undefined;
     const tower = game.building.selectedTower;
     if (!tower) return;
     const scene = this.scene;
@@ -82,12 +92,13 @@ export class TowerPanel implements HudPart {
     const RW = w - 36;
     const sell = game.run.phase === 'build'; // the sell line wears only in the build phase
     const below = sell ? SELL_H + ROW_GAP : 0; // the sell line and its row gap, under the slot row
+    const marked = tower.cellMul > 1; // stands on the board's marked cell
     // Pass 1: lay each row's added line out at (0,0) to measure it, then let the row grow to fit.
     const rows = tower.augments.map((c) => {
       const addedLine = scene.add.text(0, 0, tierAddedLine(getAugment(c.id), c.tier), textStyle(11, PALETTE.muted, { wordWrap: { width: RW - 52 } })).setOrigin(0, 0);
       return { addedLine, rowH: Math.max(ROW_H, Math.round(addedLine.height) + 52) }; // 52 = 44 px from the row's top to the added line + 8 px under its last line
     });
-    const H = (ROW_H + ROW_GAP) * n + 146 + 18 + DPS_LINE + below + rows.reduce((s, r) => s + r.rowH - ROW_H, 0); // room for the kills line and the damage per second under it
+    const H = (ROW_H + ROW_GAP) * n + 146 + 18 + DPS_LINE + (marked ? MARKED_LINE : 0) + below + rows.reduce((s, r) => s + r.rowH - ROW_H, 0); // room for the marked, kills and damage-per-second lines
     const top = -H / 2;
     // The card swallows taps, so tapping the panel never builds on the board under it.
     const card = makeCard(scene, 0, 0, w, H, 22).setInteractive();
@@ -139,6 +150,11 @@ export class TowerPanel implements HudPart {
     if (n === 0) {
       // Defensive: a tower always holds its first augment, so this should never show.
       items.push(scene.add.text(left, top + 80, 'Put an augment in a slot', textStyle(13, PALETTE.muted)).setOrigin(0, 0));
+    }
+    // The marked line, above the kills line: shown only while this tower stands on the board's marked cell.
+    if (marked) {
+      this.markedText = scene.add.text(left, H / 2 - 79 - below - 2 * DPS_LINE, markedLine(tower), textStyle(11, PALETTE.muted)).setOrigin(0, 0);
+      items.push(this.markedText);
     }
     // This run's kills by this tower, in the gap between the augment rows and the slot row.
     this.killsText = scene.add.text(left, H / 2 - 79 - below - DPS_LINE, `kills ${tower.kills}`, textStyle(11, PALETTE.muted)).setOrigin(0, 0);
@@ -193,6 +209,11 @@ export class TowerPanel implements HudPart {
     items.push(scene.add.text(hintX, y, hint, textStyle(12, PALETTE.faint, { wordWrap: { width: Math.max(60, w - 36 - MAX_SLOTS * (SLOT + 8)) } })).setOrigin(0, 0.5));
     return items;
   }
+}
+
+/** The marked line: "marked · +N% damage", N from the tower's live cell multiplier, never hard-coded. */
+function markedLine(tower: Tower): string {
+  return `marked · +${Math.round((tower.cellMul - 1) * 100)}% damage`;
 }
 
 /** Damage, range, speed, and the number of shots when more than one. */

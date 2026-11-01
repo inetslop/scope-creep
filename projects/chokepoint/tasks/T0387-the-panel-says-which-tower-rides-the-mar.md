@@ -4,11 +4,12 @@ title: The panel says which tower rides the marked cell
 assignee: desktop-4070
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T23:16:36Z
 claimed_at: 2026-11-01T23:37:09Z
+finished_at: 2026-11-01T23:56:51Z
 epic: E16
 ---
 
@@ -77,3 +78,15 @@ if (this.markedText && tower) this.markedText.setText(markedLine(tower)); // no-
 
 ### Tests
 none
+
+## Result (attempt 1, desktop-4070)
+
+The tower panel now shows a muted "marked · +N% damage" line under the augment rows (just above the kills line) when the selected tower stands on the board's marked cell, with N read live from the tower's `cellMul` so it reads +25% on a plain board and +50 once The rich cell raises the multiplier (T0386). Implemented in `src/ui/hud/TowerPanel.ts` only: a `MARKED_LINE` constant, a `markedText` object pushed before the slot row, the card growing 14px only while the tower is marked, a flip-check rebuild in `update()` for multiplier changes, and a new module-level `markedLine()` helper. Off-marked towers and every other panel row are unchanged; typecheck, lint, unit tests and desktop+phone smoke all pass.
+
+- Self-review: APPROVE
+- Time: 19.7 min
+
+```
+projects/chokepoint/game/src/ui/hud/TowerPanel.ts | 23 ++++++++++++++++++++++-
+ 1 file changed, 22 insertions(+), 1 deletion(-)
+```
