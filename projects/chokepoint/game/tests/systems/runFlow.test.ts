@@ -8,23 +8,27 @@ const teachCalls = vi.hoisted(() => ({ n: 0 }));
 vi.mock('../../src/systems/fx/streakTeach', () => ({ streakTeach: () => (teachCalls.n += 1) }));
 
 import { START } from '../../src/config';
+import { bankInterest } from '../../src/core/bankInterest';
 import { RunState } from '../../src/core/run';
 import { hook } from '../../src/debug/testHook';
 import { SCENES } from '../../src/scenes/keys';
 import { RunFlow, type RunSystems } from '../../src/systems/RunFlow';
 
-/** A flow with only what startWaveNow touches; the wave start, sound and placement cancel are recorded. */
+/** A flow with only what startWaveNow touches; the wave start, sound, placement cancel and bank pay are recorded. */
 function fakeFlow(active: boolean) {
   const run = new RunState(1);
   run.startBuild(8);
-  const state = { started: 0, sound: 0, canceled: 0 };
+  const state = { started: 0, sound: 0, canceled: 0, blip: 0 };
   const flow = new RunFlow(
-    { scene: { isActive: () => active } } as unknown as Phaser.Scene,
+    {
+      scene: { isActive: () => active },
+      registry: { set: () => {}, get: () => undefined }, // no stats card in the test: no coin trail
+    } as unknown as Phaser.Scene,
     run,
     {
       waves: { start: () => (state.started += 1) },
       board: { map: { farGate: undefined }, path: { points: [] } }, // the far gate's send early-outs: no gate
-      sfx: { waveStart: () => (state.sound += 1) },
+      sfx: { waveStart: () => (state.sound += 1), coinBlip: () => (state.blip += 1) },
       building: { cancelPending: () => (state.canceled += 1) },
     } as unknown as RunSystems,
   );
@@ -35,15 +39,15 @@ describe('RunFlow.startWaveNow, the one start-wave path', () => {
   it('banks 2 gold per whole second left, cancels the waiting placement and starts the wave', () => {
     const { run, flow, state } = fakeFlow(true);
     expect(flow.startWaveNow()).toBe(16); // 8 s left
-    expect(run.gold).toBe(START.gold + 16);
+    expect(run.gold).toBe(START.gold + 16 + bankInterest(START.gold + 16)); // the banked seconds-gold, then the bank's 5% pay on it
     expect(run.buildLeftSec).toBe(0);
-    expect(state).toEqual({ started: 1, sound: 1, canceled: 1 });
+    expect(state).toEqual({ started: 1, sound: 1, canceled: 1, blip: 1 });
   });
   it('banks nothing with under a second left and still starts the wave', () => {
     const { run, flow, state } = fakeFlow(true);
     run.buildLeftSec = 0.4;
     expect(flow.startWaveNow()).toBe(0);
-    expect(run.gold).toBe(START.gold);
+    expect(run.gold).toBe(START.gold + bankInterest(START.gold)); // no banked seconds, but the bank still pays its 5%
     expect(state.started).toBe(1);
   });
   it('does nothing when the scene is not active or the phase is not build', () => {

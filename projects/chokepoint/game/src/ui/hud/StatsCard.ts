@@ -30,6 +30,7 @@ export class StatsCard implements HudPart {
   private livesPop = false;
   private lastWave = -1;
   private livesPulsing = false;
+  private goldPulsing = false;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -64,6 +65,8 @@ export class StatsCard implements HudPart {
     if (game.run.lives > this.lastLives) this.popLives();
     this.lastLives = game.run.lives;
     this.gold.setText(String(game.run.gold));
+    const pay = this.scene.registry.pop('bankPay') as number | undefined; // the bank's pay, from RunFlow this frame
+    if (pay !== undefined && pay > 0) this.popGold(pay);
     this.goldTagRow(game.run.phase === 'wave' && isQuietWave(game.run.wave) && isLastStand(game.run));
     const n = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed, bgen: game.run.bgen, held: game.run.heldLives }, this.cleanPay, game.run.mode === 'iron' ? 2 : 1, game.run.levelHpMul, this.flawlessPay, this.heldPay);
     this.coins.setText(`+${n} coins`);
@@ -104,6 +107,18 @@ export class StatsCard implements HudPart {
     const base = this.coinTallyIcon.scale;
     this.scene.tweens.add({ targets: this.coins, scale: 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => this.coins.setScale(1) });
     this.scene.tweens.add({ targets: this.coinTallyIcon, scale: base * 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => { this.popping = false; this.coinTallyIcon.setScale(base); this.coinTallyIcon.clearTint(); } });
+  }
+
+  /** The bank's pay at the wave start: a small gold "+N" rises off the gold number (the gold pop's look)
+   *  while the number scales 1.15 and back over ~150 ms (the coin pop's timing). */
+  private popGold(n: number): void {
+    const x = this.box.x + this.gold.x;
+    const y = this.box.y + this.gold.y;
+    const t = this.scene.add.text(x, y - 16, `+${n}`, textStyle(14, PALETTE.goldText, { fontStyle: 'bold', stroke: cssColor(PALETTE.card), strokeThickness: 4 })).setOrigin(0.5);
+    this.scene.tweens.add({ targets: t, y: y - 40, alpha: 0, duration: 750, ease: 'Quad.easeOut', onComplete: () => t.destroy() });
+    if (this.goldPulsing) return;
+    this.goldPulsing = true;
+    this.scene.tweens.add({ targets: this.gold, scale: 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => { this.goldPulsing = false; this.gold.setScale(1); } });
   }
 
   /** Last stand: the red lives number pops once at each wave start, same timing as the coin pop. */

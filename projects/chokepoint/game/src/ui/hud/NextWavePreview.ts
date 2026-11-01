@@ -30,6 +30,9 @@ const TEACH: { tag: string; first: number; text: string }[] = [
 /** The one-time teach for the run's first build phase: the big button's "+N" pill banks the seconds left as gold. Shown while `wavesCleared` is 0, re-derived from the run, never stored. */
 const EARLY_SEND = 'start early — the button banks the seconds left as gold';
 
+/** The one-time teach for the run's first build phase: the bank pays 5% of the gold at the wave start, capped. Shown while `wavesCleared` is 0, re-derived from the run, never stored. */
+const BANK_PAY = 'bank pays 5% at wave start · up to +10';
+
 /**
  * Directly above the next-wave button while the build phase runs: what the next wave sends, straight from its
  * plan (game.waves.nextPlan), so a new enemy shows up here with no change to this file. Each type
@@ -71,7 +74,7 @@ export class NextWavePreview implements HudPart {
         this.box.destroy();
       }
       const farCount = game.board.map.farGate && !isBossWave(plan.number) ? farGateSplit(plan.spawns.length) : 0;
-      this.box = this.build(plan, this.teachLine(plan, game.run), farCount > 0 ? `far gate ×${farCount}` : undefined);
+      this.box = this.build(plan, this.teachLines(plan, game.run), farCount > 0 ? `far gate ×${farCount}` : undefined);
       this.place();
       this.box.setScale(0.4 * this.fitScale()); // pop in like a new tower does
       this.scene.tweens.add({ targets: this.box, scale: this.fitScale(), duration: 200, ease: 'Back.easeOut' });
@@ -100,16 +103,17 @@ export class NextWavePreview implements HudPart {
     box.setScale(s).setPosition(x, above - (this.cardH / 2) * s);
   }
 
-  /** The one-time line that teaches this wave's tag on first preview, or the early-send teach on the run's first build phase, or none (taught once per run, derived from the run's held-wave count). */
-  private teachLine(plan: WavePlan, run: RunState): string | undefined {
-    if (run.wavesCleared === 0) return EARLY_SEND;
+  /** The one-time lines under the counts: the first build phase (no wave cleared yet) teaches the early send
+   *  and the bank's pay; after that, this wave's tag on first preview. Re-derived from the run, never stored. */
+  private teachLines(plan: WavePlan, run: RunState): string[] {
+    if (run.wavesCleared === 0) return [EARLY_SEND, BANK_PAY];
     for (const t of TEACH) {
-      if (plan.tags.includes(t.tag) && run.wavesCleared < t.first) return t.text;
+      if (plan.tags.includes(t.tag) && run.wavesCleared < t.first) return [t.text];
     }
-    return undefined;
+    return [];
   }
 
-  private build(plan: WavePlan, teach: string | undefined, farLine: string | undefined): Phaser.GameObjects.Container {
+  private build(plan: WavePlan, teach: string[], farLine: string | undefined): Phaser.GameObjects.Container {
     const scene = this.scene;
     const counts = waveCounts(plan); // a quiet wave's plan is already halved, so the counts come out small
     const countsPieces: (Phaser.GameObjects.Image | Phaser.GameObjects.Text | Phaser.GameObjects.Container)[] = [];
@@ -142,20 +146,17 @@ export class NextWavePreview implements HudPart {
       cursor += 5 + count.width;
     });
     const countsW = Math.ceil(cursor);
-    let teachText: Phaser.GameObjects.Text | undefined;
-    if (teach) teachText = scene.add.text(0, 0, teach, textStyle(14, PALETTE.muted)).setOrigin(0.5);
-    let farText: Phaser.GameObjects.Text | undefined;
-    if (farLine) farText = scene.add.text(0, 0, farLine, textStyle(14, PALETTE.muted)).setOrigin(0.5);
-    this.cardW = Math.max(countsW, farText ? Math.ceil(farText.width) : 0, teachText ? Math.ceil(teachText.width) : 0) + PAD * 2;
-    this.cardH = LINE_H + (farLine ? ROW_GAP + TEACH_H : 0) + (teach ? ROW_GAP + TEACH_H : 0) + PAD * 2;
+    const lines: Phaser.GameObjects.Text[] = [];
+    if (farLine) lines.push(scene.add.text(0, 0, farLine, textStyle(14, PALETTE.muted)).setOrigin(0.5));
+    for (const line of teach) lines.push(scene.add.text(0, 0, line, textStyle(14, PALETTE.muted)).setOrigin(0.5));
+    this.cardW = Math.max(countsW, ...lines.map((t) => Math.ceil(t.width))) + PAD * 2;
+    this.cardH = LINE_H + lines.length * (ROW_GAP + TEACH_H) + PAD * 2;
     const contentH = this.cardH - PAD * 2;
     const left = -this.cardW / 2 + PAD;
     for (const p of countsPieces) { p.x += left; p.y += -contentH / 2 + LINE_H / 2; }
     let ly = -contentH / 2 + LINE_H + ROW_GAP + TEACH_H / 2;
-    for (const t of [farText, teachText]) if (t) { t.setPosition(0, ly); ly += ROW_GAP + TEACH_H; }
-    const pieces: Phaser.GameObjects.GameObject[] = [...countsPieces];
-    if (farText) pieces.push(farText);
-    if (teachText) pieces.push(teachText);
+    for (const t of lines) { t.setPosition(0, ly); ly += ROW_GAP + TEACH_H; }
+    const pieces: Phaser.GameObjects.GameObject[] = [...countsPieces, ...lines];
     pieces.unshift(makeCard(scene, 0, 0, this.cardW, this.cardH, this.cardH / 2)); // pill, like before
     return scene.add.container(0, 0, pieces);
   }

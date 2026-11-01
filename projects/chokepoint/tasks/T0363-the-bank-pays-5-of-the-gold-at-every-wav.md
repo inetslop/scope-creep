@@ -4,11 +4,12 @@ title: "The bank pays: 5% of the gold at every wave start, capped at +10"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T15:28:41Z
 claimed_at: 2026-11-01T16:21:42Z
+finished_at: 2026-11-01T16:33:21Z
 ---
 
 ## Goal
@@ -133,3 +134,20 @@ No other signatures change. `Sfx.coinBlip()` already exists (src/audio/Sfx.ts:99
 
 ### Tests
 - `tests/core/bankInterest.test.ts` (vitest, model `tests/core/lastStand.test.ts`): `bankInterest(100) === 5` and `bankInterest(120) === 6` (5% rate), `bankInterest(20) === 1`, `bankInterest(19) === 0`, `bankInterest(0) === 0` (floor, paid only ≥ 1), `bankInterest(101) === 5` (floor not round), `bankInterest(200) === 10`, `bankInterest(500) === 10`, `bankInterest(10000) === 10` (the +10 cap).
+
+## Result (attempt 1, desktop)
+
+The run's gold bank now pays 5% interest (floored, paid from +1 up, capped at +10) at every wave start, on both the countdown end and the big button's early send (after the banked seconds-gold). It's a new pure module `src/core/bankInterest.ts` with unit tests, wired through one new `RunFlow.bankPay()` on the shared wave-start transition, with the kill-gold trio of feedback (gold "+N" pop on the stats card, a coin trail to the tally, the coin blip) and a one-time muted teach line under the first-build-phase wave preview. The interest is run gold only, so coins, score, claim and profile are untouched. `npm run check` and the desktop/mobile smoke both pass.
+
+- Self-review: APPROVE
+- Time: 11.7 min
+
+```
+projects/chokepoint/game/src/core/bankInterest.ts  |  5 ++++
+ projects/chokepoint/game/src/systems/RunFlow.ts    | 21 +++++++++++++
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  | 35 +++++++++++-----------
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts   | 15 ++++++++++
+ .../game/tests/core/bankInterest.test.ts           | 22 ++++++++++++++
+ .../chokepoint/game/tests/systems/runFlow.test.ts  | 18 ++++++-----
+ 6 files changed, 92 insertions(+), 24 deletions(-)
+```

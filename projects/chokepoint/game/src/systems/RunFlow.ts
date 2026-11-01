@@ -3,7 +3,9 @@ import { BUILD_SEC } from '../config';
 import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
 import { draftPool, rollOffer } from '../core/augments';
+import { bankInterest } from '../core/bankInterest';
 import { farGateSplit } from '../core/farGate';
+import type { Point } from '../core/path';
 import type { RunState } from '../core/run';
 import { isBossWave } from '../core/waves';
 import { draftCardsFor } from '../core/techEffects';
@@ -20,6 +22,7 @@ import type { Building } from './Building';
 import type { EnemySystem } from './EnemySystem';
 import type { FxSystem } from './FxSystem';
 import { farGateSend } from './fx/farGateSend';
+import { goldCoin } from './fx/goldCoin';
 import { buildHoldRoad, fadeHoldRoad, placeHoldRoad } from './fx/holdRoad';
 import { streakTeach } from './fx/streakTeach';
 import type { ProjectileSystem } from './ProjectileSystem';
@@ -76,6 +79,7 @@ export class RunFlow {
       run.buildLeftSec -= dt;
       if (run.buildLeftSec <= 0) {
         this.s.building.cancelPending();
+        this.bankPay(); // the bank's pay, once, before the wave starts (waves.start flips the phase)
         this.s.waves.start();
         this.s.sfx?.waveStart();
         this.farGatePulse();
@@ -105,11 +109,28 @@ export class RunFlow {
   startWaveNow(): number {
     if (this.run.phase !== 'build' || !this.scene.scene.isActive()) return 0;
     const banked = this.run.bankSend();
+    this.bankPay(); // after bankSend: the interest is on the bank as a result (the banked seconds-gold is already in it)
     this.s.building.cancelPending();
     this.s.waves.start();
     this.s.sfx?.waveStart();
     this.farGatePulse();
     return banked;
+  }
+
+  /** The bank's pay at the wave start (core/bankInterest): 5% of the run's gold, at most +10, exactly once
+   *  per wave — both starts pass it here. Run gold, never coins: the tally and the claim recipe never see it. */
+  private bankPay(): void {
+    const pay = bankInterest(this.run.gold);
+    if (pay <= 0) return;
+    this.run.gold += pay; // like tollLeak: run gold only, goldEarned stays "kill gold + wave bonuses"
+    this.scene.registry.set('bankPay', pay); // the "+N" pop at the stats card's gold number (ui/hud/StatsCard.ts)
+    const spot = this.scene.registry.get('statsGold') as Point | undefined;
+    if (spot) {
+      // One coin from the board's centre to the gold number, the kill coin's size and arc at the current zoom.
+      const px = this.s.board.toScreen({ x: 1, y: 0 }).x - this.s.board.toScreen({ x: 0, y: 0 }).x;
+      goldCoin(this.s.fx, { x: this.s.board.width / 2, y: this.s.board.height / 2 }, this.s.board.toBoard(spot), 10 / px, 24 / px);
+    }
+    this.s.sfx?.coinBlip();
   }
 
   /** Offers the draft's cards — three, four on every fifth draft (DraftScene); finishDraft starts the next build phase. */
