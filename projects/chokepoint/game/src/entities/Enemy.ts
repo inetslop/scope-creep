@@ -56,6 +56,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   controlQuietSec = 0;
   /** Board units a gust (Push) still has to slide it back along the road. */
   pushLeft = 0;
+  /** True on the frame a slow, root or push was applied and ignored (ignoresControl); the Ward's ring (systems/enemyHooks/wardDeny.ts) reads and clears it. */
+  deny = false;
   /** Fraction of extra damage it takes from everything until it dies (Mark); 0: unmarked. */
   markPct = 0;
   /** Seconds since it was marked (the chevron's pop-in); 0 until marked. */
@@ -103,6 +105,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.controlCount = 0;
     this.controlQuietSec = 0;
     this.pushLeft = 0;
+    this.deny = false;
     this.markPct = 0;
     this.markAge = 0;
     this.shielded = false;
@@ -262,7 +265,7 @@ export class Enemy extends Phaser.GameObjects.Image {
 
   /** Slows it by `pct` for `sec` seconds; a weaker slow doesn't replace a stronger one. */
   slow(pct: number, sec: number): void {
-    if (this.def.ignoresControl) return;
+    if (this.def.ignoresControl) { this.deny = true; return; }
     if (pct < this.slowPct) return;
     this.slowPct = pct;
     this.slowLeft = Math.max(this.slowLeft, sec);
@@ -272,7 +275,8 @@ export class Enemy extends Phaser.GameObjects.Image {
    * push/root streak (core/control.ts). A root that would be shorter than 0.05s is skipped but
    * still counts, so an enemy hit nonstop stays fatigued. */
   root(sec: number): void {
-    if (this.def.ignoresControl || this.rootLeft > 0) return;
+    if (this.def.ignoresControl) { this.deny = true; return; }
+    if (this.rootLeft > 0) return;
     const s = sec * controlScale(this);
     if (s < 0.05) {
       noteControl(this);
@@ -292,7 +296,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   /** Queues a slide back along the road by `units` board units (Push), halved by the push/root
    * streak (core/control.ts); advance() consumes it. */
   pushBack(units: number): void {
-    if (!this.active || this.def.ignoresControl || units <= 0) return;
+    if (!this.active || units <= 0) return;
+    if (this.def.ignoresControl) { this.deny = true; return; }
     this.pushLeft += units * controlScale(this);
     noteControl(this);
   }

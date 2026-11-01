@@ -4,11 +4,12 @@ title: "The Ward shows its immunity: a ring when a control does not take"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T02:32:15Z
 claimed_at: 2026-11-01T03:05:23Z
+finished_at: 2026-11-01T03:27:42Z
 ---
 
 ## Goal
@@ -59,3 +60,17 @@ No signature changes: `slow()`, `root()`, `pushBack()` keep their params/returns
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The Ward now shows its immunity: when a Frost slow, Anchor root, Push gust or per-hit push lands on it and is ignored, one small thin red ring plays at its base (its own color, ~40% alpha, growing from the token's base out to 0.5 cells over 400 ms, at ground level under the token) so a first-time player reads the Ward's rule from the board. The hook is a new file, systems/enemyHooks/wardDeny.ts, registered next to muteJam in the enemy-hook list; Enemy.ts gained a display-only `deny` flag, set exactly where the `ignoresControl` early-returns skip a control and reset in `spawn()`. One ring per Ward: a new event restarts it from the top instead of stacking, and a Frost aura's re-apply refreshes at most once per 0.5 s. The Ward's numbers and immunity are untouched — the controls still do nothing to it; no sound, no input, no gameplay change.
+
+- Self-review: APPROVE
+- Time: 22.3 min
+
+```
+projects/chokepoint/game/src/entities/Enemy.ts     | 11 +++-
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/wardDeny.ts        | 76 ++++++++++++++++++++++
+ 3 files changed, 86 insertions(+), 3 deletions(-)
+```
