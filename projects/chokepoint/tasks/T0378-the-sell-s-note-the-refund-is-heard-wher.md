@@ -3,12 +3,13 @@ id: T0378
 title: "The sell's note: the refund is heard where it happens"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-01T20:21:14Z
 claimed_at: 2026-11-01T20:21:20Z
-designer: yoga
+finished_at: 2026-11-01T20:25:16Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -25,3 +26,7 @@ Selling a tower is heard where it happens: the moment a tower sells, the quiet c
 - [ ] The blip is the existing `Sfx.coinBlip` at its existing volume — no new Sfx method, no volume or timing change anywhere else.
 - [ ] Silent with sound off; the sell line, the sell price, the gold pop and the coin trail are byte-identical; nothing new on screen.
 - [ ] Typecheck, lint, unit tests and the desktop/mobile smoke pass.
+
+## Rejected by architect (yoga)
+
+already implemented — `Building.sellTower()` (src/systems/Building.ts:226) already plays `Sfx.coinBlip()` exactly once at the payout moment, right after T0274's gold pop and coin trail; the task's prescribed change (and every acceptance criterion) exists in the current tree, so there is nothing left to build.
