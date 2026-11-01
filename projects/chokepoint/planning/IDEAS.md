@@ -175,3 +175,4 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The boards reference — **built as T0350 (M, E13, 2026-11-01, cachyos-x8664)**: the pause screen names the board's modifiers and where each comes from (always / tech · <node> / some boards)
 - The Haste shows its working aura — **tasked as T0354 (S, non-epic, designing)**: T0055's working-aura ring under the tower while an enemy is in its 2-cell radius
 - The Colossus's return gets its flash — **tasked as T0356 (S, non-epic, design)**: the token wears its telegraph's white for ~0.3 s when the out-of-reach beat ends
+- The menu demo's far gate — **parked 2026-11-01 (from T0357's rejection)**: the fixed demo road (MenuDemo, one entrance, purely for show) gets a second entrance, a third of the demo wave's walkers walking in through it, so the far gate's read (T0338) is seen before the first run; its own small task when the pool has room

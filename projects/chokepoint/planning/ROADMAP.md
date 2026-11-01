@@ -24,7 +24,7 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 ### E4 — Augment rarity (fully tasked 2026-10-31 — closing on the pool's landings)
 **Goal:** the draft is exciting: sometimes a card is something special.
 **When done:** every augment card in the draft comes in a rarity: Common, Rare or Epic. A rarer card is the same augment with stronger numbers (a Rare Rapid attacks faster than a Common one), and a few rule-changing augments only ever come as Epic. Rarity shows everywhere the augment does: the card's frame and a small gem row on the draft, hand and tower-panel cards, and on the tower itself (its slot pip). Rarer cards turn up more often the further the run gets; the odds are shown in the draft.
-**Breakdown:** everything landed — the rarity (T0002), the augments (Lance T0004, Mark T0012, Rally T0020, Mint T0021, Anchor T0023, Push T0027, Ember T0028, Beam T0073, Spray T0101, Haste T0152, Toll T0234), the card, hand, panel and tower reads, the odds shift (T0011), the rerolls (T0036, T0276), the codex (T0221) and the beam-combo web (T0130, T0210, T0242, T0132) — except the pool's registrations: T0062 (M) Trap · T0064 (L) Momentum · T0095 (L) Mend · T0235 (L) Feast, one at a time in claim order (T0025 (L) Chain failed and its file is gone — dropped, no re-file; T0150, its leap re-tune, dies with it); behind them T0248 (S, the codex lock, waits on T0062 and T0095). T0298 (Wildcard) is out of the pool (its file is gone) — re-task it if it is still wanted.
+**Breakdown:** everything landed — the rarity (T0002), the augments (Lance T0004, Mark T0012, Rally T0020, Mint T0021, Anchor T0023, Push T0027, Ember T0028, Beam T0073, Spray T0101, Haste T0152, Toll T0234), the card, hand, panel and tower reads, the odds shift (T0011), the rerolls (T0036, T0276), the codex (T0221) and the beam-combo web (T0130, T0210, T0242, T0132) — except the pool's registrations: T0062 (M) Trap · T0064 (L) Momentum · T0095 (L) Mend · T0235 (L) Feast, one at a time in claim order (T0025 (L) Chain failed and its file is gone — dropped, no re-file; T0150, its leap re-tune, dies with it — file closed by the PO 2026-11-01); behind them T0248 (S, the codex lock, waits on T0062 and T0095). T0298 (Wildcard) is out of the pool (its file is gone) — re-task it if it is still wanted.
 
 **E4 closes when T0062, T0064, T0095, T0235 and T0248 land — every E4 task is written (Chain and its re-tune dropped with T0025's failure); it counts as finished while the pool lands.**
 
@@ -59,7 +59,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **When done:** on some boards the road has a second gate partway along, and a share of every wave's enemies comes in through it — the player covers the road from two entry points, and the far gate's shorter run shifts where the pressure lands. Later slices: a road that forks into two lanes, and a marked cell that makes its tower stronger.
 **Breakdown:**
 - the far gate: a second entrance partway down the road; a third of each non-boss wave comes through it; the board, the board preview and the next-wave preview show it — **T0338 (M, done 2026-11-01)**
-- the fork: the road splits into two lanes and re-joins; enemies take either lane — **tasked as T0352 (L, in the pool)**
+- the fork: the road splits into two lanes and re-joins; enemies take either lane — **building as T0352 (L)**
 - the marked cell: one build cell that makes a tower built on it stronger — **tasked as T0340 (M, in the pool)**
 - the boards reference: the pause screen names the board's modifiers — mark, name, one dry line, and where each comes from (always / tech / some boards) — the vocabulary for the new islands — **done as T0350 (M, 2026-11-01, cachyos-x8664)**
 
@@ -67,7 +67,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Goal:** the tech tree has covered the run start, the board, the pool and the payout — but not the wave itself: a fifth branch lets between-run coins buy how a run plays.
 **When done:** the tree's "The wave" branch has three nodes, each bought once and on for every run after: The door (the far gate on every board), The thin road (every enemy 10% slower) and The breather (quiet waves pay double the wave bonus).
 **Breakdown:**
-- the branch and its first node, The door: the tech screen's fifth branch plus a 30-coin node that puts the far gate (T0338) on every board — **tasked as T0357 (M, in the pool)**
+- the branch and its first node, The door: the tech screen's fifth branch plus a 30-coin node that puts the far gate (T0338) on every board — **T0357 rejected 2026-11-01 (the menu's live demo is a fixed one-entrance road, no gate there — the demo's second entrance is its own task, IDEAS); re-filed as T0358 (M, no dependency, next pool) without the demo clause**
 - (to task) The thin road: 40 coins, every enemy 10% slower
 - (to task) The breather: 60 coins, quiet waves pay 2× the wave bonus
 
