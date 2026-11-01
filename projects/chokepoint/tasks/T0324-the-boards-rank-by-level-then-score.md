@@ -3,11 +3,13 @@ id: T0324
 title: The boards rank by level, then score
 size: M
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-10-31T23:37:22Z
+claimed_at: 2026-11-01T00:04:30Z
 epic: E9
+designer: cachyos-x8664
 ---
 
 ## Goal
