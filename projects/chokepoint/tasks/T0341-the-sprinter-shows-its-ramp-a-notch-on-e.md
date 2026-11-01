@@ -3,10 +3,12 @@ id: T0341
 title: "The Sprinter shows its ramp: a notch on each hit that speeds it up"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T05:22:57Z
+claimed_at: 2026-11-01T05:23:03Z
+designer: yoga
 ---
 
 ## Goal
