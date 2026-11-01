@@ -4,11 +4,12 @@ title: The speed toggle gets its note
 assignee: desktop
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T00:11:52Z
 claimed_at: 2026-11-01T05:06:56Z
+finished_at: 2026-11-01T05:09:24Z
 ---
 
 ## Goal
@@ -64,3 +65,17 @@ Do not touch `SpeedButton.ts`, `hotkeys.ts`, the button fill, or `scale()`.
 
 ### Tests
 - none
+
+## Result (attempt 1, desktop)
+
+The wave-speed toggle now has a quiet UI blip: new `Sfx.speedBlip()` (60 ms sine, vol 0.1 — G5 into 2x, E5 back to 1x) plays from the single flip point in `WaveSpeed.toggle()`, so both the button and the F key share one call site and the wave-end auto un-fill (which goes through `scale()`) stays silent. `WaveSpeed` now takes the run's `Sfx` in its constructor (GameScene passes `sfx`), and silence-with-sound-off falls out of `tone()`'s existing muted guard. No changes to the button, hotkey, 2x scaling or pause.
+
+- Self-review: APPROVE
+- Time: 2.5 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts         | 5 +++++
+ projects/chokepoint/game/src/scenes/GameScene.ts  | 2 +-
+ projects/chokepoint/game/src/systems/WaveSpeed.ts | 8 ++++++++
+ 3 files changed, 14 insertions(+), 1 deletion(-)
+```

@@ -2,14 +2,22 @@
  * The wave's speed: 1x or 2x (fast-forward). GameScene scales the simulation dt through scale()
  * so everything in the wave phase runs twice as fast at once.
  */
+import type { Sfx } from '../audio/Sfx';
+
 export class WaveSpeed {
   /** 1 or 2. */
   speed = 1;
+  private readonly sfx: Sfx | undefined;
+
+  constructor(sfx: Sfx | undefined) {
+    this.sfx = sfx;
+  }
 
   /** Toggle 1x/2x; only honoured while the wave phase runs (build/draft/over ignore it). */
   toggle(inWave: boolean): void {
     if (!inWave) return;
     this.speed = this.speed === 1 ? 2 : 1;
+    this.sfx?.speedBlip(this.speed === 2);
   }
 
   /** The dt to simulate this frame; outside the wave phase the speed resets to 1. */

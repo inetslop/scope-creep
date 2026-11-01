@@ -210,6 +210,11 @@ export class Sfx {
     this.tone(784, 0.08, 'sine', 0.1, undefined, 0.09);
   }
 
+  /** The wave-speed toggle: G5 to 2x, E5 back to 1x, 60 ms sines, the tier-chime's quiet volume. */
+  speedBlip(fast: boolean): void {
+    this.tone(fast ? 784 : 659, 0.06, 'sine', 0.1);
+  }
+
   /** The ×10 kill-chain milestone: a soft two-note rise, E5 then G5, 90 ms apart, the tier-chime's quiet volume. */
   comboChime(): void {
     this.tone(659, 0.08, 'sine', 0.1);

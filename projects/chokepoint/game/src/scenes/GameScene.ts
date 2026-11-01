@@ -148,7 +148,7 @@ export class GameScene extends Phaser.Scene {
       sfx,
       firstRun: loadProfile(window.localStorage).runsPlayed === 0, // a resumed first run is still first: the profile only counts finished runs
     });
-    this.speed = new WaveSpeed();
+    this.speed = new WaveSpeed(sfx);
     this.rally = new RallySystem(this, this.towers, this.fx);
     this.haste = new HasteSystem(this.towers, this.enemies);
     this.beams = new BeamSystem(this, this.towers, this.enemies, sfx);
