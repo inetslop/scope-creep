@@ -1,12 +1,14 @@
 ---
 id: T0359
 title: "The menu demo's far gate: the second entrance before the first run"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T12:52:50Z
+claimed_at: 2026-11-01T12:59:57Z
 ---
 
 ## Goal
