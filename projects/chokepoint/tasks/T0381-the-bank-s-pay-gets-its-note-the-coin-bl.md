@@ -3,10 +3,12 @@ id: T0381
 title: "The bank's pay gets its note: the coin blip on the interest"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T21:18:04Z
+claimed_at: 2026-11-01T21:35:12Z
+designer: yoga
 ---
 
 ## Goal
