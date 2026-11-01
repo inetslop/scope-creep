@@ -3,11 +3,13 @@ id: T0379
 title: "The crossing learns: the wave-50 boss banks into the uncovered ground"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: [T0317]
 attempts: 0
 created: 2026-11-01T21:18:04Z
+claimed_at: 2026-11-01T21:18:07Z
 epic: E10
+designer: desktop
 ---
 
 ## Goal
