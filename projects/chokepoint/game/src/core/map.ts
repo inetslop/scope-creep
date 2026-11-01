@@ -1,4 +1,5 @@
 import { ensureChokes } from './choke';
+import { farGateCell } from './farGate';
 import { foldSwitchback } from './switchback';
 import type { Rng } from './rng';
 
@@ -17,6 +18,8 @@ export interface GameMap {
   kinds: CellKind[][];
   /** Path cells in walking order: the first is on the entrance edge, the last on the exit edge. */
   path: Cell[];
+  /** The far gate's cell (core/farGate.ts): a second entrance about a third of the way in, on about one board in three. */
+  farGate?: Cell;
   /** True when the path runs top to bottom (portrait boards), false for left to right. */
   vertical: boolean;
 }
@@ -87,7 +90,9 @@ export function generateMap(rng: Rng, cols: number, rows: number, rocks: number,
 
   const map: GameMap = { cols, rows, kinds, path, vertical };
   const folded = fold ? foldSwitchback(map) : map;
-  return bgen >= 2 ? ensureChokes(folded, chokes) : folded;
+  const result = bgen >= 2 ? ensureChokes(folded, chokes) : folded;
+  // The far gate (core/farGate.ts): one board in three grows a second entrance. The roll is the seed's last draw, so the road keeps this seed's usual shape.
+  return { ...result, farGate: rng.chance(1 / 3) ? farGateCell(result) : undefined };
 }
 
 /** 1 when the road's second cell is the entrance jog (not one step along the entrance axis), else 0. */

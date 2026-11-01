@@ -1,4 +1,5 @@
 import { ENEMIES, getEnemy } from '../content/enemies';
+import { isFarGateSpawn } from '../core/farGate';
 import { levelCountMul, levelSpeedMul } from '../core/levels';
 import type { RunState } from '../core/run';
 import { planWave, planWithLevel, type WavePlan } from '../core/waves';
@@ -9,6 +10,8 @@ import type { EnemySystem } from './EnemySystem';
 export class WaveSystem {
   private readonly run: RunState;
   private readonly enemies: EnemySystem;
+  /** Board units from the route start to the far gate (core/farGate.ts); 0 with no far gate. */
+  private readonly farGateDistance: number;
   private plan: WavePlan | undefined;
   private next = 0;
   private timer = 0;
@@ -17,9 +20,10 @@ export class WaveSystem {
   heldLost = 0;
   private livesAtStart = 0;
 
-  constructor(run: RunState, enemies: EnemySystem) {
+  constructor(run: RunState, enemies: EnemySystem, farGateDistance = 0) {
     this.run = run;
     this.enemies = enemies;
+    this.farGateDistance = farGateDistance;
   }
 
   /** The wave the build phase leads to (the HUD's preview reads it; it is planned once at build start). */
@@ -71,7 +75,7 @@ export class WaveSystem {
     while (this.next < plan.spawns.length && this.timer >= plan.spawns[this.next]!.delaySec) {
       const spawn = plan.spawns[this.next]!;
       this.timer -= spawn.delaySec;
-      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul, levelSpeedMul(this.run.level));
+      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul, levelSpeedMul(this.run.level), isFarGateSpawn(this.next, plan, this.farGateDistance > 0) ? this.farGateDistance : 0);
       this.next += 1;
     }
   }

@@ -63,7 +63,8 @@ function drawBoard(ctx: CanvasRenderingContext2D, map: GameMap, path: PathLine):
   ctx.restore();
 
   // Gates: where enemies come in (grey, a white chevron) and the exit you defend (ink, a white ring).
-  const gate = (p: { x: number; y: number }, exit: boolean): void => {
+  const dirIn = Math.atan2(second.y - first.y, second.x - first.x);
+  const gate = (p: { x: number; y: number }, exit: boolean, dir = dirIn): void => {
     ctx.save();
     setShadow(ctx, 0.8);
     roundRectPath(ctx, p.x - CELL * 0.3, p.y - CELL * 0.3, CELL * 0.6, CELL * 0.6, CELL * 0.16);
@@ -76,7 +77,6 @@ function drawBoard(ctx: CanvasRenderingContext2D, map: GameMap, path: PathLine):
       ctx.strokeStyle = '#ffffff';
       ctx.stroke();
     } else {
-      const dir = Math.atan2(second.y - first.y, second.x - first.x);
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.rotate(dir);
@@ -94,6 +94,13 @@ function drawBoard(ctx: CanvasRenderingContext2D, map: GameMap, path: PathLine):
   };
   gate(edgeStart, false);
   gate(edgeEnd, true);
+  // The far gate: the road's second entrance (core/farGate.ts), a token on its own straight cell, chevron toward the exit.
+  const fg = map.farGate;
+  if (fg) {
+    const i = map.path.findIndex((c) => c.col === fg.col && c.row === fg.row);
+    const p = pts[i + 1]!;
+    gate(p, false, Math.atan2(pts[i + 2]!.y - p.y, pts[i + 2]!.x - p.x));
+  }
 }
 
 /**

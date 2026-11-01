@@ -2,7 +2,8 @@ import type Phaser from 'phaser';
 import { CELL, HUD } from '../../config';
 import { getEnemy } from '../../content/enemies';
 import { PALETTE } from '../../content/palette';
-import { waveCounts, type WavePlan } from '../../core/waves';
+import { waveCounts, isBossWave, type WavePlan } from '../../core/waves';
+import { farGateSplit } from '../../core/farGate';
 import type { RunState } from '../../core/run';
 import { artScale, enemyTexture } from '../../art/textures';
 import type { GameScene } from '../../scenes/GameScene';
@@ -67,7 +68,8 @@ export class NextWavePreview implements HudPart {
         this.scene.tweens.killTweensOf(this.box);
         this.box.destroy();
       }
-      this.box = this.build(plan, this.teachLine(plan, game.run));
+      const farCount = game.board.map.farGate && !isBossWave(plan.number) ? farGateSplit(plan.spawns.length) : 0;
+      this.box = this.build(plan, this.teachLine(plan, game.run), farCount > 0 ? `far gate ×${farCount}` : undefined);
       this.place();
       this.box.setScale(0.4 * this.fitScale()); // pop in like a new tower does
       this.scene.tweens.add({ targets: this.box, scale: this.fitScale(), duration: 200, ease: 'Back.easeOut' });
@@ -105,7 +107,7 @@ export class NextWavePreview implements HudPart {
     return undefined;
   }
 
-  private build(plan: WavePlan, teach: string | undefined): Phaser.GameObjects.Container {
+  private build(plan: WavePlan, teach: string | undefined, farLine: string | undefined): Phaser.GameObjects.Container {
     const scene = this.scene;
     const counts = waveCounts(plan); // a quiet wave's plan is already halved, so the counts come out small
     const countsPieces: (Phaser.GameObjects.Image | Phaser.GameObjects.Text | Phaser.GameObjects.Container)[] = [];
@@ -140,13 +142,17 @@ export class NextWavePreview implements HudPart {
     const countsW = Math.ceil(cursor);
     let teachText: Phaser.GameObjects.Text | undefined;
     if (teach) teachText = scene.add.text(0, 0, teach, textStyle(14, PALETTE.muted)).setOrigin(0.5);
-    this.cardW = Math.max(countsW, teachText ? Math.ceil(teachText.width) : 0) + PAD * 2;
-    this.cardH = LINE_H + (teach ? ROW_GAP + TEACH_H : 0) + PAD * 2;
+    let farText: Phaser.GameObjects.Text | undefined;
+    if (farLine) farText = scene.add.text(0, 0, farLine, textStyle(14, PALETTE.muted)).setOrigin(0.5);
+    this.cardW = Math.max(countsW, farText ? Math.ceil(farText.width) : 0, teachText ? Math.ceil(teachText.width) : 0) + PAD * 2;
+    this.cardH = LINE_H + (farLine ? ROW_GAP + TEACH_H : 0) + (teach ? ROW_GAP + TEACH_H : 0) + PAD * 2;
     const contentH = this.cardH - PAD * 2;
     const left = -this.cardW / 2 + PAD;
     for (const p of countsPieces) { p.x += left; p.y += -contentH / 2 + LINE_H / 2; }
-    if (teachText) teachText.setPosition(0, -contentH / 2 + LINE_H + ROW_GAP + TEACH_H / 2);
+    let ly = -contentH / 2 + LINE_H + ROW_GAP + TEACH_H / 2;
+    for (const t of [farText, teachText]) if (t) { t.setPosition(0, ly); ly += ROW_GAP + TEACH_H; }
     const pieces: Phaser.GameObjects.GameObject[] = [...countsPieces];
+    if (farText) pieces.push(farText);
     if (teachText) pieces.push(teachText);
     pieces.unshift(makeCard(scene, 0, 0, this.cardW, this.cardH, this.cardH / 2)); // pill, like before
     return scene.add.container(0, 0, pieces);
