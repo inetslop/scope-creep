@@ -144,7 +144,7 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
 function planNormalWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): WavePlan {
   const unlocked = enemies.filter((e) => !e.spawnOnly && e.fromWave <= wave && e.threat > 0);
   const rampers = unlocked.filter((e) => e.speedRamp !== undefined);
-  const walkers = unlocked.filter((e) => e.speedRamp === undefined && e.dashCycle === undefined && e.splitsInto === undefined && e.id !== 'hauler' && e.id !== 'mute' && e.id !== 'bulwark' && e.id !== 'ward' && e.id !== 'feeder');
+  const walkers = unlocked.filter((e) => e.speedRamp === undefined && e.dashCycle === undefined && e.splitsInto === undefined && e.id !== 'hauler' && e.id !== 'mute' && e.id !== 'bulwark' && e.id !== 'ward' && e.id !== 'flyer');
   let budget = waveBudget(wave);
   // Reserve the rampers first; no rng here, so the seeded picks of the walkers don't shift.
   const rampSpawns: string[] = [];
@@ -156,9 +156,9 @@ function planNormalWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): W
   // The dashing ones are reserved the same way, after the rampers.
   const dashSpawns: string[] = [];
   for (const e of unlocked) if (e.dashCycle !== undefined) { const n = Math.min(dashCount(wave), Math.floor(budget / e.threat)); for (let i = 0; i < n; i++) dashSpawns.push(e.id); budget -= n * e.threat; }
-  // The Feeder: one on 13, 17, 21, ... (≡ 1 mod 4, so never a quiet wave and never a boss wave).
+  // The Flyer: one on 13, 17, 21, ... (≡ 1 mod 4, so never a quiet wave and never a boss wave).
   // Unlike the Hauler and the Mute it comes out of the budget: its real threat is reserved up front.
-  if (wave >= 13 && (wave - 13) % 4 === 0) budget -= unlocked.find((e) => e.id === 'feeder')!.threat;
+  if (wave >= 13 && (wave - 13) % 4 === 0) budget -= unlocked.find((e) => e.id === 'flyer')!.threat;
   const spawns: WaveSpawn[] = [];
   while (walkers.length > 0) {
     const affordable = walkers.filter((e) => e.threat <= budget);
@@ -188,8 +188,8 @@ function planNormalWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): W
   if (wave >= 12 && (wave - 12) % 4 === 0) reserved.push('bulwark');
   // The Ward: one on 15, 25, 30, ... — wave 20 is the boss's slot (E5); it never comes from the budget (its threat is a placeholder).
   if (wave >= 15 && wave % 5 === 0 && wave !== 20) reserved.push('ward');
-  // The Feeder walks in with the wave (its threat already came out of the budget above; after the splitters, like the Hauler).
-  if (wave >= 13 && (wave - 13) % 4 === 0) reserved.push('feeder');
+  // The Flyer flies in with the wave (its threat already came out of the budget above; after the splitters, like the Hauler).
+  if (wave >= 13 && (wave - 13) % 4 === 0) reserved.push('flyer');
   let finalSpawns: WaveSpawn[];
   if (reserved.length === 0) {
     finalSpawns = spawns;

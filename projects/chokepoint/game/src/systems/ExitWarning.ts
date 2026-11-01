@@ -14,7 +14,6 @@ import type { Sfx } from '../audio/Sfx';
  * matter how many enemies are in range.
  */
 export class ExitWarning {
-  private readonly board: Board;
   private readonly enemies: EnemySystem;
   private readonly sfx: Sfx | undefined;
   private readonly img: Phaser.GameObjects.Image;
@@ -22,7 +21,6 @@ export class ExitWarning {
   private active = false;
 
   constructor(scene: Phaser.Scene, board: Board, enemies: EnemySystem, sfx: Sfx | undefined) {
-    this.board = board;
     this.enemies = enemies;
     this.sfx = sfx;
     const pts = board.path.points;
@@ -57,13 +55,12 @@ export class ExitWarning {
     this.img.setVisible(true);
   }
 
-  /** Any alive enemy within 3 s of the exit, at its current speed (slows included). */
+  /** Any alive enemy within 3 s of the exit, at its current speed (slows included) — on its own line: the road for a walker, its crossing for a Flyer. */
   private inRange(): boolean {
-    const len = this.board.path.length;
     for (const e of this.enemies.all) {
       if (!e.active) continue;
       const speed = e.speed * (1 - e.slowPct);
-      if (speed > 0 && (len - e.distance) / speed <= 3) return true;
+      if (speed > 0 && (e.path.length - e.distance) / speed <= 3) return true;
     }
     return false;
   }

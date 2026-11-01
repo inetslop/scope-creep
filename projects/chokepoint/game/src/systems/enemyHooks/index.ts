@@ -13,7 +13,7 @@ import { blockTeach } from './blockTeach';
 import { mintRing } from './mintRing';
 import { tollLeak } from './tollLeak';
 import { muteJam } from './muteJam';
-import { feederPack } from './feederPack';
+import { flySpawn } from './flySpawn';
 import { wardDeny } from './wardDeny';
 import { bulwarkPlate } from './bulwarkPlate';
 import { nameTag } from './nameTag';
@@ -69,7 +69,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   tollLeak,
   burnLeap,
   muteJam,
-  feederPack,
+  flySpawn,
   wardDeny,
   bulwarkPlate,
   mintRing,

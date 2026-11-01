@@ -14,6 +14,13 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
     const depth = tokenDepth(r);
     const size = tokenRoom(r, depth) * 2;
     paintTexture(scene, enemyTexture(e.id), size, size, (ctx) => {
+      if (e.look.shape === 'wings') {
+        // The Flyer's wings: flat (no side face, no shadow), so the token may turn with its flight.
+        shapePath(ctx, 'wings', size / 2, size / 2, r);
+        ctx.fillStyle = rgba(PALETTE[e.look.color], 1);
+        ctx.fill();
+        return;
+      }
       paintToken(ctx, e.look.shape, size / 2, size / 2 - depth / 2, r, PALETTE[e.look.color], deepOf(e.look.color), { depth });
       if (e.id === 'hauler') {
         // The Hauler wears its coin: the HUD's own coin shape, flat on the face, a third of the width.

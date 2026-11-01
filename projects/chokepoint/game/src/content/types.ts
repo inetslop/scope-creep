@@ -1,7 +1,7 @@
 import type { Bright } from './palette';
 
 /** Flat shapes the art code can draw (see art/shapes.ts). */
-export type Shape = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'pillar' | 'chevron' | 'ring' | 'crescent';
+export type Shape = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'pillar' | 'chevron' | 'ring' | 'wings';
 
 export interface Look {
   shape: Shape;
@@ -29,6 +29,8 @@ export interface EnemyDef {
   dashCycle?: { crawlSec: number; pauseSec: number; dashCells: number; dashSec: number };
   /** Ignores all control: Frost slow, Anchor root, Push gusts and pushes, both forms. */
   ignoresControl?: boolean;
+  /** It flies: its whole path is one straight line from the island's edge (the seed picks the point) to the exit (core/flyRoute.ts), never the road. A Push gust and an Anchor root do not reach it; a Frost slow and the Haste aura do. */
+  flies?: boolean;
   /** When it dies, it splits into two of this enemy: one 0.25 cells ahead of the kill, one behind (core/split.ts). */
   splitsInto?: string;
   /** The mid-life split (the Orb): when its hp first drops to `hpFrac` of its max after a hit and it survives, it vanishes with no kill and leaves two of `into` at its road spot, 0.25 cells either side (core/split.ts), each with half its hp after the triggering hit (core/midSplit.ts). */

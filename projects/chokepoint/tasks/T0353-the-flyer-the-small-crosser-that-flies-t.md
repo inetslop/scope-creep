@@ -4,11 +4,12 @@ title: "The Flyer: the small crosser that flies the sky"
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T11:14:54Z
 claimed_at: 2026-11-01T16:09:58Z
+finished_at: 2026-11-01T17:51:31Z
 epic: E10
 ---
 
@@ -103,3 +104,37 @@ export function pickFlyLine(map: GameMap, rng: Rng, cellSize: number): FlyLine;
 ### Tests
 - `tests/core/flyRoute.test.ts`: on generated boards (two 14x8, one 8x14 portrait, `generateMap(new Rng(seed), …, 5)`): spawn on the entrance edge (`x === 0` landscape, `y === 0` portrait, along-edge coordinate inside the board); `exit` equals the road line's end (`pathLineFor(…).pointAt(length)`); `openFraction(map, CELL, spawn, exit) >= 0.2` for several seeds; line has exactly 2 points; same seed → same spawn and length.
 - `tests/core/waves.test.ts`: the swapped Flyer slot test (one on 13, 17, 21, … ≡ 1 mod 4 through wave 30, never a Flyer-only wave); splitter "others" count excludes `'flyer'`.
+
+## Result (attempt 1, asus)
+
+Added the Flyer — the small crosser that flies a seeded straight line from the island's edge to the exit at 2.0 cells/s (hp 60, gold 8, lives 1, threat 3, from wave 13, one on 13/17/21/…), taking over the Feeder's wave slot. New: `core/flyRoute.ts` (seeded crossing picker with an open-area gate so the line never follows the road), `flyer.ts` content with the new flat purple `wings` silhouette (two rounded chevrons, rotates with its flight), a thin purple spawn ring (`flyRing`/`flySpawn`), per-enemy `path` on the pooled Enemy so exit-warning, near-miss and invariants use each enemy's own line, and `flies` gates that keep Push gusts and Anchor roots from reaching it while Frost slow, Haste and all target rules work unchanged. The Feeder is removed everywhere (content, waves, hook, crescent art, `packPct`, its invariant) — its two files are listed for deletion above. `npm run check` (516 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: NO VERDICT
+- Time: 101.6 min
+- Deleted src/content/enemies/feeder.ts, as the agent asked.
+- Deleted src/systems/enemyHooks/feederPack.ts, as the agent asked.
+- Self-review edits were discarded (checks failed at "check").
+
+```
+projects/chokepoint/game/src/art/entities.ts       |  7 ++
+ projects/chokepoint/game/src/art/paint.ts          | 35 +++++-----
+ projects/chokepoint/game/src/art/shapes.ts         |  2 +-
+ .../chokepoint/game/src/content/enemies/feeder.ts  | 15 ----
+ .../chokepoint/game/src/content/enemies/flyer.ts   | 16 +++++
+ .../chokepoint/game/src/content/enemies/index.ts   |  4 +-
+ projects/chokepoint/game/src/content/types.ts      |  4 +-
+ projects/chokepoint/game/src/core/flyRoute.ts      | 52 ++++++++++++++
+ projects/chokepoint/game/src/core/waves.ts         | 10 +--
+ projects/chokepoint/game/src/debug/runChecks.ts    |  4 +-
+ projects/chokepoint/game/src/entities/Enemy.ts     | 33 +++++----
+ .../chokepoint/game/src/systems/EnemySystem.ts     | 10 ++-
+ .../chokepoint/game/src/systems/ExitWarning.ts     |  7 +-
+ .../game/src/systems/enemyHooks/feederPack.ts      | 80 ----------------------
+ .../game/src/systems/enemyHooks/flySpawn.ts        | 19 +++++
+ .../game/src/systems/enemyHooks/index.ts           |  4 +-
+ .../game/src/systems/enemyHooks/nearMiss.ts        |  2 +-
+ projects/chokepoint/game/src/systems/fx/flyRing.ts | 14 ++++
+ .../chokepoint/game/tests/core/flyRoute.test.ts    | 57 +++++++++++++++
+ projects/chokepoint/game/tests/core/waves.test.ts  | 10 +--
+ 20 files changed, 232 insertions(+), 153 deletions(-)
+```

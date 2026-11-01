@@ -18,9 +18,11 @@ const POP_SEC = 0.18;
 const PUSH_RATE = 4.5;
 
 /**
- * A pooled enemy walking the path. It stores how far along the path it is (`distance`, board
- * units); its position follows from that. spawn() resets every field; despawn() returns it to
- * the pool (never destroy() a pooled object). Enemies don't rotate: their shading is painted in.
+ * A pooled enemy walking its line (the road, or a Flyer's own crossing, core/flyRoute.ts). It
+ * stores how far along that line it is (`distance`, board units); its position follows from
+ * that. spawn() resets every field; despawn() returns it to the pool (never destroy() a pooled
+ * object). Enemies don't rotate: their shading is painted in — a flat token (the Flyer's wings)
+ * turns with its flight, like the tracer.
  */
 export class Enemy extends Phaser.GameObjects.Image {
   def!: EnemyDef;
@@ -34,6 +36,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   waveSpeedMul = 1;
   /** Board units walked along the path. */
   distance = 0;
+  /** The line it walks: the road for a walker, its own crossing for a flyer (core/flyRoute.ts). */
+  path!: PathLine;
   /** The fork's lane it takes (core/fork.ts); its split children take the same. 0 on a road without a fork. */
   lane: 0 | 1 = 0;
   /** Board units per second. */
@@ -52,8 +56,6 @@ export class Enemy extends Phaser.GameObjects.Image {
   slowLeft = 0;
   /** Fraction the haste aura adds to its speed while it is inside (Haste); set by systems/HasteSystem.ts. */
   hastePct = 0;
-  /** Fraction the Feeder's pack push adds to its speed while it is inside one (0 or a quarter); set by systems/enemyHooks/feederPack.ts. */
-  packPct = 0;
   /** Seconds of a full stop left (Anchor): a rooted enemy does not move at all. */
   rootLeft = 0;
   /** Pushes and roots taken in the current streak (core/control.ts); each halves the next one. */
@@ -103,6 +105,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.speedMul = speedMul;
     this.waveSpeedMul = waveSpeedMul;
     this.distance = distance;
+    this.path = path;
     this.lane = lane;
     this.speed = def.speed * CELL * speedMul;
     this.dirX = 0;
@@ -113,7 +116,6 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.slowPct = 0;
     this.slowLeft = 0;
     this.hastePct = 0;
-    this.packPct = 0;
     this.rootLeft = 0;
     this.controlCount = 0;
     this.controlQuietSec = 0;
@@ -134,6 +136,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.reachClock = -1;
     this.splitClock = -1;
     this.setTexture(enemyTexture(def.id));
+    this.setRotation(0); // a recycled flyer slot must not turn a walker
     this.clearTint();
     this.setAlpha(1); // a recycled Colossus must not come up half-ghost
     this.setScale(0);
@@ -154,8 +157,8 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.disc?.setVisible(false); // hidden until advance() places it (no flash at the origin)
   }
 
-  /** Walks for `dt` seconds. Returns true when it reached the end of the path (a leak). */
-  advance(dt: number, path: PathLine): boolean {
+  /** Walks for `dt` seconds. Returns true when it reached the end of its line (a leak). */
+  advance(dt: number): boolean {
     const cycle = this.def.dashCycle;
     const reach = this.def.outOfReach;
     const wasWhite =
@@ -181,7 +184,7 @@ export class Enemy extends Phaser.GameObjects.Image {
       this.pushLeft -= pushed;
     }
     // The slow first, then the haste aura (a 40% slow + 30% haste walks at 0.6 × 1.3 of base).
-    const speed = this.rootLeft > 0 ? 0 : this.speed * (1 - this.slowPct) * (1 + this.hastePct) * (1 + this.packPct);
+    const speed = this.rootLeft > 0 ? 0 : this.speed * (1 - this.slowPct) * (1 + this.hastePct);
     switch (this.def.behavior) {
       case 'walk':
         this.distance += speed * dt;
@@ -207,7 +210,7 @@ export class Enemy extends Phaser.GameObjects.Image {
               this.dashLeft = c.dashSec;
             }
           } else {
-            this.distance += (c.dashCells / c.dashSec) * CELL * (1 + this.hastePct) * (1 + this.packPct) * dt;
+            this.distance += (c.dashCells / c.dashSec) * CELL * (1 + this.hastePct) * dt;
             this.dashLeft -= dt;
             if (this.dashLeft <= 0) {
               this.dashLeg = 'crawl';
@@ -224,13 +227,15 @@ export class Enemy extends Phaser.GameObjects.Image {
     const t = Math.min(1, this.age / POP_SEC);
     const pop = t < 1 ? 1.15 * Math.sin((t * Math.PI) / 2) : 1;
     this.setScale(ART_SCALE * pop);
-    const p = path.pointAt(this.distance);
-    const a = path.pointAt(this.distance + 4);
+    const p = this.path.pointAt(this.distance);
+    const a = this.path.pointAt(this.distance + 4);
     const dl = Math.hypot(a.x - p.x, a.y - p.y);
     if (dl > 0) {
       this.dirX = (a.x - p.x) / dl;
       this.dirY = (a.y - p.y) / dl;
     }
+    // The Flyer's wings point where it flies: the texture points up, flat, so it may turn.
+    if (this.def.flies) this.setRotation(Math.atan2(this.dirY, this.dirX) + Math.PI / 2);
     this.setPosition(p.x, p.y - Math.abs(Math.sin(this.distance / 9)) * 2);
     if (this.plate !== undefined && this.def.plate !== undefined) {
       this.plate.setPosition(this.x, this.y).setScale(ART_SCALE * pop).setRotation(Math.atan2(this.dirX, -this.dirY)).setVisible(true);
@@ -247,7 +252,7 @@ export class Enemy extends Phaser.GameObjects.Image {
       else this.clearTint();
     }
     this.setAlpha(leg === 'out' ? 0.5 : 1); // untargetable, not invisible: the token half-ghosts
-    return this.distance >= path.length;
+    return this.distance >= this.path.length;
   }
 
   /** Out of reach right now (the Colossus's beat): the aim picks skip it; area, line and held damage still reach it. */
@@ -291,6 +296,7 @@ export class Enemy extends Phaser.GameObjects.Image {
    * push/root streak (core/control.ts). A root that would be shorter than 0.05s is skipped but
    * still counts, so an enemy hit nonstop stays fatigued. */
   root(sec: number): void {
+    if (this.def.flies) return; // the root does not reach the sky
     if (this.def.ignoresControl) { this.deny = true; return; }
     if (this.rootLeft > 0) return;
     const s = sec * controlScale(this);
@@ -313,6 +319,7 @@ export class Enemy extends Phaser.GameObjects.Image {
    * streak (core/control.ts); advance() consumes it. */
   pushBack(units: number): void {
     if (!this.active || units <= 0) return;
+    if (this.def.flies) return; // a gust moves it not
     if (this.def.ignoresControl) { this.deny = true; return; }
     this.pushLeft += units * controlScale(this);
     noteControl(this);

@@ -11,6 +11,7 @@ import { burnRate, burnStep } from '../core/burn';
 import { TICK_SEC } from '../config';
 import { plateMul } from '../core/plate';
 import { pathLineForLane, type PathLine } from '../core/path';
+import { pickFlyLine } from '../core/flyRoute';
 import { shieldMul } from '../core/shield';
 import { CONTROL_WINDOW_SEC } from '../core/control';
 import { pickNearest } from '../core/targeting';
@@ -58,6 +59,7 @@ const JOLT_BASE_SIZE = 0.26;
 export class EnemySystem {
   private readonly scene: Phaser.Scene;
   private readonly run: RunState;
+  private readonly board: Board;
   private readonly fx: FxSystem;
   private readonly sfx: Sfx | undefined;
   /** The run's towers (set by GameScene): a kill pays each mint tower that reaches it extra gold. */
@@ -72,6 +74,7 @@ export class EnemySystem {
   constructor(scene: Phaser.Scene, board: Board, run: RunState, fx: FxSystem, sfx: Sfx | undefined) {
     this.scene = scene;
     this.run = run;
+    this.board = board;
     this.fx = fx;
     this.sfx = sfx;
     this.bars = scene.add.graphics().setDepth(DEPTH.bars);
@@ -103,7 +106,10 @@ export class EnemySystem {
       this.scene.add.existing(enemy);
       this.pool.push(enemy);
     }
-    enemy.spawn(def, hpMul, this.routes[lane]!, speedMul, waveSpeedMul, distance, lane);
+    // A Flyer takes its own crossing (the seed picks the point on the entrance edge); a walker the road.
+    const fly = def.flies ? pickFlyLine(this.board.map, this.run.rng, CELL) : undefined;
+    // A flyer always starts on its own edge — the far-gate distance (road units) never applies to it.
+    enemy.spawn(def, hpMul, fly ? fly.line : this.routes[lane]!, speedMul, waveSpeedMul, fly ? 0 : distance, lane);
     hook.stats.enemiesSpawned += 1;
     return enemy;
   }
@@ -111,7 +117,7 @@ export class EnemySystem {
   update(dt: number): void {
     for (const e of this.pool) {
       if (!e.active) continue;
-      const leaked = e.advance(dt, this.routes[e.lane]!);
+      const leaked = e.advance(dt);
       // The burn keeps ticking after the last shot; an enemy that leaks this frame is done.
       if (!leaked) this.tickBurn(e, dt);
       if (leaked) {
