@@ -42,7 +42,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E9 — Level augments: harder runs for a bigger payout (done; history in planning/archive/ROADMAP.md)
 
-### E10 — The sky: not everything walks the road (active — opened 2026-10-31)
+### E10 — The sky: not everything walks the road (active — fully tasked 2026-11-01, closing on the pool's landings)
 **Goal:** the road stops being the only line on the board: something crosses the island over it, and a build that only covers the road stops being enough.
 **When done:** the wave-50 boss never touches the road — it crosses the island in a straight line and banks to a new one at half health — and a small regular flyer in the wave mix teaches the same read; the flight line's telegraph is the enemy's own language, and the player learns to cover the island, not just the road.
 **Breakdown:**
@@ -51,13 +51,13 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the regular Flyer in the wave mix: the first enemy that doesn't walk the road — a small fast shape that crosses the island in a straight line from its edge to the exit, one on the Feeder's old waves (13, 17, 21, …); carries the Feeder's removal, the regular cap stays 10 of 10 — **done as T0353 (L, 2026-11-01, asus)**; its one-time preview teach — **done as T0373 (S, 2026-11-01, yoga)**
 - the Flyer's motion reads as flight: a short fading streak in its own color trails the regular Flyer through the sky — **tasked as T0375 (S, in the pool, 2026-11-01)**
 - the sky wears its own note: one soft sustained tone plays while any regular Flyer is in the air, heard as distinct from the road's thuds — **tasked as T0376 (M, in the pool, 2026-11-01)**
-- (to task) the crossing learns: the bank's line is chosen to cross where the run's towers don't reach — the boss banks into uncovered ground, its telegraph keeping it fair (waits on T0317)
+- the crossing learns: at 50% hp the bank's line is chosen to cross where the run's towers cover least — the boss banks into the uncovered ground, the 0.8 s preview keeping it fair — **tasked as T0379 (L, in the pool, waits on T0317)**
 
 ### E11 — First run teaches itself (done; history in planning/archive/ROADMAP.md)
 
 ### E12 — The run's story: a run you can look back on (done; history in planning/archive/ROADMAP.md)
 
-### E13 — The island opens up: the road comes in from more than one gate (done 2026-11-01; history in planning/archive/ROADMAP.md)
+### E13 — The island opens up: the road comes in from more than one gate (done; history in planning/archive/ROADMAP.md)
 
 ### E14 — The wave: a tech branch for what a wave does (active — fully tasked 2026-11-01, closing on the pool's landings)
 **Goal:** the tech tree has covered the run start, the board, the pool and the payout — but not the wave itself: a fifth branch lets between-run coins buy how a run plays.
@@ -106,4 +106,4 @@ Ideas that may become epics or tasks of one.
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
 - The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **done as T0348 (M, 2026-11-01, asus)**
 - More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **E9's later slice, parked**
-- Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**; the choice's payoff as a live line — "bank +N" on the stats card, build phase only — **tasked as T0374 (M, non-epic, in the pool, 2026-11-01)**
+- Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**; the live "bank +N" line — **built as T0374 (M, non-epic, 2026-11-01)**; the rule taught once, a chip at the first pay — **tasked as T0380 (S, non-epic, 2026-11-01)**; every pay heard, the coin blip — **tasked as T0381 (S, non-epic, 2026-11-01)**

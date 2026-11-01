@@ -291,3 +291,7 @@ Status: **done (2026-10-29)** — all five branches landed (run start, draft, po
 - the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line) — **T0305 (M, priority 1) — done** (2026-10-30, asus)
 - the coins reference: how a run pays, off the pause (the rates, this run's terms, the multipliers — the payout math in one card) — **T0329 (M, E9) — done** (2026-11-01, asus)
 - (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set
+
+## Archived 2026-11-01
+
+### E13 — The island opens up: the road comes in from more than one gate (done 2026-11-01; history in planning/archive/ROADMAP.md)
