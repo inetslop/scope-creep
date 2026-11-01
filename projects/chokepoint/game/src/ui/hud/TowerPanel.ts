@@ -148,7 +148,7 @@ export class TowerPanel implements HudPart {
     if (perSec >= 1) items.push(scene.add.text(left, H / 2 - 79 - below, `≈ ${perSec}/s`, textStyle(11, PALETTE.muted)).setOrigin(0, 0));
     items.push(...this.slots(game, tower, left, w, H, below));
     if (sell) {
-      const price = sellPrice(tower.slots, game.run.slotDiscount);
+      const price = sellPrice(tower.slots, game.run.slotDiscount, game.run.techOwned);
       items.push(makeButton(scene, 0, H / 2 - 16 - SELL_H / 2, `Sell · +${price}`, () => game.building.sellTower(), { width: RW, height: SELL_H, radius: 12 }).container);
     }
     const x = isNarrow(width) ? width / 2 : EDGE + w / 2;

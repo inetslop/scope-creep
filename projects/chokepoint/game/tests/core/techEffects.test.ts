@@ -4,7 +4,7 @@ import { DRAFT_NODES } from '../../src/content/tech/draft';
 import { draftCardCount, slotCost } from '../../src/core/augments';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
 import { buyNode } from '../../src/core/tech';
-import { draftCardsFor, draftTech, sellPrice, slotPrice } from '../../src/core/techEffects';
+import { draftCardsFor, draftTech, sellPrice, sellRefund, slotPrice } from '../../src/core/techEffects';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -42,12 +42,25 @@ describe('techEffects', () => {
     expect(slotPrice(MAX_SLOTS, 10)).toBeUndefined(); // no slot beyond the last: no price
   });
 
-  it('selling pays 70% of what the unlocked slots cost, floored (the discount only touches the second slot)', () => {
-    expect(sellPrice(1, 0)).toBe(28); // 70% of the 40 first slot
-    expect(sellPrice(1, 5)).toBe(28); // the discount only touches the second slot
-    expect(sellPrice(2, 0)).toBe(77); // 70% of 40 + 70
-    expect(sellPrice(2, 10)).toBe(70); // 70% of 40 + 60
-    expect(sellPrice(MAX_SLOTS, 0)).toBe(469); // 70% of 40 + 70 + 160 + 400
+  it('selling pays 70% of what the unlocked slots cost, floored, without the Soft sell node (the discount only touches the second slot)', () => {
+    expect(sellPrice(1, 0, [])).toBe(28); // 70% of the 40 first slot
+    expect(sellPrice(1, 5, [])).toBe(28); // the discount only touches the second slot
+    expect(sellPrice(2, 0, [])).toBe(77); // 70% of 40 + 70
+    expect(sellPrice(2, 10, [])).toBe(70); // 70% of 40 + 60
+    expect(sellPrice(MAX_SLOTS, 0, [])).toBe(469); // 70% of 40 + 70 + 160 + 400
+  });
+
+  it('sellRefund is 7 per 10 without the node, 8 with Soft sell; other-branch and duplicate ids count for nothing', () => {
+    expect(sellRefund([])).toBe(7);
+    expect(sellRefund(['soft-sell'])).toBe(8);
+    expect(sellRefund(['gold-1'])).toBe(7);
+    expect(sellRefund(['soft-sell', 'soft-sell', 'nope'])).toBe(8);
+  });
+
+  it('with Soft sell, selling pays 80% of what the unlocked slots cost, floored', () => {
+    expect(sellPrice(1, 0, ['soft-sell'])).toBe(32); // 80% of the 40 first slot
+    expect(sellPrice(2, 10, ['soft-sell'])).toBe(80); // 80% of 40 + 60
+    expect(sellPrice(MAX_SLOTS, 0, ['soft-sell'])).toBe(536); // 80% of 40 + 70 + 160 + 400
   });
 
   it('draftTech counts each node once, unknown ids count for nothing', () => {

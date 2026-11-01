@@ -1,4 +1,5 @@
 import { DRAFT_NODES } from '../content/tech/draft';
+import { TOWER_NODES } from '../content/tech/tower';
 import { draftCardCount, slotCost } from './augments';
 
 /** What the owned "The draft" tech nodes change for a new run. */
@@ -35,15 +36,30 @@ export function slotPrice(index: number, discount: number): number | undefined {
   return index === 1 ? Math.max(5, base - discount) : base;
 }
 
+/** The sell's refund per 10 paid: the biggest owned tower node's `refund`, 7 when none is owned; each node counts once, unknown ids count for nothing. */
+export function sellRefund(owned: readonly string[]): number {
+  let refund = 7;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = TOWER_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    if (node.refund > refund) refund = node.refund;
+  }
+  return refund;
+}
+
 /**
- * What selling a tower with `slots` unlocked slots pays: 70% of what the slots cost
- * (`slotPrice(i, discount)` each), floored. A refund, not a retrieve: the augments are gone.
+ * What selling a tower with `slots` unlocked slots pays: `sellRefund(owned)` per 10 of what the
+ * slots cost (`slotPrice(i, discount)` each), floored — 80% with Soft sell, 70% without. A
+ * refund, not a retrieve: the augments are gone.
  */
-export function sellPrice(slots: number, discount: number): number {
+export function sellPrice(slots: number, discount: number, owned: readonly string[]): number {
   let paid = 0;
   for (let i = 0; i < slots; i++) paid += slotPrice(i, discount)!;
-  // *7/10, not *0.7: paid is whole, and in float 670 * 0.7 is 468.999…, a gold short of the 469 the run owes.
-  return Math.floor((paid * 7) / 10);
+  // whole tenths, not *0.7 or *0.8: paid is whole, and in float 670 * 0.7 is 468.999…, a gold short of the 469 the run owes.
+  return Math.floor((paid * sellRefund(owned)) / 10);
 }
 
 /** How many cards the draft at `draftNumber` offers, with the "Fourth card" node owned or not. */

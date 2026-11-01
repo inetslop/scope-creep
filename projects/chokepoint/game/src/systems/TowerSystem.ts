@@ -170,12 +170,13 @@ export class TowerSystem {
   }
 
   /**
-   * Sells `tower`: the run pays back 70% of what its slots cost, its cell frees, and it leaves the
-   * board — the auras read the towers standing, so a sold one stops working this frame. The
-   * augments are gone: a refund, not a retrieve. Returns the gold paid.
+   * Sells `tower`: the run pays back the sell's rate of what its slots cost (70%, 80% with the
+   * Soft sell node), its cell frees, and it leaves the board — the auras read the towers
+   * standing, so a sold one stops working this frame. The augments are gone: a refund, not a
+   * retrieve. Returns the gold paid.
    */
   sell(tower: Tower): number {
-    const paid = sellPrice(tower.slots, this.run.slotDiscount);
+    const paid = sellPrice(tower.slots, this.run.slotDiscount, this.run.techOwned);
     this.run.gold += paid;
     this.board.place(tower.cell, undefined);
     this.towers.splice(this.towers.indexOf(tower), 1);

@@ -4,11 +4,12 @@ title: The tower branch and its first node, Soft sell
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T21:57:55Z
 claimed_at: 2026-11-01T22:18:50Z
+finished_at: 2026-11-01T22:27:16Z
 epic: E16
 ---
 
@@ -82,3 +83,22 @@ export function buyTowerNode(store: KeyValueStore | undefined, id: string): bool
 - `tests/core/tech.test.ts`: tower row shape; `nodeCost(TOWER_NODES, 'soft-sell')` = 30; `buyTowerNode` gates (unknown, 29 coins, already owned) and deducts 30; `nodeInReach` lists include `TOWER_NODES` (soft-sell counts for the dot).
 - `tests/core/techEffects.test.ts`: `sellRefund` (7 default, 8 with soft-sell, other-branch and duplicate ids ignored); `sellPrice` with `[]` stays 28/77/70/469 and with `['soft-sell']` pays 32/80/536.
 - `npm run check` (typecheck + lint + unit tests) must pass.
+
+## Result (attempt 1, desktop)
+
+The tech tree gained its sixth branch row "The tower" with its first node, Soft sell (30 coins, bought once, on in every run after): while owned, selling a tower refunds 80% of its slot cost instead of 70%, shown on the tower panel's Sell line and paid by the sell commit, with the rate read from the profile's purchased list at sell time. The menu's Tech dot now counts the node toward affordability. No other branch, augment, enemy, wave or board content changed; check and smoke (desktop + phone) both pass.
+
+- Self-review: APPROVE
+- Time: 8.4 min
+
+```
+projects/chokepoint/game/src/content/tech/tower.ts | 14 ++++++++++
+ projects/chokepoint/game/src/core/tech.ts          | 24 ++++++++++++++++-
+ projects/chokepoint/game/src/core/techEffects.ts   | 26 ++++++++++++++----
+ projects/chokepoint/game/src/scenes/TechScene.ts   | 21 +++++++++------
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  9 ++++---
+ projects/chokepoint/game/src/ui/hud/TowerPanel.ts  |  2 +-
+ projects/chokepoint/game/tests/core/tech.test.ts   | 31 +++++++++++++++++++---
+ .../chokepoint/game/tests/core/techEffects.test.ts | 27 ++++++++++++++-----
+ 8 files changed, 125 insertions(+), 29 deletions(-)
+```

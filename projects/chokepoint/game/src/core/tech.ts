@@ -4,6 +4,7 @@ import { CLAIM_NODES } from '../content/tech/claim';
 import { POOL_NODES } from '../content/tech/pool';
 import { DRAFT_NODES } from '../content/tech/draft';
 import { WAVE_NODES } from '../content/tech/wave';
+import { TOWER_NODES } from '../content/tech/tower';
 import { PROFILE_KEY, loadProfile, type KeyValueStore } from './profile';
 
 /** One buyable node: what it costs, what it needs before it unlocks, and what it adds to every new run. */
@@ -170,7 +171,7 @@ export function buyPoolNode(store: KeyValueStore | undefined, id: string): boole
  * branch node lists are the ones the tech screen's rows read (TechScene's `rows`).
  */
 export function nodeInReach(purchased: readonly string[], coins: number): boolean {
-  for (const branch of [TECH_NODES, POOL_NODES, CLAIM_NODES, BOARD_NODES, WAVE_NODES]) {
+  for (const branch of [TECH_NODES, POOL_NODES, CLAIM_NODES, BOARD_NODES, WAVE_NODES, TOWER_NODES]) {
     for (const node of branch) {
       if (!purchased.includes(node.id) && coins >= nodeCost(branch, node.id)) return true;
     }
@@ -231,6 +232,27 @@ export function buyWaveNode(store: KeyValueStore | undefined, id: string): boole
   const node = WAVE_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
   const price = nodeCost(WAVE_NODES, id);
+  if (profile.coins < price) return false;
+  profile.coins -= price;
+  profile.purchased.push(id);
+  try {
+    store?.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    /* private mode or full storage: the purchase just isn't kept */
+  }
+  return true;
+}
+
+/**
+ * Buys a tower node from the saved profile's coins. Refuses an unknown or already owned id and
+ * a price the coins don't cover (they never go below zero); a tower node has no prerequisites
+ * and no gate — its effect is in every run the moment it is bought.
+ */
+export function buyTowerNode(store: KeyValueStore | undefined, id: string): boolean {
+  const profile = loadProfile(store);
+  const node = TOWER_NODES.find((n) => n.id === id);
+  if (!node || profile.purchased.includes(id)) return false;
+  const price = nodeCost(TOWER_NODES, id);
   if (profile.coins < price) return false;
   profile.coins -= price;
   profile.purchased.push(id);
