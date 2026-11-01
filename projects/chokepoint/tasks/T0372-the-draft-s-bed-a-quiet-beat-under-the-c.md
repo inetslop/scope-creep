@@ -3,12 +3,10 @@ id: T0372
 title: "The draft's bed: a quiet beat under the card pick"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-01T18:12:12Z
-claimed_at: 2026-11-01T18:12:15Z
-designer: desktop
 ---
 
 ## Goal
@@ -25,3 +23,67 @@ The pick is the run's biggest decision, but it is the only beat of the run's loo
 - [ ] Opening the draft — the pre-wave-1 pick and every pick after a cleared wave — fades the bed in over 0.6 s, and committing a card fades it out over 0.6 s; the bed is silent in the menu, during the build phase, during waves, while paused, and when the sound is off.
 - [ ] The loop is exactly 3 sine notes (G2, E3, G3) at 1.2 s steps and 0.025 volume — slower, sparser and quieter than the build bed, distinct from the wave bed; the build bed, the wave bed and the last-stand bed form are byte-identical to before.
 - [ ] A reroll keeps the bed playing with no re-fade; the tier chime, the flip and the Epic shimmer are unchanged; a run plays end to end from the first pick to game over.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/audio/draftBed.ts` - the draft's quiet 3-note bed class (`DraftBed`), a trimmed copy of `src/audio/buildBed.ts`
+- edit `src/scenes/DraftScene.ts` - own the bed: construct in `create()`, drive in a new `update()`, stop in a new `shutdown()`
+- edit `src/debug/runChecks.ts` - one invariant line + its import
+
+### Interfaces
+`src/audio/draftBed.ts` (copy `buildBed.ts` verbatim, then apply exactly these changes; nothing else):
+```ts
+const DECAY_SEC = 0.5, FADE_SEC = 0.6, STEP_SEC = 1.2, VOL = 0.025;
+const NOTES = [98, 164.81, 196]; // G2 E3 G3
+```
+- rename the class `BuildBed` → `DraftBed`; rewrite its doc comment (3-note loop under the draft's card pick: 1.2 s steps, 0.5 s decays, 0.025 pre-master — slower, sparser, quieter than the build bed; fades in 0.6 s when the draft scene opens, fades out 0.6 s when a pick commits (the scene's stop); a reroll keeps it playing; silent under the pause screen and when muted).
+- delete the `LOW_NOTES` line and the `private lastStand = false;` field (no forms).
+- `update(dt: number, playing: boolean): void` — drop the `lastStand` parameter and its two lines (`if (this.lastStand !== lastStand) {...}` and `const notes = ...`); the loop body becomes `while (this.acc >= STEP_SEC) { this.acc -= STEP_SEC; this.playNote(NOTES[this.step % 3]!); this.step += 1; }`
+- `stop()`: delete the `this.lastStand = false;` line only.
+- `broken()`: message → `` `${this.liveNotes} notes still ringing in the draft bed` `` (same `> 2` threshold; a note rings 0.52 s, the step is 1.2 s, so at most one is alive).
+
+`src/scenes/DraftScene.ts`:
+```ts
+import { DraftBed } from '../audio/draftBed';   // after the phaser import
+
+export class DraftScene extends Phaser.Scene {
+  private picked = false;
+  bed: DraftBed; // the draft's quiet bed: its shutdown stops it, runChecks reads it while the draft is open
+```
+- in `create()`, right after `hook.overlay = SCENES.draft;`: `this.bed = new DraftBed(getSfx(this));`
+- new methods between the constructor and `create()`:
+```ts
+  update(_time: number, deltaMs: number): void {
+    const dt = Math.min(deltaMs / 1000, 0.05);
+    this.bed.update(dt, !this.scene.isActive(SCENES.pause)); // silent under the pause screen, like the other beds
+  }
+
+  shutdown(): void {
+    this.bed.stop(); // the pick's fade-out and ringing notes must not outlive the draft (the Sfx context is the singleton's)
+  }
+```
+
+`src/debug/runChecks.ts`:
+- import: `import { DraftScene } from '../scenes/DraftScene';` next to the existing `import type { GameScene } from '../scenes/GameScene';`
+- one line directly after `['buildBed.valid', (g) => g.buildBed.broken()],`:
+```ts
+  ['draftBed.valid', (g) => (g.scene.isActive(SCENES.draft) ? (g.scene.get(SCENES.draft) as DraftScene).bed.broken() : null)],
+```
+
+### Steps
+1. Create `src/audio/draftBed.ts` by copying `src/audio/buildBed.ts` and applying the exact changes above.
+2. Edit `src/scenes/DraftScene.ts`: import, public `bed` field, construction in `create()`, `update()`, `shutdown()`.
+3. Edit `src/debug/runChecks.ts`: import + the one invariant line.
+4. Run `npm run check` — must pass.
+
+### Pitfalls
+- Do not touch `src/audio/buildBed.ts`, `src/audio/music.ts`, `src/audio/Sfx.ts`, `core/bedForm.ts` or `systems/RunFlow.ts` — the build bed, wave bed and last-stand form must stay byte-identical, and no new Sfx method is needed.
+- The draft scene keeps running while the pause card overlays it (only GameScene pauses), so the `!this.scene.isActive(SCENES.pause)` gate in `update()` is what makes it "silent while paused"; a pause over the draft re-opens the bed with a fresh 0.6 s fade on resume, same as the other beds restarting after a pause.
+- Reroll: change nothing in `reroll()` — the scene stays open, so the bed keeps playing with no re-fade. Do not add a `stop()` call there.
+- One start point, one stop point: the bed starts lazily on the first `update()` after `create()` and stops only in `shutdown()` (fired by `pick()`'s `scene.stop()`, possibly 150 ms later for the first-run hint). No re-fade anywhere else.
+- The fade-out and the ring-out keep going after the scene is shut down because they live on the Sfx singleton's WebAudio context, not on scene objects — do not schedule anything on the scene after stop.
+- Keep the step accumulator (`acc`) and `dt` clamp exactly as in `buildBed.ts`; never assume 60 fps.
+
+### Tests
+- none (audio task; no `src/core` rule changes)
