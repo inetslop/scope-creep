@@ -1,12 +1,14 @@
 ---
 id: T0365
 title: "The build bed: a quiet beat under the build phase"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T16:18:26Z
+claimed_at: 2026-11-01T17:03:47Z
 ---
 
 ## Goal
