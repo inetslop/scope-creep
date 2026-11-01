@@ -3,11 +3,13 @@ id: T0357
 title: "The wave branch: the tech tree's fifth branch, and The door node"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T12:09:03Z
+claimed_at: 2026-11-01T12:09:07Z
 epic: E14
+designer: desktop
 ---
 
 ## Goal
