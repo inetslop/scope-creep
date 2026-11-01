@@ -1,12 +1,14 @@
 ---
 id: T0328
 title: "The Dasher's surge gets its streak"
+assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T01:14:01Z
+claimed_at: 2026-11-01T01:24:38Z
 ---
 
 ## Goal
