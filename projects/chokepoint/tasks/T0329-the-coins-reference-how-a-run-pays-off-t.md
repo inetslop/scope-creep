@@ -3,11 +3,13 @@ id: T0329
 title: "The coins reference: how a run pays, off the pause"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0313]
 attempts: 0
 created: 2026-11-01T01:46:07Z
+claimed_at: 2026-11-01T01:46:11Z
 epic: E9
+designer: desktop
 ---
 
 ## Goal
