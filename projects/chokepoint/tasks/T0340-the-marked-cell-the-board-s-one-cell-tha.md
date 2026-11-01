@@ -3,11 +3,13 @@ id: T0340
 title: "The marked cell: the board's one cell that makes its tower stronger"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T05:06:52Z
+claimed_at: 2026-11-01T05:27:04Z
 epic: E13
+designer: desktop
 ---
 
 ## Goal
