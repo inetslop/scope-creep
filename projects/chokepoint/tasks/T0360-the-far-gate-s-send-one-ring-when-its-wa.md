@@ -3,10 +3,12 @@ id: T0360
 title: "The far gate's send: one ring when its walkers come in"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T12:52:50Z
+claimed_at: 2026-11-01T12:53:26Z
+designer: yoga
 ---
 
 ## Goal
