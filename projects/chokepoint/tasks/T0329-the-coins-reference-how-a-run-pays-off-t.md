@@ -4,11 +4,12 @@ title: "The coins reference: how a run pays, off the pause"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0313]
 attempts: 1
 created: 2026-11-01T01:46:07Z
 claimed_at: 2026-11-01T04:09:16Z
+finished_at: 2026-11-01T04:45:23Z
 epic: E9
 ---
 
@@ -79,3 +80,19 @@ No new types. `CoinsScene` reads, once, exactly what already exists:
 
 ### Tests
 - none (read-only UI page; no new/changed `src/core` rule).
+
+## Result (attempt 1, asus)
+
+Added the "Coins" reference page off the pause — a fifth reference row and controls line in `PauseScene`, a new `CoinsScene` (dimmed pause behind one white card: current "Pays" rates, "This run" recipe parts from the live ledger, and "Multipliers" for Iron ×2 and level augments when present), plus the `SCENES.coins` key and scene registration in `main.ts`. Everything is read from the run and profile's purchased nodes, so a resumed run shows the same card and the pause's worth line stays the only place the total appears. Check and smoke pass.
+
+- Self-review: APPROVE
+- Time: 36.1 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/main.ts              |   3 +-
+ projects/chokepoint/game/src/scenes/CoinsScene.ts | 149 ++++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/PauseScene.ts |  13 +-
+ projects/chokepoint/game/src/scenes/keys.ts       |   1 +
+ 4 files changed, 163 insertions(+), 3 deletions(-)
+```

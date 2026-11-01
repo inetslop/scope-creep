@@ -21,6 +21,7 @@ export const SCENES = {
   waves: 'Waves',
   bosses: 'Bosses',
   summary: 'Summary',
+  coins: 'Coins',
   gameOver: 'GameOver',
   rewards: 'Rewards',
 } as const;

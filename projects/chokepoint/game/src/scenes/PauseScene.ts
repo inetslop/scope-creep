@@ -23,6 +23,7 @@ const CONTROLS: string[] = [
   'Waves — the tags and when they come',
   'Bosses — the bosses and their trick',
   'Summary — the run so far: score, combo, by tower',
+  'Coins — how a run pays',
 ];
 
 /** Pause overlay: resume or quit, on one card. In ?smoke mode it resumes on its own. */
@@ -184,13 +185,19 @@ export class PauseScene extends Phaser.Scene {
       this.scene.pause(); // the pause card's Escape key must not fire under the reference
     };
     const summaryButton = makeButton(this, 0, 0, 'Summary', showSummary, { width: 240, height: 52, radius: 26 });
+    const showCoins = (): void => {
+      if (closed) return;
+      this.scene.launch(SCENES.coins);
+      this.scene.pause(); // the pause card's Escape key must not fire under the reference
+    };
+    const coinsButton = makeButton(this, 0, 0, 'Coins', showCoins, { width: 240, height: 52, radius: 26 });
 
     // Card height from the content, then place everything top-down in one column
     let h = PAD + title.height + GAP_S + statsH;
     if (worthText) h += worthText.height + GAP_S;
     h += GAP_B + heading.height;
     for (const t of lines) h += GAP_S + t.height;
-    h += GAP_B + 56 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + PAD;
+    h += GAP_B + 56 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + PAD;
     const panelH = Math.ceil(h);
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
     let y = -panelH / 2 + PAD;
@@ -226,8 +233,10 @@ export class PauseScene extends Phaser.Scene {
     bossesButton.container.setY(cy(52));
     y += GAP_S;
     summaryButton.container.setY(cy(52));
+    y += GAP_S;
+    coinsButton.container.setY(cy(52));
 
-    const boxKids: Phaser.GameObjects.GameObject[] = [panel, title, stats, heading, ...lines, resumeButton.container, quitButton.container, soundRow.container, enemiesButton.container, wavesButton.container, bossesButton.container, summaryButton.container];
+    const boxKids: Phaser.GameObjects.GameObject[] = [panel, title, stats, heading, ...lines, resumeButton.container, quitButton.container, soundRow.container, enemiesButton.container, wavesButton.container, bossesButton.container, summaryButton.container, coinsButton.container];
     if (worthText) boxKids.push(worthText);
     const box = this.add.container(0, 0, boxKids);
 
