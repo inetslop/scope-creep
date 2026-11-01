@@ -3,13 +3,11 @@ id: T0386
 title: "The rich cell: the tower branch's second node, the marked cell 1.25× to 1.5×"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-01T22:53:02Z
-claimed_at: 2026-11-01T22:53:05Z
 epic: E16
-designer: desktop
 ---
 
 ## Goal
@@ -29,3 +27,62 @@ The tech tree's "The tower" branch (T0383) gains its second node — The rich ce
 - [ ] The marked cell's position, look and which boards carry it are untouched; no other branch's nodes or prices, augment, enemy, wave or board rule changes.
 - [ ] The tech card fits at 412x915 and 1280x720 with the tower row holding two cards (the layout check in the gate).
 - [ ] The game is playable menu to game over with the node owned and unbought, on desktop and mobile.
+
+## Design (architect, desktop)
+
+### Files
+- edit `src/content/tech/tower.ts` - add the `cellMul` field to `TowerNode` and the second node `rich-cell` after `soft-sell`; update the two comments that say the branch has one node / only sells
+- edit `src/core/techEffects.ts` - add the `markedCellMul(owned)` reader next to `sellRefund`, importing `MARKED_DMG_MUL` from `./markedCell`
+- edit `src/systems/TowerSystem.ts` - `build()` (line 68) reads the buff through the reader; swap the imports
+- edit `src/systems/RunSave.ts` - resume (line 96) reads the buff through the reader; swap the imports
+- edit `src/debug/runChecks.ts` - the `towers.markedCell` invariant (line 114) expects the reader's value; swap the imports
+- edit `src/scenes/PickScene.ts` - the two existing "one cell · +25% damage" texts read the owned buff (landscape card line 220, portrait detail line 306)
+- edit `tests/core/tech.test.ts` - tower-row data test gains the second node; `nodeCost` depth-2 assertion; a buy test for the node
+- edit `tests/core/techEffects.test.ts` - `markedCellMul` tests next to the `sellRefund` test
+
+### Interfaces
+```ts
+// src/content/tech/tower.ts — added to the existing interface, after `refund: number;`
+  /** the board's marked cell's damage multiplier, when the node raises it (1.25 when none does) */
+  cellMul?: number;
+
+// src/core/techEffects.ts — new export, placed directly after sellRefund()
+export function markedCellMul(owned: readonly string[]): number;
+```
+TechScene needs no change: its `rows` map over `TOWER_NODES`, `nodeCost()` pricing, `buyTowerNode()` dispatch, owned border and `nodeInReach()` dot all pick the node up from the data. `nodeCost(TOWER_NODES, 'rich-cell')` is `nodePrice(30, 2)` = 85.
+
+### Steps
+1. `src/content/tech/tower.ts`: add the field above, then this line after the `soft-sell` line: `{ id: 'rich-cell', name: 'The rich cell', line: 'the marked cell makes its tower 1.5× stronger, not 1.25×', price: 85, refund: 0, cellMul: 1.5 },` — no `requires` field exists or is added (no in-branch gate). Rewrite the two comments (lines 1 and 11) to name both nodes.
+2. `src/core/techEffects.ts`: add `import { MARKED_DMG_MUL } from './markedCell';` after the `TOWER_NODES` import. Add:
+```ts
+/** The board's marked cell's damage multiplier: the biggest owned tower node's `cellMul`, MARKED_DMG_MUL (1.25) when none raises it; each node counts once, unknown ids count for nothing. */
+export function markedCellMul(owned: readonly string[]): number {
+  let mul = MARKED_DMG_MUL;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = TOWER_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    if (node.cellMul !== undefined && node.cellMul > mul) mul = node.cellMul;
+  }
+  return mul;
+}
+```
+3. `src/systems/TowerSystem.ts`: change line 9 to `import { markedCellMul, sellPrice, slotPrice } from '../core/techEffects';` and delete line 11 (`MARKED_DMG_MUL` import — its only use is line 68). Line 68 becomes: `tower.cellMul = this.board.onMarked(cell) ? markedCellMul(this.run.techOwned) : 1; // the board's marked cell: +25%, 1.5× with The rich cell`
+4. `src/systems/RunSave.ts`: add `import { markedCellMul } from '../core/techEffects';` and delete line 6 (the `MARKED_DMG_MUL` import, only used at line 96). Line 96 becomes: `tower.cellMul = game.board.onMarked(cell) ? markedCellMul(run.techOwned) : 1; // the board's marked cell: +25%, 1.5× with The rich cell` (`run` is already in scope there; a resumed run keeps the profile's current nodes, like `farGate`).
+5. `src/debug/runChecks.ts`: add `import { markedCellMul } from '../core/techEffects';` and delete line 8. Line 114 becomes: `const want = g.board.onMarked(t.cell) ? markedCellMul(g.run.techOwned) : 1;`
+6. `src/scenes/PickScene.ts`: add `import { markedCellMul } from '../core/techEffects';`. In the landscape build method (where line 220 is) and in `buildDetail` (where line 306 is), compute once near the texts: `const pct = Math.round((markedCellMul(loadProfile(window.localStorage).purchased) - 1) * 100);` and replace each `'one cell · +25% damage'` with the template `one cell · +${pct}% damage` (keep each text's existing style options). `loadProfile` is already imported.
+7. Tests (exact cases): in `techEffects.test.ts`, after the `sellRefund` test: `markedCellMul([])` = 1.25, `(['rich-cell'])` = 1.5, `(['soft-sell'])` = 1.25, `(['gold-1'])` = 1.25, `(['soft-sell', 'rich-cell', 'rich-cell', 'nope'])` = 1.5 (add the name to the file's import). In `tech.test.ts`: the tower-row test maps `[n.id, n.name, n.line, n.price, n.refund, n.cellMul]` to `[['soft-sell', 'Soft sell', "a sell pays 80% of its slots' cost, not 70%", 30, 8, undefined], ['rich-cell', 'The rich cell', 'the marked cell makes its tower 1.5× stronger, not 1.25×', 85, 0, 1.5]]`; add `expect(nodeCost(TOWER_NODES, 'rich-cell')).toBe(85); // the tower branch's depth 2` to the `nodeCost` test; add a buy test: 84 coins refuses, 100 coins with Soft sell unowned buys at 85 (coins 15, `purchased` `['rich-cell']`), buying again refuses.
+8. Run `npm run check` then `npm run smoke`.
+
+### Pitfalls
+- Unused import: `MARKED_DMG_MUL` must leave `TowerSystem.ts`, `RunSave.ts` and `runChecks.ts` (lint fails on it); keep it in `core/markedCell.ts` untouched (value, `markedCell()` and the painted dot stay 1.25-era code — position and look are out of scope).
+- Byte-identical when unbought: the reader's default is `MARKED_DMG_MUL`, and `Math.round((1.25 - 1) * 100)` is 25, so every readout renders the same string as today.
+- No gate: do not invent a `requires` on the node or a check in `buyTowerNode`; Soft-sell-less purchase is an acceptance criterion.
+- Do not add a third node (The light move's slot stays empty) and do not touch other branches' rows, prices, the tech screen layout code, or `towerDps`/`BeamSystem` (they already read `tower.cellMul`).
+- PickScene text: `+50%` is the same width as `+25%`; both sites keep their current style and wrap options, so nothing reflows at 412x915 or 1280x720. The tower row's two cards sit at x ±86 in the 356-wide narrow panel (12 px margin each side) — no layout code change.
+
+### Tests
+- `tests/core/techEffects.test.ts`: `markedCellMul` default 1.25, 1.5 with the node, Soft sell and other-branch/duplicate ids count for nothing.
+- `tests/core/tech.test.ts`: both tower rows' data including `cellMul`, `nodeCost` 85 at depth 2, buy at 85 without Soft sell, refuse at 84, refuse when already owned.
