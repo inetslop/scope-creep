@@ -3,10 +3,12 @@ id: T0361
 title: "Herd: the augment that grows with the crowd"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T13:25:34Z
+claimed_at: 2026-11-01T13:25:37Z
+designer: desktop
 ---
 
 ## Goal
