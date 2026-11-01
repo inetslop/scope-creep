@@ -3,11 +3,13 @@ id: T0371
 title: "The preview says which gate sends what: the far-gate share on the next-wave card"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T17:47:11Z
+claimed_at: 2026-11-01T17:47:42Z
 epic: E13
+designer: inet-racing
 ---
 
 ## Goal
