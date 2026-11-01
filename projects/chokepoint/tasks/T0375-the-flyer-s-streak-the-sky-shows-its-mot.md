@@ -3,11 +3,13 @@ id: T0375
 title: "The Flyer's streak: the sky shows its motion"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T19:38:40Z
+claimed_at: 2026-11-01T19:39:35Z
 epic: E10
+designer: yoga
 ---
 
 ## Goal
