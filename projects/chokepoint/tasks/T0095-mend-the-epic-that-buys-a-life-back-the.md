@@ -1,12 +1,14 @@
 ---
 id: T0095
 title: "Mend: the Epic that buys a life back (the T0093 re-file)"
+assignee: inet-racing
 size: L
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T02:00:38Z
+claimed_at: 2026-11-01T10:34:43Z
 epic: E4
 ---
 
