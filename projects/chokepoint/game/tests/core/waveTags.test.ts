@@ -15,9 +15,9 @@ describe('wave tags reference', () => {
     expect(nextTaggedWave(0, isBossWave)).toBe(10);
     expect(nextTaggedWave(19, isBossWave)).toBe(20);
   });
-  it("lists the three tags in the order the run meets them, each with the game's own rule", () => {
-    expect(WAVE_TAG_ROWS.map((r) => r.tag)).toEqual(['quiet', 'tight', 'boss']);
-    const first = [4, 6, 10];
+  it("lists the four tags in the order the run meets them, each with the game's own rule", () => {
+    expect(WAVE_TAG_ROWS.map((r) => r.tag)).toEqual(['quiet', 'tight', 'boss', 'rush']);
+    const first = [4, 6, 10, 11];
     WAVE_TAG_ROWS.forEach((row, i) => expect(row.rule(first[i]!)).toBe(true));
   });
 });

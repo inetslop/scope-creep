@@ -4,11 +4,12 @@ title: "The rush tag: the wave where every walker comes faster"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T03:39:37Z
 claimed_at: 2026-11-01T09:04:50Z
+finished_at: 2026-11-01T10:00:46Z
 ---
 
 ## Goal
@@ -89,3 +90,37 @@ tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave
 ### Tests
 - `tests/core/rushWaves.test.ts` as specified in step 11 (new core rule: predicate, factor, Swift stacking, tag, collisions, plan shape).
 - Update existing `tests/core/waveTags.test.ts` (step 10). Dasher/Sprinter/slow composition is carried by the unchanged `Enemy` math plus the smoke's `level.speed` invariant.
+
+## Result (attempt 1, cachyos-x8664)
+
+Verified — the tree is exactly as the summary describes and `npm run check` passes fresh on the current tree (typecheck + lint + 509/509 tests, 62 files).
+
+**T0337 — rush wave tag, complete:**
+
+**Speed** — `core/waves.ts` gained `isRushWave` (every 7th wave from 11, yielding to quiet/tight/boss) and `waveSpeedMul` (1.5 on rush, else 1). `WaveSystem` computes the combined factor and passes it through `EnemySystem.spawn` → `Enemy.spawn`, so `this.speed = def.speed * CELL * speedMul` rides the level's Swift multiplicatively (1.15 × 1.5 = 1.725, asserted in tests); `waveSpeedMul` is stored on the Enemy solely for the Dasher's telegraph (`pauseSec / waveSpeedMul`), its 3-cell surge leg and the Sprinter's ramp cap untouched. Control (Frost/Anchor) multiplies the already-faster speed as usual.
+
+**Inheritance** — split children keep the parent's factor through both `split.ts` and `midSplit.ts` (5-arg spawn); MenuDemo's own spawn is unaffected.
+
+**On screen** — the rush chip (orangeDeep) renders in the wave-10 build-phase preview and the banner via the new `tagChip()` in `core/waveTags.ts`, with the one-time teach line "rush: the walkers move 1.5× faster"; the waves reference grows the rush row from `WAVE_TAG_ROWS` with no change to that scene file.
+
+**Guards** — the `level.speed` invariant in `runChecks.ts` now expects `speedMul = levelSpeedMul × waveSpeedMul`; new `tests/core/rushWaves.test.ts` (tag order, collisions at 32/46/60, speed factor); `waveTags`/`enemyHooks` tests updated …
+
+- Self-review: APPROVE
+- Time: 55.9 min
+
+```
+projects/chokepoint/game/src/core/waveTags.ts      |  8 +++++-
+ projects/chokepoint/game/src/core/waves.ts         | 12 ++++++++-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  4 +--
+ projects/chokepoint/game/src/entities/Enemy.ts     |  7 +++--
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  4 +--
+ projects/chokepoint/game/src/systems/WaveSystem.ts |  6 +++--
+ .../game/src/systems/enemyHooks/midSplit.ts        |  4 +--
+ .../game/src/systems/enemyHooks/split.ts           |  2 +-
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  |  4 ++-
+ projects/chokepoint/game/src/ui/hud/topBanner.ts   |  3 ++-
+ .../chokepoint/game/tests/core/rushWaves.test.ts   | 30 ++++++++++++++++++++++
+ .../chokepoint/game/tests/core/waveTags.test.ts    |  6 ++---
+ .../game/tests/systems/enemyHooks.test.ts          |  7 ++---
+ 13 files changed, 76 insertions(+), 21 deletions(-)
+```

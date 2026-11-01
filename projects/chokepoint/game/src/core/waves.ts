@@ -100,6 +100,16 @@ export function tightHalve(spawns: WaveSpawn[]): WaveSpawn[] {
   return spawns.map((s, i) => ({ enemy: s.enemy, delaySec: i === 0 ? 0 : s.delaySec / 2 }));
 }
 
+/** Every 7th wave from wave 11 is a rush wave (11, 18, 25, ...); it yields to a quiet, tight or boss wave, which keeps its own tag. */
+export function isRushWave(wave: number): boolean {
+  return wave >= 11 && (wave - 11) % 7 === 0 && !isQuietWave(wave) && !isTightWave(wave) && !isBossWave(wave);
+}
+
+/** The wave's speed factor: 1.5 on a rush wave, 1 otherwise. It multiplies the level's Swift (1.15 × 1.5 = 1.725). */
+export function waveSpeedMul(wave: number): number {
+  return isRushWave(wave) ? 1.5 : 1;
+}
+
 /** Every 10th wave is the boss wave: one Colossus (the Guard and the Titan on wave 20, the Orb on wave 30), nothing else. */
 export function isBossWave(wave: number): boolean {
   return wave > 0 && wave % 10 === 0;
@@ -205,7 +215,7 @@ function planNormalWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): W
   if (wave >= 12 && (wave - 12) % 4 === 0 && !finalSpawns.some((s) => s.enemy === 'bulwark')) finalSpawns = [{ enemy: 'bulwark', delaySec: 0 }, ...finalSpawns];
   // A Ward wave always sends its Ward, even when the halving would drop it: it walks in first (wave 20 is the boss's slot).
   if (wave >= 15 && wave % 5 === 0 && wave !== 20 && !finalSpawns.some((s) => s.enemy === 'ward')) finalSpawns = [{ enemy: 'ward', delaySec: 0 }, ...finalSpawns];
-  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : [] };
+  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : [] };
 }
 
 /**

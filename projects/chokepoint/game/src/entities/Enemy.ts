@@ -30,6 +30,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   hpMul = 1;
   /** The level's spawn-speed factor it took (Swift); its split children take the same. */
   speedMul = 1;
+  /** The wave's speed factor it took (the rush wave: 1.5); its split children take the same. */
+  waveSpeedMul = 1;
   /** Board units walked along the path. */
   distance = 0;
   /** Board units per second. */
@@ -89,12 +91,13 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.setActive(false).setVisible(false);
   }
 
-  spawn(def: EnemyDef, hpMul: number, path: PathLine, speedMul = 1, distance = 0): void {
+  spawn(def: EnemyDef, hpMul: number, path: PathLine, speedMul = 1, waveSpeedMul = 1, distance = 0): void {
     this.def = def;
     this.maxHp = Math.max(1, Math.round(def.hp * hpMul));
     this.hp = this.maxHp;
     this.hpMul = hpMul;
     this.speedMul = speedMul;
+    this.waveSpeedMul = waveSpeedMul;
     this.distance = distance;
     this.speed = def.speed * CELL * speedMul;
     this.dirX = 0;
@@ -187,7 +190,7 @@ export class Enemy extends Phaser.GameObjects.Image {
             this.dashLeft -= dt;
             if (this.dashLeft <= 0) {
               this.dashLeg = 'pause';
-              this.dashLeft = c.pauseSec;
+              this.dashLeft = c.pauseSec / this.waveSpeedMul;
               this.pauseAge = 0;
             }
           } else if (this.dashLeg === 'pause') {

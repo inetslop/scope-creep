@@ -3,6 +3,7 @@ import { CELL, HUD } from '../../config';
 import { getEnemy } from '../../content/enemies';
 import { PALETTE } from '../../content/palette';
 import { waveCounts, isBossWave, type WavePlan } from '../../core/waves';
+import { tagChip } from '../../core/waveTags';
 import { farGateSplit } from '../../core/farGate';
 import type { RunState } from '../../core/run';
 import { artScale, enemyTexture } from '../../art/textures';
@@ -23,6 +24,7 @@ const TEACH: { tag: string; first: number; text: string }[] = [
   { tag: 'quiet', first: 4, text: 'quiet: fewer, double gold' },
   { tag: 'tight', first: 6, text: 'tight: they come bunched' },
   { tag: 'boss', first: 10, text: 'boss: one big shape instead of a crowd' },
+  { tag: 'rush', first: 11, text: 'rush: the walkers move 1.5× faster' },
 ];
 
 /** The one-time teach for the run's first build phase: the big button's "+N" pill banks the seconds left as gold. Shown while `wavesCleared` is 0, re-derived from the run, never stored. */
@@ -118,7 +120,7 @@ export class NextWavePreview implements HudPart {
       const label = scene.add.text(0, 0, tag, textStyle(11, PALETTE.card, { fontStyle: 'bold' })).setOrigin(0.5);
       const chipW = Math.ceil(label.width) + 14;
       const chip = scene.add.graphics();
-      chip.fillStyle(tag === 'tight' ? PALETTE.muted : tag === 'boss' ? PALETTE.purpleDeep : PALETTE.blueDeep, 1);
+      chip.fillStyle(tagChip(tag), 1);
       chip.fillRoundedRect(-chipW / 2, -9, chipW, 18, 9);
       countsPieces.push(scene.add.container(chipW / 2, 0, [chip, label])); // its left edge sits on the card's content edge
       cursor += chipW + GROUP_GAP;

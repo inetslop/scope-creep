@@ -6,10 +6,10 @@ import { split } from '../../src/systems/enemyHooks/split';
 
 /** A context with only what these hooks use; the spawns are recorded. */
 function fakeContext(pathLength: number) {
-  const spawned: { id: string; hpMul: number; speedMul: number; distance: number }[] = [];
+  const spawned: { id: string; hpMul: number; speedMul: number; waveSpeedMul: number; distance: number }[] = [];
   const ctx = {
     board: { path: { length: pathLength } },
-    enemies: { spawn: (def: { id: string }, hpMul: number, speedMul: number, distance: number) => spawned.push({ id: def.id, hpMul, speedMul, distance }) },
+    enemies: { spawn: (def: { id: string }, hpMul: number, speedMul: number, waveSpeedMul: number, distance: number) => spawned.push({ id: def.id, hpMul, speedMul, waveSpeedMul, distance }) },
     towers: () => [],
   } as unknown as EnemyHookContext;
   return { ctx, spawned };
@@ -25,10 +25,11 @@ describe('enemy hooks', () => {
     const { ctx, spawned } = fakeContext(1000);
     const hook = split(ctx);
     const splitter = getEnemy('splitter');
-    hook.onKill?.({ enemy: { def: splitter, distance: 500, hpMul: 1.5, speedMul: 1.15 } as never, source: undefined, paid: 8 });
+    hook.onKill?.({ enemy: { def: splitter, distance: 500, hpMul: 1.5, speedMul: 1.15, waveSpeedMul: 1.5 } as never, source: undefined, paid: 8 });
     expect(spawned.map((s) => s.id)).toEqual([splitter.splitsInto, splitter.splitsInto]);
     expect(spawned.every((s) => s.hpMul === 1.5)).toBe(true);
     expect(spawned.every((s) => s.speedMul === 1.15)).toBe(true); // a Swift run: the children keep the parent's factor
+    expect(spawned.every((s) => s.waveSpeedMul === 1.5)).toBe(true); // a rush wave: the children keep the parent's wave factor
     const [behind, ahead] = spawned.map((s) => s.distance).sort((a, b) => a - b);
     expect(behind).toBeLessThan(500);
     expect(ahead).toBeGreaterThan(500);

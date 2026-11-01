@@ -1,5 +1,5 @@
 import { PALETTE } from '../content/palette';
-import { isBossWave, isQuietWave, isTightWave } from './waves';
+import { isBossWave, isQuietWave, isRushWave, isTightWave } from './waves';
 
 export interface WaveTagRow {
   tag: string;
@@ -21,7 +21,13 @@ export const WAVE_TAG_ROWS: WaveTagRow[] = [
   { tag: 'quiet', chip: PALETTE.blueDeep, name: 'quiet', meaning: 'fewer, double gold', when: 'every 4th wave', rule: isQuietWave },
   { tag: 'tight', chip: PALETTE.muted, name: 'tight', meaning: 'they come bunched', when: 'every 8th, from 6', rule: isTightWave },
   { tag: 'boss', chip: PALETTE.purpleDeep, name: 'boss', meaning: 'one big shape, instead of a crowd', when: 'every 10th wave', rule: isBossWave },
+  { tag: 'rush', chip: PALETTE.orangeDeep, name: 'rush', meaning: 'the walkers move 1.5× faster', when: 'every 7th, from 11', rule: isRushWave },
 ];
+
+/** The chip fill a tag's row wears (the preview's and the banner's chips read it); faint when the row is unknown. */
+export function tagChip(tag: string): number {
+  return WAVE_TAG_ROWS.find((r) => r.tag === tag)?.chip ?? PALETTE.faint;
+}
 
 /** The first wave after `current` that the tag's own rule tags (the reference's 'next: wave N'). */
 export function nextTaggedWave(current: number, rule: (wave: number) => boolean): number {

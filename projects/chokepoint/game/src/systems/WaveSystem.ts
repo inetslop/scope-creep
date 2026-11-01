@@ -2,7 +2,7 @@ import { ENEMIES, getEnemy } from '../content/enemies';
 import { isFarGateSpawn } from '../core/farGate';
 import { levelCountMul, levelSpeedMul } from '../core/levels';
 import type { RunState } from '../core/run';
-import { planWave, planWithLevel, type WavePlan } from '../core/waves';
+import { planWave, planWithLevel, type WavePlan, waveSpeedMul } from '../core/waves';
 import { hook } from '../debug/testHook';
 import type { EnemySystem } from './EnemySystem';
 
@@ -71,11 +71,13 @@ export class WaveSystem {
   update(dt: number): void {
     const plan = this.plan;
     if (!plan) return;
+    const waveMul = waveSpeedMul(plan.number);
+    const speedMul = levelSpeedMul(this.run.level) * waveMul;
     this.timer += dt;
     while (this.next < plan.spawns.length && this.timer >= plan.spawns[this.next]!.delaySec) {
       const spawn = plan.spawns[this.next]!;
       this.timer -= spawn.delaySec;
-      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul, levelSpeedMul(this.run.level), isFarGateSpawn(this.next, plan, this.farGateDistance > 0) ? this.farGateDistance : 0);
+      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul, speedMul, waveMul, isFarGateSpawn(this.next, plan, this.farGateDistance > 0) ? this.farGateDistance : 0);
       this.next += 1;
     }
   }

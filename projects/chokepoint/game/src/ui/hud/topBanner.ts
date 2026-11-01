@@ -1,6 +1,7 @@
 import type Phaser from 'phaser';
 import { HUD } from '../../config';
 import { PALETTE } from '../../content/palette';
+import { tagChip } from '../../core/waveTags';
 import { cardTexture, makeCard } from '../card';
 import { textStyle } from '../text';
 import { isNarrow } from './hud';
@@ -64,7 +65,7 @@ export class TopBanner {
       const label = this.scene.add.text(0, 0, tag, textStyle(11, PALETTE.card, { fontStyle: 'bold' })).setOrigin(0.5);
       const w = Math.ceil(label.width) + 14;
       const g = this.scene.add.graphics();
-      g.fillStyle(tag === 'tight' ? PALETTE.muted : tag === 'boss' ? PALETTE.purpleDeep : PALETTE.blueDeep, 1);
+      g.fillStyle(tagChip(tag), 1);
       g.fillRoundedRect(-w / 2, -9, w, 18, 9);
       const c = this.scene.add.container(w / 2, 0, [g, label]);
       c.setPosition(cursor + w / 2, 0);
