@@ -3,13 +3,14 @@ id: T0355
 title: "The Flyer's teach: the first Flyer's preview says it crosses the sky"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: [T0353]
 attempts: 0
 created: 2026-11-01T11:14:54Z
 claimed_at: 2026-11-01T11:42:14Z
+finished_at: 2026-11-01T12:47:48Z
 epic: E10
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
@@ -25,3 +26,7 @@ The first time a Flyer's token shows in the next-wave preview, one muted line un
 - [ ] on the first build phase whose next wave contains a Flyer, one muted line under the preview reads "the Flyer crosses the sky — cover the island, not just the road"; the next build phase, Flyer or not, shows no line
 - [ ] after a resume past that moment the line never shows; a resume before it shows the line at the first Flyer wave
 - [ ] the preview's tokens, counts and bonus line, and everything on the board, are unchanged
+
+## Rejected by architect (cachyos-x8664)
+
+the design context contains only the plan step (pin down where the once-per-run flag is set), not the feature's requirements — which trigger fires it, what it shows, and which enemy/counter it gates — so there is no buildable spec to design against.
