@@ -3,10 +3,12 @@ id: T0366
 title: "The Hive's pop gets its burst"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T16:18:26Z
+claimed_at: 2026-11-01T16:44:47Z
+designer: yoga
 ---
 
 ## Goal
