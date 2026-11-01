@@ -1,12 +1,14 @@
 ---
 id: T0320
 title: The first run says hold the road
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-31T01:28:10Z
+claimed_at: 2026-11-01T03:35:32Z
 epic: E11
 ---
 
