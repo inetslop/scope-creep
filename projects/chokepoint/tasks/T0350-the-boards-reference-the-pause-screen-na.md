@@ -3,11 +3,13 @@ id: T0350
 title: "The boards reference: the pause screen names the board's modifiers"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T09:12:53Z
+claimed_at: 2026-11-01T09:12:57Z
 epic: E13
+designer: desktop
 ---
 
 ## Goal
