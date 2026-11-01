@@ -1,12 +1,14 @@
 ---
 id: T0384
 title: "The far gate says what it is: the first send's one-time chip"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T22:18:47Z
+claimed_at: 2026-11-01T22:52:30Z
 epic: E14
 ---
 
