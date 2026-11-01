@@ -1,12 +1,14 @@
 ---
 id: T0343
 title: On touch, a tap previews the tower; a ✓ builds it, an ✗ cancels
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T06:40:31Z
+claimed_at: 2026-11-01T09:56:22Z
 ---
 
 ## Goal
