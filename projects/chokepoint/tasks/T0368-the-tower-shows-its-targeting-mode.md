@@ -3,10 +3,12 @@ id: T0368
 title: The tower shows its targeting mode
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T17:18:47Z
+claimed_at: 2026-11-01T17:24:43Z
+designer: yoga
 ---
 
 ## Goal
