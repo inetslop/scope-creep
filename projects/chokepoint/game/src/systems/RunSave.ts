@@ -3,6 +3,7 @@ import { levelBuildSeconds } from '../core/levels';
 import { mapExtraBends } from '../core/map';
 import type { RunPhase } from '../core/run';
 import { clearSavedRun, saveRun, type RunStore, type SavedRun } from '../core/saveRun';
+import { MARKED_DMG_MUL } from '../core/markedCell';
 import { Tower } from '../entities/Tower';
 import type { GameScene } from '../scenes/GameScene';
 
@@ -88,6 +89,7 @@ export class RunSave {
       // Not through TowerSystem.build(): that would spend gold and play the build sound.
       const c = game.board.centerOf(cell);
       const tower = new Tower(game, c.x, c.y, cell);
+      tower.cellMul = game.board.onMarked(cell) ? MARKED_DMG_MUL : 1; // the board's marked cell: +25% damage (core/markedCell.ts)
       game.board.place(cell, tower);
       game.towers.towers.push(tower);
       tower.slots = t.slots;

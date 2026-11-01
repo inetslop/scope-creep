@@ -11,20 +11,23 @@ import type { TowerSpec } from './augments';
  * it — plus a ray per Bolt, every one scaled by Rapid's net factor on the beam and the Rally's
  * speed (`rallyRateMul`). Every one of a tower's damage instances can roll for a crit (Spray,
  * core/augments.ts), so its whole output runs (1 + its crit chance) high at its expected value.
+ * The marked cell's `cellMul` (core/markedCell.ts) scales the damage a tower deals of its own
+ * — the beam, the shot/pulse and the spray terms — but not the burn its hits set ablaze,
+ * which keeps ticking at the burning tower's rate.
  */
-export function towerDps(spec: TowerSpec, rallyRateMul = 1): number {
+export function towerDps(spec: TowerSpec, rallyRateMul = 1, cellMul = 1): number {
   if (!spec.attacks) return 0;
   let dps = 0;
   // A beam's term: every line at its per-second rate (the main line already boosted by its
-  // Beams added), the same factor (Rapid x Rally) on all.
+  // Beams added), the same factor (Rapid x Rally x the marked cell's +25%) on all.
   if (spec.kind === 'beam') {
-    const m = spec.beamRapidMul * rallyRateMul;
+    const m = spec.beamRapidMul * rallyRateMul * cellMul;
     dps += (1 + spec.beamRays) * spec.beamDps * m;
   }
-  // A shot or pulse term: the damage of its hits times its rate against one enemy.
-  if (spec.kind === 'shot' || spec.kind === 'pulse') dps += spec.damage * spec.rate;
+  // A shot or pulse term: the damage of its hits times its rate against one enemy, times the marked cell's +25%.
+  if (spec.kind === 'shot' || spec.kind === 'pulse') dps += spec.damage * spec.rate * cellMul;
   // A spray's term: every pellet of the blast flies at the enemy up close, so all of them count.
-  if (spec.kind === 'spray') dps += spec.damage * spec.spray * spec.rate;
+  if (spec.kind === 'spray') dps += spec.damage * spec.spray * spec.rate * cellMul;
   // A burn's term: its rate in full (the tick that crits rolls at the burning tower's chance too).
   if (spec.burn) dps += spec.burn.dps * spec.damageMul;
   // Crits (Spray): every damage instance above can land for double, counted at its expected value.

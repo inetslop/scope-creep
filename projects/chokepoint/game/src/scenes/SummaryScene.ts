@@ -96,7 +96,7 @@ export class SummaryScene extends Phaser.Scene {
 
     // The towers paying, from the same live read the end card's by-tower card uses.
     const entries = towers
-      .map((t) => ({ first: t.augments[0]?.id, tier: t.augments[0]?.tier, kills: t.kills, damage: Math.floor(t.damageDealt), perSec: Math.floor(towerDps(t.spec, t.rallyRateMul)) }))
+      .map((t) => ({ first: t.augments[0]?.id, tier: t.augments[0]?.tier, kills: t.kills, damage: Math.floor(t.damageDealt), perSec: Math.floor(towerDps(t.spec, t.rallyRateMul, t.cellMul)) }))
       .sort((a, b) => b.kills - a.kills || (a.first ?? '').localeCompare(b.first ?? ''));
     const entryRows = Math.ceil(entries.length / PER_ROW);
     let heading: Phaser.GameObjects.Text | undefined;

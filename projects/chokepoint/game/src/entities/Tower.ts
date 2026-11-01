@@ -47,6 +47,8 @@ export class Tower extends Phaser.GameObjects.Image {
   rallyRateMul = 1;
   /** Attack-speed fraction the haste auras add on top of rallyRateMul, additive (set by systems/HasteSystem.ts). */
   hasteRatePct = 0;
+  /** 1.25 when the tower stands on the board's marked cell (it deals +25%); systems/Board.ts onMarked(). */
+  cellMul = 1;
   /** Held by a Mute: no attacks; systems/enemyHooks/muteJam.ts. */
   jammed = false;
   /** A beam line held on an enemy this frame (systems/BeamSystem.ts); its quiet dot stays off. */

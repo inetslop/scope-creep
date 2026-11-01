@@ -20,7 +20,7 @@ export const pulse: Attack = ({ tower, enemies, range, payload, fireBolt, strike
   if (t >= 0) {
     const first = enemies[t]!;
     tower.aimAt(first.x, first.y);
-    const boltPayload = { ...payload, damage: spec.boltDamage };
+    const boltPayload = { ...payload, damage: spec.boltDamage * tower.cellMul };
     for (let n = 0; n < spec.bolts; n++) fireBolt(n, first, boltPayload);
   }
   tower.kick();

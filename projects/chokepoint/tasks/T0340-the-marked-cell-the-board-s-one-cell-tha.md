@@ -4,11 +4,12 @@ title: "The marked cell: the board's one cell that makes its tower stronger"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T05:06:52Z
 claimed_at: 2026-11-01T17:13:02Z
+finished_at: 2026-11-01T19:14:37Z
 epic: E13
 ---
 
@@ -108,3 +109,33 @@ export function paintBoardPreview(scene: Phaser.Scene, key: string, map: GameMap
 
 ## Owner note (2026-11-01)
 The pick step's portrait layout changed by hand after this design: on a phone it is now three thumbnails over one detail card for the selected board (`buildDetail` in `src/scenes/PickScene.ts`), and the row of cards (`buildRow`, with the `cards.map` / `CardParts` / `colW` / `if (c.mul)` code step 12 names) is landscape only. Do step 12 in `buildRow` as written, and also show the marked cell on the detail card: the dot comes with the preview (both layouts use `paintBoardPreview`); add the muted "one cell · +25% damage" line with `put(...)` right after the road line (`road N cells · N bends`), before the level augments.
+
+## Result (attempt 1, cachyos-x8664)
+
+T0340 — the board's one marked build cell: every generated board marks exactly one of its open build cells (derived from its own seed via `new Rng(seed)` in `core/markedCell.ts`, constant `MARKED_DMG_MUL = 1.25`); a tower built there deals 25% more damage — `cellMul` on `Tower` set at both creation paths (`TowerSystem.build`, `RunSave.restore`), folded into `HitPayload.damage` in `TowerSystem.attack` (shot/pulse/spray/bolt hits), the beam's per-second factor in `BeamSystem`, `spec.boltDamage` in `attacks/pulse.ts`, and the pure `towerDps` formula's beam/shot/spray terms (not the burn, not gold/range/control); drawn as a flat milestone-yellow dot on the board texture (`art/board.ts` paints it, `Board` stores `marked` and exposes `onMarked`), shown on the pick-screen previews (each board's own cell) with a muted "one cell · +25% damage" row on the cards and detail card; no save field needed (re-derived from the seed on resume). The final fix for the reported failure: `PickScene.ts:127` was calling `paintBoardPreview` with 4 arguments (missing the 5th, required `marked: Cell`), causing `TS2554` — now passes `markedCell(map, seed)` per card so each landscape preview paints its board's dot. Plus the `towers.markedCell` invariant in `debug/runChecks.ts`, `tests/core/markedCell.test.ts`, and the cell-factor cases in `tests/core/towerDps.test.ts`.
+
+- Self-review: APPROVE
+- Time: 121.6 min
+- Gate failed at "check"; fix round 1.
+- Did not delete none: only files in src/, tests/, docs/, public/ can be deleted.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/art/board.ts          | 23 ++++++++-----
+ projects/chokepoint/game/src/core/markedCell.ts    | 20 +++++++++++
+ projects/chokepoint/game/src/core/towerDps.ts      | 15 +++++----
+ projects/chokepoint/game/src/debug/runChecks.ts    |  8 +++++
+ projects/chokepoint/game/src/entities/Tower.ts     |  2 ++
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  4 ++-
+ projects/chokepoint/game/src/scenes/PickScene.ts   | 11 ++++--
+ .../chokepoint/game/src/scenes/SummaryScene.ts     |  2 +-
+ projects/chokepoint/game/src/systems/BeamSystem.ts |  4 +--
+ projects/chokepoint/game/src/systems/Board.ts      | 14 ++++++--
+ projects/chokepoint/game/src/systems/RunSave.ts    |  2 ++
+ .../chokepoint/game/src/systems/TowerSystem.ts     |  4 ++-
+ .../chokepoint/game/src/systems/attacks/pulse.ts   |  2 +-
+ projects/chokepoint/game/src/ui/hud/TowerPanel.ts  |  2 +-
+ .../chokepoint/game/tests/core/markedCell.test.ts  | 39 ++++++++++++++++++++++
+ .../chokepoint/game/tests/core/towerDps.test.ts    |  7 ++++
+ 16 files changed, 133 insertions(+), 26 deletions(-)
+```

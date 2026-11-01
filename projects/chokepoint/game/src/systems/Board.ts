@@ -18,6 +18,8 @@ import type { Tower } from '../entities/Tower';
 export class Board {
   readonly map: GameMap;
   readonly path: PathLine;
+  /** The board's one marked cell: a tower built on it deals +25% (core/markedCell.ts). */
+  readonly marked: Cell;
   /** Board size in board units. */
   readonly width: number;
   readonly height: number;
@@ -31,9 +33,10 @@ export class Board {
   /** The screen in CSS pixels (as of the last layout). */
   private screen = { width: 1, height: 1 };
 
-  constructor(scene: Phaser.Scene, map: GameMap) {
+  constructor(scene: Phaser.Scene, map: GameMap, marked: Cell) {
     this.scene = scene;
     this.map = map;
+    this.marked = marked;
     this.path = pathLineFor(map, CELL);
     this.width = map.cols * CELL;
     this.height = map.rows * CELL;
@@ -43,9 +46,9 @@ export class Board {
     this.range = scene.add.graphics().setDepth(DEPTH.preview);
   }
 
-  /** The painted board (art/textures.ts paintBoard): island, grid dots, rocks, road, gates. */
+  /** The painted board (art/textures.ts paintBoard): island, grid dots, the marked cell's dot, rocks, road, gates. */
   private drawCells(): void {
-    const key = paintBoard(this.scene, Board.TEXTURE, this.map, this.path);
+    const key = paintBoard(this.scene, Board.TEXTURE, this.map, this.path, this.marked);
     artScale(this.scene.add.image(-BOARD_MARGIN, -BOARD_MARGIN, key).setOrigin(0).setDepth(DEPTH.board));
   }
 
@@ -145,6 +148,11 @@ export class Board {
 
   canBuild(cell: Cell): boolean {
     return kindAt(this.map, cell.col, cell.row) === 'open' && !this.towerAt(cell);
+  }
+
+  /** True when `cell` is the board's one marked cell (a tower built there deals +25%). */
+  onMarked(cell: Cell): boolean {
+    return cell.col === this.marked.col && cell.row === this.marked.row;
   }
 
   /** Puts `tower` on `cell`; `undefined` frees the cell (a sold tower lifts out of it). */

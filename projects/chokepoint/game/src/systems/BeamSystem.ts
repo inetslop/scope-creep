@@ -84,8 +84,8 @@ export class BeamSystem {
       const main = beamLines(
         st.lines[0]!.enemy as Enemy | undefined,
         this.enemies.all, t.x, t.y, range, t.spec.kind === 'beam', t.targetMode);
-      // Rapid's net factor times the Rally's speed: one factor for every line, the same as towerDps.
-      const m = t.spec.beamRapidMul * t.rallyRateMul;
+      // Rapid's net factor times the Rally's speed, times the marked cell's +25%: one factor for every line, the same as towerDps.
+      const m = t.spec.beamRapidMul * t.rallyRateMul * t.cellMul;
       const mainTarget = main === -1 ? undefined : this.enemies.all[main]!;
       // The rays are not sticky: re-derived every frame on the next enemies furthest along.
       const rays = mainTarget ? rayTargets(this.enemies.all, t.x, t.y, range, mainTarget, t.spec.beamRays) : [];

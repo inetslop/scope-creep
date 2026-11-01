@@ -8,6 +8,7 @@ import type { Cell } from '../core/map';
 import type { RunState } from '../core/run';
 import { sellPrice, slotPrice } from '../core/techEffects';
 import { tierFirst } from '../core/tiers';
+import { MARKED_DMG_MUL } from '../core/markedCell';
 import { hook } from '../debug/testHook';
 import { Tower } from '../entities/Tower';
 import type { Sfx } from '../audio/Sfx';
@@ -64,6 +65,7 @@ export class TowerSystem {
     if (!this.run.spend(slotCost(0)!)) return 'gold';
     const c = this.board.centerOf(cell);
     const tower = new Tower(this.scene, c.x, c.y, cell);
+    tower.cellMul = this.board.onMarked(cell) ? MARKED_DMG_MUL : 1; // the board's marked cell: +25% damage
     this.board.place(cell, tower);
     this.towers.push(tower);
     hook.stats.towersBuilt += 1;
@@ -131,7 +133,7 @@ export class TowerSystem {
       enemies,
       range: spec.range * CELL,
       payload: {
-        damage: spec.damage,
+        damage: spec.damage * t.cellMul, // the marked cell's +25% (core/markedCell.ts)
         splash: spec.splash * CELL,
         splashCap: Math.max(0, splashHits(spec.splashCount) - 1),
         slow: spec.slow,

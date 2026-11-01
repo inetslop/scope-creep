@@ -69,4 +69,11 @@ describe('towerDps', () => {
   it('a Beam added to a non-beam tower deals nothing', () => {
     expect(towerDps(spec('bolt', 'beam'))).toBe(towerDps(spec('bolt')));
   });
+
+  it('the marked cell deals 1.25x of its own damage (the burn keeps its own rate)', () => {
+    expect(towerDps(spec('bolt'), 1, 1.25)).toBeCloseTo(19.2 * 1.25);
+    expect(towerDps(spec('beam'), 1, 1.25)).toBeCloseTo(14 * 1.25); // 14 -> 17.5
+    expect(towerDps(spec('bolt', 'ember'), 1, 1.25)).toBeCloseTo(19.2 * 1.25 + 3); // the burn is not the cell's
+    expect(towerDps(spec('frost'), 1, 1.25)).toBe(0); // a support tower adds nothing, even on the cell
+  });
 });

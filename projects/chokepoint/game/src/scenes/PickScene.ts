@@ -5,6 +5,7 @@ import { cssColor, PALETTE } from '../content/palette';
 import { getLevelAugment, LEVEL_AUGMENTS } from '../content/levels';
 import { dailyLevel, dailySeeds, utcDay, type DailyPick } from '../core/daily';
 import { generateMap, type GameMap } from '../core/map';
+import { markedCell } from '../core/markedCell';
 import { levelMultiplierLabel } from '../core/levels';
 import { loadProfile } from '../core/profile';
 import { pathLineFor } from '../core/path';
@@ -39,6 +40,7 @@ interface CardParts {
   texH: number;
   entries: Phaser.GameObjects.Text[]; // name, line, name, line, ... in the column's order
   mul: Phaser.GameObjects.Text | undefined;
+  marked: Phaser.GameObjects.Text;
   cardH: number;
 }
 
@@ -124,7 +126,7 @@ export class PickScene extends Phaser.Scene {
 
     const maps = this.seeds.map((seed, i) => {
       const map = generateMap(new Rng(seed), portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, this.bends, this.lengthMul, 2, this.chokes, this.fold, this.farGate);
-      paintBoardPreview(this, this.boardKey(i), map, pathLineFor(map, CELL));
+      paintBoardPreview(this, this.boardKey(i), map, pathLineFor(map, CELL), markedCell(map, seed));
       return map;
     });
     const head = this.buildHead();
@@ -215,7 +217,9 @@ export class PickScene extends Phaser.Scene {
         mul = this.add.text(0, 0, levelMultiplierLabel(ids), textStyle(16, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0);
         y += mul.height;
       }
-      return { key: this.boardKey(i), texW: map.cols * CELL + BOARD_MARGIN * 2, texH: map.rows * CELL + BOARD_MARGIN * 2, entries, mul, cardH: CARD_PAD * 2 + prevH + 10 + y };
+      const marked = this.add.text(0, 0, 'one cell · +25% damage', textStyle(12, PALETTE.muted)).setOrigin(0, 0);
+      y += 10 + marked.height;
+      return { key: this.boardKey(i), texW: map.cols * CELL + BOARD_MARGIN * 2, texH: map.rows * CELL + BOARD_MARGIN * 2, entries, mul, marked, cardH: CARD_PAD * 2 + prevH + 10 + y };
     });
     const cardsW = cardW * 3 + CARD_GAP * 2;
     const cardsH = Math.max(...cards.map((c) => c.cardH));
@@ -248,6 +252,8 @@ export class PickScene extends Phaser.Scene {
         c.mul.setPosition(colX, colTop + ey);
         kids.push(c.mul);
       }
+      c.marked.setPosition(colX, colTop + ey + (c.mul ? c.mul.height : 0) + 10);
+      kids.push(c.marked);
       // The card's key, in its top-right corner (a touch screen taps the card instead).
       const keyHint = this.add.text(0, 0, String(i + 1), textStyle(11, PALETTE.faint, { fontStyle: 'bold' })).setOrigin(1, 0);
       if (narrow) keyHint.setVisible(false);
@@ -297,6 +303,7 @@ export class PickScene extends Phaser.Scene {
     };
     put(this.add.text(0, 0, `Board ${this.sel + 1}`, textStyle(20, PALETTE.ink, { fontStyle: 'bold' })), 6);
     put(this.add.text(0, 0, `road ${map.path.length} cells · ${roadBends(map.path)} bends`, textStyle(13, PALETTE.muted, { wordWrap: { width: colW } })), 8);
+    put(this.add.text(0, 0, 'one cell · +25% damage', textStyle(13, PALETTE.muted, { wordWrap: { width: colW } })), 8);
     if (ids.length === 0) {
       put(this.add.text(0, 0, 'no level augments', textStyle(13, PALETTE.muted)), 0);
     } else {

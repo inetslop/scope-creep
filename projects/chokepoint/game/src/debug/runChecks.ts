@@ -5,6 +5,7 @@ import { getLevelAugment } from '../content/levels';
 import { levelSpeedMul } from '../core/levels';
 import { draftCardCount } from '../core/augments';
 import { chokeCells } from '../core/choke';
+import { MARKED_DMG_MUL } from '../core/markedCell';
 import { switchbackFold } from '../core/switchback';
 import { TIER_ORDER } from '../core/tiers';
 import { bossId, waveSpeedMul } from '../core/waves';
@@ -106,6 +107,13 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   }],
   ['towers.quietDot', (g) => {
     for (const t of g.towers.towers) if (t.idleOn && (!t.spec.attacks || t.spec.kind === 'rally')) return `a ${t.spec.kind} tower shows its quiet dot`;
+    return null;
+  }],
+  ['towers.markedCell', (g) => {
+    for (const t of g.towers.towers) {
+      const want = g.board.onMarked(t.cell) ? MARKED_DMG_MUL : 1;
+      if (t.cellMul !== want) return `a tower at (${t.cell.col}, ${t.cell.row}) has cellMul ${t.cellMul}, expected ${want}`;
+    }
     return null;
   }],
   ['rally.valid', (g) => {

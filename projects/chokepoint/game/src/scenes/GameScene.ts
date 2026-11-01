@@ -7,6 +7,7 @@ import type { DailyPick } from '../core/daily';
 import { farGateDistance } from '../core/farGate';
 import { isLastStand } from '../core/lastStand';
 import { cellsBesidePath, generateMap } from '../core/map';
+import { markedCell } from '../core/markedCell';
 import { loadProfile } from '../core/profile';
 import { RunState } from '../core/run';
 import type { SavedRun } from '../core/saveRun';
@@ -127,11 +128,12 @@ export class GameScene extends Phaser.Scene {
     const view = viewSize(this);
     const portrait = saved ? saved.rows > saved.cols : view.height > view.width;
     const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, bends, lengthMul, this.run.bgen, chokes, fold, farGate);
+    const marked = markedCell(map, seed); // the board's one +25% cell: from its own seed, never run.rng
     this.mapLengthMul = lengthMul;
     this.mapChokes = chokes;
     this.mapFold = fold ? 1 : 0;
 
-    this.board = new Board(this, map);
+    this.board = new Board(this, map, marked);
     this.fx = new FxSystem(this, sfx);
     this.enemies = new EnemySystem(this, this.board, this.run, this.fx, sfx);
     this.exitWarn = new ExitWarning(this, this.board, this.enemies, sfx);
