@@ -1,12 +1,14 @@
 ---
 id: T0368
 title: The tower shows its targeting mode
+assignee: cachyos-x8664
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T17:18:47Z
+claimed_at: 2026-11-01T19:15:13Z
 ---
 
 ## Goal
