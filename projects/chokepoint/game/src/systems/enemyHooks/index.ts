@@ -13,6 +13,7 @@ import { mintRing } from './mintRing';
 import { tollLeak } from './tollLeak';
 import { muteJam } from './muteJam';
 import { wardDeny } from './wardDeny';
+import { bulwarkPlate } from './bulwarkPlate';
 import { nameTag } from './nameTag';
 import { bossArrival } from './bossArrival';
 import { bossOut } from './bossOut';
@@ -58,5 +59,6 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   burnLeap,
   muteJam,
   wardDeny,
+  bulwarkPlate,
   mintRing,
 ];

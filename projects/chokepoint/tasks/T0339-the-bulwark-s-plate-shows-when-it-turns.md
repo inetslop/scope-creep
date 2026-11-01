@@ -4,11 +4,12 @@ title: "The Bulwark's plate shows when it turns a hit"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T04:12:33Z
 claimed_at: 2026-11-01T07:48:15Z
+finished_at: 2026-11-01T08:04:52Z
 ---
 
 ## Goal
@@ -129,3 +130,18 @@ export const bulwarkPlate: MakeEnemyHook = ({ fx, enemies }) => {
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The Bulwark's front plate now flashes when it turns a hit: a directed shot that the plate halves lights the plate — a brief ~40%-white wash over the plate shape that holds lit ~150 ms after the last face hit (a steady glow under fire, no re-bloom or stacking) and fades over ~120 ms when hits stop; back shots and un-plated enemies never light it. Implemented as the new enemy hook `src/systems/enemyHooks/bulwarkPlate.ts` (registered in `enemyHooks/index.ts` after `wardDeny`), driven by a display-only `plated` flag on `Enemy` that `EnemySystem.strike()` sets exactly where the plate multiplier halves a face hit. No gameplay, sound or input changes; typecheck, lint, unit tests and the smoke test all pass.
+
+- Self-review: APPROVE
+- Time: 16.6 min
+
+```
+projects/chokepoint/game/src/entities/Enemy.ts     |  3 ++
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  4 +-
+ .../game/src/systems/enemyHooks/bulwarkPlate.ts    | 62 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ 4 files changed, 70 insertions(+), 1 deletion(-)
+```

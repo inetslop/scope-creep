@@ -210,7 +210,9 @@ export class EnemySystem {
     if (payload.damage > 0) {
       // The tower's crit chance (Spray): this hit rolls to land for double, with a chip where it lands.
       const crit = this.crit(payload.source.spec.critChance);
-      const damage = payload.damage * (flight && e.def.plate !== undefined ? plateMul(e.def.plate, flight.x, flight.y, e.dirX, e.dirY) : 1) * (crit ? 2 : 1);
+      const pMul = flight && e.def.plate !== undefined ? plateMul(e.def.plate, flight.x, flight.y, e.dirX, e.dirY) : 1;
+      if (pMul < 1) e.plated = true; // the plate halved a face hit; the hook lights it
+      const damage = payload.damage * pMul * (crit ? 2 : 1);
       if (crit) critChip(this.fx, e.x, e.y);
       if (e.hit(damage)) { this.kill(e, payload.source); return true; }
     }

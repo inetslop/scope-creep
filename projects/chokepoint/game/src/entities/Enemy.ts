@@ -58,6 +58,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   pushLeft = 0;
   /** True on the frame a slow, root or push was applied and ignored (ignoresControl); the Ward's ring (systems/enemyHooks/wardDeny.ts) reads and clears it. */
   deny = false;
+  /** A face hit was just halved by its front plate (the Bulwark); the hook (bulwarkPlate) reads and clears it. */
+  plated = false;
   /** Fraction of extra damage it takes from everything until it dies (Mark); 0: unmarked. */
   markPct = 0;
   /** Seconds since it was marked (the chevron's pop-in); 0 until marked. */
@@ -106,6 +108,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.controlQuietSec = 0;
     this.pushLeft = 0;
     this.deny = false;
+    this.plated = false;
     this.markPct = 0;
     this.markAge = 0;
     this.shielded = false;
