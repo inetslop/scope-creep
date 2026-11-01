@@ -4,11 +4,12 @@ title: "Chain: the zap that leaps between enemies"
 assignee: inet-racing
 size: L
 priority: 3
-status: in-progress
+status: failed
 depends_on: [T0020, T0004]
 attempts: 3
 created: 2026-10-28T05:31:15Z
 claimed_at: 2026-11-01T06:34:31Z
+finished_at: 2026-11-01T10:34:38Z
 epic: E4
 ---
 
@@ -155,3 +156,7 @@ Could not merge into main (broken-after-rebase). The work was saved to projects/
 - Conflicts in: projects/chokepoint/game/src/systems/TowerSystem.ts
 - The conflict agent resolved them.
 - After rebasing onto newer main the gate failed at "smoke".
+
+## Attempt 3 failed (inet-racing)
+
+The agent made no changes to the game (timeout).
