@@ -1,12 +1,14 @@
 ---
 id: T0336
 title: "The run's story on the mid-run page: the pause's Summary"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T03:39:37Z
+claimed_at: 2026-11-01T04:26:01Z
 epic: E12
 ---
 
