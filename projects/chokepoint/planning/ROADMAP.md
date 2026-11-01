@@ -173,6 +173,14 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - T0336 (M) — the mid-run page: the story line on the pause's Summary (T0306) — the marks and the loudest wave while the run is happening — in the pool
 - (to task, later) the ledger's damage terms: damage per tower, feeding the Summary's rows — after the E9 run files settle (core/run.ts is under edit)
 
+### E13 — The island opens up: the road comes in from more than one gate (active — opened 2026-11-01)
+**Goal:** "every board is different" (Pillar 2) goes past the rock scatter and the path's shape: the road itself varies, so a build that held one island fails on the next for a new reason.
+**When done:** on some boards the road has a second gate partway along, and a share of every wave's enemies comes in through it — the player covers the road from two entry points, and the far gate's shorter run shifts where the pressure lands. Later slices: a road that forks into two lanes, and a marked cell that makes its tower stronger.
+**Breakdown:**
+- the far gate: a second entrance partway down the road; a third of each non-boss wave comes through it; the board, the board preview and the next-wave preview show it — **T0338 (M, in the pool)**
+- (to task) the fork: the road splits into two lanes and re-joins; enemies take either lane
+- (to task) the marked cell: one build cell that makes a tower built on it stronger
+
 ### Enemy queue (non-epic)
 
 New enemies land one at a time: each new-enemy task chains behind the one before it so the enemy system, the wave mix and the art settle between additions.
@@ -197,7 +205,7 @@ Ideas that may become epics or tasks of one.
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
 - Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is T0292; the wave-50 Flyer, the first boss that doesn't walk the road, is **E10's T0317 (in the pool)**)
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
-- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them
+- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **now E13 (opened 2026-11-01)**: the far gate is T0338 (M, in the pool); the fork and the marked cell task behind it
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **built as T0239 (L, non-epic, 2026-10-30, asus)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
 - Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**; the mid-run page **built as T0306 (2026-10-30, inet-racing)** — the pause's "Summary": the ledger's rows and the standing towers' kills and ≈N/s (the end card's and claim card's reads, re-used); damage per tower and leaks per wave still need the ledger's new terms — the per-wave leaks record landed with **E12's T0333 (2026-11-01)**; the mid-run story line is **T0336 (M, in the pool)**
