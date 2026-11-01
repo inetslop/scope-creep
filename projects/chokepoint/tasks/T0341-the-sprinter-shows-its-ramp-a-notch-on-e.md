@@ -1,12 +1,14 @@
 ---
 id: T0341
 title: "The Sprinter shows its ramp: a notch on each hit that speeds it up"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T05:22:57Z
+claimed_at: 2026-11-01T05:59:48Z
 ---
 
 ## Goal
