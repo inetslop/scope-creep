@@ -1,14 +1,14 @@
 ---
 id: T0095
 title: "Mend: the Epic that buys a life back (the T0093 re-file)"
-assignee: inet-racing
 size: L
 priority: 3
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-29T02:00:38Z
 claimed_at: 2026-11-01T10:34:43Z
+finished_at: 2026-11-01T14:34:48Z
 epic: E4
 ---
 
@@ -168,3 +168,7 @@ export const mendLife: MakeEnemyHook = (ctx) => {
 - `tests/core/mend.test.ts`: `mendTarget` 1→12, 2→10, 3→8, 4→6, 5→4 and 7→4 (floor); `mendPay` pays below `START.lives`, holds at it, and a resumed run at 3 saved lives still pays up (cap is the starting 20, not 3); `mendClearHeld` false when not held, +1 capped at 20 when held; `mendTick` 'none' under target / with 0 copies / while held, 'paid' resets `mendCount` to 0 (restart after pay), 'held' sets `mendHeld` and resets, and a copy added mid-count (count 11, target 10) pays; `mendLine` 'life in 12' fresh, 'life in 7' at count 5, 'life held', 'life in 1' when a second copy shortens past the count; `towerSpec([mend])` kind 'mend' / damage 0 / `mendCount` 1, `towerSpec([bolt, mend])` kind 'shot' with `mendCount` 1, two mends → 2.
 - `tests/core/saveRun.test.ts`: sample round-trip with the pair; a save without the pair loads 0/false; `broken({ mendCount: 13 })`.
 - `tests/content.test.ts`: only the one extra `|| a.first.mendKills` (no new tests).
+
+## Attempt 1 failed (inet-racing)
+
+The agent made no changes to the game (timeout).
