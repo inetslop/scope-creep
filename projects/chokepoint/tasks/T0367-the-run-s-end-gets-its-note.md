@@ -3,10 +3,12 @@ id: T0367
 title: "The run's end gets its note"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T16:45:37Z
+claimed_at: 2026-11-01T17:05:58Z
+designer: inet-racing
 ---
 
 ## Goal
