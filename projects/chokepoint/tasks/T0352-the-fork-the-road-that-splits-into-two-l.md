@@ -1,12 +1,14 @@
 ---
 id: T0352
 title: "The fork: the road that splits into two lanes"
+assignee: asus
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0350]
-attempts: 0
+attempts: 1
 created: 2026-11-01T10:31:35Z
+claimed_at: 2026-11-01T11:56:03Z
 epic: E13
 ---
 
