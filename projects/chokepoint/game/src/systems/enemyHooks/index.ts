@@ -25,6 +25,7 @@ import { sprinterRamp } from './sprinterRamp';
 import { crackDeep } from './crackDeep';
 import { split } from './split';
 import { midSplit } from './midSplit';
+import { orbSplit } from './orbSplit';
 import { killCoin } from './killCoin';
 import { killMilestone } from './killMilestone';
 import { waveClose } from './waveClose';
@@ -44,6 +45,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   shieldDown,
   split,
   midSplit,
+  orbSplit,
   nameTag,
   bossArrival,
   bossOut,

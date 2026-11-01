@@ -4,11 +4,12 @@ title: "The Orb's split gets its moment"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T08:02:39Z
 claimed_at: 2026-11-01T10:16:08Z
+finished_at: 2026-11-01T11:23:30Z
 ---
 
 ## Goal
@@ -82,3 +83,21 @@ return this.splitClock < 0 && this.hp <= 0; // window open: hits deal, never kil
 - Don't touch `crackDeep.ts`, `split.ts`, `core/midSplit.ts` — Splitter, Colossus, Titan and regular enemies stay byte-identical.
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+The wave-30 Orb's mid-life split now telegraphs: its baked-in crack is replaced by a live muted-ink line (new enemy hook `orbSplit`, crackDeep pattern) that deepens from 25% alpha to fully opaque as it takes damage; the first hit dropping it to the half-hp line opens a 0.4 s window (`SPLIT_TELEGRAPH_SEC` in `midSplit`) during which it flashes white, keeps walking, and cannot be killed (new `splitClock` on `Enemy`, reset in `spawn()`, unkillable in `hit()`) — at the window's end it vanishes into its two Shards exactly as before plus one silent 12-chip purple burst at the split spot, and the boss horn now fires once at that moment instead of every window frame (`bossDeath` edge-trigger). Shards, the Colossus, the Titan, the Splitter's crack and all regular enemies are unchanged; new `enemies.orbSplit` invariant added to `runChecks`. Two minimal deviations from the design: the bossDeath at-line check counts a hp-0 Orb (so a window that ends at hp 0 still horns — otherwise the split would be silent), and the split's spawn capture keeps `wm` as well as `sm` (the design's shorthand omitted it; the Shards must keep today's speed factors).
+
+- Self-review: APPROVE
+- Time: 67.4 min
+
+```
+projects/chokepoint/game/src/art/entities.ts       | 15 -----
+ projects/chokepoint/game/src/debug/runChecks.ts    |  2 +
+ projects/chokepoint/game/src/entities/Enemy.ts     |  8 ++-
+ .../game/src/systems/enemyHooks/bossDeath.ts       | 54 ++++++++++++------
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/midSplit.ts        | 49 +++++++++++-----
+ .../game/src/systems/enemyHooks/orbSplit.ts        | 66 ++++++++++++++++++++++
+ 7 files changed, 148 insertions(+), 48 deletions(-)
+```

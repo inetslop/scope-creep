@@ -72,6 +72,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   shielded = false;
   /** Seconds since its out-of-reach beat started (the Colossus); -1 before its hp first dropped to half (core/outOfReach.ts). */
   reachClock = -1;
+  /** Seconds since its split window opened (the Orb); -1 before its hp first dropped to the split line. */
+  splitClock = -1;
   /** The burn on it (Ember): the burning tower's rate and damage multiplier, and the seconds left; left 0: not ablaze. */
   burn: LiveBurn = { dps: 0, mul: 1, acc: 0, left: 0 };
   /** The tower that lit the burn: when the tick kills, its mints pay like a normal kill. */
@@ -127,6 +129,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.dashLeft = this.def.dashCycle?.crawlSec ?? 0;
     this.pauseAge = 0;
     this.reachClock = -1;
+    this.splitClock = -1;
     this.setTexture(enemyTexture(def.id));
     this.clearTint();
     this.setAlpha(1); // a recycled Colossus must not come up half-ghost
@@ -252,7 +255,8 @@ export class Enemy extends Phaser.GameObjects.Image {
 
   /** Takes damage (a marked enemy takes `markPct` more, from everything, and a shielded one lands
    * at half after all of it); `flash` false for a burn tick, so it doesn't blink white on every
-   * tick. Returns true when this killed it. */
+   * tick. Returns true when this killed it — never inside its split window (the Orb: the split,
+   * not a kill, ends it, systems/enemyHooks/midSplit.ts). */
   hit(damage: number, flash = true): boolean {
     if (!this.active) return false;
     this.hp -= damage * (1 + this.markPct) * shieldMul(this.def, this.shielded);
@@ -262,7 +266,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     }
     const ramp = this.def.speedRamp;
     if (ramp && this.speed < ramp.max * CELL) this.speed = Math.min(this.speed + ramp.perHit * CELL, ramp.max * CELL);
-    return this.hp <= 0;
+    return this.splitClock < 0 && this.hp <= 0; // window open: hits deal, never kill, even down to 0
   }
 
   /** Sets ablaze, or re-ignites: the duration refreshes and the rate keeps the hotter of the two.

@@ -10,6 +10,7 @@ import { TIER_ORDER } from '../core/tiers';
 import { bossId, waveSpeedMul } from '../core/waves';
 import type { GameScene } from '../scenes/GameScene';
 import { SCENES } from '../scenes/keys';
+import { SPLIT_TELEGRAPH_SEC } from '../systems/enemyHooks/midSplit';
 import { hook } from './testHook';
 
 /**
@@ -63,6 +64,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['enemies.bossSlot', (g) => (g.run.wave === 20 || !g.enemies.all.some((e) => e.active && (e.def.id === 'titan' || e.def.id === 'guard')) ? null : 'a Titan or Guard alive off its wave 20')],
   ['enemies.reach', (g) => g.enemies.brokenReach()],
   ['enemies.orb', (g) => (g.enemies.all.filter((e) => e.active && e.def.id === 'orb').length <= 1 ? null : 'more than one Orb alive')],
+  ['enemies.orbSplit', (g) => (g.enemies.all.every((e) => !e.active || e.def.splitsAt === undefined || (Number.isFinite(e.splitClock) && e.splitClock >= -1 - 1e-9 && e.splitClock <= SPLIT_TELEGRAPH_SEC + 1e-9)) ? null : 'a split window out of its beat')],
   ['enemies.onRoad', (g) => (g.enemies.all.some((e) => e.active && (e.distance < 0 || e.distance > g.board.path.length + 1)) ? 'an enemy is off its road' : null)],
   ['exitWarn.valid', (g) => g.exitWarn.broken()],
   ['music.bed', (g) => g.music.broken()],
