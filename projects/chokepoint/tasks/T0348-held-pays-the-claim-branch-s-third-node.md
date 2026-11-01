@@ -1,12 +1,14 @@
 ---
 id: T0348
 title: "Held pays: the claim branch's third node"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T08:42:47Z
+claimed_at: 2026-11-01T09:03:40Z
 ---
 
 ## Goal
