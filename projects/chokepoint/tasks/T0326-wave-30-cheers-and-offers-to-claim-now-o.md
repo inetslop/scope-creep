@@ -1,12 +1,14 @@
 ---
 id: T0326
 title: Wave 30 cheers, and offers to claim now or keep going
+assignee: asus
 size: M
 priority: 1
-status: todo
+status: in-progress
 depends_on: [T0325]
-attempts: 0
+attempts: 1
 created: 2026-10-31T23:37:22Z
+claimed_at: 2026-11-01T07:22:17Z
 epic: E9
 ---
 
