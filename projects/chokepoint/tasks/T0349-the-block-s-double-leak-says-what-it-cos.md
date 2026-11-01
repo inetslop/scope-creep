@@ -3,10 +3,12 @@ id: T0349
 title: "The Block's double leak says what it costs"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T09:12:53Z
+claimed_at: 2026-11-01T09:31:03Z
+designer: yoga
 ---
 
 ## Goal
