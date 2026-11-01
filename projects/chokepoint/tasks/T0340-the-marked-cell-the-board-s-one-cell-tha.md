@@ -103,3 +103,6 @@ export function paintBoardPreview(scene: Phaser.Scene, key: string, map: GameMap
 ### Tests
 - `tests/core/markedCell.test.ts`: for 14x8 and 8x14, 200 seeds — the cell is `kindAt === 'open'` (never road/rock); same seed regenerated gives the same cell (resume); `MARKED_DMG_MUL` is 1.25 and `12 * MARKED_DMG_MUL === 15`; 50 distinct boards mark more than one distinct cell.
 - `tests/core/towerDps.test.ts`: `towerDps(spec('bolt'), 1, 1.25)` ≈ 24; `towerDps(spec('beam'), 1, 1.25)` ≈ 17.5; `towerDps(spec('bolt', 'ember'), 1, 1.25)` ≈ 19.2 * 1.25 + 3 (burn unchanged); `towerDps(spec('frost'), 1, 1.25)` === 0 (support gets nothing).
+
+## Owner note (2026-11-01)
+The pick step's portrait layout changed by hand after this design: on a phone it is now three thumbnails over one detail card for the selected board (`buildDetail` in `src/scenes/PickScene.ts`), and the row of cards (`buildRow`, with the `cards.map` / `CardParts` / `colW` / `if (c.mul)` code step 12 names) is landscape only. Do step 12 in `buildRow` as written, and also show the marked cell on the detail card: the dot comes with the preview (both layouts use `paintBoardPreview`); add the muted "one cell · +25% damage" line with `put(...)` right after the road line (`road N cells · N bends`), before the level augments.
