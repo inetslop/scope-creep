@@ -255,3 +255,39 @@ Status: **done (2026-10-29)** — all five branches landed (run start, draft, po
 - T0320 (M) — the third hint: "Hold the road" under the wave 1 banner — done (2026-11-01, inet-racing)
 
 **All three E11 hints landed (T0318, T0319, T0320) — E11 done.**
+
+## Archived 2026-11-01
+
+### E9 — Level augments: harder runs for a bigger payout (done 2026-11-01; history in planning/archive/ROADMAP.md)
+**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0285, T0291 (the payout), T0294 (Swift and Crowded), T0295 (Lean and Short fuse), the reprice T0288, the third node T0297 and the slot ladder T0305 landed; T0310 (the switchback) landed 2026-11-01; the claim branch's second node (Flawless pays 10 coins) landed as T0313 (2026-11-01, asus). Every E9 task is now written: T0329 and T0325 landed (2026-11-01, asus); T0326 (the wave-30 claim offer) landed 2026-11-01 (asus) — every E9 slice is done.
+**The owner's redesign (by hand, 2026-10-31):** six owner tasks, priority 1, numbered T0321–T0326 from the inbox: an added Spray is crit chance and an added Beam is +damage, both on every damage tower (T0321, T0322); Play opens a daily board pick, three boards seeded on the UTC date with their level augments and a level row from 0 to the slots, replacing the menu picker (T0323); the boards rank by level, then score, and Today is the UTC day (T0324; the server side is the owner's, done); rewards need wave 10, Quit run pays out and ends the run, a new Main menu keeps it (T0325); the wave-30 card offers to claim now or keep going (T0326). Where the "When done" list below says the menu picker, the saved preselected choice or a rolling Today, these tasks replace it; don't plan around the old picker.
+**Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
+**When done:**
+- **Unlock, a slot ladder:** level augments are picked into **slots**, and slots are earned one at a time.
+  - Reaching wave 30 in any run, normal or Iron, unlocks the **first** slot.
+  - Reaching wave 30 with **all** your unlocked slots filled unlocks the next one. Wave 30 with 1 level augment on gives 2 slots, wave 30 with 2 on gives 3, and so on, up to the size of the set.
+  - The slot count is saved in the profile and never goes down.
+  - Before the first unlock the menu doesn't show level augments, apart from one muted "reach wave 30 to unlock" teaser line.
+  - With slots unlocked, the picker shows the next goal, for example "wave 30 with 2 on unlocks a 3rd".
+- **The choice:** before a run, the menu offers a small set of level augments. Switch on up to as many as you have slots for. Each one makes the run harder in one plain way and adds its own bonus.
+  - Examples: **Tough** (enemies have +25% health), **Swift** (enemies move 15% faster), **Crowded** (+20% enemies per wave), **Lean** (−25% kill gold), **Short fuse** (−30% build time).
+  - Each carries a number such as "+20%". The chosen augments' bonuses add up into one run multiplier, shown on the menu before starting.
+- **The payout:** the run multiplier scales the run's **score** and the **coins** it pays into the tech tree. It stacks multiplicatively with Iron's doubled coins.
+  - The HUD shows the active level augments as small chips.
+  - The claim card shows the multiplier in its recipe line ("×1.6 level augments").
+  - The leaderboard row shows the multiplier, so a boosted score reads as one.
+- **Deeper tech tree, steeper prices:** more coins flow in, so tech node prices grow with depth in a branch: more than linear but not exponential.
+  - For example, price = base × depth^1.5, rounded to 5 (10, 30, 50, 80, 110, …).
+  - The current branch discount (`branchPrice`: 5 or 10 off once nodes are owned) works against this and is replaced.
+  - New deeper nodes get added so the extra coins have something worth buying.
+- Choices are saved and preselected for the next run. The run's save records them, so a resumed run keeps its level augments and multiplier.
+
+**Breakdown (to task, in this order):**
+- the unlock, the menu choice and Tough — **T0285 (L) — done** (2026-10-30, asus): wave 30 unlocks the first slot, the menu picker capped at the slot count, Tough (+25% enemy health, bonus +25%), the multiplier shown on the menu (×1.25) and the set saved in the profile and the run save
+- the payout made visible: the multiplier applied to score and coins (stacks with Iron), the claim card's line, the leaderboard row's tag, the HUD chips — **T0291 (L, priority 1) — done** (2026-10-30, asus)
+- the rest of the first set, one task per side: Swift (+15% enemy speed) + Crowded (+20% enemies per wave) — **T0294 (M) — done** (2026-10-30, asus); Lean (−25% kill gold) + Short fuse (−30% build time) — **T0295 (M) — done** (2026-10-30, asus); each a pure rule with tests, each one's multiplier bonus is its own number
+- the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned — **done as T0288 (M, 2026-10-30, cachyos-x8664)**
+- deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **done as T0297 (M, 2026-10-30, desktop)**; the claim branch's second node (Flawless pays 10 coins, T0076's open door) — **T0313 (M) — done** (2026-11-01, asus); the board branch's fourth node (The switchback, the road's fold) — **T0310 (M) — done** (2026-11-01, asus)
+- the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line) — **T0305 (M, priority 1) — done** (2026-10-30, asus)
+- the coins reference: how a run pays, off the pause (the rates, this run's terms, the multipliers — the payout math in one card) — **T0329 (M, E9) — done** (2026-11-01, asus)
+- (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set

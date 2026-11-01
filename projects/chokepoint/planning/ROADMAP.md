@@ -39,39 +39,7 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 ### E8 — A run you can show (dropped — 2026-10-30, by hand)
 Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared-seed replay is not to be tasked.
 
-### E9 — Level augments: harder runs for a bigger payout (done 2026-11-01; history in planning/archive/ROADMAP.md)
-**Priority (by hand, 2026-10-30):** E9 goes before every other epic. Its slices are tasked at priority 1, one after another as each lands, ahead of new E4/E5/E7 work. T0285, T0291 (the payout), T0294 (Swift and Crowded), T0295 (Lean and Short fuse), the reprice T0288, the third node T0297 and the slot ladder T0305 landed; T0310 (the switchback) landed 2026-11-01; the claim branch's second node (Flawless pays 10 coins) landed as T0313 (2026-11-01, asus). Every E9 task is now written: T0329 and T0325 landed (2026-11-01, asus); T0326 (the wave-30 claim offer) landed 2026-11-01 (asus) — every E9 slice is done.
-**The owner's redesign (by hand, 2026-10-31):** six owner tasks, priority 1, numbered T0321–T0326 from the inbox: an added Spray is crit chance and an added Beam is +damage, both on every damage tower (T0321, T0322); Play opens a daily board pick, three boards seeded on the UTC date with their level augments and a level row from 0 to the slots, replacing the menu picker (T0323); the boards rank by level, then score, and Today is the UTC day (T0324; the server side is the owner's, done); rewards need wave 10, Quit run pays out and ends the run, a new Main menu keeps it (T0325); the wave-30 card offers to claim now or keep going (T0326). Where the "When done" list below says the menu picker, the saved preselected choice or a rolling Today, these tasks replace it; don't plan around the old picker.
-**Goal:** once a player can reach wave 30, they can make future runs harder by choice, and are paid for it with a bigger score and more coins for the tech tree. This is the game's long-term ladder, like Slay the Spire's Ascension or Hades' Heat.
-**When done:**
-- **Unlock, a slot ladder:** level augments are picked into **slots**, and slots are earned one at a time.
-  - Reaching wave 30 in any run, normal or Iron, unlocks the **first** slot.
-  - Reaching wave 30 with **all** your unlocked slots filled unlocks the next one. Wave 30 with 1 level augment on gives 2 slots, wave 30 with 2 on gives 3, and so on, up to the size of the set.
-  - The slot count is saved in the profile and never goes down.
-  - Before the first unlock the menu doesn't show level augments, apart from one muted "reach wave 30 to unlock" teaser line.
-  - With slots unlocked, the picker shows the next goal, for example "wave 30 with 2 on unlocks a 3rd".
-- **The choice:** before a run, the menu offers a small set of level augments. Switch on up to as many as you have slots for. Each one makes the run harder in one plain way and adds its own bonus.
-  - Examples: **Tough** (enemies have +25% health), **Swift** (enemies move 15% faster), **Crowded** (+20% enemies per wave), **Lean** (−25% kill gold), **Short fuse** (−30% build time).
-  - Each carries a number such as "+20%". The chosen augments' bonuses add up into one run multiplier, shown on the menu before starting.
-- **The payout:** the run multiplier scales the run's **score** and the **coins** it pays into the tech tree. It stacks multiplicatively with Iron's doubled coins.
-  - The HUD shows the active level augments as small chips.
-  - The claim card shows the multiplier in its recipe line ("×1.6 level augments").
-  - The leaderboard row shows the multiplier, so a boosted score reads as one.
-- **Deeper tech tree, steeper prices:** more coins flow in, so tech node prices grow with depth in a branch: more than linear but not exponential.
-  - For example, price = base × depth^1.5, rounded to 5 (10, 30, 50, 80, 110, …).
-  - The current branch discount (`branchPrice`: 5 or 10 off once nodes are owned) works against this and is replaced.
-  - New deeper nodes get added so the extra coins have something worth buying.
-- Choices are saved and preselected for the next run. The run's save records them, so a resumed run keeps its level augments and multiplier.
-
-**Breakdown (to task, in this order):**
-- the unlock, the menu choice and Tough — **T0285 (L) — done** (2026-10-30, asus): wave 30 unlocks the first slot, the menu picker capped at the slot count, Tough (+25% enemy health, bonus +25%), the multiplier shown on the menu (×1.25) and the set saved in the profile and the run save
-- the payout made visible: the multiplier applied to score and coins (stacks with Iron), the claim card's line, the leaderboard row's tag, the HUD chips — **T0291 (L, priority 1) — done** (2026-10-30, asus)
-- the rest of the first set, one task per side: Swift (+15% enemy speed) + Crowded (+20% enemies per wave) — **T0294 (M) — done** (2026-10-30, asus); Lean (−25% kill gold) + Short fuse (−30% build time) — **T0295 (M) — done** (2026-10-30, asus); each a pure rule with tests, each one's multiplier bonus is its own number
-- the tech tree reprice: price by depth (superlinear, not exponential) replacing the branch discount, one pure function with tests; owned nodes stay owned — **done as T0288 (M, 2026-10-30, cachyos-x8664)**
-- deeper tech nodes: the board branch's third node ("Two chokes", a second guaranteed choke cell) — **done as T0297 (M, 2026-10-30, desktop)**; the claim branch's second node (Flawless pays 10 coins, T0076's open door) — **T0313 (M) — done** (2026-11-01, asus); the board branch's fourth node (The switchback, the road's fold) — **T0310 (M) — done** (2026-11-01, asus)
-- the slot ladder: wave 30 with every unlocked slot filled unlocks one more (pure rule with tests, a "new slot" moment on the claim card, the picker's next-goal line) — **T0305 (M, priority 1) — done** (2026-10-30, asus)
-- the coins reference: how a run pays, off the pause (the rates, this run's terms, the multipliers — the payout math in one card) — **T0329 (M, E9) — done** (2026-11-01, asus)
-- (later) more level augments and ranks (Tough I/II/III) once the slots outgrow the set
+### E9 — Level augments: harder runs for a bigger payout (done; history in planning/archive/ROADMAP.md)
 
 ### E10 — The sky: not everything walks the road (active — opened 2026-10-31)
 **Goal:** the road stops being the only line on the board: something crosses the island over it, and a build that only covers the road stops being enough.
@@ -84,21 +52,16 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E11 — First run teaches itself (done; history in planning/archive/ROADMAP.md)
 
-### E12 — The run's story: a run you can look back on (fully tasked — closing on T0345's landing)
-**Goal:** the end of a run shows the run's shape, not just its numbers: which waves were clean, which were held, which one fell.
-**When done:** the claim card carries a small second card under the first — one small mark per wave faced (green = a clean wave, muted gray = a held wave with leaks, red = the wave the run ended on), a muted legend, and the run's loudest wave (the one that leaked most); the per-wave record is written as the run goes and carried through the resume save, so a resumed run's story is whole.
-**Breakdown:**
-- T0333 (L) — the claim card's last page: the per-wave ledger record (leaks per wave, the death wave) plus the story card under the first card — done (2026-11-01, desktop)
-- T0336 (M) — the mid-run page: the story line on the pause's Summary (T0306) — the marks and the loudest wave while the run is happening — done (2026-11-01, inet-racing)
-- the ledger's damage terms: damage per tower, feeding the Summary's rows — **tasked as T0345 (M, in the pool)**
+### E12 — The run's story: a run you can look back on (done; history in planning/archive/ROADMAP.md)
 
 ### E13 — The island opens up: the road comes in from more than one gate (active — opened 2026-11-01)
 **Goal:** "every board is different" (Pillar 2) goes past the rock scatter and the path's shape: the road itself varies, so a build that held one island fails on the next for a new reason.
 **When done:** on some boards the road has a second gate partway along, and a share of every wave's enemies comes in through it — the player covers the road from two entry points, and the far gate's shorter run shifts where the pressure lands. Later slices: a road that forks into two lanes, and a marked cell that makes its tower stronger.
 **Breakdown:**
-- the far gate: a second entrance partway down the road; a third of each non-boss wave comes through it; the board, the board preview and the next-wave preview show it — **T0338 (M, in the pool)**
-- (to task) the fork: the road splits into two lanes and re-joins; enemies take either lane
+- the far gate: a second entrance partway down the road; a third of each non-boss wave comes through it; the board, the board preview and the next-wave preview show it — **T0338 (M, in progress)**
+- (to task, behind T0338) the fork: the road splits into two lanes and re-joins; enemies take either lane
 - the marked cell: one build cell that makes a tower built on it stronger — **tasked as T0340 (M, in the pool)**
+- the boards reference: the pause screen names the board's modifiers — mark, name, one dry line, and where each comes from (always / tech / some boards) — the vocabulary for the new islands — **tasked as T0350 (M, in the pool)**
 
 ### Enemy queue (non-epic)
 
@@ -124,10 +87,10 @@ Ideas that may become epics or tasks of one.
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
 - Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive is T0292; the wave-50 Flyer, the first boss that doesn't walk the road, is **E10's T0317 (in the pool)**)
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
-- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **now E13 (opened 2026-11-01)**: the far gate is T0338 (M, in the pool); the marked cell is T0340 (M, in the pool); the fork tasks behind them
+- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **now E13 (opened 2026-11-01)**: the far gate is T0338 (M, in progress); the marked cell is T0340 (M, in the pool); the boards reference is T0350 (M, in the pool); the fork tasks behind them
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **built as T0239 (L, non-epic, 2026-10-30, asus)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
-- Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**; the mid-run page **built as T0306 (2026-10-30, inet-racing)**; the per-wave leaks record landed with **E12's T0333 (2026-11-01)** and the mid-run story line with **T0336 (2026-11-01, inet-racing)**; damage per tower is **T0345 (M, in progress)**
+- Run summary: damage per tower, leaks per wave — **first slice built as T0216 (kills by tower on the end card, 2026-10-29, asus)**; the mid-run page **built as T0306 (2026-10-30, inet-racing)**; the per-wave leaks record landed with **E12's T0333 (2026-11-01)** and the mid-run story line with **T0336 (2026-11-01, inet-racing)**; damage per tower is **built as T0345 (2026-11-01, asus)**
 - The board shows its corners: a notch on the bend cells — **built as T0140 (2026-10-29), removed as T0227 (2026-10-29)**
 - Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **built as T0217 (2026-10-30, asus)**
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
