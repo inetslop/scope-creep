@@ -4,11 +4,12 @@ title: Wave 30 cheers, and offers to claim now or keep going
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: [T0325]
 attempts: 1
 created: 2026-10-31T23:37:22Z
 claimed_at: 2026-11-01T07:22:17Z
+finished_at: 2026-11-01T07:54:41Z
 epic: E9
 ---
 
@@ -226,3 +227,23 @@ export class MilestoneScene extends Phaser.Scene {
 ### Tests
 - `saveRun`: older save without the key loads as asked iff its wave is past 30; round-trips the flag; rejects a non-boolean.
 - `runFlow`: clearing wave 30 cleanly opens the milestone (not the draft) exactly once; a run already asked opens the draft.
+
+## Result (attempt 1, asus)
+
+Clearing wave 30 now opens a new "Wave 30!" overlay card (src/scenes/MilestoneScene.ts, registered after PauseScene) that plays the tier chime and offers **Claim rewards** (C) — ending the run through the pause's existing deliberate end (`endRunIntentionally`, so the "Run ended" card and no-Resume menu come from T0325 — or **Keep going** (Enter/Space, the default, and the ?smoke auto-pick) which opens the draft as usual. The line reads "Level n+1 is yours. Claim now to play it." only when this run earns the next slot (all slots on, set not full), otherwise "30 waves held."; keeping going never loses the unlock. The once-per-run flag (`milestone30Asked`) lives on `RunState`, persists in the run save, and older saves count as asked once their wave is past 30. Tests added for the save round-trip/older-save fallback and for wave 30 opening the milestone (not the draft) exactly once; `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 32.4 min
+
+```
+projects/chokepoint/game/src/core/run.ts           |  1 +
+ projects/chokepoint/game/src/core/saveRun.ts       |  4 +
+ projects/chokepoint/game/src/main.ts               |  3 +-
+ .../chokepoint/game/src/scenes/MilestoneScene.ts   | 94 ++++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/keys.ts        |  1 +
+ projects/chokepoint/game/src/systems/RunFlow.ts    | 17 +++-
+ projects/chokepoint/game/src/systems/RunSave.ts    |  2 +
+ .../chokepoint/game/tests/core/saveRun.test.ts     | 16 ++++
+ .../chokepoint/game/tests/systems/runFlow.test.ts  | 22 ++++-
+ 9 files changed, 155 insertions(+), 5 deletions(-)
+```

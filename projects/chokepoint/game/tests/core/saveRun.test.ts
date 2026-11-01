@@ -27,6 +27,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   story: [{ wave: 1, leaks: 0 }, { wave: 2, leaks: 1 }, { wave: 3, leaks: 0 }],
   streakPaid: false,
   haulerTold: false,
+  milestone30Asked: false,
   rerollsUsed: 1,
   level: [],
   towers: [
@@ -202,6 +203,21 @@ describe('saveRun', () => {
     store.setItem(SAVED_RUN_KEY, JSON.stringify(without));
     expect(loadSavedRun(store)).toEqual(sample());
     broken({ haulerTold: 'x' });
+  });
+
+  it('round-trips the wave-30 flag, and an older save loads as asked once its wave is past 30', () => {
+    const store = memory();
+    saveRun(store, sample({ milestone30Asked: true, wave: 31 }));
+    expect(loadSavedRun(store)).toEqual(sample({ milestone30Asked: true, wave: 31 }));
+    const old = { ...sample({ wave: 31 }) } as Record<string, unknown>;
+    delete old.milestone30Asked; // older saves predate the field
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(old));
+    expect(loadSavedRun(store)).toEqual(sample({ wave: 31, milestone30Asked: true }));
+    const old30 = { ...sample({ wave: 30 }) } as Record<string, unknown>;
+    delete old30.milestone30Asked;
+    store.setItem(SAVED_RUN_KEY, JSON.stringify(old30));
+    expect(loadSavedRun(store)).toEqual(sample({ wave: 30, milestone30Asked: false }));
+    broken({ milestone30Asked: 'x' });
   });
 
   it('migrates the old rerollUsed flag to the reroll count', () => {

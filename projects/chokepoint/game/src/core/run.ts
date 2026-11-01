@@ -52,6 +52,7 @@ export class RunState {
   cleanStreak = 0; // clean waves in a row; a leak resets it to 0
   streakPaid = false; // the run's one +1 life for a streak of 3 was paid
   haulerTold = false; // the run's one Hauler teach showed (T0307): a Hauler that leaked has paid
+  milestone30Asked = false; // the wave-30 milestone card was shown once this run
   private leaksThisWave = 0;
 
   constructor(seed: number, techOwned: readonly string[] = [], bgen: number = 2) {

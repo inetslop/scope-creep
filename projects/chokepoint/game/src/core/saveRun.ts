@@ -4,6 +4,7 @@ import { getLevelAugment } from '../content/levels';
 import type { AugmentCopy, Tier } from '../content/types';
 import type { RunMode, WaveRecord } from './run';
 import { TIER_ORDER } from './tiers';
+import { LEVEL_UNLOCK_WAVE } from './levels';
 
 /**
  * A run closed mid-way: kept on the device (its own key, not the profile's) so the menu can
@@ -57,6 +58,7 @@ export interface SavedRun {
   /** The run's one +1 life for a streak of 3 was paid; older saves predate the field. */
   streakPaid: boolean;
   haulerTold: boolean; // the Hauler's extra-cost teach was shown; older saves predate the field
+  milestone30Asked: boolean; // the wave-30 milestone card was shown; older saves predate the field
   rerollsUsed: number; // how many rerolls the run has bought; older saves carried rerollUsed: boolean
   /** The level augments on for the run; older saves predate the field. */
   level: string[];
@@ -105,6 +107,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
   if (p.bgen !== undefined && !inInt(p.bgen, 1, 8)) return undefined;
   if (p.streakPaid !== undefined && typeof p.streakPaid !== 'boolean') return undefined;
   if (p.haulerTold !== undefined && typeof p.haulerTold !== 'boolean') return undefined;
+  if (p.milestone30Asked !== undefined && typeof p.milestone30Asked !== 'boolean') return undefined;
   if (!inRange(p.gold, 0, 1e6)) return undefined;
   if (!inInt(p.lives, 0, 1e6) || !inInt(p.kills, 0, 1e6) || !inInt(p.cleanWaves, 0, 1e6)) return undefined;
   if (p.mode !== undefined && p.mode !== 'play' && p.mode !== 'iron') return undefined;
@@ -146,6 +149,7 @@ export function loadSavedRun(store: RunStore | undefined): SavedRun | undefined 
     story: Array.isArray(p.story) ? (p.story as WaveRecord[]) : [],
     streakPaid: p.streakPaid === true,
     haulerTold: p.haulerTold === true,
+    milestone30Asked: p.milestone30Asked === true || p.wave > LEVEL_UNLOCK_WAVE, // older saves count as asked once their wave is past 30
     rerollsUsed,
     level: Array.isArray(p.level) ? (p.level as string[]) : [],
     towers: p.towers as SavedTower[],

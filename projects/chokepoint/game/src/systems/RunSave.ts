@@ -51,6 +51,7 @@ export class RunSave {
       story: run.story.map((r) => ({ wave: r.wave, leaks: r.leaks })),
       streakPaid: run.streakPaid,
       haulerTold: run.haulerTold,
+      milestone30Asked: run.milestone30Asked,
       rerollsUsed: run.rerollsUsed,
       level: [...run.level],
       towers: this.game.towers.towers.map((t) => ({
@@ -76,6 +77,7 @@ export class RunSave {
     run.story = saved.story.map((r) => ({ wave: r.wave, leaks: r.leaks }));
     run.streakPaid = saved.streakPaid;
     run.haulerTold = saved.haulerTold;
+    run.milestone30Asked = saved.milestone30Asked;
     run.rerollsUsed = saved.rerollsUsed;
     run.hand = saved.hand.map((c) => ({ id: c.id, tier: c.tier }));
     for (const t of saved.towers) {

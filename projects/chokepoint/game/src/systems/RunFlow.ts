@@ -5,7 +5,7 @@ import type { AugmentCopy } from '../content/types';
 import { draftPool, rollOffer } from '../core/augments';
 import type { RunState } from '../core/run';
 import { draftCardsFor } from '../core/techEffects';
-import { levelBuildSeconds } from '../core/levels';
+import { LEVEL_UNLOCK_WAVE, levelBuildSeconds } from '../core/levels';
 import { clearSavedRun } from '../core/saveRun';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
@@ -177,10 +177,21 @@ export class RunFlow {
       // Under the wave-cleared text, for the beat before the draft veils the board.
       this.s.fx.cleanLines(cx, cy + 40, second);
       if (cleanBefore === 0) streakTeach(this.s.fx, cx, cy + 40 + 52); // run's first clean wave: cleanWaves still 0, the muted line names the pay
-      this.scene.time.delayedCall(1000, () => this.openDraft());
+      this.scene.time.delayedCall(1000, () => this.proceedToDraft());
     } else {
-      this.openDraft();
+      this.proceedToDraft();
     }
+  }
+
+  /** The wave-30 milestone opens in place of the draft, once per run; otherwise the draft opens. */
+  private proceedToDraft(): void {
+    if (this.run.wave === LEVEL_UNLOCK_WAVE && !this.run.milestone30Asked) {
+      this.run.milestone30Asked = true;
+      this.scene.scene.launch(SCENES.milestone);
+      this.scene.scene.pause();
+      return;
+    }
+    this.openDraft();
   }
 
   /** Quit from the pause card: the run can't be resumed, so it ends as if it were lost (the end

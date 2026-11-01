@@ -17,6 +17,7 @@ export const SCENES = {
   hud: 'Hud',
   draft: 'Draft',
   pause: 'Pause',
+  milestone: 'Milestone',
   enemies: 'Enemies',
   waves: 'Waves',
   bosses: 'Bosses',

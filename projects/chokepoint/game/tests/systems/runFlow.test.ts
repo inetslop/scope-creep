@@ -97,7 +97,7 @@ describe('RunFlow.clearWave, every wave the same', () => {
     expect(calls).not.toContain('cleanLines');
   });
 
-  for (const wave of [10, 20, 30]) {
+  for (const wave of [10, 20]) {
     it(`clearing wave ${wave} cleanly is an ordinary clear: the clean beat, then the draft, the run goes on`, () => {
       const { run, flow, calls, fireBeat } = fakeClearFlow(wave);
       const lostBefore = hook.stats.runsLost;
@@ -112,4 +112,24 @@ describe('RunFlow.clearWave, every wave the same', () => {
       expect(hook.stats.runsLost).toBe(lostBefore);
     });
   }
+
+  it('clearing wave 30 cleanly opens the milestone card in place of the draft, once', () => {
+    const { run, flow, calls, fireBeat } = fakeClearFlow(30);
+    (flow as unknown as { clearWave(): void }).clearWave();
+    expect(calls).toContain('cleanLines');
+    expect(calls).not.toContain(`launch:${SCENES.milestone}`); // held for the beat
+    fireBeat();
+    expect(calls).toContain(`launch:${SCENES.milestone}`);
+    expect(calls).not.toContain(`launch:${SCENES.draft}`);
+    expect(run.milestone30Asked).toBe(true);
+  });
+
+  it('does not open the milestone a second time in the same run', () => {
+    const { run, flow, calls, fireBeat } = fakeClearFlow(30);
+    run.milestone30Asked = true;
+    (flow as unknown as { clearWave(): void }).clearWave();
+    fireBeat();
+    expect(calls).toContain(`launch:${SCENES.draft}`);
+    expect(calls).not.toContain(`launch:${SCENES.milestone}`);
+  });
 });
