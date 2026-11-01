@@ -4,11 +4,12 @@ title: "The Colossus's return gets its flash"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T11:49:16Z
 claimed_at: 2026-11-01T12:23:46Z
+finished_at: 2026-11-01T12:43:07Z
 ---
 
 ## Goal
@@ -92,3 +93,16 @@ export const bossBack: MakeEnemyHook = ({ enemies }) => {
 
 ### Tests
 none (display-only juice; no core rule added).
+
+## Result (attempt 1, yoga)
+
+The Colossus's return from its out-of-reach beat now flashes its token white for 0.3 s — the telegraph's own white — the frame it becomes hittable again. One new enemy hook, `src/systems/enemyHooks/bossBack.ts` (registered next to `bossPhase` in `ENEMY_HOOKS`): each frame it derives seconds-since-return from the boss's existing `reachClock` and re-asserts `setTintFill(0xffffff)` during the 0.3 s window, guarding the clear so it only undoes its own tint. No Enemy field, sound, text, chip, ring or invariant added; the windup ring, departure tone, arrival ring and death beat are untouched, and every enemy without an outOfReach spec is byte-identical.
+
+- Self-review: APPROVE
+- Time: 19.4 min
+
+```
+.../game/src/systems/enemyHooks/bossBack.ts        | 37 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ 2 files changed, 39 insertions(+)
+```

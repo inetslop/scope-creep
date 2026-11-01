@@ -20,6 +20,7 @@ import { nameTag } from './nameTag';
 import { bossArrival } from './bossArrival';
 import { bossOut } from './bossOut';
 import { bossPhase } from './bossPhase';
+import { bossBack } from './bossBack';
 import { dasherStreak } from './dasherStreak';
 import { sprinterRamp } from './sprinterRamp';
 import { crackDeep } from './crackDeep';
@@ -50,6 +51,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   bossArrival,
   bossOut,
   bossPhase,
+  bossBack,
   dasherStreak,
   sprinterRamp,
   crackDeep,
