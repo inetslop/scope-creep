@@ -3,7 +3,7 @@ import { BUILD_SEC } from '../../src/config';
 import { ENEMIES } from '../../src/content/enemies';
 import { dot } from '../../src/content/enemies/dot';
 import { getLevelAugment } from '../../src/content/levels';
-import { LEVEL_UNLOCK_WAVE, leanBounty, levelBuildSeconds, levelCountMul, levelMultiplier, levelMultiplierLabel, levelMultiplierTag, levelSlotsAfter, levelSpeedMul } from '../../src/core/levels';
+import { LEVEL_UNLOCK_WAVE, REWARD_WAVE, leanBounty, levelBuildSeconds, levelCountMul, levelMultiplier, levelMultiplierLabel, levelMultiplierTag, levelSlotsAfter, levelSpeedMul } from '../../src/core/levels';
 import { killGold } from '../../src/core/lastStand';
 import { RunState } from '../../src/core/run';
 import { Rng } from '../../src/core/rng';
@@ -12,6 +12,7 @@ import { planWave, planWithLevel, quietGoldMul, waveHpMul, type WavePlan } from 
 describe('level augments', () => {
   it('the slot ladder: wave 30 with every unlocked slot filled earns one more, capped at the set', () => {
     expect(LEVEL_UNLOCK_WAVE).toBe(30);
+    expect(REWARD_WAVE).toBe(10);
     expect(levelSlotsAfter(0, 29, 0, 5)).toBe(0); // ended just short
     expect(levelSlotsAfter(0, 30, 0, 5)).toBe(1); // 0 filled counts as all filled: the first slot
     expect(levelSlotsAfter(1, 30, 0, 5)).toBe(1); // a slot left empty: nothing earned

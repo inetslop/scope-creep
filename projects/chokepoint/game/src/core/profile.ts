@@ -1,7 +1,7 @@
 /** The device's profile: best wave, runs played, coins, and the four most recent runs. Storage is passed in, so this stays pure and testable. */
 import { cleanWavePay, flawlessPay } from '../content/tech/claim';
 import { LEVEL_AUGMENTS, getLevelAugment } from '../content/levels';
-import { levelSlotsAfter } from './levels';
+import { REWARD_WAVE, levelSlotsAfter } from './levels';
 
 export interface Profile {
   bestWave: number;
@@ -125,7 +125,8 @@ export function coinsForRun(result: RunResult, cleanPay = 1, mul = 1, levelMul =
 /** Folds a finished run into the saved profile and saves it. */
 export function recordRun(store: KeyValueStore | undefined, result: RunResult): RecordResult {
   const old = loadProfile(store);
-  const coins = coinsForRun(result, cleanWavePay(old.purchased), result.mul ?? 1, result.levelMul ?? 1, flawlessPay(old.purchased));
+  const pays = (result.reached ?? result.waves) >= REWARD_WAVE;
+  const coins = pays ? coinsForRun(result, cleanWavePay(old.purchased), result.mul ?? 1, result.levelMul ?? 1, flawlessPay(old.purchased)) : 0;
   const newBest = result.waves > old.bestWave;
   const levelSlots = levelSlotsAfter(old.levelSlots, result.reached ?? result.waves, result.levelOn ?? old.levelOn.length, LEVEL_AUGMENTS.length);
   const profile: Profile = {

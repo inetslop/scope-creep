@@ -4,11 +4,12 @@ title: Rewards from wave 10; Quit run pays out and ends it; Main menu keeps it
 assignee: asus
 size: M
 priority: 1
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-10-31T23:37:22Z
 claimed_at: 2026-11-01T04:58:18Z
+finished_at: 2026-11-01T07:21:34Z
 epic: E9
 ---
 
@@ -125,3 +126,22 @@ it('pays coins only from wave 10 on, and still counts the run before it', () => 
 ```
 `tests/core/levels.test.ts` — add `REWARD_WAVE` to the line-6 import (after `LEVEL_UNLOCK_WAVE`) and `expect(REWARD_WAVE).toBe(10);` after line 14.
 End card and pause-card behavior (two-tap quit → "Run ended" in ink, "Rewards from wave 10" muted, "Menu" button, no Resume in the menu after; Main menu → Resume continues; 1280×720 and 412×915, mouse and touch) are covered by `npm run smoke` / manual play, not unit tests.
+
+## Result (attempt 1, asus)
+
+Rewiring so a run only pays coins from wave 10 on (`REWARD_WAVE` gating in `core/profile.ts`'s `recordRun`), making the pause card's "Quit run" a two-tap "End the run?" that now genuinely ends the run (new `RunFlow.endRunIntentionally()` clears the save and opens the end card titled "Run ended", with a "Rewards from wave 10" line and a "Menu" button when unpaid), and adding a "Main menu" button under Resume that keeps the run saved so the menu's Resume continues it. Touched `core/levels.ts`, `core/profile.ts`, `systems/RunFlow.ts`, `scenes/PauseScene.ts`, `scenes/GameOverScene.ts`, `debug/runChecks.ts`, and the `core/profile`/`core/levels` unit tests.
+
+- Self-review: APPROVE
+- Time: 143.3 min
+
+```
+projects/chokepoint/game/src/core/levels.ts        |  3 ++
+ projects/chokepoint/game/src/core/profile.ts       |  5 ++-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ .../chokepoint/game/src/scenes/GameOverScene.ts    |  7 ++--
+ projects/chokepoint/game/src/scenes/PauseScene.ts  | 29 +++++++++++--
+ projects/chokepoint/game/src/systems/RunFlow.ts    | 10 +++++
+ projects/chokepoint/game/tests/core/levels.test.ts |  3 +-
+ .../chokepoint/game/tests/core/profile.test.ts     | 47 +++++++++++++---------
+ 8 files changed, 77 insertions(+), 28 deletions(-)
+```

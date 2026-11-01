@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { artScale, STAR_TEXTURE } from '../art/textures';
 import { cssColor, PALETTE } from '../content/palette';
 import { cleanWavePay, flawlessPay } from '../content/tech/claim';
+import { REWARD_WAVE } from '../core/levels';
 import { coinsForRun, loadProfile, saveSound } from '../core/profile';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
@@ -37,6 +38,7 @@ export class PauseScene extends Phaser.Scene {
     hook.overlay = SCENES.pause;
     const game = getGameScene(this);
     let closed = false;
+    let armed = false;
     const resume = (): void => {
       if (closed || !this.scene.isActive()) return;
       closed = true;
@@ -44,13 +46,29 @@ export class PauseScene extends Phaser.Scene {
       this.scene.stop();
       game.closePause();
     };
-    const quit = (): void => {
+    // Main menu: the old quit — it stops the game but leaves the run saved, so the menu's Resume continues it.
+    const toMenu = (): void => {
       if (closed || !this.scene.isActive()) return;
       closed = true;
       hook.overlay = '';
       this.scene.stop(SCENES.hud);
       this.scene.stop(SCENES.game);
       this.scene.start(SCENES.menu);
+    };
+    // Quit ends the run for good: a first tap arms it ("End the run?"), a second tap within 3 s confirms.
+    const quit = (): void => {
+      if (closed || !this.scene.isActive()) return;
+      if (!armed) {
+        armed = true;
+        quitButton.label.setText('End the run?');
+        this.time.delayedCall(3000, () => { if (closed) return; armed = false; quitButton.label.setText('Quit run'); });
+        return;
+      }
+      armed = false;
+      closed = true;
+      hook.overlay = '';
+      this.scene.stop(); // the pause card; endRunIntentionally stops the hud and starts the end card
+      game.flow.endRunIntentionally();
     };
 
     const shade = this.add.rectangle(0, 0, 10, 10, PALETTE.ground, 0.78).setOrigin(0).setInteractive();
@@ -69,7 +87,7 @@ export class PauseScene extends Phaser.Scene {
     const lineStyle = textStyle(13, PALETTE.muted);
     const waveText = this.add.text(0, 0, waveWord, lineStyle).setOrigin(0, 0.5);
     const restText = this.add.text(0, 0, ` · ${game.run.lives} lives · ${game.run.gold} gold`, lineStyle).setOrigin(0, 0.5);
-    const worthText: Phaser.GameObjects.Text | undefined = game.run.wave > 0 ? this.add.text(0, 0, `worth +${coins} coins`, lineStyle).setOrigin(0.5) : undefined;
+    const worthText: Phaser.GameObjects.Text | undefined = game.run.wave > 0 ? this.add.text(0, 0, game.run.wave >= REWARD_WAVE ? `worth +${coins} coins` : 'rewards from wave 10', lineStyle).setOrigin(0.5) : undefined;
     // Group 2: "Controls" and its lines, one per entry
     const heading = this.add.text(0, 0, 'Controls', textStyle(13, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
     const lines: Phaser.GameObjects.Text[] = [];
@@ -157,6 +175,7 @@ export class PauseScene extends Phaser.Scene {
       if (!sfx.muted) sfx.blip();
     };
     const resumeButton = makeButton(this, 0, 0, 'Resume', resume, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
+    const mainMenuButton = makeButton(this, 0, 0, 'Main menu', toMenu, { width: 240, height: 52, radius: 26 });
     const quitButton = makeButton(this, 0, 0, 'Quit run', quit, { width: 240, height: 52, radius: 26 });
     const soundRow = makeButton(this, 0, 0, '', toggleSound, { width: 240, height: 52, radius: 26 });
     soundRow.content.add([glyph, soundText]);
@@ -197,7 +216,7 @@ export class PauseScene extends Phaser.Scene {
     if (worthText) h += worthText.height + GAP_S;
     h += GAP_B + heading.height;
     for (const t of lines) h += GAP_S + t.height;
-    h += GAP_B + 56 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + PAD;
+    h += GAP_B + 56 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + PAD;
     const panelH = Math.ceil(h);
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
     let y = -panelH / 2 + PAD;
@@ -222,6 +241,8 @@ export class PauseScene extends Phaser.Scene {
     y += GAP_B;
     resumeButton.container.setY(cy(56));
     y += GAP_S;
+    mainMenuButton.container.setY(cy(52));
+    y += GAP_S;
     quitButton.container.setY(cy(52));
     y += GAP_S;
     soundRow.container.setY(cy(52));
@@ -236,7 +257,7 @@ export class PauseScene extends Phaser.Scene {
     y += GAP_S;
     coinsButton.container.setY(cy(52));
 
-    const boxKids: Phaser.GameObjects.GameObject[] = [panel, title, stats, heading, ...lines, resumeButton.container, quitButton.container, soundRow.container, enemiesButton.container, wavesButton.container, bossesButton.container, summaryButton.container, coinsButton.container];
+    const boxKids: Phaser.GameObjects.GameObject[] = [panel, title, stats, heading, ...lines, resumeButton.container, mainMenuButton.container, quitButton.container, soundRow.container, enemiesButton.container, wavesButton.container, bossesButton.container, summaryButton.container, coinsButton.container];
     if (worthText) boxKids.push(worthText);
     const box = this.add.container(0, 0, boxKids);
 

@@ -26,6 +26,7 @@ export class GameOverScene extends Phaser.Scene {
     hook.overlay = '';
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
     const run = getRun(this);
+    const intentional = this.registry.pop('runEnded') === true;
     const result = recordRun(window.localStorage, { waves: run.wavesCleared, stopped: run.kills, clean: run.cleanWaves, seed: run.seed, bgen: run.bgen, mul: run.mode === 'iron' ? 2 : 1, levelMul: run.levelHpMul, reached: run.wave, levelOn: run.level.length });
     const again = (): void => {
       this.scene.start(SCENES.game);
@@ -37,7 +38,7 @@ export class GameOverScene extends Phaser.Scene {
     const panelW = 360;
     const panelH = 497;
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
-    const title = this.add.text(0, -178, 'Overrun', titleStyle(44, PALETTE.red)).setOrigin(0.5);
+    const title = this.add.text(0, -178, intentional ? 'Run ended' : 'Overrun', titleStyle(44, intentional ? PALETTE.ink : PALETTE.red)).setOrigin(0.5);
     const waveText = this.add.text(0, -130, `Held until wave ${run.wave}`, titleStyle(22)).setOrigin(0.5);
     const score = this.add.text(0, -100, `${run.finalScore} points · ${run.kills} kills`, textStyle(17, PALETTE.muted)).setOrigin(0.5);
     const scoreRecipe = this.add.text(0, -80, `waves +${run.wavesCleared * 100} · stopped +${run.kills}${run.levelHpMul > 1 ? ` · ${levelMultiplierLabel(run.level)}` : ''}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
@@ -47,7 +48,7 @@ export class GameOverScene extends Phaser.Scene {
     const wavesText = this.add.text(0, -54, `Waves held ${run.wavesCleared}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
     const stoppedText = this.add.text(0, -37, `Stopped ${run.kills}`, textStyle(15, PALETTE.muted)).setOrigin(0.5);
     const cleanText = this.add.text(0, -20, `Clean ${run.cleanWaves}`, textStyle(15, run.cleanWaves > 0 ? PALETTE.greenDeep : PALETTE.muted)).setOrigin(0.5);
-    const coinsText = this.add.text(0, -3, `+${result.coins} coins`, textStyle(15, PALETTE.goldText, { fontStyle: 'bold' })).setOrigin(0.5);
+    const coinsText = this.add.text(0, -3, result.coins > 0 ? `+${result.coins} coins` : 'Rewards from wave 10', textStyle(15, result.coins > 0 ? PALETTE.goldText : PALETTE.muted, { fontStyle: 'bold' })).setOrigin(0.5);
     if (result.coins > 0) {
       coinsText.setScale(1.15);
       this.tweens.add({ targets: coinsText, scale: 1, duration: 150, ease: 'Quad.easeOut' });
@@ -56,7 +57,7 @@ export class GameOverScene extends Phaser.Scene {
     const bestText = this.add
       .text(0, 25, result.newBest ? 'New best!' : `Best: wave ${result.profile.bestWave}`, textStyle(15, result.newBest ? PALETTE.greenDeep : PALETTE.faint, { fontStyle: 'bold' }))
       .setOrigin(0.5);
-    const claimButton = makeButton(this, 0, 87, 'Claim rewards', claim, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
+    const claimButton = makeButton(this, 0, 87, result.coins > 0 ? 'Claim rewards' : 'Menu', result.coins > 0 ? claim : () => this.scene.start(SCENES.menu), { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
     const againButton = makeButton(this, 0, 151, 'Play again', again, { width: 240, height: 56, radius: 28, fill: PALETTE.ink });
     const menuButton = makeButton(this, 0, 213, 'Menu', () => this.scene.start(SCENES.menu), { width: 240, height: 52, radius: 26 });
     const parts: Phaser.GameObjects.GameObject[] = [panel, title, waveText, score];

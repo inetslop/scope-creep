@@ -6,6 +6,7 @@ import { draftPool, rollOffer } from '../core/augments';
 import type { RunState } from '../core/run';
 import { draftCardsFor } from '../core/techEffects';
 import { levelBuildSeconds } from '../core/levels';
+import { clearSavedRun } from '../core/saveRun';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { SCENES } from '../scenes/keys';
@@ -180,6 +181,15 @@ export class RunFlow {
     } else {
       this.openDraft();
     }
+  }
+
+  /** Quit from the pause card: the run can't be resumed, so it ends as if it were lost (the end
+   * card opens titled "Run ended"), its save is cleared, and the run pays from wave 10 on. */
+  endRunIntentionally(): void {
+    this.run.phase = 'over';
+    clearSavedRun(window.localStorage);
+    this.scene.registry.set('runEnded', true);
+    this.endRun(); // the private one: towerKills flag, hud stop, GameOverScene start
   }
 
   private endRun(): void {

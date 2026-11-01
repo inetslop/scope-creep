@@ -28,6 +28,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['resume.taken', (g) => (g.registry.get('resumeRun') ? 'a saved run is waiting for the game that never took it' : null)],
   ['ghost.taken', (g) => (g.registry.get('ghostSeed') ? 'a ghost seed is waiting for the game that never took it' : null)],
   ['iron.taken', (g) => (g.registry.get('ironMode') ? 'an iron flag is waiting for the game that never took it' : null)],
+  ['run.ended', (g) => (g.registry.get('runEnded') ? 'the run-ended flag was left behind for the next run' : null)],
   ['daily.taken', (g) => (g.registry.get('dailyPick') ? 'a daily pick is waiting for the game that never took it' : null)],
   ['bossDeath.name', (g) => {
     const name = g.registry.get('bossDeathName');

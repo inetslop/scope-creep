@@ -31,10 +31,10 @@ describe('profile', () => {
   it('a recorded Iron run pays the doubled payout', () => {
     const store = memory();
     store.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2'] }));
-    const owned = recordRun(store, { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2, mul: 2 });
+    const owned = recordRun(store, { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2, mul: 2, reached: 10 });
     expect(owned.coins).toBe(16); // (1 + 1 + 6) * 2, the claim node's term first
-    expect(recordRun(memory(), { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2, mul: 2 }).coins).toBe(10); // (1 + 1 + 3) * 2
-    expect(recordRun(memory(), { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2 }).coins).toBe(5); // an ordinary run is untouched
+    expect(recordRun(memory(), { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2, mul: 2, reached: 10 }).coins).toBe(10); // (1 + 1 + 3) * 2
+    expect(recordRun(memory(), { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2, reached: 10 }).coins).toBe(5); // an ordinary run is untouched
   });
 
   it('the level augments\' multiplier scales the whole payout, after the mode\'s, rounded down once', () => {
@@ -55,9 +55,9 @@ describe('profile', () => {
   it('a recorded run pays the doubled clean term only once the claim node is owned', () => {
     const store = memory();
     store.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2'] }));
-    const owned = recordRun(store, { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2 });
+    const owned = recordRun(store, { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2, reached: 10 });
     expect(owned.coins).toBe(8); // 1 wave + a coin per ten stopped + 3 clean waves paying two each
-    expect(recordRun(memory(), { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2 }).coins).toBe(5);
+    expect(recordRun(memory(), { waves: 1, stopped: 10, clean: 3, seed: 105, bgen: 2, reached: 10 }).coins).toBe(5);
   });
 
   it('the Flawless node adds ten coins when every held wave is clean, and the term drops off when one is not', () => {
@@ -73,10 +73,10 @@ describe('profile', () => {
   it('a recorded flawless run pays the ten coins only while the Flawless node is owned', () => {
     const store = memory();
     store.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2', 'flawless'] }));
-    expect(recordRun(store, { waves: 3, stopped: 0, clean: 3, seed: 106, bgen: 2 }).coins).toBe(19); // 3 waves + 3 clean at two each + 10
+    expect(recordRun(store, { waves: 3, stopped: 0, clean: 3, seed: 106, bgen: 2, reached: 10 }).coins).toBe(19); // 3 waves + 3 clean at two each + 10
     const noNode = memory();
     noNode.setItem('chokepoint:profile', JSON.stringify({ purchased: ['clean2'] }));
-    expect(recordRun(noNode, { waves: 3, stopped: 0, clean: 3, seed: 106, bgen: 2 }).coins).toBe(9); // the same run without the node
+    expect(recordRun(noNode, { waves: 3, stopped: 0, clean: 3, seed: 106, bgen: 2, reached: 10 }).coins).toBe(9); // the same run without the node
   });
 
   it('loads an empty profile from missing or broken storage', () => {
@@ -92,15 +92,15 @@ describe('profile', () => {
 
   it('records the first run and keeps the best over later runs', () => {
     const store = memory();
-    const first = recordRun(store, { waves: 5, stopped: 40, clean: 2, seed: 101, bgen: 2 });
-    expect(first.coins).toBe(11);
+    const first = recordRun(store, { waves: 12, stopped: 40, clean: 2, seed: 101, bgen: 2 });
+    expect(first.coins).toBe(18);
     expect(first.newBest).toBe(true);
-    expect(first.profile).toEqual({ bestWave: 5, bestSeed: 101, bestSeedBgen: 2, ironBestWave: 0, runsPlayed: 1, coins: 11, purchased: [], lastRun: { wave: 5, coins: 11 }, recent: [{ wave: 5, coins: 11 }], sound: true, levelSlots: 0, levelOn: [] });
+    expect(first.profile).toEqual({ bestWave: 12, bestSeed: 101, bestSeedBgen: 2, ironBestWave: 0, runsPlayed: 1, coins: 18, purchased: [], lastRun: { wave: 12, coins: 18 }, recent: [{ wave: 12, coins: 18 }], sound: true, levelSlots: 0, levelOn: [] });
 
-    const second = recordRun(store, { waves: 3, stopped: 10, clean: 1, seed: 102, bgen: 2 });
+    const second = recordRun(store, { waves: 11, stopped: 10, clean: 1, seed: 102, bgen: 2 });
     expect(second.newBest).toBe(false);
-    expect(second.profile).toEqual({ bestWave: 5, bestSeed: 101, bestSeedBgen: 2, ironBestWave: 0, runsPlayed: 2, coins: 16, purchased: [], lastRun: { wave: 3, coins: 5 }, recent: [{ wave: 3, coins: 5 }, { wave: 5, coins: 11 }], sound: true, levelSlots: 0, levelOn: [] });
-    expect(loadProfile(store).coins).toBe(16);
+    expect(second.profile).toEqual({ bestWave: 12, bestSeed: 101, bestSeedBgen: 2, ironBestWave: 0, runsPlayed: 2, coins: 31, purchased: [], lastRun: { wave: 11, coins: 13 }, recent: [{ wave: 11, coins: 13 }, { wave: 12, coins: 18 }], sound: true, levelSlots: 0, levelOn: [] });
+    expect(loadProfile(store).coins).toBe(31);
   });
 
   it('a zero-wave run adds no coins but still counts as a run', () => {
@@ -108,6 +108,17 @@ describe('profile', () => {
     const result = recordRun(store, { waves: 0, stopped: 0, clean: 0, seed: 103, bgen: 2 });
     expect(result.coins).toBe(0);
     expect(result.profile).toEqual({ bestWave: 0, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 1, coins: 0, purchased: [], lastRun: { wave: 0, coins: 0 }, recent: [{ wave: 0, coins: 0 }], sound: true, levelSlots: 0, levelOn: [] });
+  });
+
+  it('pays coins only from wave 10 on, and still counts the run before it', () => {
+    const store = memory();
+    const short = recordRun(store, { waves: 8, stopped: 40, clean: 2, seed: 121, bgen: 2, reached: 9 });
+    expect(short.coins).toBe(0);
+    expect(short.profile).toEqual({ bestWave: 8, bestSeed: 121, bestSeedBgen: 2, ironBestWave: 0, runsPlayed: 1, coins: 0, purchased: [], lastRun: { wave: 8, coins: 0 }, recent: [{ wave: 8, coins: 0 }], sound: true, levelSlots: 0, levelOn: [] });
+    const ten = recordRun(store, { waves: 9, stopped: 30, clean: 1, seed: 122, bgen: 2, reached: 10 }); // died during wave 10
+    expect(ten.coins).toBe(13); // 9 + 3 + 1, as before the gate
+    expect(ten.profile.coins).toBe(13);
+    expect(ten.profile.recent).toEqual([{ wave: 9, coins: 13 }, { wave: 8, coins: 0 }]);
   });
 
   it('stores the seed of the run that sets the best wave, and only of it', () => {
@@ -185,12 +196,12 @@ describe('profile', () => {
   it('keeps the four most recent runs, newest first', () => {
     const store = memory();
     let seed = 200;
-    for (const waves of [5, 3, 8, 2, 9]) recordRun(store, { waves, stopped: 0, clean: 0, seed: ++seed, bgen: 2 });
+    for (const waves of [12, 11, 13, 10, 14]) recordRun(store, { waves, stopped: 0, clean: 0, seed: ++seed, bgen: 2 });
     expect(loadProfile(store).recent).toEqual([
-      { wave: 9, coins: 9 },
-      { wave: 2, coins: 2 },
-      { wave: 8, coins: 8 },
-      { wave: 3, coins: 3 },
+      { wave: 14, coins: 14 },
+      { wave: 10, coins: 10 },
+      { wave: 13, coins: 13 },
+      { wave: 11, coins: 11 },
     ]);
   });
 });

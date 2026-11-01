@@ -3,6 +3,9 @@ import { getLevelAugment } from '../content/levels';
 /** The wave a run reaches to earn the first level slot: the wave has started (a run dying during it counts). */
 export const LEVEL_UNLOCK_WAVE = 30;
 
+/** The wave a run reaches to earn coins at all: the wave has started (a run dying during it counts), the same reading as the level unlock. */
+export const REWARD_WAVE = 10;
+
 /** A run that reached the unlock wave with every unlocked slot filled earns one more slot, capped at the set's size.
  * 0 filled counts as all filled, so the first earn is the first slot. Never fewer. */
 export function levelSlotsAfter(old: number, wavesReached: number, on: number, setSize: number): number {
