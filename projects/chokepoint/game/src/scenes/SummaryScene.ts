@@ -72,7 +72,7 @@ export class SummaryScene extends Phaser.Scene {
     const run = getGameScene(this).run;
     const towers = getGameScene(this).towers.towers;
     const PAD = 28, GAP = 10, GAP_BIG = 20, CHIP_W = 64, CHIP_H = 34, GAP_X = 8, PER_ROW = 4, ROW_GAP_Y = 10, LINE_H = 14;
-    const ENTRY_H = CHIP_H + 4 + LINE_H; // the chip, its 4 px gap, and the ≈N/s line under it
+    const ENTRY_H = CHIP_H + 4 + LINE_H + 4 + LINE_H; // the chip, the ≈N/s line and the dmg line under it, each with its 4 px gap
 
     // The claim card's own reads, in the claim card's order: its labels, values and colors.
     // No coins or coin recipe: the pause's worth line already pays them.
@@ -96,7 +96,7 @@ export class SummaryScene extends Phaser.Scene {
 
     // The towers paying, from the same live read the end card's by-tower card uses.
     const entries = towers
-      .map((t) => ({ first: t.augments[0]?.id, tier: t.augments[0]?.tier, kills: t.kills, perSec: Math.floor(towerDps(t.spec, t.rallyRateMul)) }))
+      .map((t) => ({ first: t.augments[0]?.id, tier: t.augments[0]?.tier, kills: t.kills, damage: Math.floor(t.damageDealt), perSec: Math.floor(towerDps(t.spec, t.rallyRateMul)) }))
       .sort((a, b) => b.kills - a.kills || (a.first ?? '').localeCompare(b.first ?? ''));
     const entryRows = Math.ceil(entries.length / PER_ROW);
     let heading: Phaser.GameObjects.Text | undefined;
@@ -222,6 +222,8 @@ export class SummaryScene extends Phaser.Scene {
         parts.push(chip);
         // The panel's condition: no line for a tower that does no damage per second.
         if (t.perSec >= 1) parts.push(this.add.text(x, rowTop + CHIP_H + 4 + LINE_H / 2, `≈ ${t.perSec}/s`, textStyle(11, PALETTE.muted)).setOrigin(0.5));
+        // Its damage term, always shown: a support that deals none reads 0, like its kills line.
+        parts.push(this.add.text(x, rowTop + CHIP_H + 4 + LINE_H + 4 + LINE_H / 2, `dmg ${t.damage}`, textStyle(11, PALETTE.muted)).setOrigin(0.5));
       });
     }
     this.box = this.add.container(0, 0, parts);

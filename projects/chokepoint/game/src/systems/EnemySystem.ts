@@ -10,6 +10,7 @@ import { mintGoldBonus } from '../core/mint';
 import { burnRate, burnStep } from '../core/burn';
 import { TICK_SEC } from '../config';
 import { plateMul } from '../core/plate';
+import { shieldMul } from '../core/shield';
 import { CONTROL_WINDOW_SEC } from '../core/control';
 import { pickNearest } from '../core/targeting';
 import { bossId, quietGoldMul } from '../core/waves';
@@ -123,6 +124,7 @@ export class EnemySystem {
       const crit = e.burnSource ? this.crit(e.burnSource.spec.critChance) : false;
       const dealt = damage * (crit ? 2 : 1);
       if (crit) critChip(this.fx, e.x, e.y);
+      if (e.burnSource) e.burnSource.damageDealt += dealt * shieldMul(e.def, e.shielded); // the igniter's damage term, halved by the shield like the tick
       if (e.hit(dealt, false)) { this.kill(e, e.burnSource); break; }
     }
   }
@@ -135,6 +137,7 @@ export class EnemySystem {
     const crit = this.crit(source.spec.critChance);
     const dealt = damage * (crit ? 2 : 1);
     if (crit) critChip(this.fx, target.x, target.y);
+    source.damageDealt += dealt * shieldMul(target.def, target.shielded); // the ledger's damage term, halved by the shield like the tick
     if (target.hit(dealt, false)) this.kill(target, source);
   }
 
@@ -214,6 +217,7 @@ export class EnemySystem {
       if (pMul < 1) e.plated = true; // the plate halved a face hit; the hook lights it
       const damage = payload.damage * pMul * (crit ? 2 : 1);
       if (crit) critChip(this.fx, e.x, e.y);
+      payload.source.damageDealt += damage * shieldMul(e.def, e.shielded); // the ledger's damage term: as dealt, halved by the shield like the hit
       if (e.hit(damage)) { this.kill(e, payload.source); return true; }
     }
     return false;

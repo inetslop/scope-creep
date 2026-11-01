@@ -4,11 +4,12 @@ title: "The ledger's damage terms: damage per tower on the Summary's rows"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-11-01T07:03:24Z
 claimed_at: 2026-11-01T08:23:56Z
+finished_at: 2026-11-01T08:44:13Z
 epic: E12
 ---
 
@@ -100,4 +101,19 @@ error: cannot lock ref 'refs/remotes/origin/main': is at bb9d34aab10ca2da77985cd
     at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:260:5)
     at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
     at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
+
+## Result (attempt 2, asus)
+
+The pause's Summary now shows each standing tower's damage dealt this run: a new `damageDealt` field on `Tower` (src/entities/Tower.ts:57) is tallied in `EnemySystem` at the three places damage lands (src/systems/EnemySystem.ts — `strike`, `beamTick`, `tickBurn`), counting as dealt — post-crit, post-plate, shield-halved, not hp-clamped — so an Ember reads its burn damage even when another tower takes the kill, and support towers read 0 like their kills line. The Summary's by-tower rows (src/scenes/SummaryScene.ts) gain an always-shown muted `dmg N` line under the ≈N/s read with the row height grown to match; kills, ≈N/s, the end card and claim card chips are untouched, and the term resets on resume exactly like kills (not persisted in the save). A `towers.damageLedger` invariant (src/debug/runChecks.ts) guards against a non-finite or negative tally. `npm run check` and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 20.3 min
+
+```
+projects/chokepoint/game/src/debug/runChecks.ts     | 4 ++++
+ projects/chokepoint/game/src/entities/Tower.ts      | 2 ++
+ projects/chokepoint/game/src/scenes/SummaryScene.ts | 6 ++++--
+ projects/chokepoint/game/src/systems/EnemySystem.ts | 4 ++++
+ 4 files changed, 14 insertions(+), 2 deletions(-)
 ```
