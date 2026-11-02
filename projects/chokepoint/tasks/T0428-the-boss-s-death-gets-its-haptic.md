@@ -4,11 +4,12 @@ title: "The boss's death gets its haptic"
 assignee: yoga
 size: S
 priority: 3
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T14:32:01Z
 claimed_at: 2026-11-02T14:43:41Z
+finished_at: 2026-11-02T14:52:57Z
 ---
 
 ## Goal
@@ -51,3 +52,16 @@ export const PATTERNS: Record<HapticKind, number[]> = { place: [20], leak: [80],
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The boss death now buzzes the phone: a 200 ms `boss` haptic (heavier end of the run's haptics, above the leak's 80 ms) fires beside each of the bossDeath hook's two `Sfx.bossDown` moments — a killed Colossus/Titan buzzes in `onKill`, the Orb's death in `update()` — so each stopped boss buzzes exactly once per run, and three bosses buzz three times. The call goes through the existing `haptic()` guard, so desktop and unsupported browsers stay byte-identical no-ops; the existing place (20 ms) and leak (80 ms) patterns are untouched and no HUD, key or toggle was added. `src/input/haptics.ts` gains the `'boss'` kind and its pattern; `src/systems/enemyHooks/bossDeath.ts` gains the import and the two calls with their doc lines. `npm run check` and the desktop + mobile smoke both pass.
+
+- Self-review: APPROVE
+- Time: 9.3 min
+
+```
+projects/chokepoint/game/src/input/haptics.ts               | 13 +++++++------
+ .../chokepoint/game/src/systems/enemyHooks/bossDeath.ts     |  8 +++++++-
+ 2 files changed, 14 insertions(+), 7 deletions(-)
+```

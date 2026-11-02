@@ -1,4 +1,5 @@
 import { bossId } from '../../core/waves';
+import { haptic } from '../../input/haptics';
 import type { MakeEnemyHook } from './hook';
 
 /**
@@ -10,6 +11,7 @@ import type { MakeEnemyHook } from './hook';
  * Its horn (Sfx.bossDown, T0302) answers the death: the Colossus's and the Titan's kill, and
  * the Orb's split (midSplit's ring beat, where the Orb is gone with no kill) — the split's
  * moment: the frame it goes from alive at its split line to gone, not once per window frame.
+ * Its haptic (input/haptics.ts, T0428) buzzes the same two moments: 200 ms, once per boss.
  */
 export const bossDeath: MakeEnemyHook = ({ run, scene, enemies, sfx }) => {
   let lastAlive = false;
@@ -20,6 +22,7 @@ export const bossDeath: MakeEnemyHook = ({ run, scene, enemies, sfx }) => {
       if (bossId(run.wave) !== enemy.def.id) return;
       scene.registry.set('bossDeathName', enemy.def.name);
       sfx?.bossDown();
+      haptic('boss');
     },
     onLeak(enemy) {
       if (bossId(run.wave) === enemy.def.id) leaked = true;
@@ -40,7 +43,10 @@ export const bossDeath: MakeEnemyHook = ({ run, scene, enemies, sfx }) => {
         // At the split line (at or below `hpFrac` of its max; a corpse counts: the window can end at hp 0).
         if (e.def.splitsAt !== undefined && e.hp <= e.maxHp * e.def.splitsAt.hpFrac) atLine = true;
       }
-      if (!alive && lastAlive && lastAtLine && !leaked) sfx?.bossDown();
+      if (!alive && lastAlive && lastAtLine && !leaked) {
+        sfx?.bossDown();
+        haptic('boss');
+      }
       lastAlive = alive;
       lastAtLine = atLine;
       leaked = false;
