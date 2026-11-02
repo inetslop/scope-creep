@@ -3,10 +3,12 @@ id: T0442
 title: "The combo bar wears the Feast window: the drain bar follows the live chain window"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T20:29:42Z
+claimed_at: 2026-11-02T20:29:52Z
+designer: yoga
 ---
 
 ## Goal
