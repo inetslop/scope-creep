@@ -171,6 +171,40 @@ export function doubleLull(plan: WavePlan): WavePlan {
 }
 
 /**
+ * Every 11th wave from wave 26 is clumps (26, 59, 103, ... — 37 is the double wave's slot, 48 and 92 quiet
+ * waves, 70 the boss wave's and 81 a rush wave): the wave's enemies walk in clumps of 2 and 3, the gap
+ * between the clumps breaking the kill chain. It yields to a quiet, tight, rush, short cut, double or
+ * boss wave, which keeps its own tag.
+ */
+export function isClumpsWave(wave: number): boolean {
+  return wave >= 26 && (wave - 26) % 11 === 0 && !isQuietWave(wave) && !isTightWave(wave) && !isRushWave(wave) && !isShortCutWave(wave) && !isDoubleWave(wave) && !isBossWave(wave);
+}
+
+/** The gap between a clumps wave's clumps: exactly this much simulation time with no enemy on the road. */
+export const CLUMPS_GAP_SEC = 4;
+
+/** A clumps wave's clump-boundary indices, where the 2, 3, 2, 3, ... clumps end (clumpBoundaries(10) is [2, 5, 7]). */
+export function clumpBoundaries(count: number): number[] {
+  const at: number[] = [];
+  for (let i = 0, k = 0; i < count; k += 1) {
+    i += Math.min(k % 2 === 0 ? 2 : 3, count - i);
+    if (i < count) at.push(i);
+  }
+  return at;
+}
+
+/**
+ * A clumps wave's plan: the same enemies in the same order, grouped 2, 3, 2, 3, ... (the last clump takes
+ * whatever is left, 1–3). Every gap where a clump ends is replaced by CLUMPS_GAP_SEC (not added to), the
+ * wave's normal interval holding inside a clump; the gap is simulation time, so 2× fast-forward scales it.
+ * The 4 s gap always breaks the chain: the chain's window is 1.5 s + 0.4 s per Feast (core/feast.ts).
+ */
+export function clumpsGap(plan: WavePlan): WavePlan {
+  const at = new Set(clumpBoundaries(plan.spawns.length));
+  return { ...plan, spawns: plan.spawns.map((s, i) => (at.has(i) ? { ...s, delaySec: CLUMPS_GAP_SEC } : s)) };
+}
+
+/**
  * Which enemies a wave sends, in order, and when. A boss wave is exactly one boss — the Colossus,
  * the Guard and the Titan on wave 20, the Orb on wave 30, the Hive on wave 40, the Flyer on wave 50,
  * the Blinker on wave 60, the Wards and the Mender on wave 70, the Haulers and the Leech on wave 80,
@@ -272,7 +306,7 @@ function planNormalWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): W
   if (wave >= 12 && (wave - 12) % 4 === 0 && !finalSpawns.some((s) => s.enemy === 'bulwark')) finalSpawns = [{ enemy: 'bulwark', delaySec: 0 }, ...finalSpawns];
   // A Ward wave always sends its Ward, even when the halving would drop it: it walks in first (wave 20 is the boss's slot).
   if (wave >= 15 && wave % 5 === 0 && wave !== 20 && !finalSpawns.some((s) => s.enemy === 'ward')) finalSpawns = [{ enemy: 'ward', delaySec: 0 }, ...finalSpawns];
-  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : isShortCutWave(wave) ? ['short cut'] : isDoubleWave(wave) ? ['double'] : [] };
+  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : isShortCutWave(wave) ? ['short cut'] : isDoubleWave(wave) ? ['double'] : isClumpsWave(wave) ? ['clumps'] : [] };
 }
 
 /**

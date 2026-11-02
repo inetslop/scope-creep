@@ -1,5 +1,5 @@
 import { PALETTE } from '../content/palette';
-import { isBossWave, isDoubleWave, isQuietWave, isRushWave, isShortCutWave, isTightWave } from './waves';
+import { isBossWave, isClumpsWave, isDoubleWave, isQuietWave, isRushWave, isShortCutWave, isTightWave } from './waves';
 
 export interface WaveTagRow {
   tag: string;
@@ -23,6 +23,7 @@ export const WAVE_TAG_ROWS: WaveTagRow[] = [
   { tag: 'boss', chip: PALETTE.purpleDeep, name: 'boss', meaning: 'one big shape, instead of a crowd', when: 'every 10th wave', rule: isBossWave },
   { tag: 'rush', chip: PALETTE.orangeDeep, name: 'rush', meaning: 'the walkers move 1.5× faster', when: 'every 7th, from 11', rule: isRushWave },
   { tag: 'double', chip: PALETTE.yellowDeep, name: 'double', meaning: 'it comes in two fronts, the second faster', when: 'every 8th, from 21', rule: isDoubleWave },
+  { tag: 'clumps', chip: PALETTE.greenDeep, name: 'clumps', meaning: 'they come in clumps, the gaps break the chain', when: 'every 11th, from 26', rule: isClumpsWave },
   { tag: 'short cut', chip: PALETTE.tealDeep, name: 'short cut', meaning: 'they come in mid-road', when: 'every 9th, from 16', rule: isShortCutWave },
 ];
 

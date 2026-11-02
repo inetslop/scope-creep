@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { isBossWave, isDoubleWave, isQuietWave, isShortCutWave, isTightWave } from '../../src/core/waves';
+import { isBossWave, isClumpsWave, isDoubleWave, isQuietWave, isShortCutWave, isTightWave } from '../../src/core/waves';
 import { WAVE_TAG_ROWS, nextTaggedWave } from '../../src/core/waveTags';
 
 /**
@@ -17,10 +17,12 @@ describe('wave tags reference', () => {
     expect(nextTaggedWave(0, isShortCutWave)).toBe(34); // 16 is the quiet wave's slot, 25 the rush wave's
     expect(nextTaggedWave(34, isShortCutWave)).toBe(43);
     expect(nextTaggedWave(0, isDoubleWave)).toBe(21);
+    expect(nextTaggedWave(0, isClumpsWave)).toBe(26);
+    expect(nextTaggedWave(26, isClumpsWave)).toBe(59); // 37 is the double wave's slot
   });
-  it("lists the six tags in the order the run meets them, each with the game's own rule", () => {
-    expect(WAVE_TAG_ROWS.map((r) => r.tag)).toEqual(['quiet', 'tight', 'boss', 'rush', 'double', 'short cut']);
-    const first = [4, 6, 10, 11, 21, 34];
+  it("lists the seven tags in the order the run meets them, each with the game's own rule", () => {
+    expect(WAVE_TAG_ROWS.map((r) => r.tag)).toEqual(['quiet', 'tight', 'boss', 'rush', 'double', 'clumps', 'short cut']);
+    const first = [4, 6, 10, 11, 21, 26, 34];
     WAVE_TAG_ROWS.forEach((row, i) => expect(row.rule(first[i]!)).toBe(true));
   });
 });

@@ -4,7 +4,7 @@ import { isFarGateSpawn } from '../core/farGate';
 import { levelCountMul, levelSpeedMul } from '../core/levels';
 import type { RunState } from '../core/run';
 import { waveWalkFactor } from '../core/tech';
-import { DOUBLE_SPEED_MUL, doubleLull, doubleSplitAt, isDoubleWave, planWave, planWithLevel, shortCutSpawnDistance, type WavePlan, waveSpeedMul } from '../core/waves';
+import { DOUBLE_SPEED_MUL, clumpsGap, doubleLull, doubleSplitAt, isClumpsWave, isDoubleWave, planWave, planWithLevel, shortCutSpawnDistance, type WavePlan, waveSpeedMul } from '../core/waves';
 import { hook } from '../debug/testHook';
 import { tagHaptic } from '../input/haptics';
 import type { EnemySystem } from './EnemySystem';
@@ -56,8 +56,8 @@ export class WaveSystem {
     this.livesAtStart = this.run.lives;
     this.heldLost = 0;
     const plan0 = this.planned ?? planWithLevel(planWave(this.run.wave, this.run.rng, ENEMIES), levelCountMul(this.run.level));
-    // The double (core/waves.ts) rides the plan actually sent: its lull and its faster second front are cut here, after the level's extras.
-    this.plan = isDoubleWave(plan0.number) ? doubleLull(plan0) : plan0;
+    // The double and the clumps (core/waves.ts) ride the plan actually sent: their lulls and gaps are cut here, after the level's extras.
+    this.plan = isDoubleWave(plan0.number) ? doubleLull(plan0) : isClumpsWave(plan0.number) ? clumpsGap(plan0) : plan0;
     this.planned = undefined;
     this.next = 0;
     this.timer = 0;

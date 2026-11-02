@@ -4,11 +4,12 @@ title: "The clumps: the wave that walks in clumps"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T22:27:29Z
 claimed_at: 2026-11-02T23:26:13Z
+finished_at: 2026-11-03T00:01:01Z
 epic: E22
 ---
 
@@ -115,3 +116,23 @@ tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave
 ### Tests
 - `tests/core/clumpsWaves.test.ts` (new, model `doubleWaves.test.ts`): `isClumpsWave` on `[24,25,26,36,37,47,48,58,59,69,70,80,81,91,92,102,103]` → `[false,false,true,false,false,false,false,true,false,false,false,false,false,false,false,true,true]`; collisions keep their own tag (`planWave(37)` `['double']`, `48` `['quiet']`, `70` `['boss']`, `81` `['rush']`, `92` `['quiet']`); `planWave(26)` wears `['clumps']`, starts at 0, non-negative gaps; `clumpsGap` on a ten-spawn dot plan → delays `[0,1,4,1,1,4,1,4,1,1]`, seven → `[0,1,4,1,1,4,1]`, four → `[0,1,4,1]`, three → unchanged, order kept; `clumpBoundaries(10)` `[2,5,7]`; `CLUMPS_GAP_SEC === 4`; seeded range 1–100 with the full seven-branch chain, one tag at most, no boss wave clumps, every clumps plan's boundary gaps are `CLUMPS_GAP_SEC`.
 - Edit `waveTags.test.ts`: order `['quiet','tight','boss','rush','double','clumps','short cut']`, `first = [4,6,10,11,21,26,34]`, and `expect(nextTaggedWave(0, isClumpsWave)).toBe(26)` / `nextTaggedWave(26, isClumpsWave)` `59` (37 is the double's slot).
+
+## Result (attempt 1, inet-racing)
+
+Added the sixth wave tag "clumps": from wave 26 every 11th non-quiet/tight/rush/short-cut/double/boss wave (26, 59, 103, …) walks in clumps of 2 and 3 with a 4 s simulation-time gap between clumps (`isClumpsWave`, `CLUMPS_GAP_SEC`, `clumpBoundaries`, `clumpsGap` in `core/waves.ts`, applied in `WaveSystem.start()` after the level's extras, like the double's lull), a `greenDeep` chip row in `core/waveTags.ts` feeding the preview chip, banner and pause waves reference, a one-time teach line in `NextWavePreview.ts`, a `waves.clumpsPlan` invariant, and new/updated unit tests. Two places in the task's test notes contradicted the design's own `isClumpsWave` formula and `clumpBoundaries` implementation (the pinned array marked waves 58 and 102, and "three spawns → unchanged"); I followed the formula/implementation, which yields clumps at 26/59/103 and splits a three-spawn wave 2+1 with a gap — all other design details were followed as written.
+
+- Self-review: APPROVE
+- Time: 34.8 min
+
+```
+projects/chokepoint/game/src/core/waveTags.ts      |  3 +-
+ projects/chokepoint/game/src/core/waves.ts         | 36 ++++++++++-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  3 +-
+ projects/chokepoint/game/src/systems/WaveSystem.ts |  6 +-
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  |  1 +
+ .../chokepoint/game/tests/core/clumpsWaves.test.ts | 75 ++++++++++++++++++++++
+ .../chokepoint/game/tests/core/doubleWaves.test.ts |  3 +-
+ .../game/tests/core/shortCutWaves.test.ts          |  4 +-
+ .../chokepoint/game/tests/core/waveTags.test.ts    | 10 +--
+ 9 files changed, 128 insertions(+), 13 deletions(-)
+```
