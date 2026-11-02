@@ -1,12 +1,14 @@
 ---
 id: T0417
 title: "The island's note: the board's settle gets its thud"
+assignee: asus
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T10:20:00Z
+claimed_at: 2026-11-02T13:46:47Z
 ---
 
 ## Goal
