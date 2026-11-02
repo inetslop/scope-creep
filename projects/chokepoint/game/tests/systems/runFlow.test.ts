@@ -90,7 +90,7 @@ function fakeClearFlow(wave: number) {
       towers: { towers: [] },
       building: { cancelPending: () => calls.push('cancelPending') },
       fx: { popText: () => calls.push('popText'), cleanLines: () => calls.push('cleanLines') },
-      sfx: { waveClear: () => calls.push('waveClear'), waveSweep: () => calls.push('waveSweep') },
+      sfx: { waveClear: () => calls.push('waveClear'), waveSweep: () => calls.push('waveSweep'), cleanClear: () => calls.push('cleanClear') },
     } as unknown as RunSystems,
   );
   return { run, flow, calls, fireBeat: () => beat?.() };

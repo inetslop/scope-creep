@@ -4,11 +4,12 @@ title: The wave clear gets its note
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T06:19:02Z
 claimed_at: 2026-11-02T06:24:22Z
+finished_at: 2026-11-02T06:33:33Z
 ---
 
 ## Goal
@@ -57,3 +58,17 @@ cleanClear(): void {
 
 ### Tests
 - none (audio polish).
+
+## Result (attempt 1, yoga)
+
+A perfectly held wave now has its own quiet note to go with the green chip and the sweep: a soft two-note rise (sine C5 then E5, 80 ms each, volume 0.1 — a step below the claim's coin chime). One new method `cleanClear()` on `Sfx`, called from the clean branch of `RunFlow.clearWave()` at the chip's pop — mode-blind, once per clean wave, silent when sound is off, and nothing plays on a held wave. `npm run check` and desktop + mobile smoke pass.
+
+- Self-review: APPROVE
+- Time: 9.2 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts              | 6 ++++++
+ projects/chokepoint/game/src/systems/RunFlow.ts        | 1 +
+ projects/chokepoint/game/tests/systems/runFlow.test.ts | 2 +-
+ 3 files changed, 8 insertions(+), 1 deletion(-)
+```

@@ -239,6 +239,7 @@ export class RunFlow {
       const second = this.run.cleanStreakLine(!streakPaidBefore && this.run.streakPaid);
       // Under the wave-cleared text, for the beat before the draft veils the board.
       this.s.fx.cleanLines(cx, cy + 40, second);
+      this.s.sfx?.cleanClear();
       if (cleanBefore === 0) streakTeach(this.s.fx, cx, cy + 40 + 52); // run's first clean wave: cleanWaves still 0, the muted line names the pay
       this.scene.time.delayedCall(1000, () => this.proceedToDraft());
     } else {
