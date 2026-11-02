@@ -3,11 +3,13 @@ id: T0450
 title: "The draft branch and its first node, The early odds: the rare odds start at wave 1"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T23:11:28Z
+claimed_at: 2026-11-02T23:32:19Z
 epic: E23
+designer: cachyos-x8664
 ---
 
 ## Goal
