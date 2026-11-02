@@ -143,6 +143,7 @@ Ideas that may become epics or tasks of one.
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **E13 done 2026-11-01** (far gate T0338, fork T0352, marked cell T0340, boards reference T0350); the cove — a bay in the island's edge whose pocket cells double-cover the road's curve — **done as T0409 (2026-11-02)**; the slow stretch — ~1-in-4 boards, a 3-cell run of road where walkers cross at 70% — **tasked as T0416 (M, 2026-11-02)**
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **built as T0239 (L, non-epic, 2026-10-30, asus)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
+- The Mute's silence gets its note — one soft held tone while any Mute holds a tower (the sky note's pattern, T0376) — **tasked as T0419 (M, non-epic, 2026-11-02)**
 - Run summary — **all built (T0216, T0306, T0333, T0336, T0345)**: kills and damage per tower, leaks per wave, the mid-run story line
 - The board shows its corners: a notch on the bend cells — **built as T0140 (2026-10-29), removed as T0227 (2026-10-29)**
 - Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **built as T0217 (2026-10-30, asus)**

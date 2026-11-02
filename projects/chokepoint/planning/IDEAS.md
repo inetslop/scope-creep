@@ -149,6 +149,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The switchback — **built as T0310 (M, E9, 2026-11-01, asus)**: the board branch's fourth node — the road folds back on itself into a corridor of double-cover build cells
 - The wave card remembers a held wave — **built as T0218 (M, non-epic, 2026-10-29)**: a muted "held · N" chip after a wave that lost lives, until the next wave
 - The Mute shows its silence — **built as T0219 (2026-10-29, yoga)**: a quiet purple ring under the Mute, once a second while it holds a tower still
+- The Mute's silence gets its note — one soft held tone plays while any Mute holds a tower (the sky note's own pattern, T0376), so the silence is heard where the eye is not — **tasked as T0419 (M, non-epic, 2026-11-02)**
 - The Augments codex — **built as T0221 (2026-10-29, desktop)**: a menu screen that shows the whole pool at a glance, one small card per augment (T0248's lock marks the gated ones)
 - The end card's towers wear their tier — **built as T0228 (S, E4, 2026-10-29, asus)**: the by-tower chip wears T0010's tier pip beside the icon
 - The draft shows where the card lands — **built as T0243 (2026-10-30, desktop)**: each offered card wears the small tokens of the towers with a free slot the card would land on
