@@ -3,10 +3,12 @@ id: T0401
 title: "The pause's Ahead card: the two waves after next"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T03:32:09Z
+claimed_at: 2026-11-02T04:16:15Z
+designer: cachyos-x8664
 ---
 
 ## Goal
