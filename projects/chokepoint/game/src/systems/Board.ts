@@ -26,7 +26,6 @@ export class Board {
   private readonly scene: Phaser.Scene;
   private readonly towers: (Tower | undefined)[][];
   private readonly hover: Phaser.GameObjects.Graphics;
-  private readonly range: Phaser.GameObjects.Graphics;
   private readonly moveOutlines: Phaser.GameObjects.Graphics;
   /** The whole board's drawing (island, road, rocks): shown at rest, one transform per frame. */
   private boardImage!: Phaser.GameObjects.Image;
@@ -46,7 +45,6 @@ export class Board {
     this.towers = Array.from({ length: map.rows }, () => Array.from({ length: map.cols }, () => undefined));
     this.drawCells();
     this.hover = scene.add.graphics().setDepth(DEPTH.preview);
-    this.range = scene.add.graphics().setDepth(DEPTH.preview);
     this.moveOutlines = scene.add.graphics().setDepth(DEPTH.preview);
   }
 
@@ -208,16 +206,6 @@ export class Board {
       this.hover.lineStyle(2, color, 0.45);
       this.hover.strokeCircle(c.x, c.y, range);
     }
-  }
-
-  /** A range ring around a built tower (shown when it is tapped). */
-  showRange(p: Point | undefined, range: number): void {
-    this.range.clear();
-    if (!p) return;
-    this.range.fillStyle(PALETTE.ink, 0.06);
-    this.range.fillCircle(p.x, p.y, range);
-    this.range.lineStyle(2, PALETTE.ink, 0.35);
-    this.range.strokeCircle(p.x, p.y, range);
   }
 
   /**

@@ -4,11 +4,12 @@ title: "The tower shows its reach: the selected tower's range ring"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T00:29:33Z
 claimed_at: 2026-11-02T12:37:49Z
+finished_at: 2026-11-02T13:13:53Z
 ---
 
 ## Goal
@@ -71,3 +72,20 @@ export class RangeRing {
 
 ### Tests
 None — no core rule; the smoke run covers it: select a tower → teal ring at the panel's range, close → 150 ms fade, add a Reach to the open tower → radius grows live.
+
+## Result (attempt 1, asus)
+
+The selected tower now wears a teal range ring on the board while its panel is open — same look as the placement ring, radius exactly the panel's range stat, re-read every frame so committed slots and tower moves update it live — fading out over 150 ms on deselect. New `src/systems/RangeRing.ts` owns the ring and fade, wired with four lines in GameScene and an invariant in runChecks; the old one-shot ink ring (`Board.showRange` and all five `Building` call-sites, including the move state's) is removed, with the move state's what-if ring staying on `showHover`. `npm run check` and `npm run smoke` (desktop + mobile) pass.
+
+- Self-review: APPROVE
+- Time: 36.1 min
+
+```
+projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  4 ++
+ projects/chokepoint/game/src/systems/Board.ts      | 12 ----
+ projects/chokepoint/game/src/systems/Building.ts   |  9 +--
+ projects/chokepoint/game/src/systems/RangeRing.ts  | 69 ++++++++++++++++++++++
+ .../chokepoint/game/tests/systems/building.test.ts |  1 -
+ 6 files changed, 76 insertions(+), 20 deletions(-)
+```

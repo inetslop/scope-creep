@@ -170,6 +170,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   }],
   ['ward.control', (g) => (g.enemies.all.some((e) => e.active && e.def.id === 'ward' && (e.slowPct > 0 || e.rootLeft > 0 || e.pushLeft > 0)) ? 'a Ward is slowed, rooted or pushed' : null)],
   ['pushWindup.valid', (g) => g.windup.broken()],
+  ['rangeRing.valid', (g) => g.rangeRing.broken()],
   ['comboBar.valid', (g) => g.comboBar.broken()],
   ['feast.window', (g) => (Number.isFinite(g.fx.comboWindowMs) && g.fx.comboWindowMs >= FEAST_CHAIN_BASE_MS ? null : `the chain window is ${g.fx.comboWindowMs} ms`)],
   ['hand.selection', (g) => g.building.brokenSelection()],

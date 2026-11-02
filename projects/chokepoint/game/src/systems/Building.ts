@@ -213,7 +213,6 @@ export class Building {
     this.ghost.clearAll();
     this.board.clearMoveOutlines();
     this.board.showMoveOutlines();
-    this.board.showRange(undefined, 0);
     this.board.showHover(undefined, false, 0);
     tower.setDim(true);
     this.uiVersion += 1;
@@ -227,7 +226,6 @@ export class Building {
       if (wasTouch) this.cancelMove(); // a touch tap off the board ends the move (mouse waits for the ✓/✗)
       return;
     }
-    this.board.showRange(undefined, 0);
     if (!this.board.canBuild(cell)) { this.cancelMove(); return; } // a tap on anything but a free cell cancels
     if (this.pendingCell && this.pendingCell.col === cell.col && this.pendingCell.row === cell.row) { this.syncPending(); return; } // same cell: keep it
     this.pendingCell = cell;
@@ -255,8 +253,7 @@ export class Building {
     this.pendingCell = undefined;
     this.moveTower = undefined;
     this.board.showHover(undefined, false, 0);
-    this.selectTower(tower); // the panel reopens: its marked-cell line reads the buff that follows the tower
-    this.board.showRange(this.board.centerOf(cell), this.towers.rangeOf(tower)); // the ring at the cell it landed on
+    this.selectTower(tower); // the panel reopens; its range ring (systems/RangeRing.ts) follows the slide
     this.refreshGhosts();
   }
 
@@ -279,17 +276,15 @@ export class Building {
     return movePrice(tower.slots, this.run.slotDiscount, this.run.techOwned);
   }
 
-  /** Opens the panel of `tower` and shows its range. */
+  /** Opens the panel of `tower` (its range ring follows from systems/RangeRing.ts). */
   selectTower(tower: Tower): void {
     this.selectedTower = tower;
-    this.board.showRange(tower, this.towers.rangeOf(tower));
     this.uiVersion += 1;
   }
 
   closePanel(): void {
     if (!this.selectedTower) return;
     this.selectedTower = undefined;
-    this.board.showRange(undefined, 0);
     this.uiVersion += 1;
   }
 

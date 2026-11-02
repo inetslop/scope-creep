@@ -32,6 +32,7 @@ import { LeakCost } from '../systems/LeakCost';
 import { ProjectileSystem } from '../systems/ProjectileSystem';
 import { PushWindup } from '../systems/PushWindup';
 import { RallySystem } from '../systems/RallySystem';
+import { RangeRing } from '../systems/RangeRing';
 import { RunFlow } from '../systems/RunFlow';
 import { RunSave } from '../systems/RunSave';
 import { TowerGhost } from '../systems/towerGhost';
@@ -81,6 +82,7 @@ export class GameScene extends Phaser.Scene {
   buildBed!: BuildBed;
   leakCost!: LeakCost;
   windup!: PushWindup;
+  rangeRing!: RangeRing;
   comboBar!: ComboBar;
   feastGlow!: FeastGlow;
 
@@ -170,6 +172,7 @@ export class GameScene extends Phaser.Scene {
     this.saver = new RunSave(this, window.localStorage);
     if (saved) this.saver.restore(saved);
     this.windup = new PushWindup(this, this.towers);
+    this.rangeRing = new RangeRing(this, this.building);
     this.comboBar = new ComboBar(this, this.fx);
     this.feastGlow = new FeastGlow(this, this.fx, () => this.towers.towers);
 
@@ -253,6 +256,7 @@ export class GameScene extends Phaser.Scene {
     this.haste.update(simDt);
     this.beams.update(simDt);
     this.windup.update(simDt);
+    this.rangeRing.update(simDt);
     this.comboBar.update();
     this.feastGlow.update();
     syncHookStats(this);

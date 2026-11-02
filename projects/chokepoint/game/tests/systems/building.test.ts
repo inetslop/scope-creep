@@ -34,7 +34,6 @@ function makeFixture(gold: number = START.gold) {
     towerAt: (c: Cell): Tower | undefined => (tower && tower.cell.col === c.col && tower.cell.row === c.row ? (tower as unknown as Tower) : undefined),
     canBuild: (c: Cell): boolean => !(c.col === 0 && c.row === 1) && !board.towerAt(c), // (0,1) is a rock
     showHover: (cell: Cell | undefined, ok: boolean, range: number): void => { hovers.push([cell, ok, range]); },
-    showRange: (): void => {},
     centerOf: (c: Cell) => ({ x: c.col * CELL + CELL / 2, y: c.row * CELL + CELL / 2 }),
   };
   const towersFake = {
