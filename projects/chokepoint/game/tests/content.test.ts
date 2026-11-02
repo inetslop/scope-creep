@@ -24,7 +24,7 @@ describe('content', () => {
       expect(e.fromWave).toBeGreaterThanOrEqual(1);
       expect(BRIGHTS).toContain(e.look.color);
       expect(e.look.size).toBeGreaterThan(0);
-      expect(e.look.size).toBeLessThanOrEqual(e.id === 'titan' || e.id === 'orb' || e.id === 'hive' || e.id === 'crosser' || e.id === 'blinker' ? 0.5 : 0.45);
+      expect(e.look.size).toBeLessThanOrEqual(e.id === 'titan' || e.id === 'orb' || e.id === 'hive' || e.id === 'crosser' || e.id === 'blinker' || e.id === 'mender' ? 0.5 : 0.45);
       if (e.speedRamp) {
         expect(e.speedRamp.perHit).toBeGreaterThan(0);
         expect(e.speedRamp.max).toBeGreaterThan(e.speed);
@@ -71,6 +71,17 @@ describe('content', () => {
         expect(pops.telegraphSec).toBeGreaterThan(0);
         expect(pops.telegraphSec).toBeLessThan(pops.everySec);
         expect(ENEMIES.some((d) => d.id === pops.into)).toBe(true);
+      }
+      const mends = e.mends;
+      if (mends) {
+        expect(mends.everySec).toBeGreaterThan(0);
+        expect(mends.count).toBeGreaterThan(0);
+        expect(mends.radius).toBeGreaterThan(0);
+        expect(mends.frac).toBeGreaterThan(0);
+        expect(mends.frac).toBeLessThanOrEqual(1);
+        expect(mends.telegraphSec).toBeGreaterThan(0);
+        expect(mends.telegraphSec).toBeLessThan(mends.everySec);
+        expect(ENEMIES.some((d) => d.id === mends.escortId)).toBe(true);
       }
     }
   });

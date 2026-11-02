@@ -3,6 +3,7 @@ import { CELL, HUD } from '../../config';
 import { artScale, enemyTexture } from '../../art/textures';
 import type { Enemy } from '../../entities/Enemy';
 import { PALETTE } from '../../content/palette';
+import { mendsDue } from '../../core/mendClock';
 import { bossId } from '../../core/waves';
 import type { GameScene } from '../../scenes/GameScene';
 import { makeCard } from '../card';
@@ -21,7 +22,10 @@ const H = 54;
  * ~20%-alpha muted-ink track, with one 2 px ink notch at def.outOfReach.hpFrac, where it first goes
  * out of reach (the Colossus only: the notch renders only for a boss with a timed phase). Pops in
  * (~200 ms scale-in) the moment it spawns and fades out (~200 ms) the moment it dies or leaks; no
- * card on non-boss waves. Blocks nothing, takes no input; the wave banner still slides above it.
+ * card on non-boss waves. For a boss with a mend clock (the Mender) the hp row also wears one
+ * small pip in muted ink per mend remaining, under the bar: a pip fades as each mend is used (the
+ * bar alone can't show it — a mended bar looks like a fresh one), derived from the same pure
+ * clock (core/mendClock.ts). Blocks nothing, takes no input; the wave banner still slides above it.
  * The token and bar dim to the board token's alpha (boss.alpha) for the untargetable leg, lockstep
  * through 2× fast-forward — never timed here; the name stays full alpha.
  */
@@ -30,6 +34,7 @@ export class BossCard implements HudPart {
   private box: Phaser.GameObjects.Container | undefined;
   private token: Phaser.GameObjects.Image | undefined;
   private bar: Phaser.GameObjects.Graphics | undefined;
+  private pips: Phaser.GameObjects.Graphics | undefined;
   private width = 0;
   private fading = false;
 
@@ -85,6 +90,16 @@ export class BossCard implements HudPart {
       g.fillRect(-BAR_W / 2 + BAR_W * off - 1, -4, 2, 8); // the notch where it first goes out of reach
     }
     g.setAlpha(boss.alpha);
+    const pips = this.pips;
+    const mends = boss.def.mends;
+    if (pips !== undefined && mends !== undefined) {
+      pips.clear();
+      const used = mendsDue(boss.age, mends);
+      for (let i = 0; i < mends.count; i++) {
+        pips.fillStyle(PALETTE.muted, i < mends.count - used ? 0.9 : 0.18);
+        pips.fillCircle((i - (mends.count - 1) / 2) * 10, 0, 3); // one pip per mend remaining: full until it is spent
+      }
+    }
   }
 
   private build(boss: Enemy): Phaser.GameObjects.Container {
@@ -99,7 +114,13 @@ export class BossCard implements HudPart {
     bar.setPosition(0, 12);
     this.token = token;
     this.bar = bar;
-    return scene.add.container(0, 0, [card, token, name, bar]);
+    const parts: Phaser.GameObjects.GameObject[] = [card, token, name, bar];
+    if (boss.def.mends !== undefined) {
+      const pips = scene.add.graphics().setPosition(0, 20); // under the bar, inside the card: one per mend remaining
+      this.pips = pips;
+      parts.push(pips);
+    }
+    return scene.add.container(0, 0, parts);
   }
 
   private fadeOut(): void {
@@ -112,10 +133,11 @@ export class BossCard implements HudPart {
       alpha: 0,
       duration: 200,
       onComplete: () => {
-        box.destroy(true); // with children: token, name and bar go with it
+        box.destroy(true); // with children: token, name, bar and pips go with it
         this.box = undefined;
         this.token = undefined;
         this.bar = undefined;
+        this.pips = undefined;
         this.fading = false;
       },
     });

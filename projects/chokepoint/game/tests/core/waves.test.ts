@@ -246,6 +246,23 @@ describe('boss waves (every 10th)', () => {
       expect(planWave(wave, new Rng(wave), ENEMIES).spawns.filter((s) => s.enemy === 'blinker').length).toBe(wave === 60 ? 1 : 0);
     }
   });
+  it('bossId: the wave-70 boss is the Mender — its two Ward escorts walk in ahead of it, its heal targets', () => {
+    expect(bossId(70)).toBe('mender');
+    expect(planWave(70, new Rng(70), ENEMIES).spawns[2]!.enemy).toBe(bossId(70)); // the rule and the plan agree: the Mender walks in behind its Wards
+  });
+  it('wave 70 is exactly the two Wards and the Mender: the boss tag, the wave-scaled hp, identical on every seed', () => {
+    for (const seed of [1, 7, 42, 70]) {
+      const plan = planWave(70, new Rng(seed), ENEMIES);
+      expect(plan.spawns).toEqual([{ enemy: 'ward', delaySec: 0 }, { enemy: 'ward', delaySec: 0.4 }, { enemy: 'mender', delaySec: 1.2 }]);
+      expect(plan.tags).toEqual(['boss']);
+      expect(plan.hpMul).toBe(waveHpMul(70));
+    }
+  });
+  it('no wave but 70 sends a Mender (the wave-70 boss; spawnOnly, never a wave mix)', () => {
+    for (let wave = 1; wave <= 70; wave++) {
+      expect(planWave(wave, new Rng(wave), ENEMIES).spawns.filter((s) => s.enemy === 'mender').length).toBe(wave === 70 ? 1 : 0);
+    }
+  });
 });
 
 describe('quiet waves (every 4th)', () => {

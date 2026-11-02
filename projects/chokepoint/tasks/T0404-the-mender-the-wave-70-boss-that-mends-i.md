@@ -4,11 +4,12 @@ title: "The Mender: the wave-70 boss that mends itself and its pack"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T04:17:18Z
 claimed_at: 2026-11-02T13:12:59Z
+finished_at: 2026-11-02T13:27:01Z
 ---
 
 ## Goal
@@ -96,3 +97,27 @@ mends?: { everySec: number; count: number; radius: number; frac: number; telegra
 
 ### Tests
 - `tests/core/mendClock.test.ts` (new, as above); the wave-70 additions in `tests/core/waves.test.ts`; the `mends` validation in `tests/content.test.ts`.
+
+## Result (attempt 1, desktop)
+
+Wave 70 is now the Mender's boss lane: two Ward escorts walk in 0.4 s apart, the Mender (a solid orange circle at boss scale, 720 hp wave-scaled, threat 348 — the rest of the budget after the Wards' 1+1) follows 1.2 s behind, and it mends on its own clock: every 5 s, four times, a thin orange ring contracts in from 3 cells, then it and each living Ward within 3 cells flash white and restore 15% of their max hp — never a revive, escorts past the radius or killed simply missed (core/mendClock.ts, systems/enemyHooks/mendPack.ts, systems/fx/mendRing.ts, content/enemies/mender.ts). The BossCard's hp row wears four muted pips, one fading per mend used, and the boss lane's moments (chips, arrival horn and ring, BossCard, death burst and name card, escape horn) inherit through bossId and the boss tag. Guarded by new unit tests for the schedule and the wave-70 plan, content validation for the `mends` rule, and two new invariants (menderSlot, hpCap) plus the updated level.bossPlan.
+
+- Self-review: APPROVE
+- Time: 14.0 min
+
+```
+.../chokepoint/game/src/content/enemies/index.ts   |  2 +
+ .../chokepoint/game/src/content/enemies/mender.ts  | 17 ++++++++
+ projects/chokepoint/game/src/content/types.ts      |  2 +
+ projects/chokepoint/game/src/core/mendClock.ts     | 22 ++++++++++
+ projects/chokepoint/game/src/core/waves.ts         |  8 ++--
+ projects/chokepoint/game/src/debug/runChecks.ts    |  4 +-
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/mendPack.ts        | 48 ++++++++++++++++++++++
+ .../chokepoint/game/src/systems/fx/mendRing.ts     | 13 ++++++
+ projects/chokepoint/game/src/ui/hud/BossCard.ts    | 28 +++++++++++--
+ projects/chokepoint/game/tests/content.test.ts     | 13 +++++-
+ .../chokepoint/game/tests/core/mendClock.test.ts   | 26 ++++++++++++
+ projects/chokepoint/game/tests/core/waves.test.ts  | 17 ++++++++
+ 13 files changed, 194 insertions(+), 8 deletions(-)
+```

@@ -39,6 +39,8 @@ export interface EnemyDef {
   splitsAt?: { hpFrac: number; into: string };
   /** The periodic pop (the Hive): every `everySec` after its own spawn it pops one `into` at its spot, up to `max`, each telegraphed `telegraphSec` early; the popping stops the moment it dies (core/hivePops.ts, systems/enemyHooks/hivePops.ts). */
   pops?: { everySec: number; max: number; telegraphSec: number; into: string };
+  /** The mend clock (the Mender): every `everySec` after its own spawn, up to `count`, it and each living escort of `escortId` within `radius` cells restore `frac` of their own max hp, telegraphed `telegraphSec` early by one thin ring closing in; never a revive, an escort past the radius missed (core/mendClock.ts, systems/enemyHooks/mendPack.ts). */
+  mends?: { everySec: number; count: number; radius: number; frac: number; telegraphSec: number; escortId: string };
   /** Multiplies damage from a directed shot that strikes its front (flying against its travel); the rear and flightless hits go whole (core/plate.ts). */
   plate?: number;
   /** Its shield is carried by enemies of this id: until one is killed, every damage it takes lands at half, after every other modifier (core/shield.ts). */
