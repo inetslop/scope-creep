@@ -1,12 +1,14 @@
 ---
 id: T0346
 title: "The flyer's line before the wave: the build phase shows where it crosses"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0317]
-attempts: 0
+attempts: 1
 created: 2026-11-01T07:42:15Z
+claimed_at: 2026-11-02T11:21:28Z
 epic: E10
 ---
 
