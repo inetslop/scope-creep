@@ -4,11 +4,12 @@ title: "The combo break's note: the chain's loss is heard"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T01:41:53Z
 claimed_at: 2026-11-02T01:46:00Z
+finished_at: 2026-11-02T01:54:43Z
 ---
 
 ## Goal
@@ -74,3 +75,17 @@ export const comboBreakNote: MakeEnemyHook = ({ fx, sfx }) => ({
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+A leak that breaks a real kill-combo chain now plays a soft two-note fall (E4→C4, ~70 ms sines 40 ms apart, volume 0.08) on top of the existing leak thud, making the invisible loss of the chain's gold progress audible. Added `Sfx.comboBreak()` after `leak()` in `src/audio/Sfx.ts`, a new leak hook `src/systems/enemyHooks/comboBreakNote.ts` that plays only when `fx.chain >= 2` (no chain or single-kill leaks stay silent), and registered it in `ENEMY_HOOKS` ahead of the existing visual `comboBreak` hook so it reads the count before that hook resets it. The visual ×N fade, the leak thud and the pause screen are untouched; the note is display-adjacent audio only. `npm run check` (555 tests) and the desktop + mobile smoke run both pass.
+
+- Self-review: APPROVE
+- Time: 8.7 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts                      |  6 ++++++
+ .../chokepoint/game/src/systems/enemyHooks/comboBreakNote.ts   | 10 ++++++++++
+ projects/chokepoint/game/src/systems/enemyHooks/index.ts       |  2 ++
+ 3 files changed, 18 insertions(+)
+```

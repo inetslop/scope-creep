@@ -1,6 +1,7 @@
 import { burnLeap } from './burnLeap';
 import type { MakeEnemyHook } from './hook';
 import { comboBreak } from './comboBreak';
+import { comboBreakNote } from './comboBreakNote';
 import { leakEcho } from './leakEcho';
 import { bossEscape } from './bossEscape';
 import { bossDeath } from './bossDeath';
@@ -44,6 +45,7 @@ import { nearMiss } from './nearMiss';
  */
 export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   comboGold,
+  comboBreakNote,
   comboBreak,
   leakEcho,
   bossEscape,

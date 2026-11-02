@@ -135,6 +135,12 @@ export class Sfx {
     this.tone(140, 0.3, 'sawtooth', 0.25, 70);
   }
 
+  /** A leak breaks a real kill-combo chain (2+ kills): a soft two-note fall, E4 to C4, ~70 ms sine each, 40 ms apart, the coin blip's quiet class — the chain drops, so it falls. */
+  comboBreak(): void {
+    this.tone(329.63, 0.07, 'sine', 0.08);
+    this.tone(261.63, 0.07, 'sine', 0.08, undefined, 0.04);
+  }
+
   /** A boss got through: a low two-note horn, 82 Hz then 62 Hz, 200 ms each, ~100 ms apart, the sting's quiet class. */
   bossEscape(): void {
     this.tone(82, 0.2, 'sine', 0.14);
