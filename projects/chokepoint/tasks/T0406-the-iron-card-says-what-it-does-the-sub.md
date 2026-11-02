@@ -3,12 +3,10 @@ id: T0406
 title: "The Iron card says what it does: the sub-line under the name"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-02T05:03:59Z
-claimed_at: 2026-11-02T05:04:12Z
-designer: yoga
 ---
 
 ## Goal
@@ -23,3 +21,41 @@ The Iron mode's rules are only known to players who have read a run's claim card
 - [ ] The menu's Iron card shows the muted sub-line "1 life · 2× coins · no last stand" under its name, in both layouts.
 - [ ] The line shows on the menu only — the claim card, the pause screen and the profile card are unchanged.
 - [ ] The Play card, the Tech button and the menu demo are unchanged.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/scenes/MenuScene.ts` — the Iron card block only (lines 84–93): new sub-line text, profile-card muted-line style, card width grown from the line. Nothing else in this file changes (not the `below`/`layout()` math, not `IRON_H`, not `fadeIn`).
+
+### Interfaces
+No new types or signatures — everything is a `create()`-local change in `MenuScene`.
+
+### Steps
+Replace lines 84–93 exactly with:
+```ts
+    // The Iron mode: the same run at one life that pays double coins, chosen before wave 1.
+    // The sub-line also says what the mode turns off; the card's width grows from it.
+    const ironLine = this.add.text(0, 0, '1 life · 2× coins · no last stand', textStyle(17, PALETTE.muted)).setOrigin(0.5);
+    const ironTitle = this.add.text(0, 0, 'Iron', titleStyle(24)).setOrigin(0.5);
+    const ironPairH = ironTitle.height + 4 + ironLine.height;
+    const iron = makeButton(this, 0, 0, '', () => {
+      clearSavedRun(window.localStorage); // a new run abandons a saved one for nothing
+      this.registry.set('ironMode', true);
+      this.scene.start(SCENES.pick); // the Iron run also picks its board
+    }, { width: Math.round(ironLine.width) + 28, height: IRON_H, radius: 30 });
+    iron.label.setVisible(false);
+    ironTitle.setY(-ironPairH / 2 + ironTitle.height / 2);
+    ironLine.setY(ironPairH / 2 - ironLine.height / 2);
+    iron.content.add([ironTitle, ironLine]);
+```
+(`textStyle` and `titleStyle` are already imported; the 28 is the profile card's `PAD * 2`.)
+
+### Pitfalls
+- Copy the exact characters from the old string: "·" is U+00B7 and "×" is U+00D7 — not a hyphen, period, or Latin x.
+- The width is the text-fit pass: `ironLine.width + 28`, never the old hard-coded 220 and never capped. The card is centered at `cx` and scaled by `s`, so a wider card (~270–290 px) fits at 1280x720 (s≈0.56 → ~160 px) and 412x915 (s≈0.74 → ~210 px) without any layout change.
+- Don't keep the old y's (`-10`, `16`): the 17 px line is taller than the 14 px one and the title/line gap would shrink to ~1 px — the y's come from `ironPairH`.
+- Keep `height: IRON_H` (68), `iron.label.setVisible(false)`, and add only `ironTitle` and `ironLine` to `iron.content`.
+- No edits to `SummaryScene` (claim card), `PauseScene`, `ProfileCard.ts`, `MenuDemo.ts`, or the Play/Tech buttons.
+
+### Tests
+- none
