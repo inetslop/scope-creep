@@ -4,11 +4,12 @@ title: "The move: a misplaced tower goes where it should (the T0382 re-file)"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T01:03:06Z
 claimed_at: 2026-11-02T04:16:25Z
+finished_at: 2026-11-02T07:40:48Z
 epic: E15
 design_attempts: 1
 ---
@@ -92,3 +93,22 @@ In the build phase a tower can move to any free build cell for a fee, keeping it
 - **Acceptance 3**: tapping dims the tower + outlines free build cells, a free-cell tap shows the range ring + ✓/✗, ✓ pays the fee (gold drops, "−N" chip at old cell), slides the same tower ~300 ms (augments/kills/targeting unchanged), drop-in bounce at the new cell, placement haptic, the marked cell's buff follows the tower (the panel's line reads it), ✗/tap-elsewhere cancels with no gold paid + full alpha + outlines cleared.
 - **Acceptance 4**: the sell line and the rest of the panel untouched, pause controls unchanged, panel fits 412x915 and 1280x720.
 - **Acceptance 5**: `npm run check` and `npm run smoke` pass.
+
+## Result (attempt 1, asus)
+
+(no summary)
+
+- Self-review: APPROVE
+- Time: 204.4 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/techEffects.ts   | 30 +++++++
+ projects/chokepoint/game/src/entities/Tower.ts     | 45 +++++++++-
+ projects/chokepoint/game/src/systems/Board.ts      | 25 ++++++
+ projects/chokepoint/game/src/systems/Building.ts   | 99 +++++++++++++++++++++-
+ .../chokepoint/game/src/systems/fx/moveChip.ts     | 25 ++++++
+ projects/chokepoint/game/src/ui/hud/TowerPanel.ts  | 35 ++++++--
+ .../chokepoint/game/tests/core/techEffects.test.ts | 23 ++++-
+ 7 files changed, 274 insertions(+), 8 deletions(-)
+```

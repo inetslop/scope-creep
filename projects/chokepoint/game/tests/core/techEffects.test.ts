@@ -4,7 +4,7 @@ import { DRAFT_NODES } from '../../src/content/tech/draft';
 import { draftCardCount, slotCost } from '../../src/core/augments';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
 import { buyNode } from '../../src/core/tech';
-import { draftCardsFor, draftTech, sellPrice, sellRefund, slotPrice } from '../../src/core/techEffects';
+import { draftCardsFor, draftTech, movePrice, moveRefund, sellPrice, sellRefund, slotPrice } from '../../src/core/techEffects';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -61,6 +61,27 @@ describe('techEffects', () => {
     expect(sellPrice(1, 0, ['soft-sell'])).toBe(32); // 80% of the 40 first slot
     expect(sellPrice(2, 10, ['soft-sell'])).toBe(80); // 80% of 40 + 60
     expect(sellPrice(MAX_SLOTS, 0, ['soft-sell'])).toBe(536); // 80% of 40 + 70 + 160 + 400
+  });
+
+  it('moveRefund is the sell per-10 rule at a lower base rate: 6 without a node, 8 with Soft sell; other-branch and duplicate ids count for nothing', () => {
+    expect(moveRefund([])).toBe(6);
+    expect(moveRefund(['soft-sell'])).toBe(8);
+    expect(moveRefund(['gold-1'])).toBe(6);
+    expect(moveRefund(['soft-sell', 'soft-sell', 'nope'])).toBe(8);
+  });
+
+  it('moving pays 60% of what the unlocked slots cost, floored at 5, without the Soft sell node (the discount only touches the second slot)', () => {
+    expect(movePrice(1, 0, [])).toBe(24); // 60% of the 40 first slot
+    expect(movePrice(1, 5, [])).toBe(24); // the discount only touches the second slot
+    expect(movePrice(2, 0, [])).toBe(66); // 60% of 40 + 70
+    expect(movePrice(2, 10, [])).toBe(60); // 60% of 40 + 60
+    expect(movePrice(MAX_SLOTS, 0, [])).toBe(402); // 60% of 40 + 70 + 160 + 400
+  });
+
+  it('with Soft sell, moving pays 80% of what the unlocked slots cost (the node lifts the rate past the base 60%)', () => {
+    expect(movePrice(1, 0, ['soft-sell'])).toBe(32); // 80% of the 40 first slot
+    expect(movePrice(2, 10, ['soft-sell'])).toBe(80); // 80% of 40 + 60
+    expect(movePrice(MAX_SLOTS, 0, ['soft-sell'])).toBe(536); // 80% of 40 + 70 + 160 + 400
   });
 
   it('draftTech counts each node once, unknown ids count for nothing', () => {

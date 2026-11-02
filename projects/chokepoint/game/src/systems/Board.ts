@@ -27,6 +27,7 @@ export class Board {
   private readonly towers: (Tower | undefined)[][];
   private readonly hover: Phaser.GameObjects.Graphics;
   private readonly range: Phaser.GameObjects.Graphics;
+  private readonly moveOutlines: Phaser.GameObjects.Graphics;
   private area: ViewArea = { x: 0, y: 0, width: 1, height: 1 };
   private view: View = { fit: 1, zoom: 1, focus: { x: 0, y: 0 } };
   private everLaidOut = false;
@@ -44,6 +45,7 @@ export class Board {
     this.drawCells();
     this.hover = scene.add.graphics().setDepth(DEPTH.preview);
     this.range = scene.add.graphics().setDepth(DEPTH.preview);
+    this.moveOutlines = scene.add.graphics().setDepth(DEPTH.preview);
   }
 
   /** The painted board (art/textures.ts paintBoard): island, grid dots, the marked cell's dot, rocks, road, gates. */
@@ -187,5 +189,28 @@ export class Board {
     this.range.fillCircle(p.x, p.y, range);
     this.range.lineStyle(2, PALETTE.ink, 0.35);
     this.range.strokeCircle(p.x, p.y, range);
+  }
+
+  /**
+   * The move state (systems/Building.ts): a thin outline, the placement's own look de-emphasized, on
+   * every free build cell — the tower can land on any of them. Its own graphics, so it outlives the
+   * what-if range ring (showHover).
+   */
+  showMoveOutlines(): void {
+    const g = this.moveOutlines;
+    g.clear();
+    const inset = 6;
+    g.lineStyle(2, PALETTE.teal, 0.5);
+    for (let row = 0; row < this.map.rows; row++) {
+      for (let col = 0; col < this.map.cols; col++) {
+        const cell: Cell = { col, row };
+        if (!this.canBuild(cell)) continue;
+        g.strokeRoundedRect(col * CELL + inset, row * CELL + inset, CELL - inset * 2, CELL - inset * 2, 12);
+      }
+    }
+  }
+
+  clearMoveOutlines(): void {
+    this.moveOutlines.clear();
   }
 }

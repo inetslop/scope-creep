@@ -7,6 +7,8 @@ import type { AugmentCopy } from '../content/types';
 import type { Cell } from '../core/map';
 import { BEAM_ORB_LIFT, barrelTexture, beamDiscTexture, orbTexture } from '../art/barrels';
 import { ART_SCALE, artScale, TOWER_BASE, TOWER_BODY, towerTexture } from '../art/textures';
+import { MARKED_DMG_MUL } from '../core/markedCell';
+import type { Board } from '../systems/Board';
 import { barrelCount, barrelLook, drawDecorations, drawHasteRing, pipColor } from './towerLook';
 
 /** Where the body sits above the plinth's center, in board units. */
@@ -24,7 +26,8 @@ const BODY_LIFT = 4;
  * Only the barrels turn: the plinth and body have their shading painted in.
  */
 export class Tower extends Phaser.GameObjects.Image {
-  readonly cell: Cell;
+  /** The cell it stands on; systems/Building.ts' move slides it to a new one. */
+  cell: Cell;
   readonly base: Phaser.GameObjects.Image;
   /** The barrels, side by side; the container turns to aim. */
   readonly gun: Phaser.GameObjects.Container;
@@ -250,6 +253,46 @@ export class Tower extends Phaser.GameObjects.Image {
     const parts: Phaser.GameObjects.GameObject[] = [this, this.base, this.gun, this.deco, this.pips, this.jamDot, this.idleDot, this.modeTick];
     if (this.hasteRing) parts.push(this.hasteRing);
     this.scene.tweens.add({ targets: parts, y: '-=12', alpha: 0, duration: 200, ease: 'Back.easeOut', onComplete: () => this.destroy() });
+  }
+
+  /**
+   * The move (systems/Building.ts): the token slides to `cell` over ~300 ms (ease-out) and lands in
+   * the drop-in bounce. The cell and the marked cell's buff follow it — the augments, kills, damage
+   * tally and targeting mode are untouched (no rebuild, no re-draw).
+   */
+  moveTo(cell: Cell, board: Board): void {
+    const parts: Phaser.GameObjects.GameObject[] = [this, this.base, this.gun, this.deco, this.pips, this.jamDot, this.idleDot, this.modeTick];
+    if (this.hasteRing) parts.push(this.hasteRing);
+    this.scene.tweens.killTweensOf(parts); // a move started before the last one landed: one slide at a time
+    // A drop-in or landing bounce still mid-flight when the kill lands leaves a part short of its full scale: snap it back.
+    this.setScale(ART_SCALE);
+    this.base.setScale(ART_SCALE);
+    this.gun.setScale(1);
+    const from = board.centerOf(this.cell);
+    const to = board.centerOf(cell);
+    this.cell = cell;
+    this.cellMul = board.onMarked(cell) ? MARKED_DMG_MUL : 1; // the marked cell's buff follows the tower (core/markedCell.ts)
+    this.scene.tweens.add({
+      targets: parts,
+      x: `+=${to.x - from.x}`,
+      y: `+=${to.y - from.y}`,
+      duration: 300,
+      ease: 'Quad.easeOut',
+      onComplete: () => {
+        // The drop-in bounce, re-triggered at the new cell (the constructor's own tempo).
+        for (const part of [this.base, this, this.gun] as Phaser.GameObjects.Components.Transform[]) {
+          const full = part.scaleX;
+          part.setScale(full * 0.4);
+          this.scene.tweens.add({ targets: part, scale: full, duration: 260, ease: 'Back.easeOut' });
+        }
+      },
+    });
+  }
+
+  /** Dimmed to ~50% while it waits to be moved (systems/Building.ts); restored on commit or cancel. */
+  setDim(on: boolean): void {
+    const a = on ? 0.5 : 1;
+    for (const p of [this, this.base, this.gun, this.deco, this.pips] as Phaser.GameObjects.Components.Alpha[]) p.setAlpha(a);
   }
 
   /** The new pip grows in on the plinth with the same bounce as the tower's drop-in. */

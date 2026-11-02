@@ -6,11 +6,14 @@ import { slotCost, towerSpec } from '../core/augments';
 import { cellsBesidePath, type Cell } from '../core/map';
 import type { Point } from '../core/path';
 import type { RunState } from '../core/run';
+import { movePrice } from '../core/techEffects';
+import { haptic } from '../input/haptics';
 import type { Tower } from '../entities/Tower';
 import type { Sfx } from '../audio/Sfx';
 import type { Board } from './Board';
 import type { FxSystem } from './FxSystem';
 import { goldCoin } from './fx/goldCoin';
+import { moveChip } from './fx/moveChip';
 import { buildTeach } from './fx/buildTeach';
 import { TowerGhost } from './towerGhost';
 import type { TowerSystem } from './TowerSystem';
@@ -26,6 +29,8 @@ export class Building {
   selectedAugment: number | undefined;
   /** The tower whose panel is open (ui/hud/TowerPanel.ts), if any. */
   selectedTower: Tower | undefined;
+  /** The tower being moved to a free build cell (the move state), if any; `pendingCell` is its what-if cell. */
+  moveTower: Tower | undefined;
   /** The cell a touch tap is waiting to build on (ui/hud/PlaceConfirm.ts's ✓/✗), if any. */
   pendingCell: Cell | undefined;
   /** Bumped whenever the hand, a tower's slots or a selection changes, so the HUD redraws them. */
@@ -67,6 +72,7 @@ export class Building {
    */
   tap(x: number, y: number, wasTouch: boolean): void {
     if (this.run.phase === 'over' || this.run.phase === 'draft') return;
+    if (this.moveTower) { this.tapMove(x, y, wasTouch); return; } // the move state owns the board while it is up
     const cell = this.board.cellAt(x, y);
     if (!cell) {
       if (wasTouch) this.cancelPending();
@@ -113,6 +119,7 @@ export class Building {
    * range with it added.
    */
   hover(x: number | undefined, y: number): void {
+    if (this.moveTower) return; // the move state draws its own preview (the what-if range ring); hover stays idle
     const cell = x === undefined ? undefined : this.board.cellAt(x, y);
     const held = this.heldCopy;
     const tower = cell ? this.board.towerAt(cell) : undefined;
@@ -140,6 +147,7 @@ export class Building {
    */
   pickCard(index: number): void {
     if (index < 0 || index >= this.run.hand.length || this.run.phase === 'over') return;
+    if (this.moveTower) return; // the move state is modal: the hand waits for it to commit or cancel
     const tower = this.selectedTower;
     this.selectedAugment = index;
     this.refreshGhosts();
@@ -150,6 +158,7 @@ export class Building {
 
   /** The ✓ button: builds the waiting cell exactly as a tap would (same refusal, panel and sounds). */
   confirmPending(): void {
+    if (this.moveTower) { this.commitMove(); return; } // the ✓ of the move's what-if commits the move
     const cell = this.pendingCell;
     const held = this.heldCopy;
     if (!cell) return;
@@ -168,6 +177,7 @@ export class Building {
 
   /** The ✗ button (and anything else that ends the waiting placement): the preview goes, nothing changes. */
   cancelPending(): void {
+    if (this.moveTower) { this.cancelMove(); return; } // the ✗ of the move's what-if cancels the whole move
     if (!this.pendingCell) return;
     this.pendingCell = undefined;
     this.board.showHover(undefined, false, 0);
@@ -176,9 +186,96 @@ export class Building {
   /** The waiting placement's preview: the cell, and the range a new tower with the held card would have. */
   syncPending(): void {
     const cell = this.pendingCell;
+    if (!cell) return;
+    if (this.moveTower) {
+      this.board.showHover(cell, true, this.towers.rangeOf(this.moveTower)); // the move's what-if: the tower's own current range
+      return;
+    }
     const held = this.heldCopy;
-    if (!cell || !held) return;
+    if (!held) return;
     this.board.showHover(cell, true, towerSpec([held]).range * CELL);
+  }
+
+  /**
+   * The panel's "Move · −N" line (build phase only): the tower lifts for moving — the panel waits
+   * out the move (its buttons must not touch the tower being moved), the tower dims, the free
+   * build cells outline, and a tap on one previews it (the range ring plus the placement's ✓/✗).
+   * Nothing is paid until the ✓ lands.
+   */
+  startMove(): void {
+    const tower = this.selectedTower;
+    if (!tower || this.run.phase !== 'build' || this.moveTower) return;
+    if (!this.run.canAfford(this.moveFee(tower))) { this.sfx?.deny(); return; } // gold short: the line is dim, nothing happens
+    this.moveTower = tower;
+    this.selectedAugment = undefined; // the held card and any waiting placement wait out the move
+    this.pendingCell = undefined;
+    this.closePanel();
+    this.ghost.clearAll();
+    this.board.clearMoveOutlines();
+    this.board.showMoveOutlines();
+    this.board.showRange(undefined, 0);
+    this.board.showHover(undefined, false, 0);
+    tower.setDim(true);
+    this.uiVersion += 1;
+    this.refreshGhosts();
+  }
+
+  /** A tap on the board while a move is up: a free cell previews it; anything else cancels. */
+  private tapMove(x: number, y: number, wasTouch: boolean): void {
+    const cell = this.board.cellAt(x, y);
+    if (!cell) {
+      if (wasTouch) this.cancelMove(); // a touch tap off the board ends the move (mouse waits for the ✓/✗)
+      return;
+    }
+    this.board.showRange(undefined, 0);
+    if (!this.board.canBuild(cell)) { this.cancelMove(); return; } // a tap on anything but a free cell cancels
+    if (this.pendingCell && this.pendingCell.col === cell.col && this.pendingCell.row === cell.row) { this.syncPending(); return; } // same cell: keep it
+    this.pendingCell = cell;
+    this.syncPending();
+  }
+
+  /** The move's ✓: pay the fee, free the old cell, slide the same tower over — its augments, kills
+   * and targeting mode carry, and the marked cell's buff follows it. The panel reopens on it. */
+  private commitMove(): void {
+    const tower = this.moveTower;
+    const cell = this.pendingCell;
+    if (!tower || !cell || !this.board.canBuild(cell)) { this.cancelMove(); return; }
+    const fee = this.moveFee(tower);
+    if (!this.run.spend(fee)) { this.cancelMove(); this.hint(cell, `Need ${fee} gold`, PALETTE.red); return; }
+    const old = tower.cell;
+    const oldC = this.board.centerOf(old);
+    moveChip(this.fx, oldC.x, oldC.y - 20, fee); // the sell's gold-pop language, a minus: the fee pops at the old cell
+    this.board.clearMoveOutlines();
+    this.board.place(cell, tower);
+    this.board.place(old, undefined);
+    tower.setDim(false);
+    tower.moveTo(cell, this.board); // slides over ~300 ms, updating the cell and the marked cell's buff
+    haptic('place'); // the placement haptic, as the tower lands
+    this.pendingCell = undefined;
+    this.moveTower = undefined;
+    this.board.showHover(undefined, false, 0);
+    this.selectTower(tower); // the panel reopens: its marked-cell line reads the buff that follows the tower
+    this.board.showRange(this.board.centerOf(cell), this.towers.rangeOf(tower)); // the ring at the cell it landed on
+    this.refreshGhosts();
+  }
+
+  /** The move's ✗ (and a tap on anything but a free cell): nothing is paid, the tower brightens, the
+   * outlines clear, and the panel reopens where the tower still stands. */
+  private cancelMove(): void {
+    const tower = this.moveTower;
+    if (!tower) return;
+    this.moveTower = undefined;
+    this.pendingCell = undefined;
+    tower.setDim(false);
+    this.board.clearMoveOutlines();
+    this.board.showHover(undefined, false, 0);
+    this.selectTower(tower);
+    this.refreshGhosts();
+  }
+
+  /** The fee to move `tower`: floor(0.6× its slots' cost), min 5 — the sell's own rule at a lower rate. */
+  private moveFee(tower: Tower): number {
+    return movePrice(tower.slots, this.run.slotDiscount, this.run.techOwned);
   }
 
   /** Opens the panel of `tower` and shows its range. */

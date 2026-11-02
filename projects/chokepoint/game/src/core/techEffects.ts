@@ -62,6 +62,36 @@ export function sellPrice(slots: number, discount: number, owned: readonly strin
   return Math.floor((paid * sellRefund(owned)) / 10);
 }
 
+/**
+ * The move's refund per 10 paid: the sell's own rule (the biggest owned tower node's `refund`) at a
+ * lower base rate — 6 when no node gives more (8 with Soft sell). Each node counts once, unknown ids
+ * count for nothing.
+ */
+export function moveRefund(owned: readonly string[]): number {
+  let refund = 6;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = TOWER_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    if (node.refund > refund) refund = node.refund;
+  }
+  return refund;
+}
+
+/**
+ * What it costs to move a tower with `slots` unlocked slots to a free build cell: `moveRefund(owned)`
+ * per 10 of what the slots cost (`slotPrice(i, discount)` each), floored at 5 — 60% without Soft sell,
+ * 80% with. A repositioning, not a refund: the tower keeps its augments, kills and mode.
+ */
+export function movePrice(slots: number, discount: number, owned: readonly string[]): number {
+  let paid = 0;
+  for (let i = 0; i < slots; i++) paid += slotPrice(i, discount)!;
+  // whole tenths, not *0.6 or *0.8 (see sellPrice): paid is whole, and in float the product can land a gold short.
+  return Math.max(5, Math.floor((paid * moveRefund(owned)) / 10));
+}
+
 /** How many cards the draft at `draftNumber` offers, with the "Fourth card" node owned or not. */
 export function draftCardsFor(draftNumber: number, fourthCard: boolean): number {
   return fourthCard && draftNumber === 1 ? 4 : draftCardCount(draftNumber);

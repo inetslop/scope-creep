@@ -5,7 +5,7 @@ import { cssColor, PALETTE } from '../../content/palette';
 import { describeSpec } from '../../core/augments';
 import type { RunPhase } from '../../core/run';
 import type { TargetMode } from '../../core/targeting';
-import { sellPrice, slotPrice } from '../../core/techEffects';
+import { movePrice, sellPrice, slotPrice } from '../../core/techEffects';
 import { towerDps } from '../../core/towerDps';
 import { tierAddedLine } from '../../core/tiers';
 import { artScale, augmentTexture, COIN_TEXTURE } from '../../art/textures';
@@ -26,11 +26,13 @@ const SLOT = 50;
 const DPS_LINE = 14; // one muted line of 11px
 const MARKED_LINE = 14; // one muted line, like DPS_LINE
 const SELL_H = 44; // the "Sell · +N" line, build phase only
+const MOVE_H = 44; // the "Move · −N" line, build phase only, above the sell line
 
 /**
  * Above the hand, while a tower is selected: what its augments make it, one card per augment
  * (icon, "Name · Tier", the tier's gems, its added line), its stats, and its slots (filled,
- * free, the next one's price, locked). In the build phase it wears a "Sell · +N" line. The panel
+ * free, the next one's price, locked). In the build phase it wears a "Move · −N" line over a
+ * "Sell · +N" line. The panel
  * grows with the number of augments. Rebuilt when Building.uiVersion changes or the phase
  * changes; the unlock price turns red while the gold is short.
  */
@@ -38,6 +40,7 @@ export class TowerPanel implements HudPart {
   private readonly scene: Phaser.Scene;
   private box: Phaser.GameObjects.Container | undefined;
   private unlock: { button: Button; cost: number; price: Phaser.GameObjects.Text } | undefined;
+  private moveBtn: { button: Button; cost: number; price: Phaser.GameObjects.Text } | undefined;
   private killsText: Phaser.GameObjects.Text | undefined;
   private markedText: Phaser.GameObjects.Text | undefined;
   private size = { width: 0, height: 0 };
@@ -74,12 +77,20 @@ export class TowerPanel implements HudPart {
       this.unlock.price.setColor(cssColor(affordable ? PALETTE.ink : PALETTE.red));
       this.unlock.button.content.setAlpha(affordable ? 1 : 0.6);
     }
+    if (this.moveBtn) {
+      // The reroll button's own short-gold pattern: the line dims, the price goes red, and it stops reacting.
+      const affordable = game.run.canAfford(this.moveBtn.cost);
+      this.moveBtn.price.setColor(cssColor(affordable ? PALETTE.ink : PALETTE.red));
+      this.moveBtn.button.content.setAlpha(affordable ? 1 : 0.6);
+      this.moveBtn.button.setEnabled(affordable);
+    }
   }
 
   private build(game: GameScene): void {
     this.box?.destroy();
     this.box = undefined;
     this.unlock = undefined;
+    this.moveBtn = undefined;
     this.killsText = undefined;
     this.markedText = undefined;
     const tower = game.building.selectedTower;
@@ -90,8 +101,8 @@ export class TowerPanel implements HudPart {
     const left = -w / 2 + 18;
     const n = tower.augments.length;
     const RW = w - 36;
-    const sell = game.run.phase === 'build'; // the sell line wears only in the build phase
-    const below = sell ? SELL_H + ROW_GAP : 0; // the sell line and its row gap, under the slot row
+    const sell = game.run.phase === 'build'; // the sell and move lines wear only in the build phase
+    const below = sell ? SELL_H + MOVE_H + 2 * ROW_GAP : 0; // the sell line and its move line, and their row gaps, under the slot row
     const marked = tower.cellMul > 1; // stands on the board's marked cell
     // Pass 1: lay each row's added line out at (0,0) to measure it, then let the row grow to fit.
     const rows = tower.augments.map((c) => {
@@ -166,9 +177,23 @@ export class TowerPanel implements HudPart {
     if (sell) {
       const price = sellPrice(tower.slots, game.run.slotDiscount, game.run.techOwned);
       items.push(makeButton(scene, 0, H / 2 - 16 - SELL_H / 2, `Sell · +${price}`, () => game.building.sellTower(), { width: RW, height: SELL_H, radius: 12 }).container);
+      // The move line, above the sell line: pay the fee to slide this tower to a free build cell.
+      const moveCost = movePrice(tower.slots, game.run.slotDiscount, game.run.techOwned);
+      const moveButton = makeButton(scene, 0, H / 2 - 16 - SELL_H - ROW_GAP - MOVE_H / 2, '', () => game.building.startMove(), { width: RW, height: MOVE_H, radius: 12, fadeWhenDisabled: false });
+      const moveWord = scene.add.text(0, 0, 'Move ·', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
+      const movePriceText = scene.add.text(0, 0, `−${moveCost}`, textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0.5);
+      const gap = 2;
+      const pairW = moveWord.width + gap + movePriceText.width;
+      moveWord.setPosition(-pairW / 2 + moveWord.width / 2, 0);
+      movePriceText.setPosition(moveWord.x + moveWord.width / 2 + gap + movePriceText.width / 2, 0);
+      moveButton.content.add([moveWord, movePriceText]);
+      this.moveBtn = { button: moveButton, cost: moveCost, price: movePriceText };
+      items.push(moveButton.container);
     }
     const x = isNarrow(width) ? width / 2 : EDGE + w / 2;
-    this.box = scene.add.container(x, height - HUD.bottom - 10 - H / 2, items);
+    // Four augments plus the move line make the panel taller than the play area at a short screen (1280x720): its top stays under the top HUD.
+    const y = Math.max(HUD.top + H / 2, height - HUD.bottom - 10 - H / 2);
+    this.box = scene.add.container(x, y, items);
   }
 
   /** The slot row: filled (the augment), free (a plus), the next to unlock (its price), locked. `below` is what sits under it (the sell line). */
