@@ -3,10 +3,12 @@ id: T0422
 title: "The preview's tag chip sits on its own line"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T11:43:00Z
+claimed_at: 2026-11-02T11:43:19Z
+designer: yoga
 ---
 
 ## Goal
