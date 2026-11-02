@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ClaimBed } from '../audio/claimBed';
 import { ART, artScale, COIN_TEXTURE, STAR_TEXTURE } from '../art/textures';
 import { LEVEL_AUGMENTS } from '../content/levels';
 import { cssColor, PALETTE } from '../content/palette';
@@ -14,7 +15,7 @@ import { makeButton } from '../ui/button';
 import { makeCard } from '../ui/card';
 import { display, uiCamera, viewSize } from '../ui/display';
 import { textStyle, titleStyle } from '../ui/text';
-import { getRun, onResize, SCENES } from './keys';
+import { getRun, getSfx, onResize, SCENES } from './keys';
 
 /** The coin icon beside "+N coins": its shown size (the 28-unit texture at artScale 1.5) and the small fixed gap. */
 const COIN_SIZE = 14;
@@ -56,6 +57,8 @@ export class RewardsScene extends Phaser.Scene {
   private coinText!: Phaser.GameObjects.Text;
   private coinIcon!: Phaser.GameObjects.Image;
   private ironTag?: Phaser.GameObjects.Text;
+  bed!: ClaimBed; // the claim's quiet bed: its shutdown stops it, runChecks reads it while the claim is open
+  private claimClosed = false;
 
   constructor() {
     super(SCENES.rewards);
@@ -65,6 +68,9 @@ export class RewardsScene extends Phaser.Scene {
     uiCamera(this);
     hook.scene = SCENES.game;
     hook.overlay = SCENES.rewards;
+    this.bed = new ClaimBed(getSfx(this));
+    this.claimClosed = false; // the scene instance is reused between runs; a stopped claim must not linger
+    this.events.once('shutdown', () => this.bed.stop()); // the fade-out and ringing notes must not outlive the claim (the Sfx context is the singleton's)
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
     const run = getRun(this);
     const profile = loadProfile(window.localStorage);
@@ -88,6 +94,8 @@ export class RewardsScene extends Phaser.Scene {
     const menu = (): void => {
       if (closed) return;
       closed = true;
+      this.claimClosed = true;
+      this.bed.stop(); // fade the claim's bed (0.3 s) as the menu's takes over — the other beds' hand-off
       hook.overlay = '';
       this.scene.stop(SCENES.hud);
       this.scene.stop(SCENES.game);
@@ -280,7 +288,9 @@ export class RewardsScene extends Phaser.Scene {
   }
 
   update(_time: number, deltaMs: number): void {
-    this.elapsed += Math.min(deltaMs / 1000, 0.05);
+    const dt = Math.min(deltaMs / 1000, 0.05);
+    this.bed.update(dt, !this.claimClosed);
+    this.elapsed += dt;
     const k = Math.min(1, this.elapsed / 0.6);
     const kc = Math.min(1, this.elapsed / 1.0);
     this.wavesText.setText(`Waves held ${Math.round(this.waves * k)}`);

@@ -4,11 +4,12 @@ title: "The claim's bed: a quiet beat under the rewards card"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T05:22:32Z
 claimed_at: 2026-11-02T06:31:51Z
+finished_at: 2026-11-02T06:40:39Z
 ---
 
 ## Goal
@@ -59,3 +60,17 @@ The claim — the moment the run's story is told — plays in its own quiet regi
 
 ### Tests
 none (audio task).
+
+## Result (attempt 1, desktop)
+
+Added the run's coda: a fifth quiet audio bed (src/audio/claimBed.ts, same shape as the menu bed) playing the menu's E2/B2/E3 notes at 1.3 s steps with a rest in the beat, at the beds' shared 0.02 volume. RewardsScene now owns and drives it — it fades in when the claim card lands and, on returning to the menu, fades out over 0.3 s while the menu's bed takes over; the bed is recreated and its closed flag reset each run, and the mute toggle silences it like every other bed. Added the claimBed.valid invariant to runChecks next to the other bed checks. check and smoke (desktop + phone) both pass.
+
+- Self-review: APPROVE
+- Time: 8.8 min
+
+```
+projects/chokepoint/game/src/audio/claimBed.ts     | 77 ++++++++++++++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  2 +
+ .../chokepoint/game/src/scenes/RewardsScene.ts     | 14 +++-
+ 3 files changed, 91 insertions(+), 2 deletions(-)
+```
