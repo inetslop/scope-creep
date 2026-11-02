@@ -3,13 +3,14 @@ id: T0450
 title: "The draft branch and its first node, The early odds: the rare odds start at wave 1"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-02T23:11:28Z
 claimed_at: 2026-11-02T23:32:19Z
+finished_at: 2026-11-02T23:41:53Z
 epic: E23
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
@@ -28,3 +29,7 @@ The tech tree gains an eighth branch — The draft — with its first node, The 
 - [ ] The draft's odds line reads the shifted odds while the node is owned.
 - [ ] A run without the node rolls byte-identical odds on every draft; the first-draft floor, the no-repeat rule, the four-card draft, the wildcard and the reroll are untouched.
 - [ ] The game is playable menu to game over on desktop and mobile.
+
+## Rejected by architect (cachyos-x8664)
+
+"The draft" already exists as the tech screen's 2nd branch — `content/tech/draft.ts` `DRAFT_NODES` (the Slot II / fourth-card nodes, bought through `buyNode` at a 10-coin depth-1 price, `nodeCost` base = `branch[0].price` = 10), so the task's new "The draft" branch with a 30-coin depth-1 node bought through the wave-style independent dispatch collides with the existing branch it must leave "untouched"; a 30-coin depth-1 node can't sit in DRAFT_NODES (whose depth-1 price is 10) without a price that "violates the depth rule", and making the branch a separate array would be a second "The draft" row.
