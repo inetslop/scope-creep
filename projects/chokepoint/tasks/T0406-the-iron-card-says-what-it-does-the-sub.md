@@ -3,10 +3,12 @@ id: T0406
 title: "The Iron card says what it does: the sub-line under the name"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T05:03:59Z
+claimed_at: 2026-11-02T05:04:12Z
+designer: yoga
 ---
 
 ## Goal
