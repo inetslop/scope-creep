@@ -190,14 +190,22 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['hand.selection', (g) => g.building.brokenSelection()],
   ['building.pending', (g) => { const c = g.building.pendingCell; if (!c) return null; if (g.run.phase !== 'build') return `a placement waits in phase ${g.run.phase}`; return g.board.canBuild(c) ? null : `a placement waits on a taken or blocked cell (${c.col}, ${c.row})`; }],
   // The clean wave's chip keeps phase 'draft' with an empty offer for a second, so check while the draft overlay is up (the offer is filled before it launches).
-  ['draft.offer', (g) => (hook.overlay !== SCENES.draft || g.flow.offer.length === draftCardCount(g.flow.draftWave) ? null : `draft offers ${g.flow.offer.length} cards, expected ${draftCardCount(g.flow.draftWave)}`)],
+  ['draft.offer', (g) => {
+    if (hook.overlay !== SCENES.draft) return null;
+    const offer = g.flow.offer;
+    const count = draftCardCount(g.flow.draftWave);
+    if (offer.length !== count) return `draft offers ${offer.length} cards, expected ${count}`;
+    const wild = offer.filter((c) => c.wildcard);
+    if (count !== 4) return wild.length === 0 ? null : `a ${count}-card draft offers a wildcard`;
+    return wild.length === 1 && offer[3]!.wildcard === true && offer[3]!.tier !== 'common' ? null : `the four-card draft's wildcard is wrong`;
+  }],
   ['level.choice', (g) => (new Set(g.run.level).size === g.run.level.length && g.run.level.every((id) => getLevelAugment(id) !== undefined) ? null : `level choice ${g.run.level.join(',')}`)],
   ['level.speed', (g) => (g.enemies.all.every((e) => !e.active || e.speedMul === levelSpeedMul(g.run.level) * waveWalkFactor(g.run.techOwned) * waveSpeedMul(g.run.wave)) ? null : 'an enemy walks at the wrong level, walk or wave speed factor')],
   ['walk.mul', (g) => (g.enemies.all.every((e) => !e.active || e.walkMul === waveWalkFactor(g.run.techOwned)) ? null : 'an enemy carries the wrong run walk factor')],
   ['level.bossPlan', (g) => { if (!bossId(g.run.wave) || !g.waves.currentPlan) return null; const want = g.run.wave === 20 ? 2 : g.run.wave === 70 || g.run.wave === 80 || g.run.wave === 90 ? 3 : 1; return g.waves.currentPlan.spawns.length === want ? null : `boss wave ${g.run.wave} sends ${g.waves.currentPlan.spawns.length}, not ${want}`; }],
   ['augments.valid', (g) => {
     for (const c of [...g.run.hand, ...g.towers.towers.flatMap((t) => t.augments)])
-      if (!AUGMENTS.some((a) => a.id === c.id) || !TIER_ORDER.includes(c.tier)) return `unknown augment copy ${c.id}:${c.tier}`;
+      if (!AUGMENTS.some((a) => a.id === c.id) || !TIER_ORDER.includes(c.tier) || c.wildcard) return `unknown augment copy ${c.id}:${c.tier}`;
     return null;
   }],
   ['fx.count', (g) => (g.fx.count > 200 ? `${g.fx.count} effects alive` : null)],

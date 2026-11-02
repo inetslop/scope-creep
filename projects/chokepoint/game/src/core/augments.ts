@@ -419,7 +419,9 @@ export function draftPool(owned: readonly string[]): readonly AugmentDef[] {
  * so the opening pick is never a dead end - except when the bolt is excluded (the opening reroll),
  * when the first card is rolled like the rest. `exclude` is the ids of the offer just before this
  * one: those augments are not offered again; if they leave fewer than 3 eligible the rule relaxes
- * for this offer only, so the roll never hard-fails.
+ * for this offer only, so the roll never hard-fails. The every-fifth draft's fourth card is the
+ * Wildcard: it rolls last (so it is never one of the other three), a Common roll becomes a Rare,
+ * and it carries `wildcard` until the pick reveals it.
  */
 export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, wave: number, opening = false, exclude?: readonly string[]): AugmentCopy[] {
   const open = opening ? pool.filter((a) => a.first.damage > 0 || a.opening) : pool;
@@ -427,6 +429,8 @@ export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, 
   const excluded = new Set(exclude ?? []);
   // If that leaves fewer than 3 eligible, the rule relaxes for this offer only, so the roll never hard-fails.
   const banned = open.filter((a) => !excluded.has(a.id)).length < 3 ? new Set<string>() : excluded;
+  // The every-fifth draft's fourth card is the Wildcard: hidden until the pick, and a Common roll becomes a Rare.
+  const wildSlot = count === 4 && draftCardCount(wave) === 4;
   const taken = new Set<string>();
   const offers: AugmentCopy[] = [];
   if (opening && !banned.has(bolt.id)) {
@@ -435,11 +439,13 @@ export function rollOffer(rng: Rng, pool: readonly AugmentDef[], count: number, 
     taken.add(bolt.id);
   }
   for (let i = offers.length; i < count; i++) {
-    const tier = rollTier(rng, wave);
+    const wildcard = wildSlot && i === count - 1;
+    let tier = rollTier(rng, wave);
+    if (wildcard && tier === 'common') tier = 'rare';
     const candidates = open.filter((a) => !taken.has(a.id) && !banned.has(a.id) && (a.tier === undefined || a.tier === tier) && (a.minTier === undefined || tierIndex(tier) >= tierIndex(a.minTier)));
     const picked = rng.pick(candidates);
     taken.add(picked.id);
-    offers.push({ id: picked.id, tier });
+    offers.push(wildcard ? { id: picked.id, tier, wildcard: true } : { id: picked.id, tier });
   }
   return offers;
 }

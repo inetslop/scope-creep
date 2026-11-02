@@ -135,6 +135,8 @@ export interface TierValues {
 export interface AugmentCopy {
   id: string;
   tier: Tier;
+  /** The every-fifth draft's 4th card: rolled with the offer, hidden until the pick. Stripped before it joins the hand. */
+  wildcard?: boolean;
 }
 
 /** How a tower attacks: set by the first augment put into it (see core/augments.ts). */

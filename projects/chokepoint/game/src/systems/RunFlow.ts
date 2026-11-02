@@ -164,7 +164,7 @@ export class RunFlow {
   finishDraft(pick: AugmentCopy | undefined): void {
     if (this.run.phase !== 'draft') return;
     if (pick && this.offer.some((o) => o.id === pick.id && o.tier === pick.tier)) {
-      this.run.takeAugment(pick);
+      this.run.takeAugment({ id: pick.id, tier: pick.tier }); // the hand holds the plain copy: the wildcard flag never leaves the draft
       hook.stats.augmentsTaken += 1;
       this.s.building.cardAdded();
     }

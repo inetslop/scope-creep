@@ -4,11 +4,12 @@ title: "The draft's wildcard: the 4th card that becomes a Rare or Epic"
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T18:33:27Z
 claimed_at: 2026-11-02T18:46:34Z
+finished_at: 2026-11-02T19:05:34Z
 ---
 
 ## Goal
@@ -108,3 +109,20 @@ No other signature changes. `RunFlow.offer` stays `AugmentCopy[]`; `finishDraft(
 
 ### Tests
 - `tests/core/augments.test.ts`: the five Wildcard tests in Step 5 (4-card shape, 3-card/node-draft absence, never-Common + both tiers seen, previous-offer/own-table exclusion, reroll rolls a new one).
+
+## Result (attempt 1, desktop)
+
+The every-fifth draft's 4th card is now the Wildcard: `rollOffer` (src/core/augments.ts) rolls it last in the offer's own rng stream — a Common roll becomes a Rare, it can never be the previous offer's augment or one of its own three tablemates, and a reroll re-rolls it — carrying a new optional `wildcard` flag on `AugmentCopy` (src/content/types.ts). DraftScene shows it as a plain white card with a muted-yellow "?", "Wildcard" and "becomes a Rare or Epic augment", no tier word/dot/count/fit row and a quiet offer flip; picking it flips to the resolved identity (icon, name, tier word in the tier's color) over ~300 ms with the tier chime, then closes and the card plays as an ordinary card. `finishDraft` strips the flag so the hand, saves and codex only ever see plain copies, and the `draft.offer`/`augments.valid` invariants (src/debug/runChecks.ts) now police the wildcard's shape and tier. `npm run check` (625 tests) and the desktop + mobile smoke both pass.
+
+- Self-review: APPROVE
+- Time: 19.0 min
+
+```
+projects/chokepoint/game/src/content/types.ts      |  2 +
+ projects/chokepoint/game/src/core/augments.ts      | 12 +++-
+ projects/chokepoint/game/src/debug/runChecks.ts    | 12 +++-
+ projects/chokepoint/game/src/scenes/DraftScene.ts  | 83 +++++++++++++++++++---
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  2 +-
+ .../chokepoint/game/tests/core/augments.test.ts    | 52 ++++++++++++++
+ 6 files changed, 146 insertions(+), 17 deletions(-)
+```

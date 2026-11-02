@@ -449,4 +449,56 @@ describe('rollOffer', () => {
     for (let seed = 1; seed <= 200; seed++) if (!rollOffer(new Rng(seed), AUGMENTS, 3, 2).some((c) => c.id === 'bolt')) noBolt += 1;
     expect(noBolt).toBeGreaterThan(0);
   });
+
+  it("the every-fifth draft's fourth card is the Wildcard, and only the fourth", () => {
+    for (let seed = 1; seed <= 30; seed++) {
+      const offer = rollOffer(new Rng(seed), AUGMENTS, 4, 10);
+      expect(offer.length).toBe(4);
+      expect(offer[3].wildcard).toBe(true);
+      for (const c of offer.slice(0, 3)) expect(c.wildcard).toBeUndefined();
+    }
+  });
+
+  it('no Wildcard in the 3-card drafts or the pre-wave-1 draft with its fourth card', () => {
+    for (let seed = 1; seed <= 30; seed++) {
+      for (const offer of [rollOffer(new Rng(seed), AUGMENTS, 3, 5), rollOffer(new Rng(seed), AUGMENTS, 4, 1)]) {
+        for (const c of offer) expect(c.wildcard).toBeUndefined();
+      }
+    }
+  });
+
+  it('the Wildcard never lands Common: a Common roll becomes a Rare, and both Rare and Epic appear', () => {
+    const seen: Record<string, number> = {};
+    for (let seed = 1; seed <= 300; seed++) {
+      const w = rollOffer(new Rng(seed), AUGMENTS, 4, 10)[3];
+      expect(w.tier).not.toBe('common');
+      seen[w.tier] = (seen[w.tier] ?? 0) + 1;
+    }
+    expect(seen.rare ?? 0).toBeGreaterThan(0);
+    expect(seen.epic ?? 0).toBeGreaterThan(0);
+  });
+
+  it('in a run of drafts, no card is the previous offer, and the Wildcard is never on its own table', () => {
+    for (let seed = 1; seed <= 100; seed++) {
+      const rng = new Rng(seed);
+      let last: string[] = [];
+      for (let d = 1; d <= 10; d++) {
+        const count = d % 5 === 0 ? 4 : 3;
+        const offer = rollOffer(rng, AUGMENTS, count, d, d === 1, last);
+        for (const c of offer) expect(last.includes(c.id)).toBe(false);
+        expect(new Set(offer.map((c) => c.id)).size).toBe(offer.length);
+        last = offer.map((c) => c.id);
+      }
+    }
+  });
+
+  it('a reroll of a four-card draft offers a new Wildcard', () => {
+    for (let seed = 1; seed <= 100; seed++) {
+      const rng = new Rng(seed);
+      const first = rollOffer(rng, AUGMENTS, 4, 10);
+      const second = rollOffer(rng, AUGMENTS, 4, 10, false, first.map((c) => c.id));
+      expect(second[3].wildcard).toBe(true);
+      expect(second[3].id).not.toBe(first[3].id);
+    }
+  });
 });

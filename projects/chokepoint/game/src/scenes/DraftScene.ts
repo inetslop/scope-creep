@@ -27,8 +27,9 @@ const HINT_GAP = 12;
  * Before the first wave and after every cleared one: the draft's cards (three, four on every
  * fifth; RunFlow.offer); the one picked (click, tap or 1-4) goes into the hand. Each card has two
  * lines: next to the tower glyph what the augment does as a new tower, next to the plus what it
- * adds to a tower. Overlay over a paused GameScene. In ?smoke mode it picks the first card on its
- * own.
+ * adds to a tower. The four-card draft's 4th card is the Wildcard: a plain white card, a "?" in
+ * its place, hidden until the pick flips it to the augment it rolled. Overlay over a paused
+ * GameScene. In ?smoke mode it picks the first card on its own.
  */
 export class DraftScene extends Phaser.Scene {
   private picked = false;
@@ -52,7 +53,7 @@ export class DraftScene extends Phaser.Scene {
     const game = getGameScene(this);
     const four = game.flow.offer.length === 4;
     const flipped: boolean[] = game.flow.offer.map(() => false);
-    let cards: { button: ReturnType<typeof makeButton>; frame: Phaser.GameObjects.Graphics | undefined }[] = [];
+    let cards: { button: ReturnType<typeof makeButton>; frame: Phaser.GameObjects.Graphics | undefined; hidden?: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[]; resolved?: (Phaser.GameObjects.Text | Phaser.GameObjects.Image)[] }[] = [];
     let flipTweens: Phaser.Tweens.Tween[] = [];
     let size = viewSize(this);
     let H = CARD_H; // the offer's card height, set by buildRow
@@ -60,13 +61,37 @@ export class DraftScene extends Phaser.Scene {
       if (this.picked || !flipped[i]) return;
       this.picked = true;
       hook.overlay = '';
-      if (hint) {
-        this.tweens.add({ targets: hint, alpha: 0, duration: 150, ease: 'Quad.easeIn' });
-        this.time.delayedCall(150, () => this.scene.stop());
+      const copy = game.flow.offer[i];
+      const close = (): void => {
+        if (hint) {
+          this.tweens.add({ targets: hint, alpha: 0, duration: 150, ease: 'Quad.easeIn' });
+          this.time.delayedCall(150, () => this.scene.stop());
+        } else {
+          this.scene.stop();
+        }
+        game.flow.finishDraft(copy);
+      };
+      // The Wildcard flips to the augment it rolled (its own tier chime with it); the build phase opens only after.
+      const hidden = cards[i]?.hidden;
+      const resolved = cards[i]?.resolved;
+      if (hidden && resolved) {
+        this.tweens.add({
+          targets: cards[i]!.button.container,
+          scaleX: 0.03,
+          duration: 150,
+          ease: 'Quad.easeIn',
+          yoyo: true,
+          repeat: 1,
+          onYoyo: () => {
+            hidden.forEach((o) => o.setVisible(false));
+            resolved.forEach((o) => o.setVisible(true));
+            getSfx(this)?.tierChime(copy.tier);
+          },
+          onComplete: close,
+        });
       } else {
-        this.scene.stop();
+        close();
       }
-      game.flow.finishDraft(game.flow.offer[i]);
     };
 
     // Veils the board and swallows clicks, so nothing underneath reacts.
@@ -143,13 +168,49 @@ export class DraftScene extends Phaser.Scene {
       // Pass 1: lay the two lines out at (0,0) to measure them, then let the card grow to fit.
       const lines = copies.map((copy) => {
         const b = getAugment(copy.id);
+        if (copy.wildcard) return { copy, b, wildcard: true as const, towerLine: undefined, addedLine: undefined, fit: undefined }; // the Wildcard's card has no lines to lay out
         const towerLine = this.add.text(0, 0, tierTowerLine(b, copy.tier), textStyle(four ? 12 : 14, PALETTE.ink, wrap)).setOrigin(0, 0);
         const addedLine = this.add.text(0, 0, tierAddedLine(b, copy.tier), textStyle(four ? 12 : 14, PALETTE.muted, wrap)).setOrigin(0, 0);
-        return { copy, b, tier: copy.tier, towerLine, addedLine, fit: buildFitRow(this, k, copy, game.towers.towers) };
+        return { copy, b, wildcard: false as const, tier: copy.tier, towerLine, addedLine, fit: buildFitRow(this, k, copy, game.towers.towers) };
       });
-      H = Math.max(CARD_H, ...lines.map((l) => l.towerLine.height + 10 + l.addedLine.height + 117 + (l.fit ? 10 + l.fit.height : 0)));
-      cards = lines.map(({ copy, b, towerLine, addedLine, fit }, i) => {
+      H = Math.max(CARD_H, ...lines.map((l) => (l.towerLine && l.addedLine ? l.towerLine.height + 10 + l.addedLine.height + 117 + (l.fit ? 10 + l.fit.height : 0) : 0)));
+      cards = lines.map(({ copy, b, wildcard, towerLine, addedLine, fit }, i) => {
         const t = -H / 2; // every y below is measured from the card's top edge
+        if (wildcard) {
+          // The Wildcard's face: plain white, the milestone-yellow "?" where the icon would be, its name and one line.
+          const button = makeButton(this, 0, 0, '', () => pick(i), { width: cw, height: H, radius: Math.round(22 * k), accent: PALETTE.yellow });
+          const question = this.add.text(0, t + 31, '?', titleStyle(24, PALETTE.yellow)).setOrigin(0.5);
+          const wName = this.add.text(0, t + 66, 'Wildcard', titleStyle(four ? 16 : 20)).setOrigin(0.5);
+          const wLine = this.add.text(0, t + 101, 'becomes a Rare or Epic augment', textStyle(four ? 12 : 14, PALETTE.muted, { align: 'center', wordWrap: { width: cw - 24 } })).setOrigin(0.5, 0);
+          const key = this.add.text(-cw / 2 + 14, t + 10, String(i + 1), textStyle(12, PALETTE.faint, { fontStyle: 'bold' }));
+          // Its resolved identity, built now and hidden until the pick: the augment's icon, name and tier word.
+          const icon = artScale(this.add.image(0, t + 31, augmentTexture(b.id)), 1.3 * k);
+          const name = this.add.text(0, 0, b.name, titleStyle(four ? 16 : 20)).setOrigin(0.5);
+          const tierWord = this.add.text(0, 0, ` · ${tierName(copy.tier)}`, titleStyle(four ? 16 : 20, tierGemColor(copy.tier))).setOrigin(0.5);
+          name.setPosition(-tierWord.width / 2, t + 66);
+          tierWord.setPosition(name.width / 2, t + 66);
+          const hidden = [question, wName, wLine, key];
+          const resolved = [icon, name, tierWord];
+          for (const o of resolved) o.setVisible(false);
+          button.content.add([...hidden, ...resolved]);
+          // The offer flip, quiet: no tier chime, no epic lengthening (the tier is hidden until the pick).
+          const back = artScale(this.add.image(0, 0, GEM_TEXTURE)).setTint(PALETTE.faint);
+          button.content.setVisible(false);
+          button.container.add(back);
+          const flip = this.tweens.add({
+            targets: [button.container],
+            scaleX: 0.03,
+            delay: i === 3 ? 420 : 100 + i * 60,
+            duration: 100,
+            ease: 'Quad.easeIn',
+            yoyo: true,
+            repeat: 1,
+            onYoyo: () => { back.setVisible(false); button.content.setVisible(true); },
+            onComplete: () => { button.container.setScale(1); flipped[i] = true; },
+          });
+          flipTweens.push(flip);
+          return { button, frame: undefined, hidden, resolved };
+        }
         const button = makeButton(this, 0, 0, '', () => pick(i), { width: cw, height: H, radius: Math.round(22 * k), accent: PALETTE[b.look.color] });
         const icon = artScale(this.add.image(0, t + 31, augmentTexture(b.id)), 1.3 * k);
         // Rare and Epic say their tier on the name line in the tier's color; Common keeps the plain name, like its plain frame.
