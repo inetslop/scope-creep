@@ -24,6 +24,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Colorblind mode: patterns on the shapes, not just color
 - Map modifiers chosen in the draft instead of an augment (e.g. "the next wave comes from both ends")
 - Haptics on mobile for builds and leaks — **built as T0265 (S, non-epic, 2026-10-30, yoga)**: one guarded navigator.vibrate, two patterns (place 20 ms, leak 80 ms), no HUD or toggle
+- The boss death gets its haptic — the run's loudest kill (T0273's burst and horn) earns a longer, heavier buzz than the leak's on mobile (T0265's guarded pattern, once per boss) — parked
 - Draft reroll — **built as T0036, extended by T0276**: endless rerolls, cost 50 + 15n + 5n², the button shows the price and turns red and disabled when gold is short (never "used")
 - Leak warning: the last 3 seconds before an enemy reaches the exit, the exit pulses red with a quiet tick — built as T0014 (yoga)
 - Ghost run — **built as T0078**: a menu option "Ghost · Wave N" under Play re-grows the best run's exact board; it never changes the saved seed
@@ -90,6 +91,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Last stand — **built as T0054**: at exactly 1 life every kill pays double gold for the rest of the run (off the moment the streak pays a life back) and the lives number stays red
 - Average wave on the profile card — **built as T0050 (2026-10-28, desktop)**: the menu profile card's "runs N" line becomes "runs N · avg wave M", M the average wave of the last four runs (T0018)
 - Combo gold — built (T0066, 2026-10-29)
+- The combo says what it pays — the run's first ×5 chain says once, at the +2 pop's own spot, that quick kills pay extra: a one-time chip, the first-leak chip's look — **tasked as T0425 (S, 2026-11-02)**
 - Scorch cell: a build cell where 12+ enemies died this run keeps a small dark chip on the ground for the rest of the run, and a tower built on that cell deals +5% more damage — the road shows where the fight was, and the next placement takes the advantage — **now E19 (active, 2026-11-02); the scorch cell tasked as T0414 (M, in the pool)**
 - The pause line stars your record — **built as T0069 (2026-10-28, asus)**: the pause screen's run-so-far line (T0030) shows the small yellow star (T0016) the moment the current wave equals the saved best wave, and keeps it for the rest of the run (a resumed run at or above its best shows it from the first pause)
 - The record pass — **built as T0296 (S, non-epic, 2026-10-30, yoga)**: a record star pops beside the wave card's number once, the moment the run reaches the saved best wave (Iron wears the muted star)

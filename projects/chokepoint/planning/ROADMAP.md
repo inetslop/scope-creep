@@ -43,12 +43,12 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E9 — Level augments: harder runs for a bigger payout (done; history in planning/archive/ROADMAP.md)
 
-### E10 — The sky: not everything walks the road (active — all but T0346 landed 2026-11-02)
+### E10 — The sky: not everything walks the road (done 2026-11-02)
 **Goal:** the road stops being the only line on the board: something crosses the island over it, and a build that only covers the road stops being enough.
 **When done:** the wave-50 boss never touches the road — it crosses the island in a straight line and banks to a new one at half health — and a small regular flyer in the wave mix teaches the same read; the flight line's telegraph is the enemy's own language, and the player learns to cover the island, not just the road.
 **Breakdown:**
 - The Flyer, the wave-50 boss: the fifth every-10 boss, the first that doesn't walk the road — a straight-line crossing from the island's edge to the exit, a bank at half health — **done as T0317 (L, 2026-11-02, asus)**
-- the build phase shows the line: before the flyer's wave, its route is on the board through the build — the crossing's cover is chosen in the build, not learned at the wave's door — **tasked as T0346 (M, in the pool; T0317 landed, so it can start)**
+- the build phase shows the line: before the flyer's wave, its route is on the board through the build — the crossing's cover is chosen in the build, not learned at the wave's door — **done as T0346 (M, 2026-11-02, asus)**
 - the regular Flyer in the wave mix: the first enemy that doesn't walk the road — a small fast shape that crosses the island in a straight line from its edge to the exit, one on the Feeder's old waves (13, 17, 21, …); carries the Feeder's removal, the regular cap stays 10 of 10 — **done as T0353 (L, 2026-11-01, asus)**; its one-time preview teach — **done as T0373 (S, 2026-11-01, yoga)**
 - the Flyer's motion reads as flight: a short fading streak in its own color trails the regular Flyer through the sky — **done as T0375 (S, 2026-11-01, yoga)**
 - the sky wears its own note: one soft sustained tone plays while any regular Flyer is in the air, heard as distinct from the road's thuds — **done as T0376 (M, 2026-11-01, inet-racing)**
@@ -126,7 +126,7 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Mute (T0074, M) — **done** (2026-10-29, desktop-4070): silences every tower within 2 cells. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
 - Feeder (IDEAS) — **done as T0334 (2026-11-01, desktop, the T0309 re-file)**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring — the regular-enemy cap is 10 of 10; its slot and removal ride the Flyer (T0353, tasked 2026-11-01).
 - The Hive (IDEAS) — **done as T0292 (L, 2026-11-01, desktop)**: the wave-40 boss, the next peak after the Orb — the first boss that grows the group (a Dot every 6 s, up to 5); `spawnOnly`, so the 10-regular cap is untouched (the Feeder fills it).
-- The Blinker (IDEAS) — **tasked as T0402 (M, 2026-11-02, the T0364 re-file, smaller)**: the wave-60 boss — blinks 2.5 cells forward every 4 s on a 1 s telegraph (committed); the boss lane, spawnOnly, the regular cap untouched.
+- The Blinker (IDEAS) — **done as T0402 (M, 2026-11-02, desktop, the T0364 re-file, smaller)**: the wave-60 boss — blinks 2.5 cells forward every 4 s on a 1 s telegraph (committed); the boss lane, spawnOnly, the regular cap untouched.
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
 Queue order: the Bulwark (T0102), the Ward (T0111), the Dart's removal (T0237) and the Feeder (T0334) are done — the regular-enemy cap (10, the bar in modules/enemies.md) is 10 of 10; the Flyer (T0353) takes the Feeder's slot and carries its removal, so the Wall (parked, IDEAS) stays parked behind it — it needs a slot. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
@@ -146,7 +146,7 @@ Ideas that may become epics or tasks of one.
 - Targeting modes per tower (first, strongest, closest) — **built as T0114 (L, non-epic, 2026-11-01, inet-racing)**; its follow-up (the plinth notch, the one-time chip) — **tasked as T0368 (S, non-epic, in the pool, 2026-11-01)**
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
-- Bosses every 10 waves, each with its own mechanic — **E5 done; the queue: the Hive (T0292) and the Flyer (T0317) done, the Blinker (T0402), the Mender (T0404) and the Leech (T0405) in the pool**
+- Bosses every 10 waves, each with its own mechanic — **E5 done; the queue: the Hive (T0292), the Flyer (T0317) and the Blinker (T0402) done, the Mender (T0404) and the Leech (T0405) in the pool**
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **E13 done 2026-11-01** (far gate T0338, fork T0352, marked cell T0340, boards reference T0350); the cove — a bay in the island's edge whose pocket cells double-cover the road's curve — **done as T0409 (2026-11-02)**; the slow stretch — ~1-in-4 boards, a 3-cell run of road where walkers cross at 70% — **tasked as T0416 (M, 2026-11-02)**
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)

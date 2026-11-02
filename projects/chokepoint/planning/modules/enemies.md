@@ -27,10 +27,11 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-18 in the game, from game/src/content/enemies/ (the real values).
+19 in the game, from game/src/content/enemies/ (the real values).
 
 **By `behavior`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
+- `blink`: Blinker
 - `dash`: Dasher
 - `fly`: Flyer
 - `walk`: Dot, Block, Colossus, Guard, Titan, Orb, Hive, Shard, Sprinter, Splitter, Hauler, Mute, Flyer, Ward, Bulwark, Splinter
@@ -145,6 +146,19 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - spawnOnly: true
 - bank: hpFrac 0.5, previewSec 0.8
 - look: shape triangle, color red, size 0.5
+
+### Blinker (`blinker`)
+- description: "The whole wave in one shape: it blinks 2.5 cells forward every 4 s — kill it while it blinks, or cover the road between."
+- behavior: blink
+- hp: 720
+- speed: 0.9
+- gold: 20
+- livesCost: 1
+- threat: 300
+- fromWave: 60
+- spawnOnly: true
+- blinkCycle: walkSec 4, teleSec 1, cells 2.5
+- look: shape almond, color pink, size 0.5
 
 ### Dasher (`dasher`)
 - description: "Crawls, stops to wind up, then dashes: catch it mid-stop."
