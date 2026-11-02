@@ -80,6 +80,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   shielded = false;
   /** Its drink is armed right now (the Leech): set by systems/enemyHooks/leechDrink.ts, read one frame stale here for the white telegraph (core/drink.ts). */
   drinkReady = false;
+  /** How many feeds it has taken (the Gorge); set by systems/enemyHooks/gorgeFeeds.ts, read live by the BossCard's pips. */
+  feedsUsed = 0;
   /** Seconds since its out-of-reach beat started (the Colossus); -1 before its hp first dropped to half (core/outOfReach.ts). */
   reachClock = -1;
   /** Seconds since its split window opened (the Orb); -1 before its hp first dropped to the split line. */
@@ -150,6 +152,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.markAge = 0;
     this.shielded = false;
     this.drinkReady = false; // a recycled slot must not keep a stale telegraph
+    this.feedsUsed = 0; // a recycled slot must not keep a stale feed count
     this.burn.dps = 0;
     this.burn.mul = 1;
     this.burn.acc = 0;

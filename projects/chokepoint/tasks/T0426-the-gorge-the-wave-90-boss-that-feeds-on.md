@@ -4,11 +4,12 @@ title: "The Gorge: the wave-90 boss that feeds on your leaks"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T14:32:01Z
 claimed_at: 2026-11-02T16:52:37Z
+finished_at: 2026-11-02T17:49:30Z
 ---
 
 ## Goal
@@ -177,3 +178,29 @@ The Gorge is a wave-90 boss that mirrors the wave-80 Leech plan (its two Splinte
 
 - `npm run check` (typecheck + lint + unit tests): `tests/content.test.ts` (the Gorge is valid content — unique kebab id, `threat 448 > 0`, `fromWave 90 >= 1`, color in `BRIGHTS`, `size 0.5` via the new exception) and `tests/core/waves.test.ts` (`bossId(90) === 'gorge'`; the wave-90 plan is stable across seeds `[1,7,42]` and equals `[{splinter,0},{splinter,1.2},{gorge,2.4}]` with `tags ['boss']` and `hpMul === waveHpMul(90)`; no wave but 90 sends a Gorge).
 - `npm run smoke` (builds the game and plays it in a real browser): the wave-90 boss lane — preview chip, arrival horn+ring, BossCard (token, name, live hp bar, and the feed pips that dim as the two Splinters leak and the Gorge feeds), the death burst+name card, and the escape horn — plus the new `enemies.gorgeSlot` / `enemies.gorgeFeed` invariants and the updated `level.bossPlan`.
+
+## Result (attempt 1, asus)
+
+Added the wave-90 boss, the Gorge: a red 2.5-turn spiral (new `spiral` shape, size 0.5, boss norm) that walks the road behind two fast Splinter escorts and feeds on the player's leaks — each leak of any other enemy flashes it white, contracts a thin red ring from 2 cells onto it, and restores 15% of its max hp (capped, at most twice, never a revive, never self-fed), with a one-time "leaks feed it" chip and 2 dimming pips on its BossCard. New files: `content/enemies/gorge.ts`, `systems/enemyHooks/gorgeFeeds.ts`, `systems/fx/gorgeTell.ts`; one-line registrations plus the wave-90 plan in `core/waves.ts`, `feedsUsed` on `Enemy`, two smoke invariants and the bossPlan fix in `runChecks.ts`, and tests for the wave-90 plan, the feeding rule and the new content field. `npm run check` (620 tests) and the desktop + mobile smoke both pass.
+
+- Self-review: APPROVE
+- Time: 56.9 min
+
+```
+projects/chokepoint/game/src/art/paint.ts          | 29 ++++++++++++++
+ projects/chokepoint/game/src/art/shapes.ts         |  2 +-
+ .../chokepoint/game/src/content/enemies/gorge.ts   | 17 ++++++++
+ .../chokepoint/game/src/content/enemies/index.ts   |  2 +
+ projects/chokepoint/game/src/content/types.ts      | 10 ++++-
+ projects/chokepoint/game/src/core/waves.ts         | 10 +++--
+ projects/chokepoint/game/src/debug/runChecks.ts    |  4 +-
+ projects/chokepoint/game/src/entities/Enemy.ts     |  3 ++
+ .../game/src/systems/enemyHooks/gorgeFeeds.ts      | 33 ++++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../chokepoint/game/src/systems/fx/gorgeTell.ts    | 26 ++++++++++++
+ projects/chokepoint/game/src/ui/hud/BossCard.ts    | 12 +++++-
+ projects/chokepoint/game/tests/content.test.ts     |  9 ++++-
+ projects/chokepoint/game/tests/core/waves.test.ts  | 17 ++++++++
+ .../game/tests/systems/enemyHooks.test.ts          | 46 ++++++++++++++++++++++
+ 15 files changed, 212 insertions(+), 10 deletions(-)
+```

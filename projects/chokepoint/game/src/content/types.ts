@@ -1,7 +1,7 @@
 import type { Bright } from './palette';
 
 /** Flat shapes the art code can draw (see art/shapes.ts). */
-export type Shape = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'pillar' | 'chevron' | 'ring' | 'wings' | 'maw' | 'almond';
+export type Shape = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'pillar' | 'chevron' | 'ring' | 'wings' | 'maw' | 'almond' | 'spiral';
 
 export interface Look {
   shape: Shape;
@@ -60,6 +60,14 @@ export interface EnemyDef {
    * (core/drink.ts, systems/enemyHooks/leechDrink.ts).
    */
   drinks?: { everySec: number; telegraphSec: number; drinkSec: number; maxDrinks: number; drinkPct: number; escort: string };
+  /**
+   * The feed (the Gorge): while it lives, every leak of any other enemy flashes it white and
+   * restores `frac` of its own max hp (a heal, never a revive), up to `max` times, with a thin
+   * ring in its own color contracting from `ringCells` cells; a one-time teach on the first feed
+   * (systems/enemyHooks/gorgeFeeds.ts, systems/fx/gorgeTell.ts). Event-driven: nothing happens
+   * unless a leak happens.
+   */
+  feeds?: { max: number; frac: number; ringCells: number };
   /**
    * The bank (the boss Flyer): when its hp first drops to `hpFrac` of its max, its remaining route
    * becomes two straight segments — from its position to the edge bank point the board read at that

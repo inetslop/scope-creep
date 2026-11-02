@@ -280,6 +280,23 @@ describe('boss waves (every 10th)', () => {
       expect(planWave(wave, new Rng(wave), ENEMIES).spawns.filter((s) => s.enemy === 'leech').length).toBe(wave === 80 ? 1 : 0);
     }
   });
+  it('bossId: the wave-90 boss is the Gorge — its two Splinter escorts walk in ahead of it, its feed line', () => {
+    expect(bossId(90)).toBe('gorge');
+    expect(planWave(90, new Rng(90), ENEMIES).spawns[2]!.enemy).toBe(bossId(90)); // the rule and the plan agree: the Gorge walks in behind its Splinters
+  });
+  it('wave 90 is exactly the two Splinters and the Gorge: the boss tag, the wave-scaled hp, identical on every seed', () => {
+    for (const seed of [1, 7, 42, 90]) {
+      const plan = planWave(90, new Rng(seed), ENEMIES);
+      expect(plan.spawns).toEqual([{ enemy: 'splinter', delaySec: 0 }, { enemy: 'splinter', delaySec: 1.2 }, { enemy: 'gorge', delaySec: 2.4 }]);
+      expect(plan.tags).toEqual(['boss']);
+      expect(plan.hpMul).toBe(waveHpMul(90));
+    }
+  });
+  it('no wave but 90 sends a Gorge (the wave-90 boss; spawnOnly, never a wave mix)', () => {
+    for (let wave = 1; wave <= 90; wave++) {
+      expect(planWave(wave, new Rng(wave), ENEMIES).spawns.filter((s) => s.enemy === 'gorge').length).toBe(wave === 90 ? 1 : 0);
+    }
+  });
 });
 
 describe('quiet waves (every 4th)', () => {

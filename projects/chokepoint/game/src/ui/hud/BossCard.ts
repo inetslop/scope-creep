@@ -100,6 +100,14 @@ export class BossCard implements HudPart {
         pips.fillCircle((i - (mends.count - 1) / 2) * 10, 0, 3); // one pip per mend remaining: full until it is spent
       }
     }
+    const feeds = boss.def.feeds;
+    if (pips !== undefined && feeds !== undefined) {
+      pips.clear();
+      for (let i = 0; i < feeds.max; i++) {
+        pips.fillStyle(PALETTE.muted, i < feeds.max - boss.feedsUsed ? 0.9 : 0.18);
+        pips.fillCircle((i - (feeds.max - 1) / 2) * 10, 0, 3); // one pip per feed remaining: full until it is spent
+      }
+    }
   }
 
   private build(boss: Enemy): Phaser.GameObjects.Container {
@@ -115,8 +123,8 @@ export class BossCard implements HudPart {
     this.token = token;
     this.bar = bar;
     const parts: Phaser.GameObjects.GameObject[] = [card, token, name, bar];
-    if (boss.def.mends !== undefined) {
-      const pips = scene.add.graphics().setPosition(0, 20); // under the bar, inside the card: one per mend remaining
+    if (boss.def.mends !== undefined || boss.def.feeds !== undefined) {
+      const pips = scene.add.graphics().setPosition(0, 20); // under the bar, inside the card: one per mend or feed remaining
       this.pips = pips;
       parts.push(pips);
     }

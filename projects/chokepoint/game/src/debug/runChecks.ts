@@ -110,6 +110,8 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['enemies.push', (g) => g.enemies.brokenPush()],
   ['enemies.bossSlot', (g) => (g.run.wave === 20 || !g.enemies.all.some((e) => e.active && (e.def.id === 'titan' || e.def.id === 'guard')) ? null : 'a Titan or Guard alive off its wave 20')],
   ['enemies.menderSlot', (g) => (g.run.wave === 70 || !g.enemies.all.some((e) => e.active && e.def.id === 'mender') ? null : 'a Mender alive off its wave 70')],
+  ['enemies.gorgeSlot', (g) => (g.run.wave === 90 || !g.enemies.all.some((e) => e.active && e.def.id === 'gorge') ? null : 'a Gorge alive off its wave 90')],
+  ['enemies.gorgeFeed', (g) => (g.enemies.all.every((e) => !e.active || !e.def.feeds || (e.feedsUsed >= 0 && e.feedsUsed <= e.def.feeds.max)) ? null : 'a Gorge fed past its feed count')],
   ['enemies.hpCap', (g) => (g.enemies.all.every((e) => !e.active || e.hp <= e.maxHp + 1e-9) ? null : 'an enemy above its max hp')],
   ['enemies.reach', (g) => g.enemies.brokenReach()],
   ['enemies.fly', (g) => g.enemies.brokenFly()],
@@ -192,7 +194,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['level.choice', (g) => (new Set(g.run.level).size === g.run.level.length && g.run.level.every((id) => getLevelAugment(id) !== undefined) ? null : `level choice ${g.run.level.join(',')}`)],
   ['level.speed', (g) => (g.enemies.all.every((e) => !e.active || e.speedMul === levelSpeedMul(g.run.level) * waveWalkFactor(g.run.techOwned) * waveSpeedMul(g.run.wave)) ? null : 'an enemy walks at the wrong level, walk or wave speed factor')],
   ['walk.mul', (g) => (g.enemies.all.every((e) => !e.active || e.walkMul === waveWalkFactor(g.run.techOwned)) ? null : 'an enemy carries the wrong run walk factor')],
-  ['level.bossPlan', (g) => { if (!bossId(g.run.wave) || !g.waves.currentPlan) return null; const want = g.run.wave === 20 ? 2 : g.run.wave === 70 || g.run.wave === 80 ? 3 : 1; return g.waves.currentPlan.spawns.length === want ? null : `boss wave ${g.run.wave} sends ${g.waves.currentPlan.spawns.length}, not ${want}`; }],
+  ['level.bossPlan', (g) => { if (!bossId(g.run.wave) || !g.waves.currentPlan) return null; const want = g.run.wave === 20 ? 2 : g.run.wave === 70 || g.run.wave === 80 || g.run.wave === 90 ? 3 : 1; return g.waves.currentPlan.spawns.length === want ? null : `boss wave ${g.run.wave} sends ${g.waves.currentPlan.spawns.length}, not ${want}`; }],
   ['augments.valid', (g) => {
     for (const c of [...g.run.hand, ...g.towers.towers.flatMap((t) => t.augments)])
       if (!AUGMENTS.some((a) => a.id === c.id) || !TIER_ORDER.includes(c.tier)) return `unknown augment copy ${c.id}:${c.tier}`;

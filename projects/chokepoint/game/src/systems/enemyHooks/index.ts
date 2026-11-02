@@ -35,6 +35,7 @@ import { split } from './split';
 import { midSplit } from './midSplit';
 import { hivePops } from './hivePops';
 import { mendPack } from './mendPack';
+import { gorgeFeeds } from './gorgeFeeds';
 import { hivePopBurst } from './hivePopBurst';
 import { orbSplit } from './orbSplit';
 import { killCoin } from './killCoin';
@@ -62,6 +63,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   midSplit,
   hivePops,
   mendPack,
+  gorgeFeeds,
   hivePopBurst,
   orbSplit,
   nameTag,

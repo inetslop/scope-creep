@@ -83,6 +83,35 @@ export function shapePath(ctx: CanvasRenderingContext2D, shape: Shape, x: number
     ctx.closePath();
     return;
   }
+  // A spiral (the Gorge): a thick band of ~2.5 turns winding in from the edge to an open center.
+  // Traced as one closed fillable band: the outer edge out, a rounded end, the inner edge back,
+  // a rounded end — so paintToken's side face and top both fill it in one go.
+  if (shape === 'spiral') {
+    const end = 2.5 * Math.PI * 2; // 2.5 turns
+    const band = radius * 0.2; // the band's thickness
+    const a = radius * 0.22; // the band's centerline at the open center (its inner edge is 0.12r in)
+    const b = (radius - band / 2 - a) / end; // the centerline grows to the edge at the last turn
+    const steps = 72;
+    const at = (r: number, th: number): { x: number; y: number } => ({ x: x + Math.cos(th) * r, y: y + Math.sin(th) * r });
+    const p0 = at(a, 0);
+    const p1 = at(radius - band / 2, end);
+    ctx.beginPath();
+    for (let i = 0; i <= steps; i++) {
+      const th = (i / steps) * end;
+      const p = at(a + b * th + band / 2, th);
+      if (i === 0) ctx.moveTo(p.x, p.y);
+      else ctx.lineTo(p.x, p.y);
+    }
+    ctx.arc(p1.x, p1.y, band / 2, end, end + Math.PI); // the rounded outer end
+    for (let i = steps; i >= 0; i--) {
+      const th = (i / steps) * end;
+      const p = at(a + b * th - band / 2, th);
+      ctx.lineTo(p.x, p.y);
+    }
+    ctx.arc(p0.x, p0.y, band / 2, Math.PI, 0); // the rounded inner end
+    ctx.closePath();
+    return;
+  }
   // A maw (the Leech): a circle with a wedge cut from the bottom, a straight chord across the
   // opening, so it reads as an open mouth, not a circle.
   if (shape === 'maw') {

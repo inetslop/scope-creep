@@ -24,7 +24,7 @@ describe('content', () => {
       expect(e.fromWave).toBeGreaterThanOrEqual(1);
       expect(BRIGHTS).toContain(e.look.color);
       expect(e.look.size).toBeGreaterThan(0);
-      expect(e.look.size).toBeLessThanOrEqual(e.id === 'titan' || e.id === 'orb' || e.id === 'hive' || e.id === 'crosser' || e.id === 'blinker' || e.id === 'mender' || e.id === 'leech' ? 0.5 : 0.45);
+      expect(e.look.size).toBeLessThanOrEqual(e.id === 'titan' || e.id === 'orb' || e.id === 'hive' || e.id === 'crosser' || e.id === 'blinker' || e.id === 'mender' || e.id === 'leech' || e.id === 'gorge' ? 0.5 : 0.45);
       if (e.speedRamp) {
         expect(e.speedRamp.perHit).toBeGreaterThan(0);
         expect(e.speedRamp.max).toBeGreaterThan(e.speed);
@@ -91,6 +91,13 @@ describe('content', () => {
         expect(drinks.drinkPct).toBeGreaterThan(0);
         expect(drinks.drinkPct).toBeLessThanOrEqual(1);
         expect(ENEMIES.some((d) => d.id === drinks.escort)).toBe(true);
+      }
+      const feeds = e.feeds;
+      if (feeds) {
+        expect(feeds.max).toBeGreaterThan(0);
+        expect(feeds.frac).toBeGreaterThan(0);
+        expect(feeds.frac).toBeLessThanOrEqual(1);
+        expect(feeds.ringCells).toBeGreaterThan(0);
       }
     }
   });

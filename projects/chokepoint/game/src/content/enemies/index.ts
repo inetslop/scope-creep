@@ -20,6 +20,7 @@ import { sprinter } from './sprinter';
 import { ward } from './ward';
 import { leech } from './leech';
 import { mender } from './mender';
+import { gorge } from './gorge';
 
 /** Every enemy type. Waves draw from the ones whose fromWave has been reached. */
 export const ENEMIES: readonly EnemyDef[] = [
@@ -42,6 +43,7 @@ export const ENEMIES: readonly EnemyDef[] = [
   ward,
   leech,
   mender,
+  gorge,
   bulwark,
   splinter,
 ];
