@@ -87,6 +87,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Best combo on the claim — **built as T0051 (2026-10-28, yoga)**: the rewards card's "Best combo ×N" line, counting up with the others and yellow at ×10 and up (the milestone color, T0034)
 - Score on the claim card — **built as T0047 (2026-10-28, desktop)**: the rewards card's count-up gets a "Score N" line — the same score the end of the run shows — so the number that ranks runs is seen where the run is claimed
 - The quiet tower — **built as T0233 (S, non-epic, 2026-10-30, yoga)**: a tower idle 4 s mid-wave (attack-first only) wears one small dim dot that clears the moment it acts; groundwork for E5's untargetable boss phase
+- The quiet dot says what it means — the dot's (T0233) first appearance teaches once: a one-time chip above the tower, the first-leak chip's look, reading "quiet: nothing in reach" — **tasked as T0445 (S, non-epic, 2026-11-02)**
 - Last stand — **built as T0054**: at exactly 1 life every kill pays double gold for the rest of the run (off the moment the streak pays a life back) and the lives number stays red
 - Average wave on the profile card — **built as T0050 (2026-10-28, desktop)**: the menu profile card's "runs N" line becomes "runs N · avg wave M", M the average wave of the last four runs (T0018)
 - Combo gold — built (T0066, 2026-10-29)
