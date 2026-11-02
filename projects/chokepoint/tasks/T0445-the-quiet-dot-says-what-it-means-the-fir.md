@@ -3,10 +3,12 @@ id: T0445
 title: "The quiet dot says what it means: the first idle tower's one-time chip"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T20:49:14Z
+claimed_at: 2026-11-02T20:50:16Z
+designer: yoga
 ---
 
 ## Goal
