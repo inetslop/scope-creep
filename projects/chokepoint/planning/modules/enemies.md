@@ -27,14 +27,14 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-19 in the game, from game/src/content/enemies/ (the real values).
+21 in the game, from game/src/content/enemies/ (the real values).
 
 **By `behavior`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
 - `blink`: Blinker
 - `dash`: Dasher
 - `fly`: Flyer
-- `walk`: Dot, Block, Colossus, Guard, Titan, Orb, Hive, Shard, Sprinter, Splitter, Hauler, Mute, Flyer, Ward, Bulwark, Splinter
+- `walk`: Dot, Block, Colossus, Guard, Titan, Orb, Hive, Shard, Sprinter, Splitter, Hauler, Mute, Flyer, Ward, Leech, Mender, Bulwark, Splinter
 
 ### Dot (`dot`)
 - description: "The basic walker: steady speed, middling health."
@@ -241,6 +241,32 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - fromWave: 15
 - ignoresControl: true
 - look: shape circle, color red, size 0.26
+
+### Leech (`leech`)
+- description: "A big pink maw that drinks the health of the Haulers beside it into itself, until its maw closes."
+- behavior: walk
+- hp: 720
+- speed: 0.9
+- gold: 20
+- livesCost: 1
+- threat: 400
+- fromWave: 80
+- spawnOnly: true
+- drinks: everySec 5, telegraphSec 0.8, drinkSec 0.6, maxDrinks 8, drinkPct 0.08, escort hauler
+- look: shape maw, color pink, size 0.5
+
+### Mender (`mender`)
+- description: "Mends itself and its pack: every 5 s it and its living Wards within three cells flash and restore 15% of their max hp, four times."
+- behavior: walk
+- hp: 720
+- speed: 0.9
+- gold: 20
+- livesCost: 1
+- threat: 348
+- fromWave: 70
+- spawnOnly: true
+- mends: everySec 5, count 4, radius 3, frac 0.15, telegraphSec 1.2, escortId ward
+- look: shape circle, color orange, size 0.5
 
 ### Bulwark (`bulwark`)
 - description: "Wears a plate across its front: shots into the face are halved, into the back they go through."

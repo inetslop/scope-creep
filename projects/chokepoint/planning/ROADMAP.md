@@ -43,16 +43,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E9 — Level augments: harder runs for a bigger payout (done; history in planning/archive/ROADMAP.md)
 
-### E10 — The sky: not everything walks the road (done 2026-11-02)
-**Goal:** the road stops being the only line on the board: something crosses the island over it, and a build that only covers the road stops being enough.
-**When done:** the wave-50 boss never touches the road — it crosses the island in a straight line and banks to a new one at half health — and a small regular flyer in the wave mix teaches the same read; the flight line's telegraph is the enemy's own language, and the player learns to cover the island, not just the road.
-**Breakdown:**
-- The Flyer, the wave-50 boss: the fifth every-10 boss, the first that doesn't walk the road — a straight-line crossing from the island's edge to the exit, a bank at half health — **done as T0317 (L, 2026-11-02, asus)**
-- the build phase shows the line: before the flyer's wave, its route is on the board through the build — the crossing's cover is chosen in the build, not learned at the wave's door — **done as T0346 (M, 2026-11-02, asus)**
-- the regular Flyer in the wave mix: the first enemy that doesn't walk the road — a small fast shape that crosses the island in a straight line from its edge to the exit, one on the Feeder's old waves (13, 17, 21, …); carries the Feeder's removal, the regular cap stays 10 of 10 — **done as T0353 (L, 2026-11-01, asus)**; its one-time preview teach — **done as T0373 (S, 2026-11-01, yoga)**
-- the Flyer's motion reads as flight: a short fading streak in its own color trails the regular Flyer through the sky — **done as T0375 (S, 2026-11-01, yoga)**
-- the sky wears its own note: one soft sustained tone plays while any regular Flyer is in the air, heard as distinct from the road's thuds — **done as T0376 (M, 2026-11-01, inet-racing)**
-- the crossing learns: at 50% hp the bank's line is chosen to cross where the run's towers cover least — the boss banks into the uncovered ground, the 0.8 s preview keeping it fair — **done as T0379 (L, 2026-11-02, desktop)**
+### E10 — The sky: not everything walks the road (done; history in planning/archive/ROADMAP.md)
 
 ### E11 — First run teaches itself (done; history in planning/archive/ROADMAP.md)
 
@@ -108,13 +99,13 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the scorch cell: the per-cell kill count, the chip at 12 kills, the +5% on a tower built there, the first-scorch teach, the run save — **tasked as T0414 (M, in the pool)**
 - the deep scorch: a cell at 24+ kills burns deeper — a thin second ring on the chip and +10% instead of +5% for a tower built there (the build-time read, the scorch's own rule) — **task when T0414 lands**
 
-### E20 — The exit: a tech branch for surviving the leak (active — opened 2026-11-02)
+### E20 — The exit: a tech branch for surviving the leak (active — opened 2026-11-02; The long watch landed 2026-11-02)
 **Goal:** the tech tree has covered run start, board, pool, claim, wave and tower — but not surviving a leak: a seventh branch lets between-run coins buy how the run withstands the exit.
 **When done:** the tree's "The exit" branch has three nodes, each bought once and on for every run after: The long watch (the leak warning starts 5 s out instead of 3 s), One life a Block (a Block that leaks costs 1 life instead of 2) and The first pass (the run's first leak costs no life).
 **Breakdown:**
-- the branch and its first node, The long watch: the tech screen's seventh row plus a 30-coin node that starts the leak warning at 5 s instead of 3 s — **tasked as T0423 (M, in the pool)**
+- the branch and its first node, The long watch: the tech screen's seventh row plus a 30-coin node that starts the leak warning at 5 s instead of 3 s — **done as T0423 (M, 2026-11-02, asus)**
 - One life a Block: 85 coins by the depth rule, a Block that leaks costs 1 life instead of 2 — **task when the branch is up**
-- The first pass: 155 coins by the depth rule, the run's first leak costs no life (a per-run flag the run save carries) — **task when the branch is up**
+- The first pass: 155 coins by the depth rule, the run's first leak costs no life (a per-run flag the run save carries; the Hauler's 5 gold still pays) — **tasked as T0427 (M, in the pool)**
 
 ## Enemy queue (non-epic)
 
@@ -129,7 +120,7 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - The Blinker (IDEAS) — **done as T0402 (M, 2026-11-02, desktop, the T0364 re-file, smaller)**: the wave-60 boss — blinks 2.5 cells forward every 4 s on a 1 s telegraph (committed); the boss lane, spawnOnly, the regular cap untouched.
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
-Queue order: the Bulwark (T0102), the Ward (T0111), the Dart's removal (T0237) and the Feeder (T0334) are done — the regular-enemy cap (10, the bar in modules/enemies.md) is 10 of 10; the Flyer (T0353) takes the Feeder's slot and carries its removal, so the Wall (parked, IDEAS) stays parked behind it — it needs a slot. The queue lands one enemy at a time. (The old panic-removal file also carries id T0102 — the live T0102 is the Bulwark; flagged for the runner.)
+Queue order: the regular-enemy cap (10, the bar in modules/enemies.md) is 10 of 10 — the Feeder's slot went to the Flyer (T0353, done), so the Wall (parked, IDEAS) stays parked — it needs a slot. The queue lands one enemy at a time.
 
 ## Augment queue (non-epic)
 
@@ -146,7 +137,7 @@ Ideas that may become epics or tasks of one.
 - Targeting modes per tower (first, strongest, closest) — **built as T0114 (L, non-epic, 2026-11-01, inet-racing)**; its follow-up (the plinth notch, the one-time chip) — **tasked as T0368 (S, non-epic, in the pool, 2026-11-01)**
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
-- Bosses every 10 waves, each with its own mechanic — **E5 done; the queue: the Hive (T0292), the Flyer (T0317) and the Blinker (T0402) done, the Mender (T0404) and the Leech (T0405) in the pool**
+- Bosses every 10 waves, each with its own mechanic — **E5 done; the queue: the Hive, the Flyer, the Blinker, the Mender and the Leech done (2026-11-02); the Gorge (T0426) tasked 2026-11-02 — the wave-90 boss, feeds on the run's leaks**
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **E13 done 2026-11-01** (far gate T0338, fork T0352, marked cell T0340, boards reference T0350); the cove — a bay in the island's edge whose pocket cells double-cover the road's curve — **done as T0409 (2026-11-02)**; the slow stretch — ~1-in-4 boards, a 3-cell run of road where walkers cross at 70% — **tasked as T0416 (M, 2026-11-02)**
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)

@@ -7,20 +7,20 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Targeting modes per tower (First / Strongest / Closest) — **built as T0114; the plinth notch as T0368**
 - Lance augment: first, a long piercing line that hits everything along it; added, shots pierce one more enemy — built as T0004 (asus)
 - Chain augment — **dropped 2026-11-01** (T0025 failed, no re-file; T0150's leap re-tune dies with it): was a zap that struck the furthest and leapt to the nearest unstruck; don't re-task
-- Push augment: first, a gust that pushes everything within 2.5 cells back along the road, no damage (a support pulse, like Frost's slow and Mark's mark); added, hits push struck enemies back 0.4 cells (+0.4 per Push) — the first augment that moves enemies along the road instead of slowing or stopping them — built as T0027 (2026-10-28, desktop)
+- Push augment — **done as T0027** (the gust that pushes 0.8 cells back every 2.4 s; the added hit's push lives on the card)
 - Gust wind-up — **built as T0058 (2026-10-28, yoga)**: a thin ring in Push's color sweeps 0°→360° once per charge interval around the Push tower's base, completing and fading at each gust — the next shove is readable before it lands
 - Mark augment: first, marks the enemy furthest along so it takes 25% more damage; added, hits mark too — built as T0012 (asus)
 - Rare augments that change a rule (e.g. towers next to each other share their slows)
 - Splitter enemy — **built as T0068 (2026-10-28, desktop-4070)**: a bigger cracked Dot that splits into two fast splinters at its spot on death
 - Shield enemy: a ring that absorbs the first hits for its neighbours
 - Sprinter enemy: speeds up each time it is hit — built as T0006 (desktop)
-- Flyer: ignores the path and crosses the board in a straight line — **now E10 (canonical)**: the boss (T0317) and the regular Flyer (T0353, took the Feeder's slot) both done, the preview teach (T0373) done
+- Flyer: ignores the path and crosses the board in a straight line — **E10 done** (the boss T0317, the regular T0353, the preview teach T0373)
 - The flyer's line before the wave: the build phase before the flyer's wave shows its route on the board (the flyer's red, 2 px, ~50% alpha, spawn → exit), fading as the wave-start telegraph (T0317) takes over — the crossing's cover is chosen in the build, not learned at the wave's door — **tasked as T0346 (M, E10, in the pool, waits on T0317)**
 - Boss every 10 waves with a health bar and its own mechanic
 - Wave preview strip in the build phase: the shapes and counts of the next wave — built as T0015 (2026-10-28, narcissus)
 - Interest — **built as T0363 (2026-11-01)**; the "bank +N" line as T0374; the first-pay chip dropped (T0380); the coin blip already played (T0381); the pay's gold pop done (T0395, 2026-11-02); the trail stays parked
 - Fast-forward (2x) for the wave phase — **built as T0019 (2026-10-28)**: the SpeedButton, one scaled clock for the whole wave phase
-- Daily seeded run with a shareable result — the leaderboard (Today / Forever, added by hand 2026-10-30) is where a shared result lands — was **E8 — dropped by hand 2026-10-30** (T0278 dropped); do not re-task
+- Daily shareable result — **dropped with E8 by hand 2026-10-30; do not re-task**
 - Colorblind mode: patterns on the shapes, not just color
 - Map modifiers chosen in the draft instead of an augment (e.g. "the next wave comes from both ends")
 - Haptics on mobile for builds and leaks — **built as T0265 (S, non-epic, 2026-10-30, yoga)**: one guarded navigator.vibrate, two patterns (place 20 ms, leak 80 ms), no HUD or toggle
@@ -44,11 +44,11 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Recent runs: the menu lists your last few runs (wave + coins) so you can see your trend — built as T0018 (desktop)
 - The run history: the last-four recent line grows into a History card — the last twelve runs, most recent first (wave, coins, the iron mark, the best star), the line moving into the card (one in, one out) — **now E18 (active); the card done as T0410 (M, 2026-11-02), the records block tasked as T0415 (M, in the pool)**
 - A "New best" star on the menu's profile card when your last run hit your best wave — built as T0016 (yoga)
-- Mender enemy — **now the wave-70 boss, tasked as T0404 (M, 2026-11-02)**: a slow solid orange circle at boss scale that mends itself and its 2 Ward escorts on a clock (4 mends, 15% of max each); the regular version stays parked — it needs a cap slot
+- Mender enemy — **done as T0404 (the wave-70 boss, 2026-11-02)**; the regular version stays parked — it needs a cap slot
 - Leech boss — **tasked as T0405 (M)**: the wave-80 boss, a big pink open maw with 2 Hauler escorts that drinks their health — the design lives in the task file
 - Anchor augment — **built as T0023 (2026-10-28, desktop)**: roots (fully stops) everything within 2.5 cells for 0.75 s every 3 s; added, hits root for 0.5 s (+0.25 s per extra copy)
 - Enemy telegraph — built (T0099, T0104, T0105, T0113, T0138, T0139); enemy hooks land on its pattern
-- Lives as a danger bar: the lives readout becomes a small bar that drifts toward red and pulses as you get close to losing your last life — was T0022 (rejected: the 196 px stats card has no room for 20 pips; would need single-digit starting lives or a growing card — revisit if either lands)
+- Lives as a danger bar — **T0022 rejected** (the 196 px stats card has no room for 20 pips; revisit if single-digit starting lives land)
 - Tower earnings: the tower panel shows how much gold a tower has earned this run, so you can see which towers are paying for themselves
 - The clean wave's bonus shown during the build phase — **overtaken**: the preview shows the wave's clear bonus (T0079) and the claim card shows the coin recipe with its clean terms (T0075); if a clean wave ever pays run gold in-wave, this re-opens
 - A run-so-far line on the pause screen — **built as T0030 (2026-10-28, yoga)**: wave, lives, gold, coins earned this run
@@ -101,7 +101,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Score made visible — **built as T0083 (2026-10-29, yoga)**: the claim card's Score line (T0047) and the game-over card get a small muted breakdown under them (the score's own recipe from the run ledger, terms always summing to the score shown)
 - The wave preview says what the wave pays — **built as T0079 (2026-10-29)**: a muted "+N gold" clear-bonus line under the preview card
 - Feeder enemy — **built as T0334 (2026-11-01), removed with the Flyer (T0353)**; the Wall stays parked — it needs a slot
-- Send them early — **built as T0077 (2026-10-29, asus)**: during the build phase a "Send · +N" button under the wave preview starts the wave at once and pays 2 gold per full second left on the countdown (the gold pops at the button, N live-falling, dimmed with a red price while short) — the break is no longer free time; the mirror Stay-put button (below) stays parked behind it
+- Send them early — **done as T0077** (the countdown's gold: 2 per full second left)
 - The board shows its corners — **built as T0140 (S, non-epic, 2026-10-29, narcissus)**: a small muted notch on each bend cell's face
 - The claim card's last page — **E12 done (2026-11-01)**: one small mark per wave in a wrapping row (green = clean, gray = held, red = the end wave), the best combo and the loudest wave
 - Luck augment (Epic only): a support that never attacks — a clean wave bumps the next draft one tier higher (added: one more tier per copy; one draft only) — the first augment that changes what can be picked, not what the towers do; look: a small white square with one yellow pip per copy (a die face). Parked behind Momentum (T0064) so the draft module's changes land one at a time
@@ -141,7 +141,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The pool branch, node two — **built as T0209 (M, E2, 2026-10-29, cachyos-x8664)**: a “Momentum” node (30 coins) that unlocks Momentum (T0064) into the draft, the same gate pattern as Haste (T0153's either-order rule); the draft gate is T0064's line
 - Beam combos IIb — **built as T0242 (M, E4, 2026-10-30, desktop-4070)**: a beam kill splits into one homing needle per added Spray (12 damage, the pellet's look and speed)
 - The tech tree: the claim branch — **built as T0211 (L, E2, 2026-10-29, desktop)**: a branch whose nodes change what a run pays (Clean ×2: each clean wave pays 2 coins instead of 1)
-- The tech tree: the tower branch (6th) — **now E16 (ROADMAP is canonical)**: Soft sell **done as T0383 (2026-11-01)**; The rich cell **tasked as T0386 (M, in the pool)**; The light move **tasked as T0412 (M, in the pool)**
+- The tech tree: the tower branch (6th) — **now E16 (ROADMAP is canonical)**
 - The menu's Tech button wears a dot — **built as T0213 (S, E2, 2026-10-29, yoga)**: while the player's coins can buy at least one unowned node (any branch), a small yellow dot in the button's top-right corner, clearing the moment nothing is affordable — the tree pulls the player in (the T016 star's language)
 - Run start, node five: a second “Life +1” (40 coins) — the branch's last node; a card with the owned mark, so the run-start branch can read complete — **built as T0215 (M, E2, 2026-10-29, asus)**
 - Branch discount: the 2nd node of a branch costs 5 less, the 3rd 10 (the card shows the struck-through old price) — the tree rewards going deep in one branch, not wide across all — **built as T0214 (M, E2, 2026-10-29, cachyos-x8664)**
@@ -160,7 +160,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The leak thud — **dropped (rejected as T0267, 2026-10-30)**: every leak already plays a prominent low thud (Sfx.leak(), 140→70 Hz sawtooth, 0.3 s, volume 0.25) — the leak is already heard; don't re-propose a leak sound
 - The combo milestone chime — **built as T0254 (S, E4, 2026-10-30, asus)**: one soft two-note chime when a kill-combo chain reaches ×10, once per chain
 - The what-if says the price: a next-slot price beside each ghosted tower's marker (T0096) — **rejected as T0251 (2026-10-30): the plinth's face has no room (43 units wide, the pip row spans 38) — don't re-propose a price on the plinth**
-- Move a tower — **now E15**: the panel's Move line, a fee of 60% of the slots' cost (minimum 5), augments and kills carry, one move per tower per build phase — **the core done as T0394 (2026-11-02), the note done as T0392 (2026-11-02), the limit and its teach the next slice (waits on the move's files)**; the ROADMAP's E15 is canonical
+- Move a tower — **now E15 (ROADMAP is canonical)** (core T0394 and the note T0392 done; the limit and its teach the next slice)
 - The enemies reference — built (T0252, 2026-10-30)
 - The level clear gets a sting — **dropped (E3 dropped 2026-10-30)**: a soft two-note low sting (T0091's shape) as the "Level N clear" card lands, once per clear, silent with sound off
 - The waves reference — **built as T0264 (M, non-epic, 2026-10-30, inet-racing)**: a pause screen of the wave tags, read from core/waves.ts
@@ -197,9 +197,9 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The run's end gets its note — **built as T0367 (2026-11-01)**: one quiet two-note fall (B2→G2) when the game-over card lands
 - The loop: ~1-in-4 boards (exclusive with the fork), the road circles the island once; the board facts and the boards reference name it — **built as T0377 (L, 2026-11-02, inet-racing)**
 - The cove: ~1-in-6 boards (exclusive with the fork and the loop), a bay beside a road curve with a three-cell pocket — **done as T0409 (2026-11-02)**
-- The island's drop-in: the new board settles into place with a soft bounce at the run's open (~400 ms, 1.03→1.0, once per new board, never on a resume or the menu demo) — **done as T0407 (2026-11-02)**; the settle's thud — the run's opening beat, heard — **tasked as T0417 (S, 2026-11-02)**
+- The island's drop-in — **done as T0407**; the settle's thud — **done as T0417**
 - The storm: a third mode — no breather, every wave rushes (1.5× walkers, the chip), the wave bonus doubles (gold, never coins) — **now E17 (active); first slice T0403 (L, in the pool)**
-- The pause's "Ahead" card: the two waves after next, so a build plans for the wave after next — **dropped 2026-11-02 (rejected as T0401: the run plans only the immediately-next wave; the later waves' plans can't be re-derived — the drafts' rerolls put the run's rng in a state only a full replay could reach)**; do not re-task a multi-wave preview
+- The pause's "Ahead" card (the two waves after next) — **dropped 2026-11-02 (rejected as T0401); do not re-task a multi-wave preview**
 - The near miss gets its note: when the wave's last enemy dies within 1.5 cells of the exit (the "close" chip's own moment, T0271), one soft note plays, so the close call is heard as well as seen — **done as T0400 (2026-11-02)**
 - The wave clear gets its note: one soft two-note rise (C5→E5) once per clean wave — **done as T0411 (2026-11-02)**
 - The crit's moment — a crit hit (the double-damage roll, T0299/T0321) reads as double: the hit flash sizes up one notch for that one hit; verify first that the hit path does not already show the crit — parked until the enemy system's files are free

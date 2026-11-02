@@ -295,3 +295,16 @@ Status: **done (2026-10-29)** — all five branches landed (run start, draft, po
 ## Archived 2026-11-01
 
 ### E13 — The island opens up: the road comes in from more than one gate (done 2026-11-01; history in planning/archive/ROADMAP.md)
+
+## Archived 2026-11-02
+
+### E10 — The sky: not everything walks the road (done 2026-11-02)
+**Goal:** the road stops being the only line on the board: something crosses the island over it, and a build that only covers the road stops being enough.
+**When done:** the wave-50 boss never touches the road — it crosses the island in a straight line and banks to a new one at half health — and a small regular flyer in the wave mix teaches the same read; the flight line's telegraph is the enemy's own language, and the player learns to cover the island, not just the road.
+**Breakdown:**
+- The Flyer, the wave-50 boss: the fifth every-10 boss, the first that doesn't walk the road — a straight-line crossing from the island's edge to the exit, a bank at half health — **done as T0317 (L, 2026-11-02, asus)**
+- the build phase shows the line: before the flyer's wave, its route is on the board through the build — the crossing's cover is chosen in the build, not learned at the wave's door — **done as T0346 (M, 2026-11-02, asus)**
+- the regular Flyer in the wave mix: the first enemy that doesn't walk the road — a small fast shape that crosses the island in a straight line from its edge to the exit, one on the Feeder's old waves (13, 17, 21, …); carries the Feeder's removal, the regular cap stays 10 of 10 — **done as T0353 (L, 2026-11-01, asus)**; its one-time preview teach — **done as T0373 (S, 2026-11-01, yoga)**
+- the Flyer's motion reads as flight: a short fading streak in its own color trails the regular Flyer through the sky — **done as T0375 (S, 2026-11-01, yoga)**
+- the sky wears its own note: one soft sustained tone plays while any regular Flyer is in the air, heard as distinct from the road's thuds — **done as T0376 (M, 2026-11-01, inet-racing)**
+- the crossing learns: at 50% hp the bank's line is chosen to cross where the run's towers cover least — the boss banks into the uncovered ground, the 0.8 s preview keeping it fair — **done as T0379 (L, 2026-11-02, desktop)**
