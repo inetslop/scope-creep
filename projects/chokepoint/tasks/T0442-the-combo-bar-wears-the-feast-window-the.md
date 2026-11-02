@@ -3,12 +3,13 @@ id: T0442
 title: "The combo bar wears the Feast window: the drain bar follows the live chain window"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-02T20:29:42Z
 claimed_at: 2026-11-02T20:29:52Z
-designer: yoga
+finished_at: 2026-11-02T20:33:51Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -27,3 +28,7 @@ The drain bar under the ×N kill-combo counter shows the chain's real clock: whe
 - [ ] A run with two Feast added copies: 2.3 s, the same behavior.
 - [ ] The bar's look (its colors, its ~20%-alpha track, its place under the ×N counter) is unchanged; the ×N counter, the combo gold pops, the ×10 milestone and the combo-break fade are all byte-identical to before.
 - [ ] `npm run check` and the desktop + mobile smoke pass.
+
+## Rejected by architect (yoga)
+
+No-op — the bar already drains over the live chain window: EnemySystem.kill() sets fx.comboWindowMs = feastChainWindowMs(feastCopies()) at each kill and ComboBar drains over that same value the chain break uses (1.5 s base, +0.4 s per Feast copy), so all acceptance criteria already hold.
