@@ -4,8 +4,9 @@ import { CLAIM_NODES, cleanWavePay, flawlessPay, heldPay } from '../../src/conte
 import { POOL_NODES } from '../../src/content/tech/pool';
 import { WAVE_NODES } from '../../src/content/tech/wave';
 import { TOWER_NODES } from '../../src/content/tech/tower';
+import { EXIT_NODES } from '../../src/content/tech/exit';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { boardBends, boardChokes, boardFarGate, boardLengthMul, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES, waveWalkFactor } from '../../src/core/tech';
+import { boardBends, boardChokes, boardFarGate, boardLengthMul, buyBoardNode, buyClaimNode, buyExitNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, leakWarnLead, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES, waveWalkFactor } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -317,6 +318,36 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'door', 'soft-sell']);
   });
 
+  it('the exit row is one node for now, The long watch at 30: the leak warning starts 5 s out', () => {
+    expect(EXIT_NODES.map((n) => [n.id, n.name, n.line, n.price, n.lead])).toEqual([
+      ['long-watch', 'The long watch', 'the leak warning starts 5 s out', 30, 5],
+    ]);
+  });
+
+  it('leakWarnLead is 3 with no, other-branch or unknown ids, 5 while The long watch is owned; duplicates count once', () => {
+    expect(leakWarnLead([])).toBe(3);
+    expect(leakWarnLead(['gold-1', 'door', 'soft-sell', 'nope'])).toBe(3);
+    expect(leakWarnLead(['long-watch'])).toBe(5);
+    expect(leakWarnLead(['gold-1', 'long-watch', 'long-watch'])).toBe(5);
+  });
+
+  it('an exit node buys only when it is known, unowned and affordable', () => {
+    expect(buyExitNode(withCoins(60), 'nope')).toBe(false);
+    const broke = withCoins(29);
+    expect(buyExitNode(broke, 'long-watch')).toBe(false); // unaffordable: 29 < 30
+    expect(loadProfile(broke).coins).toBe(29);
+    const owned = withCoins(60, ['long-watch']);
+    expect(buyExitNode(owned, 'long-watch')).toBe(false); // already owned
+    expect(loadProfile(owned).coins).toBe(60);
+  });
+
+  it('an exit purchase deducts exactly 30 and saves the id alongside the other branches', () => {
+    const store = withCoins(60, ['gold-1', 'door']);
+    expect(buyExitNode(store, 'long-watch')).toBe(true);
+    expect(loadProfile(store).coins).toBe(30);
+    expect(loadProfile(store).purchased).toEqual(['gold-1', 'door', 'long-watch']);
+  });
+
   it('nodePrice rounds base × depth^1.5 to the nearest multiple of 5 (halves up)', () => {
     expect(nodePrice(10, 1)).toBe(10);
     expect(nodePrice(10, 2)).toBe(30);
@@ -351,8 +382,8 @@ describe('tech', () => {
     expect(nodeInReach([], 0)).toBe(false);
     expect(nodeInReach([], 5)).toBe(true); // gold-1, the run-start branch's cheapest node
     expect(nodeInReach([], 4)).toBe(false); // a balance that reaches no unowned node
-    expect(nodeInReach([...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES, ...WAVE_NODES, ...TOWER_NODES].map((n) => n.id), 99999)).toBe(false); // every node owned
-    const allButTwo = [...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES.filter((n) => n.id !== 'two-chokes'), ...WAVE_NODES, ...TOWER_NODES].map((n) => n.id);
+    expect(nodeInReach([...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES, ...WAVE_NODES, ...TOWER_NODES, ...EXIT_NODES].map((n) => n.id), 99999)).toBe(false); // every node owned
+    const allButTwo = [...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES.filter((n) => n.id !== 'two-chokes'), ...WAVE_NODES, ...TOWER_NODES, ...EXIT_NODES].map((n) => n.id);
     expect(nodeInReach(allButTwo, 49)).toBe(false); // the last unowned node costs 50 at its depth
     expect(nodeInReach(allButTwo, 50)).toBe(true);
   });

@@ -4,11 +4,12 @@ title: "The exit branch and its first node, The long watch: the leak warning sta
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T12:03:44Z
 claimed_at: 2026-11-02T13:26:44Z
+finished_at: 2026-11-02T13:46:03Z
 epic: E20
 ---
 
@@ -82,3 +83,20 @@ TechScene row line (after the TOWER_NODES line): `EXIT_NODES.map((n) => ({ id: n
 
 ### Tests
 In `tests/core/tech.test.ts`, modeled on the tower-row tests (lines 297–317): the exit row is one node, The long watch at 30 with `lead` 5; `leakWarnLead` is 3 with no/other-branch/unknown ids and 5 with `long-watch` owned (duplicates count once); a node buys only when known, unowned and affordable (no prerequisite); a purchase deducts exactly 30 and saves the id alongside the other branches.
+
+## Result (attempt 1, asus)
+
+Added the seventh tech branch "The exit" — a new content file `src/content/tech/exit.ts` with the node "The long watch" (30 coins, lead 5), a `leakWarnLead()`/`buyExitNode()` pair in `src/core/tech.ts` (the node also joins the Tech button's in-reach list), the leak warning in `src/systems/ExitWarning.ts` now taking its threshold as a constructor parameter (3 s unchanged without the node, 5 s with), the row and buy wired into `TechScene`, and unit tests in `tests/core/tech.test.ts`. Buying the node starts the red exit-gate pulse and its tick when the closest enemy is 5 s from the exit, for every run after purchase.
+
+- Self-review: APPROVE
+- Time: 19.3 min
+
+```
+projects/chokepoint/game/src/content/tech/exit.ts  | 14 ++++++++
+ projects/chokepoint/game/src/core/tech.ts          | 38 +++++++++++++++++++++-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  4 +--
+ projects/chokepoint/game/src/scenes/TechScene.ts   | 20 +++++++-----
+ .../chokepoint/game/src/systems/ExitWarning.ts     | 15 +++++----
+ projects/chokepoint/game/tests/core/tech.test.ts   | 37 +++++++++++++++++++--
+ 6 files changed, 108 insertions(+), 20 deletions(-)
+```

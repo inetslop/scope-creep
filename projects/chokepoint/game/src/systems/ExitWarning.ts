@@ -7,8 +7,9 @@ import type { EnemySystem } from './EnemySystem';
 import type { Sfx } from '../audio/Sfx';
 
 /**
- * The leak warning: when the enemy closest to the exit is within 3 s of reaching it, a red copy
- * of the exit gate pulses over it, with a quiet tick per pulse, so a leak is never a surprise.
+ * The leak warning: when the enemy closest to the exit is within its lead seconds of reaching
+ * it, a red copy of the exit gate pulses over it, with a quiet tick per pulse, so a leak is
+ * never a surprise.
  * Driven by `dt` from GameScene, so it freezes while the scene is paused; the single `t`
  * accumulator keeps the scale and the tick in sync — exactly one tick per 0.4 s pulse, no
  * matter how many enemies are in range.
@@ -17,12 +18,14 @@ export class ExitWarning {
   private readonly enemies: EnemySystem;
   private readonly sfx: Sfx | undefined;
   private readonly img: Phaser.GameObjects.Image;
+  private readonly lead: number;
   private t = 0;
   private active = false;
 
-  constructor(scene: Phaser.Scene, board: Board, enemies: EnemySystem, sfx: Sfx | undefined) {
+  constructor(scene: Phaser.Scene, board: Board, enemies: EnemySystem, sfx: Sfx | undefined, lead: number) {
     this.enemies = enemies;
     this.sfx = sfx;
+    this.lead = lead;
     const pts = board.path.points;
     const x = (pts[pts.length - 1]!.x + pts[pts.length - 2]!.x) / 2;
     const y = (pts[pts.length - 1]!.y + pts[pts.length - 2]!.y) / 2;
@@ -31,7 +34,7 @@ export class ExitWarning {
     this.img.setDepth(DEPTH.preview).setVisible(false);
   }
 
-  /** The warning's own state: any living enemy within 3 s of the exit (the wave bed reads it). */
+  /** The warning's own state: any living enemy within its lead seconds of the exit (the wave bed reads it). */
   get live(): boolean { return this.active; }
 
   update(dt: number): void {
@@ -55,12 +58,12 @@ export class ExitWarning {
     this.img.setVisible(true);
   }
 
-  /** Any alive enemy within 3 s of the exit, at its current speed (slows included) — on its own route: the road for a walker, its crossing for a Flyer. */
+  /** Any alive enemy within its lead seconds of the exit, at its current speed (slows included) — on its own route: the road for a walker, its crossing for a Flyer. */
   private inRange(): boolean {
     for (const e of this.enemies.all) {
       if (!e.active) continue;
       const speed = e.speed * (1 - e.slowPct);
-      if (speed > 0 && e.remaining / speed <= 3) return true;
+      if (speed > 0 && e.remaining / speed <= this.lead) return true;
     }
     return false;
   }

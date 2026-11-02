@@ -11,7 +11,7 @@ import { markedCell } from '../core/markedCell';
 import { loadProfile } from '../core/profile';
 import { RunState } from '../core/run';
 import type { SavedRun } from '../core/saveRun';
-import { boardBends, boardChokes, boardFarGate, boardFold, boardLengthMul, startBonuses } from '../core/tech';
+import { boardBends, boardChokes, boardFarGate, boardFold, boardLengthMul, leakWarnLead, startBonuses } from '../core/tech';
 import { draftTech } from '../core/techEffects';
 import { flags } from '../debug/flags';
 import { registerRunChecks, syncHookStats } from '../debug/runChecks';
@@ -142,7 +142,7 @@ export class GameScene extends Phaser.Scene {
     this.board = new Board(this, map, marked);
     this.fx = new FxSystem(this, sfx);
     this.enemies = new EnemySystem(this, this.board, this.run, this.fx, sfx);
-    this.exitWarn = new ExitWarning(this, this.board, this.enemies, sfx);
+    this.exitWarn = new ExitWarning(this, this.board, this.enemies, sfx, leakWarnLead(this.run.techOwned));
     this.music = new MusicBed(sfx);
     this.buildBed = new BuildBed(sfx);
     this.leakCost = new LeakCost(this.run, this.fx, this.board);
