@@ -3,11 +3,13 @@ id: T0392
 title: "The move's note: one quiet blip on the commit"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0382]
 attempts: 0
 created: 2026-11-02T00:02:34Z
+claimed_at: 2026-11-02T00:08:48Z
 epic: E15
+designer: yoga
 ---
 
 ## Goal
