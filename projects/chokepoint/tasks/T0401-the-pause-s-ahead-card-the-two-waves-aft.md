@@ -3,12 +3,13 @@ id: T0401
 title: "The pause's Ahead card: the two waves after next"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-02T03:32:09Z
 claimed_at: 2026-11-02T04:16:15Z
-designer: cachyos-x8664
+finished_at: 2026-11-02T04:49:23Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -27,3 +28,7 @@ The pause screen gains an "Ahead" reference card — the two waves after the run
 - [ ] Each row shows the wave number, that wave's own tag chips, and each enemy type's token and count exactly as the preview draws them; a boss wave's row shows the boss's token and its bold name.
 - [ ] The rows are the run's own: they change with the board's gates (the far-gate board plans differently) and are exactly the plans those waves will run.
 - [ ] No new key, sound or board mark; the pause's controls list is unchanged; the card with its longest row fits at 412x915 and 1280x720.
+
+## Rejected by architect (cachyos-x8664)
+
+The run only ever plans the immediately-next wave — `WaveSystem.planNext()` (called once per build from `RunFlow.finishDraft`) draws `planWave(run.wave + 1, this.run.rng, ENEMIES)` off the live `run.rng` and stores it as `nextPlan`, and nothing plans or stores waves current+2/current+3; their plans can't be re-derived purely, because the draft that lands between them (`rollOffer`'s variable draws — `count` cards each `rollTier` + `rng.pick`, plus any rerolls) puts the run's rng into a state only a fragile full replay from a fresh `Rng(seed)` — the re-roll the task forbids — can reach (and `Rng` exposes no state and has no clone to branch it), and advancing the live run's rng to pre-plan them would desync the real wave plans, so the card can't show "exactly the plans those waves will run."
