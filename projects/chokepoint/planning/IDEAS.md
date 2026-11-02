@@ -181,6 +181,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The draft's bed: a quiet 3-note beat under the card pick, slower and sparser than the build bed — **built as T0372 (M, 2026-11-01)**
 - The menu's bed — **built as T0397 (2026-11-02, desktop)**: the fourth and calmest of the run's audio beds
 - The claim's bed — the fifth of the run's audio beds: a quiet beat under the claim card (the menu bed's shape, a touch faster, handing off to it over ~300 ms) — **done as T0408 (2026-11-02)**
+- The game over's bed — the sixth of the run's audio beds: a quiet beat under the game-over card (the claim bed's shape slowed — E2/B2/E3 at 1.8 s steps with a rest, the beds' shared 0.02), starting on the card's land under the run's end note and handing off to the claim's or the menu's — **tasked as T0420 (M, 2026-11-02)**
 - The Splitter's crack deepens with the damage it takes — **built as T0344 (2026-11-01)**
 - The Orb's split gets its moment — **built as T0347 (S, non-epic, 2026-11-01, yoga)**: the crack goes live with the Splitter's damage curve; the half-hp break flashes the Orb white before it bursts into its two Shards
 - The Block's double leak says what it costs — **built as T0349 (S, non-epic, 2026-11-01, yoga)**: the first Block leak's chip at the exit says what it costs (T0307's Hauler pattern)

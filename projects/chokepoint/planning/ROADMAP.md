@@ -128,7 +128,7 @@ Queue order: the Bulwark (T0102), the Ward (T0111), the Dart's removal (T0237) a
 New augments land one at a time, the enemy queue's way: each registration keeps the draft at the 16-cap and says which augment it retires.
 
 - Herd (T0361, M) — **in the pool (2026-11-01)**: the first augment that scales with the crowd — +5%/+8% (Rare/Epic) damage per enemy within 2 cells, cap 5; its registration retires Anchor (the fifth removal, after E4's four).
-- Chill (the T0391 re-file, M) — **re-file when the augment's files are free (T0317's Flyer and T0389 are busy)**: the shot that adds chill stacks — each hit slows 10% per stack, up to 5 (50%), fading 2 s after the last hit; Rare hits add 2, Epic 3; works on the Flyer's flight, the Ward ignores it; its registration retires Toll (the sixth removal, order-independent with the five).
+- Chill (the T0391 re-file, M) — **re-file when the augment's files are free (T0235 is on the augment's core)**: the shot that adds chill stacks — each hit slows 10% per stack, up to 5 (50%), fading 2 s after the last hit; Rare hits add 2, Epic 3; works on the Flyer's flight, the Ward ignores it; its registration retires Toll (the sixth removal, order-independent with the five).
 
 ## Later
 
