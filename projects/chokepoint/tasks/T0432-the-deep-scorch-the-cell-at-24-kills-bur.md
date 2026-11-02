@@ -3,11 +3,13 @@ id: T0432
 title: "The deep scorch: the cell at 24+ kills burns deeper"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0414]
 attempts: 0
 created: 2026-11-02T16:14:55Z
+claimed_at: 2026-11-02T16:43:51Z
 epic: E19
+designer: inet-racing
 ---
 
 ## Goal
