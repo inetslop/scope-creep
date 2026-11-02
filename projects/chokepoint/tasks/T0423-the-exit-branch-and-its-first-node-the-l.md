@@ -1,12 +1,14 @@
 ---
 id: T0423
 title: "The exit branch and its first node, The long watch: the leak warning starts 5 s out"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T12:03:44Z
+claimed_at: 2026-11-02T13:26:44Z
 epic: E20
 ---
 
