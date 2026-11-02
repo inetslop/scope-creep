@@ -108,6 +108,14 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the scorch cell: the per-cell kill count, the chip at 12 kills, the +5% on a tower built there, the first-scorch teach, the run save — **tasked as T0414 (M, in the pool)**
 - the deep scorch: a cell at 24+ kills burns deeper — a thin second ring on the chip and +10% instead of +5% for a tower built there (the build-time read, the scorch's own rule) — **task when T0414 lands**
 
+### E20 — The exit: a tech branch for surviving the leak (active — opened 2026-11-02)
+**Goal:** the tech tree has covered run start, board, pool, claim, wave and tower — but not surviving a leak: a seventh branch lets between-run coins buy how the run withstands the exit.
+**When done:** the tree's "The exit" branch has three nodes, each bought once and on for every run after: The long watch (the leak warning starts 5 s out instead of 3 s), One life a Block (a Block that leaks costs 1 life instead of 2) and The first pass (the run's first leak costs no life).
+**Breakdown:**
+- the branch and its first node, The long watch: the tech screen's seventh row plus a 30-coin node that starts the leak warning at 5 s instead of 3 s — **tasked as T0423 (M, in the pool)**
+- One life a Block: 85 coins by the depth rule, a Block that leaks costs 1 life instead of 2 — **task when the branch is up**
+- The first pass: 155 coins by the depth rule, the run's first leak costs no life (a per-run flag the run save carries) — **task when the branch is up**
+
 ## Enemy queue (non-epic)
 
 New enemies land one at a time: each new-enemy task chains behind the one before it so the enemy system, the wave mix and the art settle between additions.
