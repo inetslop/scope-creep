@@ -1,12 +1,14 @@
 ---
 id: T0413
 title: "The pause line says which run it is: a muted mode word on the run line"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T08:58:13Z
+claimed_at: 2026-11-02T09:05:36Z
 ---
 
 ## Goal
