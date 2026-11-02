@@ -1,12 +1,14 @@
 ---
 id: T0429
 title: "One life a Block: the exit branch's second node, a leaking Block costs 1 life"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T15:49:41Z
+claimed_at: 2026-11-02T16:23:35Z
 epic: E20
 ---
 
