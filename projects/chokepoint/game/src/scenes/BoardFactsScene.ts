@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { BOARD_MARGIN, paintBoardPreview } from '../art/board';
 import { CELL } from '../config';
 import { boardFactMap, boardFactTag, BOARD_FACT_SEEDS, BOARD_FACTS, type BoardFactRow } from '../core/boardFacts';
-import { markedCell } from '../core/markedCell';
+import { markedCells } from '../core/markedCell';
 import { pathLineFor } from '../core/path';
 import { PALETTE } from '../content/palette';
 import { loadProfile } from '../core/profile';
@@ -107,7 +107,7 @@ export class BoardFactsScene extends Phaser.Scene {
       const map = s ? boardFactMap(row.row.mark) : undefined;
       if (map && s) {
         const key = 'boards:fact:' + row.row.mark;
-        paintBoardPreview(this, key, map, pathLineFor(map, CELL), markedCell(map, s.seed));
+        paintBoardPreview(this, key, map, pathLineFor(map, CELL), markedCells(map, s.seed));
         const img = this.add.image(left + BOARD_W / 2, rowTop + row.h / 2, key);
         img.setScale(Math.min(BOARD_W / (map.cols * CELL + BOARD_MARGIN * 2), BOARD_H / (map.rows * CELL + BOARD_MARGIN * 2)));
         parts.push(img);

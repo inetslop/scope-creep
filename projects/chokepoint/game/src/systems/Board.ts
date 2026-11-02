@@ -19,8 +19,8 @@ import type { Sfx } from '../audio/Sfx';
 export class Board {
   readonly map: GameMap;
   readonly path: PathLine;
-  /** The board's one marked cell: a tower built on it deals +25% (core/markedCell.ts). */
-  readonly marked: Cell;
+  /** The board's marked cells (the first mark, and on some boards a second): a tower built on one deals +25% (core/markedCell.ts). */
+  readonly marked: Cell[];
   /** Board size in board units. */
   readonly width: number;
   readonly height: number;
@@ -37,7 +37,7 @@ export class Board {
   /** The screen in CSS pixels (as of the last layout). */
   private screen = { width: 1, height: 1 };
 
-  constructor(scene: Phaser.Scene, map: GameMap, marked: Cell, sfx: Sfx | undefined) {
+  constructor(scene: Phaser.Scene, map: GameMap, marked: Cell[], sfx: Sfx | undefined) {
     this.scene = scene;
     this.sfx = sfx;
     this.map = map;
@@ -182,9 +182,9 @@ export class Board {
     return kindAt(this.map, cell.col, cell.row) === 'open' && !this.towerAt(cell);
   }
 
-  /** True when `cell` is the board's one marked cell (a tower built there deals +25%). */
+  /** True when `cell` is one of the board's marked cells (a tower built there deals +25%). */
   onMarked(cell: Cell): boolean {
-    return cell.col === this.marked.col && cell.row === this.marked.row;
+    return this.marked.some((c) => c.col === cell.col && c.row === cell.row);
   }
 
   /** Puts `tower` on `cell`; `undefined` frees the cell (a sold tower lifts out of it). */

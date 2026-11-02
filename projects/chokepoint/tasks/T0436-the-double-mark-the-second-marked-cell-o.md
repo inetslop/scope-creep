@@ -4,11 +4,12 @@ title: "The double mark: the second marked cell on some boards"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T17:22:19Z
 claimed_at: 2026-11-02T18:20:22Z
+finished_at: 2026-11-02T19:15:18Z
 ---
 
 ## Goal
@@ -76,3 +77,25 @@ export function markedCells(map: GameMap, seed: number): Cell[];  // [first] or 
 ### Tests
 - `tests/core/markedCell.test.ts` (reuse `makeMap`, add `markedCells`/`boardHasDoubleMark`/`kindAt` to imports): `boardHasDoubleMark` deterministic + ~1 in 4 over 1..4000 (count `>=850 && <=1150`, twin.test pattern); a double-mark board has exactly 2 marks on different open cells and a no-hash board exactly 1, over 1..2000 (`seen` in `[400,800]`); `cells[0]` deep-equals `markedCell(map,seed)`; `markedCells` deterministic (same board → same cells).
 - `tests/core/boardFacts.test.ts`: add `'dblmark'` to the mark-order list + a `facts` case asserting `boardHasDoubleMark(s.seed)` true, `markedCells(m, s.seed)` length 2, each open; add `markedCells`+`boardHasDoubleMark` to the import (keep `markedCell`).
+
+## Result (attempt 1, cachyos-x8664)
+
+The double mark is live — ~1 in 4 boards (seed-hash, `boardHasDoubleMark`) carries a second marked cell on a different open cell with the same mark and the same 1.25× buff, every board still has exactly one first mark, and the boards reference gains the "The double mark — some boards" row grown from committed seed 15. The second cell reuses `MARKED_DMG_MUL` through `board.onMarked`, so the existing tower/panel/dps code picks it up unchanged, and the new `board.doubleMark` runCheck pins the two-marks/different-cells invariant. `npm run check` passes (625 tests) and `npm run smoke` passes on desktop and phone. The only deviation is that the throwaway seed-finder test could not be deleted (permission system denied `rm`), so it was left in place as a passing test that pins the committed seed rather than a failing probe.
+
+- Self-review: APPROVE
+- Time: 54.9 min
+
+```
+projects/chokepoint/game/src/art/board.ts          | 20 +++++----
+ projects/chokepoint/game/src/core/boardFacts.ts    |  4 +-
+ projects/chokepoint/game/src/core/markedCell.ts    | 30 +++++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  7 ++++
+ .../chokepoint/game/src/scenes/BoardFactsScene.ts  |  4 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  4 +-
+ projects/chokepoint/game/src/scenes/PickScene.ts   |  4 +-
+ projects/chokepoint/game/src/systems/Board.ts      | 10 ++---
+ .../game/tests/core/_tmp_findseed.test.ts          | 10 +++++
+ .../chokepoint/game/tests/core/boardFacts.test.ts  | 14 +++++--
+ .../chokepoint/game/tests/core/markedCell.test.ts  | 49 +++++++++++++++++++++-
+ 11 files changed, 131 insertions(+), 25 deletions(-)
+```

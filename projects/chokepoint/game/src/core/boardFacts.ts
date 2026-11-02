@@ -12,7 +12,7 @@ import { Rng } from './rng';
  * sibling references. Pure: read once from the live profile, no state.
  */
 
-export type BoardFactMark = 'choke' | 'bend' | 'longway' | 'twochokes' | 'switchback' | 'fargate' | 'fork' | 'loop' | 'cove' | 'twin' | 'markedcell';
+export type BoardFactMark = 'choke' | 'bend' | 'longway' | 'twochokes' | 'switchback' | 'fargate' | 'fork' | 'loop' | 'cove' | 'twin' | 'markedcell' | 'dblmark';
 export type BoardFactTag = { kind: 'always' } | { kind: 'some' } | { kind: 'tech'; node: string } | { kind: 'someTech'; node: string };
 export interface BoardFactRow {
   mark: BoardFactMark;
@@ -33,6 +33,7 @@ export const BOARD_FACTS: readonly BoardFactRow[] = [
   { mark: 'cove', name: 'The cove', meaning: "a bay in the island's edge beside a curve; the pocket's cells cover it from both sides", tag: { kind: 'some' } },
   { mark: 'twin', name: 'The twin', meaning: 'a mirror pair of cells on the longest straight', tag: { kind: 'some' } },
   { mark: 'markedcell', name: 'The marked cell', meaning: 'one build cell that makes its tower stronger', tag: { kind: 'some' } },
+  { mark: 'dblmark', name: 'The double mark', meaning: 'a second marked cell, the same mark and the same buff', tag: { kind: 'some' } },
 ];
 
 /** One committed seed per row's modifier, with the row's own parameters — the row's board is grown from it, never a roll. */
@@ -58,6 +59,7 @@ export const BOARD_FACT_SEEDS: Partial<Record<BoardFactMark, BoardFactSeed>> = {
   cove: { seed: 13 },
   twin: { seed: 11 },
   markedcell: { seed: 9 },
+  dblmark: { seed: 15 },
 };
 
 /** The row's board, grown the run's own way: bgen 2 (the choke guarantee, the loop and cove rolls), the run's rocks, a fixed portrait board (8 cols x 14 rows). */

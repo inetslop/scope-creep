@@ -11,8 +11,8 @@ import { cellCenter } from '../core/path';
 /** Board units of empty space around the island in the board texture, for its shadow. */
 export const BOARD_MARGIN = 40;
 
-/** The board as drawn in the run's texture and in the previews: the island, the grid dots, the rocks, the road, the two gates, and the marked cell's yellow dot. */
-function drawBoard(ctx: CanvasRenderingContext2D, map: GameMap, path: PathLine, marked: Cell): void {
+/** The board as drawn in the run's texture and in the previews: the island, the grid dots, the rocks, the road, the two gates, and the marked cells' yellow dots. */
+function drawBoard(ctx: CanvasRenderingContext2D, map: GameMap, path: PathLine, marked: Cell[]): void {
   const w = map.cols * CELL;
   const h = map.rows * CELL;
   // The island, raised off the ground; the cove (core/cove.ts) scoops its bay into the edge.
@@ -34,11 +34,13 @@ function drawBoard(ctx: CanvasRenderingContext2D, map: GameMap, path: PathLine, 
     }
   }
 
-  // The marked cell's flat dot: a small yellow dot at the cell's face (a tower on it deals +25%).
-  ctx.beginPath();
-  ctx.arc((marked.col + 0.5) * CELL, (marked.row + 0.5) * CELL, CELL * 0.16, 0, Math.PI * 2);
+  // The marked cells' flat dots: a small yellow dot at each cell's face (a tower on one deals +25%).
   ctx.fillStyle = rgba(PALETTE.yellow, 1);
-  ctx.fill();
+  for (const m of marked) {
+    ctx.beginPath();
+    ctx.arc((m.col + 0.5) * CELL, (m.row + 0.5) * CELL, CELL * 0.16, 0, Math.PI * 2);
+    ctx.fill();
+  }
 
   // Rocks: low rounded blocks.
   for (let row = 0; row < map.rows; row++) {
@@ -148,10 +150,10 @@ function islePath(ctx: CanvasRenderingContext2D, map: GameMap, cove: Cove): void
 
 /**
  * Paints one run's board: the island, the grid dots, the rocks, the road, the two gates, and
- * the marked cell's yellow dot.
+ * the marked cells' yellow dots.
  * Returns the texture key; the texture's top-left is (-BOARD_MARGIN, -BOARD_MARGIN) on the board.
  */
-export function paintBoard(scene: Phaser.Scene, key: string, map: GameMap, path: PathLine, marked: Cell): string {
+export function paintBoard(scene: Phaser.Scene, key: string, map: GameMap, path: PathLine, marked: Cell[]): string {
   if (scene.textures.exists(key)) scene.textures.remove(key);
   const w = map.cols * CELL;
   const h = map.rows * CELL;
@@ -169,7 +171,7 @@ export function paintBoard(scene: Phaser.Scene, key: string, map: GameMap, path:
  * as the run will, so the card shows the board the run plays.
  * Returns the texture key; the texture's top-left is (-BOARD_MARGIN, -BOARD_MARGIN) on the board.
  */
-export function paintBoardPreview(scene: Phaser.Scene, key: string, map: GameMap, path: PathLine, marked: Cell, px = 1): string {
+export function paintBoardPreview(scene: Phaser.Scene, key: string, map: GameMap, path: PathLine, marked: Cell[], px = 1): string {
   if (scene.textures.exists(key)) scene.textures.remove(key);
   const w = map.cols * CELL;
   const h = map.rows * CELL;

@@ -5,7 +5,7 @@ import { cssColor, PALETTE } from '../content/palette';
 import { getLevelAugment, LEVEL_AUGMENTS } from '../content/levels';
 import { dailyLevel, dailySeeds, utcDay, type DailyPick } from '../core/daily';
 import { generateMap, type GameMap } from '../core/map';
-import { markedCell } from '../core/markedCell';
+import { markedCells } from '../core/markedCell';
 import { levelMultiplierLabel } from '../core/levels';
 import { loadProfile } from '../core/profile';
 import { pathLineFor } from '../core/path';
@@ -126,7 +126,7 @@ export class PickScene extends Phaser.Scene {
 
     const maps = this.seeds.map((seed, i) => {
       const map = generateMap(new Rng(seed), portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, this.bends, this.lengthMul, 2, this.chokes, this.fold, this.farGate, seed);
-      paintBoardPreview(this, this.boardKey(i), map, pathLineFor(map, CELL), markedCell(map, seed));
+      paintBoardPreview(this, this.boardKey(i), map, pathLineFor(map, CELL), markedCells(map, seed));
       return map;
     });
     const head = this.buildHead();

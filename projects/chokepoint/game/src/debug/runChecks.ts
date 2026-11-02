@@ -74,6 +74,13 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
     if (g.board.map.kinds[mid.row]![mid.col] !== 'path') return `the twin's midpoint is not road`;
     return null;
   }],
+  ['board.doubleMark', (g) => {
+    const m = g.board.marked;
+    if (m.length < 1 || m.length > 2) return `the board's ${m.length} marked cells`;
+    for (const c of m) if (g.board.map.kinds[c.row]![c.col] !== 'open') return `a marked cell is not buildable at (${c.col}, ${c.row})`;
+    for (let i = 0; i < m.length; i++) for (let j = i + 1; j < m.length; j++) if (m[i]!.col === m[j]!.col && m[i]!.row === m[j]!.row) return `two marks share (${m[i]!.col}, ${m[i]!.row})`;
+    return null;
+  }],
   ['resume.taken', (g) => (g.registry.get('resumeRun') ? 'a saved run is waiting for the game that never took it' : null)],
   ['ghost.taken', (g) => (g.registry.get('ghostSeed') ? 'a ghost seed is waiting for the game that never took it' : null)],
   ['iron.taken', (g) => (g.registry.get('ironMode') ? 'an iron flag is waiting for the game that never took it' : null)],
