@@ -114,6 +114,20 @@ export function boardFarGate(owned: readonly string[]): boolean {
   return false;
 }
 
+/** The walk-speed factor of a new run's enemies for the owned wave nodes: the product of the owned nodes' factors, 1 when none has one; each node counts once, unknown ids count for nothing. */
+export function waveWalkFactor(owned: readonly string[]): number {
+  let mul = 1;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = WAVE_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    if (node.walkMul !== undefined) mul *= node.walkMul;
+  }
+  return mul;
+}
+
 /** A branch's first-node price scaled by depth^1.5 and rounded to the nearest multiple of 5 (halves up). */
 export function nodePrice(base: number, depth: number): number {
   return Math.round((base * Math.pow(depth, 1.5)) / 5) * 5;

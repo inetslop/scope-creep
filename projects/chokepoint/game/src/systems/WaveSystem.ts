@@ -3,6 +3,7 @@ import { forkLane } from '../core/fork';
 import { isFarGateSpawn } from '../core/farGate';
 import { levelCountMul, levelSpeedMul } from '../core/levels';
 import type { RunState } from '../core/run';
+import { waveWalkFactor } from '../core/tech';
 import { planWave, planWithLevel, type WavePlan, waveSpeedMul } from '../core/waves';
 import { hook } from '../debug/testHook';
 import type { EnemySystem } from './EnemySystem';
@@ -15,6 +16,8 @@ export class WaveSystem {
   private readonly farGateDistance: number;
   /** The board splits its road: each spawn takes a lane at the split (core/fork.ts). */
   private readonly hasFork: boolean;
+  /** The run's walk factor on every enemy (The thin road: 0.9); read once from the owned tech. */
+  private readonly walkMul: number;
   private plan: WavePlan | undefined;
   private next = 0;
   private timer = 0;
@@ -28,6 +31,7 @@ export class WaveSystem {
     this.enemies = enemies;
     this.farGateDistance = farGateDistance;
     this.hasFork = hasFork;
+    this.walkMul = waveWalkFactor(run.techOwned);
   }
 
   /** The wave the build phase leads to (the HUD's preview reads it; it is planned once at build start). */
@@ -76,13 +80,13 @@ export class WaveSystem {
     const plan = this.plan;
     if (!plan) return;
     const waveMul = waveSpeedMul(plan.number);
-    const speedMul = levelSpeedMul(this.run.level) * waveMul;
+    const speedMul = levelSpeedMul(this.run.level) * this.walkMul * waveMul;
     this.timer += dt;
     while (this.next < plan.spawns.length && this.timer >= plan.spawns[this.next]!.delaySec) {
       const spawn = plan.spawns[this.next]!;
       this.timer -= spawn.delaySec;
       // The fork's lane is the spawn's (seed, wave, index) hash (core/fork.ts), never a draw on the run's rng.
-      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul, speedMul, waveMul, isFarGateSpawn(this.next, plan, this.farGateDistance > 0) ? this.farGateDistance : 0, this.hasFork ? forkLane(this.run.seed, this.run.wave, this.next) : 0);
+      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul, speedMul, waveMul, this.walkMul, isFarGateSpawn(this.next, plan, this.farGateDistance > 0) ? this.farGateDistance : 0, this.hasFork ? forkLane(this.run.seed, this.run.wave, this.next) : 0);
       this.next += 1;
     }
   }

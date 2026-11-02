@@ -4,11 +4,12 @@ title: "The thin road: the wave branch's second node, every enemy 10% slower"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T17:47:11Z
 claimed_at: 2026-11-02T01:38:25Z
+finished_at: 2026-11-02T02:18:35Z
 epic: E14
 ---
 
@@ -93,3 +94,25 @@ export function waveWalkFactor(owned: readonly string[]): number {
 
 ### Tests
 - `tests/core/tech.test.ts` updates above (the only rule that could silently break: the node's content, its derived 85 price, and `waveWalkFactor`). None elsewhere — the fold lives in Phaser-layer code, covered by the `level.speed`/`walk.mul` invariants in the smoke.
+
+## Result (attempt 1, asus)
+
+Added the wave branch's second tech node "The thin road" (depth-2, 85 coins by the depth rule) in `content/tech/wave.ts`, with `waveWalkFactor()` in `core/tech.ts` feeding a new `walkMul` through `WaveSystem` → `EnemySystem` → `Enemy.spawn` so every enemy of every new run walks 0.9× speed (Dasher's dash leg adjusted so the surge stays 3 cells; split children and hive pops inherit the parent's factor). Updated the `level.speed` invariant, added a `walk.mul` invariant, and extended `tech.test.ts` (node row, 85 price, factor, buy) plus the split-hook test's fake spawn. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 40.2 min
+
+```
+projects/chokepoint/game/src/content/tech/wave.ts  |  5 ++++-
+ projects/chokepoint/game/src/core/tech.ts          | 14 +++++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  4 +++-
+ projects/chokepoint/game/src/entities/Enemy.ts     |  9 +++++---
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  4 ++--
+ projects/chokepoint/game/src/systems/WaveSystem.ts |  8 ++++++--
+ .../game/src/systems/enemyHooks/hivePops.ts        |  2 +-
+ .../game/src/systems/enemyHooks/midSplit.ts        |  4 ++--
+ .../game/src/systems/enemyHooks/split.ts           |  2 +-
+ projects/chokepoint/game/tests/core/tech.test.ts   | 24 ++++++++++++++++++----
+ .../game/tests/systems/enemyHooks.test.ts          |  7 ++++---
+ 11 files changed, 63 insertions(+), 20 deletions(-)
+```

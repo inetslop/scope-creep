@@ -99,7 +99,7 @@ export class EnemySystem {
     return n;
   }
 
-  spawn(def: EnemyDef, hpMul: number, speedMul = 1, waveSpeedMul = 1, distance = 0, lane: 0 | 1 = 0): Enemy {
+  spawn(def: EnemyDef, hpMul: number, speedMul = 1, waveSpeedMul = 1, walkMul = 1, distance = 0, lane: 0 | 1 = 0): Enemy {
     let enemy = this.pool.find((e) => !e.active);
     if (!enemy) {
       enemy = new Enemy(this.scene);
@@ -109,7 +109,7 @@ export class EnemySystem {
     // A Flyer takes its own crossing (the seed picks the point on the entrance edge); a walker the road.
     const fly = def.flies ? pickFlyLine(this.board.map, this.run.rng, CELL) : undefined;
     // A flyer always starts on its own edge — the far-gate distance (road units) never applies to it.
-    enemy.spawn(def, hpMul, fly ? fly.line : this.routes[lane]!, speedMul, waveSpeedMul, fly ? 0 : distance, lane);
+    enemy.spawn(def, hpMul, fly ? fly.line : this.routes[lane]!, speedMul, waveSpeedMul, walkMul, fly ? 0 : distance, lane);
     // The boss Flyer lifts off on its own seeded crossing (core/flyRoute.ts): never the road, never through the entrance gate.
     if (def.behavior === 'fly') enemy.takeFlight(flyRouteFor(this.board.map, CELL));
     hook.stats.enemiesSpawned += 1;

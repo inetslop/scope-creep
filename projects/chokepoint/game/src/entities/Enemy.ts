@@ -35,6 +35,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   speedMul = 1;
   /** The wave's speed factor it took (the rush wave: 1.5); its split children take the same. */
   waveSpeedMul = 1;
+  /** The run's walk factor it took (the wave branch's The thin road: 0.9); its split children take the same. */
+  walkMul = 1;
   /** Board units walked along the path. */
   distance = 0;
   /** The line it walks: the road for a walker, its own crossing for a flyer (core/flyRoute.ts). */
@@ -105,13 +107,14 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.setActive(false).setVisible(false);
   }
 
-  spawn(def: EnemyDef, hpMul: number, path: PathLine, speedMul = 1, waveSpeedMul = 1, distance = 0, lane: 0 | 1 = 0): void {
+  spawn(def: EnemyDef, hpMul: number, path: PathLine, speedMul = 1, waveSpeedMul = 1, walkMul = 1, distance = 0, lane: 0 | 1 = 0): void {
     this.def = def;
     this.maxHp = Math.max(1, Math.round(def.hp * hpMul));
     this.hp = this.maxHp;
     this.hpMul = hpMul;
     this.speedMul = speedMul;
     this.waveSpeedMul = waveSpeedMul;
+    this.walkMul = walkMul;
     this.distance = distance;
     this.path = path;
     this.lane = lane;
@@ -232,10 +235,10 @@ export class Enemy extends Phaser.GameObjects.Image {
             this.pauseAge += dt;
             if (this.dashLeft <= 0) {
               this.dashLeg = 'dash';
-              this.dashLeft = c.dashSec;
+              this.dashLeft = c.dashSec / this.walkMul;
             }
           } else {
-            this.distance += (c.dashCells / c.dashSec) * CELL * (1 + this.hastePct) * dt;
+            this.distance += (c.dashCells / c.dashSec) * CELL * this.walkMul * (1 + this.hastePct) * dt;
             this.dashLeft -= dt;
             if (this.dashLeft <= 0) {
               this.dashLeg = 'crawl';

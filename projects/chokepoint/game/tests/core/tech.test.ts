@@ -5,7 +5,7 @@ import { POOL_NODES } from '../../src/content/tech/pool';
 import { WAVE_NODES } from '../../src/content/tech/wave';
 import { TOWER_NODES } from '../../src/content/tech/tower';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { boardBends, boardChokes, boardFarGate, boardLengthMul, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES } from '../../src/core/tech';
+import { boardBends, boardChokes, boardFarGate, boardLengthMul, buyBoardNode, buyClaimNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES, waveWalkFactor } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -249,9 +249,10 @@ describe('tech', () => {
     expect(startBonuses(['one-more-bend'])).toEqual({ gold: 0, life: 0 });
   });
 
-  it('the wave row is one node for now, The door at 30: the far gate on every board', () => {
-    expect(WAVE_NODES.map((n) => [n.id, n.name, n.line, n.price, n.farGate])).toEqual([
-      ['door', 'The door', 'the far gate on every board', 30, true],
+  it('the wave row is two nodes: The door at 30 with the far gate, The thin road at 30 walking 10% slower', () => {
+    expect(WAVE_NODES.map((n) => [n.id, n.name, n.line, n.price, n.farGate, n.walkMul])).toEqual([
+      ['door', 'The door', 'the far gate on every board', 30, true, undefined],
+      ['thin-road', 'The thin road', 'every enemy walks 10% slower, for every run after', 30, false, 0.9],
     ]);
   });
 
@@ -263,6 +264,13 @@ describe('tech', () => {
     const owned = withCoins(60, ['door']);
     expect(buyWaveNode(owned, 'door')).toBe(false); // already owned
     expect(loadProfile(owned).coins).toBe(60);
+    const short = withCoins(84);
+    expect(buyWaveNode(short, 'thin-road')).toBe(false); // unaffordable: 84 < 85, its depth-2 price
+    expect(loadProfile(short).coins).toBe(84);
+    const paid = withCoins(85);
+    expect(buyWaveNode(paid, 'thin-road')).toBe(true);
+    expect(loadProfile(paid).coins).toBe(0);
+    expect(loadProfile(paid).purchased).toEqual(['thin-road']);
   });
 
   it('a wave purchase deducts exactly 30 and saves the id alongside the other branches', () => {
@@ -277,6 +285,13 @@ describe('tech', () => {
     expect(boardFarGate(['gold-1', 'haste', 'one-more-bend', 'nope'])).toBe(false);
     expect(boardFarGate(['door'])).toBe(true);
     expect(boardFarGate(['door', 'door', 'gold-1'])).toBe(true);
+  });
+
+  it('waveWalkFactor is 0.9 while The thin road is owned; duplicates and other-branch ids count for nothing', () => {
+    expect(waveWalkFactor([])).toBe(1);
+    expect(waveWalkFactor(['door', 'gold-1', 'haste', 'nope'])).toBe(1);
+    expect(waveWalkFactor(['thin-road'])).toBe(0.9);
+    expect(waveWalkFactor(['door', 'thin-road', 'thin-road', 'gold-1'])).toBe(0.9);
   });
 
   it("the tower row is one node for now, Soft sell at 30: a sell pays 80% of the slots' cost, not 70%", () => {
@@ -319,6 +334,7 @@ describe('tech', () => {
     expect(nodeCost(CLAIM_NODES, 'flawless')).toBe(85); // 30 at the claim branch's depth 2
     expect(nodeCost(CLAIM_NODES, 'held-pays')).toBe(155); // 30 at the claim branch's depth 3
     expect(nodeCost(WAVE_NODES, 'door')).toBe(30); // the wave branch's first node, at depth one
+    expect(nodeCost(WAVE_NODES, 'thin-road')).toBe(85); // 30 at the wave branch's depth 2
     expect(nodeCost(TOWER_NODES, 'soft-sell')).toBe(30); // the tower branch's first node, at depth one
   });
 

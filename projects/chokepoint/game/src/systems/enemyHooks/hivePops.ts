@@ -41,7 +41,7 @@ export const hivePops: MakeEnemyHook = ({ enemies, fx, run }) => {
         while (h.pops < due) {
           h.pops += 1;
           const into = getEnemy(rule.into);
-          enemies.spawn(into, waveHpMul(run.wave) * run.levelHpMul, e.speedMul, e.waveSpeedMul, d); // the run's Tough, exactly like a plan spawn
+          enemies.spawn(into, waveHpMul(run.wave) * run.levelHpMul, e.speedMul, e.waveSpeedMul, e.walkMul, d); // the run's Tough, exactly like a plan spawn
           fx.ring(x, y, into.look.size * CELL, PALETTE[into.look.color]); // a small ring at its spot, in the Dot's color
           h.telegraphed = false; // the next pop telegraphs on its own
         }
