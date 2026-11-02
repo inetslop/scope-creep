@@ -24,7 +24,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Colorblind mode: patterns on the shapes, not just color
 - Map modifiers chosen in the draft instead of an augment (e.g. "the next wave comes from both ends")
 - Haptics on mobile for builds and leaks — **built as T0265 (S, non-epic, 2026-10-30, yoga)**: one guarded navigator.vibrate, two patterns (place 20 ms, leak 80 ms), no HUD or toggle
-- The boss death gets its haptic — the run's loudest kill (T0273's burst and horn) earns a longer, heavier buzz than the leak's on mobile (T0265's guarded pattern, once per boss) — parked
+- The boss death gets its haptic — the run's loudest kill (T0273's burst and horn) earns a longer, heavier buzz than the leak's on mobile (T0265's guarded pattern, once per boss) — **done as T0428 (2026-11-02, yoga)**
 - Draft reroll — **built as T0036, extended by T0276**: endless rerolls, cost 50 + 15n + 5n², the button shows the price and turns red and disabled when gold is short (never "used")
 - Leak warning: the last 3 seconds before an enemy reaches the exit, the exit pulses red with a quiet tick — built as T0014 (yoga)
 - Ghost run — **built as T0078**: a menu option "Ghost · Wave N" under Play re-grows the best run's exact board; it never changes the saved seed
@@ -208,3 +208,5 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The tower's reach — **tasked as T0393 (M, non-epic, 2026-11-02)**: while the tower panel is open, the selected tower wears its range ring on the board (the placement ring's own look, its current range), fading when the panel closes — the sky crossing's (E10) reach is an answer you see, not a number you estimate; no new button or key
 - The preview wears the next wave's tag — the chip already shows on the preview card (T0418 was rejected 2026-11-02 on that premise); the chip gets its own line under the token row so it reads as the wave's label, not a token (the storm's "chip on the preview" rides on it) — **tasked as T0422 (S, non-epic, 2026-11-02)**
 - The boards reference wears the board's shape: a small live board on each row (a fixed seed per modifier, the reference's own words unchanged) — **tasked as T0424 (M, non-epic, 2026-11-02)**
+- The twin: ~1-in-4 boards (exclusive with the fork and the loop), a mirror pair of build cells at equal distance on both sides of the road's longest straight stretch — a clean either/or at the run's most open stretch, nothing painted on the cells — **tasked as T0430 (M, non-epic, 2026-11-02)**
+- The bank's first pay says what it is: the run's first build phase where the "bank +N" line shows (gold 20+) teaches once, "your gold pays 5% each wave" (T0314's one-time line's shape, its own file) — **tasked as T0431 (S, non-epic, 2026-11-02)**

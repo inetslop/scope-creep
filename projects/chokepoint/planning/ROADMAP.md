@@ -104,8 +104,8 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **When done:** the tree's "The exit" branch has three nodes, each bought once and on for every run after: The long watch (the leak warning starts 5 s out instead of 3 s), One life a Block (a Block that leaks costs 1 life instead of 2) and The first pass (the run's first leak costs no life).
 **Breakdown:**
 - the branch and its first node, The long watch: the tech screen's seventh row plus a 30-coin node that starts the leak warning at 5 s instead of 3 s — **done as T0423 (M, 2026-11-02, asus)**
-- One life a Block: 85 coins by the depth rule, a Block that leaks costs 1 life instead of 2 — **task when the branch is up**
-- The first pass: 155 coins by the depth rule, the run's first leak costs no life (a per-run flag the run save carries; the Hauler's 5 gold still pays) — **tasked as T0427 (M, in the pool)**
+- One life a Block: 85 coins by the depth rule, a Block that leaks costs 1 life instead of 2 — **tasked as T0429 (M, in the pool, 2026-11-02)** (The first pass, T0427, can be re-filed behind it once this lands)
+- The first pass: 155 coins by the depth rule, the run's first leak costs no life (a per-run flag the run save carries; the Hauler's 5 gold still pays) — **T0427 rejected 2026-11-02 (the branch needed its second row, One life a Block, first); re-file behind T0429 once it lands**
 
 ## Enemy queue (non-epic)
 
