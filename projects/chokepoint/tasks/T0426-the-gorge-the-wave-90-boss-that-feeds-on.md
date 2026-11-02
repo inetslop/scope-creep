@@ -1,12 +1,14 @@
 ---
 id: T0426
 title: "The Gorge: the wave-90 boss that feeds on your leaks"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T14:32:01Z
+claimed_at: 2026-11-02T16:52:37Z
 ---
 
 ## Goal
