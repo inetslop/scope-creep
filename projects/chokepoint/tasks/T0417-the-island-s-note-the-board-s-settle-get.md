@@ -4,11 +4,12 @@ title: "The island's note: the board's settle gets its thud"
 assignee: asus
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T10:20:00Z
 claimed_at: 2026-11-02T13:46:47Z
+finished_at: 2026-11-02T13:54:10Z
 ---
 
 ## Goal
@@ -68,3 +69,17 @@ import type { Sfx } from '../audio/Sfx';
 - No invariant, no test, no HUD change — a sound only.
 ### Tests
 - none
+
+## Result (attempt 1, asus)
+
+Added `Sfx.settleThud()` (one low sine, 90→60 Hz over 150 ms at volume 0.12) in `src/audio/Sfx.ts`, wired it into the board's drop-in tween `onComplete` in `src/systems/Board.ts` (which now takes an optional `Sfx`), and passed `sfx` through at Board's construction in `src/scenes/GameScene.ts` — the island now plays exactly one soft thud when it settles at the run's open, silent on resumed runs, the menu demo, or with sound off.
+
+- Self-review: APPROVE
+- Time: 7.4 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts        | 5 +++++
+ projects/chokepoint/game/src/scenes/GameScene.ts | 2 +-
+ projects/chokepoint/game/src/systems/Board.ts    | 7 +++++--
+ 3 files changed, 11 insertions(+), 3 deletions(-)
+```

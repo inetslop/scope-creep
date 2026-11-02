@@ -121,6 +121,11 @@ export class Sfx {
     this.tone(196, 0.08, 'sine', 0.1, undefined, 0.08);
   }
 
+  /** The island's settle at the run's open: one low sine, 90 Hz to 60 Hz over 150 ms, the sting's quiet class, under the leak thud's 0.25. */
+  settleThud(): void {
+    this.tone(90, 0.15, 'sine', 0.12, 60);
+  }
+
   /** The run ends as the game-over card lands: the boss horn's two low notes falling (123.47 then 98 Hz), 80 ms each, 90 ms apart, the sting's quiet class. */
   runEnd(): void {
     this.tone(123.47, 0.08, 'sine', 0.1);

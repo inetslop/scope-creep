@@ -139,7 +139,7 @@ export class GameScene extends Phaser.Scene {
     this.mapChokes = chokes;
     this.mapFold = fold ? 1 : 0;
 
-    this.board = new Board(this, map, marked);
+    this.board = new Board(this, map, marked, sfx);
     this.fx = new FxSystem(this, sfx);
     this.enemies = new EnemySystem(this, this.board, this.run, this.fx, sfx);
     this.exitWarn = new ExitWarning(this, this.board, this.enemies, sfx, leakWarnLead(this.run.techOwned));

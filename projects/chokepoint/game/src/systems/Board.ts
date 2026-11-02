@@ -8,6 +8,7 @@ import { cellCenter, pathLineFor, type PathLine, type Point } from '../core/path
 import { display } from '../ui/display';
 import { clampView, fitView, panBy, scaleOf, toBoard, toScreen, zoomAt, type View, type ViewArea } from '../core/view';
 import type { Tower } from '../entities/Tower';
+import type { Sfx } from '../audio/Sfx';
 
 /**
  * The board: the map's cells, which cells hold towers, and the camera. The camera fits the board
@@ -24,6 +25,7 @@ export class Board {
   readonly width: number;
   readonly height: number;
   private readonly scene: Phaser.Scene;
+  private readonly sfx: Sfx | undefined;
   private readonly towers: (Tower | undefined)[][];
   private readonly hover: Phaser.GameObjects.Graphics;
   private readonly moveOutlines: Phaser.GameObjects.Graphics;
@@ -35,8 +37,9 @@ export class Board {
   /** The screen in CSS pixels (as of the last layout). */
   private screen = { width: 1, height: 1 };
 
-  constructor(scene: Phaser.Scene, map: GameMap, marked: Cell) {
+  constructor(scene: Phaser.Scene, map: GameMap, marked: Cell, sfx: Sfx | undefined) {
     this.scene = scene;
+    this.sfx = sfx;
     this.map = map;
     this.marked = marked;
     this.path = pathLineFor(map, CELL);
@@ -65,7 +68,7 @@ export class Board {
     this.boardImage.setOrigin(0.5);
     this.boardImage.setPosition(this.width / 2, this.height / 2);
     this.boardImage.setScale(full * 1.03);
-    tweens.add({ targets: this.boardImage, scale: full, duration: 400, ease: 'Back.easeOut', onComplete: () => this.settleRest() });
+    tweens.add({ targets: this.boardImage, scale: full, duration: 400, ease: 'Back.easeOut', onComplete: () => { this.settleRest(); this.sfx?.settleThud(); } });
   }
 
   /** Snaps the island to rest (its tween killed) so the build phase opens at scale exactly 1.0. */
