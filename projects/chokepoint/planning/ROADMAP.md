@@ -99,12 +99,12 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the scorch cell: the per-cell kill count, the chip at 12 kills, the +5% on a tower built there, the first-scorch teach, the run save — **tasked as T0414 (M, in the pool)**
 - the deep scorch: a cell at 24+ kills burns deeper — a thin second ring on the chip and +10% instead of +5% for a tower built there (the build-time read, the scorch's own rule) — **tasked as T0432 (M, waits on T0414)**
 
-### E20 — The exit: a tech branch for surviving the leak (active — opened 2026-11-02; The long watch landed 2026-11-02)
+### E20 — The exit: a tech branch for surviving the leak (fully tasked 2026-11-02, closing on the pool's landings)
 **Goal:** the tech tree has covered run start, board, pool, claim, wave and tower — but not surviving a leak: a seventh branch lets between-run coins buy how the run withstands the exit.
 **When done:** the tree's "The exit" branch has three nodes, each bought once and on for every run after: The long watch (the leak warning starts 5 s out instead of 3 s), One life a Block (a Block that leaks costs 1 life instead of 2) and The first pass (the run's first leak costs no life).
 **Breakdown:**
 - the branch and its first node, The long watch: the tech screen's seventh row plus a 30-coin node that starts the leak warning at 5 s instead of 3 s — **done as T0423 (M, 2026-11-02, asus)**
-- One life a Block: 85 coins by the depth rule, a Block that leaks costs 1 life instead of 2 — **tasked as T0429 (M, in the pool, 2026-11-02)** (the first pass is tasked behind it as T0433)
+- One life a Block: 85 coins by the depth rule, a Block that leaks costs 1 life instead of 2 — **done as T0429 (M, 2026-11-02, inet-racing)** (the first pass is tasked behind it as T0433)
 - The first pass: 155 coins by the depth rule, the run's first leak costs no life (a per-run flag the run save carries; the Hauler's 5 gold still pays) — **tasked as T0433 (M, waits on T0429; the T0427 re-file)**
 
 ## Enemy queue (non-epic)
@@ -137,9 +137,9 @@ Ideas that may become epics or tasks of one.
 - Targeting modes per tower (first, strongest, closest) — **built as T0114 (L, non-epic, 2026-11-01, inet-racing)**; its follow-up (the plinth notch, the one-time chip) — **tasked as T0368 (S, non-epic, in the pool, 2026-11-01)**
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
-- Bosses every 10 waves, each with its own mechanic — **E5 done; the queue: the Hive, the Flyer, the Blinker, the Mender and the Leech done (2026-11-02); the Gorge (T0426) tasked 2026-11-02 — the wave-90 boss, feeds on the run's leaks**
+- Bosses every 10 waves, each with its own mechanic — **E5 done; the queue: the Hive, the Flyer, the Blinker, the Mender and the Leech done (2026-11-02); the Gorge (T0426) tasked 2026-11-02 — the wave-90 boss, feeds on the run's leaks; the Fracture (T0435) tasked 2026-11-02 — the wave-100 boss, splits into 3 Shards when it dies**
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
-- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **E13 done 2026-11-01** (far gate T0338, fork T0352, marked cell T0340, boards reference T0350); the cove — a bay in the island's edge whose pocket cells double-cover the road's curve — **done as T0409 (2026-11-02)**; the slow stretch — ~1-in-4 boards, a 3-cell run of road where walkers cross at 70% — **tasked as T0416 (M, 2026-11-02)**
+- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **E13 done 2026-11-01** (far gate T0338, fork T0352, marked cell T0340, boards reference T0350); the cove — a bay in the island's edge whose pocket cells double-cover the road's curve — **done as T0409 (2026-11-02)**; the slow stretch — ~1-in-4 boards, a 3-cell run of road where walkers cross at 70% — **T0416's file lost 2026-11-02; re-file when the enemy's files are free**; the double mark — ~1-in-4 boards, a second marked cell with the marked cell's own mark and buff — **tasked as T0436 (M, 2026-11-02)**
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **built as T0239 (L, non-epic, 2026-10-30, asus)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
 - The Mute's silence gets its note — one soft held tone while any Mute holds a tower (the sky note's pattern, T0376) — **tasked as T0419 (M, non-epic, 2026-11-02)**
