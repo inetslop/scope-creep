@@ -3,11 +3,13 @@ id: T0433
 title: "The first pass: the run's first leak costs no life"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0429]
 attempts: 0
 created: 2026-11-02T16:14:55Z
+claimed_at: 2026-11-02T16:52:01Z
 epic: E20
+designer: cachyos-x8664
 ---
 
 ## Goal
