@@ -4,11 +4,12 @@ title: "The Block's leak chip reads the live rule"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T18:33:27Z
 claimed_at: 2026-11-02T19:00:32Z
+finished_at: 2026-11-02T19:31:53Z
 ---
 
 ## Goal
@@ -64,3 +65,15 @@ None — no new types or signatures; the change is local to `blockTeach.onLeak`.
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The Block's leak teach chip (T0349/T0107) now reads the live rule: in `blockTeach.onLeak` the `blockLeakCost` read moved up to right after `run.blockTold = true;`, and a new early return suppresses the chip when the leak costs 1 life (One life a Block owned) — the first-leak chip already taught that a leak costs a life, so this one would only restate it. In plain runs the chip, its look, position and timing are byte-identical ("the Block takes 2 lives" at the exit, once per run); in owned runs no chip pops. `run.blockTold` still sets in both cases before the early return and rides the save, so a resumed run never re-shows it. No other file changed; check and desktop + mobile smoke pass.
+
+- Self-review: APPROVE
+- Time: 31.4 min
+
+```
+projects/chokepoint/game/src/systems/enemyHooks/blockTeach.ts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+```
