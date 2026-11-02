@@ -3,12 +3,14 @@ id: T0394
 title: "The move: a misplaced tower goes where it should (the T0382 re-file)"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T01:03:06Z
+claimed_at: 2026-11-02T02:16:52Z
 epic: E15
 design_attempts: 1
+designer: cachyos-x8664
 ---
 
 ## Goal
