@@ -3,7 +3,7 @@ import { anchor } from './anchor';
 import { beam } from './beam';
 import { bolt } from './bolt';
 import { ember } from './ember';
-import { frost } from './frost';
+import { feast } from './feast';
 import { haste } from './haste';
 import { lance } from './lance';
 import { mark } from './mark';
@@ -22,7 +22,6 @@ export const AUGMENTS: readonly AugmentDef[] = [
   lance,
   splash,
   spray,
-  frost,
   push,
   anchor,
   mint,
@@ -30,6 +29,7 @@ export const AUGMENTS: readonly AugmentDef[] = [
   rally,
   haste,
   mark,
+  feast,
   ember,
   beam,
   rapid,

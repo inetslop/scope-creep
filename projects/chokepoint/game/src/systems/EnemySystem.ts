@@ -4,6 +4,7 @@ import { PALETTE } from '../content/palette';
 import type { Burn, EnemyDef } from '../content/types';
 import type { RunState } from '../core/run';
 import type { BeamFx } from '../core/beamEffects';
+import { feastChainWindowMs, feastDamageMul } from '../core/feast';
 import { killGold } from '../core/lastStand';
 import { leanBounty } from '../core/levels';
 import { mintGoldBonus } from '../core/mint';
@@ -137,7 +138,7 @@ export class EnemySystem {
     for (const damage of burnStep(e.burn, dt)) {
       if (!e.active) break;
       const crit = e.burnSource ? this.crit(e.burnSource.spec.critChance) : false;
-      const dealt = damage * (crit ? 2 : 1);
+      const dealt = damage * this.feastMul() * (crit ? 2 : 1);
       if (crit) critChip(this.fx, e.x, e.y);
       if (e.burnSource) e.burnSource.damageDealt += dealt * shieldMul(e.def, e.shielded); // the igniter's damage term, halved by the shield like the tick
       if (e.hit(dealt, false)) { this.kill(e, e.burnSource); break; }
@@ -150,7 +151,7 @@ export class EnemySystem {
   beamTick(target: Enemy, damage: number, source: Tower): void {
     if (damage <= 0 || !target.active) return;
     const crit = this.crit(source.spec.critChance);
-    const dealt = damage * (crit ? 2 : 1);
+    const dealt = damage * this.feastMul() * (crit ? 2 : 1);
     if (crit) critChip(this.fx, target.x, target.y);
     source.damageDealt += dealt * shieldMul(target.def, target.shielded); // the ledger's damage term, halved by the shield like the tick
     if (target.hit(dealt, false)) this.kill(target, source);
@@ -160,6 +161,19 @@ export class EnemySystem {
    * which doubles its damage and shows the chip. No roll at all with no chance. */
   private crit(chance: number): boolean {
     return chance > 0 && this.run.rng.next() < chance;
+  }
+
+  /** The Feast copies on the board, any tower, any slot (core/feast.ts): they power the chain's window and its per-hit bonus. */
+  private feastCopies(): number {
+    let n = 0;
+    for (const t of this.towers()) n += t.spec.feastCount;
+    return n;
+  }
+
+  /** The Feast multiplier on one damage event right now: +4% per chain level while the chain lives;
+   * 1 the moment it breaks (window expiry or a leak), or with no Feast on the board. */
+  private feastMul(): number {
+    return feastDamageMul(this.feastCopies(), this.fx.chain, this.scene.time.now, this.fx.comboLastKill, this.fx.comboWindowMs);
   }
 
   /**
@@ -230,7 +244,7 @@ export class EnemySystem {
       const crit = this.crit(payload.source.spec.critChance);
       const pMul = flight && e.def.plate !== undefined ? plateMul(e.def.plate, flight.x, flight.y, e.dirX, e.dirY) : 1;
       if (pMul < 1) e.plated = true; // the plate halved a face hit; the hook lights it
-      const damage = payload.damage * pMul * (crit ? 2 : 1);
+      const damage = payload.damage * this.feastMul() * pMul * (crit ? 2 : 1);
       if (crit) critChip(this.fx, e.x, e.y);
       payload.source.damageDealt += damage * shieldMul(e.def, e.shielded); // the ledger's damage term: as dealt, halved by the shield like the hit
       if (e.hit(damage)) { this.kill(e, payload.source); return true; }
@@ -246,6 +260,8 @@ export class EnemySystem {
     const baseGold = killGold(this.run, leanBounty(e.def.gold, this.run.level) * quietGoldMul(this.run.wave));
     const paid = this.run.addKill(baseGold + (source ? mintGoldBonus(this.towers(), e, source) : 0));
     const mint = paid - baseGold; // one per Mint bonus, each pays exactly +1 (T0021)
+    // The Feast copies on the board set the window this kill lives by, before the counter reads it (core/feast.ts).
+    this.fx.comboWindowMs = feastChainWindowMs(this.feastCopies());
     const milestone = this.fx.killCount(e.x, e.y);
     this.run.noteCombo(this.fx.chain);
     // A boss kill (the plan's own boss, core/waves.ts) is its moment: 24 chips in its own color,

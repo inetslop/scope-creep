@@ -5,6 +5,7 @@ import { getLevelAugment } from '../content/levels';
 import { levelSpeedMul } from '../core/levels';
 import { waveWalkFactor } from '../core/tech';
 import { draftCardCount } from '../core/augments';
+import { FEAST_CHAIN_BASE_MS } from '../core/feast';
 import { chokeCells } from '../core/choke';
 import { MARKED_DMG_MUL } from '../core/markedCell';
 import { switchbackFold } from '../core/switchback';
@@ -166,6 +167,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['ward.control', (g) => (g.enemies.all.some((e) => e.active && e.def.id === 'ward' && (e.slowPct > 0 || e.rootLeft > 0 || e.pushLeft > 0)) ? 'a Ward is slowed, rooted or pushed' : null)],
   ['pushWindup.valid', (g) => g.windup.broken()],
   ['comboBar.valid', (g) => g.comboBar.broken()],
+  ['feast.window', (g) => (Number.isFinite(g.fx.comboWindowMs) && g.fx.comboWindowMs >= FEAST_CHAIN_BASE_MS ? null : `the chain window is ${g.fx.comboWindowMs} ms`)],
   ['hand.selection', (g) => g.building.brokenSelection()],
   ['building.pending', (g) => { const c = g.building.pendingCell; if (!c) return null; if (g.run.phase !== 'build') return `a placement waits in phase ${g.run.phase}`; return g.board.canBuild(c) ? null : `a placement waits on a taken or blocked cell (${c.col}, ${c.row})`; }],
   // The clean wave's chip keeps phase 'draft' with an empty offer for a second, so check while the draft overlay is up (the offer is filled before it launches).

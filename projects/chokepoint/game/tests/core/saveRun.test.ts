@@ -21,7 +21,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   mode: 'play',
   wave: 3,
   phase: 'build',
-  hand: [{ id: 'frost', tier: 'rare' }],
+  hand: [{ id: 'lance', tier: 'rare' }],
   kills: 42,
   cleanWaves: 2,
   story: [{ wave: 1, leaks: 0 }, { wave: 2, leaks: 1 }, { wave: 3, leaks: 0 }],
@@ -35,7 +35,7 @@ const sample = (over: Partial<SavedRun> = {}): SavedRun => ({
   rerollsUsed: 1,
   level: [],
   towers: [
-    { col: 2, row: 1, slots: 2, augments: [{ id: 'bolt', tier: 'common' }, { id: 'frost', tier: 'epic' }] },
+    { col: 2, row: 1, slots: 2, augments: [{ id: 'bolt', tier: 'common' }, { id: 'rapid', tier: 'epic' }] },
     { col: 9, row: 5, slots: 1, augments: [{ id: 'mint', tier: 'common' }] },
   ],
   ...over,
@@ -299,7 +299,7 @@ describe('saveRun', () => {
     broken({ hand: [null] });
     broken({ towers: [{ col: 2, row: 1, slots: 0, augments: [] }] });
     broken({ towers: [{ col: 2, row: 1, slots: 5, augments: [] }] });
-    broken({ towers: [{ col: 2, row: 1, slots: 1, augments: [{ id: 'bolt', tier: 'common' }, { id: 'frost', tier: 'common' }] }] });
+    broken({ towers: [{ col: 2, row: 1, slots: 1, augments: [{ id: 'bolt', tier: 'common' }, { id: 'reach', tier: 'common' }] }] });
     broken({ towers: [{ col: 64, row: 1, slots: 1, augments: [{ id: 'bolt', tier: 'common' }] }] });
     broken({ towers: [{ col: 20, row: 1, slots: 1, augments: [{ id: 'bolt', tier: 'common' }] }] }); // past the save's 14 columns
   });

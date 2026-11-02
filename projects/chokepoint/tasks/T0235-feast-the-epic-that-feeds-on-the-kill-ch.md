@@ -4,11 +4,12 @@ title: "Feast: the Epic that feeds on the kill chain"
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-10-29T22:31:19Z
 claimed_at: 2026-11-02T07:41:32Z
+finished_at: 2026-11-02T11:20:42Z
 epic: E4
 ---
 
@@ -126,4 +127,43 @@ The agent made no changes to the game (success).
 
 ```
 Prompt is too long · automatic compaction failed: summarization produced empty response
+```
+
+## Result (attempt 2, asus)
+
+Feast is the new Epic-only support augment: while the ×N kill chain is alive, every tower's damage is multiplied by +4% per chain level (×2 → +8%, ×10 → +40%), switching off the instant the chain expires or a leak breaks it, and each extra Feast tower on the board lengthens the chain window by +0.4 s (1.5 s base, no cap), which the chain counter, drain bar and 2× fast-forward all honor. Rules live in `core/feast.ts` and are applied in `EnemySystem`'s damage paths (shots, Lance pierce, Spray pellets, Beam per-second, Ember ticks); the look is a low open yellow ring "plate" at a Feast tower's base with one tick per copy, lit while the chain lives and dim while broken, driven by the new `FeastGlow` system and tested with a new `feast.window` invariant. One deviation from the design: the pool was at 16 augments, not 15, so registering Feast pushed it to 17 and the 16-cap rule fired — **Frost** was removed (first of Frost → Rally → Mint → Mark still in the index) and its definition file is listed for deletion. That removal's mechanical collateral: the menu demo's support tower is now an Anchor (Frost's texture is no longer painted), roughly ten test files were updated to swap the dead 'frost' id for living augments with Frost-specific slow assertions dropped (Frost was the game's only slow source — the slow code stays generic), and the pre-existing marginal fixed-seed "rolls Mint" test had its sample grown from 60 to 300 seeds because the pool change shifted that seed's roll strea…
+
+- Self-review: NO VERDICT
+- Time: 219.2 min
+- Deleted src/content/augments/frost.ts, as the agent asked.
+
+```
+.../chokepoint/game/src/content/augments/feast.ts  | 27 +++++++++
+ .../chokepoint/game/src/content/augments/frost.ts  | 16 ------
+ .../chokepoint/game/src/content/augments/index.ts  |  4 +-
+ projects/chokepoint/game/src/content/types.ts      |  4 ++
+ projects/chokepoint/game/src/core/augments.ts      |  6 ++
+ projects/chokepoint/game/src/core/feast.ts         | 30 ++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  2 +
+ projects/chokepoint/game/src/entities/Tower.ts     | 33 ++++++++++-
+ projects/chokepoint/game/src/entities/towerLook.ts | 16 ++++++
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  4 ++
+ .../chokepoint/game/src/scenes/menu/MenuDemo.ts    |  6 +-
+ projects/chokepoint/game/src/systems/ComboBar.ts   |  2 +-
+ .../chokepoint/game/src/systems/EnemySystem.ts     | 22 +++++++-
+ projects/chokepoint/game/src/systems/FeastGlow.ts  | 29 ++++++++++
+ projects/chokepoint/game/src/systems/FxSystem.ts   | 14 +++--
+ projects/chokepoint/game/tests/content.test.ts     |  2 +-
+ projects/chokepoint/game/tests/core/anchor.test.ts |  8 +--
+ .../chokepoint/game/tests/core/augments.test.ts    | 35 +++++-------
+ .../chokepoint/game/tests/core/beamEffects.test.ts |  7 +--
+ projects/chokepoint/game/tests/core/ember.test.ts  |  3 +-
+ projects/chokepoint/game/tests/core/feast.test.ts  | 64 ++++++++++++++++++++++
+ projects/chokepoint/game/tests/core/mark.test.ts   |  8 +--
+ projects/chokepoint/game/tests/core/run.test.ts    |  4 +-
+ .../chokepoint/game/tests/core/saveRun.test.ts     |  6 +-
+ projects/chokepoint/game/tests/core/toll.test.ts   |  2 +-
+ .../chokepoint/game/tests/core/towerDps.test.ts    | 10 ++--
+ .../chokepoint/game/tests/systems/building.test.ts |  6 +-
+ 27 files changed, 284 insertions(+), 86 deletions(-)
 ```

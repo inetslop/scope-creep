@@ -18,7 +18,7 @@ function makeFixture(gold: number = START.gold) {
   const run = new RunState(1);
   run.startBuild(8);
   run.gold = gold;
-  run.takeAugment({ id: 'frost', tier: 'common' });
+  run.takeAugment({ id: 'lance', tier: 'common' });
   run.takeAugment({ id: 'bolt', tier: 'common' });
   interface FakeTower { cell: Cell; augments: AugmentCopy[]; freeSlots: number }
   const built: [Cell, AugmentCopy][] = [];
@@ -76,14 +76,14 @@ describe('Building.tap on touch: the first tap waits, the buttons decide', () =>
     expect(f.built).toEqual([]);
     expect(f.run.gold).toBe(START.gold);
     expect(f.building.pendingCell).toEqual({ col: 0, row: 0 });
-    expect(f.hovers.at(-1)).toEqual([{ col: 0, row: 0 }, true, towerSpec([{ id: 'frost', tier: 'common' }]).range * CELL]);
+    expect(f.hovers.at(-1)).toEqual([{ col: 0, row: 0 }, true, towerSpec([{ id: 'lance', tier: 'common' }]).range * CELL]);
   });
 
   it('confirmPending builds there: the gold is paid, the card leaves, the panel opens, nothing waits', () => {
     const f = makeFixture();
     f.tapAt(0, 0, true);
     f.building.confirmPending();
-    expect(f.built).toEqual([[{ col: 0, row: 0 }, { id: 'frost', tier: 'common' }]]);
+    expect(f.built).toEqual([[{ col: 0, row: 0 }, { id: 'lance', tier: 'common' }]]);
     expect(f.run.gold).toBe(START.gold - slotCost(0)!);
     expect(f.run.hand.length).toBe(1);
     expect(f.building.selectedTower).toBe(f.tower());

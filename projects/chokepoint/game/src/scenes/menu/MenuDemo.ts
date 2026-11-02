@@ -38,8 +38,8 @@ const DEMO = {
 
 /**
  * The menu's live picture: a road with two gates where a third of the walkers come in through
- * the far gate, a Bolt tower that turns and shoots them down (bursts, gold popups), and a Frost
- * tower that pulses and slows them. Purely for show: none of it touches a run. MenuScene creates
+ * the far gate, a Bolt tower that turns and shoots them down (bursts, gold popups), and an Anchor
+ * tower that pulses over them, slowing them. Purely for show: none of it touches a run. MenuScene creates
  * it, lays it out and calls update() every frame.
  */
 export class MenuDemo {
@@ -77,7 +77,7 @@ export class MenuDemo {
       this.parts.push({ img: scene.add.image(0, 0, TOWER_BASE), at, dy: 0, size: DEMO.towerScale });
       this.parts.push({ img: scene.add.image(0, 0, towerTexture(augment)).setDepth(2), at, dy: -4, size: DEMO.towerScale });
     };
-    tower(DEMO.frost.at, 'frost');
+    tower(DEMO.frost.at, 'anchor');
     tower(DEMO.bolt.at, 'bolt');
     this.barrel = scene.add.image(0, 0, barrelTexture(scene, 'teal', { length: 1, width: 1, bulb: false, bands: 0 })).setDepth(1);
     this.parts.push({ img: this.barrel, at: DEMO.bolt.at, dy: -4, size: DEMO.towerScale });

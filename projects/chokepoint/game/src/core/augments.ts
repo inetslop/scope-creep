@@ -80,6 +80,8 @@ export interface TowerSpec {
   hastePct: number;
   /** Hastes in the tower: one aura, one base-ring tick each. */
   hasteCount: number;
+  /** Feasts in the tower, any slot: each copy beyond the first on the board lengthens the kill chain's window (core/feast.ts). */
+  feastCount: number;
   /** The tower's crit chance, 0-1: each damage instance rolls for double at this (Spray's own 15% as a first, plus every Spray added). 0 when the tower deals no damage to crit. */
   critChance: number;
 }
@@ -120,6 +122,7 @@ const EMPTY: TowerSpec = {
   sprayCount: 0,
   hastePct: 0,
   hasteCount: 0,
+  feastCount: 0,
   critChance: 0,
 };
 
@@ -173,6 +176,7 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
     sprayCount: 0,
     hastePct: 0,
     hasteCount: 0,
+    feastCount: 0,
     critChance: 0,
   };
   // Anchors in any slot: the first sets the root's duration, each extra one lengthens it.
@@ -260,6 +264,8 @@ export function towerSpec(augments: readonly AugmentCopy[]): TowerSpec {
   for (const a of augments) if (a.id === 'spray') spec.sprayCount += 1;
   // Mints in any slot: this tower's kills drop this much extra gold (core/mint.ts).
   for (const a of augments) spec.goldPerKill += tierAdded(getAugment(a.id), a.tier).goldPerKill ?? 0;
+  // Feasts in any slot: one per copy, any slot — the window bonus counts them board-wide (core/feast.ts).
+  for (const a of augments) if (a.id === 'feast') spec.feastCount += 1;
   // Tolls in any slot: every leak pays this much gold while the tower stands (core/toll.ts).
   for (let i = 0; i < augments.length; i++) {
     const a = getAugment(augments[i]!.id);

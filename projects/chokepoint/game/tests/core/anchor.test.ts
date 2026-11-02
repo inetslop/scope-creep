@@ -21,7 +21,7 @@ describe('anchor (root)', () => {
 
   it('each extra Anchor adds 0.25s to the roots of the tower it is in', () => {
     expect(spec('bolt', 'anchor', 'anchor').root?.sec).toBeCloseTo(0.75); // 0.5 + 0.25, not the second copy's own 0.5
-    expect(spec('frost', 'anchor', 'anchor').root?.sec).toBeCloseTo(0.75);
+    expect(spec('mint', 'anchor', 'anchor').root?.sec).toBeCloseTo(0.75);
   });
 
   it('rolls from Rare up; the Rare is the base, the Epic roots 1s every 2.6s', () => {
@@ -42,12 +42,6 @@ describe('anchor (root)', () => {
       }
     }
     expect(seen).toBeGreaterThan(0);
-  });
-
-  it('Frost and Anchor keep both: the slow and the root', () => {
-    const s = spec('frost', 'anchor');
-    expect(s.slow?.pct).toBe(0.4);
-    expect(s.root?.sec).toBeCloseTo(0.5);
   });
 
   it("the card's lines state each tier's numbers", () => {

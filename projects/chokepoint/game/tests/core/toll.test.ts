@@ -55,6 +55,6 @@ describe('tollPay', () => {
 
   it('pays nothing with no Toll tower on the board', () => {
     expect(tollPay([])).toBe(0);
-    expect(tollPay([tower({ id: 'bolt', tier: 'common' }), tower({ id: 'frost', tier: 'common' })])).toBe(0);
+    expect(tollPay([tower({ id: 'bolt', tier: 'common' }), tower({ id: 'reach', tier: 'common' })])).toBe(0);
   });
 });

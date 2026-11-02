@@ -21,8 +21,8 @@ describe('towerDps', () => {
 
   it('an added augment changes the damage per second', () => {
     expect(towerDps(spec('bolt', 'rapid'))).toBeCloseTo(21.6);
-    expect(towerDps(spec('bolt', 'rapid', 'frost'))).toBeCloseTo(21.6);
-    expect(towerDps(spec('bolt', 'frost'))).toBeCloseTo(19.2); // slows only: the same hits
+    expect(towerDps(spec('bolt', 'rapid', 'mark'))).toBeCloseTo(21.6);
+    expect(towerDps(spec('bolt', 'mark'))).toBeCloseTo(19.2); // marks only: the same hits
     expect(towerDps(spec('bolt', 'bolt'))).toBeCloseTo(19.2); // a second Bolt: more shots, the same per second
   });
 
@@ -33,13 +33,13 @@ describe('towerDps', () => {
   });
 
   it('a support tower adds nothing', () => {
-    expect(towerDps(spec('frost'))).toBe(0);
+    expect(towerDps(spec('feast'))).toBe(0);
     expect(towerDps(spec('mark'))).toBe(0);
     expect(towerDps(spec('push'))).toBe(0);
     expect(towerDps(spec('anchor'))).toBe(0);
     expect(towerDps(spec('mint'))).toBe(0);
     expect(towerDps(spec('rally'))).toBe(0);
-    expect(towerDps(spec('frost', 'anchor', 'rally'))).toBe(0); // only support augments: nothing to deal damage
+    expect(towerDps(spec('feast', 'anchor', 'rally'))).toBe(0); // only support augments: nothing to deal damage
   });
 
   it('a lone beam deals its per-second rate (the panel used to show 0 for it)', () => {
@@ -74,6 +74,6 @@ describe('towerDps', () => {
     expect(towerDps(spec('bolt'), 1, 1.25)).toBeCloseTo(19.2 * 1.25);
     expect(towerDps(spec('beam'), 1, 1.25)).toBeCloseTo(14 * 1.25); // 14 -> 17.5
     expect(towerDps(spec('bolt', 'ember'), 1, 1.25)).toBeCloseTo(19.2 * 1.25 + 3); // the burn is not the cell's
-    expect(towerDps(spec('frost'), 1, 1.25)).toBe(0); // a support tower adds nothing, even on the cell
+    expect(towerDps(spec('feast'), 1, 1.25)).toBe(0); // a support tower adds nothing, even on the cell
   });
 });

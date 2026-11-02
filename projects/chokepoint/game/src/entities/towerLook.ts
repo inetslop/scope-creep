@@ -167,6 +167,22 @@ export function drawHasteRing(g: Phaser.GameObjects.Graphics, spec: TowerSpec): 
   }
 }
 
+/**
+ * Feast: the low open ring (a plate — a stroke, no fill) at the tower's base in yellow, one short
+ * tick per copy. It lives on its own Graphics (the tower's `feastPlate`) so systems/FeastGlow.ts
+ * can dim it while the kill chain is broken — the shared decorations graphics cannot take a
+ * per-object alpha. A ring, not a disc: it reads apart from any filled token in the yellow family.
+ */
+export function drawFeastPlate(g: Phaser.GameObjects.Graphics, spec: TowerSpec): void {
+  g.clear();
+  const r = BODY * 1.95; // the base, below the pips, like the Mark ring
+  fillRing(g, 0, 0, r, 2, 0, Math.PI * 2, PALETTE.yellow, 1);
+  for (let i = 0; i < spec.feastCount; i++) {
+    const a = (i * Math.PI * 2) / spec.feastCount; // 0 = up
+    fillRing(g, 0, 0, r, 4, a - 0.12, a + 0.12, PALETTE.yellow, 1);
+  }
+}
+
 export function drawDecorations(g: Phaser.GameObjects.Graphics, spec: TowerSpec): void {
   g.clear();
   const barrels = barrelCount(spec);

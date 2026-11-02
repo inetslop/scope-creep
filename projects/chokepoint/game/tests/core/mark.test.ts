@@ -19,7 +19,7 @@ describe('the mark', () => {
     expect(spec('bolt', 'mark')).toMatchObject({ kind: 'shot', markPct: 0.25, markCount: 1 });
     expect(spec('bolt', 'mark', 'mark')).toMatchObject({ markPct: 0.5, markCount: 2 });
     expect(spec('splash', 'mark').markPct).toBe(0.25);
-    expect(spec('frost', 'mark').markPct).toBe(0.25);
+    expect(spec('mint', 'mark').markPct).toBe(0.25);
   });
 
   it('a Mark tower gets no bolts from Bolt, and its own range still scales', () => {
@@ -31,14 +31,14 @@ describe('the mark', () => {
     expect(describeSpec(spec('mark'))).toMatch(/mark/i);
     expect(describeSpec(spec('mark'))).toMatch(/25%/);
     expect(describeSpec(spec('bolt', 'mark'))).toMatch(/mark/i);
-    expect(describeSpec(spec('frost', 'mark'))).toMatch(/mark/i);
+    expect(describeSpec(spec('push', 'mark'))).toMatch(/mark/i);
   });
 
-  it('is Epic-only and may open a run; Push, Rally, Haste, Mint and Toll are Epic-only as well', () => {
+  it('is Epic-only and may open a run; Push, Rally, Haste, Mint, Toll and Feast are Epic-only as well', () => {
     const m = getAugment('mark');
     expect(m.tier).toBe('epic');
     expect(m.opening).toBe(true);
-    const epicOnly = ['mark', 'rally', 'haste', 'mint', 'toll', 'push'];
+    const epicOnly = ['mark', 'rally', 'haste', 'mint', 'toll', 'push', 'feast'];
     for (const a of AUGMENTS) if (!epicOnly.includes(a.id)) expect(a.tier).toBeUndefined();
     for (const id of epicOnly) expect(getAugment(id).tier).toBe('epic');
     expect(getAugment('anchor').minTier).toBe('rare');

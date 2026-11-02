@@ -112,9 +112,8 @@ describe('ember', () => {
     expect(describeSpec(spec('ember'))).toBe('Sets ablaze the furthest enemy: 3 per second for 3 s.');
     expect(describeSpec(towerSpec([copy('ember', 'rare')]))).toBe('Sets ablaze the furthest enemy: 4 per second for 3 s.');
     expect(describeSpec(spec('bolt', 'ember'))).toContain(', and its hits set ablaze');
-    expect(describeSpec(spec('frost', 'ember'))).toContain(', and its hits set ablaze');
+    expect(describeSpec(spec('mint', 'ember'))).toContain(', and its hits set ablaze');
     expect(describeSpec(spec('mark', 'ember'))).toContain(', and its hits set ablaze');
-    expect(describeSpec(spec('ember', 'frost'))).toContain('slowing them by 40%');
     expect(describeSpec(spec('bolt'))).not.toContain('ablaze');
   });
 

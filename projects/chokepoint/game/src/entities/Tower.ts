@@ -9,7 +9,7 @@ import { BEAM_ORB_LIFT, barrelTexture, beamDiscTexture, orbTexture } from '../ar
 import { ART_SCALE, artScale, TOWER_BASE, TOWER_BODY, towerTexture } from '../art/textures';
 import { MARKED_DMG_MUL } from '../core/markedCell';
 import type { Board } from '../systems/Board';
-import { barrelCount, barrelLook, drawDecorations, drawHasteRing, pipColor } from './towerLook';
+import { barrelCount, barrelLook, drawDecorations, drawFeastPlate, drawHasteRing, pipColor } from './towerLook';
 
 /** Where the body sits above the plinth's center, in board units. */
 const BODY_LIFT = 4;
@@ -75,6 +75,10 @@ export class Tower extends Phaser.GameObjects.Image {
   private beamOn = false;
   /** The flat red base ring while a haste aura radiates; its own graphics so it can take an alpha (undefined until it has Haste). */
   hasteRing: Phaser.GameObjects.Graphics | undefined;
+  /** The yellow open plate at the base of a Feast-first tower (entities/towerLook.ts): lit while the kill chain lives, dim while it is broken (systems/FeastGlow.ts). Undefined without a Feast first. */
+  private feastPlate: Phaser.GameObjects.Graphics | undefined;
+  /** The last lit state applied to the plate; a fresh plate draws at full alpha, so it starts lit. */
+  private feastPlateLit = true;
 
   constructor(scene: Phaser.Scene, x: number, y: number, cell: Cell) {
     super(scene, x, y - BODY_LIFT, towerTexture(undefined));
@@ -137,8 +141,32 @@ export class Tower extends Phaser.GameObjects.Image {
     this.buildGun(spec, towerColor(this.augments));
     drawDecorations(this.deco, spec);
     this.refreshHasteRing(spec);
+    this.refreshFeastPlate(spec);
     this.drawPips();
     this.setModeTick();
+  }
+
+  /**
+   * The yellow open plate, one tick per Feast copy: only a Feast FIRST tower wears it (a Feast
+   * added elsewhere shows nothing — the buff is board-wide). Redrawn on every refresh so a copy
+   * added later grows its tick.
+   */
+  private refreshFeastPlate(spec: TowerSpec): void {
+    if (spec.firstId === 'feast') {
+      if (this.feastPlate === undefined) this.feastPlate = this.scene.add.graphics().setDepth(DEPTH.towers + 1).setPosition(this.x, this.y);
+      drawFeastPlate(this.feastPlate, spec);
+    } else if (this.feastPlate !== undefined) {
+      this.feastPlate.destroy();
+      this.feastPlate = undefined;
+      this.feastPlateLit = true; // a future plate starts at its full alpha, like a fresh one
+    }
+  }
+
+  /** Lit (full opacity) while the run's kill chain lives, dim (half) while it is broken; no-op with no plate or on no change. */
+  setFeastPlateLit(lit: boolean): void {
+    if (this.feastPlate === undefined || this.feastPlateLit === lit) return;
+    this.feastPlateLit = lit;
+    this.feastPlate.setAlpha(lit ? 1 : 0.5);
   }
 
   /** The flat red base ring, one tick per Haste copy; created once at the plinth's center. */
@@ -252,6 +280,7 @@ export class Tower extends Phaser.GameObjects.Image {
   sellAway(): void {
     const parts: Phaser.GameObjects.GameObject[] = [this, this.base, this.gun, this.deco, this.pips, this.jamDot, this.idleDot, this.modeTick];
     if (this.hasteRing) parts.push(this.hasteRing);
+    if (this.feastPlate) parts.push(this.feastPlate);
     this.scene.tweens.add({ targets: parts, y: '-=12', alpha: 0, duration: 200, ease: 'Back.easeOut', onComplete: () => this.destroy() });
   }
 
@@ -263,6 +292,7 @@ export class Tower extends Phaser.GameObjects.Image {
   moveTo(cell: Cell, board: Board): void {
     const parts: Phaser.GameObjects.GameObject[] = [this, this.base, this.gun, this.deco, this.pips, this.jamDot, this.idleDot, this.modeTick];
     if (this.hasteRing) parts.push(this.hasteRing);
+    if (this.feastPlate) parts.push(this.feastPlate);
     this.scene.tweens.killTweensOf(parts); // a move started before the last one landed: one slide at a time
     // A drop-in or landing bounce still mid-flight when the kill lands leaves a part short of its full scale: snap it back.
     this.setScale(ART_SCALE);
@@ -348,6 +378,7 @@ export class Tower extends Phaser.GameObjects.Image {
     this.modeTick.destroy();
     this.jamDot.destroy();
     if (this.hasteRing) this.hasteRing.destroy();
+    if (this.feastPlate) this.feastPlate.destroy();
     this.scene.tweens.killTweensOf(this.idleDot);
     this.idleDot.destroy();
     super.destroy(fromScene);

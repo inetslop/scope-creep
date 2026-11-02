@@ -32,7 +32,7 @@ export class ComboBar {
     const g = this.bar;
     // The chain window is on the scene clock (the same clock FxSystem.killCount uses),
     // so the fill empties at exactly the moment the chain breaks, at 1x and 2x alike.
-    const frac = Math.min(1, Math.max(0, 1 - (this.scene.time.now - this.fx.comboLastKill) / 1500));
+    const frac = Math.min(1, Math.max(0, 1 - (this.scene.time.now - this.fx.comboLastKill) / this.fx.comboWindowMs));
     g.clear();
     g.fillStyle(PALETTE.muted, 0.2);
     g.fillRoundedRect(-13, -2, 26, 4, 2); // track

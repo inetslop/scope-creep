@@ -2,6 +2,7 @@ import type Phaser from 'phaser';
 import { DEPTH } from '../config';
 import { cssColor, PALETTE } from '../content/palette';
 import { artScale, CHIP_TEXTURE } from '../art/textures';
+import { FEAST_CHAIN_BASE_MS } from '../core/feast';
 import { fillRing } from '../ui/ring';
 import { textStyle } from '../ui/text';
 import type { Sfx } from '../audio/Sfx';
@@ -22,6 +23,8 @@ export class FxSystem {
   /** Kill chain for the rising ×N counter: count, last kill time, live objects. */
   private comboN = 0;
   private lastKill = 0;
+  /** The chain's window in ms: 1.5 s, +0.4 s per Feast copy beyond the first (core/feast.ts); EnemySystem sets it at each kill. */
+  comboWindowMs = FEAST_CHAIN_BASE_MS;
   private comboText: Phaser.GameObjects.Text | null = null;
   private comboPop: Phaser.Tweens.Tween | null = null;
   private comboFade: Phaser.Tweens.Tween | null = null;
@@ -51,7 +54,7 @@ export class FxSystem {
     return this.comboText;
   }
 
-  /** When the last chain kill was, on the scene clock (the bar's fill drains from it over 1.5 s). */
+  /** When the last chain kill was, on the scene clock (the bar's fill drains from it over the window). */
   get comboLastKill(): number {
     return this.lastKill;
   }
@@ -127,11 +130,12 @@ export class FxSystem {
     }
   }
 
-  /** One kill for the chain: within 1.5 s it continues, a longer gap resets it. From ×2 up the
-   * counter sits above the latest kill's chips, each step 8 px up, popping 1.2 → 1.0; 1.5 s idle fades it. */
+  /** One kill for the chain: within the window (1.5 s, +0.4 s per extra Feast on the board,
+   * core/feast.ts) it continues, a longer gap resets it. From ×2 up the counter sits above the
+   * latest kill's chips, each step 8 px up, popping 1.2 → 1.0; an idle window fades it. */
   killCount(x: number, y: number): boolean {
     const now = this.scene.time.now;
-    if (now - this.lastKill >= 1500) this.comboN = 0;
+    if (now - this.lastKill >= this.comboWindowMs) this.comboN = 0;
     this.lastKill = now;
     this.comboN += 1;
     if (this.comboN < 2) return false;
@@ -155,7 +159,7 @@ export class FxSystem {
     t.setScale(1.2);
     this.comboPop?.remove();
     this.comboPop = this.scene.tweens.add({ targets: t, scale: 1, duration: 150, ease: 'Quad.easeOut' });
-    this.comboTimer = this.scene.time.delayedCall(1500, () => this.comboFadeStart());
+    this.comboTimer = this.scene.time.delayedCall(this.comboWindowMs, () => this.comboFadeStart());
     if (this.comboN === 10) this.sfx?.comboChime();
     return this.comboN === 10;
   }

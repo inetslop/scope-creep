@@ -24,15 +24,13 @@ describe('towerSpec', () => {
     expect(spec('splash').kind).toBe('pulse');
     expect(spec('reach').range).toBeGreaterThan(4);
     expect(spec('rapid').rate).toBeGreaterThan(3);
-    expect(spec('frost').damage).toBe(0);
-    expect(spec('frost').slow?.pct).toBe(0.4);
+    expect(spec('mint').damage).toBe(0);
   });
 
   it('later augments add their values', () => {
     expect(spec('bolt', 'rapid').rate).toBeCloseTo(spec('bolt').rate * 1.5);
     expect(spec('bolt', 'rapid').damage).toBeCloseTo(spec('bolt').damage * 0.75);
     expect(spec('bolt', 'reach').range).toBeCloseTo(spec('bolt').range * 1.35);
-    expect(spec('bolt', 'frost').slow?.pct).toBe(0.4);
     expect(spec('bolt', 'bolt').shots).toBe(2);
     expect(spec('bolt', 'splash').splash).toBe(1);
     expect(describeSpec(spec('bolt', 'splash'))).toMatch(/burst/);
@@ -44,19 +42,18 @@ describe('towerSpec', () => {
     expect(towerSpec([copy('bolt', 'rare')]).damageMul).toBeCloseTo(1.3);
     expect(spec('bolt', 'rapid').damageMul).toBeCloseTo(0.75);
     expect(spec('bolt', 'rapid', 'rapid').damageMul).toBeCloseTo(0.5625);
-    expect(spec('bolt', 'frost').damageMul).toBe(1);
+    expect(spec('bolt', 'mark').damageMul).toBe(1);
   });
 
   it('on a pulse tower, Splash reaches further and Bolt adds shots with its own damage', () => {
     expect(spec('splash', 'splash').range).toBe(spec('splash').range + 1);
-    expect(spec('frost', 'bolt').bolts).toBe(1);
-    expect(spec('frost', 'bolt').boltDamage).toBeGreaterThan(0);
-    expect(spec('frost', 'bolt').damage).toBe(0);
+    expect(spec('mint', 'bolt').bolts).toBe(1);
+    expect(spec('mint', 'bolt').boltDamage).toBeGreaterThan(0);
+    expect(spec('mint', 'bolt').damage).toBe(0);
   });
 
   it('Splash does not make anything weaker', () => {
     expect(spec('bolt', 'splash').damage).toBe(spec('bolt').damage);
-    expect(spec('frost', 'splash').slow?.pct).toBe(spec('frost').slow?.pct);
   });
 
   it('every damaging first augment can hold wave 1: similar damage per second', () => {
@@ -67,7 +64,7 @@ describe('towerSpec', () => {
   });
 
   it('a tower shows its first augment color', () => {
-    expect(towerColor(['frost', 'splash'].map((id) => copy(id)))).toBe(getAugment('frost').look.color);
+    expect(towerColor(['mint', 'splash'].map((id) => copy(id)))).toBe(getAugment('mint').look.color);
     expect(towerColor([])).toBeUndefined();
   });
 });
@@ -86,9 +83,9 @@ describe('splash cap', () => {
     expect(describeSpec(spec('bolt', 'splash', 'splash'))).toMatch(/burst to 5 more/);
   });
 
-  it('Splash added to a Frost first only widens its reach, never caps it', () => {
-    expect(spec('frost', 'splash').splash).toBe(0);
-    expect(describeSpec(spec('frost', 'splash'))).toMatch(/Slows everything around it/);
+  it('Splash added to a support first only widens its reach, never caps it', () => {
+    expect(spec('mint', 'splash').splash).toBe(0);
+    expect(spec('mint', 'splash').range).toBe(3); // 2 + the splash cell
   });
 });
 
@@ -103,7 +100,7 @@ describe('pierce (Lance)', () => {
   });
 
   it('a pulse given pierce fires that many bolts, which keep going', () => {
-    expect(spec('frost', 'lance')).toMatchObject({ bolts: 1, pierce: 1 });
+    expect(spec('mint', 'lance')).toMatchObject({ bolts: 1, pierce: 1 });
   });
 });
 
@@ -129,7 +126,7 @@ describe('spray (Spray)', () => {
   });
 
   it('a support tower with an added Spray deals nothing to crit: its chance stays 0 and its line is unchanged', () => {
-    for (const first of ['mark', 'rally', 'frost']) {
+    for (const first of ['mark', 'rally', 'mint']) {
       expect(spec(first, 'spray').critChance).toBe(0);
       expect(describeSpec(spec(first, 'spray'))).toBe(describeSpec(spec(first)));
     }
@@ -177,8 +174,6 @@ describe('mint gold (Mint)', () => {
     expect(describeSpec(spec('mint'))).toBe('Does not attack, kills within 2 cells drop +1 gold.');
     expect(describeSpec(spec('bolt', 'mint'))).toContain('kills drop +1 gold');
     expect(describeSpec(spec('bolt', 'mint', 'mint'))).toContain('kills drop +2 gold');
-    expect(describeSpec(spec('frost'))).toBe('Slows everything around it by 40%.');
-    expect(describeSpec(spec('frost', 'bolt'))).toBe('Slows everything around it by 40%, and shoots the enemy furthest along.');
   });
 });
 
@@ -307,10 +302,6 @@ describe('tiers', () => {
     expect(towerSpec([copy('bolt'), copy('splash', 'epic')]).splash).toBeCloseTo(2);
   });
 
-  it("a Rare Frost first tower slows by the tier's amount", () => {
-    expect(towerSpec([copy('frost', 'rare')]).slow?.pct).toBe(0.5);
-  });
-
   it("the card's added line changes with the tier", () => {
     expect(tierAddedLine(rapid, 'rare')).toBe('Attacks 65% faster, hits 25% lighter.');
     expect(tierAddedLine(rapid, 'epic')).toBe('Attacks 85% faster, hits 25% lighter.');
@@ -378,7 +369,7 @@ describe('rollOffer', () => {
 
   it('rolls Mint only as an Epic card, across many seeds', () => {
     let seen = 0;
-    for (let seed = 1; seed <= 60; seed++) {
+    for (let seed = 1; seed <= 300; seed++) {
       const rng = new Rng(seed);
       for (const wave of [1, 5, 10]) {
         for (const c of rollOffer(rng, AUGMENTS, 3, wave, false)) {
@@ -449,7 +440,7 @@ describe('rollOffer', () => {
   });
 
   it('the rule relaxes, rather than hard-failing, when exclusions leave fewer than 3 eligible', () => {
-    const tiny = AUGMENTS.slice(0, 4); // bolt, lance, splash, frost
+    const tiny = AUGMENTS.slice(0, 4); // bolt, lance, splash, spray
     for (let seed = 1; seed <= 50; seed++) expect(rollOffer(new Rng(seed), tiny, 3, 5, false, ['bolt', 'lance'])).toHaveLength(3);
   });
 

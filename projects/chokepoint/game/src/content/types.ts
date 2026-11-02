@@ -169,6 +169,8 @@ export interface FirstForm {
   beam?: { dps: number };
   /** Kills within this many cells of the tower (its range ring) drop +1 gold per mint copy in it (Mint). */
   goldRadius?: number;
+  /** The tower's power comes from the run's state, not from striking enemies: it deals nothing itself (Feast). */
+  runPower?: boolean;
   /** Every leak pays this much gold while the tower stands (Toll). */
   goldPerLeak?: number;
   /** The haste aura's percent on the enemy side while inside (Haste first). */
@@ -206,6 +208,8 @@ export interface AddedForm {
   rally?: { pct: number };
   /** This tower's own kills drop this much extra gold (Mint). */
   goldPerKill?: number;
+  /** Each copy beyond the first lengthens the kill chain's window by this many seconds (Feast). */
+  chainWindowSec?: number;
   /** Every leak pays this much more gold while the tower stands (Toll). */
   goldPerLeak?: number;
   /** Added to the haste aura's percent per extra Haste copy, both sides (Haste). */

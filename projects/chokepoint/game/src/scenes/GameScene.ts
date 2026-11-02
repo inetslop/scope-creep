@@ -24,6 +24,7 @@ import { Building } from '../systems/Building';
 import { ComboBar } from '../systems/ComboBar';
 import { EnemySystem } from '../systems/EnemySystem';
 import { ExitWarning } from '../systems/ExitWarning';
+import { FeastGlow } from '../systems/FeastGlow';
 import { FxSystem } from '../systems/FxSystem';
 import { HasteSystem } from '../systems/HasteSystem';
 import { LeakCost } from '../systems/LeakCost';
@@ -79,6 +80,7 @@ export class GameScene extends Phaser.Scene {
   leakCost!: LeakCost;
   windup!: PushWindup;
   comboBar!: ComboBar;
+  feastGlow!: FeastGlow;
 
   constructor() {
     super(SCENES.game);
@@ -166,6 +168,7 @@ export class GameScene extends Phaser.Scene {
     if (saved) this.saver.restore(saved);
     this.windup = new PushWindup(this, this.towers);
     this.comboBar = new ComboBar(this, this.fx);
+    this.feastGlow = new FeastGlow(this, this.fx, () => this.towers.towers);
 
     this.board.layout(view.width, view.height);
     onResize(this, (w, h) => this.board.layout(w, h));
@@ -247,6 +250,7 @@ export class GameScene extends Phaser.Scene {
     this.beams.update(simDt);
     this.windup.update(simDt);
     this.comboBar.update();
+    this.feastGlow.update();
     syncHookStats(this);
   }
 }

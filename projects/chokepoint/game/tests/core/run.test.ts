@@ -38,9 +38,9 @@ describe('RunState', () => {
   it('starts with the starting hand; picks go in, placing takes them out', () => {
     const run = new RunState(1);
     expect(run.hand).toEqual([...START.hand]);
-    run.takeAugment({ id: 'frost', tier: 'common' });
+    run.takeAugment({ id: 'lance', tier: 'common' });
     run.takeAugment({ id: 'bolt', tier: 'rare' });
-    expect(run.useAugment(0)).toEqual({ id: 'frost', tier: 'common' });
+    expect(run.useAugment(0)).toEqual({ id: 'lance', tier: 'common' });
     expect(run.hand).toEqual([{ id: 'bolt', tier: 'rare' }]);
     expect(run.useAugment(5)).toBeUndefined();
   });
