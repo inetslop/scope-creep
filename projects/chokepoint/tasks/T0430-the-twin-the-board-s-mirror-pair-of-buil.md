@@ -3,10 +3,12 @@ id: T0430
 title: "The twin: the board's mirror pair of build cells"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T15:49:41Z
+claimed_at: 2026-11-02T16:14:59Z
+designer: desktop
 ---
 
 ## Goal
