@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { BOARD_FACTS, boardFactTag } from '../../src/core/boardFacts';
+import { chokeCells } from '../../src/core/choke';
+import { GRID, ROCKS } from '../../src/config';
+import { generateMap, kindAt, mapExtraBends, type GameMap } from '../../src/core/map';
+import { markedCell } from '../../src/core/markedCell';
+import { Rng } from '../../src/core/rng';
+import { switchbackFold } from '../../src/core/switchback';
+import { BOARD_FACTS, BOARD_FACT_SEEDS, boardFactMap, boardFactTag, type BoardFactMark } from '../../src/core/boardFacts';
 import { BOARD_NODES } from '../../src/content/tech/board';
 import { WAVE_NODES } from '../../src/content/tech/wave';
 
@@ -42,5 +48,53 @@ describe('the board facts', () => {
     expect(boardFactTag(BOARD_FACTS[1]!, ['one-more-bend'])).toBe('owned');
     expect(boardFactTag(BOARD_FACTS[4]!, [])).toBe('The switchback');
     expect(boardFactTag(BOARD_FACTS[4]!, ['switchback'])).toBe('owned');
+  });
+});
+
+describe('the boards reference\'s per-row seeds', () => {
+  it('every row the reference lists has a committed seed (a later row without one shows text only)', () => {
+    for (const row of BOARD_FACTS) expect(BOARD_FACT_SEEDS[row.mark]).toBeDefined();
+    expect(Object.keys(BOARD_FACT_SEEDS)).toHaveLength(BOARD_FACTS.length); // no seed sits on a row the reference does not list
+  });
+
+  it('a row\'s board is identical every time it is grown: a fixed seed, never a roll', () => {
+    for (const row of BOARD_FACTS) {
+      const a = boardFactMap(row.mark)!;
+      const b = boardFactMap(row.mark)!;
+      expect(a.path).toEqual(b.path);
+      expect(a.kinds).toEqual(b.kinds);
+    }
+  });
+
+  it('each row\'s grown board carries the row\'s modifier', () => {
+    const facts = (m: GameMap, mark: BoardFactMark): void => {
+      switch (mark) {
+        case 'choke': expect(chokeCells(m).length).toBeGreaterThanOrEqual(1); break;
+        case 'bend': expect(mapExtraBends(m)).toBe(1); break;
+        case 'longway': {
+          const s = BOARD_FACT_SEEDS.longway!;
+          const short = generateMap(new Rng(s.seed), GRID.short, GRID.long, ROCKS, 0, 1, 2, 1, false, false, s.seed);
+          expect(m.path.length).toBeGreaterThan(short.path.length);
+          break;
+        }
+        case 'twochokes': expect(chokeCells(m).length).toBeGreaterThanOrEqual(2); break;
+        case 'switchback': expect(switchbackFold(m)).not.toBeNull(); break;
+        case 'fargate': expect(m.farGate).toBeDefined(); break;
+        case 'fork': expect(m.fork).toBeDefined(); break;
+        case 'loop': expect(m.loop).toBeDefined(); break;
+        case 'cove': expect(m.cove).toBeDefined(); break;
+        case 'markedcell': {
+          const s = BOARD_FACT_SEEDS.markedcell!;
+          const c = markedCell(m, s.seed);
+          expect(kindAt(m, c.col, c.row)).toBe('open');
+          break;
+        }
+        default: throw new Error(`no board facts for the row's mark: ${String(mark)}`);
+      }
+    };
+    for (const row of BOARD_FACTS) {
+      const map = boardFactMap(row.mark)!;
+      facts(map, row.mark);
+    }
   });
 });

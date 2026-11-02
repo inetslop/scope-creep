@@ -4,11 +4,12 @@ title: "The boards reference wears the board's shape: a small live board on each
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T12:40:16Z
 claimed_at: 2026-11-02T13:36:21Z
+finished_at: 2026-11-02T14:13:14Z
 ---
 
 ## Goal
@@ -75,3 +76,19 @@ export function boardFactMap(mark: BoardFactMark): GameMap | undefined;
 
 ### Tests
 - `tests/core/boardFacts.test.ts`: the three describes from step 3 (seeds exist for every current row; determinism; the grown board carries the row's modifier, all 10 rows). The existing row-order test already guards "row set unchanged".
+
+## Result (attempt 1, inet-racing)
+
+The pause's Boards reference now shows each modifier's own board instead of a small glyph: every row wears a ~96 px mini-board (island, road, gates, rocks, marked cell) grown from a committed per-row seed in `BOARD_FACT_SEEDS` / `boardFactMap` (core/boardFacts.ts, no Phaser), so the fork row shows a fork, the loop row a circling road, the cove row a bay, and the far gate row a second entrance. BoardFactsScene paints each row's board with `paintBoardPreview`, grows the row to the board's height (text-only fallback for a future seed-less row), and cleans the textures up on shutdown; unit tests pin the seeds (determinism + every row's board carries its modifier). The run is untouched — board generation, saves and readouts still roll from the run's own seed.
+
+- Self-review: APPROVE
+- Time: 36.9 min
+- Deleted tests/core/boardFactSeeds.search.test.ts, as the agent asked.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/boardFacts.ts    | 34 +++++++++++++
+ .../chokepoint/game/src/scenes/BoardFactsScene.ts  | 44 +++++++++++------
+ .../chokepoint/game/tests/core/boardFacts.test.ts  | 56 +++++++++++++++++++++-
+ 3 files changed, 119 insertions(+), 15 deletions(-)
+```

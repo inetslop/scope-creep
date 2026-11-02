@@ -1,5 +1,8 @@
+import { GRID, ROCKS } from '../config';
 import { BOARD_NODES } from '../content/tech/board';
 import { WAVE_NODES } from '../content/tech/wave';
+import { generateMap, type GameMap } from './map';
+import { Rng } from './rng';
 
 /**
  * The board's modifiers, in the order the pause's "Boards" reference lists them: the choke and
@@ -30,6 +33,37 @@ export const BOARD_FACTS: readonly BoardFactRow[] = [
   { mark: 'cove', name: 'The cove', meaning: "a bay in the island's edge beside a curve; the pocket's cells cover it from both sides", tag: { kind: 'some' } },
   { mark: 'markedcell', name: 'The marked cell', meaning: 'one build cell that makes its tower stronger', tag: { kind: 'some' } },
 ];
+
+/** One committed seed per row's modifier, with the row's own parameters — the row's board is grown from it, never a roll. */
+export interface BoardFactSeed {
+  seed: number;
+  extraBends?: number; // the bend row: 1 (the row's tech's own parameter)
+  lengthMul?: number;  // the long way row: 2
+  chokes?: number;     // the two chokes row: 2
+  fold?: boolean;      // the switchback row: true
+  farGate?: boolean;   // the far gate row: true
+}
+
+/** One fixed seed per row's modifier (never a roll). A row added later without an entry shows text only. */
+export const BOARD_FACT_SEEDS: Partial<Record<BoardFactMark, BoardFactSeed>> = {
+  choke: { seed: 1 },
+  bend: { seed: 2, extraBends: 1 },
+  longway: { seed: 4, lengthMul: 2 },
+  twochokes: { seed: 3, chokes: 2 },
+  switchback: { seed: 5, fold: true },
+  fargate: { seed: 8, farGate: true },
+  fork: { seed: 6 },
+  loop: { seed: 7 },
+  cove: { seed: 13 },
+  markedcell: { seed: 9 },
+};
+
+/** The row's board, grown the run's own way: bgen 2 (the choke guarantee, the loop and cove rolls), the run's rocks, a fixed portrait board (8 cols x 14 rows). */
+export function boardFactMap(mark: BoardFactMark): GameMap | undefined {
+  const s = BOARD_FACT_SEEDS[mark];
+  if (!s) return undefined;
+  return generateMap(new Rng(s.seed), GRID.short, GRID.long, ROCKS, s.extraBends ?? 0, s.lengthMul ?? 1, 2, s.chokes ?? 1, s.fold ?? false, s.farGate ?? false, s.seed);
+}
 
 /** "always", "some boards", "tech · the node" while its node is owned, the tree's own node name, or "owned" while the profile owns it. */
 export function boardFactTag(row: BoardFactRow, purchased: readonly string[]): string {
