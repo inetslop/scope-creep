@@ -4,11 +4,12 @@ title: "The Leech: the wave-80 boss that drinks its escorts"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T05:03:59Z
 claimed_at: 2026-11-02T13:27:39Z
+finished_at: 2026-11-02T13:55:09Z
 ---
 
 ## Goal
@@ -119,3 +120,33 @@ export function leechTell(fx: FxSystem, x: number, y: number): void; // white ch
 - `tests/core/drink.test.ts` (new): the drink-cycle leg boundaries.
 - `tests/content.test.ts`: the `drinks` spec validation + Leech size.
 - `tests/core/waves.test.ts`: the wave-80 boss-lane plan (deterministic on every seed), `bossId(80)`, and the spawnOnly exclusion.
+
+## Result (attempt 1, desktop)
+
+Added the Leech, the wave-80 boss: a big pink maw (new `maw` shape — a circle with a wedge cut, plus a plain-circle closed-maw texture) that every 5 s flashes white for 0.8 s and drinks 8% of its max hp from its nearest living Hauler escort over 0.6 s (pink line, draining escort bar, green +N pop), until its 8th drink or the last escort dies, whichever closes its maw for good; a drink-kill is a normal death. New files: `content/enemies/leech.ts`, `core/drink.ts` (shared cycle leg), `systems/enemyHooks/leechDrink.ts`, `systems/fx/leechTell.ts` (one-time "drinks its escorts" chip) and `tests/core/drink.test.ts`; wave 80 now sends 2 Haulers + the Leech (boss card, horn, arrival ring, jolt and death burst all inherit via `bossId`), with the `enemies.leech` invariant and content/waves tests added. One deviation: the `level.bossPlan` invariant keeps its wave-70 case (the design's expression would have dropped it and fired on the Mender's 3-spawn wave).
+
+- Self-review: APPROVE
+- Time: 27.5 min
+- Deleted tests/_leechProbe.test.ts, as the agent asked.
+
+```
+projects/chokepoint/game/src/art/entities.ts       |  10 +-
+ projects/chokepoint/game/src/art/paint.ts          |   9 ++
+ projects/chokepoint/game/src/art/shapes.ts         |   2 +-
+ projects/chokepoint/game/src/art/textures.ts       |   2 +
+ .../chokepoint/game/src/content/enemies/index.ts   |   2 +
+ .../chokepoint/game/src/content/enemies/leech.ts   |  17 +++
+ projects/chokepoint/game/src/content/types.ts      |  10 +-
+ projects/chokepoint/game/src/core/drink.ts         |  15 +++
+ projects/chokepoint/game/src/core/waves.ts         |   9 +-
+ projects/chokepoint/game/src/debug/runChecks.ts    |   3 +-
+ projects/chokepoint/game/src/entities/Enemy.ts     |  11 +-
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  16 +++
+ .../game/src/systems/enemyHooks/index.ts           |   2 +
+ .../game/src/systems/enemyHooks/leechDrink.ts      | 121 +++++++++++++++++++++
+ .../chokepoint/game/src/systems/fx/leechTell.ts    |  26 +++++
+ projects/chokepoint/game/tests/content.test.ts     |  11 +-
+ projects/chokepoint/game/tests/core/drink.test.ts  |  34 ++++++
+ projects/chokepoint/game/tests/core/waves.test.ts  |  17 +++
+ 18 files changed, 307 insertions(+), 10 deletions(-)
+```

@@ -1,7 +1,7 @@
 import type { Bright } from './palette';
 
 /** Flat shapes the art code can draw (see art/shapes.ts). */
-export type Shape = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'pillar' | 'chevron' | 'ring' | 'wings' | 'almond';
+export type Shape = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'pillar' | 'chevron' | 'ring' | 'wings' | 'maw' | 'almond';
 
 export interface Look {
   shape: Shape;
@@ -52,6 +52,14 @@ export interface EnemyDef {
    * and held damage and all control still reach it.
    */
   outOfReach?: { hpFrac: number; telegraphSec: number; phaseSec: number; periodSec: number };
+  /**
+   * The drink (the Leech): every `everySec` after its own spawn, up to `maxDrinks`, it flashes
+   * white for `telegraphSec` and then drinks `drinkPct` of its own max hp from the nearest living
+   * escort of `escort` over `drinkSec` — a drink is damage, and one that kills its target is a
+   * normal death; when the drinks are done, or the last escort is gone, its maw closes for good
+   * (core/drink.ts, systems/enemyHooks/leechDrink.ts).
+   */
+  drinks?: { everySec: number; telegraphSec: number; drinkSec: number; maxDrinks: number; drinkPct: number; escort: string };
   /**
    * The bank (the boss Flyer): when its hp first drops to `hpFrac` of its max, its remaining route
    * becomes two straight segments — from its position to the edge bank point the board read at that

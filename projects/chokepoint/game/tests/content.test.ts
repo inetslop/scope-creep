@@ -24,7 +24,7 @@ describe('content', () => {
       expect(e.fromWave).toBeGreaterThanOrEqual(1);
       expect(BRIGHTS).toContain(e.look.color);
       expect(e.look.size).toBeGreaterThan(0);
-      expect(e.look.size).toBeLessThanOrEqual(e.id === 'titan' || e.id === 'orb' || e.id === 'hive' || e.id === 'crosser' || e.id === 'blinker' || e.id === 'mender' ? 0.5 : 0.45);
+      expect(e.look.size).toBeLessThanOrEqual(e.id === 'titan' || e.id === 'orb' || e.id === 'hive' || e.id === 'crosser' || e.id === 'blinker' || e.id === 'mender' || e.id === 'leech' ? 0.5 : 0.45);
       if (e.speedRamp) {
         expect(e.speedRamp.perHit).toBeGreaterThan(0);
         expect(e.speedRamp.max).toBeGreaterThan(e.speed);
@@ -82,6 +82,15 @@ describe('content', () => {
         expect(mends.telegraphSec).toBeGreaterThan(0);
         expect(mends.telegraphSec).toBeLessThan(mends.everySec);
         expect(ENEMIES.some((d) => d.id === mends.escortId)).toBe(true);
+      }
+      const drinks = e.drinks;
+      if (drinks) {
+        expect(drinks.everySec).toBeGreaterThan(0);
+        expect(drinks.everySec).toBeGreaterThan(drinks.telegraphSec + drinks.drinkSec); // a quiet beat between drinks
+        expect(drinks.maxDrinks).toBeGreaterThan(0);
+        expect(drinks.drinkPct).toBeGreaterThan(0);
+        expect(drinks.drinkPct).toBeLessThanOrEqual(1);
+        expect(ENEMIES.some((d) => d.id === drinks.escort)).toBe(true);
       }
     }
   });

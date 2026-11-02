@@ -83,6 +83,15 @@ export function shapePath(ctx: CanvasRenderingContext2D, shape: Shape, x: number
     ctx.closePath();
     return;
   }
+  // A maw (the Leech): a circle with a wedge cut from the bottom, a straight chord across the
+  // opening, so it reads as an open mouth, not a circle.
+  if (shape === 'maw') {
+    const hw = Math.PI / 5;
+    ctx.beginPath();
+    ctx.arc(x, y, radius, Math.PI / 2 + hw, Math.PI / 2 - hw);
+    ctx.closePath();
+    return;
+  }
   const pts = shapePoints(shape, radius).map((p) => ({ x: p.x + x, y: p.y + y }));
   roundedPolygon(ctx, pts, radius * 0.28);
 }

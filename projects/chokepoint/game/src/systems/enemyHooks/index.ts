@@ -6,6 +6,7 @@ import { leakEcho } from './leakEcho';
 import { bossEscape } from './bossEscape';
 import { bossDeath } from './bossDeath';
 import { titanShield } from './titanShield';
+import { leechDrink } from './leechDrink';
 import { shieldDown } from './shieldDown';
 import { comboGold } from './comboGold';
 import { haulerLeak } from './haulerLeak';
@@ -55,6 +56,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   bossEscape,
   bossDeath,
   titanShield,
+  leechDrink,
   shieldDown,
   split,
   midSplit,

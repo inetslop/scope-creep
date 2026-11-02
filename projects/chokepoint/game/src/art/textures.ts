@@ -23,6 +23,8 @@ export const PLATE_TEXTURE = 'enemy:plate';
 export const DISC_TEXTURE = 'enemy:disc';
 /** The Blinker's small white eye: a flat dot near the back of its face that slides forward through its telegraph (entities/Enemy.ts). */
 export const EYE_TEXTURE = 'enemy:eye';
+/** The Leech with its maw closed: the same token as a plain circle, after its drinks (systems/enemyHooks/leechDrink.ts). */
+export const LEECH_CLOSED_TEXTURE = 'enemy:leech-closed';
 /** A thin straight tracer for a piercing shot (Lance): it keeps going after a hit. */
 export const TRACER_TEXTURE = 'fx:tracer';
 export const CHIP_TEXTURE = 'fx:chip';

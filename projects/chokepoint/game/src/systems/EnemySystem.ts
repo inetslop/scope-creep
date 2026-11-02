@@ -157,6 +157,16 @@ export class EnemySystem {
     if (target.hit(dealt, false)) this.kill(target, source);
   }
 
+  /** The Leech's drink: takes `amount` hp from `e`, no flash, no mark, no shield, no tower — and a
+   * kill it makes pays as a normal death (source undefined: gold pop, chips, the combo, no mints).
+   * Returns true when it killed. */
+  drain(e: Enemy, amount: number): boolean {
+    if (!e.active || amount <= 0) return false;
+    e.hp -= amount;
+    if (e.hp <= 0) { this.kill(e, undefined); return true; }
+    return false;
+  }
+
   /** Rolls the tower's crit chance on the run's rng: true when this damage instance is a crit,
    * which doubles its damage and shows the chip. No roll at all with no chance. */
   private crit(chance: number): boolean {
@@ -334,6 +344,12 @@ export class EnemySystem {
   brokenReach(): string | undefined {
     const bad = this.pool.find((e) => e.active && e.def.outOfReach !== undefined && (!Number.isFinite(e.reachClock) || e.reachClock < -1 - 1e-9));
     return bad ? `${bad.def.id} with reach clock ${bad.reachClock}` : undefined;
+  }
+
+  /** Invariant: no active Leech carries a NaN hp or hp above its max (its drinks never overfill it). */
+  brokenLeech(): string | undefined {
+    const bad = this.pool.find((e) => e.active && e.def.drinks !== undefined && (!Number.isFinite(e.hp) || e.hp > e.maxHp + 1e-6));
+    return bad ? `${bad.def.id} at ${bad.hp} of ${bad.maxHp}` : undefined;
   }
 
   /** Invariant: no active boss Flyer carries a broken crossing — no route, a distance off its line, a broken bank clock. */

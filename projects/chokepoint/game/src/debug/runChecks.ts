@@ -107,6 +107,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['enemies.orb', (g) => (g.enemies.all.filter((e) => e.active && e.def.id === 'orb').length <= 1 ? null : 'more than one Orb alive')],
   ['enemies.flyer', (g) => (g.enemies.all.filter((e) => e.active && e.def.behavior === 'fly').length <= 1 ? null : 'more than one Flyer alive')],
   ['enemies.hive', (g) => (g.enemies.all.filter((e) => e.active && e.def.id === 'hive').length <= 1 ? null : 'more than one Hive alive')],
+  ['enemies.leech', (g) => g.enemies.brokenLeech()],
   ['enemies.blink', (g) => (g.enemies.all.every((e) => !e.active || e.def.blinkCycle === undefined || (e.blinkLeg !== 'tele' || (Number.isFinite(e.blinkDest) && e.blinkDest > e.distance && e.blinkDest <= e.path.length))) ? null : 'a Blinker out of its blink beat')],
   ['hive.pending', (g) => (Number.isInteger(g.run.pendingPops) && g.run.pendingPops >= 0 && g.run.pendingPops <= 5 ? null : `pending pops ${g.run.pendingPops}`)],
   ['enemies.orbSplit', (g) => (g.enemies.all.every((e) => !e.active || e.def.splitsAt === undefined || (Number.isFinite(e.splitClock) && e.splitClock >= -1 - 1e-9 && e.splitClock <= SPLIT_TELEGRAPH_SEC + 1e-9)) ? null : 'a split window out of its beat')],
@@ -182,7 +183,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['level.choice', (g) => (new Set(g.run.level).size === g.run.level.length && g.run.level.every((id) => getLevelAugment(id) !== undefined) ? null : `level choice ${g.run.level.join(',')}`)],
   ['level.speed', (g) => (g.enemies.all.every((e) => !e.active || e.speedMul === levelSpeedMul(g.run.level) * waveWalkFactor(g.run.techOwned) * waveSpeedMul(g.run.wave)) ? null : 'an enemy walks at the wrong level, walk or wave speed factor')],
   ['walk.mul', (g) => (g.enemies.all.every((e) => !e.active || e.walkMul === waveWalkFactor(g.run.techOwned)) ? null : 'an enemy carries the wrong run walk factor')],
-  ['level.bossPlan', (g) => { if (!bossId(g.run.wave) || !g.waves.currentPlan) return null; const want = g.run.wave === 20 ? 2 : g.run.wave === 70 ? 3 : 1; return g.waves.currentPlan.spawns.length === want ? null : `boss wave ${g.run.wave} sends ${g.waves.currentPlan.spawns.length}, not ${want}`; }],
+  ['level.bossPlan', (g) => { if (!bossId(g.run.wave) || !g.waves.currentPlan) return null; const want = g.run.wave === 20 ? 2 : g.run.wave === 70 || g.run.wave === 80 ? 3 : 1; return g.waves.currentPlan.spawns.length === want ? null : `boss wave ${g.run.wave} sends ${g.waves.currentPlan.spawns.length}, not ${want}`; }],
   ['augments.valid', (g) => {
     for (const c of [...g.run.hand, ...g.towers.towers.flatMap((t) => t.augments)])
       if (!AUGMENTS.some((a) => a.id === c.id) || !TIER_ORDER.includes(c.tier)) return `unknown augment copy ${c.id}:${c.tier}`;

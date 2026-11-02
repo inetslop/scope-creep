@@ -110,7 +110,7 @@ export function waveSpeedMul(wave: number): number {
   return isRushWave(wave) ? 1.5 : 1;
 }
 
-/** Every 10th wave is the boss wave: one Colossus (the Guard and the Titan on wave 20, the Orb on wave 30, the Hive on wave 40, the Flyer on wave 50, the Blinker on wave 60, the Wards and the Mender on wave 70), nothing else. */
+/** Every 10th wave is the boss wave: one Colossus (the Guard and the Titan on wave 20, the Orb on wave 30, the Hive on wave 40, the Flyer on wave 50, the Blinker on wave 60, the Wards and the Mender on wave 70, the Haulers and the Leech on wave 80), nothing else. */
 export function isBossWave(wave: number): boolean {
   return wave > 0 && wave % 10 === 0;
 }
@@ -118,13 +118,14 @@ export function isBossWave(wave: number): boolean {
 /** The enemy the plan declares as the boss of wave `wave`; undefined on non-boss waves. */
 export function bossId(wave: number): string | undefined {
   if (!isBossWave(wave)) return undefined;
-  return wave === 70 ? 'mender' : wave === 60 ? 'blinker' : wave === 50 ? 'crosser' : wave === 40 ? 'hive' : wave === 30 ? 'orb' : wave === 20 ? 'titan' : 'colossus';
+  return wave === 80 ? 'leech' : wave === 70 ? 'mender' : wave === 60 ? 'blinker' : wave === 50 ? 'crosser' : wave === 40 ? 'hive' : wave === 30 ? 'orb' : wave === 20 ? 'titan' : 'colossus';
 }
 
 /**
  * Which enemies a wave sends, in order, and when. A boss wave is exactly one boss — the Colossus,
  * the Guard and the Titan on wave 20, the Orb on wave 30, the Hive on wave 40, the Flyer on wave 50,
- * the Blinker on wave 60, the Wards and the Mender on wave 70 — and nothing else; every other wave
+ * the Blinker on wave 60, the Wards and the Mender on wave 70, the Haulers and the Leech on wave 80 —
+ * and nothing else; every other wave
  * spends the wave's budget on enemies
  * that are unlocked (fromWave) and
  * affordable, groups of the same type come in quick succession, and ramping enemies are reserved
@@ -136,6 +137,8 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
     planNormalWave(wave, rng, enemies);
     // Wave 20 is the Titan's wave: the Guard walks in ahead of it, carrying the Titan's shield (core/shield.ts).
     if (wave === 20) return { number: wave, spawns: [{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }], hpMul: waveHpMul(wave), tags: ['boss'] };
+    // Wave 80 is the Leech's wave: its two Hauler escorts walk in ahead of it, its drinks (core/drink.ts).
+    if (wave === 80) return { number: wave, spawns: [{ enemy: 'hauler', delaySec: 0 }, { enemy: 'hauler', delaySec: 1.2 }, { enemy: 'leech', delaySec: 2.4 }], hpMul: waveHpMul(wave), tags: ['boss'] };
     // Wave 70 is the Mender's wave: its two Ward escorts walk in ahead of it, its heal targets (core/mendClock.ts).
     if (wave === 70) return { number: wave, spawns: [{ enemy: 'ward', delaySec: 0 }, { enemy: 'ward', delaySec: 0.4 }, { enemy: 'mender', delaySec: 1.2 }], hpMul: waveHpMul(wave), tags: ['boss'] };
     // Wave 30 is the Orb's wave and wave 40 the Hive's: the boss wave's shape is its own (the Colossus on every other boss wave).

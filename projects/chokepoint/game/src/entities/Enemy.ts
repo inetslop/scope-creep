@@ -9,6 +9,7 @@ import { applyRoot, tickRoot } from '../core/root';
 import { controlScale, noteControl, pushable, tickControl } from '../core/control';
 import { bankedLine, firstLine, type FlyRoute } from '../core/flyRoute';
 import { shieldMul } from '../core/shield';
+import { drinkLeg } from '../core/drink';
 import type { LiveBurn } from '../core/burn';
 import type { Tower } from './Tower';
 
@@ -77,6 +78,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   markAge = 0;
   /** Its shield is up: every hit lands at half until its carrier dies (core/shield.ts, systems/enemyHooks/titanShield.ts). */
   shielded = false;
+  /** Its drink is armed right now (the Leech): set by systems/enemyHooks/leechDrink.ts, read one frame stale here for the white telegraph (core/drink.ts). */
+  drinkReady = false;
   /** Seconds since its out-of-reach beat started (the Colossus); -1 before its hp first dropped to half (core/outOfReach.ts). */
   reachClock = -1;
   /** Seconds since its split window opened (the Orb); -1 before its hp first dropped to the split line. */
@@ -146,6 +149,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.markPct = 0;
     this.markAge = 0;
     this.shielded = false;
+    this.drinkReady = false; // a recycled slot must not keep a stale telegraph
     this.burn.dps = 0;
     this.burn.mul = 1;
     this.burn.acc = 0;
@@ -210,10 +214,13 @@ export class Enemy extends Phaser.GameObjects.Image {
   advance(dt: number): boolean {
     const cycle = this.def.dashCycle;
     const reach = this.def.outOfReach;
+    // The drink's white telegraph (the Leech): the same leg the hook reads (core/drink.ts), so they never disagree.
+    const drinkFlash = this.def.drinks !== undefined && this.drinkReady && drinkLeg(this.def.drinks, this.age) === 'flash';
     const wasWhite =
       this.flash > 0 ||
       (cycle !== undefined && this.dashLeg === 'pause' && this.pauseAge < cycle.pauseSec / 2) ||
-      (reach !== undefined && outOfReachLeg(reach, this.reachClock) === 'flash');
+      (reach !== undefined && outOfReachLeg(reach, this.reachClock) === 'flash') ||
+      drinkFlash;
     // The out-of-reach beat: its clock starts the frame its hp first drops to the fraction, then
     // just runs — the leg (flash, phase, quiet) falls out of it (core/outOfReach.ts).
     if (this.reachClock < 0 && reach !== undefined && this.hp <= this.maxHp * reach.hpFrac) this.reachClock = 0;
@@ -362,7 +369,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     const tele = cycle !== undefined && this.dashLeg === 'pause' && this.pauseAge < cycle.pauseSec / 2;
     if (this.flash > 0) this.flash -= dt;
     const leg = reach !== undefined ? outOfReachLeg(reach, this.reachClock) : 'idle';
-    const white = tele || leg === 'flash' || this.flash > 0;
+    const white = tele || leg === 'flash' || this.flash > 0 || drinkFlash;
     if (white !== wasWhite) {
       if (white) this.setTintFill(0xffffff);
       else this.clearTint();

@@ -5,7 +5,7 @@ import { ENEMIES, getEnemy } from '../content/enemies';
 import { deepOf, PALETTE, rgba, type Bright } from '../content/palette';
 import type { Shape } from '../content/types';
 import { paintToken, roundRectPath, setShadow, shapePath } from './paint';
-import { BOLT_TEXTURE, CHIP_TEXTURE, DISC_TEXTURE, EYE_TEXTURE, enemyTexture, paintTexture, PLATE_TEXTURE, TOWER_BASE, TOWER_BODY, tokenDepth, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
+import { BOLT_TEXTURE, CHIP_TEXTURE, DISC_TEXTURE, EYE_TEXTURE, enemyTexture, LEECH_CLOSED_TEXTURE, paintTexture, PLATE_TEXTURE, TOWER_BASE, TOWER_BODY, tokenDepth, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
 
 /** Enemies, tower plinths and bodies, bolts and chips: everything that stands or flies on the board. */
 export function paintEntityTextures(scene: Phaser.Scene): void {
@@ -103,6 +103,14 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
     ctx.beginPath();
     ctx.arc(discSize / 2, discSize / 2 - gDepth / 2 - gR * 0.55, gR * 0.42, 0, Math.PI * 2);
     ctx.fill();
+  });
+  // The Leech with its maw closed: the same token as a plain circle, in its own size — swapped in
+  // after its eight drinks (systems/enemyHooks/leechDrink.ts), so the swap is seamless.
+  const lR = getEnemy('leech').look.size * CELL;
+  const lDepth = tokenDepth(lR);
+  const leechClosedSize = tokenRoom(lR, lDepth) * 2;
+  paintTexture(scene, LEECH_CLOSED_TEXTURE, leechClosedSize, leechClosedSize, (ctx) => {
+    paintToken(ctx, 'circle', leechClosedSize / 2, leechClosedSize / 2 - lDepth / 2, lR, PALETTE.pink, deepOf('pink'), { depth: lDepth });
   });
   // The Blinker's eye: one small flat white dot near the back of its face (Enemy slides it forward
   // through the telegraph). Flat (no shading), so it may turn with the token.

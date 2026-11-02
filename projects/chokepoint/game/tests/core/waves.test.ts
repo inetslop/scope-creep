@@ -263,6 +263,23 @@ describe('boss waves (every 10th)', () => {
       expect(planWave(wave, new Rng(wave), ENEMIES).spawns.filter((s) => s.enemy === 'mender').length).toBe(wave === 70 ? 1 : 0);
     }
   });
+  it('bossId: the wave-80 boss is the Leech — its two Hauler escorts walk in ahead of it, its drinks', () => {
+    expect(bossId(80)).toBe('leech');
+    expect(planWave(80, new Rng(80), ENEMIES).spawns[2]!.enemy).toBe(bossId(80)); // the rule and the plan agree: the Leech walks in behind its Haulers
+  });
+  it('wave 80 is exactly the two Haulers and the Leech: the boss tag, the wave-scaled hp, identical on every seed', () => {
+    for (const seed of [1, 7, 42, 80]) {
+      const plan = planWave(80, new Rng(seed), ENEMIES);
+      expect(plan.spawns).toEqual([{ enemy: 'hauler', delaySec: 0 }, { enemy: 'hauler', delaySec: 1.2 }, { enemy: 'leech', delaySec: 2.4 }]);
+      expect(plan.tags).toEqual(['boss']);
+      expect(plan.hpMul).toBe(waveHpMul(80));
+    }
+  });
+  it('no wave but 80 sends a Leech (the wave-80 boss; spawnOnly, never a wave mix)', () => {
+    for (let wave = 1; wave <= 80; wave++) {
+      expect(planWave(wave, new Rng(wave), ENEMIES).spawns.filter((s) => s.enemy === 'leech').length).toBe(wave === 80 ? 1 : 0);
+    }
+  });
 });
 
 describe('quiet waves (every 4th)', () => {
