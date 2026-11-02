@@ -107,6 +107,14 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - One life a Block: 85 coins by the depth rule, a Block that leaks costs 1 life instead of 2 — **done as T0429 (M, 2026-11-02, inet-racing)** (the first pass is tasked behind it as T0433)
 - The first pass: 155 coins by the depth rule, the run's first leak costs no life (a per-run flag the run save carries; the Hauler's 5 gold still pays) — **tasked as T0433 (M, waits on T0429; the T0427 re-file)**
 
+### E21 — The levels: more ways to make a run harder (active — opened 2026-11-02)
+**Goal:** the run-setup step's level set is five (Crowded, Lean, Short fuse, Swift, Tough) and the run's coin multiplier pays for the handicap the player picks; the set grows past five with a new dimension each time, so the run the player sets up is a pick, not a default.
+**When done:** the set has more than five levels with dimensions the five don't touch — information (Blind: no preview of the next wave) and the board's face (no marked cell, no guaranteed choke) — each with its own dry one-liner on the run-setup step, its own multiplier notch and its own chip; the ranks (Tough I/II/III) once the set outgrows the run's slots.
+**Breakdown:**
+- Blind: the sixth level — the run's build phase has no wave preview (the preview card and the flyer's line stay hidden) — **tasked as T0446 (M, 2026-11-02)**
+- the board's face: a level whose boards carry no marked cell and no guaranteed choke — parked until the board's files settle (the long straight, T0438)
+- the ranks: Tough I/II/III once the set outgrows the run's slots — parked
+
 ## Enemy queue (non-epic)
 
 New enemies land one at a time: each new-enemy task chains behind the one before it so the enemy system, the wave mix and the art settle between additions.
@@ -148,9 +156,9 @@ Ideas that may become epics or tasks of one.
 - Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **built as T0217 (2026-10-30, asus)**
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
 - The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **done as T0348 (M, 2026-11-01, asus)**
-- More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **E9's later slice, parked**
+- More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **now E21 (active, 2026-11-02); the first level tasked as T0446 (M, in the pool)**
 - Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**; the live "bank +N" line — **built as T0374 (M, non-epic, 2026-11-01)**; the first-pay chip — **dropped (rejected as T0380: the line already teaches the rule)**; the pay's coin blip — **already played (rejected as T0381)**; the pay's gold pop at the number — **done as T0395 (2026-11-02)**
 - The storm: a third menu mode — no breather, every wave rushes, 2× the wave bonus for the run (IDEAS holds the full text) — **now E17 (active, 2026-11-02)**
 - The run history: the menu's last-four line grows into a History card of the last twelve runs — **now E18 (active, 2026-11-02)**
-- The short cut: the fourth wave tag — from wave 16, every 9th non-quiet/tight/rush/boss wave, the walkers come in 40% down their own road; the front stretch idles, the back stretch carries the wave; the answer is placement (back-road cover, the move, the sell-and-rebuild), where the rush's answer is none — **tasked as T0440 (M, non-epic, 2026-11-02)**
+- The short cut: the fourth wave tag — from wave 16, every 9th non-quiet/tight/rush/boss wave, the walkers come in 40% down their own road; the front stretch idles, the back stretch carries the wave; the answer is placement (back-road cover, the move, the sell-and-rebuild), where the rush's answer is none — **done as T0440 (M, non-epic, 2026-11-02, desktop)**
 - The codex at the pause: the pause's reference set gains the family the draft is about — an "Augments" row opening the codex (T0221) over the dimmed pause, back to the pause (the How row's cross-context pattern; the menu's codex stays) — **tasked as T0441 (M, non-epic, 2026-11-02)**

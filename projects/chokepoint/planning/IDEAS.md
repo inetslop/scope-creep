@@ -5,12 +5,12 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Sell a tower for 70% of slot cost — **built as T0274; E7 done**
 - Take an augment back out of a tower into the hand, for a fee — **dropped with E7's close (T0275, dropped by hand 2026-10-30); don't re-task**
 - Targeting modes per tower (First / Strongest / Closest) — **built as T0114; the plinth notch as T0368**
-- Lance augment: first, a long piercing line that hits everything along it; added, shots pierce one more enemy — built as T0004 (asus)
+- Lance augment — **built as T0004 (asus)**
 - Chain augment — **dropped 2026-11-01** (T0025 failed, no re-file; T0150's leap re-tune dies with it): was a zap that struck the furthest and leapt to the nearest unstruck; don't re-task
 - Push augment — **done as T0027** (the gust that pushes 0.8 cells back every 2.4 s; the added hit's push lives on the card)
-- Gust wind-up — **built as T0058 (2026-10-28, yoga)**: a thin ring in Push's color sweeps 0°→360° once per charge interval around the Push tower's base, completing and fading at each gust — the next shove is readable before it lands
+- Gust wind-up — **built as T0058 (2026-10-28, yoga)**: Push's wind-up ring, one sweep per charge
 - Mark augment: first, marks the enemy furthest along so it takes 25% more damage; added, hits mark too — built as T0012 (asus)
-- Splitter enemy — **built as T0068 (2026-10-28, desktop-4070)**: a bigger cracked Dot that splits into two fast splinters at its spot on death
+- Splitter enemy — **built as T0068 (2026-10-28, desktop-4070)**
 - Shield enemy: a ring that absorbs the first hits for its neighbours
 - Sprinter enemy: speeds up each time it is hit — built as T0006 (desktop)
 - Flyer: ignores the path and crosses the board in a straight line — **E10 done** (the boss T0317, the regular T0353, the preview teach T0373)
@@ -24,12 +24,13 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Map modifiers chosen in the draft instead of an augment (e.g. "the next wave comes from both ends")
 - Haptics on mobile for builds and leaks — **built as T0265 (S, non-epic, 2026-10-30, yoga)**: one guarded navigator.vibrate, two patterns (place 20 ms, leak 80 ms), no HUD or toggle
 - The boss death gets its haptic — the run's loudest kill (T0273's burst and horn) earns a longer, heavier buzz than the leak's on mobile (T0265's guarded pattern, once per boss) — **done as T0428 (2026-11-02, yoga)**
-- Draft reroll — **built as T0036, extended by T0276**: endless rerolls, cost 50 + 15n + 5n², the button shows the price and turns red and disabled when gold is short (never "used")
+- Draft reroll — **built as T0036, extended by T0276**
 - Leak warning: the last 3 seconds before an enemy reaches the exit, the exit pulses red with a quiet tick — built as T0014 (yoga)
 - Ghost run — **built as T0078**: a menu option "Ghost · Wave N" under Play re-grows the best run's exact board; it never changes the saved seed
+- Blind level: the sixth level augment — a run with no wave preview (the preview card and the flyer's line stay hidden in the build phase; the tag chip still lands with the wave banner) for the set's next multiplier notch — **now E21 (active); the first level tasked as T0446 (M, in the pool)**
 - DPS line in the tower panel — **built as T0084**: a muted "≈ N/s" line under the kills line (T0070), one term per augment on one enemy (Ember adds its per-second rate, supports 0, under 1/s shows no line)
 - First-run hints — **E11 done** (T0318, T0319, T0320)
-- How to play — **built as T0351 (M, non-epic, 2026-11-01, cachyos-x8664)**: a menu card that re-teaches the run's loop in four dry lines, plus a pointer to the pause's keys
+- How to play — **built as T0351 (M, non-epic, 2026-11-01, cachyos-x8664)**: a menu card that re-teaches the run's loop
 - Sound on/off toggle — **built as T0035 (2026-10-28, yoga)**: on the pause screen, remembered in the profile
 - Wave banner — **built as T0067 (2026-10-28)**: "Wave N" slides in top-center and fades; topBanner.ts is the shared card the last-stand banner (T0060) reuses
 - Kill combo: kills within 1.5 s chain a rising "×2, ×3" counter above the last kill — built as T0031 (yoga)
@@ -52,7 +53,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The clean wave's bonus shown during the build phase — **overtaken**: the preview shows the wave's clear bonus (T0079) and the claim card shows the coin recipe with its clean terms (T0075); if a clean wave ever pays run gold in-wave, this re-opens
 - A run-so-far line on the pause screen — **built as T0030 (2026-10-28, yoga)**: wave, lives, gold, coins earned this run
 - The buy-slot button reads why it is quiet: when gold is short it dims and shows the price in red, so a first-time player sees the gap, not a dead button — **T0396's file lost 2026-11-02; re-file when TowerPanel is free (the button lives in it); the pattern E15's move line (T0394) wears**
-- Tier word on the draft card — **built as T0026 (2026-10-28, yoga)**: Rare and Epic cards read "Name · Rare" / "Name · Epic", Common plain; the word wears its tier's color — **built as T0097 (draft) and T0100 (hand, 2026-10-29, yoga)**
+- Tier word on the draft card — **built as T0026 (2026-10-28, yoga)**, the hand's as T0100
 - What-if preview — **built as T0096 (M, E4, 2026-10-29, asus)**: while an augment is held, a tower with a free slot ghosts the marker and range ring it would gain, before the gold is spent
 - Tight-pack waves — **built as T0108 (2026-10-29)**: from wave 6 every 8th (never a quiet wave) spawns at half the interval, tagged "tight"
 - A second pick: every 5th draft offers a 4th card — **built as T0065 (2026-10-29, asus)**: four cards with the same tier odds and no-repeat rule, the fourth flipping in last with its own tier chime
@@ -66,39 +67,39 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Streak — **built as T0045 (2026-10-28, cachyos-x8664)**: three clean waves in a row restore one life (the lives readout pops green), once per run — a perfect stretch pays back in survival, on top of the clean-wave coins
 - Demo at your level — **built as T0049**: the menu's live demo runs a real wave around your saved best wave, byte-identical for first-time players, nothing written to the profile
 - Lead augment — **removed by hand (2026-10-28, after T0040)**: every shot already homes in and never misses, so aiming ahead only added a way to miss and it played as a weaker Reach; don't re-propose a predictive or aimed shot unless shots can miss
-- Working aura — **built as T0055 (2026-10-28, desktop)**: a support tower that never fires shimmers a quiet ~1 s ring at its base in its own color each time its aura works (Rally shows no ring — its effect is visible on its towers firing)
+- Working aura — **built as T0055 (2026-10-28, desktop)**: a quiet ring under a support tower each time its aura works
 - The run's seed on the rewards card — **built as T0056 (2026-10-28, yoga)**: a muted "Board ABCD" line under the coins, derived from the board seed, so a run can be shared and replayed
-- Mint's gold pop — **built as T0039 (2026-10-28, baby-mama)**: when a kill pays a Mint's +1 extra gold, a small gold "+1" pops up at the kill spot (the same pop as kill gold), so the aura's income is visible where it happens
+- Mint's gold pop — **built as T0039 (2026-10-28, baby-mama)**: the +1 pops at the kill spot
 - The bounty's trail — **built as T0388 (2026-11-02)**
 - Wave-clear sweep — built (T0240, 2026-10-30)
 - First boss (E5) — **done 2026-10-30**
-- The wave-40 boss: the Hive — a purple pentagon that pops one Dot every 6 s (up to 5), the first enemy that adds enemies to the board while it lives — **done as T0292 (2026-11-01)**
-- The wave-60 boss: the Blinker — **done as T0402 (M, 2026-11-02, desktop)**: a pink almond that blinks 2.5 cells forward every 4 s (a 1 s telegraph)
+- The wave-40 boss: the Hive — **done as T0292 (2026-11-01)**
+- The wave-60 boss: the Blinker — **done as T0402 (M, 2026-11-02, desktop)**
 - Owned dot — **built as T0044 (2026-10-28, yoga)**: a draft card whose augment is already in the run shows a small muted-gray dot on its top-right corner, so "stack this one" vs "branch this one" reads at a glance
-- Best-run star on the Recent line — **built as T0037 (2026-10-28, yoga)**: the entry in the menu's Recent line (T0018) that reached your best wave gets the same small yellow star the profile card shows (T0016), so the trend line shows which run set the record
+- Best-run star on the Recent line — **built as T0037 (2026-10-28, yoga)**: the star on the Recent line's best run
 - New-enemy name tag — **built as T0085 (2026-10-29, desktop)**: the first spawn of a type pops a small white name chip over its spawn spot, once per type per run
-- Draft never repeats — **built as T0052 (2026-10-28, inet-racing)**: in one run the draft never offers the same augment twice in a row (the offer roll excludes the immediately previous offer, a reroll excludes the offer it replaces), so every pick has at least one fresh branch
+- Draft never repeats — **built as T0052 (2026-10-28, inet-racing)**: no augment twice in a row
 - Panic pulse — **built as T0063, removed 2026-10-29 (by hand)**: a 25-gold once-per-wave button that cleared every enemy on the board — the first bought way out of a wave; **don't re-task unless the in-wave economy re-opens**
 - Quiet wave — **built as T0071 (2026-10-28)**: every 4th wave is a breather — half size, double kill gold, tagged "quiet"; inside the last stand it is ×4
-- Epic frame shimmer — **built as T0041 (2026-10-28, yoga)**: on the draft reveal flip (T0024), the Epic card's purple frame runs a one-shot ~150 ms white shimmer, left to right, as it lands (and on the reroll re-flip), so the rarest card is noticed before its name is read
-- First-draft floor — **built as T0048 (2026-10-28, baby-mama)**: the pre-wave-1 draft always includes at least one Common Bolt (a reroll used in draft 0 keeps the floor), so a first-time player's first tower is the game's default shot; from wave 2 on the roll is normal
+- Epic frame shimmer — **built as T0041 (2026-10-28, yoga)**: the Epic frame's one-shot shimmer as the card lands
+- First-draft floor — **built as T0048 (2026-10-28, baby-mama)**: the pre-wave-1 draft always includes a Common Bolt
 - One life is loud — **folded into T0054 (last stand, built 2026-10-28, asus)**: when exactly one life remains, the lives number in the stats card turns red and pulses once at the start of every wave
-- The panel says who's working — **built as T0070 (2026-10-28, desktop)**: the tower panel gets a small muted-gray "kills N" line (attribution by the source-of-kill rule — an Ember killing tick counts for the source tower, support towers read "kills 0", resets on new and resumed runs), the first step toward a run summary
+- The panel says who's working — **built as T0070 (2026-10-28, desktop)**: the panel's "kills N" line
 - Best combo on the claim — **built as T0051 (2026-10-28, yoga)**: the rewards card's "Best combo ×N" line, counting up with the others and yellow at ×10 and up (the milestone color, T0034)
-- Score on the claim card — **built as T0047 (2026-10-28, desktop)**: the rewards card's count-up gets a "Score N" line — the same score the end of the run shows — so the number that ranks runs is seen where the run is claimed
+- Score on the claim card — **built as T0047 (2026-10-28, desktop)**
 - The quiet tower — **built as T0233 (S, non-epic, 2026-10-30, yoga)**: a tower idle 4 s mid-wave (attack-first only) wears one small dim dot that clears the moment it acts; groundwork for E5's untargetable boss phase
 - The quiet dot says what it means — the dot's (T0233) first appearance teaches once: a one-time chip above the tower, the first-leak chip's look, reading "quiet: nothing in reach" — **tasked as T0445 (S, non-epic, 2026-11-02)**
 - Last stand — **built as T0054**: at exactly 1 life every kill pays double gold for the rest of the run (off the moment the streak pays a life back) and the lives number stays red
-- Average wave on the profile card — **built as T0050 (2026-10-28, desktop)**: the menu profile card's "runs N" line becomes "runs N · avg wave M", M the average wave of the last four runs (T0018)
+- Average wave on the profile card — **built as T0050 (2026-10-28, desktop)**
 - Combo gold — built (T0066, 2026-10-29)
 - The combo says what it pays — the run's first ×5 chain says once, at the +2 pop's own spot, that quick kills pay extra: a one-time chip, the first-leak chip's look — **tasked as T0425 (S, 2026-11-02)**
 - Scorch cell: a build cell where 12+ enemies died this run keeps a small dark chip on the ground for the rest of the run, and a tower built on that cell deals +5% more damage — the road shows where the fight was, and the next placement takes the advantage — **now E19 (active, 2026-11-02); the scorch cell tasked as T0414 (M, in the pool)**
-- The pause line stars your record — **built as T0069 (2026-10-28, asus)**: the pause screen's run-so-far line (T0030) shows the small yellow star (T0016) the moment the current wave equals the saved best wave, and keeps it for the rest of the run (a resumed run at or above its best shows it from the first pause)
+- The pause line stars your record — **built as T0069 (2026-10-28, asus)**: the star on the pause's run line at the saved best wave
 - The record pass — **built as T0296 (S, non-epic, 2026-10-30, yoga)**: a record star pops beside the wave card's number once, the moment the run reaches the saved best wave (Iron wears the muted star)
 - Last stand banner — **built as T0060 (2026-10-29, cachyos-x8664)**: the moment a run drops to 1 life, the shared top-center card (T0067) slides in — "Last stand" over a muted "kills pay double" — and fades after ~1 s, on every re-entry to 1 life
-- The Hauler's fortune is visible — **built as T0098 (2026-10-29, narcissus)**: one flat gold coin (the HUD's own coin shape, ~a third of the token's width) painted on the Hauler's hexagon face, so a first-time player sees it pays more before the first kill
+- The Hauler's fortune is visible — **built as T0098 (2026-10-29, narcissus)**: a gold coin painted on the Hauler's face
 - Trap augment — **tasked as T0062 (M, E4, in the pool)**
-- Score made visible — **built as T0083 (2026-10-29, yoga)**: the claim card's Score line (T0047) and the game-over card get a small muted breakdown under them (the score's own recipe from the run ledger, terms always summing to the score shown)
+- Score made visible — **built as T0083 (2026-10-29, yoga)**: the muted breakdown under the Score
 - The wave preview says what the wave pays — **built as T0079 (2026-10-29)**: a muted "+N gold" clear-bonus line under the preview card
 - Feeder enemy — **built as T0334 (2026-11-01), removed with the Flyer (T0353)**; the Wall stays parked — it needs a slot
 - Send them early — **done as T0077** (the countdown's gold: 2 per full second left)
@@ -125,33 +126,33 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Spray augment — built (T0101, 2026-10-29)
 - Feast augment (Epic only) — **done as T0235 (L, E4, 2026-11-02, asus)**: while the kill chain lives, every tower +4% damage per chain level (added: the combo window +0.4 s)
 - The card says how many — **built as T0094 (2026-10-29, narcissus)**: a draft card the run already owns (T0044's dot) also shows a small muted "×N" next to the dot — N the copies of that augment the run holds in towers and the hand, shown only for N ≥ 2 — so "stack this one" vs "branch this one" has a number, not just a mark
-- The banner wears the chip — **built as T0080 (2026-10-29, narcissus)**: when a tagged wave (T0071's "quiet") starts, the wave banner (T0067) shows the wave's own muted chip beside the number — "Wave 8 · quiet" — so the tag is seen where the wave lands; later tags (E5's boss) wear the same chip; untagged waves byte-identical
+- The banner wears the chip — **built as T0080 (2026-10-29, narcissus)**: the tag's chip beside the banner's number
 - The run's richest minute — built (T0082, 2026-10-29)
 - The boss bar wears its phase — **built into T0256 (M, E5)**: the notch at 50% ships with the boss bar card, which also dims with the phase
 - The boss's phase gets its note — **built as T0284 (S, E5, 2026-10-30, yoga)**: a quiet falling tone when the boss goes out of reach
 - The Guard's shield break gets its moment — **done as T0293 (S, 2026-10-30, yoga)**: an 8-chip burst in the shield's orange plus a shield-down chip over the Titan
 - The boss's death gets its note — **built as T0302 (S, non-epic, 2026-10-30, cachyos-x8664)**: a low rising horn (G2→B2→D3) under the 24-chip burst, the run's loudest kill; future bosses inherit it
 - The boss's arrival gets its ring — **built as T0312 (2026-10-31)**: one muted ring in the boss's own color at its first spawn, ~0.6 s
-- The pause line says what the run is worth — **built as T0087 (2026-10-29, yoga)**: one muted "worth +N coins" line under the pause card's run line (T0030) — the run's own coin formula (T0001) applied to what has happened so far, read with the same pure formula the claim card's recipe line (T0075) uses; hidden while the run line reads "Ready" (before wave 1)
-- The build says its tier — **built as T0088 (2026-10-29, desktop-4070)**: the moment an augment is committed to a tower, the tier chime (T0032) plays once at its existing volume, starting on the commit with the drop-in bounce — the rarity is heard where it is spent; never on a failed placement, T0032's reveal chime untouched
+- The pause line says what the run is worth — **built as T0087 (2026-10-29, yoga)**: the "worth +N coins" line under the pause's run line
+- The build says its tier — **built as T0088 (2026-10-29, desktop-4070)**: the tier chime plays once on the commit, never on a failed placement
 - The last stand gets a sting — **built as T0091 (2026-10-29)**: a soft two-note low sting when the last-stand banner lands, once per entry to 1 life
-- The leak jolt sizes with the leaker — **built as T0109 (2026-10-29, desktop)**: the camera jolt on a leak (pillar 5's board jolt) scales with the enemy's size — amplitude × (1 + (size − 1) × 1.5), so the size-1.0 shapes stay byte-identical and a Hauler (1.3) lands ~1.45× harder; the jolt's shape and trigger unchanged
+- The leak jolt sizes with the leaker — **built as T0109 (2026-10-29, desktop)**: the camera jolt scales with the leaker's size
 - The first leak says what it costs — **built as T0107 (S, non-epic, 2026-10-29)**: a one-time leaks-cost-a-life chip at the exit, ~1.5 s
 - The tech tree: the board branch — built (T0208, T0230)
-- The pool branch, node two — **built as T0209 (M, E2, 2026-10-29, cachyos-x8664)**: a “Momentum” node (30 coins) that unlocks Momentum (T0064) into the draft, the same gate pattern as Haste (T0153's either-order rule); the draft gate is T0064's line
+- The pool branch, node two — **built as T0209 (M, E2, 2026-10-29, cachyos-x8664)**: the Momentum node (30 coins)
 - Beam combos IIb — **built as T0242 (M, E4, 2026-10-30, desktop-4070)**: a beam kill splits into one homing needle per added Spray (12 damage, the pellet's look and speed)
 - The tech tree: the claim branch — **built as T0211 (L, E2, 2026-10-29, desktop)**: a branch whose nodes change what a run pays (Clean ×2: each clean wave pays 2 coins instead of 1)
 - The tech tree: the tower branch (6th) — **now E16 (ROADMAP is canonical)**
-- The menu's Tech button wears a dot — **built as T0213 (S, E2, 2026-10-29, yoga)**: while the player's coins can buy at least one unowned node (any branch), a small yellow dot in the button's top-right corner, clearing the moment nothing is affordable — the tree pulls the player in (the T016 star's language)
+- The menu's Tech button wears a dot — **built as T0213 (S, E2, 2026-10-29, yoga)**: the yellow dot while a node is affordable
 - Run start, node five: a second “Life +1” (40 coins) — the branch's last node; a card with the owned mark, so the run-start branch can read complete — **built as T0215 (M, E2, 2026-10-29, asus)**
-- Branch discount: the 2nd node of a branch costs 5 less, the 3rd 10 (the card shows the struck-through old price) — the tree rewards going deep in one branch, not wide across all — **built as T0214 (M, E2, 2026-10-29, cachyos-x8664)**
+- Branch discount — **built as T0214 (M, E2, 2026-10-29, cachyos-x8664)**: the 2nd node −5, the 3rd −10
 - Streak readout: the exit's "Clean" chip counting the clean streak (T0045) — **absorbed by T0205**: the clean wave's own green line at the exit already counts it — don't re-task
 - The guaranteed choke — built (T0217, 2026-10-30)
 - Two chokes — **built as T0297 (M, E9, 2026-10-30, desktop)**: the board branch's third node, boards carry two guaranteed choke cells
 - The switchback — **built as T0310 (M, E9, 2026-11-01, asus)**: the board branch's fourth node — the road folds back on itself into a corridor of double-cover build cells
 - The wave card remembers a held wave — **built as T0218 (M, non-epic, 2026-10-29)**: a muted "held · N" chip after a wave that lost lives, until the next wave
 - The Mute shows its silence — **built as T0219 (2026-10-29, yoga)**: a quiet purple ring under the Mute, once a second while it holds a tower still
-- The Mute's silence gets its note — one soft held tone plays while any Mute holds a tower (the sky note's own pattern, T0376), so the silence is heard where the eye is not — **tasked as T0419 (M, non-epic, 2026-11-02)**
+- The Mute's silence gets its note — **done as T0419 (M, non-epic, 2026-11-02, asus)**: one soft held tone while a Mute holds a tower
 - The Augments codex — **built as T0221 (2026-10-29, desktop)**: a menu screen that shows the whole pool at a glance, one small card per augment (T0248's lock marks the gated ones)
 - The end card's towers wear their tier — **built as T0228 (S, E4, 2026-10-29, asus)**: the by-tower chip wears T0010's tier pip beside the icon
 - The draft shows where the card lands — **built as T0243 (2026-10-30, desktop)**: each offered card wears the small tokens of the towers with a free slot the card would land on
@@ -178,19 +179,19 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The Dasher's surge gets its streak — **built as T0328 (S, non-epic, 2026-11-01, yoga)**: a short flat purple streak trails a dashing Dasher
 - Rush wave — **built as T0337 (M, non-epic, 2026-11-01, cachyos-x8664)**: the third wave tag — from wave 11, every 7th non-quiet/tight/boss wave, its walkers move 1.5× faster
 - The Sprinter shows its ramp — **built as T0341 (S, non-epic, 2026-11-01, yoga)**: a small orange notch pops at the chevron's base on each hit that raises its speed, until the cap
-- The last stand's bed — **built as T0342 (2026-11-01, desktop)**: the wave bed (T0239) wears the last stand's form — one octave lower, the exit quicken on top — for the whole time the run is at one life
+- The last stand's bed — **built as T0342 (2026-11-01, desktop)**: the wave bed wears the last stand's form at one life
 - The build bed: a quiet, calmer beat under the build phase — **built as T0365 (2026-11-01)**
 - The draft's bed: a quiet 3-note beat under the card pick, slower and sparser than the build bed — **built as T0372 (M, 2026-11-01)**
 - The menu's bed — **built as T0397 (2026-11-02, desktop)**: the fourth and calmest of the run's audio beds
-- The claim's bed — the fifth of the run's audio beds: a quiet beat under the claim card (the menu bed's shape, a touch faster, handing off to it over ~300 ms) — **done as T0408 (2026-11-02)**
-- The game over's bed — the sixth of the run's audio beds: a quiet beat under the game-over card (the claim bed's shape slowed — E2/B2/E3 at 1.8 s steps with a rest, the beds' shared 0.02), starting on the card's land under the run's end note and handing off to the claim's or the menu's — **tasked as T0420 (M, 2026-11-02)**
+- The claim's bed — **done as T0408 (2026-11-02)**: the fifth of the run's audio beds
+- The game over's bed — **done as T0420 (M, 2026-11-02, inet-racing)**: the sixth of the run's audio beds
 - The Splitter's crack deepens with the damage it takes — **built as T0344 (2026-11-01)**
-- The Orb's split gets its moment — **built as T0347 (S, non-epic, 2026-11-01, yoga)**: the crack goes live with the Splitter's damage curve; the half-hp break flashes the Orb white before it bursts into its two Shards
+- The Orb's split gets its moment — **built as T0347 (S, non-epic, 2026-11-01, yoga)**: the half-hp break flashes the Orb white before it bursts
 - The Block's double leak says what it costs — **built as T0349 (S, non-epic, 2026-11-01, yoga)**: the first Block leak's chip at the exit says what it costs (T0307's Hauler pattern)
-- The boards reference — **built as T0350 (M, E13, 2026-11-01, cachyos-x8664)**: the pause screen names the board's modifiers and where each comes from (always / tech · <node> / some boards)
+- The boards reference — **built as T0350 (M, E13, 2026-11-01, cachyos-x8664)**: names the board's modifiers and where each comes from
 - The Haste shows its working aura — **built as T0354 (S, non-epic, 2026-11-01, yoga)**: T0055's working-aura ring under the tower while an enemy is in its 2-cell radius
 - The Colossus's return gets its flash — **built as T0356 (S, non-epic, 2026-11-01, yoga)**: the token wears its telegraph's white for ~0.3 s when the out-of-reach beat ends
-- The menu demo's far gate — **built as T0359 (M, 2026-11-01)**: the fixed demo road gets a second entrance, a third of the demo wave's walkers coming in through it
+- The menu demo's far gate — **built as T0359 (M, 2026-11-01)**: a second entrance on the fixed demo road
 - The far gate's send — **built as T0360 (S, 2026-11-01)**: one muted ring at the far gate when a non-boss wave starts
 - The far gate says what it is — **done as T0384 (S, E14, 2026-11-01, yoga)** (ROADMAP's E14 is canonical)
 - Herd augment (Rare or Epic) — **tasked as T0361 (M, in the pool)** (ROADMAP's augment queue is canonical; retires Anchor, the fifth removal)
@@ -200,18 +201,18 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The island's drop-in — **done as T0407**; the settle's thud — **done as T0417**
 - The storm: a third mode — no breather, every wave rushes (1.5× walkers, the chip), the wave bonus doubles (gold, never coins) — **now E17 (active); first slice T0403 (L, in the pool)**
 - The pause's "Ahead" card (the two waves after next) — **dropped 2026-11-02 (rejected as T0401); do not re-task a multi-wave preview**
-- The near miss gets its note: when the wave's last enemy dies within 1.5 cells of the exit (the "close" chip's own moment, T0271), one soft note plays, so the close call is heard as well as seen — **done as T0400 (2026-11-02)**
+- The near miss gets its note — **done as T0400 (2026-11-02)**: one soft note at the "close" chip's moment
 - The wave clear gets its note: one soft two-note rise (C5→E5) once per clean wave — **done as T0411 (2026-11-02)**
 - The crit's moment — a crit hit (the double-damage roll, T0299/T0321) reads as double: the hit flash sizes up one notch for that one hit; verify first that the hit path does not already show the crit — parked until the enemy system's files are free
 - The marked cell's chip — one-time chip at the first build on the marked cell — **tasked as T0389 (S, in progress)**; its panel line is **done as T0387 (2026-11-02)**
 - Chill augment (pool card, opening) — **T0421 rejected 2026-11-02 (card lines over the 70/56 card budget); re-file pending** (ROADMAP's augment queue is canonical; retires Toll, the sixth removal)
-- The tower's reach — **done as T0393 (M, 2026-11-02, asus)**: while the tower panel is open, the selected tower wears its range ring on the board (the placement ring's own look, its current range), fading when the panel closes — the sky crossing's (E10) reach is an answer you see, not a number you estimate; no new button or key
+- The tower's reach — **done as T0393 (M, 2026-11-02, asus)**: the selected tower wears its range ring on the board while the panel is open
 - The preview wears the next wave's tag — the chip already shows on the preview card (T0418 was rejected 2026-11-02 on that premise); the chip gets its own line under the token row so it reads as the wave's label, not a token (the storm's "chip on the preview" rides on it) — **tasked as T0422 (S, non-epic, 2026-11-02)**
-- The boards reference wears the board's shape: a small live board on each row (a fixed seed per modifier, the reference's own words unchanged) — **done as T0424 (M, 2026-11-02, inet-racing)**
-- The twin: ~1-in-4 boards (exclusive with the fork and the loop), a mirror pair of build cells at equal distance on both sides of the road's longest straight stretch — a clean either/or at the run's most open stretch, nothing painted on the cells — **done as T0430 (M, 2026-11-02, desktop)**
-- The double mark: ~1-in-4 boards, a second marked cell with the marked cell's own ground mark and buff (no exclusivity — it does not change the road) — **tasked as T0436 (M, non-epic, 2026-11-02)**
+- The boards reference wears the board's shape — **done as T0424 (M, 2026-11-02, inet-racing)**: a small live board on each row
+- The twin: ~1-in-4 boards (exclusive with the fork and the loop), a mirror pair of build cells at equal distance on both sides of the road's longest straight stretch — **done as T0430 (M, 2026-11-02, desktop)**
+- The double mark: ~1-in-4 boards, a second marked cell with the marked cell's own mark and buff — **done as T0436 (M, non-epic, 2026-11-02, cachyos-x8664)**
 - The long straight: ~1-in-5 boards (exclusive with the fork and the loop), the road's longest straight run of cells is 7+ — the sniper's board: a Reach at the straight's edge covers most of it — **tasked as T0438 (M, non-epic, 2026-11-02)**
 - The bank's first pay says what it is: the run's first build phase where the "bank +N" line shows (gold 20+) teaches once, "your gold pays 5% each wave" (T0314's one-time line's shape, its own file) — **tasked as T0431 (S, non-epic, 2026-11-02)**
-- The short cut: a fourth wave tag — from wave 16, every 9th non-quiet/tight/rush/boss wave, the walkers come in 40% down their own road (each entrance's own path; the flyer's crossing is exempt): the front stretch idles (the quiet tower's dot names which), the back stretch carries the wave; the answer is placement, where the rush's answer is none — the preview chip + the derived teach (T0092), the banner chip — **tasked as T0440 (M, non-epic, 2026-11-02)**
+- The short cut: the fourth wave tag — the walkers come in 40% down their own road: the front stretch idles, the back stretch carries the wave; the answer is placement, where the rush's answer is none — **done as T0440 (M, non-epic, 2026-11-02, desktop)**
 - The codex at the pause: the pause's reference set (enemies, waves, bosses, coins, boards, how) has no augments row — the only augment reference (the codex, T0221) is menu-only, so a mid-run player checking a held card's combos ends the run; the pause gains an "Augments" row, the codex over the dimmed pause, back to the pause (the How row's cross-context pattern; the menu's codex stays) — **tasked as T0441 (M, non-epic, 2026-11-02)**
 - The Tide: the wave-110 boss — the first enemy that walks back: it walks forward at the boss's 0.9 and, every 6 s after a 0.5 s white flash, dashes 2 cells back along the road — it can be stalled, but it still leaks if it reaches the exit, and the wave never ends until it dies; the wave is exactly one of it (the boss's own lane); the answer is the sustained line (the beam rides the dash), the pin (the root holds it mid-kite) and the Push (it adds to the retreat) — **parked behind the Fracture (T0435); task when it lands**
