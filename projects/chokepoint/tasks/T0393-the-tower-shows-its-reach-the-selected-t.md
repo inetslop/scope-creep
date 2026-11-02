@@ -3,10 +3,12 @@ id: T0393
 title: "The tower shows its reach: the selected tower's range ring"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T00:29:33Z
+claimed_at: 2026-11-02T00:34:03Z
+designer: cachyos-x8664
 ---
 
 ## Goal
