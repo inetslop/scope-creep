@@ -3,14 +3,14 @@ id: T0382
 title: "The move: a misplaced tower goes where it should"
 size: L
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-01T21:57:55Z
 claimed_at: 2026-11-01T22:33:59Z
+finished_at: 2026-11-02T00:34:01Z
 epic: E15
-design_attempts: 1
-designer: cachyos-x8664
+design_attempts: 2
 ---
 
 ## Goal
@@ -35,3 +35,11 @@ A misplaced tower is not permanent, and it doesn't have to be sold: during the b
 - [ ] After one move the line reads "Moved" (muted) for the rest of the build phase, re-enables in the next one, and the limit survives a resume.
 - [ ] The first build phase of a run shows the one-time muted "keeps its augments and kills" line under Move; the pause card's controls list names the move.
 - [ ] The panel with the longest fee number fits its card at 412x915 and 1280x720 (the layout check in the gate).
+
+## Architect could not design it (cachyos-x8664)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+
+```
