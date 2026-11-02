@@ -1,12 +1,14 @@
 ---
 id: T0404
 title: "The Mender: the wave-70 boss that mends itself and its pack"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T04:17:18Z
+claimed_at: 2026-11-02T13:12:59Z
 ---
 
 ## Goal
