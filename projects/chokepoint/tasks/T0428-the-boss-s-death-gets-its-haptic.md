@@ -3,10 +3,12 @@ id: T0428
 title: "The boss's death gets its haptic"
 size: S
 priority: 3
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T14:32:01Z
+claimed_at: 2026-11-02T14:32:25Z
+designer: yoga
 ---
 
 ## Goal
