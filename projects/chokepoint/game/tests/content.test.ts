@@ -24,7 +24,7 @@ describe('content', () => {
       expect(e.fromWave).toBeGreaterThanOrEqual(1);
       expect(BRIGHTS).toContain(e.look.color);
       expect(e.look.size).toBeGreaterThan(0);
-      expect(e.look.size).toBeLessThanOrEqual(e.id === 'titan' || e.id === 'orb' || e.id === 'hive' || e.id === 'crosser' ? 0.5 : 0.45);
+      expect(e.look.size).toBeLessThanOrEqual(e.id === 'titan' || e.id === 'orb' || e.id === 'hive' || e.id === 'crosser' || e.id === 'blinker' ? 0.5 : 0.45);
       if (e.speedRamp) {
         expect(e.speedRamp.perHit).toBeGreaterThan(0);
         expect(e.speedRamp.max).toBeGreaterThan(e.speed);
@@ -36,6 +36,12 @@ describe('content', () => {
         expect(c.dashCells).toBeGreaterThan(0);
         expect(c.dashSec).toBeGreaterThan(0);
         expect(c.dashCells / c.dashSec).toBeGreaterThan(e.speed); // the surge outpaces the crawl
+      }
+      if (e.behavior === 'blink') {
+        const c = e.blinkCycle!;
+        expect(c.walkSec).toBeGreaterThan(0);
+        expect(c.teleSec).toBeGreaterThan(0);
+        expect(c.cells).toBeGreaterThan(0);
       }
       if (e.outOfReach) {
         expect(e.outOfReach.hpFrac).toBeGreaterThan(0);

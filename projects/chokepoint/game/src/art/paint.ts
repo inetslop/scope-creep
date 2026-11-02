@@ -74,6 +74,15 @@ export function shapePath(ctx: CanvasRenderingContext2D, shape: Shape, x: number
     traceRounded(ctx, back, radius * 0.7 * 0.28);
     return;
   }
+  // An almond: a lens, pointed at both ends and pointing up like the other shapes (the Blinker).
+  if (shape === 'almond') {
+    ctx.beginPath();
+    ctx.moveTo(x, y - radius);
+    ctx.quadraticCurveTo(x + radius * 0.55, y, x, y + radius);
+    ctx.quadraticCurveTo(x - radius * 0.55, y, x, y - radius);
+    ctx.closePath();
+    return;
+  }
   const pts = shapePoints(shape, radius).map((p) => ({ x: p.x + x, y: p.y + y }));
   roundedPolygon(ctx, pts, radius * 0.28);
 }

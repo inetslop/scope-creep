@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { CELL, DEPTH } from '../config';
 import type { EnemyDef } from '../content/types';
 import type { PathLine } from '../core/path';
-import { ART_SCALE, DISC_TEXTURE, PLATE_TEXTURE, enemyTexture } from '../art/textures';
+import { ART_SCALE, DISC_TEXTURE, EYE_TEXTURE, PLATE_TEXTURE, enemyTexture } from '../art/textures';
 import { ignite } from '../core/burn';
 import { outOfReachLeg } from '../core/outOfReach';
 import { applyRoot, tickRoot } from '../core/root';
@@ -96,10 +96,20 @@ export class Enemy extends Phaser.GameObjects.Image {
   dashLeg: 'crawl' | 'pause' | 'dash' = 'crawl';
   dashLeft = 0; // seconds left of the current leg
   pauseAge = 0; // seconds into 'pause' (its telegraph is the first half)
+  /** Which leg of its blink cycle (the Blinker) it is in: the plain walk, the committed telegraph. */
+  blinkLeg: 'walk' | 'tele' = 'walk';
+  blinkLeft = 0; // seconds left of the current leg
+  blinkTeleAge = 0; // seconds into 'tele' (its eye slides forward over the leg)
+  /** Road units of the blink's destination, locked the moment the telegraph is set. */
+  blinkDest = 0;
+  /** True on the frame its telegraph is set: one ring blooms at the destination (systems/enemyHooks/blinkTelegraph.ts). */
+  blinkTold = false;
   /** The front plate (the Bulwark): a flat image that turns to face its travel; undefined without one. */
   private plate?: Phaser.GameObjects.Image;
   /** The shield disc (the Guard): a flat image that turns to face its travel; undefined without one. */
   private disc?: Phaser.GameObjects.Image;
+  /** The eye (the Blinker): a small flat dot that slides forward through its telegraph; undefined without one. */
+  private eye?: Phaser.GameObjects.Image;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0, '__DEFAULT');
@@ -144,6 +154,11 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.dashLeg = 'crawl';
     this.dashLeft = this.def.dashCycle?.crawlSec ?? 0;
     this.pauseAge = 0;
+    this.blinkLeg = 'walk';
+    this.blinkLeft = this.def.blinkCycle?.walkSec ?? 0;
+    this.blinkTeleAge = 0;
+    this.blinkDest = 0;
+    this.blinkTold = false;
     this.reachClock = -1;
     this.splitClock = -1;
     this.flyRoute = undefined;
@@ -170,6 +185,12 @@ export class Enemy extends Phaser.GameObjects.Image {
       this.disc.setDepth(DEPTH.enemies);
     }
     this.disc?.setVisible(false); // hidden until advance() places it (no flash at the origin)
+    // Its eye (the Blinker) rides on top: a flat dot that slides forward through the telegraph.
+    if (this.def.blinkCycle !== undefined && this.eye === undefined) {
+      this.eye = this.scene.add.image(0, 0, EYE_TEXTURE);
+      this.eye.setDepth(DEPTH.enemies);
+    }
+    this.eye?.setVisible(false); // hidden until advance() places it (no flash at the origin)
   }
 
   /**
@@ -268,6 +289,40 @@ export class Enemy extends Phaser.GameObjects.Image {
         this.distance += speed * dt;
         break;
       }
+      case 'blink': {
+        // Walk plainly; at the line, a committed telegraph and a one-step reposition. The step is a
+        // fixed jump (no speed factor on it), and a root, a slow, a gust or a silence during the
+        // telegraph does not cancel it: it lands where the ring showed, the road between never walked.
+        const c = this.def.blinkCycle!;
+        if (this.blinkLeg === 'walk') {
+          if (this.rootLeft <= 0) { // rooted it holds, and its cycle holds with it (the Dasher's rule)
+            this.distance += speed * dt;
+            this.blinkLeft -= dt;
+            if (this.blinkLeft <= 0) {
+              // Never the last 2.5 cells: within twice the step of the exit it walks the rest.
+              if (this.distance + c.cells * CELL <= this.path.length - c.cells * CELL) {
+                this.blinkDest = this.distance + c.cells * CELL; // locked the moment it is set
+                this.blinkLeg = 'tele';
+                this.blinkLeft = c.teleSec;
+                this.blinkTeleAge = 0;
+                this.blinkTold = true;
+              } else {
+                this.blinkLeft = c.walkSec;
+              }
+            }
+          }
+        } else {
+          this.blinkLeft -= dt; // committed: the clock runs even while rooted
+          this.blinkTeleAge += dt;
+          if (this.blinkLeft <= 0) {
+            this.distance = this.blinkDest; // one step
+            this.blinkLeg = 'walk';
+            this.blinkLeft = c.walkSec;
+            this.blinkTeleAge = 0;
+          }
+        }
+        break;
+      }
     }
     this.age += dt;
     if (this.markPct > 0) this.markAge += dt;
@@ -287,12 +342,22 @@ export class Enemy extends Phaser.GameObjects.Image {
     if (this.def.flies) this.setRotation(Math.atan2(this.dirY, this.dirX) + Math.PI / 2);
     // The boss Flyer's triangle points where it flies: the texture points up, flat, so it may turn (the plate's formula).
     if (this.flyLine !== undefined) this.setRotation(Math.atan2(this.dirX, -this.dirY));
+    // The Blinker's almond points where it walks: the texture points up, flat, so it may turn.
+    if (this.def.behavior === 'blink') this.setRotation(Math.atan2(this.dirX, -this.dirY));
     this.setPosition(p.x, p.y - Math.abs(Math.sin(this.distance / 9)) * 2);
     if (this.plate !== undefined && this.def.plate !== undefined) {
       this.plate.setPosition(this.x, this.y).setScale(ART_SCALE * pop).setRotation(Math.atan2(this.dirX, -this.dirY)).setVisible(true);
     }
     if (this.disc !== undefined && this.def.id === 'guard') {
       this.disc.setPosition(this.x, this.y).setScale(ART_SCALE * pop).setRotation(Math.atan2(this.dirX, -this.dirY)).setVisible(true);
+    }
+    // Its eye: near the back of the face, sliding to the front over the telegraph (its own language).
+    if (this.eye !== undefined && this.def.blinkCycle !== undefined) {
+      const c = this.def.blinkCycle;
+      const r = this.def.look.size * CELL;
+      const slide = this.blinkLeg === 'tele' ? Math.min(1, this.blinkTeleAge / c.teleSec) : 0;
+      const off = r * (-0.4 + 0.8 * slide);
+      this.eye.setPosition(this.x + this.dirX * off, this.y + this.dirY * off).setScale(ART_SCALE * pop).setVisible(true);
     }
     const tele = cycle !== undefined && this.dashLeg === 'pause' && this.pauseAge < cycle.pauseSec / 2;
     if (this.flash > 0) this.flash -= dt;
@@ -388,6 +453,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.clearTint();
     this.plate?.setVisible(false); // a recycled slot must not show a stale plate (e.g. on a dot)
     this.disc?.setVisible(false); // a recycled slot must not show a stale disc (e.g. on a dot)
+    this.eye?.setVisible(false); // a recycled slot must not show a stale eye (e.g. on a dot)
     this.setActive(false).setVisible(false);
   }
 }

@@ -21,6 +21,8 @@ export const BOLT_TEXTURE = 'fx:bolt';
 export const PLATE_TEXTURE = 'enemy:plate';
 /** The Guard's shield disc: a flat orange circle on its road-facing front, rotated to its travel by entities/Enemy.ts. */
 export const DISC_TEXTURE = 'enemy:disc';
+/** The Blinker's small white eye: a flat dot near the back of its face that slides forward through its telegraph (entities/Enemy.ts). */
+export const EYE_TEXTURE = 'enemy:eye';
 /** A thin straight tracer for a piercing shot (Lance): it keeps going after a hit. */
 export const TRACER_TEXTURE = 'fx:tracer';
 export const CHIP_TEXTURE = 'fx:chip';

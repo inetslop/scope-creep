@@ -4,11 +4,12 @@ title: "The Blinker: the wave-60 boss that blinks the road"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T03:32:09Z
 claimed_at: 2026-11-02T12:40:20Z
+finished_at: 2026-11-02T13:03:24Z
 ---
 
 ## Goal
@@ -158,3 +159,31 @@ plus its import and `ENEMY_HOOKS` line after `flyLine,`.
 ### Tests
 - `tests/core/waves.test.ts`: the wave-60 boss-plan tests above (bossId, single spawn, boss tag, hp mul, seed-stable, spawnOnly).
 - `tests/content.test.ts`: the size-cap and `blinkCycle` additions. No new core module is added (the cycle lives in `Enemy.advance()` like the Dasher's), so no further unit tests.
+
+## Result (attempt 1, desktop)
+
+Added the Blinker, the wave-60 boss: a pink almond that walks the road at 0.9 cells/s, then every 4 s stops, spends a committed 1 s telegraph (its small white eye slides forward and one thin pink ring blooms at the destination) and blinks 2.5 cells forward in one step that no root, slow, Push gust or Mute can cancel — it never blinks the last 2.5 cells. New files: `content/enemies/blinker.ts`, `systems/fx/blinkRing.ts`, `systems/enemyHooks/blinkTelegraph.ts`; one line each in the enemy, hook and registry files; `almond` shape and `blink` behavior added to the types and painters; `bossId` returns `'blinker'` at 60 so the BossCard, death banner, boss horn and name chip all pick it up unchanged; plus the `enemies.blink` invariant and the wave-60 boss-plan and content tests. Check (590 tests) and smoke (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 23.1 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/.blink-sim.mjs            |  2 +
+ projects/chokepoint/game/src/art/entities.ts       | 19 +++++-
+ projects/chokepoint/game/src/art/paint.ts          |  9 +++
+ projects/chokepoint/game/src/art/shapes.ts         |  2 +-
+ projects/chokepoint/game/src/art/textures.ts       |  2 +
+ .../chokepoint/game/src/content/enemies/blinker.ts | 17 ++++++
+ .../chokepoint/game/src/content/enemies/index.ts   |  2 +
+ projects/chokepoint/game/src/content/types.ts      |  6 +-
+ projects/chokepoint/game/src/core/waves.ts         |  8 +--
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/entities/Enemy.ts     | 68 +++++++++++++++++++++-
+ .../game/src/systems/enemyHooks/blinkTelegraph.ts  | 19 ++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../chokepoint/game/src/systems/fx/blinkRing.ts    | 14 +++++
+ projects/chokepoint/game/tests/content.test.ts     |  8 ++-
+ projects/chokepoint/game/tests/core/waves.test.ts  | 18 ++++++
+ 16 files changed, 187 insertions(+), 10 deletions(-)
+```

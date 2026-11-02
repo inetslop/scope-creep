@@ -6,6 +6,7 @@ import { orb } from './orb';
 import { hive } from './hive';
 import { shard } from './shard';
 import { crosser } from './crosser';
+import { blinker } from './blinker';
 import { titan } from './titan';
 import { bulwark } from './bulwark';
 import { dasher } from './dasher';
@@ -29,6 +30,7 @@ export const ENEMIES: readonly EnemyDef[] = [
   hive,
   shard,
   crosser,
+  blinker,
   dasher,
   sprinter,
   splitter,

@@ -23,6 +23,7 @@ import { bossArrival } from './bossArrival';
 import { bossOut } from './bossOut';
 import { bossPhase } from './bossPhase';
 import { flyLine } from './flyLine';
+import { blinkTelegraph } from './blinkTelegraph';
 import { bossBack } from './bossBack';
 import { dasherStreak } from './dasherStreak';
 import { flyerStreak } from './flyerStreak';
@@ -63,6 +64,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   bossOut,
   bossPhase,
   flyLine,
+  blinkTelegraph,
   bossBack,
   dasherStreak,
   flyerStreak,

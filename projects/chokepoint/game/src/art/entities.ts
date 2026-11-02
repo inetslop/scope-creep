@@ -5,7 +5,7 @@ import { ENEMIES, getEnemy } from '../content/enemies';
 import { deepOf, PALETTE, rgba, type Bright } from '../content/palette';
 import type { Shape } from '../content/types';
 import { paintToken, roundRectPath, setShadow, shapePath } from './paint';
-import { BOLT_TEXTURE, CHIP_TEXTURE, DISC_TEXTURE, enemyTexture, paintTexture, PLATE_TEXTURE, TOWER_BASE, TOWER_BODY, tokenDepth, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
+import { BOLT_TEXTURE, CHIP_TEXTURE, DISC_TEXTURE, EYE_TEXTURE, enemyTexture, paintTexture, PLATE_TEXTURE, TOWER_BASE, TOWER_BODY, tokenDepth, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
 
 /** Enemies, tower plinths and bodies, bolts and chips: everything that stands or flies on the board. */
 export function paintEntityTextures(scene: Phaser.Scene): void {
@@ -16,6 +16,13 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
     paintTexture(scene, enemyTexture(e.id), size, size, (ctx) => {
       if (e.behavior === 'fly') {
         // The boss Flyer's triangle: flat (no side face, no shadow), so the token may turn with its flight.
+        shapePath(ctx, e.look.shape, size / 2, size / 2, r);
+        ctx.fillStyle = rgba(PALETTE[e.look.color], 1);
+        ctx.fill();
+        return;
+      }
+      if (e.behavior === 'blink') {
+        // The Blinker's almond: flat (no side face, no shadow), so the token may turn with its walk.
         shapePath(ctx, e.look.shape, size / 2, size / 2, r);
         ctx.fillStyle = rgba(PALETTE[e.look.color], 1);
         ctx.fill();
@@ -95,6 +102,16 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
     ctx.fillStyle = rgba(PALETTE.orange, 1);
     ctx.beginPath();
     ctx.arc(discSize / 2, discSize / 2 - gDepth / 2 - gR * 0.55, gR * 0.42, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  // The Blinker's eye: one small flat white dot near the back of its face (Enemy slides it forward
+  // through the telegraph). Flat (no shading), so it may turn with the token.
+  const bkR = getEnemy('blinker').look.size * CELL;
+  const eyeR = bkR * 0.14;
+  paintTexture(scene, EYE_TEXTURE, eyeR * 2, eyeR * 2, (ctx) => {
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(eyeR, eyeR, eyeR, 0, Math.PI * 2);
     ctx.fill();
   });
 }

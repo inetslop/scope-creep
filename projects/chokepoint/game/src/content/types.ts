@@ -1,7 +1,7 @@
 import type { Bright } from './palette';
 
 /** Flat shapes the art code can draw (see art/shapes.ts). */
-export type Shape = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'pillar' | 'chevron' | 'ring' | 'wings';
+export type Shape = 'circle' | 'triangle' | 'square' | 'diamond' | 'pentagon' | 'hexagon' | 'pillar' | 'chevron' | 'ring' | 'wings' | 'almond';
 
 export interface Look {
   shape: Shape;
@@ -11,7 +11,7 @@ export interface Look {
 }
 
 /** How an enemy moves along the path. Add a name here and a case in Enemy.advance() for a new one. */
-export type EnemyBehavior = 'walk' | 'dash' | 'fly';
+export type EnemyBehavior = 'walk' | 'dash' | 'fly' | 'blink';
 
 export interface EnemyDef {
   /** kebab-case, unique. */
@@ -27,6 +27,8 @@ export interface EnemyDef {
   speedRamp?: { perHit: number; max: number };
   /** The dash cycle (Dasher): crawl for `crawlSec`, stop for `pauseSec` (its white telegraph is the first half), then surge `dashCells` cells in `dashSec`. */
   dashCycle?: { crawlSec: number; pauseSec: number; dashCells: number; dashSec: number };
+  /** The blink cycle (the Blinker): walk plainly for `walkSec`, stop for `teleSec` (its telegraph: the eye slides forward and one ring blooms at the destination), then reposition `cells` forward in one step — committed: a root, a slow, a gust or a silence during the telegraph does not cancel it, and the road between the jump is never walked (entities/Enemy.ts). */
+  blinkCycle?: { walkSec: number; teleSec: number; cells: number };
   /** Ignores all control: Frost slow, Anchor root, Push gusts and pushes, both forms. */
   ignoresControl?: boolean;
   /** It flies: its whole path is one straight line from the island's edge (the seed picks the point) to the exit (core/flyRoute.ts), never the road. A Push gust and an Anchor root do not reach it; a Frost slow and the Haste aura do. */
