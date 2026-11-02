@@ -3,11 +3,13 @@ id: T0443
 title: "The move's limit: one move per tower per build phase, and its teach"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0389]
 attempts: 0
 created: 2026-11-02T20:29:42Z
+claimed_at: 2026-11-02T20:50:20Z
 epic: E15
+designer: desktop
 ---
 
 ## Goal
