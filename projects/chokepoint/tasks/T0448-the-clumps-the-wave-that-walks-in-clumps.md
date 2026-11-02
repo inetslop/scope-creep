@@ -1,12 +1,14 @@
 ---
 id: T0448
 title: "The clumps: the wave that walks in clumps"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T22:27:29Z
+claimed_at: 2026-11-02T23:26:13Z
 epic: E22
 ---
 
