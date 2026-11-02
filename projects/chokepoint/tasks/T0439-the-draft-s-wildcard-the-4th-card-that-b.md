@@ -1,12 +1,14 @@
 ---
 id: T0439
 title: "The draft's wildcard: the 4th card that becomes a Rare or Epic"
+assignee: desktop
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T18:33:27Z
+claimed_at: 2026-11-02T18:46:34Z
 ---
 
 ## Goal
