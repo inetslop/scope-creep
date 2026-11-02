@@ -3,12 +3,13 @@ id: T0391
 title: "Chill: the augment that deepens with focus"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-02T00:02:34Z
 claimed_at: 2026-11-02T00:29:37Z
-designer: desktop
+finished_at: 2026-11-02T00:37:21Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -52,3 +53,7 @@ First-form numbers: damage 8, range 2.4, rate 1.25 (every 0.8 s), projectileSpee
 - [ ] A chilled regular Flyer flies slower along its unchanged route; the wave-50 boss Flyer slows the same way its speed is slowed
 - [ ] The Chill tower wears the ice disc (one tick per extra copy); tier pips, tier word, draft flip/chime, what-if marker and resume all carry the new augment like the others
 - [ ] A new pure module carries the stack rule (apply/refresh/fade, the cap, the fatigue exemption) with unit tests; the content entry passes the content bar in tests; `npm run check` and the desktop + mobile smoke pass
+
+## Rejected by architect (desktop)
+
+the "exact" card lines are up to 114 characters, but the content bar (tests/content.test.ts) caps common asTower/asAdded at 70 and tier lines at 56, and those wrapped lines would also push the 412x915 draft's title and first card off-screen — so the exact lines and a passing `npm run check` with a fitting phone layout cannot both hold; reissue with lines within the bar, or explicitly approve raising the limits and re-laying out the draft cards.
