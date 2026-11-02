@@ -3,13 +3,14 @@ id: T0427
 title: "The first pass: the run's first leak costs no life"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-02T14:32:01Z
 claimed_at: 2026-11-02T14:52:42Z
+finished_at: 2026-11-02T15:18:13Z
 epic: E20
-designer: inet-racing
+design_attempts: 1
 ---
 
 ## Goal
@@ -29,3 +30,7 @@ The exit branch's third node: a run with it never pays a life for its first leak
 - [ ] A resume taken after the first leak keeps the flag spent; a fresh run starts unspent.
 - [ ] Without the node, a run is byte-identical to today.
 - [ ] Unit tests for the node's price and purchase and for the flag through the run save; `npm run check` and the desktop + mobile smoke pass.
+
+## Rejected by architect (inet-racing)
+
+the "The exit" branch currently has only one node (The long watch) — "The first pass" cannot sit as its third row at the depth-3 price of 155 until the branch's second node ("One life a Block") exists, and that node is in neither the code (src/content/tech/exit.ts) nor the open tasks, so the 155/third-row acceptance can't be met without inventing an out-of-scope node.
