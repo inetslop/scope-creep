@@ -3,10 +3,12 @@ id: T0426
 title: "The Gorge: the wave-90 boss that feeds on your leaks"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T14:32:01Z
+claimed_at: 2026-11-02T14:52:36Z
+designer: cachyos-x8664
 ---
 
 ## Goal
