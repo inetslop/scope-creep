@@ -110,6 +110,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['enemies.onRoad', (g) => (g.enemies.all.some((e) => e.active && e.def.behavior !== 'fly' && (e.distance < 0 || e.distance > e.path.length + 1)) ? 'an enemy is off its line' : null)],
   ['flyer.line', (g) => (g.enemies.all.some((e) => e.active && e.def.flies && ((!Number.isFinite(e.path.length) || e.path.length <= 0) || e.pushLeft > 0 || e.rootLeft > 0)) ? 'a flyer with a broken line, or pushed or rooted' : null)],
   ['exitWarn.valid', (g) => g.exitWarn.broken()],
+  ['flyLine.valid', (g) => g.flyTelegraph.broken()],
   ['music.bed', (g) => g.music.broken()],
   ['buildBed.valid', (g) => g.buildBed.broken()],
   ['draftBed.valid', (g) => (g.scene.isActive(SCENES.draft) ? (g.scene.get(SCENES.draft) as DraftScene).bed.broken() : null)],

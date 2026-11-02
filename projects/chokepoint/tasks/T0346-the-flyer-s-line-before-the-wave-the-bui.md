@@ -4,11 +4,12 @@ title: "The flyer's line before the wave: the build phase shows where it crosses
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0317]
 attempts: 1
 created: 2026-11-01T07:42:15Z
 claimed_at: 2026-11-02T11:21:28Z
+finished_at: 2026-11-02T12:37:05Z
 epic: E10
 ---
 
@@ -74,3 +75,20 @@ export class FlyTelegraph {
 
 ### Tests
 - `tests/core/flyTelegraph.test.ts` per step 6 (the gate is a new core rule that E10's mix-wave extension could silently widen).
+
+## Result (attempt 1, asus)
+
+The build phase before the Flyer's boss wave (wave 50) now shows the Flyer's own seeded route — spawn to exit, its red, 2 px, 50% alpha — on the board, so crossing cover is chosen in the build. A new pure gate (`src/core/flyTelegraph.ts`, unit-tested: true only for the wave-50 plan) drives a new `FlyTelegraph` system (`src/systems/FlyTelegraph.ts`) that holds the line through the whole build (including a resume into it) and fades it out over 0.3 s the moment the wave starts, handing off seamlessly to T0317's wave-start telegraph. Wired with four one-line edits in GameScene and one invariant in runChecks; the boss enemy's id in the code is 'crosser', so the gate checks that instead of the design's 'flyer' (the mix Flyer, never a boss), and the line uses Phaser's two-point Line with setAlpha since 3.90's Line has no multi-point setLineStyle API. `npm run check` (587 tests) and desktop/mobile smoke both pass.
+
+- Self-review: APPROVE
+- Time: 75.6 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/flyTelegraph.ts  | 10 +++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  4 ++
+ .../chokepoint/game/src/systems/FlyTelegraph.ts    | 81 ++++++++++++++++++++++
+ .../game/tests/core/flyTelegraph.test.ts           | 35 ++++++++++
+ 5 files changed, 131 insertions(+)
+```

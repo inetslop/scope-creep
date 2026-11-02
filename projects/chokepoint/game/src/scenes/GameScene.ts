@@ -25,6 +25,7 @@ import { ComboBar } from '../systems/ComboBar';
 import { EnemySystem } from '../systems/EnemySystem';
 import { ExitWarning } from '../systems/ExitWarning';
 import { FeastGlow } from '../systems/FeastGlow';
+import { FlyTelegraph } from '../systems/FlyTelegraph';
 import { FxSystem } from '../systems/FxSystem';
 import { HasteSystem } from '../systems/HasteSystem';
 import { LeakCost } from '../systems/LeakCost';
@@ -75,6 +76,7 @@ export class GameScene extends Phaser.Scene {
   projectiles!: ProjectileSystem;
   fx!: FxSystem;
   exitWarn!: ExitWarning;
+  flyTelegraph!: FlyTelegraph;
   music!: MusicBed;
   buildBed!: BuildBed;
   leakCost!: LeakCost;
@@ -143,6 +145,7 @@ export class GameScene extends Phaser.Scene {
     this.buildBed = new BuildBed(sfx);
     this.leakCost = new LeakCost(this.run, this.fx, this.board);
     this.waves = new WaveSystem(this.run, this.enemies, farGateDistance(map), map.fork !== undefined);
+    this.flyTelegraph = new FlyTelegraph(this, this.board, this.run, this.waves);
     this.projectiles = new ProjectileSystem(this, this.enemies);
     this.towers = new TowerSystem(this, this.board, this.run, this.enemies, this.projectiles, this.fx, sfx);
     this.enemies.towers = () => this.towers.towers; // a kill pays the mints around it (core/mint.ts)
@@ -240,6 +243,7 @@ export class GameScene extends Phaser.Scene {
     const dt = Math.min(deltaMs / 1000, 0.05);
     const simDt = this.speed.scale(dt, this.run.phase === 'wave');
     this.flow.update(simDt);
+    this.flyTelegraph.update(simDt);
     this.saver.update();
     this.exitWarn.update(simDt);
     this.music.update(dt, simDt, this.run.phase === 'wave', isLastStand(this.run), this.exitWarn.live); // after, so `live` is this frame's
