@@ -1,12 +1,14 @@
 ---
 id: T0395
 title: "The bank's pay pops at the number"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T01:03:06Z
+claimed_at: 2026-11-02T01:30:20Z
 ---
 
 ## Goal
