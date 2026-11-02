@@ -4,11 +4,12 @@ title: "The history card: the last twelve runs, on the menu"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T06:19:02Z
 claimed_at: 2026-11-02T07:43:56Z
+finished_at: 2026-11-02T08:25:10Z
 epic: E18
 ---
 
@@ -71,3 +72,23 @@ export const RECENT_CAP = 12;
 - Fullest row "Wave 999 · +99999 coins Iron ★" is ~180 px at 12 px font, well inside `W - PAD * 2 = 300`; card is 340 px tall at twelve rows, fitting both 412x915 and 1280x720 at scale 1.
 ### Tests
 - `tests/core/profile.test.ts` as in step 7 (cap, iron mode, old-save loading).
+
+## Result (attempt 1, inet-racing)
+
+The menu's button row gains a "History" button (shown once there's a run to list, in Tech/How's own style and added to the fit-sum so the column still scales into 412x915 and 1280x720); tapping it opens a new History card (scenes/HistoryScene.ts, the How card's own language: white card over the dimmed demo, tap to close back) listing the last twelve finished runs, most recent first, as "Wave N · +X coins" in the recent line's muted style, with the muted "Iron" mark on Iron rows and the yellow star on any row at the saved best wave. The profile store (core/profile.ts) now keeps twelve runs (RECENT_CAP) with each entry's mode, old saves load as-is, and the profile card's last-four "Recent" line and its stars are gone (RecentLine.ts deleted) while its coins, best wave + star and runs · avg wave line keep their values, the avg still over the last four. Tests cover the twelve-run cap, the stored iron mode, and old-save loading.
+
+- Self-review: APPROVE
+- Time: 41.3 min
+- Deleted src/scenes/menu/RecentLine.ts, as the agent asked.
+
+```
+projects/chokepoint/game/src/core/profile.ts       | 22 ++++--
+ projects/chokepoint/game/src/main.ts               |  3 +-
+ .../chokepoint/game/src/scenes/HistoryScene.ts     | 87 ++++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/MenuScene.ts   | 12 +++
+ projects/chokepoint/game/src/scenes/keys.ts        |  1 +
+ .../chokepoint/game/src/scenes/menu/ProfileCard.ts | 30 +++-----
+ .../chokepoint/game/src/scenes/menu/RecentLine.ts  | 42 -----------
+ .../chokepoint/game/tests/core/profile.test.ts     | 36 ++++++++-
+ 8 files changed, 162 insertions(+), 71 deletions(-)
+```

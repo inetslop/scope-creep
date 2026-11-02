@@ -215,15 +215,45 @@ describe('profile', () => {
     expect(short.profile.levelSlots).toBe(2);
   });
 
-  it('keeps the four most recent runs, newest first', () => {
+  it('keeps the twelve most recent runs, newest first', () => {
     const store = memory();
     let seed = 200;
-    for (const waves of [12, 11, 13, 10, 14]) recordRun(store, { waves, stopped: 0, clean: 0, seed: ++seed, bgen: 2 });
+    for (const waves of [12, 11, 13, 10, 14, 19, 15, 18, 16, 17, 21, 20, 22, 23]) recordRun(store, { waves, stopped: 0, clean: 0, seed: ++seed, bgen: 2 });
     expect(loadProfile(store).recent).toEqual([
+      { wave: 23, coins: 23 },
+      { wave: 22, coins: 22 },
+      { wave: 20, coins: 20 },
+      { wave: 21, coins: 21 },
+      { wave: 17, coins: 17 },
+      { wave: 16, coins: 16 },
+      { wave: 18, coins: 18 },
+      { wave: 15, coins: 15 },
+      { wave: 19, coins: 19 },
       { wave: 14, coins: 14 },
       { wave: 10, coins: 10 },
       { wave: 13, coins: 13 },
-      { wave: 11, coins: 11 },
     ]);
+  });
+
+  it('stores an Iron run with its mode, and a following ordinary run without one', () => {
+    const store = memory();
+    const iron = recordRun(store, { waves: 12, stopped: 0, clean: 0, seed: 201, bgen: 2, mul: 2 });
+    expect(iron.profile.recent[0]).toEqual({ wave: 12, coins: 24, mode: 'iron' });
+    const plain = recordRun(store, { waves: 11, stopped: 0, clean: 0, seed: 202, bgen: 2 });
+    expect(plain.profile.recent[0]).toEqual({ wave: 11, coins: 11 });
+    expect(plain.profile.recent[1]).toEqual({ wave: 12, coins: 24, mode: 'iron' });
+  });
+
+  it('loads a stored run list capped at twelve, and old-shape entries as-is', () => {
+    const store = memory();
+    store.setItem('chokepoint:profile', JSON.stringify({ recent: Array.from({ length: 13 }, (_, i) => ({ wave: i + 1, coins: i + 1 })) }));
+    const many = loadProfile(store);
+    expect(many.recent).toHaveLength(12);
+    expect(many.recent[0]).toEqual({ wave: 1, coins: 1 });
+    store.setItem('chokepoint:profile', JSON.stringify({ recent: [{ wave: 3, coins: 1 }, { wave: 2, coins: 4, mode: 'storm' }, { wave: 1, coins: 9 }] }));
+    const old = loadProfile(store).recent;
+    expect(old).toHaveLength(3); // fewer than twelve loads as-is
+    expect(old[0]).toEqual({ wave: 3, coins: 1 }); // no mode: none
+    expect(old[1]).toEqual({ wave: 2, coins: 4 }); // a broken mode loads as none
   });
 });

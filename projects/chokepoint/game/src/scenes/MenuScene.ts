@@ -136,6 +136,11 @@ export class MenuScene extends Phaser.Scene {
       this.scene.launch(SCENES.how);
       this.scene.pause();
     }, { width: 220, height: 60, fontSize: 24, radius: 30 });
+    // The last twelve runs; only once there is a run to list (same as resume/boards/ghost).
+    const history = p.recent.length ? makeButton(this, 0, 0, 'History', () => {
+      this.scene.launch(SCENES.history);
+      this.scene.pause();
+    }, { width: 220, height: 60, fontSize: 24, radius: 30 }) : undefined;
     // The leaderboards (scenes/BoardsScene.ts), only when the build has a server for them.
     const boards = boardsOn()
       ? makeButton(this, 0, 0, 'Boards', () => {
@@ -156,6 +161,7 @@ export class MenuScene extends Phaser.Scene {
     fadeIn.push(techLine);
     fadeIn.push(augments.container);
     fadeIn.push(howRow.container);
+    if (history) fadeIn.push(history.container);
     if (boards) fadeIn.push(boards.container);
     if (ghost && ghostLine) {
       fadeIn.push(ghost.container);
@@ -182,6 +188,7 @@ export class MenuScene extends Phaser.Scene {
       if (resume) below += BUTTON_H + GAP;
       below += BUTTON_H + GAP + IRON_H + GAP + BUTTON_H + CAPTION_GAP + techLine.height + GAP + BUTTON_H;
       below += GAP + BUTTON_H; // the How row
+      if (history) below += GAP + BUTTON_H; // the History row
       if (boards) below += GAP + BUTTON_H;
       if (ghost && ghostLine) below += GAP + BUTTON_H + CAPTION_GAP + ghostLine.height + GAP;
       below += (ghost && ghostLine ? 0 : GAP) + hint.height; // the gap above the hint (the ghost's line adds its own)
@@ -241,6 +248,11 @@ export class MenuScene extends Phaser.Scene {
       gap(GAP);
       howRow.container.setScale(s);
       howRow.container.setPosition(cx, put(BUTTON_H));
+      if (history) {
+        gap(GAP);
+        history.container.setScale(s);
+        history.container.setPosition(cx, put(BUTTON_H));
+      }
       if (boards) {
         gap(GAP);
         boards.container.setScale(s);

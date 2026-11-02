@@ -1,7 +1,15 @@
-/** The device's profile: best wave, runs played, coins, and the four most recent runs. Storage is passed in, so this stays pure and testable. */
+/** The device's profile: best wave, runs played, coins, and the twelve most recent runs. Storage is passed in, so this stays pure and testable. */
 import { cleanWavePay, flawlessPay, heldPay } from '../content/tech/claim';
 import { LEVEL_AUGMENTS, getLevelAugment } from '../content/levels';
 import { REWARD_WAVE, levelSlotsAfter } from './levels';
+
+/** A finished run as the history stores it: what it reached and what it paid. */
+export interface RecentRun {
+  wave: number;
+  coins: number;
+  /** This run's mode; the storm takes its own mark line in the same slot when it lands (T0403). */
+  mode?: 'iron';
+}
 
 export interface Profile {
   bestWave: number;
@@ -16,7 +24,7 @@ export interface Profile {
   /** Tech tree node ids bought with the coins; spent coins are gone. */
   purchased: string[];
   lastRun: { wave: number; coins: number } | null;
-  recent: { wave: number; coins: number }[];
+  recent: RecentRun[];
   sound: boolean;
   /** Level slots earned: one per run that reached wave 30 with every slot filled, capped at the set (never decreases). */
   levelSlots: number;
@@ -58,6 +66,9 @@ export interface RecordResult {
 
 export const PROFILE_KEY = 'chokepoint:profile';
 
+/** The finished runs the history keeps, most recent first. */
+export const RECENT_CAP = 12;
+
 export function loadProfile(store: KeyValueStore | undefined): Profile {
   try {
     const raw = store?.getItem(PROFILE_KEY);
@@ -74,8 +85,9 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
     const recent = Array.isArray(parsed.recent)
       ? parsed.recent
           .filter((r) => !!r && typeof r === 'object' && Number.isFinite(r.wave) && r.wave >= 0 && Number.isFinite(r.coins) && r.coins >= 0)
-          .slice(0, 4)
-          .map((r) => ({ wave: Number(r.wave), coins: Number(r.coins) }))
+          .slice(0, RECENT_CAP)
+          // A missing or broken mode loads as none: older saves load as-is.
+          .map((r) => ({ wave: Number(r.wave), coins: Number(r.coins), mode: r.mode === 'iron' ? ('iron' as const) : undefined }))
       : [];
     const bestSeed =
       typeof parsed.bestSeed === 'number' && Number.isInteger(parsed.bestSeed) && parsed.bestSeed >= 0 && parsed.bestSeed <= 2 ** 31
@@ -144,7 +156,7 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
     coins: old.coins + coins,
     purchased: old.purchased,
     lastRun: { wave: result.waves, coins },
-    recent: [{ wave: result.waves, coins }, ...old.recent].slice(0, 4),
+    recent: [{ wave: result.waves, coins, mode: result.mul === 2 ? ('iron' as const) : undefined }, ...old.recent].slice(0, RECENT_CAP),
     sound: old.sound,
     levelSlots,
     levelOn: old.levelOn,

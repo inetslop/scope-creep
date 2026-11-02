@@ -4,7 +4,6 @@ import { PALETTE } from '../../content/palette';
 import type { Profile } from '../../core/profile';
 import { makeCard } from '../../ui/card';
 import { textStyle } from '../../ui/text';
-import { buildRecentLine } from './RecentLine';
 
 const PAD = 14;
 const LINE_GAP = 10;
@@ -19,22 +18,23 @@ export interface ProfileCard {
   height: number;
 }
 
-/** The card's muted runs line: the total runs played, plus the average wave of the recent runs once there are two. */
+/** The card's muted runs line: the total runs played, plus the average wave of the last four runs once there are two. */
 function runsText(profile: Profile): string {
+  const last4 = profile.recent.slice(0, 4);
   let text = `runs ${profile.runsPlayed}`;
-  if (profile.recent.length >= 2) {
+  if (last4.length >= 2) {
     let sum = 0;
-    for (const r of profile.recent) sum += r.wave;
-    text += ` · avg ${Math.floor(sum / profile.recent.length)}`;
+    for (const r of last4) sum += r.wave;
+    text += ` · avg ${Math.floor(sum / last4.length)}`;
   }
   return text;
 }
 
 /**
  * The menu's profile card, as a centered column: the coin beside its number, the best wave
- * (starred when it is also the last run), the runs line, and the recent runs as the last line.
- * Its height comes from its lines, so the menu lays it out in the column instead of a fixed
- * card height. The menu is relaunched after every run, so it always shows the saved profile fresh.
+ * (starred when it is also the last run), and the runs line. Its height comes from its lines,
+ * so the menu lays it out in the column instead of a fixed card height. The menu is relaunched
+ * after every run, so it always shows the saved profile fresh.
  */
 export function buildProfileCard(scene: Phaser.Scene, profile: Profile): ProfileCard {
   const coin = artScale(scene.add.image(0, 0, COIN_TEXTURE), 1.4);
@@ -58,11 +58,8 @@ export function buildProfileCard(scene: Phaser.Scene, profile: Profile): Profile
   const runs = scene.add.text(0, 0, runsText(profile), textStyle(17, PALETTE.muted)).setOrigin(0.5);
   const h3 = runs.height;
 
-  const recent = buildRecentLine(scene, profile);
-  const h4 = recent ? 16 : 0;
-
-  const gaps = (recent ? 3 : 2) + (iron ? 1 : 0);
-  const height = PAD * 2 + h1 + h2 + hIron + h3 + h4 + gaps * LINE_GAP;
+  const gaps = 2 + (iron ? 1 : 0);
+  const height = PAD * 2 + h1 + h2 + hIron + h3 + gaps * LINE_GAP;
   const card = makeCard(scene, 0, 0, PROFILE_CARD_W, height, 20);
 
   let y = -height / 2 + PAD;
@@ -84,16 +81,9 @@ export function buildProfileCard(scene: Phaser.Scene, profile: Profile): Profile
   }
   const c3 = put(h3);
   runs.setY(c3);
-  if (recent) {
-    const c4 = put(h4);
-    const s = Math.max(Math.min(1, (PROFILE_CARD_W - PAD * 2) / recent.width), 11 / 12);
-    recent.container.setPosition(-(recent.width * s) / 2, c4);
-    recent.container.setScale(s);
-  }
   const kids: Phaser.GameObjects.GameObject[] = [card, coin, coins, best, star];
   if (iron && ironStar) kids.push(iron, ironStar);
   kids.push(runs);
-  if (recent) kids.push(recent.container);
   return {
     container: scene.add.container(0, 0, kids),
     width: PROFILE_CARD_W,
