@@ -1,12 +1,14 @@
 ---
 id: T0392
 title: "The move's note: one quiet blip on the commit"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: [T0394]
-attempts: 0
+attempts: 1
 created: 2026-11-02T00:02:34Z
+claimed_at: 2026-11-02T07:42:05Z
 epic: E15
 ---
 
