@@ -3,10 +3,12 @@ id: T0454
 title: "The combo bar wears the live window: the Feast's +0.4 s on the drain"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T23:41:13Z
+claimed_at: 2026-11-02T23:42:02Z
+designer: yoga
 ---
 
 ## Goal
