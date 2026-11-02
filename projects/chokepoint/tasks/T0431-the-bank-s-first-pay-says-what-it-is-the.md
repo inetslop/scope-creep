@@ -3,10 +3,12 @@ id: T0431
 title: "The bank's first pay says what it is: the interest rule, taught once"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T15:49:41Z
+claimed_at: 2026-11-02T15:50:16Z
+designer: yoga
 ---
 
 ## Goal
