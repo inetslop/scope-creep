@@ -86,6 +86,13 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - The panel line: the tower panel says which tower rides the marked cell — a muted "marked · +N% damage" line (N 25 plain, 50 with the node) on a marked-cell tower, reading the live buff — **done as T0387 (S, 2026-11-02, desktop-4070)**
 - The light move: the branch's third node, 155 coins by the depth rule, a move's fee 60% → 30% — **waits on T0394 (E15's core, the T0382 re-file); task when it can start (the rich cell takes the depth-2 slot ahead of it)**
 
+### E17 — The storm: a third mode off the menu (active — opened 2026-11-02)
+**Goal:** the menu has Play and Iron; a third card, Storm, sells tempo for in-run gold — every wave rushes and pays double the wave bonus: a run that plays faster and richer, not harder, and not richer between runs.
+**When done:** the menu offers a Storm card in the Iron card's language; a storm run has no quiet waves, every non-boss wave rushes (walkers 1.5×, the chip on the banner and the preview) and every wave pays 2× the wave bonus gold; boss waves keep the boss's own pace; normal and Iron runs are byte-identical; the claim card says "Storm".
+**Breakdown:**
+- the mode and its menu card: the Storm card under Iron, the mode flag (save/resume keeps it), the wave rules (no quiet, rush on every non-boss wave, the bonus ×2) and the claim's "Storm" line — **tasked as T0403 (L, in the pool)**
+- the profile remembers the storm's best wave: a muted "Storm wave N" line on the profile card with a muted star (the Iron line's pattern, T0249) — **task when T0403 lands**
+
 ## Enemy queue (non-epic)
 
 New enemies land one at a time: each new-enemy task chains behind the one before it so the enemy system, the wave mix and the art settle between additions.
@@ -116,7 +123,7 @@ Ideas that may become epics or tasks of one.
 - Targeting modes per tower (first, strongest, closest) — **built as T0114 (L, non-epic, 2026-11-01, inet-racing)**; its follow-up (the plinth notch, the one-time chip) — **tasked as T0368 (S, non-epic, in the pool, 2026-11-01)**
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
-- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive **done as T0292 (2026-11-01, desktop)**; the wave-50 Flyer, the first boss that doesn't walk the road, **done as T0317 (2026-11-02, asus)**; the wave-60 Blinker, the first that skips the road, **tasked as T0402 (M, 2026-11-02, the T0364 re-file, smaller)**)
+- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive **done as T0292 (2026-11-01, desktop)**; the wave-50 Flyer, the first boss that doesn't walk the road, **done as T0317 (2026-11-02, asus)**; the wave-60 Blinker, the first that skips the road, **tasked as T0402 (M, 2026-11-02, the T0364 re-file, smaller)**; the wave-70 Mender, the first that mends itself and its pack, **tasked as T0404 (M, non-epic, 2026-11-02)**)
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
 - Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **E13 done 2026-11-01** (far gate T0338, fork T0352, marked cell T0340, boards reference T0350)
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
@@ -128,4 +135,4 @@ Ideas that may become epics or tasks of one.
 - The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **done as T0348 (M, 2026-11-01, asus)**
 - More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **E9's later slice, parked**
 - Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**; the live "bank +N" line — **built as T0374 (M, non-epic, 2026-11-01)**; the first-pay chip — **dropped (rejected as T0380: the line already teaches the rule)**; the pay's coin blip — **already played (rejected as T0381)**; the pay's gold pop at the number — **re-filed as T0395 (S, non-epic, in the pool, 2026-11-02)**
-- The storm: a third menu mode — no breather, every wave rushes, 2× the wave bonus for the run (IDEAS holds the full text) — **the next epic to open (E17)**
+- The storm: a third menu mode — no breather, every wave rushes, 2× the wave bonus for the run (IDEAS holds the full text) — **now E17 (active, 2026-11-02)**
