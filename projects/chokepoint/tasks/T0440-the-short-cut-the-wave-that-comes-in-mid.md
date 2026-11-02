@@ -4,11 +4,12 @@ title: "The short cut: the wave that comes in mid-road"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T19:42:29Z
 claimed_at: 2026-11-02T20:59:28Z
+finished_at: 2026-11-02T21:22:25Z
 ---
 
 ## Goal
@@ -84,3 +85,22 @@ Add a new wave tag to the existing `quiet`/`tight`/`boss`/`rush` family — a pu
 - `npm run check` (lint: core/ no Phaser; all unit tests) + `npm run smoke` (the banner's chip, the preview's teach line, and the waves-reference row all render at the tag's waves, desktop + phone).
 
 The spec's exact values (tag id, cadence, chip color, teach text, and whether the twist is plan-only or a mid-road spawn) are the only inputs the developer holds; every file, code shape, and test above is pinned.
+
+## Result (attempt 1, desktop)
+
+Added the short cut wave tag (T0440): `isShortCutWave` (from wave 16, every 9th, yielding to quiet/tight/rush/boss — first real one is wave 34) and `shortCutSpawnDistance` (road walkers come in 40% down the path they walk, from the entrance they walk in from — 40% of the road left for far-gate walkers) in `core/waves.ts`, the `['short cut']` tag in `planNormalWave`'s cascade, the `WAVE_TAG_ROWS` row (tealDeep chip, "they come in mid-road", "every 9th, from 16"), the preview's one-time teach line, and the offset read in `WaveSystem.update` beside the rush speed factor — flyers, the far gate's send rule, split children and boss waves untouched. Tests: new `tests/core/shortCutWaves.test.ts` (cadence, tag, collisions at 16/25/70/142, the 40% distance, and a seeded wave 1–100 range proving every other wave keeps the plain tag), the extended `waveTags.test.ts`, and a cheap `waves.shortCutPlan` run invariant. `npm run check` (635 tests) and the desktop + phone smoke pass.
+
+- Self-review: APPROVE
+- Time: 23.0 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/waveTags.ts      |  3 +-
+ projects/chokepoint/game/src/core/waves.ts         | 21 ++++++++++-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/systems/WaveSystem.ts |  7 +++-
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  |  1 +
+ .../game/tests/core/shortCutWaves.test.ts          | 44 ++++++++++++++++++++++
+ .../chokepoint/game/tests/core/waveTags.test.ts    | 10 +++--
+ 7 files changed, 79 insertions(+), 8 deletions(-)
+```

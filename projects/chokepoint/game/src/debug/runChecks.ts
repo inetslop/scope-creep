@@ -210,6 +210,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['level.speed', (g) => (g.enemies.all.every((e) => !e.active || e.speedMul === levelSpeedMul(g.run.level) * waveWalkFactor(g.run.techOwned) * waveSpeedMul(g.run.wave)) ? null : 'an enemy walks at the wrong level, walk or wave speed factor')],
   ['walk.mul', (g) => (g.enemies.all.every((e) => !e.active || e.walkMul === waveWalkFactor(g.run.techOwned)) ? null : 'an enemy carries the wrong run walk factor')],
   ['level.bossPlan', (g) => { if (!bossId(g.run.wave) || !g.waves.currentPlan) return null; const want = g.run.wave === 20 ? 2 : g.run.wave === 70 || g.run.wave === 80 || g.run.wave === 90 ? 3 : 1; return g.waves.currentPlan.spawns.length === want ? null : `boss wave ${g.run.wave} sends ${g.waves.currentPlan.spawns.length}, not ${want}`; }],
+  ['waves.shortCutPlan', (g) => { const p = g.waves.currentPlan; if (!p || !p.tags.includes('short cut')) return null; return p.spawns.length > 0 && p.spawns.every((s) => s.delaySec >= 0) ? null : `the short cut wave ${p.number} plan is not a plain wave plan`; }],
   ['augments.valid', (g) => {
     for (const c of [...g.run.hand, ...g.towers.towers.flatMap((t) => t.augments)])
       if (!AUGMENTS.some((a) => a.id === c.id) || !TIER_ORDER.includes(c.tier) || c.wildcard) return `unknown augment copy ${c.id}:${c.tier}`;

@@ -122,6 +122,25 @@ export function bossId(wave: number): string | undefined {
 }
 
 /**
+ * Every 9th wave from wave 16 is the short cut (34, 43, 61, 79, ... — wave 16 is the quiet
+ * wave's slot, 25 the rush wave's, 52 a quiet wave and 70 the boss wave's): the wave's road
+ * walkers come in mid-road, so the front stretch idles and the fight lives in the back half.
+ * It yields to a quiet, tight, rush or boss wave, which keeps its own tag.
+ */
+export function isShortCutWave(wave: number): boolean {
+  return wave >= 16 && (wave - 16) % 9 === 0 && !isQuietWave(wave) && !isTightWave(wave) && !isRushWave(wave) && !isBossWave(wave);
+}
+
+/**
+ * The spawn distance for a wave's spawn: always its entrance (the far gate's distance, 0 at the
+ * main gate), plus — on a short cut wave — 40% of the line left of the entrance, so the road
+ * walkers come in mid-road, 40% down the path they walk (from the entrance they walk in from).
+ */
+export function shortCutSpawnDistance(wave: number, lineLength: number, entranceDistance: number): number {
+  return entranceDistance + (isShortCutWave(wave) ? 0.4 * (lineLength - entranceDistance) : 0);
+}
+
+/**
  * Which enemies a wave sends, in order, and when. A boss wave is exactly one boss — the Colossus,
  * the Guard and the Titan on wave 20, the Orb on wave 30, the Hive on wave 40, the Flyer on wave 50,
  * the Blinker on wave 60, the Wards and the Mender on wave 70, the Haulers and the Leech on wave 80,
@@ -223,7 +242,7 @@ function planNormalWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): W
   if (wave >= 12 && (wave - 12) % 4 === 0 && !finalSpawns.some((s) => s.enemy === 'bulwark')) finalSpawns = [{ enemy: 'bulwark', delaySec: 0 }, ...finalSpawns];
   // A Ward wave always sends its Ward, even when the halving would drop it: it walks in first (wave 20 is the boss's slot).
   if (wave >= 15 && wave % 5 === 0 && wave !== 20 && !finalSpawns.some((s) => s.enemy === 'ward')) finalSpawns = [{ enemy: 'ward', delaySec: 0 }, ...finalSpawns];
-  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : [] };
+  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : isShortCutWave(wave) ? ['short cut'] : [] };
 }
 
 /**

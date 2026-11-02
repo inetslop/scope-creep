@@ -4,7 +4,7 @@ import { isFarGateSpawn } from '../core/farGate';
 import { levelCountMul, levelSpeedMul } from '../core/levels';
 import type { RunState } from '../core/run';
 import { waveWalkFactor } from '../core/tech';
-import { planWave, planWithLevel, type WavePlan, waveSpeedMul } from '../core/waves';
+import { planWave, planWithLevel, shortCutSpawnDistance, type WavePlan, waveSpeedMul } from '../core/waves';
 import { hook } from '../debug/testHook';
 import type { EnemySystem } from './EnemySystem';
 
@@ -86,7 +86,10 @@ export class WaveSystem {
       const spawn = plan.spawns[this.next]!;
       this.timer -= spawn.delaySec;
       // The fork's lane is the spawn's (seed, wave, index) hash (core/fork.ts), never a draw on the run's rng.
-      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul, speedMul, waveMul, this.walkMul, isFarGateSpawn(this.next, plan, this.farGateDistance > 0) ? this.farGateDistance : 0, this.hasFork ? forkLane(this.run.seed, this.run.wave, this.next) : 0);
+      const lane = this.hasFork ? forkLane(this.run.seed, this.run.wave, this.next) : 0;
+      // The short cut (core/waves.ts): the wave's road walkers come in 40% down the path they walk, from the entrance they walk in from.
+      const entrance = isFarGateSpawn(this.next, plan, this.farGateDistance > 0) ? this.farGateDistance : 0;
+      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul, speedMul, waveMul, this.walkMul, shortCutSpawnDistance(plan.number, this.enemies.routeForLane(lane).length, entrance), lane);
       this.next += 1;
     }
   }
