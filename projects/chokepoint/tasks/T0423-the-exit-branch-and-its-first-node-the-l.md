@@ -3,11 +3,13 @@ id: T0423
 title: "The exit branch and its first node, The long watch: the leak warning starts 5 s out"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T12:03:44Z
+claimed_at: 2026-11-02T12:33:59Z
 epic: E20
+designer: inet-racing
 ---
 
 ## Goal
