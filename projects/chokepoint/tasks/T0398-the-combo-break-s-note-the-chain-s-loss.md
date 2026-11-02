@@ -1,12 +1,14 @@
 ---
 id: T0398
 title: "The combo break's note: the chain's loss is heard"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T01:41:53Z
+claimed_at: 2026-11-02T01:46:00Z
 ---
 
 ## Goal
