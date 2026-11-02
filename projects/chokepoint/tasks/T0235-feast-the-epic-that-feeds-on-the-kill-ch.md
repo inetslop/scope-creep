@@ -1,14 +1,14 @@
 ---
 id: T0235
 title: "Feast: the Epic that feeds on the kill chain"
+assignee: asus
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 1
+attempts: 2
 created: 2026-10-29T22:31:19Z
-claimed_at: 2026-11-02T03:45:04Z
-finished_at: 2026-11-02T07:28:29Z
+claimed_at: 2026-11-02T07:41:32Z
 epic: E4
 ---
 
