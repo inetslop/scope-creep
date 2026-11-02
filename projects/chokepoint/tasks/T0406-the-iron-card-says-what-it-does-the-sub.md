@@ -1,12 +1,14 @@
 ---
 id: T0406
 title: "The Iron card says what it does: the sub-line under the name"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T05:03:59Z
+claimed_at: 2026-11-02T05:22:08Z
 ---
 
 ## Goal
