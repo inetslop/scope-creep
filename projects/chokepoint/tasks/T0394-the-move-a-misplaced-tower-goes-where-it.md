@@ -1,12 +1,14 @@
 ---
 id: T0394
 title: "The move: a misplaced tower goes where it should (the T0382 re-file)"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T01:03:06Z
+claimed_at: 2026-11-02T04:16:25Z
 epic: E15
 design_attempts: 1
 ---
