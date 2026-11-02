@@ -1,12 +1,14 @@
 ---
 id: T0428
 title: "The boss's death gets its haptic"
+assignee: yoga
 size: S
 priority: 3
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T14:32:01Z
+claimed_at: 2026-11-02T14:43:41Z
 ---
 
 ## Goal
