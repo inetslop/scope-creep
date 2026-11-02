@@ -43,6 +43,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Leaker: a big slow enemy that costs 2 lives when it leaks — **dropped (the Block already costs 2 lives; no new behavior)**
 - Recent runs: the menu lists your last few runs (wave + coins) so you can see your trend — built as T0018 (desktop)
 - The run history: the last-four recent line grows into a History card — the last twelve runs, most recent first (wave, coins, the iron mark, the best star), the line moving into the card (one in, one out) — **now E18 (active); the card done as T0410 (M, 2026-11-02), the records block tasked as T0415 (M, in the pool)**
+- The history card replays a run's board: tapping a row grows that run's board as a ghost run (T0078's pattern, any of the last twelve, not just the best) — parked for after E18 closes (the records block T0415 and the storm's rows are in)
 - A "New best" star on the menu's profile card when your last run hit your best wave — built as T0016 (yoga)
 - Mender enemy — **done as T0404 (the wave-70 boss, 2026-11-02)**; the regular version stays parked — it needs a cap slot
 - Leech boss — **tasked as T0405 (M)**: the wave-80 boss, a big pink open maw with 2 Hauler escorts that drinks their health — the design lives in the task file

@@ -82,7 +82,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **When done:** the menu offers a Storm card in the Iron card's language; a storm run has no quiet waves, every non-boss wave rushes (walkers 1.5×, the chip on the banner and the preview) and every wave pays 2× the wave bonus gold; boss waves keep the boss's own pace; normal and Iron runs are byte-identical; the claim card says "Storm".
 **Breakdown:**
 - the mode and its menu card: the Storm card under Iron, the mode flag (save/resume keeps it), the wave rules (no quiet, rush on every non-boss wave, the bonus ×2) and the claim's "Storm" line — **tasked as T0403 (L, in the pool)**
-- the profile remembers the storm's best wave: a muted "Storm wave N" line on the profile card with a muted star (the Iron line's pattern, T0249) — **task when T0403 lands**
+- the profile remembers the storm's best wave: a muted "Storm wave N" line on the profile card with a muted star (the Iron line's pattern, T0249) — **tasked as T0434 (S, waits on T0403)**
 
 ### E18 — The history: every run, on the menu (active — opened 2026-11-03)
 **Goal:** the menu shows the last four runs at a glance; a history card lists the last twelve, so the whole climb is one tap away and the trend the last-four line hints at is readable.
@@ -97,15 +97,15 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **When done:** a build cell where 12+ enemies died this run keeps a small dark chip on the ground for the rest of the run, a tower built on it deals 5% more damage, and the run's first scorch says what the mark means once.
 **Breakdown:**
 - the scorch cell: the per-cell kill count, the chip at 12 kills, the +5% on a tower built there, the first-scorch teach, the run save — **tasked as T0414 (M, in the pool)**
-- the deep scorch: a cell at 24+ kills burns deeper — a thin second ring on the chip and +10% instead of +5% for a tower built there (the build-time read, the scorch's own rule) — **task when T0414 lands**
+- the deep scorch: a cell at 24+ kills burns deeper — a thin second ring on the chip and +10% instead of +5% for a tower built there (the build-time read, the scorch's own rule) — **tasked as T0432 (M, waits on T0414)**
 
 ### E20 — The exit: a tech branch for surviving the leak (active — opened 2026-11-02; The long watch landed 2026-11-02)
 **Goal:** the tech tree has covered run start, board, pool, claim, wave and tower — but not surviving a leak: a seventh branch lets between-run coins buy how the run withstands the exit.
 **When done:** the tree's "The exit" branch has three nodes, each bought once and on for every run after: The long watch (the leak warning starts 5 s out instead of 3 s), One life a Block (a Block that leaks costs 1 life instead of 2) and The first pass (the run's first leak costs no life).
 **Breakdown:**
 - the branch and its first node, The long watch: the tech screen's seventh row plus a 30-coin node that starts the leak warning at 5 s instead of 3 s — **done as T0423 (M, 2026-11-02, asus)**
-- One life a Block: 85 coins by the depth rule, a Block that leaks costs 1 life instead of 2 — **tasked as T0429 (M, in the pool, 2026-11-02)** (The first pass, T0427, can be re-filed behind it once this lands)
-- The first pass: 155 coins by the depth rule, the run's first leak costs no life (a per-run flag the run save carries; the Hauler's 5 gold still pays) — **T0427 rejected 2026-11-02 (the branch needed its second row, One life a Block, first); re-file behind T0429 once it lands**
+- One life a Block: 85 coins by the depth rule, a Block that leaks costs 1 life instead of 2 — **tasked as T0429 (M, in the pool, 2026-11-02)** (the first pass is tasked behind it as T0433)
+- The first pass: 155 coins by the depth rule, the run's first leak costs no life (a per-run flag the run save carries; the Hauler's 5 gold still pays) — **tasked as T0433 (M, waits on T0429; the T0427 re-file)**
 
 ## Enemy queue (non-epic)
 
