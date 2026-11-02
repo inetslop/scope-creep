@@ -4,6 +4,8 @@ export interface TargetCandidate {
   y: number;
   /** Distance walked along the path: bigger is closer to the exit. */
   distance: number;
+  /** Board units to the exit along its own route: smaller is closer. */
+  remaining: number;
   active: boolean;
   /** Current hit points: the Strongest mode's pick. */
   hp: number;
@@ -14,15 +16,15 @@ export interface TargetCandidate {
 /** How a tower picks its main target when several are in range. */
 export type TargetMode = 'first' | 'strongest' | 'closest';
 
-/** Both in range: should the tower prefer a over b? Ties always go to the furthest along. */
+/** Both in range: should the tower prefer a over b? Ties always go to the furthest along (least remaining to the exit). */
 export function prefers(a: TargetCandidate, b: TargetCandidate, mode: TargetMode, x: number, y: number): boolean {
-  if (mode === 'strongest') return a.hp > b.hp || (a.hp === b.hp && a.distance > b.distance);
+  if (mode === 'strongest') return a.hp > b.hp || (a.hp === b.hp && a.remaining < b.remaining);
   if (mode === 'closest') {
     const da = (a.x - x) * (a.x - x) + (a.y - y) * (a.y - y);
     const db = (b.x - x) * (b.x - x) + (b.y - y) * (b.y - y);
-    return da < db || (da === db && a.distance > b.distance);
+    return da < db || (da === db && a.remaining < b.remaining);
   }
-  return a.distance > b.distance;
+  return a.remaining < b.remaining;
 }
 
 /**
@@ -65,13 +67,13 @@ export function pickTargets(x: number, y: number, range: number, enemies: readon
   const by = (a: number, b: number): number => {
     const ea = enemies[a]!;
     const eb = enemies[b]!;
-    if (mode === 'strongest') return eb.hp - ea.hp || eb.distance - ea.distance;
+    if (mode === 'strongest') return eb.hp - ea.hp || ea.remaining - eb.remaining;
     if (mode === 'closest') {
       const da = (ea.x - x) * (ea.x - x) + (ea.y - y) * (ea.y - y);
       const db = (eb.x - x) * (eb.x - x) + (eb.y - y) * (eb.y - y);
-      return da - db || eb.distance - ea.distance;
+      return da - db || ea.remaining - eb.remaining;
     }
-    return eb.distance - ea.distance;
+    return ea.remaining - eb.remaining;
   };
   return inRange(x, y, range, enemies)
     .filter((i) => !enemies[i]!.untargetable)

@@ -11,7 +11,7 @@ import { burnRate, burnStep } from '../core/burn';
 import { TICK_SEC } from '../config';
 import { plateMul } from '../core/plate';
 import { pathLineForLane, type PathLine } from '../core/path';
-import { pickFlyLine } from '../core/flyRoute';
+import { flyRouteFor, pickFlyLine } from '../core/flyRoute';
 import { shieldMul } from '../core/shield';
 import { CONTROL_WINDOW_SEC } from '../core/control';
 import { pickNearest } from '../core/targeting';
@@ -110,6 +110,8 @@ export class EnemySystem {
     const fly = def.flies ? pickFlyLine(this.board.map, this.run.rng, CELL) : undefined;
     // A flyer always starts on its own edge — the far-gate distance (road units) never applies to it.
     enemy.spawn(def, hpMul, fly ? fly.line : this.routes[lane]!, speedMul, waveSpeedMul, fly ? 0 : distance, lane);
+    // The boss Flyer lifts off on its own seeded crossing (core/flyRoute.ts): never the road, never through the entrance gate.
+    if (def.behavior === 'fly') enemy.takeFlight(flyRouteFor(this.board.map, CELL));
     hook.stats.enemiesSpawned += 1;
     return enemy;
   }
@@ -316,6 +318,18 @@ export class EnemySystem {
   brokenReach(): string | undefined {
     const bad = this.pool.find((e) => e.active && e.def.outOfReach !== undefined && (!Number.isFinite(e.reachClock) || e.reachClock < -1 - 1e-9));
     return bad ? `${bad.def.id} with reach clock ${bad.reachClock}` : undefined;
+  }
+
+  /** Invariant: no active boss Flyer carries a broken crossing — no route, a distance off its line, a broken bank clock. */
+  brokenFly(): string | undefined {
+    const bad = this.pool.find(
+      (e) => e.active
+        && e.def.behavior === 'fly'
+        && (e.flyLine === undefined
+          || !Number.isFinite(e.distance) || e.distance < 0 || e.distance > e.flyLine.length + 0.01
+          || !Number.isFinite(e.bankClock) || e.bankClock < -1 - 1e-9),
+    );
+    return bad ? `${bad.def.id} at ${bad.distance.toFixed(1)} of ${bad.flyLine?.length.toFixed(1) ?? 'no line'}, bank clock ${bad.bankClock}` : undefined;
   }
 
   /** Invariant: no enemy has slid back before the road's start (the gust clamps at 0). */

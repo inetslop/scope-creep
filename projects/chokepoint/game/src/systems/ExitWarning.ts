@@ -55,12 +55,12 @@ export class ExitWarning {
     this.img.setVisible(true);
   }
 
-  /** Any alive enemy within 3 s of the exit, at its current speed (slows included) — on its own line: the road for a walker, its crossing for a Flyer. */
+  /** Any alive enemy within 3 s of the exit, at its current speed (slows included) — on its own route: the road for a walker, its crossing for a Flyer. */
   private inRange(): boolean {
     for (const e of this.enemies.all) {
       if (!e.active) continue;
       const speed = e.speed * (1 - e.slowPct);
-      if (speed > 0 && (e.path.length - e.distance) / speed <= 3) return true;
+      if (speed > 0 && e.remaining / speed <= 3) return true;
     }
     return false;
   }

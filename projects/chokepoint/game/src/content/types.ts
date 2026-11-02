@@ -10,8 +10,8 @@ export interface Look {
   size: number;
 }
 
-/** How an enemy moves along the path. Add a name here and a case in Enemy.update() for a new one. */
-export type EnemyBehavior = 'walk' | 'dash';
+/** How an enemy moves along the path. Add a name here and a case in Enemy.advance() for a new one. */
+export type EnemyBehavior = 'walk' | 'dash' | 'fly';
 
 export interface EnemyDef {
   /** kebab-case, unique. */
@@ -48,6 +48,13 @@ export interface EnemyDef {
    * and held damage and all control still reach it.
    */
   outOfReach?: { hpFrac: number; telegraphSec: number; phaseSec: number; periodSec: number };
+  /**
+   * The bank (the boss Flyer): when its hp first drops to `hpFrac` of its max, its remaining route
+   * becomes two straight segments — from its position to a seeded bank point on the island's edge,
+   * then to the exit — previewed as its flight line for `previewSec` (core/flyRoute.ts,
+   * systems/enemyHooks/flyLine.ts). It banks on its hp clock even while rooted.
+   */
+  bank?: { hpFrac: number; previewSec: number };
   /** Gold for killing it. */
   gold: number;
   /** Lives lost when it reaches the exit. */

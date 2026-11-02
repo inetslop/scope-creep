@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { controlScale, noteControl, tickControl, type ControlState } from '../../src/core/control';
+import { getEnemy } from '../../src/content/enemies';
+import { controlScale, noteControl, pushable, tickControl, type ControlState } from '../../src/core/control';
 
 const fresh = (): ControlState => ({ controlCount: 0, controlQuietSec: 0 });
 
@@ -76,5 +77,12 @@ describe('control fatigue (core/control.ts)', () => {
       }
       expect(hits).toBeGreaterThan(0);
     }
+  });
+
+  it('a gust pushes along the road: a walker is pushable, a Ward, the small Flyer and the boss Flyer are not', () => {
+    expect(pushable(getEnemy('dot'))).toBe(true);
+    expect(pushable(getEnemy('ward'))).toBe(false); // the Ward shrugs every control off
+    expect(pushable(getEnemy('flyer'))).toBe(false); // the small Flyer is not on the road
+    expect(pushable(getEnemy('crosser'))).toBe(false); // the boss Flyer crosses the sky
   });
 });

@@ -1,3 +1,5 @@
+import type { EnemyDef } from '../content/types';
+
 /**
  * The shared control fatigue, the one rule for every push and root: each push or root on an
  * enemy that just took one is half as strong as the one before, and after
@@ -35,4 +37,9 @@ export function tickControl(s: ControlState, dt: number): void {
     s.controlCount = 0;
     s.controlQuietSec = 0;
   }
+}
+
+/** Whether a gust (Push) can push it: a Ward shrugs every control off, and a gust pushes along the road — a flyer (the small crosser, the boss) is not on the road. */
+export function pushable(def: EnemyDef): boolean {
+  return !def.ignoresControl && def.behavior !== 'fly' && !def.flies;
 }

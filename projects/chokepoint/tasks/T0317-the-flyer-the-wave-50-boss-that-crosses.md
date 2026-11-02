@@ -4,11 +4,12 @@ title: "The Flyer: the wave-50 boss that crosses the sky"
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-10-31T00:35:25Z
 claimed_at: 2026-11-01T21:38:45Z
+finished_at: 2026-11-02T01:37:39Z
 epic: E10
 ---
 
@@ -128,4 +129,39 @@ error: cannot lock ref 'refs/remotes/origin/main': is at 6bf74ab9ff71383eee6e4ba
     at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:260:5)
     at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
     at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
+
+## Result (attempt 2, asus)
+
+Wave 50 now sends exactly one boss Flyer — the whole wave's budget in one shape: a red triangle at 0.5 that crosses the island in a seeded straight line from off the entrance edge to the exit gate at 0.7 cells/s, banking once at exactly 50% hp toward a seeded edge point (0.8 s red preview of the two new segments, one quiet falling note, still banking while rooted), with a thin 50%-alpha red line telegraphing the first crossing for 3 s at wave start and no mark left behind. All existing boss feedback works with no new HUD (arrival horn, boss card, name tag "Flyer", death burst + name card, the bosses reference row auto-grows); Frost slow and Anchor root apply to it, Push gusts do not, and progress, furthest-targeting, the 3 s exit warning and the wave-end count all read its remaining route distance. Two forced deviations: the boss is a new def `crosser` keeping the display name "Flyer", because the earlier small Flyer (T0353) already owns id 'flyer' with test-pinned waves 13/17/21 (so the enemy codex now lists two "Flyer" rows), and the spec's "escape/out-of-reach notes do not fire" is met by a one-line guard in bossEscape silencing the escape horn on a boss Flyer leak (the out-of-reach note cannot fire — it has no such spec). Unit tests pin the wave-50 plan (exactly one spawn, boss tag, wave-scaled hp, seeds 1/7/42/50), the seeded board route math (spawn off the entrance's own row, edge bank point, exit gate, first/banked line lengths, determinism), and the push rules; `npm r…
+
+- Self-review: NO VERDICT
+- Time: 238.9 min
+
+```
+projects/chokepoint/game/src/art/entities.ts       |  7 ++
+ projects/chokepoint/game/src/audio/Sfx.ts          |  5 ++
+ .../chokepoint/game/src/content/enemies/crosser.ts | 17 +++++
+ .../chokepoint/game/src/content/enemies/index.ts   |  2 +
+ projects/chokepoint/game/src/content/types.ts      | 11 ++-
+ projects/chokepoint/game/src/core/control.ts       |  7 ++
+ projects/chokepoint/game/src/core/flyRoute.ts      | 56 +++++++++++++-
+ projects/chokepoint/game/src/core/targeting.ts     | 16 ++--
+ projects/chokepoint/game/src/core/waves.ts         |  7 +-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  4 +-
+ projects/chokepoint/game/src/entities/Enemy.ts     | 74 ++++++++++++++++---
+ .../chokepoint/game/src/systems/EnemySystem.ts     | 16 +++-
+ .../chokepoint/game/src/systems/ExitWarning.ts     |  4 +-
+ .../game/src/systems/enemyHooks/bossEscape.ts      |  3 +-
+ .../game/src/systems/enemyHooks/flyLine.ts         | 61 +++++++++++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 +
+ .../game/src/systems/enemyHooks/nearMiss.ts        |  2 +-
+ projects/chokepoint/game/tests/content.test.ts     |  9 ++-
+ projects/chokepoint/game/tests/core/beam.test.ts   |  4 +-
+ .../chokepoint/game/tests/core/beamShapes.test.ts  |  2 +-
+ .../chokepoint/game/tests/core/control.test.ts     | 10 ++-
+ .../chokepoint/game/tests/core/flyRoute.test.ts    | 86 +++++++++++++++++++++-
+ .../chokepoint/game/tests/core/targeting.test.ts   | 22 +++---
+ projects/chokepoint/game/tests/core/waves.test.ts  | 18 +++++
+ 24 files changed, 400 insertions(+), 45 deletions(-)
 ```

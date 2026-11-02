@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { beamLines, inBeamRange, rayTargets } from '../../src/core/beam';
 import type { TargetCandidate } from '../../src/core/targeting';
 
-const e = (x: number, y: number, distance: number, active = true, hp = 1): TargetCandidate => ({ x, y, distance, active, hp });
+const e = (x: number, y: number, distance: number, active = true, hp = 1): TargetCandidate => ({ x, y, distance, remaining: 100 - distance, active, hp });
 const R = 10; // the tower sits at (0, 0)
 
 describe('inBeamRange', () => {
@@ -27,6 +27,7 @@ describe('beamLines', () => {
     const b = e(-2, 0, 25);
     expect(beamLines(undefined, [a, b], 0, 0, R, true)).toBe(0); // a is furthest
     b.distance = 40; // b overtakes a
+    b.remaining = 60;
     expect(beamLines(a, [a, b], 0, 0, R, true)).toBe(0); // the line still holds a
   });
 
@@ -51,6 +52,7 @@ describe('beamLines', () => {
     const b = e(-2, 0, 20);
     expect(beamLines(undefined, [a, b], 0, 0, R, false)).toBe(0);
     b.distance = 40;
+    b.remaining = 60;
     expect(beamLines(a, [a, b], 0, 0, R, false)).toBe(1);
   });
 

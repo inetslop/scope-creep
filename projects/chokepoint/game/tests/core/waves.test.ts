@@ -208,6 +208,24 @@ describe('boss waves (every 10th)', () => {
       expect(planWave(20, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }]);
       expect(planWave(30, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'orb', delaySec: 0 }]);
       expect(planWave(40, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'hive', delaySec: 0 }]);
+      expect(planWave(50, new Rng(seed), ENEMIES).spawns).toEqual([{ enemy: 'crosser', delaySec: 0 }]);
+    }
+  });
+  it('bossId: the wave-50 boss is the Flyer — the whole budget in one shape', () => {
+    expect(bossId(50)).toBe('crosser');
+    expect(planWave(50, new Rng(50), ENEMIES).spawns[0]!.enemy).toBe(bossId(50)); // the rule and the plan agree
+  });
+  it('wave 50 is exactly the Flyer: the boss tag, the wave-scaled hp, identical on every seed', () => {
+    for (const seed of [1, 7, 42, 50]) {
+      const plan = planWave(50, new Rng(seed), ENEMIES);
+      expect(plan.spawns).toEqual([{ enemy: 'crosser', delaySec: 0 }]);
+      expect(plan.tags).toEqual(['boss']);
+      expect(plan.hpMul).toBe(waveHpMul(50));
+    }
+  });
+  it('no wave but 50 sends the Flyer (the wave-50 boss; spawnOnly, never a wave mix)', () => {
+    for (let wave = 1; wave <= 50; wave++) {
+      expect(planWave(wave, new Rng(wave), ENEMIES).spawns.filter((s) => s.enemy === 'crosser').length).toBe(wave === 50 ? 1 : 0);
     }
   });
 });

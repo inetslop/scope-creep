@@ -6,7 +6,8 @@ import { ART_SCALE, DISC_TEXTURE, PLATE_TEXTURE, enemyTexture } from '../art/tex
 import { ignite } from '../core/burn';
 import { outOfReachLeg } from '../core/outOfReach';
 import { applyRoot, tickRoot } from '../core/root';
-import { controlScale, noteControl, tickControl } from '../core/control';
+import { controlScale, noteControl, pushable, tickControl } from '../core/control';
+import { bankedLine, firstLine, type FlyRoute } from '../core/flyRoute';
 import { shieldMul } from '../core/shield';
 import type { LiveBurn } from '../core/burn';
 import type { Tower } from './Tower';
@@ -21,8 +22,8 @@ const PUSH_RATE = 4.5;
  * A pooled enemy walking its line (the road, or a Flyer's own crossing, core/flyRoute.ts). It
  * stores how far along that line it is (`distance`, board units); its position follows from
  * that. spawn() resets every field; despawn() returns it to the pool (never destroy() a pooled
- * object). Enemies don't rotate: their shading is painted in — a flat token (the Flyer's wings)
- * turns with its flight, like the tracer.
+ * object). Enemies don't rotate: their shading is painted in — a flat token (the Flyer's wings,
+ * the boss Flyer's triangle) turns with its flight, like the tracer.
  */
 export class Enemy extends Phaser.GameObjects.Image {
   def!: EnemyDef;
@@ -78,6 +79,13 @@ export class Enemy extends Phaser.GameObjects.Image {
   reachClock = -1;
   /** Seconds since its split window opened (the Orb); -1 before its hp first dropped to the split line. */
   splitClock = -1;
+  /** The boss Flyer's crossing (core/flyRoute.ts): the seeded route, and the line it flies now; undefined for a walker. */
+  flyRoute?: FlyRoute;
+  flyLine?: PathLine;
+  /** Seconds since its hp first dropped to the bank line (the boss Flyer); -1 before that, clamped at the bank. */
+  bankClock = -1;
+  /** The road's length it spawned on (its `path`); the boss Flyer's flight line replaces it as its route. */
+  roadLen = 0;
   /** The burn on it (Ember): the burning tower's rate and damage multiplier, and the seconds left; left 0: not ablaze. */
   burn: LiveBurn = { dps: 0, mul: 1, acc: 0, left: 0 };
   /** The tower that lit the burn: when the tick kills, its mints pay like a normal kill. */
@@ -135,6 +143,10 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.pauseAge = 0;
     this.reachClock = -1;
     this.splitClock = -1;
+    this.flyRoute = undefined;
+    this.flyLine = undefined;
+    this.bankClock = -1;
+    this.roadLen = path.length;
     this.setTexture(enemyTexture(def.id));
     this.setRotation(0); // a recycled flyer slot must not turn a walker
     this.clearTint();
@@ -155,6 +167,19 @@ export class Enemy extends Phaser.GameObjects.Image {
       this.disc.setDepth(DEPTH.enemies);
     }
     this.disc?.setVisible(false); // hidden until advance() places it (no flash at the origin)
+  }
+
+  /**
+   * Lifts off on the boss Flyer's own crossing (core/flyRoute.ts): the seeded route and its
+   * first line, from its spawn point. The road it spawned on is never its route (nor the
+   * far-gate distance) — EnemySystem calls this right after spawn().
+   */
+  takeFlight(route: FlyRoute): void {
+    this.flyRoute = route;
+    this.flyLine = firstLine(route);
+    this.distance = 0;
+    const p = this.flyLine.pointAt(0);
+    this.setPosition(p.x, p.y);
   }
 
   /** Walks for `dt` seconds. Returns true when it reached the end of its line (a leak). */
@@ -220,6 +245,26 @@ export class Enemy extends Phaser.GameObjects.Image {
         }
         break;
       }
+      case 'fly': {
+        // The bank (the boss Flyer's beat): the clock starts the frame its hp first drops to the
+        // line and runs on its own dt, before any root check — a rooted or slowed Flyer still
+        // banks on its hp clock; control buys time, not the beat.
+        const bank = this.def.bank!;
+        if (this.bankClock < 0 && this.hp <= this.maxHp * bank.hpFrac) this.bankClock = 0;
+        if (this.bankClock >= 0) {
+          const prev = this.bankClock;
+          this.bankClock += dt;
+          if (prev < bank.previewSec && this.bankClock >= bank.previewSec) {
+            // The turn lands once, exactly at the line: its remaining route becomes two straight
+            // segments — from where it is now to the seeded edge bank point, then to the exit.
+            this.flyLine = bankedLine(this.flyRoute!, { x: this.x, y: this.y });
+            this.distance = 0;
+            this.bankClock = bank.previewSec;
+          }
+        }
+        this.distance += speed * dt;
+        break;
+      }
     }
     this.age += dt;
     if (this.markPct > 0) this.markAge += dt;
@@ -227,8 +272,9 @@ export class Enemy extends Phaser.GameObjects.Image {
     const t = Math.min(1, this.age / POP_SEC);
     const pop = t < 1 ? 1.15 * Math.sin((t * Math.PI) / 2) : 1;
     this.setScale(ART_SCALE * pop);
-    const p = this.path.pointAt(this.distance);
-    const a = this.path.pointAt(this.distance + 4);
+    const line = this.flyLine ?? this.path;
+    const p = line.pointAt(this.distance);
+    const a = line.pointAt(this.distance + 4);
     const dl = Math.hypot(a.x - p.x, a.y - p.y);
     if (dl > 0) {
       this.dirX = (a.x - p.x) / dl;
@@ -236,6 +282,8 @@ export class Enemy extends Phaser.GameObjects.Image {
     }
     // The Flyer's wings point where it flies: the texture points up, flat, so it may turn.
     if (this.def.flies) this.setRotation(Math.atan2(this.dirY, this.dirX) + Math.PI / 2);
+    // The boss Flyer's triangle points where it flies: the texture points up, flat, so it may turn (the plate's formula).
+    if (this.flyLine !== undefined) this.setRotation(Math.atan2(this.dirX, -this.dirY));
     this.setPosition(p.x, p.y - Math.abs(Math.sin(this.distance / 9)) * 2);
     if (this.plate !== undefined && this.def.plate !== undefined) {
       this.plate.setPosition(this.x, this.y).setScale(ART_SCALE * pop).setRotation(Math.atan2(this.dirX, -this.dirY)).setVisible(true);
@@ -252,7 +300,12 @@ export class Enemy extends Phaser.GameObjects.Image {
       else this.clearTint();
     }
     this.setAlpha(leg === 'out' ? 0.5 : 1); // untargetable, not invisible: the token half-ghosts
-    return this.distance >= this.path.length;
+    return this.distance >= line.length;
+  }
+
+  /** Board units to the exit along its own route: the road for a walker, its crossing for a flyer (core/flyRoute.ts). */
+  get remaining(): number {
+    return Math.max(0, (this.flyLine ?? this.path).length - this.distance);
   }
 
   /** Out of reach right now (the Colossus's beat): the aim picks skip it; area, line and held damage still reach it. */
@@ -316,11 +369,14 @@ export class Enemy extends Phaser.GameObjects.Image {
   }
 
   /** Queues a slide back along the road by `units` board units (Push), halved by the push/root
-   * streak (core/control.ts); advance() consumes it. */
+   * streak (core/control.ts); advance() consumes it. A gust pushes along the road, so it does
+   * not reach the sky (neither Flyer) and a Ward shrugs it off with its ring. */
   pushBack(units: number): void {
     if (!this.active || units <= 0) return;
-    if (this.def.flies) return; // a gust moves it not
-    if (this.def.ignoresControl) { this.deny = true; return; }
+    if (!pushable(this.def)) {
+      if (this.def.ignoresControl) this.deny = true;
+      return;
+    }
     this.pushLeft += units * controlScale(this);
     noteControl(this);
   }

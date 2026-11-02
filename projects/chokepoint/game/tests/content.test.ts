@@ -24,7 +24,7 @@ describe('content', () => {
       expect(e.fromWave).toBeGreaterThanOrEqual(1);
       expect(BRIGHTS).toContain(e.look.color);
       expect(e.look.size).toBeGreaterThan(0);
-      expect(e.look.size).toBeLessThanOrEqual(e.id === 'titan' || e.id === 'orb' || e.id === 'hive' ? 0.5 : 0.45);
+      expect(e.look.size).toBeLessThanOrEqual(e.id === 'titan' || e.id === 'orb' || e.id === 'hive' || e.id === 'crosser' ? 0.5 : 0.45);
       if (e.speedRamp) {
         expect(e.speedRamp.perHit).toBeGreaterThan(0);
         expect(e.speedRamp.max).toBeGreaterThan(e.speed);
@@ -44,6 +44,13 @@ describe('content', () => {
         expect(e.outOfReach.phaseSec).toBeGreaterThan(0);
         expect(e.outOfReach.periodSec).toBeGreaterThan(0);
         expect(e.outOfReach.periodSec).toBeGreaterThan(e.outOfReach.telegraphSec + e.outOfReach.phaseSec); // a quiet beat between beats
+      }
+      if (e.behavior === 'fly') {
+        // The boss Flyer crosses the sky: its crossing banks once, at a seeded hp line (core/flyRoute.ts).
+        const bank = e.bank!;
+        expect(bank.hpFrac).toBeGreaterThan(0);
+        expect(bank.hpFrac).toBeLessThanOrEqual(1);
+        expect(bank.previewSec).toBeGreaterThan(0);
       }
       const split = e.splitsAt;
       if (split) {

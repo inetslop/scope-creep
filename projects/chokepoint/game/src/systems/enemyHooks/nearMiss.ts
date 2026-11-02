@@ -9,7 +9,7 @@ export const nearMiss: MakeEnemyHook = (ctx) => ({
     const waves = ctx.scene.registry.get('waves') as WaveSystem | undefined;
     if (!waves || !waves.spawningDone || ctx.run.over) return;
     if (ctx.enemies.aliveCount !== 1) return; // the dead enemy is still counted while onKill runs
-    if (enemy.path.length - enemy.distance > 1.5 * CELL) return; // its own line: a flyer's crossing, not the road
+    if (enemy.remaining > 1.5 * CELL) return; // its own route: a flyer's crossing, not the road
     nameLabel(ctx.fx, enemy.x, enemy.y, 'close');
   },
 });

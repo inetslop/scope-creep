@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 import { inRange, pickNearest, pickTarget, pickTargets } from '../../src/core/targeting';
 
 const enemies = [
-  { x: 10, y: 0, distance: 5, active: true, hp: 1 },
-  { x: 20, y: 0, distance: 9, active: true, hp: 1 },
-  { x: 25, y: 0, distance: 12, active: false, hp: 1 },
-  { x: 200, y: 0, distance: 50, active: true, hp: 1 },
+  { x: 10, y: 0, distance: 5, remaining: 100 - 5, active: true, hp: 1 },
+  { x: 20, y: 0, distance: 9, remaining: 100 - 9, active: true, hp: 1 },
+  { x: 25, y: 0, distance: 12, remaining: 100 - 12, active: false, hp: 1 },
+  { x: 200, y: 0, distance: 50, remaining: 100 - 50, active: true, hp: 1 },
 ];
 
 describe('pickTarget', () => {
@@ -34,8 +34,8 @@ describe('pickTargets', () => {
 describe('targeting modes', () => {
   // In range of (0,0) at 30: a far weak one and a near strong one.
   const modeEnemies = [
-    { x: 28, y: 0, distance: 40, active: true, hp: 2 }, // furthest, weakest
-    { x: 12, y: 0, distance: 10, active: true, hp: 9 }, // nearest, strongest
+    { x: 28, y: 0, distance: 40, remaining: 100 - 40, active: true, hp: 2 }, // furthest, weakest
+    { x: 12, y: 0, distance: 10, remaining: 100 - 10, active: true, hp: 9 }, // nearest, strongest
   ];
 
   it('first (the default) keeps the furthest along', () => {
@@ -61,13 +61,13 @@ describe('targeting modes', () => {
 });
 
 describe('pickNearest', () => {
-  const struck = { x: 100, y: 0, distance: 20, active: true, hp: 1 };
+  const struck = { x: 100, y: 0, distance: 20, remaining: 100 - 20, active: true, hp: 1 };
   const list = [
     struck, // the enemy that was just hit
-    { x: 104, y: 0, distance: 21, active: true, hp: 1 }, // 4 away
-    { x: 90, y: 0, distance: 15, active: true, hp: 1 }, // 10 away
-    { x: 200, y: 0, distance: 60, active: true, hp: 1 }, // 100 away
-    { x: 112, y: 0, distance: 24, active: false, hp: 1 }, // dead, 12 away
+    { x: 104, y: 0, distance: 21, remaining: 100 - 21, active: true, hp: 1 }, // 4 away
+    { x: 90, y: 0, distance: 15, remaining: 100 - 15, active: true, hp: 1 }, // 10 away
+    { x: 200, y: 0, distance: 60, remaining: 100 - 60, active: true, hp: 1 }, // 100 away
+    { x: 112, y: 0, distance: 24, remaining: 100 - 24, active: false, hp: 1 }, // dead, 12 away
   ];
 
   it('the nearest first within the radius, skipping the struck enemy and the dead', () => {

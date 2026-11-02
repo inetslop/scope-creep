@@ -110,7 +110,7 @@ export function waveSpeedMul(wave: number): number {
   return isRushWave(wave) ? 1.5 : 1;
 }
 
-/** Every 10th wave is the boss wave: one Colossus (the Guard and the Titan on wave 20, the Orb on wave 30, the Hive on wave 40), nothing else. */
+/** Every 10th wave is the boss wave: one Colossus (the Guard and the Titan on wave 20, the Orb on wave 30, the Hive on wave 40, the Flyer on wave 50), nothing else. */
 export function isBossWave(wave: number): boolean {
   return wave > 0 && wave % 10 === 0;
 }
@@ -118,12 +118,13 @@ export function isBossWave(wave: number): boolean {
 /** The enemy the plan declares as the boss of wave `wave`; undefined on non-boss waves. */
 export function bossId(wave: number): string | undefined {
   if (!isBossWave(wave)) return undefined;
-  return wave === 40 ? 'hive' : wave === 30 ? 'orb' : wave === 20 ? 'titan' : 'colossus';
+  return wave === 50 ? 'crosser' : wave === 40 ? 'hive' : wave === 30 ? 'orb' : wave === 20 ? 'titan' : 'colossus';
 }
 
 /**
  * Which enemies a wave sends, in order, and when. A boss wave is exactly one boss — the Colossus,
- * the Guard and the Titan on wave 20, the Orb on wave 30, the Hive on wave 40 — and nothing else; every other wave
+ * the Guard and the Titan on wave 20, the Orb on wave 30, the Hive on wave 40, the Flyer on wave 50 —
+ * and nothing else; every other wave
  * spends the wave's budget on enemies
  * that are unlocked (fromWave) and
  * affordable, groups of the same type come in quick succession, and ramping enemies are reserved

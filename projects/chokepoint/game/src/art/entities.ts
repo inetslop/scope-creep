@@ -14,6 +14,13 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
     const depth = tokenDepth(r);
     const size = tokenRoom(r, depth) * 2;
     paintTexture(scene, enemyTexture(e.id), size, size, (ctx) => {
+      if (e.behavior === 'fly') {
+        // The boss Flyer's triangle: flat (no side face, no shadow), so the token may turn with its flight.
+        shapePath(ctx, e.look.shape, size / 2, size / 2, r);
+        ctx.fillStyle = rgba(PALETTE[e.look.color], 1);
+        ctx.fill();
+        return;
+      }
       if (e.look.shape === 'wings') {
         // The Flyer's wings: flat (no side face, no shadow), so the token may turn with its flight.
         shapePath(ctx, 'wings', size / 2, size / 2, r);
