@@ -1,12 +1,14 @@
 ---
 id: T0408
 title: "The claim's bed: a quiet beat under the rewards card"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T05:22:32Z
+claimed_at: 2026-11-02T06:31:51Z
 ---
 
 ## Goal
