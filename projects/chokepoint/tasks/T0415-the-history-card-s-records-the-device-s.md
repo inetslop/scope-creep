@@ -3,11 +3,13 @@ id: T0415
 title: "The history card's records: the device's best marks, at the card's foot"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0410]
 attempts: 0
 created: 2026-11-02T09:13:56Z
+claimed_at: 2026-11-02T09:52:20Z
 epic: E18
+designer: cachyos-x8664
 ---
 
 ## Goal
