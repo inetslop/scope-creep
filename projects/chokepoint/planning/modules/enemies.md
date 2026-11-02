@@ -27,11 +27,12 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-17 in the game, from game/src/content/enemies/ (the real values).
+18 in the game, from game/src/content/enemies/ (the real values).
 
 **By `behavior`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
 - `dash`: Dasher
+- `fly`: Flyer
 - `walk`: Dot, Block, Colossus, Guard, Titan, Orb, Hive, Shard, Sprinter, Splitter, Hauler, Mute, Flyer, Ward, Bulwark, Splinter
 
 ### Dot (`dot`)
@@ -131,6 +132,19 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - fromWave: 30
 - spawnOnly: true
 - look: shape hexagon, color purple, size 0.2
+
+### Flyer (`crosser`)
+- description: "The whole wave in one shape: it crosses the island in a straight line — cover the line, not the road."
+- behavior: fly
+- hp: 720
+- speed: 0.7
+- gold: 20
+- livesCost: 1
+- threat: 250
+- fromWave: 50
+- spawnOnly: true
+- bank: hpFrac 0.5, previewSec 0.8
+- look: shape triangle, color red, size 0.5
 
 ### Dasher (`dasher`)
 - description: "Crawls, stops to wind up, then dashes: catch it mid-stop."
