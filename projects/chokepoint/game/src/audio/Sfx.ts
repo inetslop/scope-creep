@@ -275,6 +275,11 @@ export class Sfx {
     this.tone(fast ? 784 : 659, 0.06, 'sine', 0.1);
   }
 
+  /** The move commits: one D5 (587 Hz), 60 ms, the speed-blip's quiet class. */
+  moveBlip(): void {
+    this.tone(587, 0.06, 'sine', 0.1);
+  }
+
   /** The ×10 kill-chain milestone: a soft two-note rise, E5 then G5, 90 ms apart, the tier-chime's quiet volume. */
   comboChime(): void {
     this.tone(659, 0.08, 'sine', 0.1);

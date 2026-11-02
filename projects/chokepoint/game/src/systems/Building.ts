@@ -245,6 +245,7 @@ export class Building {
     const old = tower.cell;
     const oldC = this.board.centerOf(old);
     moveChip(this.fx, oldC.x, oldC.y - 20, fee); // the sell's gold-pop language, a minus: the fee pops at the old cell
+    this.sfx?.moveBlip();
     this.board.clearMoveOutlines();
     this.board.place(cell, tower);
     this.board.place(old, undefined);

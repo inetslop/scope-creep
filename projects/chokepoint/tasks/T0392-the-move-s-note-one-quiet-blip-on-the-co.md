@@ -4,11 +4,12 @@ title: "The move's note: one quiet blip on the commit"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0394]
 attempts: 1
 created: 2026-11-02T00:02:34Z
 claimed_at: 2026-11-02T07:42:05Z
+finished_at: 2026-11-02T07:50:32Z
 epic: E15
 ---
 
@@ -57,3 +58,16 @@ One call site, exact line: `this.sfx?.moveBlip();`
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+The move's commit now plays a quiet blip: added `moveBlip()` (one D5, 587 Hz, 60 ms sine, volume 0.1 — the speed-blip's own quiet class) to `src/audio/Sfx.ts` directly after `speedBlip()`, and one call site, `this.sfx?.moveBlip();`, in `Building.commitMove()` right where the fee is spent, the −N chip pops at the old cell and the ~300 ms slide starts — the single flip-point pattern `WaveSpeed.toggle()` used. Cancelling the move (✗, tap elsewhere) and a failed commit (gold short, no free cell) play nothing new; with sound off the commit is silent; no key, button or HUD element changed. `npm run check` and the desktop + mobile smoke pass.
+
+- Self-review: APPROVE
+- Time: 8.5 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts        | 5 +++++
+ projects/chokepoint/game/src/systems/Building.ts | 1 +
+ 2 files changed, 6 insertions(+)
+```
