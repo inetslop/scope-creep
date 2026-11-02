@@ -3,10 +3,12 @@ id: T0421
 title: "Chill: the augment that stacks the slow"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T11:43:00Z
+claimed_at: 2026-11-02T12:03:47Z
+designer: desktop
 ---
 
 ## Goal
