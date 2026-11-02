@@ -3,11 +3,13 @@ id: T0427
 title: "The first pass: the run's first leak costs no life"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T14:32:01Z
+claimed_at: 2026-11-02T14:52:42Z
 epic: E20
+designer: inet-racing
 ---
 
 ## Goal
