@@ -4,11 +4,12 @@ title: "The preview's tag chip sits on its own line"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T11:43:00Z
 claimed_at: 2026-11-02T12:05:48Z
+finished_at: 2026-11-02T12:15:39Z
 ---
 
 ## Goal
@@ -83,3 +84,15 @@ Everything else (the `counts.forEach` row, `fitScale()`, `place()`, pop-in tween
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+The next-wave preview's tag chip (quiet, tight, rush, boss) now sits on its own centered line directly under the token row, above the card's muted lines, instead of at the token row's left edge — so it reads as the wave's label rather than crowding the first token. The chip's look is unchanged (tag fill, 11 px bold label, label.width+14 × 18 rounded rect); the tagged card grows 22 px (18 px line + 4 px gap) and untagged cards are byte-identical. Change is confined to `src/ui/hud/NextWavePreview.ts`: two new layout constants (`CHIP_H`, `CHIP_GAP`) and `build()` internals — the chip no longer reserves row space and is centered like the muted lines below it.
+
+- Self-review: APPROVE
+- Time: 9.9 min
+
+```
+.../chokepoint/game/src/ui/hud/NextWavePreview.ts  | 27 +++++++++++++---------
+ 1 file changed, 16 insertions(+), 11 deletions(-)
+```

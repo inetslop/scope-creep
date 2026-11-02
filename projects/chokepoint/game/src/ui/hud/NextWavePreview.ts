@@ -15,6 +15,8 @@ import { EDGE, isNarrow, NEXT_SIZE, type HudPart } from './hud';
 const LINE_H = 20;
 const ROW_GAP = 6;
 const TEACH_H = 18;
+const CHIP_H = 18;
+const CHIP_GAP = 4;
 const PAD = 16;
 const GROUP_GAP = 8;
 
@@ -124,15 +126,16 @@ export class NextWavePreview implements HudPart {
     const countsPieces: (Phaser.GameObjects.Image | Phaser.GameObjects.Text | Phaser.GameObjects.Container)[] = [];
     let cursor = 0;
     const tag = plan.tags[0];
+    let chip: Phaser.GameObjects.Container | undefined;
+    let chipW = 0;
     if (tag) {
-      // The tag's own chip at the card's left edge, in its own muted color (never the red leak warning).
+      // The tag's own chip, in its own muted color (never the red leak warning), on its own line under the row.
       const label = scene.add.text(0, 0, tag, textStyle(11, PALETTE.card, { fontStyle: 'bold' })).setOrigin(0.5);
-      const chipW = Math.ceil(label.width) + 14;
-      const chip = scene.add.graphics();
-      chip.fillStyle(tagChip(tag), 1);
-      chip.fillRoundedRect(-chipW / 2, -9, chipW, 18, 9);
-      countsPieces.push(scene.add.container(chipW / 2, 0, [chip, label])); // its left edge sits on the card's content edge
-      cursor += chipW + GROUP_GAP;
+      chipW = Math.ceil(label.width) + 14;
+      const chipBg = scene.add.graphics();
+      chipBg.fillStyle(tagChip(tag), 1);
+      chipBg.fillRoundedRect(-chipW / 2, -9, chipW, 18, 9);
+      chip = scene.add.container(0, 0, [chipBg, label]);
     }
     counts.forEach((c, i) => {
       if (i > 0) {
@@ -154,14 +157,16 @@ export class NextWavePreview implements HudPart {
     const lines: Phaser.GameObjects.Text[] = [];
     if (farLine) lines.push(scene.add.text(0, 0, farLine, textStyle(14, PALETTE.muted)).setOrigin(0.5));
     for (const line of teach) lines.push(scene.add.text(0, 0, line, textStyle(14, PALETTE.muted)).setOrigin(0.5));
-    this.cardW = Math.max(countsW, ...lines.map((t) => Math.ceil(t.width))) + PAD * 2;
-    this.cardH = LINE_H + lines.length * (ROW_GAP + TEACH_H) + PAD * 2;
+    this.cardW = Math.max(countsW, chipW, ...lines.map((t) => Math.ceil(t.width))) + PAD * 2;
+    const chipRow = chip ? CHIP_GAP + CHIP_H : 0;
+    this.cardH = LINE_H + chipRow + lines.length * (ROW_GAP + TEACH_H) + PAD * 2;
     const contentH = this.cardH - PAD * 2;
     const left = -this.cardW / 2 + PAD;
     for (const p of countsPieces) { p.x += left; p.y += -contentH / 2 + LINE_H / 2; }
-    let ly = -contentH / 2 + LINE_H + ROW_GAP + TEACH_H / 2;
+    if (chip) chip.setPosition(0, -contentH / 2 + LINE_H + CHIP_GAP + CHIP_H / 2); // centered, like the lines below it
+    let ly = -contentH / 2 + LINE_H + chipRow + ROW_GAP + TEACH_H / 2;
     for (const t of lines) { t.setPosition(0, ly); ly += ROW_GAP + TEACH_H; }
-    const pieces: Phaser.GameObjects.GameObject[] = [...countsPieces, ...lines];
+    const pieces: Phaser.GameObjects.GameObject[] = [...countsPieces, ...(chip ? [chip] : []), ...lines];
     pieces.unshift(makeCard(scene, 0, 0, this.cardW, this.cardH, this.cardH / 2)); // pill, like before
     return scene.add.container(0, 0, pieces);
   }
