@@ -97,9 +97,16 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Goal:** the menu shows the last four runs at a glance; a history card lists the last twelve, so the whole climb is one tap away and the trend the last-four line hints at is readable.
 **When done:** the menu has a History button in the Tech/How row; its card lists the last twelve runs, most recent first — wave, coins, a muted "iron" mark on Iron runs, the yellow star on the best-wave run — and the profile card's last-four line has moved into it (one in, one out), the card keeping its coins, best wave and runs · avg wave line.
 **Breakdown:**
-- the history card: the menu's History button and its card (the last twelve runs, most recent first, with the iron mark and the best star), the profile card's last-four line moved into it, the profile storing twelve runs — **tasked as T0410 (M, in the pool)**
-- the records block: a muted "Records" line at the card's foot — best combo ×N, longest clean streak, most clean waves in one run (the run ledger's own values) — **task when T0410 lands (the card's files are busy while it builds)**
+- the history card: the menu's History button and its card (the last twelve runs, most recent first, with the iron mark and the best star), the profile card's last-four line moved into it, the profile storing twelve runs — **done as T0410 (M, 2026-11-02, inet-racing)**
+- the records block: a muted "Records" line at the card's foot — best combo ×N, longest clean streak, most clean waves in one run (the run ledger's own values) — **tasked as T0415 (M, in the pool)**
 - the storm's rows: a storm run's row wears a muted "storm" mark (the iron mark's own language) — **waits on T0403 (E17); task when it lands**
+
+### E19 — The island remembers: the ground keeps the fight's marks (active — opened 2026-11-02)
+**Goal:** the board shows where the run's fight happened: a cell that has seen enough kills keeps a small mark, and a tower built there is a little stronger — the next placement reads the run's own history, and the fight's hot spots become an advantage.
+**When done:** a build cell where 12+ enemies died this run keeps a small dark chip on the ground for the rest of the run, a tower built on it deals 5% more damage, and the run's first scorch says what the mark means once.
+**Breakdown:**
+- the scorch cell: the per-cell kill count, the chip at 12 kills, the +5% on a tower built there, the first-scorch teach, the run save — **tasked as T0414 (M, in the pool)**
+- the deep scorch: a cell at 24+ kills burns deeper — a thin second ring on the chip and +10% instead of +5% for a tower built there (the build-time read, the scorch's own rule) — **task when T0414 lands**
 
 ## Enemy queue (non-epic)
 
