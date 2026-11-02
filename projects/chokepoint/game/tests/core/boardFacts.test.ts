@@ -10,8 +10,8 @@ import { BOARD_NODES } from '../../src/content/tech/board';
 import { WAVE_NODES } from '../../src/content/tech/wave';
 
 describe('the board facts', () => {
-  it('lists the ten modifiers in order, each with its mark key', () => {
-    expect(BOARD_FACTS.map((r) => r.mark)).toEqual(['choke', 'bend', 'longway', 'twochokes', 'switchback', 'fargate', 'fork', 'loop', 'cove', 'markedcell']);
+  it('lists the eleven modifiers in order, each with its mark key', () => {
+    expect(BOARD_FACTS.map((r) => r.mark)).toEqual(['choke', 'bend', 'longway', 'twochokes', 'switchback', 'fargate', 'fork', 'loop', 'cove', 'twin', 'markedcell']);
   });
 
   it('the tech tags point at the tech tree\'s own node ids, read from its data', () => {
@@ -83,6 +83,7 @@ describe('the boards reference\'s per-row seeds', () => {
         case 'fork': expect(m.fork).toBeDefined(); break;
         case 'loop': expect(m.loop).toBeDefined(); break;
         case 'cove': expect(m.cove).toBeDefined(); break;
+        case 'twin': expect(m.twin).toBeDefined(); break;
         case 'markedcell': {
           const s = BOARD_FACT_SEEDS.markedcell!;
           const c = markedCell(m, s.seed);

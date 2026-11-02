@@ -58,6 +58,11 @@ export function paintBoardFactMark(g: Phaser.GameObjects.Graphics, mark: BoardFa
       road(g, -3, -9, -3, 2);
       road(g, -3, 2, 8, 2);
       break;
+    case 'twin': // the road's straight, a cell on each side in mirror position
+      road(g, 0, -10, 0, 10);
+      g.fillRoundedRect(-9, -3, 6, 6, 2);
+      g.fillRoundedRect(3, -3, 6, 6, 2);
+      break;
     case 'markedcell': // a build cell with a small dot on it
       g.fillRoundedRect(-5, -5, 10, 10, 3);
       g.fillStyle(PALETTE.card, 1);

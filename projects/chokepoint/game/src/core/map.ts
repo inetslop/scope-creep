@@ -4,6 +4,7 @@ import { farGateCell } from './farGate';
 import { placeFork, type Fork } from './fork';
 import { boardHasLoop, placeLoop, type Loop } from './loop';
 import { foldSwitchback } from './switchback';
+import { boardHasTwin, placeTwin, type Twin } from './twin';
 import type { Rng } from './rng';
 
 export interface Cell {
@@ -29,6 +30,8 @@ export interface GameMap {
   loop?: Loop;
   /** The cove (core/cove.ts): a bay scooped into the island's edge beside a road curve, a pocket of three build cells facing it, on about one board in six (never with the fork or the loop). */
   cove?: Cove;
+  /** The twin (core/twin.ts): a mirror pair of ordinary build cells at the midpoint of the road's longest straight stretch, one on each side in mirror position, on about one board in four (never with the fork or the loop). */
+  twin?: Twin;
   /** True when the path runs top to bottom (portrait boards), false for left to right. */
   vertical: boolean;
 }
@@ -50,7 +53,10 @@ export interface GameMap {
  * so a board without it is that seed's exact board as grown, and a gen-1 or switchback board
  * never loops. One board in six also carries the cove (core/cove.ts): a bay in the island's edge
  * beside a road curve, the road unchanged; never on a loop or fork board, and rng-free like the
- * loop, so a board without it is that seed's exact board.
+ * loop, so a board without it is that seed's exact board. One board in four also carries the
+ * twin (core/twin.ts): the two cells at the midpoint of the road's longest straight stretch,
+ * one on each side in mirror position — metadata only, never on a loop or fork board, and
+ * rng-free like the loop.
  */
 export function generateMap(rng: Rng, cols: number, rows: number, rocks: number, extraBends = 0, lengthMul = 1, bgen = 2, chokes = 1, fold = false, farGate = false, seed?: number): GameMap {
   const vertical = rows > cols;
@@ -122,7 +128,13 @@ export function generateMap(rng: Rng, cols: number, rows: number, rocks: number,
   // board without it is today's exact board. It never shares a board with the fork's or the loop's silhouette.
   const base = looped ?? forked ?? result;
   const coved = seed === undefined || bgen < 2 || looped !== undefined || forked !== undefined ? undefined : boardHasCove(seed) ? placeCove(base) : undefined;
-  return { ...(coved ?? base), farGate: gate };
+  // The twin (core/twin.ts): one board in four (the seed's own hash, never the rng) carries the two
+  // ordinary build cells at the midpoint of the road's longest straight, one on each side in mirror
+  // position — metadata only, the cells stay open, so a board without it is today's exact board;
+  // never on a loop or fork board (the cove's own rule).
+  const final = coved ?? base;
+  const twinned = seed === undefined || bgen < 2 || looped !== undefined || forked !== undefined ? final : boardHasTwin(seed) ? (placeTwin(final) ?? final) : final;
+  return { ...twinned, farGate: gate };
 }
 
 /** 1 when the road's second cell is the entrance jog (not one step along the entrance axis), else 0. */

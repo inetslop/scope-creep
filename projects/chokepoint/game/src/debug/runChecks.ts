@@ -65,6 +65,15 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
     for (const c of cove.cells) if (g.board.map.kinds[c.row]![c.col] !== 'open') return `a cove pocket cell is not buildable at (${c.col}, ${c.row})`;
     return null;
   }],
+  ['board.twin', (g) => {
+    const twin = g.board.map.twin;
+    if (!twin) return null;
+    if (g.board.map.fork || g.board.map.loop) return 'a twin shares the board with the fork or the loop';
+    for (const c of [twin.a, twin.b]) if (g.board.map.kinds[c.row]![c.col] !== 'open') return `a twin cell is not buildable at (${c.col}, ${c.row})`;
+    const mid = { col: (twin.a.col + twin.b.col) / 2, row: (twin.a.row + twin.b.row) / 2 };
+    if (g.board.map.kinds[mid.row]![mid.col] !== 'path') return `the twin's midpoint is not road`;
+    return null;
+  }],
   ['resume.taken', (g) => (g.registry.get('resumeRun') ? 'a saved run is waiting for the game that never took it' : null)],
   ['ghost.taken', (g) => (g.registry.get('ghostSeed') ? 'a ghost seed is waiting for the game that never took it' : null)],
   ['iron.taken', (g) => (g.registry.get('ironMode') ? 'an iron flag is waiting for the game that never took it' : null)],

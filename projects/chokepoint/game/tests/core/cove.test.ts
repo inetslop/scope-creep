@@ -69,8 +69,8 @@ describe('the cove', () => {
         expect(map).toEqual(generateMap(new Rng(seed), cols, rows, 5, 0, 1, 2, 1, false, false, seed));
         if (!map.cove) {
           // A board without the cove is today's exact board: when it does not loop (the loop would
-          // change the fork's roll), it is the same board the seed grows without a seed.
-          if (!map.loop) expect(map).toEqual(generateMap(new Rng(seed), cols, rows, 5));
+          // change the fork's roll) or twin, it is the same board the seed grows without a seed.
+          if (!map.loop && !map.twin) expect(map).toEqual(generateMap(new Rng(seed), cols, rows, 5));
           continue;
         }
         coved++;

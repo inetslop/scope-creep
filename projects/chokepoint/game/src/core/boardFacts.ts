@@ -12,7 +12,7 @@ import { Rng } from './rng';
  * sibling references. Pure: read once from the live profile, no state.
  */
 
-export type BoardFactMark = 'choke' | 'bend' | 'longway' | 'twochokes' | 'switchback' | 'fargate' | 'fork' | 'loop' | 'cove' | 'markedcell';
+export type BoardFactMark = 'choke' | 'bend' | 'longway' | 'twochokes' | 'switchback' | 'fargate' | 'fork' | 'loop' | 'cove' | 'twin' | 'markedcell';
 export type BoardFactTag = { kind: 'always' } | { kind: 'some' } | { kind: 'tech'; node: string } | { kind: 'someTech'; node: string };
 export interface BoardFactRow {
   mark: BoardFactMark;
@@ -31,6 +31,7 @@ export const BOARD_FACTS: readonly BoardFactRow[] = [
   { mark: 'fork', name: 'The fork', meaning: 'the road splits into two lanes and rejoins', tag: { kind: 'some' } },
   { mark: 'loop', name: 'The loop', meaning: 'the road circles the island once; the cells inside cover the most road', tag: { kind: 'some' } },
   { mark: 'cove', name: 'The cove', meaning: "a bay in the island's edge beside a curve; the pocket's cells cover it from both sides", tag: { kind: 'some' } },
+  { mark: 'twin', name: 'The twin', meaning: 'a mirror pair of cells on the longest straight', tag: { kind: 'some' } },
   { mark: 'markedcell', name: 'The marked cell', meaning: 'one build cell that makes its tower stronger', tag: { kind: 'some' } },
 ];
 
@@ -55,6 +56,7 @@ export const BOARD_FACT_SEEDS: Partial<Record<BoardFactMark, BoardFactSeed>> = {
   fork: { seed: 6 },
   loop: { seed: 7 },
   cove: { seed: 13 },
+  twin: { seed: 11 },
   markedcell: { seed: 9 },
 };
 

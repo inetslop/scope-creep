@@ -4,11 +4,12 @@ title: "The twin: the board's mirror pair of build cells"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T15:49:41Z
 claimed_at: 2026-11-02T16:26:01Z
+finished_at: 2026-11-02T16:49:00Z
 ---
 
 ## Goal
@@ -108,3 +109,26 @@ Invariant (after the `board.cove` entry in `INVARIANTS`): `['board.twin', (g) =>
 ### Tests
 - `tests/core/twin.test.ts` as specified in Step 3 (shape, frequency, hash rate, determinism, no-hash, two hand-built placement cases).
 - `tests/core/boardFacts.test.ts`: updated order + the twin row's committed seed verified by the existing "carries the row's modifier" test.
+
+## Result (attempt 1, desktop)
+
+Added "The twin" (T0430): about one board in four now carries a mirror pair of ordinary build cells at the midpoint of the road's longest straight stretch — new pure module src/core/twin.ts (seed-hash decision + placement, wired into generateMap in src/core/map.ts behind the cove's own exclusivity guard), a fact row + committed seed 11 in src/core/boardFacts.ts, its mark in src/ui/boardFactMarks.ts, a board.twin invariant in src/debug/runChecks.ts, and unit tests in tests/core/twin.test.ts (shape, ~1-in-4 frequency, hash rate, determinism, no-hash, two hand-built placement cases) plus the cove/loop/boardFacts test updates. One deviation from the design: the spec's hash salt `twin:${seed}` is bit-identical to the loop's `loop:${seed}` mod 4 (FNV's low two bits), which would make every twin board a loop-rolled board; the salt is `twins:${seed}` instead, making the roll provably exclusive of the loop (0 overlap over 20000 seeds, realized 886/4000 ≈ 0.22). Verified: npm run check and npm run smoke both pass.
+
+- Self-review: NO VERDICT
+- Time: 23.0 min
+- Deleted tests/core/zz-twin-seed-scratch.test.ts, as the agent asked.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/boardFacts.ts    |   4 +-
+ projects/chokepoint/game/src/core/map.ts           |  16 ++-
+ projects/chokepoint/game/src/core/twin.ts          |  47 +++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |   9 ++
+ projects/chokepoint/game/src/ui/boardFactMarks.ts  |   5 +
+ .../game/tests/core/_probe_twin_review.test.ts     |   5 +
+ .../chokepoint/game/tests/core/boardFacts.test.ts  |   5 +-
+ projects/chokepoint/game/tests/core/cove.test.ts   |   4 +-
+ projects/chokepoint/game/tests/core/loop.test.ts   |   6 +-
+ projects/chokepoint/game/tests/core/twin.test.ts   | 140 +++++++++++++++++++++
+ 10 files changed, 231 insertions(+), 10 deletions(-)
+```
