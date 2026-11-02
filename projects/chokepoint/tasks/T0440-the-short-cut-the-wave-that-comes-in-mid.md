@@ -3,10 +3,12 @@ id: T0440
 title: "The short cut: the wave that comes in mid-road"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T19:42:29Z
+claimed_at: 2026-11-02T20:03:21Z
+designer: cachyos-x8664
 ---
 
 ## Goal
