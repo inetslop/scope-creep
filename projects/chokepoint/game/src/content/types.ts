@@ -50,9 +50,10 @@ export interface EnemyDef {
   outOfReach?: { hpFrac: number; telegraphSec: number; phaseSec: number; periodSec: number };
   /**
    * The bank (the boss Flyer): when its hp first drops to `hpFrac` of its max, its remaining route
-   * becomes two straight segments — from its position to a seeded bank point on the island's edge,
-   * then to the exit — previewed as its flight line for `previewSec` (core/flyRoute.ts,
-   * systems/enemyHooks/flyLine.ts). It banks on its hp clock even while rooted.
+   * becomes two straight segments — from its position to the edge bank point the board read at that
+   * moment (the candidate its standing towers cover least, the seeded point as fallback and
+   * tie-break, core/bankChoice.ts), then to the exit — previewed as its flight line for `previewSec`
+   * (core/flyRoute.ts, systems/enemyHooks/flyLine.ts). It banks on its hp clock even while rooted.
    */
   bank?: { hpFrac: number; previewSec: number };
   /** Gold for killing it. */

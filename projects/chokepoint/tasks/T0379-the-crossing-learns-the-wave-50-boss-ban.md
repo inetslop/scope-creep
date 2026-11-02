@@ -4,11 +4,12 @@ title: "The crossing learns: the wave-50 boss banks into the uncovered ground"
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: [T0317]
 attempts: 1
 created: 2026-11-01T21:18:04Z
 claimed_at: 2026-11-02T01:41:57Z
+finished_at: 2026-11-02T01:59:17Z
 epic: E10
 ---
 
@@ -84,3 +85,21 @@ Algorithm (fixed, in the file):
 - Covered top / bare bottom: towers `{ x: (2+k)*CELL, y: 1.5*CELL, range: 3*CELL }` for k = 0..10 → chosen is the bare side: `chosen.y >= 6*CELL` and `bankScore(chosen) >= bankScore(c)` for every candidate `c`.
 - Total coverage (one tower `range: 20*CELL` at center) → every score 0, tie → `toEqual(seeded)` (pins the tie-break).
 - Determinism: the same inputs twice → `toEqual`; the towers array in a different order → same point (the score counts, it never depends on tower order).
+
+## Result (attempt 1, desktop)
+
+The wave-50 Flyer's bank now reads the board at the bank moment instead of using T0317's fixed seeded point: a new pure core function (src/core/bankChoice.ts) scores 9+1 candidate points on the edge nearest the seeded point by the fraction of their two-segment line that lies outside every standing tower's effective range, and the flyLine hook takes the least-covered one over the route's bank point exactly once at 50% hp — so the 0.8 s preview, falling tone and turn are unchanged, builds concentrated on one line lose contact where they built, and with no towers (or a tie) the bank is byte-identical to the old seeded point. Unit tests pin the choice on a fixture board (no towers → seeded, wide center ring → the line that avoids it, covered/bare sides → the bare side, total coverage → seeded tie-break, deterministic regardless of tower order); npm run check and the desktop/mobile smoke pass.
+
+- Self-review: APPROVE
+- Time: 17.3 min
+- Deleted tests/core/__t0379_probe.test.ts, as the agent asked.
+- Deleted tests/core/__t0379_probe.json, as the agent asked.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/content/types.ts      |  7 +-
+ projects/chokepoint/game/src/core/bankChoice.ts    | 79 ++++++++++++++++++++++
+ .../game/src/systems/enemyHooks/flyLine.ts         | 30 ++++++--
+ .../chokepoint/game/tests/core/bankChoice.test.ts  | 66 ++++++++++++++++++
+ 4 files changed, 174 insertions(+), 8 deletions(-)
+```
