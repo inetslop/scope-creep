@@ -3,10 +3,12 @@ id: T0418
 title: "The preview wears the next wave's tag"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T10:34:56Z
+claimed_at: 2026-11-02T10:35:23Z
+designer: yoga
 ---
 
 ## Goal
