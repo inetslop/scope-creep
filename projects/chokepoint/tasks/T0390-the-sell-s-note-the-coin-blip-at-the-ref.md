@@ -3,10 +3,12 @@ id: T0390
 title: "The sell's note: the coin blip at the refund (the T0378 re-file)"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-01T23:40:10Z
+claimed_at: 2026-11-02T00:00:31Z
+designer: desktop-4070
 ---
 
 ## Goal
