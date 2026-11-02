@@ -3,12 +3,13 @@ id: T0454
 title: "The combo bar wears the live window: the Feast's +0.4 s on the drain"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-02T23:41:13Z
 claimed_at: 2026-11-02T23:42:02Z
-designer: yoga
+finished_at: 2026-11-02T23:48:23Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -25,3 +26,7 @@ The drain bar under the ×N kill-combo counter drains over the chain's live wind
 - [ ] With N Feast copies in the run, the bar drains over 1.5 + 0.4×N seconds and empties the moment the chain can no longer extend (the break moment).
 - [ ] The bar's look, the counter, the ×10 milestone and the combo gold are unchanged; no new readout, mark or sound.
 - [ ] `npm run check` and the desktop + mobile smoke pass.
+
+## Rejected by architect (yoga)
+
+already exists — the bar (src/systems/ComboBar.ts:35) already drains over `fx.comboWindowMs`, the one field the chain break reads too (EnemySystem.kill() sets it to `feastChainWindowMs(feastCopies())` per kill, FxSystem.killCount breaks against it at lines 138/162), so with no Feast it drains 1.5 s and with N Feasts over 1.5 s + 0.4 s per extra copy — the T0442 re-file has nothing to change.
