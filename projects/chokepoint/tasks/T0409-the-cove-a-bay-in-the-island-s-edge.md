@@ -3,10 +3,12 @@ id: T0409
 title: "The cove: a bay in the island's edge"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T06:19:02Z
+claimed_at: 2026-11-02T07:17:27Z
+designer: desktop
 ---
 
 ## Goal
