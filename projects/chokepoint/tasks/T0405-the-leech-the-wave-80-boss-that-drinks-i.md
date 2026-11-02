@@ -1,12 +1,14 @@
 ---
 id: T0405
 title: "The Leech: the wave-80 boss that drinks its escorts"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T05:03:59Z
+claimed_at: 2026-11-02T13:27:39Z
 ---
 
 ## Goal
