@@ -1,12 +1,14 @@
 ---
 id: T0437
 title: "The Block's leak chip reads the live rule"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T18:33:27Z
+claimed_at: 2026-11-02T19:00:32Z
 ---
 
 ## Goal
