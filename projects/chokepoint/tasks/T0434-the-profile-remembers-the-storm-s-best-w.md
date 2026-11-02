@@ -3,11 +3,13 @@ id: T0434
 title: "The profile remembers the storm's best wave"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0403]
 attempts: 0
 created: 2026-11-02T16:14:55Z
+claimed_at: 2026-11-02T16:22:04Z
 epic: E17
+designer: yoga
 ---
 
 ## Goal
