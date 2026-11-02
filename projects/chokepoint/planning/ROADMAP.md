@@ -24,13 +24,11 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 ### E4 — Augment rarity (fully tasked 2026-10-31 — closing on the pool's landings)
 **Goal:** the draft is exciting: sometimes a card is something special.
 **When done:** every augment card in the draft comes in a rarity: Common, Rare or Epic. A rarer card is the same augment with stronger numbers (a Rare Rapid attacks faster than a Common one), and a few rule-changing augments only ever come as Epic. Rarity shows everywhere the augment does: the card's frame and a small gem row on the draft, hand and tower-panel cards, and on the tower itself (its slot pip). Rarer cards turn up more often the further the run gets; the odds are shown in the draft.
-**Breakdown:** everything landed — the rarity (T0002), the augments (Lance T0004, Mark T0012, Rally T0020, Mint T0021, Anchor T0023, Push T0027, Ember T0028, Beam T0073, Spray T0101, Haste T0152, Toll T0234), the card, hand, panel and tower reads, the odds shift (T0011), the rerolls (T0036, T0276), the codex (T0221) and the beam-combo web (T0130, T0210, T0242, T0132) — except the pool's registrations: T0062 (M) Trap · T0064 (L) Momentum · T0095 (L) Mend, one at a time in claim order (T0235 (L) Feast landed 2026-11-02, Frost out of the index with its registration) (T0025 (L) Chain failed and its file is gone — dropped, no re-file; T0150, its leap re-tune, dies with it — file closed by the PO 2026-11-01); behind them T0248 (S, the codex lock, waits on T0062 and T0095). T0298 (Wildcard) is out of the pool (its file is gone) — done as T0439 (L, non-epic, 2026-11-02, desktop).
+**Breakdown:** everything landed (the rarity T0002, the augments, the card/hand/panel/tower reads, the odds shift T0011, the rerolls, the codex T0221, the beam-combo web) except the pool's registrations — T0062 (M) Trap · T0064 (L) Momentum · T0095 (L) Mend, one at a time in claim order; behind them T0248 (S, the codex lock, waits on T0062 and T0095). Chain (T0025) failed, its re-tune T0150 died with it — dropped; the wildcard (T0298) landed as T0439 (2026-11-02).
 
-**E4 closes when T0062, T0064, T0095 and T0248 land — every E4 task is written (Feast landed 2026-11-02; Chain and its re-tune dropped with T0025's failure); it counts as finished while the pool lands.**
+**E4 closes when T0062, T0064, T0095 and T0248 land; every E4 task is written, so it counts as finished while the pool lands.**
 
-**16-cap (protocol):** the three queued registrations (T0062, T0064, T0095) land exactly three more removals (Frost is out, removed with Feast's registration): after registering, if the pool is over 16, remove the first still in the index of **Rally, then Mint, then Mark**, and say which in the result (the canonical statement is in T0064's task; Anchor is out of reach at three more). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
-**16-cap (fifth removal):** the fifth is **Anchor**, carried outside E4 by T0361 (Herd's registration, non-epic, 2026-11-01) — order-independent with the four (none of them names Anchor). After all five land the index is: Beam, Bolt, Ember, Haste, Lance, Mend, Momentum, Push, Rapid, Reach, Splash, Spray, Toll, Trap, Feast, Herd.
-**16-cap (sixth removal):** the sixth is **Toll**, carried outside E4 by the Chill registration (T0421 re-file pending, 2026-11-02 — non-epic) — order-independent with the five (none of them names Toll). After all six land the index is: Beam, Bolt, Chill, Ember, Haste, Lance, Mend, Momentum, Push, Rapid, Reach, Splash, Spray, Trap, Feast, Herd.
+**16-cap (removals):** the registrations land one at a time, each retiring one — E4's three retire **Rally, then Mint, then Mark** (the canonical statement is in T0064's task), then **Anchor** (T0361's Herd, non-epic) and **Toll** (the Chill re-file, non-epic), order-independent across the five. After all six land the index is: Beam, Bolt, Chill, Ember, Haste, Lance, Mend, Momentum, Push, Rapid, Reach, Splash, Spray, Trap, Feast, Herd. The draft floor (T0048), the beam-combo web (T0210, T0242) and the gated Haste (T0152) never leave the index.
 
 ### E5 — Bosses: every 10th wave is something you remember (done; history in planning/archive/ROADMAP.md)
 
@@ -55,14 +53,14 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Goal:** the tech tree has covered the run start, the board, the pool and the payout — but not the wave itself: a fifth branch lets between-run coins buy how a run plays.
 **When done:** the tree's "The wave" branch has three nodes, each bought once and on for every run after: The door (the far gate on every board), The thin road (every enemy 10% slower) and The breather (quiet waves pay double the wave bonus).
 **Breakdown:**
-- the branch and its first node, The door: the tech screen's fifth branch plus a 30-coin node that puts the far gate (T0338) on every board — **done as T0358 (M, 2026-11-01, desktop)** (the demo clause is out: the demo's own gate is parked in IDEAS)
+- the branch and its first node, The door: the tech screen's fifth branch plus a 30-coin node that puts the far gate (T0338) on every board — **done as T0358 (2026-11-01)**
 - The thin road: 85 coins by the depth rule, every enemy 10% slower — **done as T0369 (M, 2026-11-02, asus)**
 - The breather: 155 coins by the depth rule, quiet waves pay 2× the wave bonus — **tasked as T0370 (S, in the pool)** (no buy-gate inside the branch: each node buys independently at its depth price)
 - The door's teach: the run's first far-gate send says what the gate is — a one-time chip at the gate (the send ring's moment, T0360), once per run — **done as T0384 (S, 2026-11-01, yoga)**
 
 #### E15 — The move: a misplaced tower goes where it should (active — fully tasked 2026-11-02, closing on the pool's landings)
 **Goal:** a misplaced tower is not permanent, and it doesn't have to be sold: in the build phase a tower can move to a free build cell for a fee, keeping its augments and kills — repositioning against the wave preview is a real decision with a price, not a free reposition or a sell-and-rebuild.
-**When done:** the tower panel wears a "Move · −N" line (N = 60% of its slots' cost, floored, minimum 5, the sell's own rule); tapping it opens the move state — the tower dims, the free build cells outline, and the what-if's range ring shows at the tapped cell with the placement's own ✓/✗ — and ✓ slides the tower over in ~300 ms and pays the fee (the −N chip at the old cell, the drop-in bounce, the place haptic); one move per tower per build phase, the line reading "moved" until the next; a tap elsewhere cancels.
+**When done:** the tower panel's "Move · −N" line (N = 60% of slot cost, floored, minimum 5): tap it, the tower dims, the free cells outline with the what-if's range ring, ✓ slides it over in ~300 ms and pays the fee; one move per tower per build phase, the line reading "moved" until the next.
 **Breakdown:**
 - the move itself, the core: the panel line, the move state, the slide, the fee, the cancel — **done as T0394 (M, 2026-11-02, asus)**
 - the move's limit and its teach: one move per tower per build phase (the line reads "moved" until the next build phase) and the one-time teach line — **tasked as T0443 (M, 2026-11-02, waits on T0389)**
@@ -79,7 +77,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E17 — The storm: a third mode off the menu (active — fully tasked 2026-11-02, closing on the pool's landings)
 **Goal:** the menu has Play and Iron; a third card, Storm, sells tempo for in-run gold — every wave rushes and pays double the wave bonus: a run that plays faster and richer, not harder, and not richer between runs.
-**When done:** the menu offers a Storm card in the Iron card's language; a storm run has no quiet waves, every non-boss wave rushes (walkers 1.5×, the chip on the banner and the preview) and every wave pays 2× the wave bonus gold; boss waves keep the boss's own pace; normal and Iron runs are byte-identical; the claim card says "Storm".
+**When done:** the menu's Storm card (the Iron card's language): a storm run has no quiet waves, every non-boss wave rushes (1.5×, the chip), every wave pays 2× the bonus gold, bosses keep their pace; normal and Iron runs are byte-identical; the claim says "Storm".
 **Breakdown:**
 - the mode and its menu card: the Storm card under Iron, the mode flag (save/resume keeps it), the wave rules (no quiet, rush on every non-boss wave, the bonus ×2) and the claim's "Storm" line — **tasked as T0403 (L, in the pool)**
 - the profile remembers the storm's best wave: a muted "Storm wave N" line on the profile card with a muted star (the Iron line's pattern, T0249) — **tasked as T0434 (S, waits on T0403)**
@@ -117,12 +115,20 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E22 — The march: the wave walks in more than one way (active — opened 2026-11-02)
 **Goal:** the wave's tag set is four (quiet, tight, rush, short cut); it grows with a new march each time — a new rhythm the wave takes, with its own chip, its own answer and its own line in the waves reference — and on mobile a special wave is felt before it happens.
-**When done:** the set has six tags: the double — the wave comes in two fronts (a first pulse, a 6 s lull, the second front's walkers at 1.2×) — and the clumps — the wave walks in clumps of 2–3 with 4 s gaps that break the kill chain; the preview and the banner wear each tag's chip, the waves reference names each, and a non-quiet tagged wave gets one short buzz on mobile at the banner (the quiet breather stays silent).
+**When done:** the set has six tags: the double (two fronts, a 6 s lull, the second at 1.2×) — done as T0447 — and the clumps (clumps of 2–3 with 4 s gaps that break the chain); the preview and the banner wear each chip, the waves reference names each, and a non-quiet tagged wave buzzes once on mobile at the banner (the quiet breather stays silent).
 **Breakdown:**
 - the double: the fifth tag — from wave 21, every 8th non-quiet/tight/rush/short-cut/boss wave, the plan comes in two pulses (first half, 6 s lull, second half's walkers at 1.2×; chip "double"; the first double's preview says "the wave comes twice — the second front walks faster") — **tasked as T0447 (L, in the pool)**
 - the clumps: the sixth tag — from wave 26, every 11th non-quiet/tight/rush/short-cut/double/boss wave, the plan walks in clumps of 2–3 with a 4 s gap between clumps (the gap always breaks the kill chain — 1.5 s + 0.4 s per Feast is still under 4 s; chip "clumps"; the first clumps' preview says "the wave comes in clumps — the gaps break the chain") — **tasked as T0448 (M, in the pool)**
 - the tag's haptic: a non-quiet tagged wave (tight, rush, short cut, and double and clumps as they land) gets one 30 ms guarded buzz on mobile at the banner (T0265's guarded pattern, T0428's hook shape; the quiet breather never buzzes) — **tasked as T0449 (S, in the pool)**
 - the next tag once double and clumps land (a tag whose answer is the move — parked)
+
+### E23 — The draft: a tech branch for what the draft offers (active — opened 2026-11-02)
+**Goal:** the tech tree has covered run start, board, pool, claim, wave, tower and exit — but not the draft: an eighth branch lets between-run coins buy how the run's cards come.
+**When done:** the tree's "The draft" branch has three nodes, each bought once and on for every run after: The early odds (the tier-odds shift starts at wave 1 instead of wave 5), The second roll (the reroll is twice per run, the second 25 gold) and Opening wild (the first draft always offers a Rare or Epic alongside its Common Bolt floor).
+**Breakdown:**
+- the branch and its first node, The early odds: the tech screen's eighth row plus a 30-coin node that moves the draft's tier-odds shift (T0011) from wave 5 to wave 1 — **tasked as T0450 (M, 2026-11-02)**
+- The second roll: 85 coins by the depth rule, the run's once reroll becomes twice — the second costs 25 gold — **tasked as T0451 (M, 2026-11-02, waits on T0450)**
+- Opening wild: 155 coins by the depth rule, the first draft always offers a Rare or Epic alongside its Common Bolt floor (T0048) — the next slice once the branch lands
 
 ## Enemy queue (non-epic)
 
@@ -132,12 +138,12 @@ New enemies land one at a time: each new-enemy task chains behind the one before
 - Splitter (T0068, M) — **done** (2026-10-28, desktop-4070): breaks into two fast splinters at its spot.
 - Hauler (T0057, M) — **done** (2026-10-28, cachyos-x8664): a big slow hexagon — worth 10 gold, a leak costs a life plus 5 gold.
 - Mute (T0074, M) — **done** (2026-10-29, desktop-4070): silences every tower within 2 cells. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
-- Feeder (IDEAS) — **done as T0334 (2026-11-01, desktop, the T0309 re-file)**: from wave 13, one on 13, 17, 21, …, the 2-cell haste ring — the regular-enemy cap is 10 of 10; its slot and removal ride the Flyer (T0353, tasked 2026-11-01).
-- The Hive (IDEAS) — **done as T0292 (L, 2026-11-01, desktop)**: the wave-40 boss, the next peak after the Orb — the first boss that grows the group (a Dot every 6 s, up to 5); `spawnOnly`, so the 10-regular cap is untouched (the Feeder fills it).
-- The Blinker (IDEAS) — **done as T0402 (M, 2026-11-02, desktop, the T0364 re-file, smaller)**: the wave-60 boss — blinks 2.5 cells forward every 4 s on a 1 s telegraph (committed); the boss lane, spawnOnly, the regular cap untouched.
+- Feeder — **done as T0334 (2026-11-01)**: its slot and removal rode the Flyer (T0353, done); the regular-enemy cap is 10 of 10.
+- The Hive — **done as T0292 (2026-11-01)**: the wave-40 boss, the first boss that grows the group (a Dot every 6 s, up to 5); `spawnOnly`, the cap untouched.
+- The Blinker — **done as T0402 (2026-11-02)**: the wave-60 boss — blinks 2.5 cells forward every 4 s on a 1 s telegraph (committed); the boss lane, spawnOnly.
 - Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
 
-Queue order: the regular-enemy cap (10, the bar in modules/enemies.md) is 10 of 10 — the Feeder's slot went to the Flyer (T0353, done), so the Wall (parked, IDEAS) stays parked — it needs a slot. The queue lands one enemy at a time.
+Queue order: the regular-enemy cap is 10 of 10, so the Wall (parked, IDEAS) stays parked — it needs a slot. The queue lands one enemy at a time.
 
 ## Augment queue (non-epic)
 
@@ -166,8 +172,8 @@ Ideas that may become epics or tasks of one.
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
 - The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **done as T0348 (M, 2026-11-01, asus)**
 - More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **now E21 (active, 2026-11-02); the first level tasked as T0446 (M, in the pool)**
-- Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**; the live "bank +N" line — **built as T0374 (M, non-epic, 2026-11-01)**; the first-pay chip — **dropped (rejected as T0380: the line already teaches the rule)**; the pay's coin blip — **already played (rejected as T0381)**; the pay's gold pop at the number — **done as T0395 (2026-11-02)**
+- Bank interest: 5% of the gold bank at every wave start, capped at +10 per build phase (gold, never coins) — **built as T0363**; the live "bank +N" line as T0374; the first-pay chip dropped (T0380: the line already teaches it); the pay's coin blip already played (T0381); the pay's gold pop done as T0395 (2026-11-02)
 - The storm: a third menu mode — no breather, every wave rushes, 2× the wave bonus for the run (IDEAS holds the full text) — **now E17 (active, 2026-11-02)**
 - The run history: the menu's last-four line grows into a History card of the last twelve runs — **now E18 (active, 2026-11-02)**
-- The short cut: the fourth wave tag — from wave 16, every 9th non-quiet/tight/rush/boss wave, the walkers come in 40% down their own road; the front stretch idles, the back stretch carries the wave; the answer is placement (back-road cover, the move, the sell-and-rebuild), where the rush's answer is none — **done as T0440 (M, non-epic, 2026-11-02, desktop)**
+- The short cut: the fourth wave tag — the walkers come in 40% down their own road; the answer is placement, where the rush's answer is none — **done as T0440 (2026-11-02)**
 - The codex at the pause: the pause's reference set gains the family the draft is about — an "Augments" row opening the codex (T0221) over the dimmed pause, back to the pause (the How row's cross-context pattern; the menu's codex stays) — **tasked as T0441 (M, non-epic, 2026-11-02)**
