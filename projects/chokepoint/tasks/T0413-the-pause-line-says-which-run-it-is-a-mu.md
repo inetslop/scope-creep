@@ -3,10 +3,12 @@ id: T0413
 title: "The pause line says which run it is: a muted mode word on the run line"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T08:58:13Z
+claimed_at: 2026-11-02T08:59:01Z
+designer: yoga
 ---
 
 ## Goal
