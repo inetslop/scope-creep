@@ -3,11 +3,13 @@ id: T0451
 title: "The second roll: the draft branch's second node, the reroll twice per run"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0450]
 attempts: 0
 created: 2026-11-02T23:11:28Z
+claimed_at: 2026-11-02T23:41:16Z
 epic: E23
+designer: desktop
 ---
 
 ## Goal
