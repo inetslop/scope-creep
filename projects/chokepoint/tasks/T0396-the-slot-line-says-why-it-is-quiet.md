@@ -3,12 +3,13 @@ id: T0396
 title: The slot line says why it is quiet
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-02T01:03:06Z
 claimed_at: 2026-11-02T01:21:55Z
-designer: yoga
+finished_at: 2026-11-02T01:30:16Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -24,3 +25,7 @@ The tower panel's next-slot line — the price of the tower's next free slot —
 - [ ] Tapping the short line is unchanged (the existing deny); nothing new plays
 - [ ] The panel's layout is unchanged at 412x915 and 1280x720 — only the line's weight and the price's color move
 - [ ] `npm run check` and the desktop + mobile smoke pass
+
+## Rejected by architect (yoga)
+
+Already built — TowerPanel.update() already dims the next-slot button to the muted weight (alpha 0.6) and wears its price in red via canAfford(), with the existing unlockSlot() "Need N gold" deny; nothing to add.
