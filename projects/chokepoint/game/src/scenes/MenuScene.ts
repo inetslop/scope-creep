@@ -82,14 +82,18 @@ export class MenuScene extends Phaser.Scene {
     const button = makeButton(this, 0, 0, 'Play', play, { width: 200, height: 60, fontSize: 24, radius: 30, fill: PALETTE.ink });
     const playBox = this.add.container(0, 0, [button.container]);
     // The Iron mode: the same run at one life that pays double coins, chosen before wave 1.
+    // The sub-line also says what the mode turns off; the card's width grows from it.
+    const ironLine = this.add.text(0, 0, '1 life · 2× coins · no last stand', textStyle(17, PALETTE.muted)).setOrigin(0.5);
+    const ironTitle = this.add.text(0, 0, 'Iron', titleStyle(24)).setOrigin(0.5);
+    const ironPairH = ironTitle.height + 4 + ironLine.height;
     const iron = makeButton(this, 0, 0, '', () => {
       clearSavedRun(window.localStorage); // a new run abandons a saved one for nothing
       this.registry.set('ironMode', true);
       this.scene.start(SCENES.pick); // the Iron run also picks its board
-    }, { width: 220, height: IRON_H, radius: 30 });
+    }, { width: Math.round(ironLine.width) + 28, height: IRON_H, radius: 30 });
     iron.label.setVisible(false);
-    const ironTitle = this.add.text(0, -10, 'Iron', titleStyle(24)).setOrigin(0.5);
-    const ironLine = this.add.text(0, 16, '1 life · 2× coins', textStyle(14, PALETTE.muted)).setOrigin(0.5);
+    ironTitle.setY(-ironPairH / 2 + ironTitle.height / 2);
+    ironLine.setY(ironPairH / 2 - ironLine.height / 2);
     iron.content.add([ironTitle, ironLine]);
     const savedRun = loadSavedRun(window.localStorage);
     let resume: Button | undefined;

@@ -4,11 +4,12 @@ title: "The Iron card says what it does: the sub-line under the name"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T05:03:59Z
 claimed_at: 2026-11-02T05:22:08Z
+finished_at: 2026-11-02T05:31:27Z
 ---
 
 ## Goal
@@ -61,3 +62,15 @@ Replace lines 84–93 exactly with:
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+The menu's Iron card now shows a muted sub-line under its name — "1 life · 2× coins · no last stand" — in the profile card's muted-line style (17 px, `PALETTE.muted`), saying what the mode buys and that it turns off last stand. The card width is text-fit from the line (`ironLine.width + 28`) instead of the hard-coded 220, and the title/line y positions come from the pair height, keeping the 4 px gap. Nothing else changed: the claim card, pause screen, Play/Tech buttons and the menu demo are untouched, and the line fits in both layouts since the card is already centered and scaled by the existing layout math.
+
+- Self-review: APPROVE
+- Time: 9.3 min
+
+```
+projects/chokepoint/game/src/scenes/MenuScene.ts | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+```
