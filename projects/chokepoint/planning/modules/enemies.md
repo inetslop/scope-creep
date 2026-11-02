@@ -27,14 +27,14 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 
 ## What exists now
 
-21 in the game, from game/src/content/enemies/ (the real values).
+22 in the game, from game/src/content/enemies/ (the real values).
 
 **By `behavior`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
 - `blink`: Blinker
 - `dash`: Dasher
 - `fly`: Flyer
-- `walk`: Dot, Block, Colossus, Guard, Titan, Orb, Hive, Shard, Sprinter, Splitter, Hauler, Mute, Flyer, Ward, Leech, Mender, Bulwark, Splinter
+- `walk`: Dot, Block, Colossus, Guard, Titan, Orb, Hive, Shard, Sprinter, Splitter, Hauler, Mute, Flyer, Ward, Leech, Mender, Gorge, Bulwark, Splinter
 
 ### Dot (`dot`)
 - description: "The basic walker: steady speed, middling health."
@@ -267,6 +267,19 @@ A missing row, or a row whose difference is only numbers, gets the task rejected
 - spawnOnly: true
 - mends: everySec 5, count 4, radius 3, frac 0.15, telegraphSec 1.2, escortId ward
 - look: shape circle, color orange, size 0.5
+
+### Gorge (`gorge`)
+- description: "A red spiral that feeds on the leaks of the Splinters that walk in ahead of it."
+- behavior: walk
+- hp: 720
+- speed: 0.9
+- gold: 20
+- livesCost: 1
+- threat: 448
+- fromWave: 90
+- spawnOnly: true
+- feeds: max 2, frac 0.15, ringCells 2
+- look: shape spiral, color red, size 0.5
 
 ### Bulwark (`bulwark`)
 - description: "Wears a plate across its front: shots into the face are halved, into the back they go through."
