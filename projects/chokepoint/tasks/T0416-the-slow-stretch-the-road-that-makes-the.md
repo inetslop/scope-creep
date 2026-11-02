@@ -3,12 +3,11 @@ id: T0416
 title: "The slow stretch: the road that makes the walkers linger"
 size: M
 priority: 2
-status: designing
+status: design
 depends_on: []
 attempts: 0
 created: 2026-11-02T10:20:00Z
-claimed_at: 2026-11-02T10:43:20Z
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
