@@ -1,12 +1,14 @@
 ---
 id: T0447
 title: "The double: the wave that comes twice"
+assignee: desktop
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T22:27:29Z
+claimed_at: 2026-11-02T22:34:33Z
 epic: E22
 ---
 
