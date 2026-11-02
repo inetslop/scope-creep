@@ -3,10 +3,12 @@ id: T0408
 title: "The claim's bed: a quiet beat under the rewards card"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T05:22:32Z
+claimed_at: 2026-11-02T06:19:06Z
+designer: desktop
 ---
 
 ## Goal
