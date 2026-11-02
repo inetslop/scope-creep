@@ -73,9 +73,9 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Goal:** a misplaced tower is not permanent, and it doesn't have to be sold: in the build phase a tower can move to a free build cell for a fee, keeping its augments and kills — repositioning against the wave preview is a real decision with a price, not a free reposition or a sell-and-rebuild.
 **When done:** the tower panel wears a "Move · −N" line (N = 60% of its slots' cost, floored, minimum 5, the sell's own rule); tapping it opens the move state — the tower dims, the free build cells outline, and the what-if's range ring shows at the tapped cell with the placement's own ✓/✗ — and ✓ slides the tower over in ~300 ms and pays the fee (the −N chip at the old cell, the drop-in bounce, the place haptic); one move per tower per build phase, the line reading "moved" until the next; a tap elsewhere cancels.
 **Breakdown:**
-- the move itself, the core: the panel line, the move state, the slide, the fee, the cancel — **tasked as T0394 (M, in the pool, the T0382 re-file: T0382 (L) failed 2026-11-02 on the architect's overflow, re-filed smaller; the resume flag is out — the save's own timing covers it)**
-- the move's limit and its teach: one move per tower per build phase (the line reads "moved" until the next build phase) and the one-time teach line — **waits on T0394, task when it lands (the limit and its line live in T0394's files, busy while T0389 builds)**
-- the move's note: one quiet blip on the commit (the speed toggle's note pattern, T0315) — **tasked as T0392 (S, in the pool, waits on T0394)**
+- the move itself, the core: the panel line, the move state, the slide, the fee, the cancel — **done as T0394 (M, 2026-11-02, asus)**
+- the move's limit and its teach: one move per tower per build phase (the line reads "moved" until the next build phase) and the one-time teach line — **T0394 landed; task when the move's files are free (T0235 builds on Tower.ts, T0389 on the run's files)**
+- the move's note: one quiet blip on the commit (the speed toggle's note pattern, T0315) — **done as T0392 (S, 2026-11-02, yoga)**
 
 ### E16 — The tower: a tech branch for how towers are managed (active — opened 2026-11-01)
 **Goal:** the tech tree has covered run start, the board, the pool, the claim and the wave — but not the tower itself: a sixth branch lets between-run coins buy how towers are managed.
@@ -84,7 +84,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the branch and its first node, Soft sell: the tech screen's sixth row plus a 30-coin node that raises the sell's refund 70% → 80% of slot cost — **done as T0383 (M, 2026-11-01, desktop)**
 - The rich cell: the branch's second node, 85 coins by the depth rule, the marked cell's buff 1.25× → 1.5× — **tasked as T0386 (M, in the pool)**
 - The panel line: the tower panel says which tower rides the marked cell — a muted "marked · +N% damage" line (N 25 plain, 50 with the node) on a marked-cell tower, reading the live buff — **done as T0387 (S, 2026-11-02, desktop-4070)**
-- The light move: the branch's third node, 155 coins by the depth rule, a move's fee 60% → 30% — **waits on T0394 (E15's core, the T0382 re-file); task when it can start (the rich cell takes the depth-2 slot ahead of it)**
+- The light move: the branch's third node, 155 coins by the depth rule, a move's fee 60% → 30% — **tasked as T0412 (M, in the pool, 2026-11-02)**
 
 ### E17 — The storm: a third mode off the menu (active — opened 2026-11-02)
 **Goal:** the menu has Play and Iron; a third card, Storm, sells tempo for in-run gold — every wave rushes and pays double the wave bonus: a run that plays faster and richer, not harder, and not richer between runs.
@@ -131,9 +131,9 @@ Ideas that may become epics or tasks of one.
 - Targeting modes per tower (first, strongest, closest) — **built as T0114 (L, non-epic, 2026-11-01, inet-racing)**; its follow-up (the plinth notch, the one-time chip) — **tasked as T0368 (S, non-epic, in the pool, 2026-11-01)**
 - More augments with new attacks and changes (the IDEAS backlog holds the list)
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
-- Bosses every 10 waves, each with its own mechanic — now **E5** (done 2026-10-30; the boss queue continues — the wave-40 Hive **done as T0292 (2026-11-01, desktop)**; the wave-50 Flyer, the first boss that doesn't walk the road, **done as T0317 (2026-11-02, asus)**; the wave-60 Blinker, the first that skips the road, **tasked as T0402 (M, 2026-11-02, the T0364 re-file, smaller)**; the wave-70 Mender, the first that mends itself and its pack, **tasked as T0404 (M, non-epic, 2026-11-02)**; the wave-80 Leech, the first that drinks its escorts' health, **tasked as T0405 (M, non-epic, 2026-11-02)**)
+- Bosses every 10 waves, each with its own mechanic — **E5 done; the queue: the Hive (T0292) and the Flyer (T0317) done, the Blinker (T0402), the Mender (T0404) and the Leech (T0405) in the pool**
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
-- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **E13 done 2026-11-01** (far gate T0338, fork T0352, marked cell T0340, boards reference T0350); the cove — a bay in the island's edge whose pocket cells double-cover the road's curve — **tasked as T0409 (M, non-epic, 2026-11-03)**
+- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **E13 done 2026-11-01** (far gate T0338, fork T0352, marked cell T0340, boards reference T0350); the cove — a bay in the island's edge whose pocket cells double-cover the road's curve — **done as T0409 (2026-11-02)**
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **built as T0239 (L, non-epic, 2026-10-30, asus)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
 - Run summary — **all built (T0216, T0306, T0333, T0336, T0345)**: kills and damage per tower, leaks per wave, the mid-run story line
@@ -142,6 +142,6 @@ Ideas that may become epics or tasks of one.
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
 - The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **done as T0348 (M, 2026-11-01, asus)**
 - More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **E9's later slice, parked**
-- Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**; the live "bank +N" line — **built as T0374 (M, non-epic, 2026-11-01)**; the first-pay chip — **dropped (rejected as T0380: the line already teaches the rule)**; the pay's coin blip — **already played (rejected as T0381)**; the pay's gold pop at the number — **re-filed as T0395 (S, non-epic, in the pool, 2026-11-02)**
+- Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**; the live "bank +N" line — **built as T0374 (M, non-epic, 2026-11-01)**; the first-pay chip — **dropped (rejected as T0380: the line already teaches the rule)**; the pay's coin blip — **already played (rejected as T0381)**; the pay's gold pop at the number — **done as T0395 (2026-11-02)**
 - The storm: a third menu mode — no breather, every wave rushes, 2× the wave bonus for the run (IDEAS holds the full text) — **now E17 (active, 2026-11-02)**
 - The run history: the menu's last-four line grows into a History card of the last twelve runs — **now E18 (active, 2026-11-03)**
