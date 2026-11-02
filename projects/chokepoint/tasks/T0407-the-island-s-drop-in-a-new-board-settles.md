@@ -1,12 +1,14 @@
 ---
 id: T0407
 title: "The island's drop-in: a new board settles into place"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T05:22:32Z
+claimed_at: 2026-11-02T09:19:17Z
 design_attempts: 1
 ---
 
