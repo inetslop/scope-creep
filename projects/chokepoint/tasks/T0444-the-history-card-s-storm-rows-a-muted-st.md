@@ -3,13 +3,12 @@ id: T0444
 title: "The history card's storm rows: a muted storm mark"
 size: M
 priority: 2
-status: designing
+status: design
 depends_on: [T0403]
 attempts: 0
 created: 2026-11-02T20:29:42Z
-claimed_at: 2026-11-02T20:51:25Z
 epic: E18
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
