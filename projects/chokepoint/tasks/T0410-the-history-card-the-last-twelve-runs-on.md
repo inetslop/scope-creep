@@ -3,11 +3,13 @@ id: T0410
 title: "The history card: the last twelve runs, on the menu"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T06:19:02Z
+claimed_at: 2026-11-02T07:28:33Z
 epic: E18
+designer: inet-racing
 ---
 
 ## Goal
