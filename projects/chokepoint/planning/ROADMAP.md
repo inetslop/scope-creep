@@ -60,7 +60,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - The breather: 155 coins by the depth rule, quiet waves pay 2× the wave bonus — **tasked as T0370 (S, in the pool)** (no buy-gate inside the branch: each node buys independently at its depth price)
 - The door's teach: the run's first far-gate send says what the gate is — a one-time chip at the gate (the send ring's moment, T0360), once per run — **done as T0384 (S, 2026-11-01, yoga)**
 
-#### E15 — The move: a misplaced tower goes where it should (active — re-filed 2026-11-02 after T0382's architect overflow)
+#### E15 — The move: a misplaced tower goes where it should (active — fully tasked 2026-11-02, closing on the pool's landings)
 **Goal:** a misplaced tower is not permanent, and it doesn't have to be sold: in the build phase a tower can move to a free build cell for a fee, keeping its augments and kills — repositioning against the wave preview is a real decision with a price, not a free reposition or a sell-and-rebuild.
 **When done:** the tower panel wears a "Move · −N" line (N = 60% of its slots' cost, floored, minimum 5, the sell's own rule); tapping it opens the move state — the tower dims, the free build cells outline, and the what-if's range ring shows at the tapped cell with the placement's own ✓/✗ — and ✓ slides the tower over in ~300 ms and pays the fee (the −N chip at the old cell, the drop-in bounce, the place haptic); one move per tower per build phase, the line reading "moved" until the next; a tap elsewhere cancels.
 **Breakdown:**
@@ -68,7 +68,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the move's limit and its teach: one move per tower per build phase (the line reads "moved" until the next build phase) and the one-time teach line — **tasked as T0443 (M, 2026-11-02, waits on T0389)**
 - the move's note: one quiet blip on the commit (the speed toggle's note pattern, T0315) — **done as T0392 (S, 2026-11-02, yoga)**
 
-### E16 — The tower: a tech branch for how towers are managed (active — opened 2026-11-01)
+### E16 — The tower: a tech branch for how towers are managed (active — fully tasked 2026-11-02, closing on the pool's landings)
 **Goal:** the tech tree has covered run start, the board, the pool, the claim and the wave — but not the tower itself: a sixth branch lets between-run coins buy how towers are managed.
 **When done:** the tree's "The tower" branch has three nodes, each bought once and on for every run after: Soft sell (a sell refunds 80% of slot cost, not 70%), The light move (a move's fee 30% instead of 60%) and The rich cell (the marked cell's buff 1.25× → 1.5×).
 **Breakdown:**
@@ -77,14 +77,14 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - The panel line: the tower panel says which tower rides the marked cell — a muted "marked · +N% damage" line (N 25 plain, 50 with the node) on a marked-cell tower, reading the live buff — **done as T0387 (S, 2026-11-02, desktop-4070)**
 - The light move: the branch's third node, 155 coins by the depth rule, a move's fee 60% → 30% — **tasked as T0412 (M, in the pool, 2026-11-02)**
 
-### E17 — The storm: a third mode off the menu (active — opened 2026-11-02)
+### E17 — The storm: a third mode off the menu (active — fully tasked 2026-11-02, closing on the pool's landings)
 **Goal:** the menu has Play and Iron; a third card, Storm, sells tempo for in-run gold — every wave rushes and pays double the wave bonus: a run that plays faster and richer, not harder, and not richer between runs.
 **When done:** the menu offers a Storm card in the Iron card's language; a storm run has no quiet waves, every non-boss wave rushes (walkers 1.5×, the chip on the banner and the preview) and every wave pays 2× the wave bonus gold; boss waves keep the boss's own pace; normal and Iron runs are byte-identical; the claim card says "Storm".
 **Breakdown:**
 - the mode and its menu card: the Storm card under Iron, the mode flag (save/resume keeps it), the wave rules (no quiet, rush on every non-boss wave, the bonus ×2) and the claim's "Storm" line — **tasked as T0403 (L, in the pool)**
 - the profile remembers the storm's best wave: a muted "Storm wave N" line on the profile card with a muted star (the Iron line's pattern, T0249) — **tasked as T0434 (S, waits on T0403)**
 
-### E18 — The history: every run, on the menu (active — opened 2026-11-02)
+### E18 — The history: every run, on the menu (active — fully tasked 2026-11-02, closing on the pool's landings)
 **Goal:** the menu shows the last four runs at a glance; a history card lists the last twelve, so the whole climb is one tap away and the trend the last-four line hints at is readable.
 **When done:** the menu has a History button in the Tech/How row; its card lists the last twelve runs, most recent first — wave, coins, a muted "iron" mark on Iron runs, the yellow star on the best-wave run — and the profile card's last-four line has moved into it (one in, one out), the card keeping its coins, best wave and runs · avg wave line.
 **Breakdown:**
@@ -92,7 +92,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the records block: a muted "Records" line at the card's foot — best combo ×N, longest clean streak, most clean waves in one run (the run ledger's own values) — **tasked as T0415 (M, in the pool)**
 - the storm's rows: a storm run's row wears a muted "storm" mark (the iron mark's own language) — **tasked as T0444 (M, 2026-11-02, waits on T0403)**
 
-### E19 — The island remembers: the ground keeps the fight's marks (active — opened 2026-11-02)
+### E19 — The island remembers: the ground keeps the fight's marks (active — fully tasked 2026-11-02, closing on the pool's landings)
 **Goal:** the board shows where the run's fight happened: a cell that has seen enough kills keeps a small mark, and a tower built there is a little stronger — the next placement reads the run's own history, and the fight's hot spots become an advantage.
 **When done:** a build cell where 12+ enemies died this run keeps a small dark chip on the ground for the rest of the run, a tower built on it deals 5% more damage, and the run's first scorch says what the mark means once.
 **Breakdown:**
@@ -114,6 +114,15 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - Blind: the sixth level — the run's build phase has no wave preview (the preview card and the flyer's line stay hidden) — **tasked as T0446 (M, 2026-11-02)**
 - the board's face: a level whose boards carry no marked cell and no guaranteed choke — parked until the board's files settle (the long straight, T0438)
 - the ranks: Tough I/II/III once the set outgrows the run's slots — parked
+
+### E22 — The march: the wave walks in more than one way (active — opened 2026-11-02)
+**Goal:** the wave's tag set is four (quiet, tight, rush, short cut); it grows with a new march each time — a new rhythm the wave takes, with its own chip, its own answer and its own line in the waves reference — and on mobile a special wave is felt before it happens.
+**When done:** the set has six tags: the double — the wave comes in two fronts (a first pulse, a 6 s lull, the second front's walkers at 1.2×) — and the clumps — the wave walks in clumps of 2–3 with 4 s gaps that break the kill chain; the preview and the banner wear each tag's chip, the waves reference names each, and a non-quiet tagged wave gets one short buzz on mobile at the banner (the quiet breather stays silent).
+**Breakdown:**
+- the double: the fifth tag — from wave 21, every 8th non-quiet/tight/rush/short-cut/boss wave, the plan comes in two pulses (first half, 6 s lull, second half's walkers at 1.2×; chip "double"; the first double's preview says "the wave comes twice — the second front walks faster") — **tasked as T0447 (L, in the pool)**
+- the clumps: the sixth tag — from wave 26, every 11th non-quiet/tight/rush/short-cut/double/boss wave, the plan walks in clumps of 2–3 with a 4 s gap between clumps (the gap always breaks the kill chain — 1.5 s + 0.4 s per Feast is still under 4 s; chip "clumps"; the first clumps' preview says "the wave comes in clumps — the gaps break the chain") — **tasked as T0448 (M, in the pool)**
+- the tag's haptic: a non-quiet tagged wave (tight, rush, short cut, and double and clumps as they land) gets one 30 ms guarded buzz on mobile at the banner (T0265's guarded pattern, T0428's hook shape; the quiet breather never buzzes) — **tasked as T0449 (S, in the pool)**
+- the next tag once double and clumps land (a tag whose answer is the move — parked)
 
 ## Enemy queue (non-epic)
 
