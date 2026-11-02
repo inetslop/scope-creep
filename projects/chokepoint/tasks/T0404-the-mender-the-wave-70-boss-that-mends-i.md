@@ -3,12 +3,10 @@ id: T0404
 title: "The Mender: the wave-70 boss that mends itself and its pack"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-02T04:17:18Z
-claimed_at: 2026-11-02T04:37:49Z
-designer: desktop
 ---
 
 ## Goal
@@ -44,3 +42,55 @@ The wave-70 boss (next in the every-10 lane): the first enemy that heals — the
 - [ ] Frost slow, Anchor root and Push gusts work on the Mender but not its Wards; the mends land on their clock even while the Mender is rooted.
 - [ ] The Mender inherits the boss lane's moments: the boss chip on preview and banner, the arrival ring and horn, the death burst and name card, the death horn, and the 1-life leak with the boss's escape horn.
 - [ ] No wave other than 70 changes: the every-10 lane below it and the regular mix are untouched.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/content/enemies/mender.ts` - the wave-70 boss def (model `content/enemies/hive.ts`)
+- create `src/core/mendClock.ts` - pure mend schedule (model `core/hivePops.ts` exactly)
+- create `src/systems/fx/mendRing.ts` - the closing telegraph ring (model `fx/auraRing.ts`)
+- create `src/systems/enemyHooks/mendPack.ts` - the mend clock + pack heal (model `enemyHooks/hivePops.ts`)
+- create `tests/core/mendClock.test.ts` - unit tests for the schedule (model `tests/core/hivePops.test.ts`)
+- edit `src/content/types.ts` - add the `mends` field to `EnemyDef`, right after `pops`
+- edit `src/content/enemies/index.ts` - import + one `ENEMIES` line, after `ward`
+- edit `src/core/waves.ts` - `bossId` case, the wave-70 `planWave` branch, the two doc comments
+- edit `src/systems/enemyHooks/index.ts` - import + one `ENEMY_HOOKS` line, after `hivePops`
+- edit `src/ui/hud/BossCard.ts` - the four mend pips under the bar
+- edit `src/debug/runChecks.ts` - fix `level.bossPlan`, add two invariants
+- edit `tests/content.test.ts` - size-0.5 exception + `mends` validation
+- edit `tests/core/waves.test.ts` - the wave-70 boss-lane tests
+
+### Interfaces
+```ts
+// content/types.ts, on EnemyDef after `pops`:
+/** The mend clock (the Mender): every `everySec` after its own spawn, up to `count`, it and each living escort of `escortId` within `radius` cells restore `frac` of their own max hp, telegraphed `telegraphSec` early by one thin ring closing in; never a revive, an escort past the radius missed (core/mendClock.ts, systems/enemyHooks/mendPack.ts). */
+mends?: { everySec: number; count: number; radius: number; frac: number; telegraphSec: number; escortId: string };
+```
+`core/mendClock.ts`: `export function mendsDue(clockSec: number, rule: MendsRule): number` and `export function nextMendAt(clockSec: number, rule: MendsRule): number` (`type MendsRule = NonNullable<EnemyDef['mends']>`), bodies copied from `popsDue`/`nextPopAt` with `count` for `max`.
+`systems/fx/mendRing.ts`: `export function mendRing(fx: FxSystem, x: number, y: number, fromCells: number, toRadius: number, color: number): void` — `if (fx.full) return;` then a `graphics` at `DEPTH.preview`, `fillRing(g, 0, 0, fromCells * CELL, 3, 0, Math.PI * 2, color, 0.9)`, `fx.track(g, 1200, { scale: toRadius / (fromCells * CELL), alpha: 0, ease: 'Quad.easeIn' })` (closes in; every other ring grows).
+`systems/enemyHooks/mendPack.ts`: `export const mendPack: MakeEnemyHook = ({ enemies, fx }) => ...` — closure `Map<Enemy, { serial: number; clock: number; landed: number; ringed: boolean }>`; in `update(dt)`: prune inactive, skip no `def.mends`, fresh state on serial change, `m.clock += dt` (its own clock, even slowed or rooted); when `!m.ringed && at >= 0 && m.clock >= at - rule.telegraphSec` set `m.ringed` and call `mendRing(fx, e.x, e.y, rule.radius, e.def.look.size * CELL, PALETTE[e.def.look.color])`; `while (m.landed < mendsDue(m.clock, rule)) { m.landed += 1; m.ringed = false; ... }` where the heal is, on the mender and every `o.active` with `o.def.id === rule.escortId` and `Math.hypot(o.x - e.x, o.y - e.y) <= rule.radius * CELL`: `e.flash = 0.06; e.setTintFill(0xffffff); e.hp = Math.min(e.maxHp, e.hp + e.maxHp * rule.frac);` (exactly the hit flash, turned into a heal).
+`mender.ts`: `{ id: 'mender', name: 'Mender', behavior: 'walk', hp: 720, speed: 0.9, gold: 20, livesCost: 1, threat: 348, fromWave: 70, spawnOnly: true, mends: { everySec: 5, count: 4, radius: 3, frac: 0.15, telegraphSec: 1.2, escortId: 'ward' }, look: { shape: 'circle', color: 'orange', size: 0.5 } }` with description 'Mends itself and its pack: every 5 s it and its living Wards within three cells flash and restore 15% of their max hp, four times.' and hive-style comments (`threat: 348, // the wave-70 budget's worth minus its two Wards (each at the Ward's own threat of 1, as the Titan's 95 + the Guard's 5 did)`).
+
+### Steps
+1. `content/types.ts`: add the `mends` field after `pops`.
+2. `content/enemies/mender.ts`, then the import and the `ENEMIES` line after `ward` in `index.ts`.
+3. `core/mendClock.ts` (copy `hivePops.ts`, rename).
+4. `systems/fx/mendRing.ts`.
+5. `systems/enemyHooks/mendPack.ts`, then its import + `mendPack,` line after `hivePops,` in `enemyHooks/index.ts`.
+6. `core/waves.ts`: in `bossId`, put `wave === 70 ? 'mender' :` at the FRONT of the existing ternary (whatever case is first — T0402 may have added 60); in `planWave`, after the wave-20 branch add: `// Wave 70 is the Mender's wave: its two Ward escorts walk in ahead of it, its heal targets (core/mendClock.ts).` then `if (wave === 70) return { number: wave, spawns: [{ enemy: 'ward', delaySec: 0 }, { enemy: 'ward', delaySec: 0.4 }, { enemy: 'mender', delaySec: 1.2 }], hpMul: waveHpMul(wave), tags: ['boss'] };` (keep the `planNormalWave(wave, rng, enemies);` parity call that precedes both branches); append ", the Wards and the Mender on wave 70" to the boss list in the `isBossWave` and `planWave` doc comments.
+7. `ui/hud/BossCard.ts`: add field `private pips: Phaser.GameObjects.Graphics | undefined;`; import `mendsDue` from `core/mendClock`; in `build()` replace the final `return scene.add.container(0, 0, [card, token, name, bar]);` with a `parts` array that, when `boss.def.mends !== undefined`, pushes `scene.add.graphics().setPosition(0, 20)` (under the bar) stored in `this.pips`; in `refresh()` append: clear `this.pips`, `const used = mendsDue(boss.age, rule);`, for `i in 0..rule.count` `pips.fillStyle(PALETTE.muted, i < rule.count - used ? 0.9 : 0.18).fillCircle((i - (rule.count - 1) / 2) * 10, 0, 3)`; in `fadeOut()`'s `onComplete` reset `this.pips = undefined;`; add one sentence to the class doc about the pips. Full state fits: token/name at y -7, bar at y 12, pips at y 20 (r 3) inside the 54-tall card — no new width, no notch boss and no pip boss share a card.
+8. `debug/runChecks.ts`: change `level.bossPlan`'s `const want = g.run.wave === 20 ? 2 : 1;` to `const want = g.run.wave === 20 ? 2 : g.run.wave === 70 ? 3 : 1;`; after the `enemies.bossSlot` line add `['enemies.menderSlot', (g) => (g.run.wave === 70 || !g.enemies.all.some((e) => e.active && e.def.id === 'mender') ? null : 'a Mender alive off its wave 70')],` and after it `['enemies.hpCap', (g) => (g.enemies.all.every((e) => !e.active || e.hp <= e.maxHp + 1e-9) ? null : 'an enemy above its max hp')],`.
+9. Tests: `tests/core/mendClock.test.ts` (rule from `getEnemy('mender').mends!`: due 0/0/1/2/3/4 at 0, 4.99, 5, 10, 15, 20; capped at 4; negative 0; next 5, 10, 20, -1 at 20); `tests/content.test.ts`: add `|| e.id === 'mender'` to the size-0.5 exception and, after the `pops` block, a `mends` block validating `everySec > 0`, `count > 0`, `radius > 0`, `0 < frac <= 1`, `telegraphSec > 0` and `< everySec`, `escortId` exists in `ENEMIES`; in `tests/core/waves.test.ts`'s boss describe add: `bossId(70)` is `'mender'` and `planWave(70).spawns[2]!.enemy === bossId(70)`; seeds `[1, 7, 42, 70]` all give `spawns` exactly `[{ ward, 0 }, { ward, 0.4 }, { mender, 1.2 }]`, tags `['boss']`, hpMul `waveHpMul(70)`; and `for (let wave = 1; wave <= 70; wave++)` no wave but 70 sends a `mender`.
+10. `npm run check` and `npm run smoke`.
+
+### Pitfalls
+- The Mender takes no control-immunity: Frost/Anchor/Push already reach it and the Wards deny on their own def — do not add control code.
+- The mend clock lives in the hook only; the pips derive from `mendsDue(boss.age, rule)` (same pure clock), never from the hook's closure.
+- Heal clamps at `maxHp` and only touches `active` enemies; a killed or gust-separated Ward is simply not in the loop — no revive path.
+- Don't touch `Enemy.ts`, `EnemySystem.ts`, `Sfx.ts` or any `art/` file: the circle-orange token, texture, preview tokens, banner chip, arrival horn/ring, death burst/name card/horn and escape horn all fall out of the def, `bossId` and the `boss` tag.
+- Keep hook state in the closure keyed by `Enemy` with a `serial` check (pool reuse); `m.ringed` must reset after each landed mend so the next one telegraphs.
+- The ring's 1200 ms tween is wall-clock like every fx; the Hive's telegraph has the same property at 2× — do not try to sync it.
+- `BossCard` pips must render only for a boss with `def.mends`, so every other boss's card is unchanged.
+
+### Tests
+- `tests/core/mendClock.test.ts` (new, as above); the wave-70 additions in `tests/core/waves.test.ts`; the `mends` validation in `tests/content.test.ts`.
