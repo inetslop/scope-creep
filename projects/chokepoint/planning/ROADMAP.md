@@ -30,6 +30,7 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 
 **16-cap (protocol):** the four queued registrations (T0062, T0064, T0095, T0235) land exactly four removals: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark**, and say which in the result (the canonical statement is in T0064's task; Anchor is out of reach at four registrations). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
 **16-cap (fifth removal):** the fifth is **Anchor**, carried outside E4 by T0361 (Herd's registration, non-epic, 2026-11-01) — order-independent with the four (none of them names Anchor). After all five land the index is: Beam, Bolt, Ember, Haste, Lance, Mend, Momentum, Push, Rapid, Reach, Splash, Spray, Toll, Trap, Feast, Herd.
+**16-cap (sixth removal):** the sixth is **Toll**, carried outside E4 by T0391 (Chill's registration, non-epic, 2026-11-02) — order-independent with the five (none of them names Toll). After all six land the index is: Beam, Bolt, Chill, Ember, Haste, Lance, Mend, Momentum, Push, Rapid, Reach, Splash, Spray, Trap, Feast, Herd.
 
 ### E5 — Bosses: every 10th wave is something you remember (done; history in planning/archive/ROADMAP.md)
 
@@ -73,7 +74,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **When done:** the tower panel wears a "Move · −N" line (N = 60% of its slots' cost, floored, minimum 5, the sell's own rule); tapping it opens the move state — the tower dims, the free build cells outline, and the what-if's range ring shows at the tapped cell with the placement's own ✓/✗ — and ✓ slides the tower over in ~300 ms and pays the fee (the −N chip at the old cell, the drop-in bounce, the place haptic); one move per tower per build phase, the line reading "moved" until the next; a tap elsewhere cancels.
 **Breakdown:**
 - the move itself: the panel line, the move state, the slide, the fee, the per-build-phase limit, the resume flag, the one-time teach line — **tasked as T0382 (L, in the pool)**
-- the move's note: one quiet blip on the commit (the speed toggle's note pattern, T0315) — **parked, S**
+- the move's note: one quiet blip on the commit (the speed toggle's note pattern, T0315) — **tasked as T0392 (S, in the pool, waits on T0382)** — every E15 task is written (T0382 + T0392); it counts as finished while the pool lands
 
 ### E16 — The tower: a tech branch for how towers are managed (active — opened 2026-11-01)
 **Goal:** the tech tree has covered run start, the board, the pool, the claim and the wave — but not the tower itself: a sixth branch lets between-run coins buy how towers are managed.
@@ -103,6 +104,7 @@ Queue order: the Bulwark (T0102), the Ward (T0111), the Dart's removal (T0237) a
 New augments land one at a time, the enemy queue's way: each registration keeps the draft at the 16-cap and says which augment it retires.
 
 - Herd (T0361, M) — **in the pool (2026-11-01)**: the first augment that scales with the crowd — +5%/+8% (Rare/Epic) damage per enemy within 2 cells, cap 5; its registration retires Anchor (the fifth removal, after E4's four).
+- Chill (T0391, M) — **in the pool (2026-11-02)**: the shot that adds chill stacks — each hit slows 10% per stack, up to 5 (50%), fading 2 s after the last hit; Rare hits add 2, Epic 3; works on the Flyer's flight, the Ward ignores it; its registration retires Toll (the sixth removal, order-independent with the five).
 
 ## Later
 
@@ -123,4 +125,4 @@ Ideas that may become epics or tasks of one.
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
 - The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **done as T0348 (M, 2026-11-01, asus)**
 - More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **E9's later slice, parked**
-- Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**; the live "bank +N" line — **built as T0374 (M, non-epic, 2026-11-01)**; the first-pay chip — **dropped (rejected as T0380: the line already teaches the rule)**; the pay's coin blip — **already played (rejected as T0381)**; the pay's gold pop at the number — **tasked as T0385 (S, non-epic, in the pool)**
+- Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**; the live "bank +N" line — **built as T0374 (M, non-epic, 2026-11-01)**; the first-pay chip — **dropped (rejected as T0380: the line already teaches the rule)**; the pay's coin blip — **already played (rejected as T0381)**; the pay's gold pop at the number — **T0385's file is gone (2026-11-02, like T0378's): re-file when the pool asks**
