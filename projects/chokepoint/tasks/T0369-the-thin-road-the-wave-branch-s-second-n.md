@@ -1,12 +1,14 @@
 ---
 id: T0369
 title: "The thin road: the wave branch's second node, every enemy 10% slower"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T17:47:11Z
+claimed_at: 2026-11-02T01:38:25Z
 epic: E14
 ---
 
