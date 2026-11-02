@@ -51,6 +51,13 @@ export function paintBoardFactMark(g: Phaser.GameObjects.Graphics, mark: BoardFa
       road(g, 8, -8, 8, 8);
       road(g, -8, 8, 8, 8);
       break;
+    case 'cove': // the edge dips in beside the road's curve, a cell in the bay
+      road(g, -9, -9, -9, -3);
+      road(g, -9, 3, -9, 9);
+      g.fillRoundedRect(-7, -1.5, 3, 3, 1);
+      road(g, -3, -9, -3, 2);
+      road(g, -3, 2, 8, 2);
+      break;
     case 'markedcell': // a build cell with a small dot on it
       g.fillRoundedRect(-5, -5, 10, 10, 3);
       g.fillStyle(PALETTE.card, 1);

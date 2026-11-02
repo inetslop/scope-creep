@@ -4,11 +4,12 @@ title: "The cove: a bay in the island's edge"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T06:19:02Z
 claimed_at: 2026-11-02T07:50:05Z
+finished_at: 2026-11-02T08:19:22Z
 ---
 
 ## Goal
@@ -224,3 +225,26 @@ function islePath(ctx: CanvasRenderingContext2D, map: GameMap, cove: Cove): void
 
 ### Tests
 - `tests/core/cove.test.ts` (new, as specified above) and the two-line update to `tests/core/boardFacts.test.ts`; nothing else — the rest is data-free core logic already covered.
+
+## Result (attempt 1, desktop)
+
+About one board in six now carries a cove — a bay scooped into the island's edge beside a road curve, with a pocket of three build cells that cover the curve from both sides (new core/cove.ts: seed-hash decision + pure rng-free placement, so a board without it is byte-identical to today's). The cove never shares a board with the fork or loop, is named as a "some boards" fact in the Boards reference with its own mark, and is drawn only as the island's dipping edge — nothing painted on the cells, no HUD change. Verified over 1000 seeds per orientation (312/2000 cove, all shape-checked, round-trip deterministic), plus a board.cove run invariant; check and desktop+mobile smoke pass. One note: the loop test's "rest stay as grown" assertion needed a `!map.cove` guard, since non-looped boards can now legally cove.
+
+- Self-review: APPROVE
+- Time: 29.3 min
+- Deleted tests/core/zz_cove_probe.test.ts, as the agent asked.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/art/board.ts          |  34 +++++-
+ projects/chokepoint/game/src/core/boardFacts.ts    |   3 +-
+ projects/chokepoint/game/src/core/cove.ts          |  97 +++++++++++++++++
+ projects/chokepoint/game/src/core/map.ts           |  14 ++-
+ projects/chokepoint/game/src/debug/runChecks.ts    |   8 ++
+ projects/chokepoint/game/src/ui/boardFactMarks.ts  |   7 ++
+ .../game/tests/core/_tmp_measure_cove.test.ts      |   7 ++
+ .../chokepoint/game/tests/core/boardFacts.test.ts  |   5 +-
+ projects/chokepoint/game/tests/core/cove.test.ts   | 118 +++++++++++++++++++++
+ projects/chokepoint/game/tests/core/loop.test.ts   |   5 +-
+ 10 files changed, 288 insertions(+), 10 deletions(-)
+```

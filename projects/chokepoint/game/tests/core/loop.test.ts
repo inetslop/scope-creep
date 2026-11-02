@@ -146,8 +146,9 @@ describe('the loop', () => {
         // Deterministic: a fresh identical call gives the same board.
         expect(map).toEqual(generateMap(new Rng(seed), cols, rows, 5, 0, 1, 2, 1, false, false, seed));
         if (!map.loop) {
-          // A board without the loop is today's exact board: the same grown board, no seed.
-          expect(map).toEqual(generateMap(new Rng(seed), cols, rows, 5));
+          // A board without the loop is today's exact board, the cove's bay aside: when it does not
+          // cove, it is the same grown board, no seed.
+          if (!map.cove) expect(map).toEqual(generateMap(new Rng(seed), cols, rows, 5));
           continue;
         }
         looped++;

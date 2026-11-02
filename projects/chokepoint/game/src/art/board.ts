@@ -1,9 +1,10 @@
 import type Phaser from 'phaser';
 import { CELL } from '../config';
 import { PALETTE, rgba } from '../content/palette';
+import type { Cove } from '../core/cove';
 import type { Cell, GameMap } from '../core/map';
 import type { PathLine } from '../core/path';
-import { paintToken, roundRectPath, setShadow, shapePath } from './paint';
+import { paintToken, roundRectPath, setShadow, shapePath, traceRounded } from './paint';
 import { paintTexture } from './textures';
 import { cellCenter } from '../core/path';
 
@@ -14,10 +15,11 @@ export const BOARD_MARGIN = 40;
 function drawBoard(ctx: CanvasRenderingContext2D, map: GameMap, path: PathLine, marked: Cell): void {
   const w = map.cols * CELL;
   const h = map.rows * CELL;
-  // The island, raised off the ground.
+  // The island, raised off the ground; the cove (core/cove.ts) scoops its bay into the edge.
   ctx.save();
   setShadow(ctx, 1.6);
-  roundRectPath(ctx, 0, 0, w, h, CELL * 0.32);
+  if (map.cove) islePath(ctx, map, map.cove);
+  else roundRectPath(ctx, 0, 0, w, h, CELL * 0.32);
   ctx.fillStyle = rgba(PALETTE.island, 1);
   ctx.fill();
   ctx.restore();
@@ -116,6 +118,32 @@ function drawBoard(ctx: CanvasRenderingContext2D, map: GameMap, path: PathLine, 
     const p = pts[i + 1]!;
     gate(p, false, Math.atan2(pts[i + 2]!.y - p.y, pts[i + 2]!.x - p.x));
   }
+}
+
+/** The island's outline: the rounded rectangle, with the cove's bay scooped into the edge lane of its pocket. */
+function islePath(ctx: CanvasRenderingContext2D, map: GameMap, cove: Cove): void {
+  const R = CELL * 0.32; // the island's corner radius, as the plain board's
+  const D = CELL * 0.45; // the bay's depth: the pocket's three cells keep their centers on the island
+  const w = map.cols * CELL, h = map.rows * CELL;
+  const c0 = cove.cells[0]!, c2 = cove.cells[2]!;
+  let pts: { x: number; y: number }[];
+  if (c0.row === 0 && c2.row === 0) {
+    const x0 = c0.col * CELL, x1 = (c2.col + 1) * CELL;
+    pts = [{ x: 0, y: 0 }, { x: x0, y: 0 }, { x: x0, y: D }, { x: x1, y: D }, { x: x1, y: 0 }, { x: w, y: 0 }, { x: w, y: h }, { x: 0, y: h }];
+  } else if (c0.row === map.rows - 1 && c2.row === map.rows - 1) {
+    const x0 = c0.col * CELL, x1 = (c2.col + 1) * CELL;
+    pts = [{ x: 0, y: 0 }, { x: w, y: 0 }, { x: w, y: h }, { x: x1, y: h }, { x: x1, y: h - D }, { x: x0, y: h - D }, { x: x0, y: h }, { x: 0, y: h }];
+  } else if (c0.col === 0 && c2.col === 0) {
+    const y0 = c0.row * CELL, y1 = (c2.row + 1) * CELL;
+    pts = [{ x: 0, y: 0 }, { x: w, y: 0 }, { x: w, y: h }, { x: 0, y: h }, { x: 0, y: y1 }, { x: D, y: y1 }, { x: D, y: y0 }, { x: 0, y: y0 }];
+  } else if (c0.col === map.cols - 1 && c2.col === map.cols - 1) {
+    const y0 = c0.row * CELL, y1 = (c2.row + 1) * CELL;
+    pts = [{ x: 0, y: 0 }, { x: w, y: 0 }, { x: w, y: y1 }, { x: w - D, y: y1 }, { x: w - D, y: y0 }, { x: w, y: y0 }, { x: w, y: h }, { x: 0, y: h }];
+  } else { roundRectPath(ctx, 0, 0, w, h, R); return; }
+  // The bay may touch the island's corner: drop duplicated points, or the trace divides by zero.
+  const out = pts.filter((p, i) => i === 0 || p.x !== pts[i - 1]!.x || p.y !== pts[i - 1]!.y);
+  if (out.length > 1 && out[out.length - 1]!.x === out[0]!.x && out[out.length - 1]!.y === out[0]!.y) out.pop();
+  traceRounded(ctx, out, R);
 }
 
 /**

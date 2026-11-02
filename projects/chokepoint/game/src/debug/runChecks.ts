@@ -55,6 +55,14 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
     }
     return null;
   }],
+  ['board.cove', (g) => {
+    const cove = g.board.map.cove;
+    if (!cove) return null;
+    if (g.board.map.fork || g.board.map.loop) return 'a cove shares the board with the fork or the loop';
+    if (cove.cells.length !== 3) return `the cove's pocket has ${cove.cells.length} cells, expected 3`;
+    for (const c of cove.cells) if (g.board.map.kinds[c.row]![c.col] !== 'open') return `a cove pocket cell is not buildable at (${c.col}, ${c.row})`;
+    return null;
+  }],
   ['resume.taken', (g) => (g.registry.get('resumeRun') ? 'a saved run is waiting for the game that never took it' : null)],
   ['ghost.taken', (g) => (g.registry.get('ghostSeed') ? 'a ghost seed is waiting for the game that never took it' : null)],
   ['iron.taken', (g) => (g.registry.get('ironMode') ? 'an iron flag is waiting for the game that never took it' : null)],
