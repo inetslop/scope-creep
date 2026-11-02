@@ -4,11 +4,12 @@ title: "The Mute's silence gets its note"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T10:55:36Z
 claimed_at: 2026-11-02T13:14:38Z
+finished_at: 2026-11-02T13:26:39Z
 ---
 
 ## Goal
@@ -117,3 +118,19 @@ export const muteNote: MakeEnemyHook = ({ enemies, towers, sfx }) => ({
 
 ### Tests
 - none (audio + enemy hook; no `src/core` rule added or changed)
+
+## Result (attempt 1, asus)
+
+The Mute's silence is now audible: one shared held C3 sine (130.81 Hz, 0.05 pre-master — the beam hum's quiet class, a step above its A2) fades in over 250 ms the frame any live Mute holds a tower within its 2-cell circle and fades out over 250 ms when the last one stops. A new enemy hook (`src/systems/enemyHooks/muteNote.ts`) reconciles it every frame reading the same reach as `muteJam`'s ring, with idempotent start/stop in `Sfx` (`muteNoteStart`/`muteNoteStop`, the sky-note pattern) so it never stacks per Mute or gaps; the tone is cut on mute, on scene shutdown and at run end so it never rings over the end card. No new key, button, HUD element or board mark.
+
+- Self-review: APPROVE
+- Time: 12.0 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          | 33 +++++++++++++++++++++-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  1 +
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  1 +
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../game/src/systems/enemyHooks/muteNote.ts        | 24 ++++++++++++++++
+ 5 files changed, 60 insertions(+), 1 deletion(-)
+```

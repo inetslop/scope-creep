@@ -271,6 +271,7 @@ export class RunFlow {
 
   private endRun(): void {
     this.s.sfx?.skyNoteStop(); // the sky's note must not ring over the end card (its flyers may still be in the air)
+    this.s.sfx?.muteNoteStop(); // the Mute's note must not ring over the end card (its Mutes may still be holding)
     this.holdRoad(); // the phase is already 'over': it fades, and the game-over card takes its place
     hook.stats.runsLost += 1;
     this.scene.registry.set('towerKills', this.s.towers.towers.map((t) => ({ first: t.augments[0]?.id, tier: t.augments[0]?.tier, kills: t.kills })));

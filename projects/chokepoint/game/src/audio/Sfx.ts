@@ -10,11 +10,13 @@ export class Sfx {
   private mutedFlag = false;
   /** Muting also stops every held beam hum (they resume only on the next lock). */
   get muted(): boolean { return this.mutedFlag; }
-  set muted(on: boolean) { if (on === this.mutedFlag) return; this.mutedFlag = on; if (on) { this.stopBeamHums(); this.skyNoteStop(); } }
+  set muted(on: boolean) { if (on === this.mutedFlag) return; this.mutedFlag = on; if (on) { this.stopBeamHums(); this.skyNoteStop(); this.muteNoteStop(); } }
   /** The quiet held hums under active beams: at most 3, keyed by the humming tower. */
   private readonly beamHums = new Map<unknown, { osc: OscillatorNode; gain: GainNode }>();
   /** The sky's one shared held note: it exists while any regular Flyer is in the air, and only once. */
   private skyNote: { osc: OscillatorNode; gain: GainNode } | undefined;
+  /** The Mute's silence: one shared held note while any Mute holds a tower still, and only once. */
+  private muteNote: { osc: OscillatorNode; gain: GainNode } | undefined;
 
   /** Call from a user gesture (the first click/tap) so the browser lets audio start. */
   unlock(): void {
@@ -236,6 +238,35 @@ export class Sfx {
     note.gain.gain.setValueAtTime(note.gain.gain.value, t);
     note.gain.gain.linearRampToValueAtTime(0.0001, t + 0.2);
     note.osc.stop(t + 0.22);
+  }
+
+  /** The Mute's held note: one shared sine at C3 (130.81 Hz) while any Mute silences a tower (pre-master 0.05, the beam hum's quiet class, a step above its A2): fades in over 250 ms. A no-op while it is already held. */
+  muteNoteStart(): void {
+    const ctx = this.ctx;
+    if (!ctx || !this.master || this.muted || ctx.state !== 'running' || this.muteNote) return;
+    const t = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = 130.81;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.linearRampToValueAtTime(0.05, t + 0.25);
+    osc.connect(gain).connect(this.master);
+    osc.start(t);
+    this.muteNote = { osc, gain };
+  }
+
+  /** The Mute's note fades out over 250 ms; an exact no-op when it is not held. */
+  muteNoteStop(): void {
+    const note = this.muteNote;
+    const ctx = this.ctx;
+    if (!note || !ctx) return;
+    this.muteNote = undefined;
+    const t = ctx.currentTime;
+    note.gain.gain.cancelScheduledValues(t);
+    note.gain.gain.setValueAtTime(note.gain.gain.value, t);
+    note.gain.gain.linearRampToValueAtTime(0.0001, t + 0.25);
+    note.osc.stop(t + 0.27);
   }
 
   waveStart(): void {
