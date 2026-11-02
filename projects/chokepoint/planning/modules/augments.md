@@ -42,7 +42,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - `beam`: Beam
 - `burn`: Ember
 - `mark`: Mark
-- `pulse`: Splash, Frost, Push, Anchor, Mint, Toll
+- `pulse`: Splash, Push, Anchor, Mint, Toll, Feast
 - `rally`: Rally, Haste
 - `shot`: Bolt, Lance, Rapid, Reach
 - `spray`: Spray
@@ -50,6 +50,7 @@ The owner removed these. Don't propose them again, or anything that works the sa
 **By `added`** (items in one row share that mechanic: a new one joining a row must differ in more than numbers)
 
 - `burn`: Ember
+- `chainWindowSec`: Feast
 - `crit`: Spray
 - `damageMul + rateMul`: Rapid
 - `damagePct`: Beam
@@ -63,7 +64,6 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - `rally`: Rally
 - `rangeMul`: Reach
 - `root`: Anchor
-- `slow`: Frost
 - `splash`: Splash
 
 ### Bolt (`bolt`)
@@ -101,15 +101,6 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - first: kind spray, damage 4, range 2.5, rate 0.833, spray 5
 - added: crit 0.05
 - tiers: rare {damageMul 1.25, cooldownMul 0.875, addedCrit 0.1, asAdded +10% crit chance on any damage.}, epic {damageMul 1.5, cooldownMul 0.75, addedCrit 0.15, asAdded +15% crit chance on any damage.}
-
-### Frost (`frost`)
-- description: "Slows everything around it. Added: hits slow enemies by 40%."
-- asTower: Slows everything around it.
-- asAdded: Hits slow enemies by 40%.
-- look: shape diamond, color ice, size 0.22
-- first: kind pulse, damage 0, range 1.8, rate 1, slow {pct 0.4, sec 2}
-- added: slow {pct 0.4, sec 2}
-- tiers: rare {cooldownMul 0.85, slowPct 0.5, asAdded Hits slow enemies by 50%.}, epic {cooldownMul 0.7, slowPct 0.6, asAdded Hits slow enemies by 60%.}
 
 ### Push (`push`)
 - description: "Pushes everything back along the road. Added: hits push back 0.4 cells."
@@ -182,6 +173,16 @@ The owner removed these. Don't propose them again, or anything that works the sa
 - tier: epic
 - opening: true
 - tiers: rare {asAdded Hits apply the mark, +25% per Mark.}, epic {asAdded Hits apply the mark, +25% per Mark.}
+
+### Feast (`feast`)
+- description: "While the kill chain lives: every tower +4% damage per chain level. Added: the combo window +0.4 s."
+- asTower: "Kills chain: every tower +4% damage per chain level."
+- asAdded: "Each extra Feast: the combo window +0.4 s."
+- look: shape ring, color yellow, size 0.22
+- first: kind pulse, damage 0, range 1, rate 1, runPower true
+- added: chainWindowSec 0.4
+- tier: epic
+- tiers: rare {}, epic {}
 
 ### Ember (`ember`)
 - description: "Sets ablaze the enemy furthest along: the burn keeps ticking. Added: hits set ablaze."

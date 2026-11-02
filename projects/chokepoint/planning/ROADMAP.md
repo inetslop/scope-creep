@@ -30,7 +30,7 @@ The level rule (T0260) and its wave-card line (T0262) landed and played badly: r
 
 **16-cap (protocol):** the four queued registrations (T0062, T0064, T0095, T0235) land exactly four removals: after registering, if the pool is over 16, remove the first still in the index of **Frost, then Rally, then Mint, then Mark**, and say which in the result (the canonical statement is in T0064's task; Anchor is out of reach at four registrations). Everything else — the draft floor (T0048), the beam-combo web (T0210, T0242), the gated Haste (T0152) — never leaves the index.
 **16-cap (fifth removal):** the fifth is **Anchor**, carried outside E4 by T0361 (Herd's registration, non-epic, 2026-11-01) — order-independent with the four (none of them names Anchor). After all five land the index is: Beam, Bolt, Ember, Haste, Lance, Mend, Momentum, Push, Rapid, Reach, Splash, Spray, Toll, Trap, Feast, Herd.
-**16-cap (sixth removal):** the sixth is **Toll**, carried outside E4 by the Chill registration (T0391's file lost 2026-11-02, re-file pending — non-epic) — order-independent with the five (none of them names Toll). After all six land the index is: Beam, Bolt, Chill, Ember, Haste, Lance, Mend, Momentum, Push, Rapid, Reach, Splash, Spray, Trap, Feast, Herd.
+**16-cap (sixth removal):** the sixth is **Toll**, carried outside E4 by the Chill registration (tasked as T0421, 2026-11-02 — non-epic) — order-independent with the five (none of them names Toll). After all six land the index is: Beam, Bolt, Chill, Ember, Haste, Lance, Mend, Momentum, Push, Rapid, Reach, Splash, Spray, Trap, Feast, Herd.
 
 ### E5 — Bosses: every 10th wave is something you remember (done; history in planning/archive/ROADMAP.md)
 
@@ -74,7 +74,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **When done:** the tower panel wears a "Move · −N" line (N = 60% of its slots' cost, floored, minimum 5, the sell's own rule); tapping it opens the move state — the tower dims, the free build cells outline, and the what-if's range ring shows at the tapped cell with the placement's own ✓/✗ — and ✓ slides the tower over in ~300 ms and pays the fee (the −N chip at the old cell, the drop-in bounce, the place haptic); one move per tower per build phase, the line reading "moved" until the next; a tap elsewhere cancels.
 **Breakdown:**
 - the move itself, the core: the panel line, the move state, the slide, the fee, the cancel — **done as T0394 (M, 2026-11-02, asus)**
-- the move's limit and its teach: one move per tower per build phase (the line reads "moved" until the next build phase) and the one-time teach line — **T0394 landed; task when the move's files are free (T0235 builds on Tower.ts, T0389 on the run's files)**
+- the move's limit and its teach: one move per tower per build phase (the line reads "moved" until the next build phase) and the one-time teach line — **T0394 landed; task when the move's files are free (T0389 still on the run's files)**
 - the move's note: one quiet blip on the commit (the speed toggle's note pattern, T0315) — **done as T0392 (S, 2026-11-02, yoga)**
 
 ### E16 — The tower: a tech branch for how towers are managed (active — opened 2026-11-01)
@@ -128,7 +128,7 @@ Queue order: the Bulwark (T0102), the Ward (T0111), the Dart's removal (T0237) a
 New augments land one at a time, the enemy queue's way: each registration keeps the draft at the 16-cap and says which augment it retires.
 
 - Herd (T0361, M) — **in the pool (2026-11-01)**: the first augment that scales with the crowd — +5%/+8% (Rare/Epic) damage per enemy within 2 cells, cap 5; its registration retires Anchor (the fifth removal, after E4's four).
-- Chill (the T0391 re-file, M) — **re-file when the augment's files are free (T0235 is on the augment's core)**: the shot that adds chill stacks — each hit slows 10% per stack, up to 5 (50%), fading 2 s after the last hit; Rare hits add 2, Epic 3; works on the Flyer's flight, the Ward ignores it; its registration retires Toll (the sixth removal, order-independent with the five).
+- Chill (the T0391 re-file, M) — **tasked as T0421 (M, 2026-11-02)**: the shot that adds chill stacks — each hit slows 10% per stack, up to 5 (50%), fading 2 s after the last hit; Rare hits add 2, Epic 3; works on the Flyer's flight, the Ward ignores it; its registration retires Toll (the sixth removal, order-independent with the five).
 
 ## Later
 
