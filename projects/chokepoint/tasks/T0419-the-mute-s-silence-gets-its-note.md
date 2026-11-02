@@ -3,10 +3,12 @@ id: T0419
 title: "The Mute's silence gets its note"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T10:55:36Z
+claimed_at: 2026-11-02T11:17:56Z
+designer: desktop
 ---
 
 ## Goal
