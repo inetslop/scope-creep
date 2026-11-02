@@ -3,10 +3,12 @@ id: T0407
 title: "The island's drop-in: a new board settles into place"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T05:22:32Z
+claimed_at: 2026-11-02T05:42:56Z
+designer: cachyos-x8664
 ---
 
 ## Goal
