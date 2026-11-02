@@ -3,10 +3,12 @@ id: T0424
 title: "The boards reference wears the board's shape: a small live board on each row"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T12:40:16Z
+claimed_at: 2026-11-02T13:00:39Z
+designer: inet-racing
 ---
 
 ## Goal
