@@ -3,12 +3,13 @@ id: T0418
 title: "The preview wears the next wave's tag"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-02T10:34:56Z
 claimed_at: 2026-11-02T10:35:23Z
-designer: yoga
+finished_at: 2026-11-02T11:11:32Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -32,3 +33,7 @@ During the build phase the player sees the next wave's own form — quiet, tight
 - [ ] The chip lives on the preview card only: it appears and disappears with the card, leaves nothing on the board, and adds no key, button or sound.
 - [ ] The one-time tag teach (T0092) still fires as it does today.
 - [ ] At 412x915 and 1280x720 the card with the chip line fits: one line taller, the next-wave button and the rest of the HUD in place.
+
+## Rejected by architect (yoga)
+
+Already exists — the next wave's tag chip already appears on the build-phase preview card (NextWavePreview.build(), lines 126-136: word `plan.tags[0]`, `tagChip(tag)` fill, banner chip's exact 11px label and label.width+14 × 18 rounded size, shown only during the build and destroyed with the card), so the task's premise that the tag is shown nowhere during the build is false; if the chip should sit on its own line under the token row instead of at the token row's left edge, that is a new one-line layout task to file.
