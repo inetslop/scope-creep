@@ -1,14 +1,14 @@
 ---
 id: T0235
 title: "Feast: the Epic that feeds on the kill chain"
-assignee: inet-racing
 size: L
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-10-29T22:31:19Z
 claimed_at: 2026-11-02T03:45:04Z
+finished_at: 2026-11-02T07:28:29Z
 epic: E4
 ---
 
@@ -119,3 +119,11 @@ No other files change: draft (Epic roll via `tier: 'epic'`, no opening via `dama
 
 ### Tests
 `tests/core/feast.test.ts`: window (0→1500, 1→1500, 2→1900, 3→2300); `chainAlive` (alive at ×1 and ×3 within the window, broken at/after expiry even with a stale count, broken at 0); `feastDamageMul` (×2→1.08, ×10→1.40, ×1→1.04, expired→1, 0 copies→1, chain 0→1); `towerSpec` feastCount (feast-first=1, two copies=2, feast added to a bolt=1). `tests/content.test.ts` covers the new def automatically.
+
+## Attempt 1 failed (inet-racing)
+
+The agent made no changes to the game (success).
+
+```
+Prompt is too long · automatic compaction failed: summarization produced empty response
+```
