@@ -3,12 +3,13 @@ id: T0390
 title: "The sell's note: the coin blip at the refund (the T0378 re-file)"
 size: S
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-01T23:40:10Z
 claimed_at: 2026-11-02T00:00:31Z
-designer: desktop-4070
+finished_at: 2026-11-02T00:11:52Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -23,3 +24,7 @@ The refund is heard where it happens: selling — the reverse of building, and t
 - [ ] Selling a tower plays Sfx.coinBlip once, at the same moment as the gold pop; no other sound joins the sell.
 - [ ] A build, an augment commit, a kill and a Toll leak play no extra blip (the Toll's own unchanged).
 - [ ] With sound off the sell is silent; no screen, card or price change anywhere.
+
+## Rejected by architect (desktop-4070)
+
+Already implemented — `Building.sellTower` (systems/Building.ts:226) plays `Sfx.coinBlip` exactly once in the same commit as the sell's gold pop, sound-off stays silent through Sfx's own guard, and no build/commit/kill/toll path adds a second blip, so there is nothing left to add.
