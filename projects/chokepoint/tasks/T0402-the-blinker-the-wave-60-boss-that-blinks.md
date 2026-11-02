@@ -3,10 +3,12 @@ id: T0402
 title: "The Blinker: the wave-60 boss that blinks the road"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T03:32:09Z
+claimed_at: 2026-11-02T04:26:18Z
+designer: desktop
 ---
 
 ## Goal
