@@ -3,11 +3,13 @@ id: T0438
 title: "The long straight: the board whose longest straight is 7+ cells"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T18:33:27Z
+claimed_at: 2026-11-02T20:54:23Z
 design_attempts: 1
+designer: inet-racing
 ---
 
 ## Goal
