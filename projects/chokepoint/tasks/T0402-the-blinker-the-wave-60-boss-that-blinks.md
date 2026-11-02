@@ -1,12 +1,14 @@
 ---
 id: T0402
 title: "The Blinker: the wave-60 boss that blinks the road"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T03:32:09Z
+claimed_at: 2026-11-02T12:40:20Z
 ---
 
 ## Goal
