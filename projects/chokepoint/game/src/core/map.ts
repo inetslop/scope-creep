@@ -1,6 +1,7 @@
 import { ensureChokes } from './choke';
 import { farGateCell } from './farGate';
 import { placeFork, type Fork } from './fork';
+import { boardHasLoop, placeLoop, type Loop } from './loop';
 import { foldSwitchback } from './switchback';
 import type { Rng } from './rng';
 
@@ -23,6 +24,8 @@ export interface GameMap {
   farGate?: Cell;
   /** The fork (core/fork.ts): the road splits into two equal lanes that rejoin before the exit, on about one board in three. */
   fork?: Fork;
+  /** The loop (core/loop.ts): the road circles a rounded ring in the middle of the island once, on about one board in four (never with the fork). */
+  loop?: Loop;
   /** True when the path runs top to bottom (portrait boards), false for left to right. */
   vertical: boolean;
 }
@@ -38,9 +41,13 @@ export interface GameMap {
  * carry two (the road folds back twice, when its tail has room). With `fold` the road gets one
  * switchback fold mid-board: a straight stretch running alongside its own return, a cell of
  * island between (see `core/switchback.ts`). With `farGate` (the wave branch's The door) every
- * board carries the far gate, no roll.
+ * board carries the far gate, no roll. With `seed` (the run's own seed) one board in four
+ * instead of the fork's roll makes the loop (core/loop.ts): the road circles a rounded ring in
+ * the middle of the island once. The decision is the seed's hash and the placement is rng-free,
+ * so a board without it is that seed's exact board as grown, and a gen-1 or switchback board
+ * never loops.
  */
-export function generateMap(rng: Rng, cols: number, rows: number, rocks: number, extraBends = 0, lengthMul = 1, bgen = 2, chokes = 1, fold = false, farGate = false): GameMap {
+export function generateMap(rng: Rng, cols: number, rows: number, rocks: number, extraBends = 0, lengthMul = 1, bgen = 2, chokes = 1, fold = false, farGate = false, seed?: number): GameMap {
   const vertical = rows > cols;
   // Work in "along x across" space, then map to cells.
   const length = vertical ? rows : cols;
@@ -97,11 +104,15 @@ export function generateMap(rng: Rng, cols: number, rows: number, rocks: number,
   const result = bgen >= 2 ? ensureChokes(folded, chokes) : folded;
   // The far gate (core/farGate.ts): one board in three grows a second entrance. The roll is the seed's last draw, so the road keeps this seed's usual shape; with the wave branch's The door the gate is on every board and the roll is skipped.
   const gate = farGate ? farGateCell(result) : rng.chance(1 / 3) ? farGateCell(result) : undefined;
+  // The loop (core/loop.ts): one board in four (the seed's own hash, never the rng) circles a
+  // rounded ring in the middle of the island; the placement is rng-free, so a board without it
+  // is today's exact board, and it takes the fork's roll while it is placed.
+  const looped = seed === undefined || bgen < 2 || fold ? undefined : boardHasLoop(seed) ? placeLoop({ ...result, farGate: gate }) : undefined;
   // The fork (core/fork.ts): one board in three splits the road into two lanes that rejoin before the
   // exit, a full build row between them. The roll is after the far gate's and the placement is
   // rng-free, so a board without it is today's exact board; a switchback board keeps its fold.
-  const forked = fold ? undefined : rng.chance(1 / 3) ? placeFork({ ...result, farGate: gate }) : undefined;
-  return { ...(forked ?? result), farGate: gate };
+  const forked = fold || looped !== undefined ? undefined : rng.chance(1 / 3) ? placeFork({ ...result, farGate: gate }) : undefined;
+  return { ...(looped ?? forked ?? result), farGate: gate };
 }
 
 /** 1 when the road's second cell is the entrance jog (not one step along the entrance axis), else 0. */

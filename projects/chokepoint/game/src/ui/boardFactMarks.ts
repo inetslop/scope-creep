@@ -45,6 +45,12 @@ export function paintBoardFactMark(g: Phaser.GameObjects.Graphics, mark: BoardFa
       road(g, -4, -5, 10, -5);
       road(g, -4, 5, 10, 5);
       break;
+    case 'loop': // the road circles the island once: a ring around its inside
+      road(g, -8, -8, 8, -8);
+      road(g, -8, -8, -8, 8);
+      road(g, 8, -8, 8, 8);
+      road(g, -8, 8, 8, 8);
+      break;
     case 'markedcell': // a build cell with a small dot on it
       g.fillRoundedRect(-5, -5, 10, 10, 3);
       g.fillStyle(PALETTE.card, 1);

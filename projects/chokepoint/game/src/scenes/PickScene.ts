@@ -125,7 +125,7 @@ export class PickScene extends Phaser.Scene {
     this.box?.destroy();
 
     const maps = this.seeds.map((seed, i) => {
-      const map = generateMap(new Rng(seed), portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, this.bends, this.lengthMul, 2, this.chokes, this.fold, this.farGate);
+      const map = generateMap(new Rng(seed), portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, this.bends, this.lengthMul, 2, this.chokes, this.fold, this.farGate, seed);
       paintBoardPreview(this, this.boardKey(i), map, pathLineFor(map, CELL), markedCell(map, seed));
       return map;
     });

@@ -127,7 +127,7 @@ export class GameScene extends Phaser.Scene {
     const farGate = boardFarGate(loadProfile(window.localStorage).purchased);
     const view = viewSize(this);
     const portrait = saved ? saved.rows > saved.cols : view.height > view.width;
-    const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, bends, lengthMul, this.run.bgen, chokes, fold, farGate);
+    const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, bends, lengthMul, this.run.bgen, chokes, fold, farGate, seed);
     const marked = markedCell(map, seed); // the board's one +25% cell: from its own seed, never run.rng
     this.mapLengthMul = lengthMul;
     this.mapChokes = chokes;

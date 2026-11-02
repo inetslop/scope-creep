@@ -4,11 +4,12 @@ title: "The loop: the board whose road circles the island once"
 assignee: inet-racing
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-01T20:21:14Z
 claimed_at: 2026-11-01T20:45:39Z
+finished_at: 2026-11-02T03:44:16Z
 ---
 
 ## Goal
@@ -77,3 +78,25 @@ Geometry (in along×across space, like the siblings; `length`=14, `width`=8). Sh
 
 ### Tests
 - `tests/core/loop.test.ts` (model on `tests/core/fork.test.ts`): 500 seeds × both orientations — valid path, deterministic, 18-32% looped, loop boards have no fork and fork boards no loop, non-loop boards `toEqual` the same call without `seed`; on loop boards the ring is 12-16 cells, a closed adjacent cycle, not a rectangle (`ring.length !== 2*bboxW + 2*bboxH - 4`), 4-6 open cells sealed inside (flood-fill open cells from the island's edge), ring is a contiguous in-order slice of `map.path`, every non-ring path cell except the two mouth connectors is Chebyshev ≥ 2 from every ring cell, no open cell has all ring cells at `Math.hypot <= 2` and the best coverage is achieved by an interior cell; `boardHasLoop` is ~25% of 1000 seeds; `placeLoop` is deterministic; fold boards and bgen-1 boards never loop; a forced-gate board (`farGate: true`) with a loop keeps the gate on a straight cell before the ring's entry; loop boards keep ≥ 1 choke cell; 100 seeds with `bends 1, lengthMul 1.25, chokes 2, farGate true` stay valid.
+
+## Result (attempt 1, inet-racing)
+
+(no summary)
+
+- Self-review: APPROVE
+- Time: 418.6 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/boardFacts.ts    |   3 +-
+ projects/chokepoint/game/src/core/loop.ts          | 149 +++++++++++++
+ projects/chokepoint/game/src/core/map.ts           |  19 +-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  17 ++
+ projects/chokepoint/game/src/scenes/GameScene.ts   |   2 +-
+ projects/chokepoint/game/src/scenes/PickScene.ts   |   2 +-
+ projects/chokepoint/game/src/ui/boardFactMarks.ts  |   6 +
+ .../chokepoint/game/tests/core/_probeLoop.test.ts  |   4 +
+ .../chokepoint/game/tests/core/boardFacts.test.ts  |   4 +-
+ projects/chokepoint/game/tests/core/loop.test.ts   | 232 +++++++++++++++++++++
+ 10 files changed, 429 insertions(+), 9 deletions(-)
+```
