@@ -3,13 +3,13 @@ id: T0416
 title: "The slow stretch: the road that makes the walkers linger"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-02T10:20:00Z
 claimed_at: 2026-11-02T11:32:44Z
-design_attempts: 1
-designer: cachyos-x8664
+finished_at: 2026-11-02T13:32:47Z
+design_attempts: 2
 ---
 
 ## Goal
@@ -28,3 +28,11 @@ Some boards hand the player a free defensive spot: about one board in four grows
 - [ ] A walker over the stretch moves at 70% of its current speed and returns to full speed the moment it leaves; a Frost-slowed walker over it is 70% of its slowed speed; a Dasher's dash burst and a flying Flyer are unaffected.
 - [ ] The board facts name the stretch on a board that has one (and not on one that doesn't); the boards reference lists it under "some boards".
 - [ ] A board without the stretch is byte-identical to before this task in generation, drawing and facts; `npm run check` and the desktop + mobile smoke pass.
+
+## Architect could not design it (cachyos-x8664)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+
+```
