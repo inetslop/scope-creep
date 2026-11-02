@@ -168,6 +168,12 @@ export class Sfx {
     this.tone(200, 0.08, 'sine', 0.1, 150);
   }
 
+  /** The wave's last kill within 1.5 cells of the exit: one soft sine at A3 — the leak tick's quiet class,
+   *  a touch higher and shorter than the leak thud (140→70 Hz, 0.3 s), so it reads as a close call, not the leak. */
+  nearMiss(): void {
+    this.tone(220, 0.15, 'sine', 0.09);
+  }
+
   /** A held 110 Hz sine under an active beam (pre-master 0.05, the tier-chime sines held): fade-in over 200 ms. */
   beamHumStart(key: unknown): void {
     const ctx = this.ctx;

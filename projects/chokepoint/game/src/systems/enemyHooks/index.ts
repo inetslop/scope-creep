@@ -38,6 +38,7 @@ import { bountyCoin } from './bountyCoin';
 import { killMilestone } from './killMilestone';
 import { waveClose } from './waveClose';
 import { nearMiss } from './nearMiss';
+import { nearMissNote } from './nearMissNote';
 
 /**
  * Everything that reacts to kills, leaks or every frame of a wave, one per line (see hook.ts).
@@ -72,6 +73,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   killMilestone,
   waveClose,
   nearMiss,
+  nearMissNote,
   haulerLeak,
   haulerTeach,
   blockTeach,

@@ -4,11 +4,12 @@ title: The near miss gets its note
 assignee: desktop
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T03:05:38Z
 claimed_at: 2026-11-02T03:33:58Z
+finished_at: 2026-11-02T03:37:05Z
 ---
 
 ## Goal
@@ -78,3 +79,17 @@ export const nearMissNote: MakeEnemyHook = (ctx) => ({
 
 ### Tests
 - none (audio/juice task)
+
+## Result (attempt 1, desktop)
+
+Added the soft near-miss note for T0271's close call: a new `Sfx.nearMiss()` method (one soft A3 sine, 220 Hz / 0.15 s / 0.09, quieter and shorter than the leak thud) placed after `leakWarn()`, and a new stateless enemy hook `src/systems/enemyHooks/nearMissNote.ts` that plays it on the exact same trigger as the "close" chip (the wave's last kill within 1.5 cells of the exit), registered in `ENEMY_HOOKS` right after `nearMiss`. Ordinary kills and leaks are untouched; it is silent when sound is off and the existing chip is unchanged. `npm run check` and the desktop + mobile smoke both pass.
+
+- Self-review: APPROVE
+- Time: 3.1 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts                 |  6 ++++++
+ projects/chokepoint/game/src/systems/enemyHooks/index.ts  |  2 ++
+ .../game/src/systems/enemyHooks/nearMissNote.ts           | 15 +++++++++++++++
+ 3 files changed, 23 insertions(+)
+```
