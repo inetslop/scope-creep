@@ -3,13 +3,14 @@ id: T0451
 title: "The second roll: the draft branch's second node, the reroll twice per run"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: [T0450]
 attempts: 0
 created: 2026-11-02T23:11:28Z
 claimed_at: 2026-11-02T23:41:16Z
+finished_at: 2026-11-02T23:43:40Z
 epic: E23
-designer: desktop
+design_attempts: 1
 ---
 
 ## Goal
@@ -28,3 +29,7 @@ The draft branch's second node — The second roll: 85 coins, the run's once dra
 - [ ] A saved and resumed run with the node keeps its reroll uses: one used shows the 25-gold button, two used shows none.
 - [ ] Without the node, the reroll is byte-identical: once per run, 15 gold, gone after.
 - [ ] The game is playable menu to game over on desktop and mobile.
+
+## Rejected by architect (desktop)
+
+The task's baseline is stale — the draft reroll today is unlimited with a climbing curve (50, 70, 100, … gold; config.ts `REROLL`/`rerollCost`, `RunState.reroll()` has no cap, and the DraftScene button stays and reprices), not the "once per run, 15 gold, gone after" the task claims is byte-identical to today, so the node's 15-then-25 two-use rule contradicts the code (a "second" reroll at 25 would cost half of today's first at 50) and building it would force rewriting the existing reroll rule the task says must not change; also, 85 coins is not derivable from the existing "The draft" branch's depth rule (base price 10 gives 30 at depth 2, 80 at depth 4), so the node's price would need T0450's not-yet-designed branch first.
