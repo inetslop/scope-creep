@@ -1,12 +1,14 @@
 ---
 id: T0420
 title: "The game over's bed: a quiet beat under the game-over card"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T11:17:53Z
+claimed_at: 2026-11-02T11:55:04Z
 ---
 
 ## Goal
