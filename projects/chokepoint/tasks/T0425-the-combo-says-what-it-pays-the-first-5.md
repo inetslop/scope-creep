@@ -3,10 +3,12 @@ id: T0425
 title: "The combo says what it pays: the first ×5 chain's one-time chip"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T13:12:56Z
+claimed_at: 2026-11-02T13:13:01Z
+designer: yoga
 ---
 
 ## Goal
