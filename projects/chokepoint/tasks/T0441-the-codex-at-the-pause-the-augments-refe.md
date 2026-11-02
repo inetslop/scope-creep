@@ -4,11 +4,12 @@ title: "The codex at the pause: the augments reference row"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T19:42:29Z
 claimed_at: 2026-11-02T20:40:45Z
+finished_at: 2026-11-02T21:30:48Z
 ---
 
 ## Goal
@@ -96,3 +97,16 @@ The `else` branch is today's two lines, unchanged.
 
 ### Tests
 none (scene/UI wiring only; no core rule added or changed)
+
+## Result (attempt 1, asus)
+
+The pause card now has an "Augments" reference row (plus a matching line in its controls list) that opens the existing codex over the dimmed pause; the codex's `doBack` takes a scene parameter and returns to the pause when opened from there (the run stays paused — GameScene pauses itself, not the pause card), falling back to the byte-identical menu path otherwise. Guarded against Phaser's stale launch data by requiring the pause scene to actually be paused. Only `CodexScene.ts` (signature + doBack) and `PauseScene.ts` (row, controls line, card height, placement, boxKids) changed. `npm run check` and desktop + mobile smoke pass.
+
+- Self-review: APPROVE
+- Time: 50.0 min
+
+```
+projects/chokepoint/game/src/scenes/CodexScene.ts | 16 +++++++++++++---
+ projects/chokepoint/game/src/scenes/PauseScene.ts | 13 +++++++++++--
+ 2 files changed, 24 insertions(+), 5 deletions(-)
+```

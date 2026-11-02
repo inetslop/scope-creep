@@ -31,7 +31,7 @@ export class CodexScene extends Phaser.Scene {
     super(SCENES.codex);
   }
 
-  create(): void {
+  create(data?: { from?: string }): void {
     uiCamera(this);
     hook.overlay = SCENES.codex;
     this.closed = false;
@@ -41,8 +41,18 @@ export class CodexScene extends Phaser.Scene {
       if (this.closed) return;
       this.closed = true;
       getSfx(this)?.blip();
-      hook.overlay = '';
-      this.scene.start(SCENES.menu);
+      // Opened from the pause's Augments row: back to the pause, the run staying paused —
+      // GameScene is paused, not the pause card. The menu opens with no data, and Phaser keeps
+      // a scene's last launch data across launches, so a stale pause data from an earlier
+      // in-run visit must not send a menu open back to a stopped run: the pause counts only
+      // while it is actually paused under the codex.
+      if (data?.from === SCENES.pause && this.scene.isPaused(SCENES.pause)) {
+        hook.overlay = SCENES.pause;
+        this.scene.start(SCENES.pause); // the run stays paused: GameScene is paused, not the pause card
+      } else {
+        hook.overlay = '';
+        this.scene.start(SCENES.menu);
+      }
     };
     // The back button: a round ink card with a white arrow, top right.
     this.back = makeButton(this, 0, 0, '', doBack, { width: 48, height: 48, radius: 24, fill: PALETTE.ink });
