@@ -1,12 +1,14 @@
 ---
 id: T0422
 title: "The preview's tag chip sits on its own line"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T11:43:00Z
+claimed_at: 2026-11-02T12:05:48Z
 ---
 
 ## Goal
