@@ -3,11 +3,13 @@ id: T0449
 title: "The tag's haptic: a special wave you feel before it happens"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T22:27:29Z
+claimed_at: 2026-11-02T22:28:16Z
 epic: E22
+designer: yoga
 ---
 
 ## Goal
