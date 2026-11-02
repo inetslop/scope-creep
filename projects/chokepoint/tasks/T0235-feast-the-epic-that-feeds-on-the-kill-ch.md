@@ -1,12 +1,14 @@
 ---
 id: T0235
 title: "Feast: the Epic that feeds on the kill chain"
+assignee: inet-racing
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-10-29T22:31:19Z
+claimed_at: 2026-11-02T03:45:04Z
 epic: E4
 ---
 
