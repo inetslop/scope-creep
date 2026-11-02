@@ -35,6 +35,7 @@ describe('level augments', () => {
     expect(levelMultiplier(['short-fuse'])).toBe(1.3);
     expect(levelMultiplier(['lean', 'short-fuse'])).toBeCloseTo(1.55, 12);
     expect(levelMultiplier(['tough', 'lean', 'short-fuse'])).toBeCloseTo(1.8, 12);
+    expect(levelMultiplier(['blind'])).toBeCloseTo(1.35, 12);
     expect(levelMultiplierLabel([])).toBe('×1.00');
     expect(levelMultiplierLabel(['tough'])).toBe('×1.25');
     expect(levelMultiplierLabel(['swift'])).toBe('×1.15');
@@ -42,6 +43,7 @@ describe('level augments', () => {
     expect(levelMultiplierLabel(['swift', 'crowded'])).toBe('×1.35');
     expect(levelMultiplierLabel(['tough', 'swift', 'crowded'])).toBe('×1.60');
     expect(levelMultiplierLabel(['tough', 'lean', 'short-fuse'])).toBe('×1.80');
+    expect(levelMultiplierLabel(['blind'])).toBe('×1.35');
     expect(levelMultiplierTag(1.25)).toBe('×1.25');
     expect(levelMultiplierTag(1.5)).toBe('×1.5');
   });
@@ -50,6 +52,7 @@ describe('level augments', () => {
     expect(getLevelAugment('tough')).toMatchObject({ name: 'Tough', line: 'enemies +25% health', bonus: 0.25 });
     expect(getLevelAugment('lean')).toMatchObject({ name: 'Lean', line: 'kills pay 25% less gold', bonus: 0.25 });
     expect(getLevelAugment('short-fuse')).toMatchObject({ name: 'Short fuse', line: 'the build countdown runs 30% shorter', bonus: 0.3 });
+    expect(getLevelAugment('blind')).toMatchObject({ name: 'Blind', line: 'no preview of the next wave', bonus: 0.35 });
     expect(getLevelAugment('nope')).toBeUndefined();
   });
 

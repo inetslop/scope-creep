@@ -4,11 +4,12 @@ title: "Blind: the level whose run has no wave preview"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T21:47:49Z
 claimed_at: 2026-11-02T23:03:56Z
+finished_at: 2026-11-02T23:11:04Z
 epic: E21
 design_attempts: 1
 ---
@@ -89,3 +90,19 @@ The run-setup step's level set (Crowded, Lean, Short fuse, Swift, Tough) gains a
 ### Tests
 
 `blind.ts` is content + two display guards, not a rule in `src/core`; the existing per-id `tests/core/levels.test.ts` already validates each level's `name`/`line`/`bonus`, and `tests/core/daily.test.ts` uses `LEVEL_AUGMENTS.length` dynamically (no fixed list), so nothing breaks from the new entry. The added lines pin `blind`'s id/line/bonus (`0.35`) and its multiplier/label (`1.35` / `×1.35`) so a later edit can't silently change the value. `npm run check` and `npm run smoke` must pass.
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the sixth level "Blind" to the level set (size M, attempt 1). Created `src/content/levels/blind.ts` (def `blind`, line "no preview of the next wave", bonus 0.35 → multiplier ×1.35, one notch above Short fuse's 0.30 on the set's own scale) and registered it in `src/content/levels/index.ts`; the run-setup step, LevelChips row, slot cap, coin/score readouts and resume all pick it up dynamically. Guarded the two display sites: `NextWavePreview.update()` now keeps `plan` undefined while `run.level` includes `blind`, so the build-phase preview card (tokens, counts, tag chip, teach lines, boss token) never appears, and `FlyTelegraph.update()` no longer shows the build-phase flyer line in a Blind run. Pinned the new value in `tests/core/levels.test.ts` (id/line/bonus, multiplier 1.35, label ×1.35); `npm run check` and `npm run smoke` both pass (desktop + mobile), and a run without Blind is byte-identical since both guards short-circuit and `levelMultiplier` ignores the absent id.
+
+- Self-review: APPROVE
+- Time: 7.1 min
+
+```
+projects/chokepoint/game/src/content/levels/blind.ts   | 9 +++++++++
+ projects/chokepoint/game/src/content/levels/index.ts   | 3 ++-
+ projects/chokepoint/game/src/systems/FlyTelegraph.ts   | 2 +-
+ projects/chokepoint/game/src/ui/hud/NextWavePreview.ts | 2 +-
+ projects/chokepoint/game/tests/core/levels.test.ts     | 3 +++
+ 5 files changed, 16 insertions(+), 3 deletions(-)
+```

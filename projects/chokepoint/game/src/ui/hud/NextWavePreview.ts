@@ -66,7 +66,7 @@ export class NextWavePreview implements HudPart {
   update(game: GameScene): void {
     // On a narrow screen the tower panel grows up into this corner while it's open, so the card waits out of the way.
     const hidden = isNarrow(this.size.width) && game.building.selectedTower !== undefined;
-    const plan = !hidden && game.run.phase === 'build' ? game.waves.nextPlan : undefined;
+    const plan = !hidden && !game.run.level.includes('blind') && game.run.phase === 'build' ? game.waves.nextPlan : undefined;
     if (!plan) {
       if (this.box) {
         this.scene.tweens.killTweensOf(this.box);

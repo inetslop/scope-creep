@@ -42,7 +42,7 @@ export class FlyTelegraph {
   }
 
   update(dt: number): void {
-    const show = this.run.phase === 'build' && isFlyerBossPlan(this.waves.nextPlan);
+    const show = this.run.phase === 'build' && !this.run.level.includes('blind') && isFlyerBossPlan(this.waves.nextPlan);
     if (show) {
       if (!this.line || !this.line.active) this.makeLine();
       this.fadeT = 0;
