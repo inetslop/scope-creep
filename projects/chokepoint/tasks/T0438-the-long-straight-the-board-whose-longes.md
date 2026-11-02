@@ -3,13 +3,13 @@ id: T0438
 title: "The long straight: the board whose longest straight is 7+ cells"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-02T18:33:27Z
 claimed_at: 2026-11-02T20:54:23Z
-design_attempts: 1
-designer: inet-racing
+finished_at: 2026-11-02T22:54:28Z
+design_attempts: 2
 ---
 
 ## Goal
@@ -27,3 +27,11 @@ About one board in five grows one long straight — the road's longest straight 
 - [ ] ~1-in-5 boards (a hash-rate test, the cove's and the twin's own test pattern) carry a road whose longest straight run is at least the module constant (7 or longer), deterministic per seed; no-hash boards keep today's roads byte-identically; fork and loop boards never carry it.
 - [ ] The board facts name the modifier and the boards reference shows its row with a committed-seed mini board whose longest straight is visibly long; the cove, twin, marked cell and double-mark tests are untouched (no exclusivity with them).
 - [ ] A run on a long-straight board plays and resumes identically to its seed (nothing in the run save); a runChecks invariant (hash ⇒ longest straight ≥ the constant) passes; `npm run check` and the desktop + mobile smoke pass.
+
+## Architect could not design it (inet-racing)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+
+```
