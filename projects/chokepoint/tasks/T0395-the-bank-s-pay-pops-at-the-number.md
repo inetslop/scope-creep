@@ -3,12 +3,10 @@ id: T0395
 title: "The bank's pay pops at the number"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-02T01:03:06Z
-claimed_at: 2026-11-02T01:03:11Z
-designer: yoga
 ---
 
 ## Goal
@@ -24,3 +22,32 @@ The bank's pay (T0363) already wears its quiet "bank +N" line in the build and i
 - [ ] A pay of 0 plays nothing; kill gold, Mint gold, the wave bonus and the early-send's seconds-gold never trigger the pop
 - [ ] The coin tally's own pop and the "bank +N" line are untouched; the stats card's layout is unchanged at 412x915 and 1280x720
 - [ ] `npm run check` and the desktop + mobile smoke pass
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/ui/hud/StatsCard.ts` — in `popGold()`, add the gold row's coin icon white-flash + scale, so the bank-pay pop wears the coin like the coin tally's own pop (`pop()`) does. Nothing else changes.
+
+### Interfaces
+None. `popGold(n: number): void` keeps its signature; its body gains the icon flash after the existing guard.
+
+### Steps
+1. Open `src/ui/hud/StatsCard.ts`, find `private popGold(n: number): void` (lines 139-147).
+2. Inside `popGold`, after the gold number's scale tween (the `this.scene.tweens.add({ targets: this.gold, ... })` line, currently line 146) — i.e. still inside the `if (this.goldPulsing) return;` guard, after `this.goldPulsing = true;` — add exactly this, mirroring `pop()`'s handling of `this.coinTallyIcon` but on `this.coinIcon` (the gold row's coin, field declared at line 27):
+   ```ts
+   this.coinIcon.setTintFill(0xffffff);
+   const base = this.coinIcon.scale;
+   this.scene.tweens.add({ targets: this.coinIcon, scale: base * 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => { this.coinIcon.setScale(base); this.coinIcon.clearTint(); } });
+   ```
+3. Touch nothing else: the "+N" rising text, the gold number scale tween and `goldPulsing` guard, `pop()`, `bankRow()`, `pulseLives()`, `popLives()`, and `RunFlow.bankPay()` (the registry + blip + coin arc are already wired).
+
+### Pitfalls
+- The icon code MUST sit after `this.goldPulsing = true;` so the "once per start" guard covers number and icon together; before the guard it would double-play.
+- Base the scale on `this.coinIcon.scale` (set by `artScale(..., 1.25)` = `1/3 * 1.25`, never hardcode `1.25` — that would leave the icon 3× the right size).
+- `onComplete` must `clearTint()` or the coin stays white for the rest of the run; it must NOT reset `goldPulsing` (the gold tween's `onComplete` already does).
+- Do not touch `this.coinTallyIcon` or `pop()` — the coin tally's own pop must keep playing for coin gains; the two pops coexist by design.
+- `bankRow`/`goldTagRow` move `this.coinIcon.x` (the ×4 rich-wave shift); scaling is origin-centered so those shifts stay valid, and no layout or size changes (412x915 and 1280x720 unchanged).
+- The registry key `bankPay` is set only by `RunFlow.bankPay()` when `pay > 0` (core/bankInterest, 5% floored, capped +10), so kill gold, Mint gold, the wave bonus and the early-send's seconds-gold never reach `popGold` — verify before touching RunFlow that no other `registry.set('bankPay')` exists (Grep: there is exactly one).
+
+### Tests
+none
