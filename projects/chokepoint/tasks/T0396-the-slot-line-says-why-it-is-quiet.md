@@ -3,10 +3,12 @@ id: T0396
 title: The slot line says why it is quiet
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T01:03:06Z
+claimed_at: 2026-11-02T01:21:55Z
+designer: yoga
 ---
 
 ## Goal
