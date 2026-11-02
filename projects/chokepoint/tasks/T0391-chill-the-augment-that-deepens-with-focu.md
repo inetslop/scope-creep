@@ -3,10 +3,12 @@ id: T0391
 title: "Chill: the augment that deepens with focus"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T00:02:34Z
+claimed_at: 2026-11-02T00:29:37Z
+designer: desktop
 ---
 
 ## Goal
