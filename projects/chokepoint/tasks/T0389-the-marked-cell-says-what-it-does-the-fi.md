@@ -1,12 +1,14 @@
 ---
 id: T0389
 title: "The marked cell says what it does: the first build's one-time chip"
+assignee: desktop-4070
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-01T23:40:10Z
+claimed_at: 2026-11-02T00:11:54Z
 ---
 
 ## Goal
