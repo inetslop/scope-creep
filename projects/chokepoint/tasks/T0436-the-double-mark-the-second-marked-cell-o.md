@@ -3,10 +3,12 @@ id: T0436
 title: "The double mark: the second marked cell on some boards"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T17:22:19Z
+claimed_at: 2026-11-02T17:43:15Z
+designer: cachyos-x8664
 ---
 
 ## Goal
