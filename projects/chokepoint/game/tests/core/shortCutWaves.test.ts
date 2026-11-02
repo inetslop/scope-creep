@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ENEMIES } from '../../src/content/enemies';
 import { Rng } from '../../src/core/rng';
-import { isBossWave, isQuietWave, isRushWave, isShortCutWave, isTightWave, planWave, shortCutSpawnDistance, waveHpMul } from '../../src/core/waves';
+import { isBossWave, isDoubleWave, isQuietWave, isRushWave, isShortCutWave, isTightWave, planWave, shortCutSpawnDistance, waveHpMul } from '../../src/core/waves';
 
 describe('short cut wave plans', () => {
   it('isShortCutWave: every 9th wave from wave 16, never a quiet, tight, rush or boss wave', () => {
@@ -37,7 +37,7 @@ describe('short cut wave plans', () => {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
       const want = isBossWave(wave)
         ? ['boss']
-        : isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : isShortCutWave(wave) ? ['short cut'] : [];
+        : isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : isShortCutWave(wave) ? ['short cut'] : isDoubleWave(wave) ? ['double'] : [];
       expect(plan.tags, `wave ${wave}`).toEqual(want);
     }
   });

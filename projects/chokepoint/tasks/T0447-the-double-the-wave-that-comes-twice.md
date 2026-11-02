@@ -4,11 +4,12 @@ title: "The double: the wave that comes twice"
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T22:27:29Z
 claimed_at: 2026-11-02T22:34:33Z
+finished_at: 2026-11-02T22:43:25Z
 epic: E22
 ---
 
@@ -81,3 +82,22 @@ In `WaveSystem.update()`: compute `const doubleAt = isDoubleWave(plan.number) ? 
 
 ### Tests
 - `tests/core/doubleWaves.test.ts` (new, as in step 6) and the two-line update to `tests/core/waveTags.test.ts`.
+
+## Result (attempt 1, desktop)
+
+Added the "double" wave tag (T0447): from wave 21, every 8th non-quiet/tight/rush/short-cut/boss wave comes in two fronts — `isDoubleWave`, `DOUBLE_LULL_SEC` (6 s), `DOUBLE_SPEED_MUL` (1.2×), `doubleSplitAt` and `doubleLull` in core/waves.ts, applied in WaveSystem.start()/update() so the lull and the faster second-front walkers ride the plan actually sent (Flyers never sped up). The preview and banner wear the "double" chip via the existing tag-chip mechanism, the waves reference lists it, the first double wave's preview teaches it once, and two new/updated invariants plus a new test file (and the tag-chain line in the short cut's range test) pin the schedule.
+
+- Self-review: APPROVE
+- Time: 8.9 min
+
+```
+projects/chokepoint/game/src/core/waveTags.ts      |  3 +-
+ projects/chokepoint/game/src/core/waves.ts         | 32 ++++++++++-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  5 +-
+ projects/chokepoint/game/src/systems/WaveSystem.ts | 11 +++-
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  |  1 +
+ .../chokepoint/game/tests/core/doubleWaves.test.ts | 65 ++++++++++++++++++++++
+ .../game/tests/core/shortCutWaves.test.ts          |  4 +-
+ .../chokepoint/game/tests/core/waveTags.test.ts    |  9 +--
+ 8 files changed, 117 insertions(+), 13 deletions(-)
+```

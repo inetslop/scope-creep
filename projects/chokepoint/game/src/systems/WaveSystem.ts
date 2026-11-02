@@ -4,7 +4,7 @@ import { isFarGateSpawn } from '../core/farGate';
 import { levelCountMul, levelSpeedMul } from '../core/levels';
 import type { RunState } from '../core/run';
 import { waveWalkFactor } from '../core/tech';
-import { planWave, planWithLevel, shortCutSpawnDistance, type WavePlan, waveSpeedMul } from '../core/waves';
+import { DOUBLE_SPEED_MUL, doubleLull, doubleSplitAt, isDoubleWave, planWave, planWithLevel, shortCutSpawnDistance, type WavePlan, waveSpeedMul } from '../core/waves';
 import { hook } from '../debug/testHook';
 import type { EnemySystem } from './EnemySystem';
 
@@ -54,7 +54,9 @@ export class WaveSystem {
     this.run.startWave();
     this.livesAtStart = this.run.lives;
     this.heldLost = 0;
-    this.plan = this.planned ?? planWithLevel(planWave(this.run.wave, this.run.rng, ENEMIES), levelCountMul(this.run.level));
+    const plan0 = this.planned ?? planWithLevel(planWave(this.run.wave, this.run.rng, ENEMIES), levelCountMul(this.run.level));
+    // The double (core/waves.ts) rides the plan actually sent: its lull and its faster second front are cut here, after the level's extras.
+    this.plan = isDoubleWave(plan0.number) ? doubleLull(plan0) : plan0;
     this.planned = undefined;
     this.next = 0;
     this.timer = 0;
@@ -81,6 +83,8 @@ export class WaveSystem {
     if (!plan) return;
     const waveMul = waveSpeedMul(plan.number);
     const speedMul = levelSpeedMul(this.run.level) * this.walkMul * waveMul;
+    // The double (core/waves.ts): from the split on, the second front's walkers walk DOUBLE_SPEED_MUL faster (a Flyer never).
+    const doubleAt = isDoubleWave(plan.number) ? doubleSplitAt(plan.spawns.length) : Infinity;
     this.timer += dt;
     while (this.next < plan.spawns.length && this.timer >= plan.spawns[this.next]!.delaySec) {
       const spawn = plan.spawns[this.next]!;
@@ -89,7 +93,8 @@ export class WaveSystem {
       const lane = this.hasFork ? forkLane(this.run.seed, this.run.wave, this.next) : 0;
       // The short cut (core/waves.ts): the wave's road walkers come in 40% down the path they walk, from the entrance they walk in from.
       const entrance = isFarGateSpawn(this.next, plan, this.farGateDistance > 0) ? this.farGateDistance : 0;
-      this.enemies.spawn(getEnemy(spawn.enemy), plan.hpMul * this.run.levelHpMul, speedMul, waveMul, this.walkMul, shortCutSpawnDistance(plan.number, this.enemies.routeForLane(lane).length, entrance), lane);
+      const def = getEnemy(spawn.enemy);
+      this.enemies.spawn(def, plan.hpMul * this.run.levelHpMul, speedMul * (this.next >= doubleAt && !def.flies ? DOUBLE_SPEED_MUL : 1), waveMul, this.walkMul, shortCutSpawnDistance(plan.number, this.enemies.routeForLane(lane).length, entrance), lane);
       this.next += 1;
     }
   }
