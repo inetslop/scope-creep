@@ -3,11 +3,13 @@ id: T0448
 title: "The clumps: the wave that walks in clumps"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T22:27:29Z
+claimed_at: 2026-11-02T22:54:31Z
 epic: E22
+designer: inet-racing
 ---
 
 ## Goal
