@@ -6,7 +6,7 @@ import { WAVE_NODES } from '../../src/content/tech/wave';
 import { TOWER_NODES } from '../../src/content/tech/tower';
 import { EXIT_NODES } from '../../src/content/tech/exit';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { boardBends, boardChokes, boardFarGate, boardLengthMul, buyBoardNode, buyClaimNode, buyExitNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, leakWarnLead, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES, waveWalkFactor } from '../../src/core/tech';
+import { blockLeakCost, boardBends, boardChokes, boardFarGate, boardLengthMul, buyBoardNode, buyClaimNode, buyExitNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, leakWarnLead, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES, waveWalkFactor } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -318,9 +318,10 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'door', 'soft-sell']);
   });
 
-  it('the exit row is one node for now, The long watch at 30: the leak warning starts 5 s out', () => {
-    expect(EXIT_NODES.map((n) => [n.id, n.name, n.line, n.price, n.lead])).toEqual([
-      ['long-watch', 'The long watch', 'the leak warning starts 5 s out', 30, 5],
+  it('the exit row is two nodes: The long watch, the leak warning starting 5 s out, and One life a Block, a leaking Block costing 1 life', () => {
+    expect(EXIT_NODES.map((n) => [n.id, n.name, n.line, n.price, n.lead, n.blockCost])).toEqual([
+      ['long-watch', 'The long watch', 'the leak warning starts 5 s out', 30, 5, 2],
+      ['one-life-block', 'One life a Block', 'a Block that leaks costs 1 life instead of 2', 30, 3, 1],
     ]);
   });
 
@@ -329,6 +330,13 @@ describe('tech', () => {
     expect(leakWarnLead(['gold-1', 'door', 'soft-sell', 'nope'])).toBe(3);
     expect(leakWarnLead(['long-watch'])).toBe(5);
     expect(leakWarnLead(['gold-1', 'long-watch', 'long-watch'])).toBe(5);
+  });
+
+  it('blockLeakCost is 2 with no, other-branch or unknown ids, 1 while One life a Block is owned; duplicates count once', () => {
+    expect(blockLeakCost([])).toBe(2);
+    expect(blockLeakCost(['gold-1', 'long-watch', 'nope'])).toBe(2);
+    expect(blockLeakCost(['one-life-block'])).toBe(1);
+    expect(blockLeakCost(['gold-1', 'one-life-block', 'one-life-block'])).toBe(1);
   });
 
   it('an exit node buys only when it is known, unowned and affordable', () => {
@@ -346,6 +354,13 @@ describe('tech', () => {
     expect(buyExitNode(store, 'long-watch')).toBe(true);
     expect(loadProfile(store).coins).toBe(30);
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'door', 'long-watch']);
+  });
+
+  it('the exit depth-2 node buys at 85 coins; 84 refuses', () => {
+    expect(buyExitNode(withCoins(84), 'one-life-block')).toBe(false);
+    const store = withCoins(100);
+    expect(buyExitNode(store, 'one-life-block')).toBe(true);
+    expect(loadProfile(store).coins).toBe(15);
   });
 
   it('nodePrice rounds base × depth^1.5 to the nearest multiple of 5 (halves up)', () => {
@@ -367,6 +382,7 @@ describe('tech', () => {
     expect(nodeCost(WAVE_NODES, 'door')).toBe(30); // the wave branch's first node, at depth one
     expect(nodeCost(WAVE_NODES, 'thin-road')).toBe(85); // 30 at the wave branch's depth 2
     expect(nodeCost(TOWER_NODES, 'soft-sell')).toBe(30); // the tower branch's first node, at depth one
+    expect(nodeCost(EXIT_NODES, 'one-life-block')).toBe(85); // 30 at the exit branch's depth 2
   });
 
   it('a later node buys at its depth price, deducted from the coins', () => {

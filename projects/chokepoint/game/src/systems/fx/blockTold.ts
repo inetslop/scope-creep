@@ -2,10 +2,10 @@ import { DEPTH } from '../../config';
 import { PALETTE, cssColor } from '../../content/palette';
 import type { FxSystem } from '../FxSystem';
 
-/** The Block's double-leak cost, taught once: "the Block takes 2 lives" at the exit gate. Same look and life as the first-leak chip. */
-export function blockTold(fx: FxSystem, x: number, y: number): void {
+/** The Block's leak cost, taught once at the exit gate: "the Block takes 2 lives" (or 1, with the exit node owned). Same look and life as the first-leak chip. */
+export function blockTold(fx: FxSystem, x: number, y: number, cost: number): void {
   if (fx.full) return;
-  const label = fx.scene.add.text(0, -1, 'the Block takes 2 lives', {
+  const label = fx.scene.add.text(0, -1, cost === 1 ? 'the Block takes 1 life' : 'the Block takes 2 lives', {
     fontFamily: 'ui-rounded, "SF Pro Rounded", "Nunito", "Varela Round", "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif',
     fontSize: '12px',
     fontStyle: 'bold',

@@ -4,11 +4,12 @@ title: "One life a Block: the exit branch's second node, a leaking Block costs 1
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T15:49:41Z
 claimed_at: 2026-11-02T16:23:35Z
+finished_at: 2026-11-02T16:43:46Z
 epic: E20
 ---
 
@@ -91,3 +92,20 @@ No other files change: TechScene renders whatever `EXIT_NODES` holds (price via 
 
 ### Tests
 - `tests/core/tech.test.ts` (as in step 6): the two-node exit row shape, `nodeCost(EXIT_NODES, 'one-life-block')` = 85, `blockLeakCost` defaults/dedup/ownership, and the 85-coin depth-2 purchase with the unaffordable 84 rejection.
+
+## Result (attempt 1, inet-racing)
+
+The "The exit" tech branch now has a second node, "One life a Block" (85 coins at depth 2, bought once via `buyExitNode`), that makes every leaking Block cost 1 life instead of 2 in all later runs — read through a new pure `blockLeakCost()` in `core/tech.ts` and applied at the single leak site in `EnemySystem`, with the first-Block-leak chip (`blockTold`/`blockTeach`) teaching the live cost. The Block's data, The long watch node and all other enemies are untouched, so non-owned runs are byte-identical. `npm run check` (610 tests) and `npm run smoke` (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 20.2 min
+
+```
+projects/chokepoint/game/src/content/tech/exit.ts  |  7 +++++--
+ projects/chokepoint/game/src/core/tech.ts          | 14 +++++++++++++
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  9 ++++++--
+ .../game/src/systems/enemyHooks/blockTeach.ts      |  6 ++++--
+ .../chokepoint/game/src/systems/fx/blockTold.ts    |  6 +++---
+ projects/chokepoint/game/tests/core/tech.test.ts   | 24 ++++++++++++++++++----
+ 6 files changed, 53 insertions(+), 13 deletions(-)
+```

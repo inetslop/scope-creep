@@ -1,4 +1,5 @@
 import { START } from '../../config';
+import { blockLeakCost } from '../../core/tech';
 import { blockTold } from '../fx/blockTold';
 import type { MakeEnemyHook } from './hook';
 
@@ -16,8 +17,9 @@ export const blockTeach: MakeEnemyHook = ({ run, fx, board }) => ({
     const y = (pts[pts.length - 1]!.y + pts[pts.length - 2]!.y) / 2;
     // onLeak runs before run.leak(): at or above the start, no leak has happened yet, so the
     // first-leak chip (systems/LeakCost) fires on this same leak. `>=`: a clean streak pays +1.
+    const cost = blockLeakCost(run.techOwned); // the exit node softens what this chip teaches (core/tech)
     const delay = run.lives >= START.lives ? FIRST_LEAK_CHIP_MS + AFTER_FIRST_MS : 0;
-    if (delay > 0) fx.scene.time.delayedCall(delay, () => blockTold(fx, x, y));
-    else blockTold(fx, x, y);
+    if (delay > 0) fx.scene.time.delayedCall(delay, () => blockTold(fx, x, y, cost));
+    else blockTold(fx, x, y, cost);
   },
 });

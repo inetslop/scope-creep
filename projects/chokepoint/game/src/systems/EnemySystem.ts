@@ -9,6 +9,7 @@ import { killGold } from '../core/lastStand';
 import { leanBounty } from '../core/levels';
 import { mintGoldBonus } from '../core/mint';
 import { burnRate, burnStep } from '../core/burn';
+import { blockLeakCost } from '../core/tech';
 import { TICK_SEC } from '../config';
 import { plateMul } from '../core/plate';
 import { pathLineForLane, type PathLine } from '../core/path';
@@ -63,6 +64,8 @@ export class EnemySystem {
   private readonly board: Board;
   private readonly fx: FxSystem;
   private readonly sfx: Sfx | undefined;
+  /** What a leaking Block costs this run (core/tech): 2, or 1 with the exit node owned. */
+  private readonly blockLeakCost: number;
   /** The run's towers (set by GameScene): a kill pays each mint tower that reaches it extra gold. */
   towers: () => readonly Tower[] = () => [];
   private readonly pool: Enemy[] = [];
@@ -78,6 +81,7 @@ export class EnemySystem {
     this.board = board;
     this.fx = fx;
     this.sfx = sfx;
+    this.blockLeakCost = blockLeakCost(run.techOwned); // the exit node softens the Block's leak (core/tech): 2 without it
     this.bars = scene.add.graphics().setDepth(DEPTH.bars);
     this.routes = [board.path, board.map.fork ? pathLineForLane(board.map, CELL, 1) : board.path];
     const ctx = { scene, board, run, fx, sfx, enemies: this, towers: () => this.towers() };
@@ -289,10 +293,11 @@ export class EnemySystem {
   }
 
   private leak(e: Enemy): void {
-    this.run.leak(e.def.livesCost);
+    const cost = e.def.id === 'block' ? this.blockLeakCost : e.def.livesCost;
+    this.run.leak(cost);
     hook.stats.enemiesLeaked += 1;
     this.fx.ring(e.x, e.y, 30, PALETTE.red);
-    this.fx.popText(e.x, e.y - 20, `-${e.def.livesCost}`, PALETTE.red);
+    this.fx.popText(e.x, e.y - 20, `-${cost}`, PALETTE.red);
     this.sfx?.leak();
     haptic('leak');
     // The jolt scales with the leaker's token size: the bigger it slips through, the harder the board shudders.

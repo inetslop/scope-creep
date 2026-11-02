@@ -143,6 +143,20 @@ export function leakWarnLead(owned: readonly string[]): number {
   return lead;
 }
 
+/** The lives a leaking Block costs in a new run: 2, or the smallest owned node's blockCost (One life a Block: 1); each node counts once, unknown ids count for nothing. */
+export function blockLeakCost(owned: readonly string[]): number {
+  let cost = 2;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = EXIT_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    if (node.blockCost < cost) cost = node.blockCost;
+  }
+  return cost;
+}
+
 /** A branch's first-node price scaled by depth^1.5 and rounded to the nearest multiple of 5 (halves up). */
 export function nodePrice(base: number, depth: number): number {
   return Math.round((base * Math.pow(depth, 1.5)) / 5) * 5;
