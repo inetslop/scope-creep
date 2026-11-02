@@ -3,12 +3,13 @@ id: T0421
 title: "Chill: the augment that stacks the slow"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-02T11:43:00Z
 claimed_at: 2026-11-02T12:03:47Z
-designer: desktop
+finished_at: 2026-11-02T12:09:05Z
+design_attempts: 1
 ---
 
 ## Goal
@@ -49,3 +50,7 @@ The pool has had no slow since Frost retired: Chill brings the slow back as a st
 - [ ] Chill stacks do not take on the Ward (its immunity ring plays); a chill slow works on the Flyer's flight.
 - [ ] A Chill tower wears the blue droplet barrel and one blue tick per copy; the what-if ghost shows the blue droplet marker on the next free slot; no mark appears over the chilled enemy.
 - [ ] Unit tests cover the stack apply/cap/fade math, per-tier stacks-per-hit, per-kind application, the Ward ignore and the pool removal.
+
+## Rejected by architect (desktop)
+
+The exact card lines (~161/123 chars) exceed the 70/56-char card limits enforced by tests/content.test.ts and overflow the three-card draft at 412x915; re-issue with shorter per-tier lines within the card budget.
