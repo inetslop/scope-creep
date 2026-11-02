@@ -3,10 +3,12 @@ id: T0398
 title: "The combo break's note: the chain's loss is heard"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T01:41:53Z
+claimed_at: 2026-11-02T01:42:33Z
+designer: yoga
 ---
 
 ## Goal
