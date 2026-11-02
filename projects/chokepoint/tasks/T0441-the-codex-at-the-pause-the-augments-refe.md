@@ -1,12 +1,14 @@
 ---
 id: T0441
 title: "The codex at the pause: the augments reference row"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T19:42:29Z
+claimed_at: 2026-11-02T20:40:45Z
 ---
 
 ## Goal
