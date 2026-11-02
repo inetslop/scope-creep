@@ -3,11 +3,13 @@ id: T0414
 title: "The scorch cell: the cell where the fight was pays a tower"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T09:13:56Z
+claimed_at: 2026-11-02T09:42:15Z
 epic: E19
+designer: inet-racing
 ---
 
 ## Goal
