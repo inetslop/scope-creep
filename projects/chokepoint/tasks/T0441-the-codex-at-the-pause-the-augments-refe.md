@@ -3,10 +3,12 @@ id: T0441
 title: "The codex at the pause: the augments reference row"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T19:42:29Z
+claimed_at: 2026-11-02T20:29:46Z
+designer: desktop
 ---
 
 ## Goal
