@@ -1,12 +1,14 @@
 ---
 id: T0449
 title: "The tag's haptic: a special wave you feel before it happens"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T22:27:29Z
+claimed_at: 2026-11-02T22:44:22Z
 epic: E22
 ---
 
