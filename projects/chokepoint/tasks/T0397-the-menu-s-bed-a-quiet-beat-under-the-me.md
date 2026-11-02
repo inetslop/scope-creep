@@ -4,11 +4,12 @@ title: "The menu's bed: a quiet beat under the menu"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T01:41:53Z
 claimed_at: 2026-11-02T03:07:30Z
+finished_at: 2026-11-02T03:15:46Z
 ---
 
 ## Goal
@@ -79,3 +80,17 @@ export class MenuBed {
 
 ### Tests
 - none (audio task; `npm run check` and `npm run smoke` are the verification)
+
+## Result (attempt 1, desktop)
+
+Added the menu's quiet 4th audio bed: `src/audio/menuBed.ts` (a 3-note E2–B2–E3 sine loop at 1.6 s steps and 0.02 volume — the calmest of the beds — with 0.6 s fades), owned by `MenuScene` (created in `create()`, stopped on shutdown, driven from `update()` so overlay cards' scene pause silences it for free), plus one `menuBed.valid` invariant in `debug/runChecks.ts`. The menu now fades its bed in on open and fades it out the moment a run starts, silent when the profile's sound is off; the menu's layout, demo and profile are untouched and the desktop + mobile smoke run passes.
+
+- Self-review: APPROVE
+- Time: 8.3 min
+
+```
+projects/chokepoint/game/src/audio/menuBed.ts    | 81 ++++++++++++++++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts  |  2 +
+ projects/chokepoint/game/src/scenes/MenuScene.ts |  7 +-
+ 3 files changed, 89 insertions(+), 1 deletion(-)
+```

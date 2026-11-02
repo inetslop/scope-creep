@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { MenuBed } from '../audio/menuBed';
 import { AUGMENTS } from '../content/augments';
 import { cssColor, PALETTE } from '../content/palette';
 import { loadProfile } from '../core/profile';
@@ -13,7 +14,7 @@ import { makeButton, type Button } from '../ui/button';
 import { addUpdateNotice } from '../ui/updateNotice';
 import { uiCamera, viewSize } from '../ui/display';
 import { textStyle, titleStyle } from '../ui/text';
-import { onKey, onResize, SCENES } from './keys';
+import { getSfx, onKey, onResize, SCENES } from './keys';
 import { MenuDemo } from './menu/MenuDemo';
 import { buildProfileCard, PROFILE_CARD_W } from './menu/ProfileCard';
 
@@ -41,6 +42,7 @@ export class MenuScene extends Phaser.Scene {
   private titleY = 0;
   private drifters: Drifter[] = [];
   private clock = 0;
+  bed!: MenuBed; // the menu's quiet bed: its shutdown stops it, runChecks reads it while the menu is open
 
   constructor() {
     super(SCENES.menu);
@@ -51,6 +53,8 @@ export class MenuScene extends Phaser.Scene {
     hook.scene = SCENES.menu;
     hook.overlay = '';
     this.clock = 0;
+    this.bed = new MenuBed(getSfx(this));
+    this.events.once('shutdown', () => this.bed.stop()); // the fade-out and ringing notes must not outlive the menu (the Sfx context is the singleton's)
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
     // A new run abandons a saved one for nothing, and opens the day's board pick first.
     const play = (): void => {
@@ -263,6 +267,7 @@ export class MenuScene extends Phaser.Scene {
     const dt = Math.min(deltaMs / 1000, 0.05);
     this.clock += dt;
     this.demo.update(dt);
+    this.bed.update(dt, true); // overlay cards pause the scene, so no notes sound while they are open
     // The title bobs gently once it has landed.
     if (this.title.scale >= 0.999) this.titleBox.setY(this.titleY + Math.sin(this.clock * 1.6) * 3);
     const { width, height } = viewSize(this);
