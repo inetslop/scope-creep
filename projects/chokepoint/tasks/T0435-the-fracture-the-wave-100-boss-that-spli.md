@@ -3,10 +3,12 @@ id: T0435
 title: "The Fracture: the wave-100 boss that splits when it dies"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T17:22:19Z
+claimed_at: 2026-11-02T17:22:22Z
+designer: desktop
 ---
 
 ## Goal
