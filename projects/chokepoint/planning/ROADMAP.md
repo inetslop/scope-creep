@@ -69,12 +69,13 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - The breather: 155 coins by the depth rule, quiet waves pay 2× the wave bonus — **tasked as T0370 (S, in the pool)** (no buy-gate inside the branch: each node buys independently at its depth price)
 - The door's teach: the run's first far-gate send says what the gate is — a one-time chip at the gate (the send ring's moment, T0360), once per run — **done as T0384 (S, 2026-11-01, yoga)**
 
-#### E15 — The move: a misplaced tower goes where it should (active — opened 2026-11-01)
+#### E15 — The move: a misplaced tower goes where it should (active — re-filed 2026-11-02 after T0382's architect overflow)
 **Goal:** a misplaced tower is not permanent, and it doesn't have to be sold: in the build phase a tower can move to a free build cell for a fee, keeping its augments and kills — repositioning against the wave preview is a real decision with a price, not a free reposition or a sell-and-rebuild.
 **When done:** the tower panel wears a "Move · −N" line (N = 60% of its slots' cost, floored, minimum 5, the sell's own rule); tapping it opens the move state — the tower dims, the free build cells outline, and the what-if's range ring shows at the tapped cell with the placement's own ✓/✗ — and ✓ slides the tower over in ~300 ms and pays the fee (the −N chip at the old cell, the drop-in bounce, the place haptic); one move per tower per build phase, the line reading "moved" until the next; a tap elsewhere cancels.
 **Breakdown:**
-- the move itself: the panel line, the move state, the slide, the fee, the per-build-phase limit, the resume flag, the one-time teach line — **tasked as T0382 (L, in the pool)**
-- the move's note: one quiet blip on the commit (the speed toggle's note pattern, T0315) — **tasked as T0392 (S, in the pool, waits on T0382)** — every E15 task is written (T0382 + T0392); it counts as finished while the pool lands
+- the move itself, the core: the panel line, the move state, the slide, the fee, the cancel — **tasked as T0394 (M, in the pool, the T0382 re-file: T0382 (L) failed 2026-11-02 on the architect's overflow, re-filed smaller; the resume flag is out — the save's own timing covers it)**
+- the move's limit and its teach: one move per tower per build phase (the line reads "moved" until the next build phase) and the one-time teach line — **waits on T0394, task when it is in**
+- the move's note: one quiet blip on the commit (the speed toggle's note pattern, T0315) — **tasked as T0392 (S, in the pool, waits on T0394)**
 
 ### E16 — The tower: a tech branch for how towers are managed (active — opened 2026-11-01)
 **Goal:** the tech tree has covered run start, the board, the pool, the claim and the wave — but not the tower itself: a sixth branch lets between-run coins buy how towers are managed.
@@ -83,7 +84,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the branch and its first node, Soft sell: the tech screen's sixth row plus a 30-coin node that raises the sell's refund 70% → 80% of slot cost — **done as T0383 (M, 2026-11-01, desktop)**
 - The rich cell: the branch's second node, 85 coins by the depth rule, the marked cell's buff 1.25× → 1.5× — **tasked as T0386 (M, in the pool)**
 - The panel line: the tower panel says which tower rides the marked cell — a muted "marked · +N% damage" line (N 25 plain, 50 with the node) on a marked-cell tower, reading the live buff — **done as T0387 (S, 2026-11-02, desktop-4070)**
-- The light move: the branch's third node, 155 coins by the depth rule, a move's fee 60% → 30% — **waits on T0382 (E15); task when it can start (the rich cell takes the depth-2 slot ahead of it)**
+- The light move: the branch's third node, 155 coins by the depth rule, a move's fee 60% → 30% — **waits on T0394 (E15's core, the T0382 re-file); task when it can start (the rich cell takes the depth-2 slot ahead of it)**
 
 ## Enemy queue (non-epic)
 
@@ -125,4 +126,5 @@ Ideas that may become epics or tasks of one.
 - The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
 - The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **done as T0348 (M, 2026-11-01, asus)**
 - More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **E9's later slice, parked**
-- Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**; the live "bank +N" line — **built as T0374 (M, non-epic, 2026-11-01)**; the first-pay chip — **dropped (rejected as T0380: the line already teaches the rule)**; the pay's coin blip — **already played (rejected as T0381)**; the pay's gold pop at the number — **T0385's file is gone (2026-11-02, like T0378's): re-file when the pool asks**
+- Bank interest: at every wave start the gold bank pays 5% of itself, capped at +10 per build phase (the build phase gains a spend-now-vs-bank decision; gold, never coins) — **built as T0363 (M, non-epic, 2026-11-01, desktop)**; the live "bank +N" line — **built as T0374 (M, non-epic, 2026-11-01)**; the first-pay chip — **dropped (rejected as T0380: the line already teaches the rule)**; the pay's coin blip — **already played (rejected as T0381)**; the pay's gold pop at the number — **re-filed as T0395 (S, non-epic, in the pool, 2026-11-02)**
+- The storm: a third menu mode — no breather, every wave rushes, 2× the wave bonus for the run (IDEAS holds the full text) — **the next epic to open (E17)**

@@ -18,7 +18,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The flyer's line before the wave: the build phase before the flyer's wave shows its route on the board (the flyer's red, 2 px, ~50% alpha, spawn → exit), fading as the wave-start telegraph (T0317) takes over — the crossing's cover is chosen in the build, not learned at the wave's door — **tasked as T0346 (M, E10, in the pool, waits on T0317)**
 - Boss every 10 waves with a health bar and its own mechanic
 - Wave preview strip in the build phase: the shapes and counts of the next wave — built as T0015 (2026-10-28, narcissus)
-- Interest: at every wave start the gold bank pays 5% of itself (floor, +1 up, cap +10) — **built as T0363 (2026-11-01)**; the "bank +N" line **built as T0374**; the first-pay chip **dropped (rejected as T0380: the line already teaches the rule)**; the coin blip **already played (rejected as T0381)**; the pay's gold pop at the number **T0385's file is gone (2026-11-02, like T0378's): re-file when the pool asks**; the trail stays parked
+- Interest: at every wave start the gold bank pays 5% of itself (floor, +1 up, cap +10) — **built as T0363 (2026-11-01)**; the "bank +N" line **built as T0374**; the first-pay chip **dropped (rejected as T0380: the line already teaches the rule)**; the coin blip **already played (rejected as T0381)**; the pay's gold pop at the number **re-filed as T0395 (S, non-epic, in the pool, 2026-11-02)**; the trail stays parked
 - Fast-forward (2x) for the wave phase — **built as T0019 (2026-10-28)**: the SpeedButton, one scaled clock for the whole wave phase
 - Daily seeded run with a shareable result — the leaderboard (Today / Forever, added by hand 2026-10-30) is where a shared result lands — was **E8 — dropped by hand 2026-10-30** (T0278 dropped); do not re-task
 - Colorblind mode: patterns on the shapes, not just color
@@ -49,7 +49,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Tower earnings: the tower panel shows how much gold a tower has earned this run, so you can see which towers are paying for themselves
 - The clean wave's bonus shown during the build phase — **overtaken**: the preview shows the wave's clear bonus (T0079) and the claim card shows the coin recipe with its clean terms (T0075); if a clean wave ever pays run gold in-wave, this re-opens
 - A run-so-far line on the pause screen — **built as T0030 (2026-10-28, yoga)**: wave, lives, gold, coins earned this run
-- The buy-slot button reads why it is quiet: when gold is short it dims and shows the price in red, so a first-time player sees the gap, not a dead button
+- The buy-slot button reads why it is quiet: when gold is short it dims and shows the price in red, so a first-time player sees the gap, not a dead button — **tasked as T0396 (S, non-epic, in the pool, 2026-11-02); the pattern E15's move line (T0394) wears**
 - Tier word on the draft card — **built as T0026 (2026-10-28, yoga)**: Rare and Epic cards read "Name · Rare" / "Name · Epic", Common plain; the word wears its tier's color — **built as T0097 (draft) and T0100 (hand, 2026-10-29, yoga)**
 - What-if preview — **built as T0096 (M, E4, 2026-10-29, asus)**: while an augment is held, a tower with a free slot ghosts the marker and range ring it would gain, before the gold is spent
 - Tight-pack waves — **built as T0108 (2026-10-29)**: from wave 6 every 8th (never a quiet wave) spawns at half the interval, tagged "tight"
@@ -154,7 +154,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The leak thud — **dropped (rejected as T0267, 2026-10-30)**: every leak already plays a prominent low thud (Sfx.leak(), 140→70 Hz sawtooth, 0.3 s, volume 0.25) — the leak is already heard; don't re-propose a leak sound
 - The combo milestone chime — **built as T0254 (S, E4, 2026-10-30, asus)**: one soft two-note chime when a kill-combo chain reaches ×10, once per chain
 - The what-if says the price: a next-slot price beside each ghosted tower's marker (T0096) — **rejected as T0251 (2026-10-30): the plinth's face has no room (43 units wide, the pip row spans 38) — don't re-propose a price on the plinth**
-- Move a tower — **now E15 (opened 2026-11-01)**: the panel's Move line, a fee of 60% of the slots' cost (minimum 5), augments and kills carry, one move per tower per build phase — **T0382 (L, in the pool)**; the move's note parked (S)
+- Move a tower — **now E15**: the panel's Move line, a fee of 60% of the slots' cost (minimum 5), augments and kills carry, one move per tower per build phase — **T0382 (L) failed 2026-11-02 (architect's overflow); the core re-filed as T0394 (M, in the pool), the limit and its teach the next slice (waits on T0394), the note is T0392 (waits on T0394)**; the ROADMAP's E15 is canonical
 - The enemies reference — built (T0252, 2026-10-30)
 - The level clear gets a sting — **dropped (E3 dropped 2026-10-30)**: a soft two-note low sting (T0091's shape) as the "Level N clear" card lands, once per clear, silent with sound off
 - The waves reference — **built as T0264 (M, non-epic, 2026-10-30, inet-racing)**: a pause screen of the wave tags, read from core/waves.ts
