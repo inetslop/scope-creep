@@ -2,7 +2,7 @@ import type Phaser from 'phaser';
 import { CELL, DEPTH, HUD, ZOOM } from '../config';
 import { PALETTE } from '../content/palette';
 import { BOARD_MARGIN, paintBoard } from '../art/board';
-import { artScale } from '../art/textures';
+import { ART_SCALE, artScale } from '../art/textures';
 import { kindAt, type Cell, type GameMap } from '../core/map';
 import { cellCenter, pathLineFor, type PathLine, type Point } from '../core/path';
 import { display } from '../ui/display';
@@ -28,6 +28,8 @@ export class Board {
   private readonly hover: Phaser.GameObjects.Graphics;
   private readonly range: Phaser.GameObjects.Graphics;
   private readonly moveOutlines: Phaser.GameObjects.Graphics;
+  /** The whole board's drawing (island, road, rocks): shown at rest, one transform per frame. */
+  private boardImage!: Phaser.GameObjects.Image;
   private area: ViewArea = { x: 0, y: 0, width: 1, height: 1 };
   private view: View = { fit: 1, zoom: 1, focus: { x: 0, y: 0 } };
   private everLaidOut = false;
@@ -51,7 +53,34 @@ export class Board {
   /** The painted board (art/textures.ts paintBoard): island, grid dots, the marked cell's dot, rocks, road, gates. */
   private drawCells(): void {
     const key = paintBoard(this.scene, Board.TEXTURE, this.map, this.path, this.marked);
-    artScale(this.scene.add.image(-BOARD_MARGIN, -BOARD_MARGIN, key).setOrigin(0).setDepth(DEPTH.board));
+    this.boardImage = artScale(this.scene.add.image(-BOARD_MARGIN, -BOARD_MARGIN, key).setOrigin(0).setDepth(DEPTH.board));
+  }
+
+  /**
+   * The island's drop-in at the run's open: the whole board's drawing scales from 1.03 down to its
+   * rest scale (ART_SCALE), centred on itself, over the board's own drop-in bounce (one transform
+   * on the drawing, no per-cell work). `tweens` drives it — the board's GameScene is paused while
+   * this plays (and its own tweens die with each new run), so the caller hands in a live manager.
+   */
+  dropIn(tweens: Phaser.Tweens.TweenManager): void {
+    const full = this.boardImage.scaleX; // rest = ART_SCALE
+    this.boardImage.setOrigin(0.5);
+    this.boardImage.setPosition(this.width / 2, this.height / 2);
+    this.boardImage.setScale(full * 1.03);
+    tweens.add({ targets: this.boardImage, scale: full, duration: 400, ease: 'Back.easeOut', onComplete: () => this.settleRest() });
+  }
+
+  /** Snaps the island to rest (its tween killed) so the build phase opens at scale exactly 1.0. */
+  settleNow(tweens: Phaser.Tweens.TweenManager): void {
+    tweens.killTweensOf(this.boardImage);
+    this.settleRest();
+  }
+
+  /** Puts the board's drawing back to rest: top-left at (-BOARD_MARGIN), origin 0, scale ART_SCALE. */
+  private settleRest(): void {
+    this.boardImage.setOrigin(0);
+    this.boardImage.setPosition(-BOARD_MARGIN, -BOARD_MARGIN);
+    this.boardImage.setScale(ART_SCALE);
   }
 
   /** Texture key of the current run's board (repainted every run). */

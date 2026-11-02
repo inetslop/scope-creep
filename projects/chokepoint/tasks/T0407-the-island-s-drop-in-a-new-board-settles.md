@@ -4,11 +4,12 @@ title: "The island's drop-in: a new board settles into place"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T05:22:32Z
 claimed_at: 2026-11-02T09:19:17Z
+finished_at: 2026-11-02T09:52:16Z
 design_attempts: 1
 ---
 
@@ -81,3 +82,16 @@ if (this.run.wave === 0) this.s.board.settleNow(this.scene.scene.get(SCENES.hud)
 
 ### Tests
 - None required (render-only). `npm run check` typechecks the new Board members and the two RunFlow lines; `npm run smoke` plays it — the smoke pick fires at 800 ms, after the 400 ms settle, so the board is at rest before the first build phase and `settleNow` is a no-op.
+
+## Result (attempt 1, cachyos-x8664)
+
+The island now settles in at the run's open — the board's single image (`Board.boardImage`) is driven from 1.03×rest-scale down to rest with a `Back.easeOut` bounce via the HudScene `TweenManager` (`Board.dropIn`, gated on `run.wave === 0` and only reachable on non-resumed runs via `RunFlow.openDraft`), and `Board.settleNow` snaps it to exactly scale 1.0 at the first build phase (`RunFlow.finishDraft`) so placement hit-testing is unchanged and no per-frame data work runs. Resumed runs never settle (GameScene only opens a draft when `!saved`), the menu demo never constructs a Board, and no new sound/marker/HUD was added. Verified `npm run check` PASS (76 files, 578 tests) and `npm run smoke` PASS (desktop + mobile, wave 1, 1 tower built each).
+
+- Self-review: APPROVE
+- Time: 33.0 min
+
+```
+projects/chokepoint/game/src/systems/Board.ts   | 33 +++++++++++++++++++++++--
+ projects/chokepoint/game/src/systems/RunFlow.ts |  2 ++
+ 2 files changed, 33 insertions(+), 2 deletions(-)
+```

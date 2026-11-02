@@ -146,6 +146,7 @@ export class RunFlow {
       this.finishDraft(undefined);
       return;
     }
+    if (this.run.wave === 0) this.s.board.dropIn((this.scene.scene.get(SCENES.hud) as Phaser.Scene).tweens); // the island's drop-in (Board.dropIn): the new board settles in at the run's open
     this.scene.scene.launch(SCENES.draft);
     this.scene.scene.pause();
   }
@@ -172,6 +173,7 @@ export class RunFlow {
     const seconds = levelBuildSeconds(base, this.run.level);
     this.buildTotalSec = seconds;
     this.run.startBuild(seconds);
+    if (this.run.wave === 0) this.s.board.settleNow((this.scene.scene.get(SCENES.hud) as Phaser.Scene).tweens); // the island is at rest before the first build phase's countdown (Board.settleNow)
     this.s.waves.planNext();
     this.scene.scene.resume();
     if (flags.smoke) this.s.building.autoBuild(); // a random tap may never build the first tower in time
