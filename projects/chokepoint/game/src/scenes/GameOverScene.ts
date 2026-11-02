@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { GameOverBed } from '../audio/gameOverBed';
 import { artScale, STAR_TEXTURE } from '../art/textures';
 import { cssColor, PALETTE } from '../content/palette';
 import { levelMultiplierLabel } from '../core/levels';
@@ -20,10 +21,14 @@ export class GameOverScene extends Phaser.Scene {
     super(SCENES.gameOver);
   }
 
+  bed!: GameOverBed; // the run's coda bed under the card: its shutdown stops it, runChecks reads it while the card is shown
+
   create(): void {
     uiCamera(this);
     hook.scene = SCENES.gameOver;
     hook.overlay = '';
+    this.bed = new GameOverBed(getSfx(this));
+    this.events.once('shutdown', () => this.bed.stop()); // the fade-out and ringing notes must not outlive the card (the Sfx context is the singleton's)
     this.cameras.main.setBackgroundColor(cssColor(PALETTE.ground));
     const run = getRun(this);
     const intentional = this.registry.pop('runEnded') === true;
@@ -90,5 +95,10 @@ export class GameOverScene extends Phaser.Scene {
       if (e.key === 'Enter' || e.key === ' ') again();
     });
     if (flags.smoke) this.time.delayedCall(1500, again);
+  }
+
+  update(_time: number, deltaMs: number): void {
+    const dt = Math.min(deltaMs / 1000, 0.05);
+    this.bed.update(dt, true); // the card is up: this scene's stop is the only way off it
   }
 }

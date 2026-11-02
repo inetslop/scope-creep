@@ -12,6 +12,7 @@ import { switchbackFold } from '../core/switchback';
 import { TIER_ORDER } from '../core/tiers';
 import { bossId, waveSpeedMul } from '../core/waves';
 import { DraftScene } from '../scenes/DraftScene';
+import { GameOverScene } from '../scenes/GameOverScene';
 import { MenuScene } from '../scenes/MenuScene';
 import { RewardsScene } from '../scenes/RewardsScene';
 import type { GameScene } from '../scenes/GameScene';
@@ -114,6 +115,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['draftBed.valid', (g) => (g.scene.isActive(SCENES.draft) ? (g.scene.get(SCENES.draft) as DraftScene).bed.broken() : null)],
   ['menuBed.valid', (g) => (g.scene.isActive(SCENES.menu) ? (g.scene.get(SCENES.menu) as MenuScene).bed.broken() : null)],
   ['claimBed.valid', (g) => (g.scene.isActive(SCENES.rewards) ? (g.scene.get(SCENES.rewards) as RewardsScene).bed.broken() : null)],
+  ['gameOverBed.valid', (g) => (g.scene.isActive(SCENES.gameOver) ? (g.scene.get(SCENES.gameOver) as GameOverScene).bed.broken() : null)],
   ['leakCost.valid', (g) => g.leakCost.broken()],
   ['projectiles.count', (g) => (g.projectiles.activeCount > 600 ? `${g.projectiles.activeCount} projectiles in flight` : null)],
   ['projectiles.stuck', (g) => g.projectiles.brokenProjectile()],

@@ -4,11 +4,12 @@ title: "The game over's bed: a quiet beat under the game-over card"
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T11:17:53Z
 claimed_at: 2026-11-02T11:55:04Z
+finished_at: 2026-11-02T12:33:12Z
 ---
 
 ## Goal
@@ -94,3 +95,17 @@ Nothing else in the scene changes — in particular `getSfx(this)?.runEnd();` (l
 
 ### Tests
 none (audio only; no `src/core` rule changes)
+
+## Result (attempt 1, inet-racing)
+
+Added the sixth run bed — `src/audio/gameOverBed.ts` (`GameOverBed`, the menu's E2/B2/E3 as a sine loop at 1.8 s steps with the claim's rest, 0.02 volume) — owned by `GameOverScene` (constructed in `create()`, stopped on scene shutdown, driven from a one-line `update()`), plus the `gameOverBed.valid` invariant in `runChecks.ts`. The quiet three-note beat fades in over 0.6 s as the game-over card lands (the run-end note plays on top, unchanged) and fades out over 0.3 s on any exit, the claim bed's hand-off pattern; silent when muted. Card look, run-end note, claim flow and menu are untouched; `npm run check` and desktop + mobile smoke pass.
+
+- Self-review: APPROVE
+- Time: 38.1 min
+
+```
+projects/chokepoint/game/src/audio/gameOverBed.ts  | 77 ++++++++++++++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  2 +
+ .../chokepoint/game/src/scenes/GameOverScene.ts    | 10 +++
+ 3 files changed, 89 insertions(+)
+```
