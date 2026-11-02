@@ -3,11 +3,13 @@ id: T0403
 title: "The storm: the third mode off the menu"
 size: L
 priority: 1
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T04:17:18Z
+claimed_at: 2026-11-02T04:17:21Z
 epic: E17
+designer: desktop
 ---
 
 ## Goal
