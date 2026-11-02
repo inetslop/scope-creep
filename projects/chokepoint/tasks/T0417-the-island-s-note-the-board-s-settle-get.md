@@ -3,12 +3,10 @@ id: T0417
 title: "The island's note: the board's settle gets its thud"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-02T10:20:00Z
-claimed_at: 2026-11-02T10:20:14Z
-designer: yoga
 ---
 
 ## Goal
@@ -23,3 +21,48 @@ The board's drop-in (T0407) is the run's opening beat and it is silent; one soft
 - [ ] Starting a new run plays exactly one soft thud at the moment the board finishes settling; a resumed run and the menu demo play none.
 - [ ] The thud is a single ~150 ms low note quieter than the leak thud, and it does not play with the sound toggle off.
 - [ ] The drop-in's look, timing and gate are unchanged; `npm run check` and the desktop + mobile smoke pass.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/audio/Sfx.ts` — add the one new sound `settleThud()`
+- edit `src/systems/Board.ts` — hold `sfx` (constructor param, type import, field) and call it from the drop-in tween's `onComplete`
+- edit `src/scenes/GameScene.ts` — pass `sfx` into the Board's constructor (one line)
+
+### Interfaces
+```ts
+// src/audio/Sfx.ts — new method, inserted after sting()'s closing brace (line 120), before runEnd()'s doc comment:
+  /** The island's settle at the run's open: one low sine, 90 Hz to 60 Hz over 150 ms, the sting's quiet class, under the leak thud's 0.25. */
+  settleThud(): void {
+    this.tone(90, 0.15, 'sine', 0.12, 60);
+  }
+```
+```ts
+// src/systems/Board.ts
+// after the `import type { Tower } from '../entities/Tower';` line:
+import type { Sfx } from '../audio/Sfx';
+// after the `private readonly scene: Phaser.Scene;` field:
+  private readonly sfx: Sfx | undefined;
+// constructor: `constructor(scene: Phaser.Scene, map: GameMap, marked: Cell, sfx: Sfx | undefined)`,
+// and `this.sfx = sfx;` right after `this.scene = scene;`
+// in dropIn(), line 70, change only the last argument:
+  // onComplete: () => this.settleRest()
+  // becomes:
+  // onComplete: () => { this.settleRest(); this.sfx?.settleThud(); }
+```
+```ts
+// src/scenes/GameScene.ts line 136:
+    this.board = new Board(this, map, marked, sfx); // `sfx` is the const from getSfx(this) at line 92
+```
+### Steps
+1. Add `settleThud()` to `Sfx.ts` (exact code above; the `tone` helper already no-ops when muted or audio is locked — no toggle logic).
+2. `Board.ts`: add the `Sfx` type import, the `sfx` field, the constructor param + assignment, and swap the `onComplete` closure as shown. Nothing else in Board moves — no tween, scale, duration or ease change.
+3. `GameScene.ts`: the one-line constructor change.
+### Pitfalls
+- Exactly-once is structural: `onComplete` fires only when the 400 ms tween runs to term; `settleNow()`'s `killTweensOf` does not fire it (a fast first pick snaps the board silent — the task defines the moment as the tween's completion).
+- Gate is inherited, never re-checked: the only `dropIn` call is `RunFlow.openDraft`'s `run.wave === 0` line, reached only via `GameScene`'s `if (!saved) this.flow.openDraft()` — resumed runs, the menu demo and mid-run drafts all never create the tween.
+- Always `this.sfx?.settleThud()`: `sfx` is `Sfx | undefined` (registry lookup before the first unlock); a bare call would crash smoke.
+- Volume 0.12 is deliberate: the sting's class (0.1) raised so it reads under the draft bed, clearly under the leak thud's 0.25; do not retune.
+- No invariant, no test, no HUD change — a sound only.
+### Tests
+- none
