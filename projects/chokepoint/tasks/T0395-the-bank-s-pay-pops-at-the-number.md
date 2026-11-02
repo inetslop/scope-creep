@@ -4,11 +4,12 @@ title: "The bank's pay pops at the number"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T01:03:06Z
 claimed_at: 2026-11-02T01:30:20Z
+finished_at: 2026-11-02T01:38:43Z
 ---
 
 ## Goal
@@ -53,3 +54,15 @@ None. `popGold(n: number): void` keeps its signature; its body gains the icon fl
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The bank's pay at a wave start now wears the coin: when the stats card's gold number pops, its coin icon (`StatsCard.popGold`, `src/ui/hud/StatsCard.ts`) also flashes white and scales 1.15× and back over ~150 ms, mirroring the coin tally's own pop. The code sits inside the `goldPulsing` guard so it plays once per start, and only for the bank's pay — the `bankPay` registry key is set in one guarded place in RunFlow, so 0 pays, kill gold, Mint gold, wave bonuses and the early-send's seconds-gold never trigger it. No sound, line, layout or size changes; check and desktop + mobile smoke all pass.
+
+- Self-review: APPROVE
+- Time: 8.4 min
+
+```
+projects/chokepoint/game/src/ui/hud/StatsCard.ts | 3 +++
+ 1 file changed, 3 insertions(+)
+```

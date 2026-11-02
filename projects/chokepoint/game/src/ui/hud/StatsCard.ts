@@ -144,6 +144,9 @@ export class StatsCard implements HudPart {
     if (this.goldPulsing) return;
     this.goldPulsing = true;
     this.scene.tweens.add({ targets: this.gold, scale: 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => { this.goldPulsing = false; this.gold.setScale(1); } });
+    this.coinIcon.setTintFill(0xffffff);
+    const base = this.coinIcon.scale;
+    this.scene.tweens.add({ targets: this.coinIcon, scale: base * 1.15, duration: 75, yoyo: true, repeat: 1, ease: 'Quad.easeOut', onComplete: () => { this.coinIcon.setScale(base); this.coinIcon.clearTint(); } });
   }
 
   /** Last stand: the red lives number pops once at each wave start, same timing as the coin pop. */
