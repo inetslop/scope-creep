@@ -3,12 +3,14 @@ id: T0446
 title: "Blind: the level whose run has no wave preview"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T21:47:49Z
+claimed_at: 2026-11-02T22:25:22Z
 epic: E21
 design_attempts: 1
+designer: cachyos-x8664
 ---
 
 ## Goal
