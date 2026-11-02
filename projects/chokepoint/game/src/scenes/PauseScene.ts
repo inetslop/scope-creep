@@ -87,6 +87,7 @@ export class PauseScene extends Phaser.Scene {
     const waveWord = game.run.wave > 0 ? `Wave ${game.run.wave}` : 'Ready';
     const coins = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed, bgen: game.run.bgen, held: game.run.heldLives }, cleanWavePay(profile.purchased), game.run.mode === 'iron' ? 2 : 1, game.run.levelHpMul, flawlessPay(profile.purchased), heldPay(profile.purchased));
     const lineStyle = textStyle(13, PALETTE.muted);
+    const ironText = game.run.wave > 0 && game.run.mode === 'iron' ? this.add.text(0, 0, ' · iron', lineStyle).setOrigin(0, 0.5) : undefined;
     const waveText = this.add.text(0, 0, waveWord, lineStyle).setOrigin(0, 0.5);
     const restText = this.add.text(0, 0, ` · ${game.run.lives} lives · ${game.run.gold} gold`, lineStyle).setOrigin(0, 0.5);
     const worthText: Phaser.GameObjects.Text | undefined = game.run.wave > 0 ? this.add.text(0, 0, game.run.wave >= REWARD_WAVE ? `worth +${coins} coins` : 'rewards from wave 10', lineStyle).setOrigin(0.5) : undefined;
@@ -105,7 +106,7 @@ export class PauseScene extends Phaser.Scene {
         for (const t of texts) t.setFontSize(size);
       }
     };
-    fitTo([waveText, restText], 13, starred ? 21 : 0);
+    fitTo(ironText ? [waveText, ironText, restText] : [waveText, restText], 13, starred ? 21 : 0);
     for (const t of lines) {
       fitTo([t], 12);
       if (t.width > maxW) t.setStyle({ wordWrap: { width: maxW } });
@@ -117,6 +118,11 @@ export class PauseScene extends Phaser.Scene {
     if (starred) {
       kids.push(artScale(this.add.image(x + 13, 1, STAR_TEXTURE)));
       x += 21;
+    }
+    if (ironText) {
+      kids.push(ironText);
+      ironText.setX(x);
+      x += ironText.width;
     }
     restText.setX(x);
     kids.push(restText);

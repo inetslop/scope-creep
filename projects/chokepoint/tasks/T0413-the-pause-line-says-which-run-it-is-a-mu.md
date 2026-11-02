@@ -4,11 +4,12 @@ title: "The pause line says which run it is: a muted mode word on the run line"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T08:58:13Z
 claimed_at: 2026-11-02T09:05:36Z
+finished_at: 2026-11-02T09:17:49Z
 ---
 
 ## Goal
@@ -59,3 +60,15 @@ The leading space in `' · iron'` is the separator (exactly how `restText`'s own
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The pause card's run line now shows a muted "iron" word after the wave number whenever an Iron run is under way ("Wave N · iron · X lives · Y gold"), so a player resuming the next day can see the mode where the run is read. It is one conditional text in PauseScene.ts, placed in the stats line's container between the wave number (and star) and the lives/gold text, using the line's own 13 px muted style; a normal run and the pre-wave "Ready" line are byte-identical to before, and the card fit at 412x915 and 1280x720 is unchanged.
+
+- Self-review: APPROVE
+- Time: 12.2 min
+
+```
+projects/chokepoint/game/src/scenes/PauseScene.ts | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+```
