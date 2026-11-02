@@ -27,7 +27,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Draft reroll — **built as T0036, extended by T0276**: endless rerolls, cost 50 + 15n + 5n², the button shows the price and turns red and disabled when gold is short (never "used")
 - Leak warning: the last 3 seconds before an enemy reaches the exit, the exit pulses red with a quiet tick — built as T0014 (yoga)
 - Ghost run — **built as T0078**: a menu option "Ghost · Wave N" under Play re-grows the best run's exact board; it never changes the saved seed
-- Slow zone: a light blue patch on the board slows enemies crossing it by 30%
+- Slow zone: a light blue patch on the board slows enemies crossing it by 30% — **tasked as T0416 (M, 2026-11-02)**: the slow stretch (3 cells, ×0.7, ~1-in-4 boards, exclusive with the fork)
 - DPS line in the tower panel — **built as T0084**: a muted "≈ N/s" line under the kills line (T0070), one term per augment on one enemy (Ember adds its per-second rate, supports 0, under 1/s shows no line)
 - First-run hints — **E11 (done 2026-11-01: T0318, T0319, T0320 all landed)** — three white cards on the device's very first run, each dismissed by doing it, never shown again
 - How to play — **built as T0351 (M, non-epic, 2026-11-01, cachyos-x8664)**: a menu card that re-teaches the run's loop in four dry lines, plus a pointer to the pause's keys
@@ -193,7 +193,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The run's end gets its note — **built as T0367 (2026-11-01)**: one quiet two-note fall (B2→G2) when the game-over card lands
 - The loop: ~1-in-4 boards (exclusive with the fork), the road circles the island once; the board facts and the boards reference name it — **built as T0377 (L, 2026-11-02, inet-racing)**
 - The cove: ~1-in-6 boards (exclusive with the fork and the loop), a bay beside a road curve with a three-cell pocket — **done as T0409 (2026-11-02)**
-- The island's drop-in: the new board settles into place with a soft bounce at the run's open (~400 ms, 1.03→1.0, once per new board, never on a resume or the menu demo) — **tasked as T0407 (M, in the pool)**
+- The island's drop-in: the new board settles into place with a soft bounce at the run's open (~400 ms, 1.03→1.0, once per new board, never on a resume or the menu demo) — **done as T0407 (2026-11-02)**; the settle's thud — the run's opening beat, heard — **tasked as T0417 (S, 2026-11-02)**
 - The storm: a third mode — no breather, every wave rushes (1.5× walkers, the chip), the wave bonus doubles (gold, never coins) — **now E17 (active); first slice T0403 (L, in the pool)**
 - The pause's "Ahead" card: the two waves after next, so a build plans for the wave after next — **dropped 2026-11-02 (rejected as T0401: the run plans only the immediately-next wave; the later waves' plans can't be re-derived — the drafts' rerolls put the run's rng in a state only a full replay could reach)**; do not re-task a multi-wave preview
 - The near miss gets its note: when the wave's last enemy dies within 1.5 cells of the exit (the "close" chip's own moment, T0271), one soft note plays, so the close call is heard as well as seen — **done as T0400 (2026-11-02)**
