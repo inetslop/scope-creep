@@ -1,12 +1,14 @@
 ---
 id: T0410
 title: "The history card: the last twelve runs, on the menu"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T06:19:02Z
+claimed_at: 2026-11-02T07:43:56Z
 epic: E18
 ---
 
