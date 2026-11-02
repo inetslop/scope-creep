@@ -4,11 +4,12 @@ title: "The tag's haptic: a special wave you feel before it happens"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T22:27:29Z
 claimed_at: 2026-11-02T22:44:22Z
+finished_at: 2026-11-02T22:52:54Z
 epic: E22
 ---
 
@@ -79,3 +80,17 @@ expect(() => tagHaptic()).not.toThrow();
 
 ### Tests
 - `npm run check` covers it: the added `tests/input/haptics.test.ts` assertion is the only test (juice task; no `core/` rule changes).
+
+## Result (attempt 1, yoga)
+
+T0449: a tagged wave's haptic. Added `tagHaptic()` to `src/input/haptics.ts` — one guarded `navigator.vibrate(30)`, the same guarded no-op shape as `haptic()` (nothing on desktop or a haptics-less browser). `WaveSystem.start()` now calls it once per wave start whenever the wave's plan wears a tag other than "quiet" (tight, rush, short cut, boss — and double/clumps when they land, since it reads the plan's `tags` field), so a phone player feels the special wave coming before it happens; the quiet breather never buzzes. No HUD element, sound, text or toggle. The no-op test in `tests/input/haptics.test.ts` now covers `tagHaptic()`.
+
+- Self-review: APPROVE
+- Time: 8.5 min
+
+```
+projects/chokepoint/game/src/input/haptics.ts        | 15 +++++++++++++++
+ projects/chokepoint/game/src/systems/WaveSystem.ts   |  3 +++
+ projects/chokepoint/game/tests/input/haptics.test.ts |  3 ++-
+ 3 files changed, 20 insertions(+), 1 deletion(-)
+```

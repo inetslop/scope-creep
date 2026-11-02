@@ -27,3 +27,18 @@ export function haptic(kind: HapticKind): void {
     /* The phone refused the buzz (vibration locked, or the call threw): the run goes on without it */
   }
 }
+
+/**
+ * A tagged wave's tag (T0449): a wave wearing a tag other than "quiet" (tight, rush, short cut,
+ * boss — double and clumps when they land) buzzes 30 ms once, as it starts, so a phone player
+ * feels the special wave coming without reading the chip. The same guarded no-op as `haptic`:
+ * nothing on a desktop or a haptics-less browser.
+ */
+export function tagHaptic(): void {
+  if (typeof navigator === 'undefined' || !('vibrate' in navigator)) return;
+  try {
+    navigator.vibrate(30);
+  } catch {
+    /* The phone refused the buzz (vibration locked, or the call threw): the run goes on without it */
+  }
+}

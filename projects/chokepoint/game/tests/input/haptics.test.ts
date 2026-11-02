@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { haptic, PATTERNS } from '../../src/input/haptics';
+import { haptic, PATTERNS, tagHaptic } from '../../src/input/haptics';
 
 describe('haptics', () => {
   it('maps the two moments to their buzz, in ms', () => {
@@ -11,5 +11,6 @@ describe('haptics', () => {
     // The node test env has no `vibrate`: a forgotten guard would throw calling `navigator.vibrate`.
     expect(() => haptic('place')).not.toThrow();
     expect(() => haptic('leak')).not.toThrow();
+    expect(() => tagHaptic()).not.toThrow();
   });
 });

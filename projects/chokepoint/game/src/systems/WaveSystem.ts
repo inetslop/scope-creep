@@ -6,6 +6,7 @@ import type { RunState } from '../core/run';
 import { waveWalkFactor } from '../core/tech';
 import { DOUBLE_SPEED_MUL, doubleLull, doubleSplitAt, isDoubleWave, planWave, planWithLevel, shortCutSpawnDistance, type WavePlan, waveSpeedMul } from '../core/waves';
 import { hook } from '../debug/testHook';
+import { tagHaptic } from '../input/haptics';
 import type { EnemySystem } from './EnemySystem';
 
 /** Sends one wave's enemies on schedule (see core/waves.ts for what a wave contains). */
@@ -60,6 +61,8 @@ export class WaveSystem {
     this.planned = undefined;
     this.next = 0;
     this.timer = 0;
+    // A tagged wave (anything but the quiet breather) buzzes once, so a phone player feels it coming (T0449).
+    if (this.plan && this.plan.tags.some((t) => t !== 'quiet')) tagHaptic();
     hook.stats.wavesStarted += 1;
   }
 
