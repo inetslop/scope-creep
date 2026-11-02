@@ -3,10 +3,12 @@ id: T0399
 title: The Bulwark says which way is armored
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T03:05:38Z
+claimed_at: 2026-11-02T03:06:14Z
+designer: yoga
 ---
 
 ## Goal
