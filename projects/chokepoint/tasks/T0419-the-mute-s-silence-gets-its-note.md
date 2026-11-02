@@ -1,12 +1,14 @@
 ---
 id: T0419
 title: "The Mute's silence gets its note"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T10:55:36Z
+claimed_at: 2026-11-02T13:14:38Z
 ---
 
 ## Goal
