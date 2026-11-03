@@ -3,11 +3,13 @@ id: T0471
 title: "The wall: the reserve's second card — the next wave's walkers walk 0.7×"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0463]
 attempts: 0
 created: 2026-11-03T04:35:57Z
+claimed_at: 2026-11-03T05:03:59Z
 epic: E24
+designer: desktop
 ---
 
 ## Goal
