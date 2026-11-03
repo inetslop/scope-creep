@@ -3,11 +3,13 @@ id: T0462
 title: "Opening wild: the draft branch's node that gives the first draft a Rare or better"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T02:05:22Z
+claimed_at: 2026-11-03T02:25:43Z
 epic: E23
+designer: desktop
 ---
 
 ## Goal
