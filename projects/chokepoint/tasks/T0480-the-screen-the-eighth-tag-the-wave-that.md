@@ -1,12 +1,14 @@
 ---
 id: T0480
 title: "The screen: the eighth tag — the wave that walks as one front"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T07:54:13Z
+claimed_at: 2026-11-03T08:25:50Z
 ---
 
 ## Goal
