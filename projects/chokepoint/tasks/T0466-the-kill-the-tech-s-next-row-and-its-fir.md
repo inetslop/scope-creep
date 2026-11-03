@@ -1,12 +1,14 @@
 ---
 id: T0466
 title: "The kill: the tech's next row and its first node, The bounty"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T02:48:20Z
+claimed_at: 2026-11-03T03:42:03Z
 epic: E25
 ---
 
