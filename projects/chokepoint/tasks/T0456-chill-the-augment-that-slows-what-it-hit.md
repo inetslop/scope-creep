@@ -3,10 +3,12 @@ id: T0456
 title: "Chill: the augment that slows what it hits"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T00:11:22Z
+claimed_at: 2026-11-03T00:51:12Z
+designer: desktop
 ---
 
 ## Goal
