@@ -4,11 +4,12 @@ title: "The tower's milestone gets its note"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T02:24:38Z
 claimed_at: 2026-11-03T02:31:28Z
+finished_at: 2026-11-03T02:38:59Z
 ---
 
 ## Goal
@@ -86,3 +87,17 @@ export const towerMilestoneNote: MakeEnemyHook = ({ sfx }) => {
 - Two towers crossing the same frame each get their own `onKill`, so each plays its own note; per-tower `Map` is what keeps them apart.
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The tower's milestone is now heard where it stands: a new `towerMilestoneNote` enemy hook plays one quiet two-note rise (`sfx.towerMilestone()`, E4→G4, 330→392 Hz, 60 ms sines ~30 ms apart, 0.06 pre-master) at the same exact edge the ring pops on — when a tower's kills first cross 10, 25 or 50. The tracker lives in the hook's closure (fresh each run), so a tower earns the note at most three times per run and a second tower crossing at the same moment plays its own; the pause's Sound toggle is honored by `Sfx.tone`'s existing mute check. The ring itself, and everything else, is byte-identical. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 7.5 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          |  6 ++++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../src/systems/enemyHooks/towerMilestoneNote.ts   | 25 ++++++++++++++++++++++
+ 3 files changed, 33 insertions(+)
+```

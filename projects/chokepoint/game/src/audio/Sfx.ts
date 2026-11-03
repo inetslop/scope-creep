@@ -281,6 +281,12 @@ export class Sfx {
     this.tone(330, 0.07, 'sine', 0.05, undefined, 0.04);
   }
 
+  /** A tower's own milestone heard at its base: one quiet two-note rise, E4 then G4 (330 then 392 Hz), 60 ms sines ~30 ms apart, 0.06 pre-master, the Leech sip's soft class. */
+  towerMilestone(): void {
+    this.tone(330, 0.06, 'sine', 0.06);
+    this.tone(392, 0.06, 'sine', 0.06, undefined, 0.03);
+  }
+
   waveStart(): void {
     this.tone(220, 0.25, 'triangle', 0.35, 440);
   }

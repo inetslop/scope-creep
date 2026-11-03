@@ -42,6 +42,7 @@ import { orbSplit } from './orbSplit';
 import { killCoin } from './killCoin';
 import { bountyCoin } from './bountyCoin';
 import { killMilestone } from './killMilestone';
+import { towerMilestoneNote } from './towerMilestoneNote';
 import { waveClose } from './waveClose';
 import { nearMiss } from './nearMiss';
 import { nearMissNote } from './nearMissNote';
@@ -81,6 +82,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   killCoin,
   bountyCoin,
   killMilestone,
+  towerMilestoneNote,
   waveClose,
   nearMiss,
   nearMissNote,
