@@ -163,6 +163,13 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - The heavy hand: 85 coins by the depth rule, every tower's damage +10% — parked
 - The quick draw: 155 coins by the depth rule, every tower attacks 10% faster — parked
 
+### E29 — The bank: a tech branch for how the gold pays (active — opened 2026-11-03)
+**Goal:** the tech tree has covered run start, board, pool, claim, wave, tower management, exit, draft, kill and strike — but not the run's own bank: an eleventh branch lets between-run coins buy how the gold the run banks pays at each wave start.
+**Breakdown:**
+- The deep vault: the branch and a 30-coin node, the bank's pay cap +10 → +20 (the 5% rate and the +1-up floor untouched) — **tasked as T0483 (M, in the pool, 2026-11-03)**
+- The high rate: 85 coins by the depth rule, the bank's rate 5% → 8% — parked (T0431's teach line must read the live rate when this lands)
+- The last stand's vault: 155 coins by the depth rule, the bank's pay ×2 while the run is at 1 life — parked
+
 ## Enemy queue (non-epic)
 
 New enemies land one at a time: each new-enemy task chains behind the one before it so the enemy system, the wave mix and the art settle between additions.
