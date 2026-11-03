@@ -3,13 +3,11 @@ id: T0452
 title: "Plain: the level whose board carries no marked cell or choke"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-02T23:41:13Z
-claimed_at: 2026-11-03T00:02:08Z
 epic: E21
-designer: inet-racing
 ---
 
 ## Goal
@@ -35,3 +33,57 @@ The run-setup step's level set (Tough, Lean, Short fuse, Swift, Crowded, Blind) 
 - [ ] A resumed Plain run is still Plain, and its board regrows from the seed without a marked cell or a guaranteed choke.
 - [ ] The LevelChips row shows Plain's chip (name only) while it is on.
 - [ ] A run without Plain is byte-identical: the marked cell, the guaranteed choke, the double mark and the coin multiplier are unchanged.
+
+## Design (architect, inet-racing)
+
+### Files
+- CREATE `src/content/levels/plain.ts` (new level augment data, modeled on `blind.ts`)
+- EDIT `src/content/levels/index.ts` (import + one registry line)
+- EDIT `src/core/daily.ts` (`dailyOrder` only)
+- EDIT `src/core/choke.ts` (`ensureChokes` only)
+- EDIT `src/core/boardFacts.ts` (mark union, tag kind, one row, seed field+entry, `boardFactTag`)
+- EDIT `src/scenes/BoardFactsScene.ts` (one line, 110)
+- EDIT `src/scenes/GameScene.ts` (3 spots in `create()`)
+- EDIT `src/scenes/PickScene.ts` (preview grow + the two "one cell · +25% damage" lines)
+- EDIT `src/debug/runChecks.ts` (2 invariants)
+- EDIT tests: `tests/core/daily.test.ts`, `tests/core/chokeGuarantee.test.ts`, `tests/core/boardFacts.test.ts`, `tests/core/levels.test.ts`
+- NO CHANGE: `LevelChips`, `TowerPanel`, `Tower`/`TowerSystem`, `Board`, `art/*`, `core/levels.ts`, `core/markedCell.ts`, `core/map.ts`, `core/run.ts`, `core/profile.ts`, `core/saveRun.ts`, `MilestoneScene`, `RewardsScene` — all read `run.level`/`LEVEL_AUGMENTS.length`/`Board.marked` and adapt automatically (chip, ×1.40 labels, 7 rungs, save validation).
+
+### Interfaces
+- `plain: LevelAugmentDef = { id: 'plain', name: 'Plain', line: 'no marked cell, no guaranteed choke', bonus: 0.4 }` (no speedMul/countMul).
+- `ensureChokes(map, count)`: `count = 0` means no guarantee, returns `map` untouched.
+- `dailyOrder(seed): string[]`: length 7, 'plain' exactly once; the other six are exactly `new Rng(seed).shuffle(<the six ids as today>)`.
+- `BOARD_FACT_SEEDS.plain = { seed: <S>, chokes: 0, noMarked: true }` where <S> is an unused seed (10, 12, 14…) whose board grown with `chokes: 0` has `chokeCells(...) === 0` (verify by running the new test; commit the seed that passes).
+- `BoardFactTag` gains `{ kind: 'level' }`, shown as the tag text `level`.
+
+### Steps
+1. Create `src/content/levels/plain.ts` with the object above (doc comment: board grows with no marked cell, no guaranteed choke; road and shape stand).
+2. `src/content/levels/index.ts`: add `import { plain } from './plain';` and make the list `[tough, lean, shortFuse, swift, crowded, blind, plain];` (append last: the filter in step 3 must yield today's six in today's order).
+3. `src/core/daily.ts` replace `dailyOrder`:
+```ts
+export function dailyOrder(seed: number): string[] {
+  const six = new Rng(seed).shuffle(LEVEL_AUGMENTS.filter((a) => a.id !== 'plain').map((a) => a.id));
+  const at = new Rng(seed).int(0, six.length);
+  return [...six.slice(0, at), 'plain', ...six.slice(at)];
+}
+```
+4. `src/core/choke.ts` `ensureChokes`: first line of the body becomes `if (count <= 0) return map; // Plain: no guarantee; the board stands as grown`.
+5. `src/scenes/GameScene.ts` in `create()`, before the `const bends =` line: `const isPlain = (saved?.level ?? pick?.level ?? []).includes('plain');` (comment: a resumed run reads the saved level, because restore runs after the board is grown). Then the chokes line: `const chokes = saved ? saved.chokes : isPlain ? 0 : boardChokes(loadProfile(window.localStorage).purchased);` and the marked line: `const marked = isPlain ? [] : markedCells(map, seed);` (mapChokes saves 0, so resume regrows plain).
+6. `src/scenes/PickScene.ts`: in `build()`'s maps loop, per seed `const plain = dailyLevel(seed, this.level).includes('plain');` and pass `plain ? 0 : this.chokes` as the chokes arg and `plain ? [] : markedCells(map, seed)` as the marks arg. `CardParts.marked` becomes `Phaser.GameObjects.Text | undefined`; in `buildRow` make the "one cell · +25% damage" text conditional on `!ids.includes('plain')` (skip the `y += 10 + marked.height` too) and guard the placement: `if (c.marked) { c.marked.setPosition(colX, colTop + ey + (c.mul ? c.mul.height : 0) + 10); kids.push(c.marked); }`. In `buildDetail` wrap line 306's `put(...)` in `if (!ids.includes('plain'))`.
+7. `src/core/boardFacts.ts`: add `'plain'` to `BoardFactMark`, `| { kind: 'level' }` to `BoardFactTag`, the row `{ mark: 'plain', name: 'Plain', meaning: 'no marked cell, no guaranteed choke', tag: { kind: 'level' } }` after the dblmark row, `noMarked?: boolean;` to `BoardFactSeed`, the `plain` entry to `BOARD_FACT_SEEDS`, and `if (tag.kind === 'level') return 'level';` in `boardFactTag`.
+8. `src/scenes/BoardFactsScene.ts` line 110: `paintBoardPreview(this, key, map, pathLineFor(map, CELL), s.noMarked ? [] : markedCells(map, s.seed));`
+9. `src/debug/runChecks.ts`: `board.choke` → `['board.choke', (g) => (g.run.level.includes('plain') || g.run.bgen < 2 || chokeCells(g.board.map).length > 0 ? null : 'a gen-2 board has no choke cell')],`; `board.doubleMark` → first statement `if (g.run.level.includes('plain')) return null; // Plain: no marked cell`.
+10. Tests: (a) `daily.test.ts` — new it: for seeds of both days, `order.filter(id => id !== 'plain')` equals `new Rng(s).shuffle(<six ids>)`, plain occurs once, and for every `l <= order.indexOf('plain')` `dailyLevel(s, l)` equals the six-shuffle's `slice(0, l)` (import `Rng`). (b) `chokeGuarantee.test.ts` — `expect(ensureChokes(m, 0)).toBe(m)` for a grown map. (c) `boardFacts.test.ts` — extend the 12-mark list with `'plain'` and add `case 'plain': { const s = BOARD_FACT_SEEDS.plain!; expect(s.chokes).toBe(0); expect(chokeCells(m).length).toBe(0); break; }`. (d) `levels.test.ts` — `getLevelAugment('plain')` toMatchObject the def; `levelMultiplier(['plain'])` ≈ 1.4; label `'×1.40'`.
+
+### Pitfalls
+- Never feed the 7-id list to `shuffle`: Fisher-Yates draws from the back, so length changes every seed's order and non-Plain runs would change level sets/×multipliers. Filter-then-insert is the byte-identity mechanism.
+- Without step 4's branch, `count <= 1` would still call `ensureChoke` — the guarantee would survive.
+- Resume: read `saved?.level`, not `run.level` (still `[]` at map-grow time); keep `mapChokes = 0` in the save — don't "repair" 0 to 1 anywhere.
+- The pick preview must grow plain boards with chokes 0 and no marks, or it shows a dot/guarantee the run won't have (the card is "the exact board the run will play").
+- The plain fact seed must genuinely grow choke-free (bgen 2 shape rolls stand); pick and commit one that passes, don't assert on an unverified seed.
+- Max level chips go 7 → 8; the row self-scales via `layoutView` exactly as today — add no layout code.
+
+### Tests
+- `npm run check` (typecheck + lint + units incl. the four new/updated test files).
+- `npm run smoke`.
+- Manual: pick step at 412x915 and 1280x720 — Plain listed with its line, chip row fits; start a run whose level includes Plain (its card names it): no mark on the ground, no panel line, no first-build chip, no double mark, board playable; HUD chip row shows a name-only "Plain" chip; menu/coin tally/pause read ×1.40 with no new readout; pause → "Boards" shows the Plain row; pause → resume keeps the board plain.
