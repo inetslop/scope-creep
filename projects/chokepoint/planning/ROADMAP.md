@@ -130,6 +130,15 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - A cheaper roll: the reroll's curve starts 25 lower — today's reroll is unlimited on a 50, 70, 100, … curve, so the node makes it 25, 45, 65, … (T0451's "second reroll for 25 gold" premise was stale); priced one depth deeper than The early odds — depth 5, 110 coins by the branch's depth rule — **tasked as T0459 (M, in the pool, 2026-11-03)** (the T0451 re-file)
 - Opening wild: the branch's third new node, 145 coins by the branch's depth rule (depth 6), the first draft always offers a Rare or Epic alongside its Common Bolt floor (T0048) — the floor is on one non-Bolt slot of the pre-wave-1 offer and its rerolls, no run state (a resumed run never re-rolls the opening draft) — **tasked as T0462 (M, in the pool, 2026-11-03)**
 
+### E24 — The reserve: the heavy card (active — opened 2026-11-03)
+**Goal:** the run's gold buys slots and rerolls; now it also buys the shape of the next wave — three heavy cards, each once per run, bought in the build phase: the surge (the next wave's towers attack 50% faster, 60 gold), the wall (the next wave's walkers walk 0.7×, 80 gold) and the harvest (the next wave's kills pay 2× gold, 50 gold). A run saves up like it builds.
+**When done:** the build phase shows the reserve — a small white card (the stats card's width) under the level chips: one bold line per heavy card with its price (the unbought "Name · N" with the coin glyph, the bought "Name · used") and its muted one-liner (the iron card's subline, T0406), the card hides when all three are spent; a buy pays the gold and the next wave wears its muted chip ("surged" / "walled" / "harvested") under the wave card's number for that wave only; the claim card's muted line names the heavy cards bought; the pause's controls list names the card.
+**Breakdown:**
+- the reserve and its first card, the surge: the card, the 60-gold once-per-run buy, the next wave's towers +50% attack speed (additive with Haste, the beam's per-second untouched), the wave's "surged" chip, the run save — **tasked as T0463 (M, in the pool, 2026-11-03)**
+- the wall: the reserve's second entry, 80 gold, the next wave's walkers 0.7× (crawl, dash, ramp and boss; the Ward ignores it, the crosser keeps its pace) — parked (tasked once T0463 lands, the entries land one at a time)
+- the harvest: the reserve's third entry, 50 gold, the next wave's kills pay 2× gold (the gold pop reads the doubled number, the last stand's look) — parked
+- the claim's line: the claim card's muted "reserve" line naming the heavy cards bought (no line when none was bought) — parked
+
 ## Enemy queue (non-epic)
 
 New enemies land one at a time: each new-enemy task chains behind the one before it so the enemy system, the wave mix and the art settle between additions.
