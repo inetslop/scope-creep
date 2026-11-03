@@ -151,8 +151,8 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Goal:** a leak costs a life and nothing else: the waves are fully decided by the seed and the number, so a run's worst moments pass without a trace; now the run's play shapes the run's next wave — what leaked comes back, one at a time, so holding the road is worth more than a life.
 **Breakdown:**
 - the memory's rule: the run's per-type leak ledger, the +1 per different regular leaker folded into the next plan (cap 3, most-leaked first, on top of the planned threat, spawnOnly never; quiet and boss waves drop them) — **tasked as T0473 (M, 2026-11-03)**
-- the teach: a one-time chip under the preview when a remembered wave is first planned, naming what came back — parked (S)
-- the deep memory: a type that leaked in each of the last two waves adds +2 instead of +1 (the cap unchanged) — parked
+- the teach: a one-time chip under the preview when a remembered wave is first planned, naming what came back — **tasked as T0487 (S, waits on T0473, 2026-11-03)** (it never shows in a Blind run — its text would name what the level hides)
+- the deep memory: a type that leaked in each of the last two waves adds +2 instead of +1 (the cap unchanged) — **tasked as T0486 (M, waits on T0473, 2026-11-03)**
 - the claim's line: a muted "remembered · N" line on the claim card when the memory fired at least once (the last page's pattern, E12) — parked
 
 ### E28 — The strike: a tech branch for how strong a tower is (active — opened 2026-11-03)
@@ -166,8 +166,8 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 ### E29 — The bank: a tech branch for how the gold pays (active — opened 2026-11-03)
 **Goal:** the tech tree has covered run start, board, pool, claim, wave, tower management, exit, draft, kill and strike — but not the run's own bank: an eleventh branch lets between-run coins buy how the gold the run banks pays at each wave start.
 **Breakdown:**
-- The deep vault: the branch and a 30-coin node, the bank's pay cap +10 → +20 (the 5% rate and the +1-up floor untouched) — **tasked as T0483 (M, in the pool, 2026-11-03)**
-- The high rate: 85 coins by the depth rule, the bank's rate 5% → 8% — parked (T0431's teach line must read the live rate when this lands)
+- The deep vault: the branch and a 30-coin node, the bank's pay cap +10 → +20 (the 5% rate and the +1-up floor untouched) — **done as T0483 (2026-11-03)**
+- The high rate: 85 coins by the depth rule, the bank's rate 5% → 8% — **tasked as T0485 (M, in the pool, 2026-11-03)** (T0431 now waits on it and reads the live rate, so the teach rewords itself)
 - The last stand's vault: 155 coins by the depth rule, the bank's pay ×2 while the run is at 1 life — parked
 
 ## Enemy queue (non-epic)
