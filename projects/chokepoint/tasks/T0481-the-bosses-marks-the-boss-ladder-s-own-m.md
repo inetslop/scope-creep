@@ -1,12 +1,14 @@
 ---
 id: T0481
 title: "The bosses' marks: the boss ladder's own marks under Patterns"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T08:12:52Z
+claimed_at: 2026-11-03T09:06:09Z
 epic: E26
 ---
 
