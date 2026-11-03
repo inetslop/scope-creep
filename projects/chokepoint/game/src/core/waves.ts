@@ -205,6 +205,17 @@ export function clumpsGap(plan: WavePlan): WavePlan {
 }
 
 /**
+ * The Clumps level's march (content/levels/clumps.ts): every non-quiet, non-boss wave walks in
+ * clumps of 2 and 3 with CLUMPS_GAP_SEC between them and wears no march tag — the level chip
+ * says the march. Quiet and boss waves keep their own plans and pace: the SAME plan object comes
+ * back, so they stay byte-identical.
+ */
+export function clumpsLevelPlan(plan: WavePlan): WavePlan {
+  if (isQuietWave(plan.number) || isBossWave(plan.number)) return plan;
+  return { ...plan, tags: [], spawns: clumpsGap(plan).spawns };
+}
+
+/**
  * Every 11th wave from wave 18 is the screen (51, 73, 139, ... — 18 is the rush wave's slot, 29 the
  * double wave's and 40 the boss wave's, 62 tight, 84 quiet, 95 the rush wave's, 106 the short
  * cut's and 117 the double's): the whole wave walks in as one front, every spawn within the
@@ -264,10 +275,10 @@ export function scatterSpawnDistance(wave: number, rng: Rng, lineLength: number,
  * affordable, groups of the same type come in quick succession, and ramping enemies are reserved
  * up front (a fixed count per wave), then interleaved evenly through it.
  */
-export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): WavePlan {
+export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[], clumpsRun = false): WavePlan {
   if (isBossWave(wave)) {
     // Still draws its share of the run's rng, so the waves after it keep today's seeded plans.
-    planNormalWave(wave, rng, enemies);
+    planNormalWave(wave, rng, enemies, clumpsRun);
     // Wave 20 is the Titan's wave: the Guard walks in ahead of it, carrying the Titan's shield (core/shield.ts).
     if (wave === 20) return { number: wave, spawns: [{ enemy: 'guard', delaySec: 0 }, { enemy: 'titan', delaySec: 1.2 }], hpMul: waveHpMul(wave), tags: ['boss'] };
     // Wave 90 is the Gorge's wave: its two Splinter escorts walk in ahead of it, its feed's line (systems/enemyHooks/gorgeFeeds.ts).
@@ -279,10 +290,10 @@ export function planWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): 
     // Wave 30 is the Orb's wave and wave 40 the Hive's: the boss wave's shape is its own (the Colossus on every other boss wave).
     return { number: wave, spawns: [{ enemy: bossId(wave)!, delaySec: 0 }], hpMul: waveHpMul(wave), tags: ['boss'] };
   }
-  return planNormalWave(wave, rng, enemies);
+  return planNormalWave(wave, rng, enemies, clumpsRun);
 }
 
-function planNormalWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): WavePlan {
+function planNormalWave(wave: number, rng: Rng, enemies: readonly EnemyDef[], clumpsRun: boolean): WavePlan {
   const unlocked = enemies.filter((e) => !e.spawnOnly && e.fromWave <= wave && e.threat > 0);
   const rampers = unlocked.filter((e) => e.speedRamp !== undefined);
   const walkers = unlocked.filter((e) => e.speedRamp === undefined && e.dashCycle === undefined && e.splitsInto === undefined && e.id !== 'hauler' && e.id !== 'mute' && e.id !== 'bulwark' && e.id !== 'ward' && e.id !== 'flyer');
@@ -348,15 +359,18 @@ function planNormalWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): W
   }
   // A quiet wave halves the plan at the single exit, so both paths above get it.
   if (isQuietWave(wave)) finalSpawns = quietHalve(finalSpawns);
-  // A tight wave bunches the plan at the single exit, so both paths above get it (it is never a quiet wave).
-  if (isTightWave(wave)) finalSpawns = tightHalve(finalSpawns);
+  // A tight wave bunches the plan at the single exit, so both paths above get it (it is never a quiet
+  // wave). A Clumps level's run never bunches — the march is the level's.
+  if (!clumpsRun && isTightWave(wave)) finalSpawns = tightHalve(finalSpawns);
   // A Mute wave always sends its Mute, even when the halving would drop it: it walks in first.
   if (wave >= 11 && (wave - 11) % 3 === 0 && !finalSpawns.some((s) => s.enemy === 'mute')) finalSpawns = [{ enemy: 'mute', delaySec: 0 }, ...finalSpawns];
   // A Bulwark wave always sends its Bulwark, even when the halving would drop it: it walks in first.
   if (wave >= 12 && (wave - 12) % 4 === 0 && !finalSpawns.some((s) => s.enemy === 'bulwark')) finalSpawns = [{ enemy: 'bulwark', delaySec: 0 }, ...finalSpawns];
   // A Ward wave always sends its Ward, even when the halving would drop it: it walks in first (wave 20 is the boss's slot).
   if (wave >= 15 && wave % 5 === 0 && wave !== 20 && !finalSpawns.some((s) => s.enemy === 'ward')) finalSpawns = [{ enemy: 'ward', delaySec: 0 }, ...finalSpawns];
-  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : isShortCutWave(wave) ? ['short cut'] : isDoubleWave(wave) ? ['double'] : isClumpsWave(wave) ? ['clumps'] : isScreenWave(wave) ? ['screen'] : isScatterWave(wave) ? ['scatter'] : [] };
+  // The Clumps level's run wears no march tag — the level chip says the march; the quiet breather keeps its own.
+  const tags = clumpsRun ? (isQuietWave(wave) ? ['quiet'] : []) : isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : isShortCutWave(wave) ? ['short cut'] : isDoubleWave(wave) ? ['double'] : isClumpsWave(wave) ? ['clumps'] : isScreenWave(wave) ? ['screen'] : isScatterWave(wave) ? ['scatter'] : [];
+  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags };
 }
 
 /**

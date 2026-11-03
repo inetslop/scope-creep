@@ -5,7 +5,7 @@ import { isFarGateSpawn } from '../core/farGate';
 import { levelCountMul, levelSpeedMul } from '../core/levels';
 import type { RunState } from '../core/run';
 import { waveWalkFactor } from '../core/tech';
-import { DOUBLE_SPEED_MUL, clumpsGap, doubleLull, doubleSplitAt, isClumpsWave, isDoubleWave, isScatterWave, isScreenWave, planWave, planWithLevel, screenFront, scatterSpawnDistance, shortCutSpawnDistance, type WavePlan, waveSpeedMul } from '../core/waves';
+import { DOUBLE_SPEED_MUL, clumpsGap, clumpsLevelPlan, doubleLull, doubleSplitAt, isClumpsWave, isDoubleWave, isScatterWave, isScreenWave, planWave, planWithLevel, screenFront, scatterSpawnDistance, shortCutSpawnDistance, type WavePlan, waveSpeedMul } from '../core/waves';
 import { hook } from '../debug/testHook';
 import { tagHaptic } from '../input/haptics';
 import type { EnemySystem } from './EnemySystem';
@@ -50,7 +50,7 @@ export class WaveSystem {
 
   /** Plans the run's next wave; RunFlow calls it when the build phase starts. */
   planNext(): void {
-    this.planned = planWithLevel(planWave(this.run.wave + 1, this.run.rng, ENEMIES), levelCountMul(this.run.level));
+    this.planned = planWithLevel(planWave(this.run.wave + 1, this.run.rng, ENEMIES, this.run.level.includes('clumps')), levelCountMul(this.run.level));
   }
 
   /** Starts the run's next wave, planned at the build phase's start. */
@@ -58,9 +58,11 @@ export class WaveSystem {
     this.run.startWave();
     this.livesAtStart = this.run.lives;
     this.heldLost = 0;
-    const plan0 = this.planned ?? planWithLevel(planWave(this.run.wave, this.run.rng, ENEMIES), levelCountMul(this.run.level));
-    // The double, the clumps and the screen (core/waves.ts) ride the plan actually sent: their lulls, gaps and front are cut here, after the level's extras.
-    this.plan = isDoubleWave(plan0.number) ? doubleLull(plan0) : isClumpsWave(plan0.number) ? clumpsGap(plan0) : isScreenWave(plan0.number) ? screenFront(plan0) : plan0;
+    // The Clumps level (content/levels/clumps.ts): its march replaces the tags' — read at the point of use, never captured (resumed runs set run.level after the constructor).
+    const clumpsRun = this.run.level.includes('clumps');
+    const plan0 = this.planned ?? planWithLevel(planWave(this.run.wave, this.run.rng, ENEMIES, clumpsRun), levelCountMul(this.run.level));
+    // The Clumps level's gaps, and the double, the clumps and the screen (core/waves.ts), ride the plan actually sent: their lulls, gaps and front are cut here, after the level's extras.
+    this.plan = clumpsRun ? clumpsLevelPlan(plan0) : isDoubleWave(plan0.number) ? doubleLull(plan0) : isClumpsWave(plan0.number) ? clumpsGap(plan0) : isScreenWave(plan0.number) ? screenFront(plan0) : plan0;
     this.planned = undefined;
     this.next = 0;
     this.timer = 0;
@@ -89,10 +91,12 @@ export class WaveSystem {
   update(dt: number): void {
     const plan = this.plan;
     if (!plan) return;
-    const waveMul = waveSpeedMul(plan.number);
+    // The Clumps level's run has no march tag: no rush speed, no double front, no scatter or short-cut distances.
+    const clumpsRun = this.run.level.includes('clumps');
+    const waveMul = clumpsRun ? 1 : waveSpeedMul(plan.number);
     const speedMul = levelSpeedMul(this.run.level) * this.walkMul * waveMul;
     // The double (core/waves.ts): from the split on, the second front's walkers walk DOUBLE_SPEED_MUL faster (a Flyer never).
-    const doubleAt = isDoubleWave(plan.number) ? doubleSplitAt(plan.spawns.length) : Infinity;
+    const doubleAt = !clumpsRun && isDoubleWave(plan.number) ? doubleSplitAt(plan.spawns.length) : Infinity;
     this.timer += dt;
     while (this.next < plan.spawns.length && this.timer >= plan.spawns[this.next]!.delaySec) {
       const spawn = plan.spawns[this.next]!;
@@ -106,7 +110,7 @@ export class WaveSystem {
       const def = getEnemy(spawn.enemy);
       const line = this.enemies.routeForLane(lane).length;
       // The scatter (core/waves.ts): every road walker pops in at its own point 15–55% down the road it walks from its own gate, one roll per enemy on the run's rng; the Flyer never rolls.
-      const dist = isScatterWave(plan.number) && !def.flies ? scatterSpawnDistance(plan.number, this.run.rng, line, entrance) : shortCutSpawnDistance(plan.number, line, entrance);
+      const dist = clumpsRun ? entrance : isScatterWave(plan.number) && !def.flies ? scatterSpawnDistance(plan.number, this.run.rng, line, entrance) : shortCutSpawnDistance(plan.number, line, entrance);
       this.enemies.spawn(def, plan.hpMul * this.run.levelHpMul, speedMul * (this.next >= doubleAt && !def.flies ? DOUBLE_SPEED_MUL : 1), waveMul, this.walkMul, dist, lane);
       this.next += 1;
     }

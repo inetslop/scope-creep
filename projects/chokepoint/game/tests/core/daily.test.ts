@@ -3,8 +3,8 @@ import { LEVEL_AUGMENTS } from '../../src/content/levels';
 import { dailyLevel, dailyOrder, dailySeeds, utcDay } from '../../src/core/daily';
 import { Rng } from '../../src/core/rng';
 
-/** The six levels before Plain, in the set's own order: the order a board without Plain plays. */
-const SIX = LEVEL_AUGMENTS.filter((a) => a.id !== 'plain').map((a) => a.id);
+/** The six levels before Plain and Clumps, in the set's own order: the order a board without either plays. */
+const SIX = LEVEL_AUGMENTS.filter((a) => a.id !== 'plain' && a.id !== 'clumps').map((a) => a.id);
 
 const day = '2026-03-01';
 const next = '2026-03-02';
@@ -47,20 +47,15 @@ describe('the daily board pick', () => {
     }
   });
 
-  it('Plain sits in the order once, and the six others keep today\'s order for the same seed', () => {
+  it('Plain and Clumps each sit in the order once, and the six others keep today\'s order for the same seed', () => {
     for (const daySeeds of [dailySeeds(day), dailySeeds(next)]) {
       for (const s of daySeeds) {
         const order = dailyOrder(s);
-        expect(order).toHaveLength(SIX.length + 1);
+        expect(order).toHaveLength(SIX.length + 2);
         expect(order.filter((id) => id === 'plain')).toEqual(['plain']); // exactly once
-        // Strip Plain: the six are today's exact shuffle for this seed (a board without Plain plays it).
-        expect(order.filter((id) => id !== 'plain')).toEqual(new Rng(s).shuffle(SIX));
-        // Up to Plain's position, the levels are today's: slice(0, l) never reaches Plain.
-        const at = order.indexOf('plain');
-        const six = new Rng(s).shuffle(SIX);
-        for (let l = 0; l <= at; l++) {
-          expect(dailyLevel(s, l)).toEqual(six.slice(0, l));
-        }
+        expect(order.filter((id) => id === 'clumps')).toEqual(['clumps']); // exactly once
+        // Strip both: the six are today's exact shuffle for this seed (a board without either plays it).
+        expect(order.filter((id) => id !== 'plain' && id !== 'clumps')).toEqual(new Rng(s).shuffle(SIX));
       }
     }
   });

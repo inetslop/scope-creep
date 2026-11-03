@@ -1,5 +1,6 @@
 import type { LevelAugmentDef } from '../types';
 import { blind } from './blind';
+import { clumps } from './clumps';
 import { crowded } from './crowded';
 import { lean } from './lean';
 import { plain } from './plain';
@@ -10,7 +11,7 @@ import { tough } from './tough';
 export type { LevelAugmentDef };
 
 /** Every level augment: the pre-run switches on the menu (never in the draft, hand, towers or codex). */
-export const LEVEL_AUGMENTS: readonly LevelAugmentDef[] = [tough, lean, shortFuse, swift, crowded, blind, plain];
+export const LEVEL_AUGMENTS: readonly LevelAugmentDef[] = [tough, lean, shortFuse, swift, crowded, blind, plain, clumps];
 
 const byId = new Map(LEVEL_AUGMENTS.map((a) => [a.id, a]));
 

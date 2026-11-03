@@ -4,11 +4,12 @@ title: "Clumps: the level whose waves all come in clumps"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T10:58:13Z
 claimed_at: 2026-11-03T11:28:26Z
+finished_at: 2026-11-03T11:46:34Z
 epic: E21
 ---
 
@@ -118,3 +119,22 @@ export function dailyOrder(seed: number): string[] {
 - Byte-identity: waves 1–100, `planWave(w, new Rng(w), ENEMIES, false)` `toEqual` `planWave(w, new Rng(w), ENEMIES)`.
 
 `tests/core/daily.test.ts`: change `SIX` to filter out both `'plain'` and `'clumps'`; rewrite the fourth test: the order has `SIX.length + 2` entries, `plain` and `clumps` each appear exactly once, and `order.filter(id => id !== 'plain' && id !== 'clumps')` equals `new Rng(s).shuffle(SIX)` for both days' seeds (drop the "up to Plain's position" prefix loop — Clumps can land before Plain).
+
+## Result (attempt 1, desktop)
+
+Added the eighth level "Clumps" (×1.40, 'every wave comes in clumps') as new data in src/content/levels/clumps.ts registered in the level set, so the pick step, level chip, levels reference and multiplier all pick it up. In a Clumps run, planWave gains a clumpsRun flag (no march tags, no tight bunching) and WaveSystem applies the new clumpsLevelPlan — every non-quiet, non-boss wave walks in clumps of 2 and 3 with the 4 s gap, wears no tag chip or buzz, and skips rush/double/scatter/short-cut mechanics; quiet and boss waves keep their exact plans. dailyOrder now inserts Clumps after Plain's insert on the seed's second draw, the level.speed invariant is Clumps-aware, and a new level.clumps invariant guards the march. Runs without the level are byte-identical (defaulted argument, same rng stream), covered by the new tests/core/clumpsLevel.test.ts and the updated daily test; check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 18.1 min
+
+```
+.../chokepoint/game/src/content/levels/clumps.ts   | 15 ++++
+ .../chokepoint/game/src/content/levels/index.ts    |  3 +-
+ projects/chokepoint/game/src/core/daily.ts         | 16 +++--
+ projects/chokepoint/game/src/core/waves.ts         | 28 ++++++--
+ projects/chokepoint/game/src/debug/runChecks.ts    | 11 ++-
+ projects/chokepoint/game/src/systems/WaveSystem.ts | 20 +++---
+ .../chokepoint/game/tests/core/clumpsLevel.test.ts | 84 ++++++++++++++++++++++
+ projects/chokepoint/game/tests/core/daily.test.ts  | 19 ++---
+ 8 files changed, 160 insertions(+), 36 deletions(-)
+```

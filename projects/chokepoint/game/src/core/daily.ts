@@ -26,14 +26,18 @@ export function dailySeeds(day: string): [number, number, number] {
 
 /**
  * The board's level-augment order: the six levels of before, shuffled by the board's seed exactly
- * as today, with Plain inserted at a position the seed picks. Plain is filtered out before the
- * shuffle (never a seventh entry: a longer list would move every seed's draws of the six) and
- * added after, so a board without Plain on it plays today's exact order.
+ * as today, with Plain and Clumps inserted at positions the seed picks. Both are filtered out
+ * before the shuffle (never extra entries: a longer list would move every seed's draws of the six)
+ * and added after — Plain on the first draw of a fresh Rng(seed), Clumps on the second — so a
+ * board without either on it plays today's exact order.
  */
 export function dailyOrder(seed: number): string[] {
-  const six = new Rng(seed).shuffle(LEVEL_AUGMENTS.filter((a) => a.id !== 'plain').map((a) => a.id));
-  const at = new Rng(seed).int(0, six.length);
-  return [...six.slice(0, at), 'plain', ...six.slice(at)];
+  const six = new Rng(seed).shuffle(LEVEL_AUGMENTS.filter((a) => a.id !== 'plain' && a.id !== 'clumps').map((a) => a.id));
+  const r = new Rng(seed);
+  const atPlain = r.int(0, six.length);
+  const seven = [...six.slice(0, atPlain), 'plain', ...six.slice(atPlain)];
+  const atClumps = r.int(0, seven.length);
+  return [...seven.slice(0, atClumps), 'clumps', ...seven.slice(atClumps)];
 }
 
 /** The board's level L: the first L of its order, so a higher level only adds augments to the same boards. */

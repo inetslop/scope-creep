@@ -12,7 +12,7 @@ import { MARKED_DMG_MUL } from '../core/markedCell';
 import { switchbackFold } from '../core/switchback';
 import { stretchCovered } from '../core/slowStretch';
 import { TIER_ORDER } from '../core/tiers';
-import { CLUMPS_GAP_SEC, DOUBLE_LULL_SEC, DOUBLE_SPEED_MUL, SCREEN_WINDOW_SEC, bossId, clumpBoundaries, doubleSplitAt, waveSpeedMul } from '../core/waves';
+import { CLUMPS_GAP_SEC, DOUBLE_LULL_SEC, DOUBLE_SPEED_MUL, SCREEN_WINDOW_SEC, bossId, clumpBoundaries, doubleSplitAt, isBossWave, isQuietWave, waveSpeedMul } from '../core/waves';
 import { DraftScene } from '../scenes/DraftScene';
 import { GameOverScene } from '../scenes/GameOverScene';
 import { MenuScene } from '../scenes/MenuScene';
@@ -219,7 +219,14 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
     return wild.length === 1 && offer[3]!.wildcard === true && offer[3]!.tier !== 'common' ? null : `the four-card draft's wildcard is wrong`;
   }],
   ['level.choice', (g) => (new Set(g.run.level).size === g.run.level.length && g.run.level.every((id) => getLevelAugment(id) !== undefined) ? null : `level choice ${g.run.level.join(',')}`)],
-  ['level.speed', (g) => { const base = levelSpeedMul(g.run.level) * waveWalkFactor(g.run.techOwned) * waveSpeedMul(g.run.wave); const double = g.waves.currentPlan?.tags.includes('double') === true; return g.enemies.all.every((e) => !e.active || e.speedMul === base || (double && e.speedMul === base * DOUBLE_SPEED_MUL)) ? null : 'an enemy walks at the wrong level, walk or wave speed factor'; }],
+  ['level.speed', (g) => { const waveMul = g.run.level.includes('clumps') ? 1 : waveSpeedMul(g.run.wave); const base = levelSpeedMul(g.run.level) * waveWalkFactor(g.run.techOwned) * waveMul; const double = g.waves.currentPlan?.tags.includes('double') === true; return g.enemies.all.every((e) => !e.active || e.speedMul === base || (double && e.speedMul === base * DOUBLE_SPEED_MUL)) ? null : 'an enemy walks at the wrong level, walk or wave speed factor'; }],
+  ['level.clumps', (g) => {
+    if (!g.run.level.includes('clumps')) return null;
+    const p = g.waves.currentPlan;
+    if (!p || isQuietWave(p.number) || isBossWave(p.number)) return null; // the breather and the boss keep their own
+    if (p.tags.length > 0) return `a Clumps run's wave ${p.number} wears a march tag ${p.tags.join(',')}`;
+    return clumpBoundaries(p.spawns.length).every((i) => p.spawns[i]!.delaySec === CLUMPS_GAP_SEC) ? null : `the Clumps run's wave ${p.number} lost its ${CLUMPS_GAP_SEC}s gaps between its clumps`;
+  }],
   ['walk.mul', (g) => (g.enemies.all.every((e) => !e.active || e.walkMul === waveWalkFactor(g.run.techOwned)) ? null : 'an enemy carries the wrong run walk factor')],
   ['level.bossPlan', (g) => { if (!bossId(g.run.wave) || !g.waves.currentPlan) return null; const want = g.run.wave === 20 ? 2 : g.run.wave === 70 || g.run.wave === 80 || g.run.wave === 90 ? 3 : 1; return g.waves.currentPlan.spawns.length === want ? null : `boss wave ${g.run.wave} sends ${g.waves.currentPlan.spawns.length}, not ${want}`; }],
   ['waves.shortCutPlan', (g) => { const p = g.waves.currentPlan; if (!p || !p.tags.includes('short cut')) return null; return p.spawns.length > 0 && p.spawns.every((s) => s.delaySec >= 0) ? null : `the short cut wave ${p.number} plan is not a plain wave plan`; }],
