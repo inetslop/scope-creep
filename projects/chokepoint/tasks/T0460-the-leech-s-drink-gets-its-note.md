@@ -4,11 +4,12 @@ title: "The Leech's drink gets its note"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T01:27:12Z
 claimed_at: 2026-11-03T01:44:31Z
+finished_at: 2026-11-03T02:02:10Z
 ---
 
 ## Goal
@@ -77,3 +78,17 @@ leechDrink(): void {
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The wave-80 Leech's drink now has its own quiet note: a new per-frame reconciled hook (src/systems/enemyHooks/leechDrinkNote.ts) plays exactly one short falling two-note sip (Sfx.leechDrink(), G4→E4, 392→330 Hz, 70 ms sines 40 ms apart, 0.05 pre-master — the Mute note's volume class, below a kill blip) at the start of each drink's 0.8 s white flash, edge-triggered on the flash leg read from the Leech's own `age` clock and `drinkReady` flag, so it never rings when the Leech is dead, missing, or its maw is closed; the sound respects the pause's Sound toggle via `Sfx.tone`'s existing mute check, and everything else is byte-identical (no HUD, chip or text).
+
+- Self-review: APPROVE
+- Time: 17.7 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts               |  7 +++++++
+ .../chokepoint/game/src/systems/enemyHooks/index.ts     |  2 ++
+ .../game/src/systems/enemyHooks/leechDrinkNote.ts       | 17 +++++++++++++++++
+ 3 files changed, 26 insertions(+)
+```

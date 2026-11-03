@@ -274,6 +274,13 @@ export class Sfx {
     note.osc.stop(t + 0.27);
   }
 
+  /** The Leech's drink: one short falling sip at each drink's white flash — two 70 ms sines a step below A4,
+   *  G4 then E4 (392→330 Hz), ~40 ms apart, 0.05 pre-master, the Mute note's volume class, never above a kill blip. */
+  leechDrink(): void {
+    this.tone(392, 0.07, 'sine', 0.05);
+    this.tone(330, 0.07, 'sine', 0.05, undefined, 0.04);
+  }
+
   waveStart(): void {
     this.tone(220, 0.25, 'triangle', 0.35, 440);
   }
