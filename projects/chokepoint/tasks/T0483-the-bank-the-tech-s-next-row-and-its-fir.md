@@ -3,11 +3,13 @@ id: T0483
 title: "The bank: the tech's next row and its first node, The deep vault"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T08:53:31Z
+claimed_at: 2026-11-03T09:29:31Z
 epic: E29
+designer: desktop
 ---
 
 ## Goal
