@@ -3,11 +3,13 @@ id: T0458
 title: "The early odds: the draft branch's node that starts the odds shift at wave 1"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T01:13:05Z
+claimed_at: 2026-11-03T01:41:12Z
 epic: E23
+designer: desktop
 ---
 
 ## Goal
