@@ -27,6 +27,7 @@ const TEACH: { tag: string; first: number; text: string }[] = [
   { tag: 'tight', first: 6, text: 'tight: they come bunched' },
   { tag: 'boss', first: 10, text: 'boss: one big shape instead of a crowd' },
   { tag: 'rush', first: 11, text: 'rush: the walkers move 1.5× faster' },
+  { tag: 'scatter', first: 19, text: 'scatter: the wave appears across the road' },
   { tag: 'double', first: 21, text: 'double — the wave comes twice, the second front walks faster' },
   { tag: 'clumps', first: 26, text: 'clumps — the wave comes in clumps, the gaps break the chain' },
   { tag: 'short cut', first: 34, text: 'short cut — they come in mid-road' },

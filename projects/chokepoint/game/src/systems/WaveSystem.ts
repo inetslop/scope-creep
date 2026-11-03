@@ -5,7 +5,7 @@ import { isFarGateSpawn } from '../core/farGate';
 import { levelCountMul, levelSpeedMul } from '../core/levels';
 import type { RunState } from '../core/run';
 import { waveWalkFactor } from '../core/tech';
-import { DOUBLE_SPEED_MUL, clumpsGap, doubleLull, doubleSplitAt, isClumpsWave, isDoubleWave, isScreenWave, planWave, planWithLevel, screenFront, shortCutSpawnDistance, type WavePlan, waveSpeedMul } from '../core/waves';
+import { DOUBLE_SPEED_MUL, clumpsGap, doubleLull, doubleSplitAt, isClumpsWave, isDoubleWave, isScatterWave, isScreenWave, planWave, planWithLevel, screenFront, scatterSpawnDistance, shortCutSpawnDistance, type WavePlan, waveSpeedMul } from '../core/waves';
 import { hook } from '../debug/testHook';
 import { tagHaptic } from '../input/haptics';
 import type { EnemySystem } from './EnemySystem';
@@ -66,8 +66,8 @@ export class WaveSystem {
     this.timer = 0;
     // A tagged wave (anything but the quiet breather) buzzes once, so a phone player feels it coming (T0449).
     if (this.plan && this.plan.tags.some((t) => t !== 'quiet')) tagHaptic();
-    // The six march tags play the tag's note (Sfx.tagNote) as the banner lands, T0449's pair: the quiet breather and the boss's own horn (T0268) never do.
-    if (this.plan && this.plan.tags.some((t) => ['tight', 'rush', 'short cut', 'double', 'clumps', 'screen'].includes(t))) this.sfx?.tagNote();
+    // The seven march tags play the tag's note (Sfx.tagNote) as the banner lands, T0449's pair: the quiet breather and the boss's own horn (T0268) never do.
+    if (this.plan && this.plan.tags.some((t) => ['tight', 'rush', 'short cut', 'double', 'clumps', 'screen', 'scatter'].includes(t))) this.sfx?.tagNote();
     hook.stats.wavesStarted += 1;
   }
 
@@ -104,7 +104,10 @@ export class WaveSystem {
       // The short cut (core/waves.ts): the wave's road walkers come in 40% down the path they walk, from the entrance they walk in from.
       const entrance = isFarGateSpawn(this.next, plan, this.farGateDistance > 0) ? this.farGateDistance : 0;
       const def = getEnemy(spawn.enemy);
-      this.enemies.spawn(def, plan.hpMul * this.run.levelHpMul, speedMul * (this.next >= doubleAt && !def.flies ? DOUBLE_SPEED_MUL : 1), waveMul, this.walkMul, shortCutSpawnDistance(plan.number, this.enemies.routeForLane(lane).length, entrance), lane);
+      const line = this.enemies.routeForLane(lane).length;
+      // The scatter (core/waves.ts): every road walker pops in at its own point 15–55% down the road it walks from its own gate, one roll per enemy on the run's rng; the Flyer never rolls.
+      const dist = isScatterWave(plan.number) && !def.flies ? scatterSpawnDistance(plan.number, this.run.rng, line, entrance) : shortCutSpawnDistance(plan.number, line, entrance);
+      this.enemies.spawn(def, plan.hpMul * this.run.levelHpMul, speedMul * (this.next >= doubleAt && !def.flies ? DOUBLE_SPEED_MUL : 1), waveMul, this.walkMul, dist, lane);
       this.next += 1;
     }
   }

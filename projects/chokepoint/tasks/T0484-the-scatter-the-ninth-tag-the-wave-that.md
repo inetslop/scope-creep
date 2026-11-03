@@ -4,11 +4,12 @@ title: "The scatter: the ninth tag — the wave that appears across the road"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T09:29:27Z
 claimed_at: 2026-11-03T10:16:56Z
+finished_at: 2026-11-03T10:29:58Z
 ---
 
 ## Goal
@@ -100,3 +101,25 @@ No other signatures change: `WavePlan`, `WaveSpawn`, `EnemySystem.spawn` all sta
 ### Tests
 - `tests/core/scatterWaves.test.ts` as specified in step 6 (rule over a range, tag worn, collisions, roll bounds/seed/determinism/no-roll-off, 1–100 sweep).
 - Edits to `waveTags.test.ts` and the four sweep tests as in steps 7–8.
+
+## Result (attempt 1, desktop)
+
+Added the ninth wave tag "scatter" (every 9th wave from 19, yielding to all other tags): road walkers now pop in at their own random point 15–55% down the road they walk from their own gate, so the wave has no front and the answer is spread coverage. The rule and per-enemy spawn roll live in `core/waves.ts`, the spawn in `WaveSystem.ts`; the single new row in `core/waveTags.ts` drives the preview chip, banner chip and the WavesScene reference entry, with a one-time teach chip in `NextWavePreview.ts` and a `waves.scatterPlan` invariant. New unit tests in `tests/core/scatterWaves.test.ts` plus updated sweeps in the five existing wave-tag test files; check and smoke (desktop + mobile) both pass.
+
+- Self-review: APPROVE
+- Time: 13.0 min
+
+```
+projects/chokepoint/game/src/core/waveTags.ts      |  3 +-
+ projects/chokepoint/game/src/core/waves.ts         | 24 +++++++++-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  1 +
+ projects/chokepoint/game/src/systems/WaveSystem.ts | 11 +++--
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  |  1 +
+ .../chokepoint/game/tests/core/clumpsWaves.test.ts |  3 +-
+ .../chokepoint/game/tests/core/doubleWaves.test.ts |  3 +-
+ .../game/tests/core/scatterWaves.test.ts           | 52 ++++++++++++++++++++++
+ .../chokepoint/game/tests/core/screenWaves.test.ts |  3 +-
+ .../game/tests/core/shortCutWaves.test.ts          |  4 +-
+ .../chokepoint/game/tests/core/waveTags.test.ts    | 10 +++--
+ 11 files changed, 100 insertions(+), 15 deletions(-)
+```

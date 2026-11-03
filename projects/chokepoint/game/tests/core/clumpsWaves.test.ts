@@ -10,6 +10,7 @@ import {
   isDoubleWave,
   isQuietWave,
   isRushWave,
+  isScatterWave,
   isScreenWave,
   isShortCutWave,
   isTightWave,
@@ -61,7 +62,7 @@ describe('clumps wave plans', () => {
       const plan = planWave(wave, new Rng(wave), ENEMIES);
       const want = isBossWave(wave)
         ? ['boss']
-        : isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : isShortCutWave(wave) ? ['short cut'] : isDoubleWave(wave) ? ['double'] : isClumpsWave(wave) ? ['clumps'] : isScreenWave(wave) ? ['screen'] : [];
+        : isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : isShortCutWave(wave) ? ['short cut'] : isDoubleWave(wave) ? ['double'] : isClumpsWave(wave) ? ['clumps'] : isScreenWave(wave) ? ['screen'] : isScatterWave(wave) ? ['scatter'] : [];
       expect(plan.tags, `wave ${wave}`).toEqual(want);
       expect(plan.tags.length, `wave ${wave}`).toBeLessThanOrEqual(1);
       if (isBossWave(wave)) expect(plan.tags, `wave ${wave}`).not.toEqual(['clumps']);

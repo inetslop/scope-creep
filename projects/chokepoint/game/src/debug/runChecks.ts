@@ -226,6 +226,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['waves.doublePlan', (g) => { const p = g.waves.currentPlan; if (!p || !p.tags.includes('double')) return null; return p.spawns.length >= 2 && p.spawns[doubleSplitAt(p.spawns.length)]!.delaySec === DOUBLE_LULL_SEC ? null : `the double wave ${p.number} has no ${DOUBLE_LULL_SEC}s lull at its split`; }],
   ['waves.clumpsPlan', (g) => { const p = g.waves.currentPlan; if (!p || !p.tags.includes('clumps')) return null; return clumpBoundaries(p.spawns.length).every((i) => p.spawns[i]!.delaySec === CLUMPS_GAP_SEC) ? null : `the clumps wave ${p.number} plan lost its ${CLUMPS_GAP_SEC}s gaps between its clumps`; }],
   ['waves.screenPlan', (g) => { const p = g.waves.currentPlan; if (!p || !p.tags.includes('screen')) return null; let t = 0; for (const s of p.spawns) t += s.delaySec; return t <= SCREEN_WINDOW_SEC + 1e-6 ? null : `the screen wave ${p.number} plan still spans past its ${SCREEN_WINDOW_SEC}s front`; }],
+  ['waves.scatterPlan', (g) => { const p = g.waves.currentPlan; if (!p || !p.tags.includes('scatter')) return null; return p.spawns.length > 0 && p.spawns.every((s) => s.delaySec >= 0) ? null : `the scatter wave ${p.number} plan is not a plain wave plan`; }],
   ['augments.valid', (g) => {
     for (const c of [...g.run.hand, ...g.towers.towers.flatMap((t) => t.augments)])
       if (!AUGMENTS.some((a) => a.id === c.id) || !TIER_ORDER.includes(c.tier) || c.wildcard) return `unknown augment copy ${c.id}:${c.tier}`;
