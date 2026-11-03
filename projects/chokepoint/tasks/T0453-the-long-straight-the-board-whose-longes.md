@@ -1,14 +1,14 @@
 ---
 id: T0453
 title: "The long straight: the board whose longest straight is 7+ cells (the T0438 re-file)"
+assignee: asus
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 1
+attempts: 2
 created: 2026-11-02T23:41:13Z
-claimed_at: 2026-11-03T03:02:32Z
-finished_at: 2026-11-03T04:29:33Z
+claimed_at: 2026-11-03T04:29:37Z
 design_attempts: 1
 ---
 
