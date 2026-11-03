@@ -3,11 +3,13 @@ id: T0461
 title: "The halt: the seventh tag — the wave that stops at the road's middle"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T01:41:10Z
+claimed_at: 2026-11-03T02:01:55Z
 epic: E22
+designer: inet-racing
 ---
 
 ## Goal
