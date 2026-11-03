@@ -26,6 +26,8 @@ export interface Profile {
   lastRun: { wave: number; coins: number } | null;
   recent: RecentRun[];
   sound: boolean;
+  /** The Patterns toggle: a small muted-ink mark on every regular token, so the type reads by shape; off by default. */
+  patterns: boolean;
   /** Level slots earned: one per run that reached wave 30 with every slot filled, capped at the set (never decreases). */
   levelSlots: number;
   /** The level augments on for the next run, in the player's order. */
@@ -120,11 +122,12 @@ export function loadProfile(store: KeyValueStore | undefined): Profile {
       lastRun,
       recent,
       sound: typeof parsed.sound === 'boolean' ? parsed.sound : true,
+      patterns: typeof parsed.patterns === 'boolean' ? parsed.patterns : false,
       levelSlots,
       levelOn,
     };
   } catch {
-    return { bestWave: 0, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true, levelSlots: 0, levelOn: [] };
+    return { bestWave: 0, bestSeed: null, bestSeedBgen: null, ironBestWave: 0, runsPlayed: 0, coins: 0, purchased: [], lastRun: null, recent: [], sound: true, patterns: false, levelSlots: 0, levelOn: [] };
   }
 }
 
@@ -158,6 +161,7 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
     lastRun: { wave: result.waves, coins },
     recent: [{ wave: result.waves, coins, mode: result.mul === 2 ? ('iron' as const) : undefined }, ...old.recent].slice(0, RECENT_CAP),
     sound: old.sound,
+    patterns: old.patterns,
     levelSlots,
     levelOn: old.levelOn,
   };
@@ -173,6 +177,17 @@ export function recordRun(store: KeyValueStore | undefined, result: RunResult): 
 export function saveSound(store: KeyValueStore | undefined, on: boolean): void {
   const profile = loadProfile(store);
   profile.sound = on;
+  try {
+    store?.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    /* private mode or full storage: the preference just isn't kept */
+  }
+}
+
+/** Saves the Patterns toggle; the profile's other fields keep what they had. */
+export function savePatterns(store: KeyValueStore | undefined, on: boolean): void {
+  const profile = loadProfile(store);
+  profile.patterns = on;
   try {
     store?.setItem(PROFILE_KEY, JSON.stringify(profile));
   } catch {

@@ -12,6 +12,8 @@ export const ART = 3;
 export const ART_SCALE = 1 / ART;
 
 export const enemyTexture = (id: string): string => `enemy:${id}`;
+/** A regular enemy's type mark (the Patterns toggle): a small muted-ink shape on its token (art/entities.ts). */
+export const markTexture = (id: string): string => `enemy:mark-${id}`;
 /** A tower body for the tower's first augment (undefined: empty, grey). */
 export const towerTexture = (firstAugment: string | undefined): string => `tower:${firstAugment ?? 'empty'}`;
 export const augmentTexture = (id: string): string => `augment:${id}`;

@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { CELL, DEPTH } from '../config';
 import type { EnemyDef } from '../content/types';
 import type { PathLine } from '../core/path';
-import { ART_SCALE, DISC_TEXTURE, EYE_TEXTURE, PLATE_TEXTURE, enemyTexture } from '../art/textures';
+import { ART_SCALE, DISC_TEXTURE, EYE_TEXTURE, markTexture, PLATE_TEXTURE, enemyTexture } from '../art/textures';
 import { ignite } from '../core/burn';
 import { outOfReachLeg } from '../core/outOfReach';
 import { applyRoot, tickRoot } from '../core/root';
@@ -118,6 +118,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   private disc?: Phaser.GameObjects.Image;
   /** The eye (the Blinker): a small flat dot that slides forward through its telegraph; undefined without one. */
   private eye?: Phaser.GameObjects.Image;
+  /** The type mark (the Patterns toggle): a small flat muted-ink shape on the face; undefined for the spawn-only pieces. */
+  private typeMark?: Phaser.GameObjects.Image;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0, '__DEFAULT');
@@ -202,6 +204,15 @@ export class Enemy extends Phaser.GameObjects.Image {
       this.eye.setDepth(DEPTH.enemies);
     }
     this.eye?.setVisible(false); // hidden until advance() places it (no flash at the origin)
+    // Its type mark (the Patterns toggle) rides on top: flat, so it may turn with the token.
+    if (!this.def.spawnOnly) {
+      if (this.typeMark === undefined) {
+        this.typeMark = this.scene.add.image(0, 0, markTexture(this.def.id));
+        this.typeMark.setDepth(DEPTH.enemies);
+      }
+      this.typeMark.setTexture(markTexture(this.def.id)); // a recycled slot must not keep the first type's mark
+    }
+    this.typeMark?.setVisible(false); // hidden until advance() places it (and while the toggle is off)
   }
 
   /**
@@ -382,6 +393,11 @@ export class Enemy extends Phaser.GameObjects.Image {
       const off = r * (-0.4 + 0.8 * slide);
       this.eye.setPosition(this.x + this.dirX * off, this.y + this.dirY * off).setScale(ART_SCALE * pop).setVisible(true);
     }
+    // Its type mark (the Patterns toggle): the registry is read every frame, so the pause card's
+    // toggle appears and vanishes on resume, and a recycled slot never carries a stale state.
+    if (this.typeMark !== undefined && !this.def.spawnOnly) { // a recycled slot may still own a mark image; the spawn-only pieces never show one
+      this.typeMark.setPosition(this.x, this.y).setScale(ART_SCALE * pop).setRotation(this.rotation).setVisible(this.scene.registry.get('patterns') === true);
+    }
     const tele = cycle !== undefined && this.dashLeg === 'pause' && this.pauseAge < cycle.pauseSec / 2;
     if (this.flash > 0) this.flash -= dt;
     const leg = reach !== undefined ? outOfReachLeg(reach, this.reachClock) : 'idle';
@@ -477,6 +493,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.plate?.setVisible(false); // a recycled slot must not show a stale plate (e.g. on a dot)
     this.disc?.setVisible(false); // a recycled slot must not show a stale disc (e.g. on a dot)
     this.eye?.setVisible(false); // a recycled slot must not show a stale eye (e.g. on a dot)
+    this.typeMark?.setVisible(false); // a recycled slot must not show a stale mark (e.g. on a dot)
     this.setActive(false).setVisible(false);
   }
 }

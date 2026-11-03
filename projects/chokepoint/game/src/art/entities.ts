@@ -5,7 +5,7 @@ import { ENEMIES, getEnemy } from '../content/enemies';
 import { deepOf, PALETTE, rgba, type Bright } from '../content/palette';
 import type { Shape } from '../content/types';
 import { paintToken, roundRectPath, setShadow, shapePath } from './paint';
-import { BOLT_TEXTURE, CHIP_TEXTURE, DISC_TEXTURE, EYE_TEXTURE, enemyTexture, LEECH_CLOSED_TEXTURE, paintTexture, PLATE_TEXTURE, TOWER_BASE, TOWER_BODY, tokenDepth, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
+import { BOLT_TEXTURE, CHIP_TEXTURE, DISC_TEXTURE, EYE_TEXTURE, enemyTexture, LEECH_CLOSED_TEXTURE, markTexture, paintTexture, PLATE_TEXTURE, TOWER_BASE, TOWER_BODY, tokenDepth, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
 
 /** Enemies, tower plinths and bodies, bolts and chips: everything that stands or flies on the board. */
 export function paintEntityTextures(scene: Phaser.Scene): void {
@@ -52,6 +52,16 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
         ctx.stroke();
       }
     });
+  }
+  // Type marks (the Patterns toggle, off by default): one small muted-ink shape per regular token,
+  // so the type reads by shape alone. Separate textures, never painted into the token: the white
+  // hit flash tints the token image only, so the mark stays visible (entities/Enemy.ts shows it).
+  for (const e of ENEMIES) {
+    if (e.spawnOnly !== undefined) continue; // the bosses and the spawn-only pieces keep their plain look
+    const r = e.look.size * CELL;
+    const depth = tokenDepth(r);
+    const size = tokenRoom(r, depth) * 2;
+    paintTexture(scene, markTexture(e.id), size, size, (ctx) => paintTypeMark(ctx, e.id, size / 2, size / 2 - depth / 2, r));
   }
   const plinth = CELL * 0.4;
   const base = tokenRoom(plinth, 5) * 2;
@@ -145,4 +155,72 @@ function paintTowerBody(ctx: CanvasRenderingContext2D, shape: Shape, color: Brig
   shapePath(ctx, 'circle', c, shape === 'pillar' ? c - r * 0.78 : c - r * 0.05, r * 0.2);
   ctx.fillStyle = rgba(PALETTE.card, 0.95);
   ctx.fill();
+}
+
+/**
+ * A type mark on a regular token's face (the Patterns toggle): one muted-ink shape per type —
+ * the shape is the information, so every mark is the same color, and no mark copies its own
+ * token's shape. Centered at (cx, cy) (the face, raised by half the side-face depth) in
+ * fractions of the token radius r.
+ */
+function paintTypeMark(ctx: CanvasRenderingContext2D, id: string, cx: number, cy: number, r: number): void {
+  const ink = rgba(PALETTE.muted, 1);
+  ctx.fillStyle = ink;
+  ctx.strokeStyle = ink;
+  switch (id) {
+    case 'dot': // bar
+      roundRectPath(ctx, cx - r / 4, cy - r / 8, r / 2, r / 4, r / 8);
+      ctx.fill();
+      break;
+    case 'block': // dot
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 0.18, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case 'dasher': // chevron
+      shapePath(ctx, 'chevron', cx, cy, r * 0.3);
+      ctx.fill();
+      break;
+    case 'sprinter': // X: the dot's bar twice, crossed
+      for (const a of [Math.PI / 4, -Math.PI / 4]) {
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(a);
+        roundRectPath(ctx, -r / 4, -r / 8, r / 2, r / 4, r / 8);
+        ctx.fill();
+        ctx.restore();
+      }
+      break;
+    case 'splitter': // two bars
+      roundRectPath(ctx, cx - 0.2 * r, cy - 0.22 * r, 0.4 * r, 0.12 * r, 0.06 * r);
+      ctx.fill();
+      roundRectPath(ctx, cx - 0.2 * r, cy + 0.1 * r, 0.4 * r, 0.12 * r, 0.06 * r);
+      ctx.fill();
+      break;
+    case 'hauler': // triangle, to one side of the gold coin (its own radius r/3 at the center)
+      shapePath(ctx, 'triangle', cx + r * 0.55, cy, r * 0.2);
+      ctx.fill();
+      break;
+    case 'mute': // square, in the ring's hole
+      shapePath(ctx, 'square', cx, cy, r * 0.24);
+      ctx.fill();
+      break;
+    case 'flyer': // diamond
+      shapePath(ctx, 'diamond', cx, cy, r * 0.25);
+      ctx.fill();
+      break;
+    case 'ward': // ring, small and centered: clear of the armor ring at 0.88r, so it reads as a mark, not a target
+      ctx.lineWidth = r * 0.14;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 0.22, 0, Math.PI * 2);
+      ctx.stroke();
+      break;
+    case 'bulwark': // arc, the top half: well inside the plate band, whose inner edge is 0.55r
+      ctx.lineWidth = r * 0.14;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 0.2, Math.PI, 2 * Math.PI);
+      ctx.stroke();
+      break;
+  }
 }

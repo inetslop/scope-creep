@@ -3,7 +3,7 @@ import { artScale, STAR_TEXTURE } from '../art/textures';
 import { cssColor, PALETTE } from '../content/palette';
 import { cleanWavePay, flawlessPay, heldPay } from '../content/tech/claim';
 import { REWARD_WAVE } from '../core/levels';
-import { coinsForRun, loadProfile, saveSound } from '../core/profile';
+import { coinsForRun, loadProfile, savePatterns, saveSound } from '../core/profile';
 import { flags } from '../debug/flags';
 import { hook } from '../debug/testHook';
 import { makeButton } from '../ui/button';
@@ -189,6 +189,23 @@ export class PauseScene extends Phaser.Scene {
     const soundRow = makeButton(this, 0, 0, '', toggleSound, { width: 240, height: 52, radius: 26 });
     soundRow.content.add([glyph, soundText]);
     refreshRow();
+    // The Patterns row, in the sound row's own look: one tap target, the label, On/Off flipped in place.
+    const patternText = this.add.text(0, 0, 'Patterns off', textStyle(20, PALETTE.ink, { fontStyle: 'bold' })).setOrigin(0, 0.5);
+    let patterns = profile.patterns;
+    const refreshPatternsRow = (): void => {
+      patternText.setText(patterns ? 'Patterns on' : 'Patterns off');
+      patternText.setColor(cssColor(patterns ? PALETTE.ink : PALETTE.muted));
+      patternText.setPosition(-patternText.width / 2, 0);
+    };
+    const togglePatterns = (): void => {
+      patterns = !patterns;
+      savePatterns(window.localStorage, patterns);
+      this.registry.set('patterns', patterns);
+      refreshPatternsRow();
+    };
+    const patternsRow = makeButton(this, 0, 0, '', togglePatterns, { width: 240, height: 52, radius: 26 });
+    patternsRow.content.add([patternText]);
+    refreshPatternsRow();
     const showEnemies = (): void => {
       if (closed) return;
       this.scene.launch(SCENES.enemies);
@@ -237,7 +254,7 @@ export class PauseScene extends Phaser.Scene {
     if (worthText) h += worthText.height + GAP_S;
     h += GAP_B + heading.height;
     for (const t of lines) h += GAP_S + t.height;
-    h += GAP_B + 56 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + PAD;
+    h += GAP_B + 56 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + GAP_S + 52 + PAD;
     const panelH = Math.ceil(h);
     const panel = makeCard(this, 0, 0, panelW, panelH, 28);
     let y = -panelH / 2 + PAD;
@@ -268,6 +285,8 @@ export class PauseScene extends Phaser.Scene {
     y += GAP_S;
     soundRow.container.setY(cy(52));
     y += GAP_S;
+    patternsRow.container.setY(cy(52));
+    y += GAP_S;
     enemiesButton.container.setY(cy(52));
     y += GAP_S;
     wavesButton.container.setY(cy(52));
@@ -282,7 +301,7 @@ export class PauseScene extends Phaser.Scene {
     y += GAP_S;
     augmentsButton.container.setY(cy(52));
 
-    const boxKids: Phaser.GameObjects.GameObject[] = [panel, title, stats, heading, ...lines, resumeButton.container, mainMenuButton.container, quitButton.container, soundRow.container, enemiesButton.container, wavesButton.container, bossesButton.container, summaryButton.container, coinsButton.container, boardsButton.container, augmentsButton.container];
+    const boxKids: Phaser.GameObjects.GameObject[] = [panel, title, stats, heading, ...lines, resumeButton.container, mainMenuButton.container, quitButton.container, soundRow.container, patternsRow.container, enemiesButton.container, wavesButton.container, bossesButton.container, summaryButton.container, coinsButton.container, boardsButton.container, augmentsButton.container];
     if (worthText) boxKids.push(worthText);
     const box = this.add.container(0, 0, boxKids);
 

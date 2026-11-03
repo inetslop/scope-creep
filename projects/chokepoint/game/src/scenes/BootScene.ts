@@ -16,8 +16,11 @@ export class BootScene extends Phaser.Scene {
     hook.scene = SCENES.boot;
     generateTextures(this);
     const sfx = new Sfx();
-    sfx.muted = !loadProfile(window.localStorage).sound;
+    const profile = loadProfile(window.localStorage);
+    sfx.muted = !profile.sound;
     this.registry.set('sfx', sfx);
+    // The Patterns toggle: read from the profile here (so it survives re-entering the game), flipped on the pause card (PauseScene).
+    this.registry.set('patterns', profile.patterns);
     // Browsers only allow audio after a user gesture: unlock on the first one.
     window.addEventListener('pointerdown', () => sfx.unlock(), { once: true });
     window.addEventListener('keydown', () => sfx.unlock(), { once: true });

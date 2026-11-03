@@ -4,11 +4,12 @@ title: "The patterns: the toggle and the enemy tokens' marks"
 assignee: desktop
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T02:48:20Z
 claimed_at: 2026-11-03T03:29:58Z
+finished_at: 2026-11-03T03:50:04Z
 epic: E26
 ---
 
@@ -81,3 +82,21 @@ Registry key `'patterns'` (boolean) holds the live toggle: BootScene sets it fro
 - `recordRun`'s object literal must carry `patterns: old.patterns` or the setting resets every run end.
 ### Tests
 - `tests/core/profile.test.ts`: add `patterns: false` to the six expected profile objects; import `savePatterns`; one `it` mirroring the sound test: fresh/missing storage defaults off, `savePatterns(store, true)` persists, a `recordRun` keeps it, `savePatterns(store, false)` turns it back off.
+
+## Result (attempt 1, desktop)
+
+Added the "Patterns" toggle to the pause card (under the Sound row, remembered in the profile, off by default) that paints a small muted-ink type mark on every regular enemy token so the type reads by shape: dot bar, block dot, dasher chevron, sprinter X, splitter two bars, hauler triangle, mute square, flyer diamond, ward ring, bulwark arc. The marks are separate per-enemy images (art/entities.ts, entities/Enemy.ts) driven by a registry flag, so they stay visible through white hit-flashes, never touch the Hauler's coin or the Bulwark's plate, and render nothing anywhere while off. Profile support (load/save/record) with unit tests in tests/core/profile.test.ts; check and smoke both pass.
+
+- Self-review: APPROVE
+- Time: 20.1 min
+
+```
+projects/chokepoint/game/src/art/entities.ts       | 80 +++++++++++++++++++++-
+ projects/chokepoint/game/src/art/textures.ts       |  2 +
+ projects/chokepoint/game/src/core/profile.ts       | 17 ++++-
+ projects/chokepoint/game/src/entities/Enemy.ts     | 19 ++++-
+ projects/chokepoint/game/src/scenes/BootScene.ts   |  5 +-
+ projects/chokepoint/game/src/scenes/PauseScene.ts  | 25 ++++++-
+ .../chokepoint/game/tests/core/profile.test.ts     | 25 +++++--
+ 7 files changed, 159 insertions(+), 14 deletions(-)
+```
