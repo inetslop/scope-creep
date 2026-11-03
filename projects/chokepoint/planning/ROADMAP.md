@@ -111,7 +111,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Breakdown:**
 - Blind: the sixth level, no wave preview in the build — **done as T0446**
 - the board's face: a level whose boards carry no marked cell and no guaranteed choke — **tasked as T0452 (M, in the pool)** (the long straight re-filed as T0453; the board's files are settled)
-- the levels reference: a menu card (the How row's pattern) naming every level and its multiplier, so the picks are readable — **tasked as T0467 (M, in the pool)**
+- the levels reference: a menu card (the How row's pattern) naming every level and its multiplier, so the picks are readable — **done as T0467**
 - the ranks: Tough I/II/III once the set outgrows the run's slots — parked
 
 ### E22 — The march: the wave walks in more than one way (active — fully tasked 2026-11-03, closing on the pool's landings)
@@ -145,8 +145,8 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Goal:** the tech tree has covered run start, board, pool, claim, wave, tower, exit and the draft — but not the kill itself: a branch on the tech screen's next row lets between-run coins buy how a kill pays.
 **When done:** the tree's "The kill" branch has three nodes, each bought once and on for every run after: The bounty (every kill pays +1 gold, doubled by the quiet ×2 and the last stand ×2), The window (the kill-chain window +0.5 s, 1.5 s → 2.0 s, additive with Feast's +0.4 s per copy) and The milestone (the chain's milestone pay ×2: the 5th and 10th kill of a chain pay +4 and +8).
 **Breakdown:**
-- the branch and its first node, The bounty: the tech screen's next row (after The exit) plus a 30-coin node, every kill +1 gold on the bounty before the quiet and last-stand ×2 — **tasked as T0466 (M, in the pool, 2026-11-03)**
-- The window: 85 coins by the depth rule, the kill-chain window +0.5 s — parked (tasked once the row lands)
+- the branch and its first node, The bounty: the tech screen's next row (after The exit) plus a 30-coin node, every kill +1 gold on the bounty before the quiet and last-stand ×2 — **done as T0466**
+- The window: 85 coins by the depth rule, the kill-chain window +0.5 s — **tasked as T0470 (M, in the pool, 2026-11-03)**
 - The milestone: 155 coins by the depth rule, the chain's milestone pay ×2 (the 5th and 10th kill of a chain pay +4 and +8) — parked
 
 ### E26 — The patterns: the board reads without color (active — opened 2026-11-03)
