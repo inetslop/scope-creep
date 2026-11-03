@@ -3,12 +3,14 @@ id: T0489
 title: "The straight: the level whose board always carries the sniper's straight"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T10:58:13Z
+claimed_at: 2026-11-03T11:41:13Z
 epic: E21
 design_attempts: 1
+designer: cachyos-x8664
 ---
 
 ## Goal
