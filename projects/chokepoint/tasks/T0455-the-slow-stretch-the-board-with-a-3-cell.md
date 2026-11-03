@@ -3,10 +3,12 @@ id: T0455
 title: "The slow stretch: the board with a 3-cell slow run of road"
 size: L
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T00:11:22Z
+claimed_at: 2026-11-03T00:11:25Z
+designer: desktop
 ---
 
 ## Goal
