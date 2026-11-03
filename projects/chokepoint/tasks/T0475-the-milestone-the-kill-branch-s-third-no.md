@@ -1,12 +1,14 @@
 ---
 id: T0475
 title: "The milestone: the kill branch's third node, the chain's milestone pay ×2"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T05:56:47Z
+claimed_at: 2026-11-03T06:40:39Z
 epic: E25
 ---
 
