@@ -1,12 +1,14 @@
 ---
 id: T0460
 title: "The Leech's drink gets its note"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T01:27:12Z
+claimed_at: 2026-11-03T01:44:31Z
 ---
 
 ## Goal
