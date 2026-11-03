@@ -144,7 +144,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Breakdown:**
 - the toggle and the enemy tokens: the pause row (the Sound row's pattern, T0035), the profile flag, the pattern module, the 10 regular marks — **done as T0465**
 - the towers: a tower wears its first augment's mark on its barrel (the 16 marks, the same vocabulary; the tier pips untouched) — **done as T0469 (2026-11-03)**
-- the bosses: the boss ladder's own marks (one per boss, distinct from the regular and barrel marks), the Shard and the Splinter wearing their parent's mark smaller, the bosses reference's rows wearing them — **tasked as T0481 (M, in the pool, 2026-11-03)**
+- the bosses: the boss ladder's own marks (one per boss, distinct from the regular and barrel marks), the Shard and the Splinter wearing their parent's mark smaller, the bosses reference's rows wearing them — **done as T0481 (2026-11-03)**
 - the references: the enemies reference and the codex's tokens wear the board's marks under Patterns (the bosses reference rides with T0481) — **tasked as T0482 (S, in the pool, 2026-11-03)**
 
 ### E27 — The road remembers: the leakers come back (active — opened 2026-11-03)
