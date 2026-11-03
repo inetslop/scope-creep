@@ -137,9 +137,9 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **When done:** the build phase shows the reserve — a small white card (the stats card's width) under the level chips: one bold line per heavy card (the unbought "Name · N" with the coin glyph, the bought "Name · used") and its muted one-liner (the iron card's subline, T0406); the card hides when all three are spent; a buy pays the gold and the next wave wears its muted chip ("surged" / "walled" / "harvested") for that wave only; the claim card's muted line names the heavy cards bought; the pause's controls list names the card.
 **Breakdown:**
 - the reserve and its first card, the surge: the card, the 60-gold once-per-run buy, the next wave's towers +50% attack speed (additive with Haste, the beam's per-second untouched), the wave's "surged" chip, the run save — **tasked as T0463 (M, in the pool, 2026-11-03)**
-- the wall: the reserve's second entry, 80 gold, the next wave's walkers 0.7× (crawl, dash, ramp and boss; the Ward ignores it, the crosser keeps its pace) — parked (tasked once T0463 lands, the entries land one at a time)
+- the wall: the reserve's second entry, 80 gold, the next wave's walkers 0.7× (crawl, dash, ramp and boss; the Ward ignores it, the crosser keeps its pace) — **tasked as T0471 (M, 2026-11-03, waits on T0463)**
 - the harvest: the reserve's third entry, 50 gold, the next wave's kills pay 2× gold (the gold pop reads the doubled number, the last stand's look) — parked
-- the claim's line: the claim card's muted "reserve" line naming the heavy cards bought (no line when none was bought) — parked
+- the claim's line: the claim card's muted "reserve" line naming the heavy cards bought (no line when none was bought) — **tasked as T0472 (S, 2026-11-03, waits on T0463)**
 
 ### E25 — The kill: a tech branch for how a kill pays (active — opened 2026-11-03)
 **Goal:** the tech tree has covered run start, board, pool, claim, wave, tower, exit and the draft — but not the kill itself: a branch on the tech screen's next row lets between-run coins buy how a kill pays.
