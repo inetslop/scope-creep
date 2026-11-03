@@ -6,7 +6,7 @@ import type { TargetMode } from '../core/targeting';
 import type { AugmentCopy } from '../content/types';
 import type { Cell } from '../core/map';
 import { BEAM_ORB_LIFT, barrelTexture, beamDiscTexture, orbTexture } from '../art/barrels';
-import { ART_SCALE, artScale, TOWER_BASE, TOWER_BODY, towerTexture } from '../art/textures';
+import { ART_SCALE, artScale, TOWER_BASE, TOWER_BODY, barrelMarkTexture, towerTexture } from '../art/textures';
 import { MARKED_DMG_MUL } from '../core/markedCell';
 import type { Board } from '../systems/Board';
 import { barrelCount, barrelLook, drawDecorations, drawFeastPlate, drawHasteRing, pipColor } from './towerLook';
@@ -73,6 +73,8 @@ export class Tower extends Phaser.GameObjects.Image {
   /** The orb's white centre disc, on a beam tower: it pulses while the beam is on. */
   private disc: Phaser.GameObjects.Image | undefined;
   private beamOn = false;
+  /** The first augment's mark on its barrel face (the Patterns toggle): hidden unless the toggle is on. */
+  private barrelMark?: Phaser.GameObjects.Image;
   /** The flat red base ring while a haste aura radiates; its own graphics so it can take an alpha (undefined until it has Haste). */
   hasteRing: Phaser.GameObjects.Graphics | undefined;
   /** The yellow open plate at the base of a Feast-first tower (entities/towerLook.ts): lit while the kill chain lives, dim while it is broken (systems/FeastGlow.ts). Undefined without a Feast first. */
@@ -183,6 +185,7 @@ export class Tower extends Phaser.GameObjects.Image {
     this.gun.removeAll(true);
     if (this.disc) { this.scene.tweens.killTweensOf(this.disc); this.disc = undefined; }
     this.beamOn = false;
+    this.barrelMark = undefined;
     this.barrelOffsets = [];
     const count = barrelCount(spec);
     if (count === 0) {
@@ -204,6 +207,10 @@ export class Tower extends Phaser.GameObjects.Image {
       const offset = (i - (count - 1) / 2) * spacing;
       this.barrelOffsets.push(offset);
       this.gun.add(artScale(this.scene.add.image(offset, 0, key)));
+    }
+    if (spec.firstId) {
+      this.barrelMark = artScale(this.scene.add.image(0, -this.barrelLength / 2, barrelMarkTexture(spec.firstId))).setVisible(false);
+      this.gun.add(this.barrelMark);
     }
     this.gun.setRotation(this.aim);
   }
@@ -366,6 +373,11 @@ export class Tower extends Phaser.GameObjects.Image {
     } else {
       this.scene.tweens.add({ targets: this.idleDot, alpha: 0, duration: 150, onComplete: () => this.idleDot.setVisible(false) });
     }
+  }
+
+  /** The first augment's barrel mark: visible only while the Patterns toggle is on. */
+  preUpdate(): void {
+    this.barrelMark?.setVisible(this.scene.registry.get('patterns') === true);
   }
 
   destroy(fromScene?: boolean): void {

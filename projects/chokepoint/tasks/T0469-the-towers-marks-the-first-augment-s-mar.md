@@ -4,11 +4,12 @@ title: "The towers' marks: the first augment's mark on every barrel"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T03:56:29Z
 claimed_at: 2026-11-03T05:36:56Z
+finished_at: 2026-11-03T07:52:52Z
 epic: E26
 ---
 
@@ -84,3 +85,32 @@ The Patterns toggle (T0465) made the enemy tokens read by shape; this slice give
 
 - `tests/towerMarks.test.ts` (new): import `BARREL_MARKS` (`art/barrelMarks.ts`) and `AUGMENTS` (`content/augments`); assert: (a) `Object.keys(BARREL_MARKS).length === 16` (one per first augment); (b) for each first augment `AUGMENTS.filter(a => a.first.kind !== 'none')`, `BARREL_MARKS[a.id]` is defined; (c) `new Set(Object.values(BARREL_MARKS)).size === 16` (all shapes distinct).
 - `npm run check` (typecheck + lint + unit tests) and `npm run smoke` must pass.
+
+## Result (attempt 1, cachyos-x8664)
+
+Done — `npm run check` is green: typecheck, lint, and all 660 tests pass (88 files, including the new `towerMarks.test.ts`).
+
+## What landed
+
+**New files**
+- `src/art/barrelMarks.ts` — `BARREL_MARKS` (a bijection over the 16 first augments → 16 distinct flat muted-ink shapes: bar, x, two-bars, crescent, chevron, ring, dot, bar-and-dot, two-dots, zigzag, cross, hollow-square, triangle, arc, square, diamond) and `paintBarrelMark()`, which paints the mark of a given augment, centered in fractions of the barrel radius `r`.
+- `tests/towerMarks.test.ts` — asserts 16 keys, every `AUGMENTS` id is covered, and all 16 shapes are distinct.
+
+**Edits**
+- `src/art/textures.ts` — added the `barrelMarkTexture(id)` key helper (`tower:barrel-mark-<id>`).
+- `src/art/entities.ts` — added the import for `paintBarrelMark` and a boot loop in `paintEntityTextures` that paints one barrel-mark texture per augment (painted for all 16, like the enemy type marks).
+- `src/entities/Tower.ts` — `private barrelMark?: Image` field, reset in `buildGun` (so a destroyed child isn't dangled), created at the center barrel face `(0, -barrelLength/2)` and added to `this.gun` (so it rides the turning barrel, flat like the barrel), and a `preUpdate()` that mirrors the enemy pattern: `this.barrelMark?.setVisible(this.scene.registry.get('patterns') === true)`.
+
+Rally-first (`count === 0`) and beam (`spec.kind === 'beam'`) early-return before the barrel, so those two never attach a mark — 14 of the 16 first-augment tower…
+
+- Self-review: NO VERDICT
+- Time: 135.9 min
+
+```
+projects/chokepoint/game/src/art/barrelMarks.ts   | 173 ++++++++++++++++++++++
+ projects/chokepoint/game/src/art/entities.ts      |  12 +-
+ projects/chokepoint/game/src/art/textures.ts      |   2 +
+ projects/chokepoint/game/src/entities/Tower.ts    |  14 +-
+ projects/chokepoint/game/tests/towerMarks.test.ts |  11 ++
+ 5 files changed, 210 insertions(+), 2 deletions(-)
+```

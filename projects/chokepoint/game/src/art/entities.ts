@@ -4,8 +4,9 @@ import { AUGMENTS } from '../content/augments';
 import { ENEMIES, getEnemy } from '../content/enemies';
 import { deepOf, PALETTE, rgba, type Bright } from '../content/palette';
 import type { Shape } from '../content/types';
+import { paintBarrelMark } from './barrelMarks';
 import { paintToken, roundRectPath, setShadow, shapePath } from './paint';
-import { BOLT_TEXTURE, CHIP_TEXTURE, DISC_TEXTURE, EYE_TEXTURE, enemyTexture, LEECH_CLOSED_TEXTURE, markTexture, paintTexture, PLATE_TEXTURE, TOWER_BASE, TOWER_BODY, tokenDepth, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
+import { BOLT_TEXTURE, CHIP_TEXTURE, DISC_TEXTURE, EYE_TEXTURE, barrelMarkTexture, enemyTexture, LEECH_CLOSED_TEXTURE, markTexture, paintTexture, PLATE_TEXTURE, TOWER_BASE, TOWER_BODY, tokenDepth, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
 
 /** Enemies, tower plinths and bodies, bolts and chips: everything that stands or flies on the board. */
 export function paintEntityTextures(scene: Phaser.Scene): void {
@@ -62,6 +63,15 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
     const depth = tokenDepth(r);
     const size = tokenRoom(r, depth) * 2;
     paintTexture(scene, markTexture(e.id), size, size, (ctx) => paintTypeMark(ctx, e.id, size / 2, size / 2 - depth / 2, r));
+  }
+  // The barrel marks for a tower's first augment (the Patterns toggle): one small muted-ink
+  // shape per first augment, shown on the barrel face (entities/Tower.ts toggles its visibility).
+  // Painted here, like the enemy type marks; a barrel-less tower (a rally or beam first) paints
+  // none, so the loop paints all 16 even though two firsts never wear one.
+  const mr = TOWER_BODY * CELL;
+  const markSize = mr * 0.6;
+  for (const a of AUGMENTS) {
+    paintTexture(scene, barrelMarkTexture(a.id), markSize, markSize, (ctx) => paintBarrelMark(ctx, a.id, markSize / 2, markSize / 2, mr));
   }
   const plinth = CELL * 0.4;
   const base = tokenRoom(plinth, 5) * 2;
