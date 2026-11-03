@@ -137,19 +137,15 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the harvest: the reserve's third entry, 50 gold, the next wave's kills pay 2× gold (the gold pop reads the doubled number, the last stand's look) — parked
 - the claim's line: the claim card's muted "reserve" line naming the heavy cards bought (no line when none was bought) — **tasked as T0472 (S, 2026-11-03, waits on T0463)**
 
-### E25 — The kill: a tech branch for how a kill pays (done 2026-11-03 — the branch and its three nodes all landed)
-**Goal:** the tech tree has covered run start, board, pool, claim, wave, tower, exit and the draft — but not the kill itself: a branch on the tech screen's next row lets between-run coins buy how a kill pays.
-**Breakdown:**
-- the branch and its first node, The bounty: the tech screen's next row (after The exit) plus a 30-coin node, every kill +1 gold on the bounty before the quiet and last-stand ×2 — **done as T0466**
-- The window: 85 coins by the depth rule, the kill-chain window +0.5 s — **done as T0470**
-- The milestone: 155 coins by the depth rule, the chain's milestone pay ×2 (the 5th and 10th kill of a chain pay +4 and +8) — **done as T0475 (2026-11-03)**
+### E25 — The kill: a tech branch for how a kill pays (done; history in planning/archive/ROADMAP.md)
 
-### E26 — The patterns: the board reads without color (active — opened 2026-11-03)
+### E26 — The patterns: the board reads without color (active — fully tasked 2026-11-03, closing on the pool's landings)
 **Goal:** shape and color carry meaning (Pillar 3); a player who can't trust color can't read the board: a "Patterns" toggle beside the pause screen's Sound row (off by default, remembered) paints a small muted-ink mark on every enemy token and every tower — the mark's shape distinct per enemy type and per first augment — so the board reads by shape alone.
 **Breakdown:**
 - the toggle and the enemy tokens: the pause row (the Sound row's pattern, T0035), the profile flag, the pattern module, the 10 regular marks — **done as T0465**
-- the towers: a tower wears its first augment's mark on its barrel (the 16 marks, the same vocabulary; the tier pips untouched) — **tasked as T0469 (M, in the pool, 2026-11-03)**
-- the rest of the board and the references: the bosses' own 8 marks, the Shard and the Splinter wearing the parent's mark smaller, the enemies reference and the codex's tokens matching — parked
+- the towers: a tower wears its first augment's mark on its barrel (the 16 marks, the same vocabulary; the tier pips untouched) — **done as T0469 (2026-11-03)**
+- the bosses: the boss ladder's own marks (one per boss, distinct from the regular and barrel marks), the Shard and the Splinter wearing their parent's mark smaller, the bosses reference's rows wearing them — **tasked as T0481 (M, in the pool, 2026-11-03)**
+- the references: the enemies reference and the codex's tokens wear the board's marks under Patterns (the bosses reference rides with T0481) — **tasked as T0482 (S, in the pool, 2026-11-03)**
 
 ### E27 — The road remembers: the leakers come back (active — opened 2026-11-03)
 **Goal:** a leak costs a life and nothing else: the waves are fully decided by the seed and the number, so a run's worst moments pass without a trace; now the run's play shapes the run's next wave — what leaked comes back, one at a time, so holding the road is worth more than a life.

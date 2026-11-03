@@ -308,3 +308,12 @@ Status: **done (2026-10-29)** — all five branches landed (run start, draft, po
 - the Flyer's motion reads as flight: a short fading streak in its own color trails the regular Flyer through the sky — **done as T0375 (S, 2026-11-01, yoga)**
 - the sky wears its own note: one soft sustained tone plays while any regular Flyer is in the air, heard as distinct from the road's thuds — **done as T0376 (M, 2026-11-01, inet-racing)**
 - the crossing learns: at 50% hp the bank's line is chosen to cross where the run's towers cover least — the boss banks into the uncovered ground, the 0.8 s preview keeping it fair — **done as T0379 (L, 2026-11-02, desktop)**
+
+## Archived 2026-11-03
+
+### E25 — The kill: a tech branch for how a kill pays (done 2026-11-03 — the branch and its three nodes all landed)
+**Goal:** the tech tree has covered run start, board, pool, claim, wave, tower, exit and the draft — but not the kill itself: a branch on the tech screen's next row lets between-run coins buy how a kill pays.
+**Breakdown:**
+- the branch and its first node, The bounty: the tech screen's next row (after The exit) plus a 30-coin node, every kill +1 gold on the bounty before the quiet and last-stand ×2 — **done as T0466**
+- The window: 85 coins by the depth rule, the kill-chain window +0.5 s — **done as T0470**
+- The milestone: 155 coins by the depth rule, the chain's milestone pay ×2 (the 5th and 10th kill of a chain pay +4 and +8) — **done as T0475 (2026-11-03)**
