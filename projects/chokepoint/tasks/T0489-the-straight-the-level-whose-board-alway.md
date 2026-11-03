@@ -3,14 +3,14 @@ id: T0489
 title: "The straight: the level whose board always carries the sniper's straight"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-03T10:58:13Z
 claimed_at: 2026-11-03T11:41:13Z
+finished_at: 2026-11-03T13:41:16Z
 epic: E21
-design_attempts: 1
-designer: cachyos-x8664
+design_attempts: 2
 ---
 
 ## Goal
@@ -31,3 +31,11 @@ The ninth level on the run-setup step: The straight. A run whose board always ca
 - [ ] A ghost run of a The-straight run regrows the straight board (the level's board rule rides the ghost, the Plain pattern, T0452).
 - [ ] A run without the level is byte-identical before and after: same boards from the same seeds, the long straight at its own ~1-in-5 rate.
 - [ ] Unit tests cover the forced straight (a sweep of seeds: every board 7+, none fork or loop), the other features' independence, and the plain run's byte-identity.
+
+## Architect could not design it (cachyos-x8664)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+
+```
