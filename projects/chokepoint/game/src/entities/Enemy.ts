@@ -118,8 +118,10 @@ export class Enemy extends Phaser.GameObjects.Image {
   private disc?: Phaser.GameObjects.Image;
   /** The eye (the Blinker): a small flat dot that slides forward through its telegraph; undefined without one. */
   private eye?: Phaser.GameObjects.Image;
-  /** The type mark (the Patterns toggle): a small flat muted-ink shape on the face; undefined for the spawn-only pieces. */
+  /** The type mark (the Patterns toggle): a small flat muted-ink shape on the face; undefined until a mark-bearing def spawns it. */
   private typeMark?: Phaser.GameObjects.Image;
+  /** True while the mark for its current def exists: the spawn-only pieces without one (the Guard) never show it. */
+  private wearsMark = false;
 
   constructor(scene: Phaser.Scene) {
     super(scene, 0, 0, '__DEFAULT');
@@ -204,8 +206,11 @@ export class Enemy extends Phaser.GameObjects.Image {
       this.eye.setDepth(DEPTH.enemies);
     }
     this.eye?.setVisible(false); // hidden until advance() places it (no flash at the origin)
-    // Its type mark (the Patterns toggle) rides on top: flat, so it may turn with the token.
-    if (!this.def.spawnOnly) {
+    // Its mark (the Patterns toggle) rides on top: flat, so it may turn with the token. Regular
+    // types, the bosses and the split children wear one (their mark texture exists); a slot whose
+    // def has none (the Guard) shows whatever it owned, hidden.
+    this.wearsMark = this.scene.textures.exists(markTexture(this.def.id));
+    if (this.wearsMark) {
       if (this.typeMark === undefined) {
         this.typeMark = this.scene.add.image(0, 0, markTexture(this.def.id));
         this.typeMark.setDepth(DEPTH.enemies);
@@ -393,9 +398,9 @@ export class Enemy extends Phaser.GameObjects.Image {
       const off = r * (-0.4 + 0.8 * slide);
       this.eye.setPosition(this.x + this.dirX * off, this.y + this.dirY * off).setScale(ART_SCALE * pop).setVisible(true);
     }
-    // Its type mark (the Patterns toggle): the registry is read every frame, so the pause card's
+    // Its mark (the Patterns toggle): the registry is read every frame, so the pause card's
     // toggle appears and vanishes on resume, and a recycled slot never carries a stale state.
-    if (this.typeMark !== undefined && !this.def.spawnOnly) { // a recycled slot may still own a mark image; the spawn-only pieces never show one
+    if (this.typeMark !== undefined && this.wearsMark) { // a recycled slot may still own a mark image; worn by regular types, bosses and split children
       this.typeMark.setPosition(this.x, this.y).setScale(ART_SCALE * pop).setRotation(this.rotation).setVisible(this.scene.registry.get('patterns') === true);
     }
     const tele = cycle !== undefined && this.dashLeg === 'pause' && this.pauseAge < cycle.pauseSec / 2;

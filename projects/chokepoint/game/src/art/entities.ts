@@ -5,6 +5,7 @@ import { ENEMIES, getEnemy } from '../content/enemies';
 import { deepOf, PALETTE, rgba, type Bright } from '../content/palette';
 import type { Shape } from '../content/types';
 import { paintBarrelMark } from './barrelMarks';
+import { BOSS_MARKS, paintBossMark } from './bossMarks';
 import { paintToken, roundRectPath, setShadow, shapePath } from './paint';
 import { BOLT_TEXTURE, CHIP_TEXTURE, DISC_TEXTURE, EYE_TEXTURE, barrelMarkTexture, enemyTexture, LEECH_CLOSED_TEXTURE, markTexture, paintTexture, PLATE_TEXTURE, TOWER_BASE, TOWER_BODY, tokenDepth, tokenRoom, TRACER_TEXTURE, towerTexture } from './textures';
 
@@ -54,15 +55,28 @@ export function paintEntityTextures(scene: Phaser.Scene): void {
       }
     });
   }
-  // Type marks (the Patterns toggle, off by default): one small muted-ink shape per regular token,
-  // so the type reads by shape alone. Separate textures, never painted into the token: the white
-  // hit flash tints the token image only, so the mark stays visible (entities/Enemy.ts shows it).
+  // The marks (the Patterns toggle, off by default): one small muted-ink shape per regular token,
+  // per boss (art/bossMarks.ts) and per split child (its parent's mark at 60%), so the type reads
+  // by shape alone. Separate textures, never painted into the token: the white hit flash tints the
+  // token image only, so the mark stays visible (entities/Enemy.ts shows it); the spawn-only pieces
+  // without one (the Titan's Guard escort) keep their plain look.
   for (const e of ENEMIES) {
-    if (e.spawnOnly !== undefined) continue; // the bosses and the spawn-only pieces keep their plain look
+    const parent = e.spawnOnly === undefined ? undefined : ENEMIES.find((d) => d.splitsInto === e.id || d.splitsAt?.into === e.id);
+    if (e.spawnOnly !== undefined && BOSS_MARKS[e.id] === undefined && parent === undefined) continue; // the Titan's Guard escort stays plain
     const r = e.look.size * CELL;
     const depth = tokenDepth(r);
     const size = tokenRoom(r, depth) * 2;
-    paintTexture(scene, markTexture(e.id), size, size, (ctx) => paintTypeMark(ctx, e.id, size / 2, size / 2 - depth / 2, r));
+    const cx = size / 2;
+    const cy = size / 2 - depth / 2;
+    paintTexture(scene, markTexture(e.id), size, size, (ctx) => {
+      if (e.spawnOnly === undefined) paintTypeMark(ctx, e.id, cx, cy, r);
+      else if (BOSS_MARKS[e.id] !== undefined) paintBossMark(ctx, e.id, cx, cy, r);
+      else { // a split child: the parent's mark at 60% of its size (the painters scale linearly with the radius given)
+        const pr = parent!.look.size * CELL;
+        if (BOSS_MARKS[parent!.id] !== undefined) paintBossMark(ctx, parent!.id, cx, cy, pr * 0.6);
+        else paintTypeMark(ctx, parent!.id, cx, cy, pr * 0.6);
+      }
+    });
   }
   // The barrel marks for a tower's first augment (the Patterns toggle): one small muted-ink
   // shape per first augment, shown on the barrel face (entities/Tower.ts toggles its visibility).
@@ -234,3 +248,6 @@ function paintTypeMark(ctx: CanvasRenderingContext2D, id: string, cx: number, cy
       break;
   }
 }
+
+/** The regular types' mark names, mirroring paintTypeMark's case comments (tests/bossMarks.test.ts checks the vocabulary). */
+export const REGULAR_MARKS: Record<string, string> = { dot: 'bar', block: 'dot', dasher: 'chevron', sprinter: 'x', splitter: 'two-bars', hauler: 'triangle', mute: 'square', flyer: 'diamond', ward: 'ring', bulwark: 'arc' };

@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { artScale, enemyTexture } from '../art/textures';
+import { artScale, enemyTexture, markTexture } from '../art/textures';
 import { CELL } from '../config';
 import { ENEMIES } from '../content/enemies';
 import { PALETTE } from '../content/palette';
@@ -70,6 +70,7 @@ export class BossesScene extends Phaser.Scene {
 
   private build(): void {
     const PAD = 16, TOKEN = 36, GAP_T = 12, GAP_R = 12, HEADER = 64, BOTTOM = 20, ROW_GAP = 10, MIN_ROW = 40;
+    const patterns = this.registry.get('patterns') === true; // read once: the flag cannot change while the reference is open
     const innerW = this.panelW - PAD * 2;
     const textW = innerW - TOKEN - GAP_T;
     // A boss def is the wave itself: it never joins a normal mix (spawnOnly), its wave is a boss
@@ -93,7 +94,11 @@ export class BossesScene extends Phaser.Scene {
     for (const row of rows) {
       const top = rowTop + (row.h - (row.name.height + 3 + row.desc.height)) / 2; // center the text block in its row
       // 2x the wave preview's 16 px icon: the token's radius is 16 px (~32 px), like EnemiesScene's scale
-      parts.push(artScale(this.add.image(-this.panelW / 2 + PAD + TOKEN / 2, rowTop + row.h / 2, enemyTexture(row.def.id)), 16 / (row.def.look.size * CELL)));
+      const tokenX = -this.panelW / 2 + PAD + TOKEN / 2;
+      const tokenY = rowTop + row.h / 2;
+      const tokenScale = 16 / (row.def.look.size * CELL);
+      parts.push(artScale(this.add.image(tokenX, tokenY, enemyTexture(row.def.id)), tokenScale));
+      if (patterns) parts.push(artScale(this.add.image(tokenX, tokenY, markTexture(row.def.id)), tokenScale)); // same canvas + scale: the mark sits on the face; added after the token, so it draws on top
       row.name.setPosition(textX, top + row.name.height / 2);
       row.wave.setPosition(-this.panelW / 2 + innerW - GAP_R, top + row.name.height / 2);
       row.desc.setPosition(textX, top + row.name.height + 3);

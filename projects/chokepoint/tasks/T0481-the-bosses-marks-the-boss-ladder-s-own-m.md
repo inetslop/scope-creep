@@ -4,11 +4,12 @@ title: "The bosses' marks: the boss ladder's own marks under Patterns"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T08:12:52Z
 claimed_at: 2026-11-03T09:06:09Z
+finished_at: 2026-11-03T09:18:42Z
 epic: E26
 ---
 
@@ -152,3 +153,20 @@ export const REGULAR_MARKS: Record<string, string> = { dot: 'bar', block: 'dot',
 
 ### Tests
 - `tests/bossMarks.test.ts` (full code above) — the task's required bijection: every ladder boss exactly one mark, all distinct, none equal to a regular-enemy mark or a barrel mark; plus the `REGULAR_MARKS` coverage check.
+
+## Result (attempt 1, desktop)
+
+Every boss on the ladder (Colossus, Titan, Orb, Hive, crosser, Blinker, Mender, Leech, Gorge) now has its own flat muted-ink mark in a new vocabulary (`src/art/bossMarks.ts`, modeled on the barrel marks), painted into the mark textures in `src/art/entities.ts` and worn on the token face by `Enemy.ts` through the existing Patterns toggle (off by default, profile-remembered); a Shard wears the Orb's mark and a Splinter the Splitter's at 60%, while the Hive's Dots, Mender's Wards and Leech's Haulers keep their own regular marks, and the Titan's Guard escort stays plain. The bosses reference (`BossesScene`) now shows marked row tokens while Patterns is on, doubling as the legend, and `tests/bossMarks.test.ts` asserts the bijection (every ladder boss exactly one mark, all distinct, none colliding with a regular-enemy or barrel mark). One deviation from the design, forced by the actual code: the design's test predicate (`threat === waveBudget`) can never match the escort-carrying bosses — Titan (95/100), Mender (348/350), Gorge (448/450) — yet the goal and the design's own record give all nine marks, so the test defines the ladder the way the wave plans declare it, `bossId(fromWave) === id` (`core/waves.ts`).
+
+- Self-review: APPROVE
+- Time: 12.6 min
+- Did not delete none: only files in src/, tests/, docs/, public/ can be deleted.
+
+```
+projects/chokepoint/game/src/art/bossMarks.ts      | 132 +++++++++++++++++++++
+ projects/chokepoint/game/src/art/entities.ts       |  27 ++++-
+ projects/chokepoint/game/src/entities/Enemy.ts     |  15 ++-
+ projects/chokepoint/game/src/scenes/BossesScene.ts |   9 +-
+ projects/chokepoint/game/tests/bossMarks.test.ts   |  32 +++++
+ 5 files changed, 203 insertions(+), 12 deletions(-)
+```
