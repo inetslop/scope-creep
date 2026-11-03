@@ -1,12 +1,14 @@
 ---
 id: T0483
 title: "The bank: the tech's next row and its first node, The deep vault"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T08:53:31Z
+claimed_at: 2026-11-03T09:33:46Z
 epic: E29
 ---
 
