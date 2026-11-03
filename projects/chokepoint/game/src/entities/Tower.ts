@@ -381,6 +381,8 @@ export class Tower extends Phaser.GameObjects.Image {
   }
 
   destroy(fromScene?: boolean): void {
+    // Already destroyed: preUpdate puts the tower on the update list too, so a scene shutdown destroys it twice (display list, then update list).
+    if (!this.scene) return;
     if (this.pipPop) { this.scene.tweens.killTweensOf(this.pipPop); this.pipPop.destroy(); this.pipPop = undefined; }
     if (this.disc) { this.scene.tweens.killTweensOf(this.disc); this.disc = undefined; }
     this.base.destroy();
