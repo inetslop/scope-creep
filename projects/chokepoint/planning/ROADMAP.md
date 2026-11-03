@@ -105,11 +105,13 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E21 — The levels: more ways to make a run harder (active — opened 2026-11-02)
 **Goal:** the run-setup step's level set is five (Crowded, Lean, Short fuse, Swift, Tough) and the run's coin multiplier pays for the handicap the player picks; the set grows past five with a new dimension each time, so the run the player sets up is a pick, not a default.
-**When done:** the set has more than five levels with dimensions the five don't touch — information (Blind: no preview of the next wave) and the board's face (no marked cell, no guaranteed choke) — each with its own dry one-liner on the run-setup step, its own multiplier notch and its own chip; the ranks (Tough I/II/III) once the set outgrows the run's slots.
+**When done:** the set has more than five levels with dimensions the five don't touch — information (Blind: no preview of the next wave), the board's face (Plain: no marked cell, no guaranteed choke; The straight: the board always carries the sniper's straight) and the wave's march (Clumps: every wave comes in clumps) — each with its own dry one-liner on the run-setup step, its own multiplier notch and its own chip; the ranks (Tough I/II/III) once the set outgrows the run's slots.
 **Breakdown:**
 - Blind: the sixth level, no wave preview in the build — **done as T0446**
-- the board's face: a level whose boards carry no marked cell and no guaranteed choke — **tasked as T0452 (M, in the pool)** (the long straight re-filed as T0453; the board's files are settled)
+- the board's face: a level whose boards carry no marked cell and no guaranteed choke — **done as T0452** (the board's files are settled)
 - the levels reference: a menu card (the How row's pattern) naming every level and its multiplier, so the picks are readable — **done as T0467**
+- the march: a level whose waves all come in clumps (the clumps tag's own values; the run's number-based march tags off; quiet and boss waves keep their own) — **tasked as T0488 (M, 2026-11-03)**
+- the board's face, the other way: a level whose board always carries the long straight (7+ cells; never fork, never loop) — **tasked as T0489 (M, 2026-11-03)**
 - the ranks: Tough I/II/III once the set outgrows the run's slots — parked
 
 ### E22 — The march: the wave walks in more than one way (active — fully tasked 2026-11-03, closing on the pool's landings)
