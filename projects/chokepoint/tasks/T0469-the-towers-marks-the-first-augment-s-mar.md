@@ -1,12 +1,14 @@
 ---
 id: T0469
 title: "The towers' marks: the first augment's mark on every barrel"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T03:56:29Z
+claimed_at: 2026-11-03T05:36:56Z
 epic: E26
 ---
 
