@@ -229,6 +229,18 @@ export function bankRate(owned: readonly string[]): number {
   return rate;
 }
 
+/** The bank's pay doubling: on while a bank node with lastStand is owned (The last stand's vault); each node counts once, unknown ids count for nothing. */
+export function bankLastStand(owned: readonly string[]): boolean {
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = BANK_NODES.find((n) => n.id === id);
+    if (node?.lastStand) return true;
+  }
+  return false;
+}
+
 /** A branch's first-node price scaled by depth^1.5 and rounded to the nearest multiple of 5 (halves up). */
 export function nodePrice(base: number, depth: number): number {
   return Math.round((base * Math.pow(depth, 1.5)) / 5) * 5;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { bankInterest } from '../../src/core/bankInterest';
+import { bankDue, bankInterest } from '../../src/core/bankInterest';
 
 describe('bankInterest', () => {
   it('pays 5% of the bank, floored', () => {
@@ -36,5 +36,21 @@ describe('bankInterest', () => {
     expect(bankInterest(200, 10, 8)).toBe(10); // the old cap binds
     expect(bankInterest(200, 20, 8)).toBe(16);
     expect(bankInterest(250, 20, 8)).toBe(20); // the deep cap binds
+  });
+});
+
+describe('bankDue', () => {
+  it('undoubled, it is exactly the normal pay', () => {
+    expect(bankDue(100, 10, 5, false)).toBe(bankInterest(100, 10, 5));
+    expect(bankDue(250, 20, 8, false)).toBe(20);
+  });
+
+  it('doubled, it pays the normal pay ×2: the floor and the cap bind first, and nothing doubles into a something', () => {
+    expect(bankDue(100, 10, 8, true)).toBe(16);
+    expect(bankDue(101, 10, 8, true)).toBe(16); // floor before doubling
+    expect(bankDue(12, 10, 8, true)).toBe(0);
+    expect(bankDue(500, 20, 8, true)).toBe(40); // the deep cap binds, then ×2
+    expect(bankDue(250, 20, 8, true)).toBe(40);
+    expect(bankDue(500, 10, 8, true)).toBe(20); // the plain cap
   });
 });

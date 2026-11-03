@@ -40,6 +40,7 @@ describe('bend sweep: the jog adds exactly one bend for every seed', () => {
     [14, 8],
     [8, 14],
   ] as const) {
+    // 6000 board generations with full validity checks: past the 5 s default under the suite's parallel load, so the test declares its own budget.
     it(`on ${cols}x${rows}: 3000 seeds keep the +1 bend (on the fork-free boards) and stay valid`, () => {
       let checked = 0;
       for (let seed = 1; seed <= 3000; seed++) {
@@ -56,6 +57,6 @@ describe('bend sweep: the jog adds exactly one bend for every seed', () => {
         }
       }
       expect(checked).toBeGreaterThanOrEqual(1000);
-    });
+    }, 20000);
   }
 });

@@ -4,11 +4,12 @@ title: "The last stand's vault: the bank branch's third node, the pay doubles at
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T11:18:16Z
 claimed_at: 2026-11-03T11:55:39Z
+finished_at: 2026-11-03T12:44:10Z
 epic: E29
 ---
 
@@ -91,3 +92,23 @@ export function bankLastStand(owned: readonly string[]): boolean {
 
 ### Tests
 - As in step 6: `bankDue` in `tests/core/bankInterest.test.ts`; row/nodeCost/`bankLastStand`/buy in `tests/core/tech.test.ts`. These lock the rule (floor/cap before doubling, depth-3 price, owned-flag scan) against silent later edits.
+
+## Result (attempt 1, inet-racing)
+
+T0490 — added the bank branch's third node, The last stand's vault (155 coins, `content/tech/bank.ts` with a `lastStand` flag), which doubles the bank's wave-start pay while the run is in the last stand (`isLastStand`: exactly 1 life, normal mode — Iron excluded): `bankDue()` in `core/bankInterest.ts` computes the normal pay (floor at +1, capped at the deep +20 / plain +10) first, then ×2, and `bankLastStand()` in `core/tech.ts` reports the node as owned; the one shared expression drives both the pay (`RunFlow.bankPay`) and the StatsCard "bank +N" line, so the displayed number is the doubled one, and the unowned path returns `bankInterest` byte-identically. Fix for the failed check: `tests/core/temp_bend_sweep.test.ts` (another developer's 3000-seed board sweep, 6000 board generations with full validity asserts) takes ~5.4 s of real time, which exceeds Vitest's 5 s default timeout under the 95-worker full-suite load — the test now declares its own 20 s budget as the last `it(...)` argument (Vitest's recommended remedy), with its assertions completely unchanged. `npm run check` passed twice (706/706 tests) and `npm run smoke` passed (desktop 335 frames, mobile 680 frames, both PASS).
+
+- Self-review: APPROVE
+- Time: 48.5 min
+- Gate failed at "check"; fix round 1.
+
+```
+projects/chokepoint/game/src/content/tech/bank.ts  |  3 ++
+ projects/chokepoint/game/src/core/bankInterest.ts  |  6 ++++
+ projects/chokepoint/game/src/core/tech.ts          | 12 ++++++++
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  9 +++---
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts   |  6 ++--
+ .../game/tests/core/bankInterest.test.ts           | 18 +++++++++++-
+ projects/chokepoint/game/tests/core/tech.test.ts   | 32 ++++++++++++++++++----
+ .../game/tests/core/temp_bend_sweep.test.ts        |  3 +-
+ 8 files changed, 75 insertions(+), 14 deletions(-)
+```
