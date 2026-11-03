@@ -1,12 +1,14 @@
 ---
 id: T0464
 title: "The tower's milestone gets its note"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T02:24:38Z
+claimed_at: 2026-11-03T02:31:28Z
 ---
 
 ## Goal
