@@ -24,6 +24,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Map modifiers chosen in the draft instead of an augment (e.g. "the next wave comes from both ends")
 - Haptics on mobile for builds and leaks — **built as T0265 (S, non-epic, 2026-10-30, yoga)**: one guarded navigator.vibrate, two patterns (place 20 ms, leak 80 ms), no HUD or toggle
 - The boss death gets its haptic — the run's loudest kill (T0273's burst and horn) earns a longer, heavier buzz than the leak's on mobile (T0265's guarded pattern, once per boss) — **done as T0428 (2026-11-02, yoga)**
+- The tag's note: a non-quiet tagged wave (tight, rush, short cut, double, clumps) plays one quiet note at the banner's moment on every platform — the haptic's (T0449) voice for desktop, sound and buzz paired the way the boss death pairs them (T0428); the quiet breather stays silent — **tasked as T0457 (S, non-epic, 2026-11-03)**
 - Draft reroll — **built as T0036, extended by T0276**
 - Leak warning: the last 3 seconds before an enemy reaches the exit, the exit pulses red with a quiet tick — built as T0014 (yoga)
 - Ghost run — **built as T0078**: a menu option "Ghost · Wave N" under Play re-grows the best run's exact board; it never changes the saved seed
@@ -59,7 +60,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - A second pick: every 5th draft offers a 4th card — **built as T0065 (2026-10-29, asus)**: four cards with the same tier odds and no-repeat rule, the fourth flipping in last with its own tier chime
 - Burn on death — **built as T0059 (2026-10-28, yoga)**: when a burning enemy dies, its burn jumps once to the nearest enemy within 2 cells (a jumped burn never jumps again)
 - Combo milestone — **built as T0034 (2026-10-28, desktop-4070)**: at ×10 the kill-combo counter turns yellow for the rest of the chain, and the milestone kill bursts with twice the chip count
-- The combo's window is a bar — **built as T0220 (S, non-epic, 2026-10-29, yoga)**: a thin bar under the ×N counter (T0031) that empties over the chain's window; the Feast follow-up (the bar drains over the live window with Feast copies) — **re-filed as T0454 (S, in the pool)**
+- The combo's window is a bar — **built as T0220 (S, non-epic, 2026-10-29, yoga)**: a thin bar under the ×N counter (T0031) that empties over the live chain window — the Feast's +0.4 s already rides on it (T0454 was rejected 2026-11-03 on that premise; don't re-task)
 - Beam hum — built (T0112, 2026-10-29)
 - Tier chime — **built as T0032 (yoga)**: on the draft reveal flip (T0024), each offered card lands with a short chime — one low note Common, two Rare, three Epic
 - Ricochet augment (a shot that bounces off the board's rocks) — **rejected** (2026-10-28): shots fly over rocks and home in on their target (there is no line of sight), so there is never an enemy behind a rock a tower can't already hit (the Lead lesson, T0040); don't re-propose unless rocks start blocking shots

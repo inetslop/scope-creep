@@ -103,13 +103,13 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Breakdown:**
 - the branch and its first node, The long watch: the tech screen's seventh row plus a 30-coin node that starts the leak warning at 5 s instead of 3 s — **done as T0423 (M, 2026-11-02, asus)**
 - One life a Block: 85 coins by the depth rule, a Block that leaks costs 1 life instead of 2 — **done as T0429 (M, 2026-11-02, inet-racing)** (the first pass is tasked behind it as T0433)
-- The first pass: 155 coins by the depth rule, the run's first leak costs no life (a per-run flag the run save carries; the Hauler's 5 gold still pays) — **tasked as T0433 (M, waits on T0429; the T0427 re-file)**
+- The first pass: 155 coins by the depth rule, the run's first leak costs no life (a per-run flag the run save carries; the Hauler's 5 gold still pays) — **tasked as T0433 (M, in the pool; the T0427 re-file)**
 
 ### E21 — The levels: more ways to make a run harder (active — opened 2026-11-02)
 **Goal:** the run-setup step's level set is five (Crowded, Lean, Short fuse, Swift, Tough) and the run's coin multiplier pays for the handicap the player picks; the set grows past five with a new dimension each time, so the run the player sets up is a pick, not a default.
 **When done:** the set has more than five levels with dimensions the five don't touch — information (Blind: no preview of the next wave) and the board's face (no marked cell, no guaranteed choke) — each with its own dry one-liner on the run-setup step, its own multiplier notch and its own chip; the ranks (Tough I/II/III) once the set outgrows the run's slots.
 **Breakdown:**
-- Blind: the sixth level — the run's build phase has no wave preview (the preview card and the flyer's line stay hidden) — **tasked as T0446 (M, 2026-11-02)**
+- Blind: the sixth level — the run's build phase has no wave preview (the preview card and the flyer's line stay hidden) — **done as T0446 (M, 2026-11-03)**
 - the board's face: a level whose boards carry no marked cell and no guaranteed choke — **tasked as T0452 (M, in the pool)** (the long straight re-filed as T0453; the board's files are settled)
 - the ranks: Tough I/II/III once the set outgrows the run's slots — parked
 
@@ -117,9 +117,9 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Goal:** the wave's tag set is four (quiet, tight, rush, short cut); it grows with a new march each time — a new rhythm the wave takes, with its own chip, its own answer and its own line in the waves reference — and on mobile a special wave is felt before it happens.
 **When done:** the set has six tags: the double (two fronts, a 6 s lull, the second at 1.2×) — done as T0447 — and the clumps (clumps of 2–3 with 4 s gaps that break the chain); the preview and the banner wear each chip, the waves reference names each, and a non-quiet tagged wave buzzes once on mobile at the banner (the quiet breather stays silent).
 **Breakdown:**
-- the double: the fifth tag — from wave 21, every 8th non-quiet/tight/rush/short-cut/boss wave, the plan comes in two pulses (first half, 6 s lull, second half's walkers at 1.2×; chip "double"; the first double's preview says "the wave comes twice — the second front walks faster") — **tasked as T0447 (L, in the pool)**
-- the clumps: the sixth tag — from wave 26, every 11th non-quiet/tight/rush/short-cut/double/boss wave, the plan walks in clumps of 2–3 with a 4 s gap between clumps (the gap always breaks the kill chain — 1.5 s + 0.4 s per Feast is still under 4 s; chip "clumps"; the first clumps' preview says "the wave comes in clumps — the gaps break the chain") — **tasked as T0448 (M, in the pool)**
-- the tag's haptic: a non-quiet tagged wave (tight, rush, short cut, and double and clumps as they land) gets one 30 ms guarded buzz on mobile at the banner (T0265's guarded pattern, T0428's hook shape; the quiet breather never buzzes) — **tasked as T0449 (S, in the pool)**
+- the double: the fifth tag — two fronts, a 6 s lull, the second at 1.2× — **done as T0447 (L, 2026-11-02)**
+- the clumps: the sixth tag — clumps of 2–3 with 4 s gaps that break the chain — **done as T0448 (M, 2026-11-03)**
+- the tag's haptic: a non-quiet tagged wave gets one 30 ms guarded buzz on mobile at the banner (the quiet breather never buzzes) — **done as T0449 (S, 2026-11-02)**
 - the next tag once double and clumps land (a tag whose answer is the move — parked)
 
 ### E23 — The draft: nodes for how the run's cards come (active — reworked 2026-11-03)
@@ -134,16 +134,12 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 New enemies land one at a time: each new-enemy task chains behind the one before it so the enemy system, the wave mix and the art settle between additions.
 
-- Dasher (T0046, M) — **done** (2026-10-28, desktop-4070): telegraphs, then surges.
-- Splitter (T0068, M) — **done** (2026-10-28, desktop-4070): breaks into two fast splinters at its spot.
-- Hauler (T0057, M) — **done** (2026-10-28, cachyos-x8664): a big slow hexagon — worth 10 gold, a leak costs a life plus 5 gold.
-- Mute (T0074, M) — **done** (2026-10-29, desktop-4070): silences every tower within 2 cells. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
-- Feeder — **done as T0334 (2026-11-01)**: its slot and removal rode the Flyer (T0353, done); the regular-enemy cap is 10 of 10.
-- The Hive — **done as T0292 (2026-11-01)**: the wave-40 boss, the first boss that grows the group (a Dot every 6 s, up to 5); `spawnOnly`, the cap untouched.
-- The Blinker — **done as T0402 (2026-11-02)**: the wave-60 boss — blinks 2.5 cells forward every 4 s on a 1 s telegraph (committed); the boss lane, spawnOnly.
-- Wall (IDEAS, new cycle 38) — parked at the back of the queue (from wave 16): slows the group it leads.
+- Dasher, Splitter, Hauler, Mute — **done** (2026-10-28/29): the burst mover, the splitter, the 10-gold leak, the tower-silencer. Lesson for all future enemies: the warm color family is closed — a new enemy repeats a family color and brings a new silhouette.
+- Feeder — **done as T0334, removed with the Flyer (T0353)**; the regular-enemy cap is 10 of 10.
+- The Hive (T0292, wave 40) and the Blinker (T0402, wave 60) — **done** (2026-11-01/02), the boss lane, `spawnOnly`, the cap untouched.
+- Wall (IDEAS) — parked at the back of the queue (from wave 16): slows the group it leads; it needs a cap slot, so it stays parked.
 
-Queue order: the regular-enemy cap is 10 of 10, so the Wall (parked, IDEAS) stays parked — it needs a slot. The queue lands one enemy at a time.
+The queue lands one enemy at a time.
 
 ## Augment queue (non-epic)
 
@@ -156,24 +152,8 @@ New augments land one at a time, the enemy queue's way: each registration keeps 
 
 Ideas that may become epics or tasks of one.
 
-- Selling a tower (for part of the gold) — **built as T0274 (2026-10-30, desktop); E7 done 2026-10-30**
-- Targeting modes per tower (first, strongest, closest) — **built as T0114 (L, non-epic, 2026-11-01, inet-racing)**; its follow-up (the plinth notch, the one-time chip) — **done as T0368 (S, 2026-11-01, cachyos-x8664)**
-- More augments with new attacks and changes (the IDEAS backlog holds the list)
-- Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
-- Bosses every 10 waves, each with its own mechanic — **E5 done; the wave-10 to wave-90 bosses all landed (Colossus, Titan, Orb, Hive, Flyer, Blinker, Mender, Leech, Gorge); the Fracture (T0435, the wave-100 boss, splits into 3 Shards when it dies) is in the pool; the Tide (the wave-110 boss, IDEAS) is parked behind it**
-- Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
-- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **E13 done 2026-11-01** (far gate T0338, fork T0352, marked cell T0340, boards reference T0350); the cove — a bay in the island's edge whose pocket cells double-cover the road's curve — **done as T0409 (2026-11-02)**; the slow stretch — ~1-in-4 boards, a 3-cell run of road where walkers cross at 70% — **tasked as T0455 (L, in the pool, 2026-11-03)**; the double mark — ~1-in-4 boards, a second marked cell with the marked cell's own mark and buff — **done as T0436 (M, 2026-11-02, cachyos-x8664)**; the long straight — ~1-in-5 boards (exclusive with the fork and the loop), the road's longest straight run is 7+ cells — **T0438 failed at the design (no design produced); re-filed as T0453 (L, in the pool)**
+- More augments with new attacks and changes — the IDEAS backlog holds the list
+- Enemies with new behaviors — the enemy queue holds the live list
+- Bosses every 10 waves, each with its own mechanic — the wave-10 to wave-90 bosses all landed; the Fracture (T0435, the wave-100 boss, splits when it dies) is in the pool, the Tide (wave 110, IDEAS) parked behind it
+- Board modifiers — the slow stretch (T0455) and the long straight (T0453) are in the pool
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
-- Music that follows the wave and the danger — **built as T0239 (L, non-epic, 2026-10-30, asus)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
-- The Mute's silence gets its note — one soft held tone while any Mute holds a tower (the sky note's pattern, T0376) — **done as T0419 (M, 2026-11-02, asus)**
-- Run summary — **all built (T0216, T0306, T0333, T0336, T0345)**: kills and damage per tower, leaks per wave, the mid-run story line
-- The board shows its corners: a notch on the bend cells — **built as T0140 (2026-10-29), removed as T0227 (2026-10-29)**
-- Every board has a choke: the guaranteed double-cover cell (groundwork under E3's winding roads and E5's boss to hold) — **built as T0217 (2026-10-30, asus)**
-- The quiet tower: a small dim dot on a tower that is idle mid-wave (groundwork for E5's untargetable boss phase) — **built as T0233 (S, non-epic, 2026-10-30, yoga)**
-- The claim branch's third node: **Held pays** — a wave that leaks pays 1 coin per life it lost (155 coins, the depth-3 price on the branch's re-priced curve) — **done as T0348 (M, 2026-11-01, asus)**
-- More level augments and ranks (Tough I/II/III) once the slots outgrow the set — **now E21 (active, 2026-11-02); the first level tasked as T0446 (M, in the pool)**
-- Bank interest: 5% of the gold bank at every wave start, capped at +10 per build phase (gold, never coins) — **built as T0363**; the live "bank +N" line as T0374; the first-pay chip dropped (T0380: the line already teaches it); the pay's coin blip already played (T0381); the pay's gold pop done as T0395 (2026-11-02)
-- The storm: a third menu mode — no breather, every wave rushes, 2× the wave bonus for the run (IDEAS holds the full text) — **now E17 (active, 2026-11-02)**
-- The run history: the menu's last-four line grows into a History card of the last twelve runs — **now E18 (active, 2026-11-02)**
-- The short cut: the fourth wave tag — the walkers come in 40% down their own road; the answer is placement, where the rush's answer is none — **done as T0440 (2026-11-02)**
-- The codex at the pause: the pause's reference set gains the family the draft is about — an "Augments" row opening the codex (T0221) over the dimmed pause, back to the pause (the How row's cross-context pattern; the menu's codex stays) — **tasked as T0441 (M, non-epic, 2026-11-02)**
