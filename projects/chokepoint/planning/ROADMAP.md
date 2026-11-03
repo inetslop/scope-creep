@@ -122,13 +122,13 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the tag's haptic: a non-quiet tagged wave (tight, rush, short cut, and double and clumps as they land) gets one 30 ms guarded buzz on mobile at the banner (T0265's guarded pattern, T0428's hook shape; the quiet breather never buzzes) — **tasked as T0449 (S, in the pool)**
 - the next tag once double and clumps land (a tag whose answer is the move — parked)
 
-### E23 — The draft: a tech branch for what the draft offers (active — opened 2026-11-02)
-**Goal:** the tech tree has covered run start, board, pool, claim, wave, tower and exit — but not the draft: an eighth branch lets between-run coins buy how the run's cards come.
-**When done:** the tree's "The draft" branch has three nodes, each bought once and on for every run after: The early odds (the tier-odds shift starts at wave 1 instead of wave 5), The second roll (the reroll is twice per run, the second 25 gold) and Opening wild (the first draft always offers a Rare or Epic alongside its Common Bolt floor).
+### E23 — The draft: nodes for how the run's cards come (active — reworked 2026-11-03)
+**Goal:** the tech tree's "The draft" branch (the tech screen's existing 2nd row — the Slot II and fourth-card nodes in `content/tech/draft.ts`) covers the hand's slots and cards, but not how the offer comes: three more nodes on that branch let between-run coins buy how the run's cards come.
+**When done:** the branch carries three more nodes, each bought once and on for every run after: The early odds (the tier-odds shift starts at wave 1 instead of wave 5), A cheaper roll (the reroll's cost curve starts 25 lower) and Opening wild (the first draft always offers a Rare or Epic alongside its Common Bolt floor).
 **Breakdown:**
-- the branch and its first node, The early odds: the tech screen's eighth row plus a 30-coin node that moves the draft's tier-odds shift (T0011) from wave 5 to wave 1 — **tasked as T0450 (M, 2026-11-02)**
-- The second roll: 85 coins by the depth rule, the run's once reroll becomes twice — the second costs 25 gold — **tasked as T0451 (M, 2026-11-02, waits on T0450)**
-- Opening wild: 155 coins by the depth rule, the first draft always offers a Rare or Epic alongside its Common Bolt floor (T0048) — the next slice once the branch lands
+- The early odds: the branch's depth-4 node at 80 coins by the branch's own depth rule (base 10 — 30 at depth 2, 80 at depth 4), the tier-odds shift (T0011) starts at wave 1 instead of wave 5 — **T0450 failed (rejected: "The draft" is the tech screen's existing 2nd branch, not a new eighth row); re-file once the tech files are free**
+- A cheaper roll: the reroll's curve starts 25 lower — today's reroll is unlimited on a 50, 70, 100, … curve, so the node makes it 25, 45, 65, … (T0451's "second reroll for 25 gold" premise was stale); priced one depth deeper than The early odds, by the branch's depth rule — **re-file pending (T0451 failed)**
+- Opening wild: the branch's third new node at its depth price, the first draft always offers a Rare or Epic alongside its Common Bolt floor (T0048) — the next slice once the branch's nodes land
 
 ## Enemy queue (non-epic)
 
@@ -150,7 +150,7 @@ Queue order: the regular-enemy cap is 10 of 10, so the Wall (parked, IDEAS) stay
 New augments land one at a time, the enemy queue's way: each registration keeps the draft at the 16-cap and says which augment it retires.
 
 - Herd (T0361, M) — **in the pool (2026-11-01)**: the first augment that scales with the crowd — +5%/+8% (Rare/Epic) damage per enemy within 2 cells, cap 5; its registration retires Anchor (the fifth removal, after E4's four).
-- Chill (the T0391 re-file, M) — **T0421 rejected 2026-11-02 (card lines over the 70/56 card budget); re-file when the augment files are free, lines within the budget**: the shot that adds chill stacks — each hit slows 10% per stack, up to 5 (50%), fading 2 s after the last hit; Rare hits add 2, Epic 3; works on the Flyer's flight, the Ward ignores it; its registration retires Toll (the sixth removal, order-independent with the five).
+- Chill (the T0391 re-file, M) — **tasked as T0456 (M, in the pool, 2026-11-03)**, the card lines within the 70/56 budget this time: the shot that adds chill stacks — each hit slows 10% per stack, up to 5 (50%), fading 2 s after the last hit; Rare hits add 2, Epic 3; works on the Flyer's flight, the Ward ignores it; its registration retires Toll (the sixth removal, order-independent with the five).
 
 ## Later
 
@@ -162,7 +162,7 @@ Ideas that may become epics or tasks of one.
 - Enemies with new behaviors (one that dashes in bursts, one that shields neighbours, one that splits — the enemy queue holds the live list)
 - Bosses every 10 waves, each with its own mechanic — **E5 done; the wave-10 to wave-90 bosses all landed (Colossus, Titan, Orb, Hive, Flyer, Blinker, Mender, Leech, Gorge); the Fracture (T0435, the wave-100 boss, splits into 3 Shards when it dies) is in the pool; the Tide (the wave-110 boss, IDEAS) is parked behind it**
 - Panic pulse: the in-wave gasp — **built as T0063 (2026-10-28), removed 2026-10-29 (by hand)**
-- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **E13 done 2026-11-01** (far gate T0338, fork T0352, marked cell T0340, boards reference T0350); the cove — a bay in the island's edge whose pocket cells double-cover the road's curve — **done as T0409 (2026-11-02)**; the slow stretch — ~1-in-4 boards, a 3-cell run of road where walkers cross at 70% — **T0416's file lost 2026-11-02; re-file when the enemy's files are free**; the double mark — ~1-in-4 boards, a second marked cell with the marked cell's own mark and buff — **done as T0436 (M, 2026-11-02, cachyos-x8664)**; the long straight — ~1-in-5 boards (exclusive with the fork and the loop), the road's longest straight run is 7+ cells — **T0438 failed at the design (no design produced); re-filed as T0453 (L, in the pool)**
+- Board modifiers: two entrances, a path that forks, cells that boost a tower placed on them — **E13 done 2026-11-01** (far gate T0338, fork T0352, marked cell T0340, boards reference T0350); the cove — a bay in the island's edge whose pocket cells double-cover the road's curve — **done as T0409 (2026-11-02)**; the slow stretch — ~1-in-4 boards, a 3-cell run of road where walkers cross at 70% — **tasked as T0455 (L, in the pool, 2026-11-03)**; the double mark — ~1-in-4 boards, a second marked cell with the marked cell's own mark and buff — **done as T0436 (M, 2026-11-02, cachyos-x8664)**; the long straight — ~1-in-5 boards (exclusive with the fork and the loop), the road's longest straight run is 7+ cells — **T0438 failed at the design (no design produced); re-filed as T0453 (L, in the pool)**
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
 - Music that follows the wave and the danger — **built as T0239 (L, non-epic, 2026-10-30, asus)**: a quiet generative bed under the wave phase that quickens on the exit warning's own state
 - The Mute's silence gets its note — one soft held tone while any Mute holds a tower (the sky note's pattern, T0376) — **done as T0419 (M, 2026-11-02, asus)**
