@@ -1,12 +1,14 @@
 ---
 id: T0457
 title: "The tag's note: a special wave you hear at the banner"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T00:51:09Z
+claimed_at: 2026-11-03T01:03:44Z
 ---
 
 ## Goal
