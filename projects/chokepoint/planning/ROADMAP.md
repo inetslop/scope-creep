@@ -113,14 +113,14 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the board's face: a level whose boards carry no marked cell and no guaranteed choke — **tasked as T0452 (M, in the pool)** (the long straight re-filed as T0453; the board's files are settled)
 - the ranks: Tough I/II/III once the set outgrows the run's slots — parked
 
-### E22 — The march: the wave walks in more than one way (active — opened 2026-11-02)
+### E22 — The march: the wave walks in more than one way (active — fully tasked 2026-11-03, closing on the pool's landings)
 **Goal:** the wave's tag set is four (quiet, tight, rush, short cut); it grows with a new march each time — a new rhythm the wave takes, with its own chip, its own answer and its own line in the waves reference — and on mobile a special wave is felt before it happens.
 **When done:** the set has six tags: the double (two fronts, a 6 s lull, the second at 1.2×) — done as T0447 — and the clumps (clumps of 2–3 with 4 s gaps that break the chain); the preview and the banner wear each chip, the waves reference names each, and a non-quiet tagged wave buzzes once on mobile at the banner (the quiet breather stays silent).
 **Breakdown:**
 - the double: the fifth tag — two fronts, a 6 s lull, the second at 1.2× — **done as T0447 (L, 2026-11-02)**
 - the clumps: the sixth tag — clumps of 2–3 with 4 s gaps that break the chain — **done as T0448 (M, 2026-11-03)**
 - the tag's haptic: a non-quiet tagged wave gets one 30 ms guarded buzz on mobile at the banner (the quiet breather never buzzes) — **done as T0449 (S, 2026-11-02)**
-- the next tag (a tag whose answer is the move): double and clumps have landed (T0447/T0448), so it is the branch's next slice — to be tasked
+- the next tag, whose answer is the move: **tasked as T0461 (M, in the pool, 2026-11-03)** — the halt: the walkers stop 3 s at the middle of their own road, the middle becomes the wave's choke, and the move re-points an old tower at it
 
 ### E23 — The draft: nodes for how the run's cards come (active — reworked 2026-11-03)
 **Goal:** the tech tree's "The draft" branch (the tech screen's existing 2nd row — the Slot II and fourth-card nodes in `content/tech/draft.ts`) covers the hand's slots and cards, but not how the offer comes: three more nodes on that branch let between-run coins buy how the run's cards come.
