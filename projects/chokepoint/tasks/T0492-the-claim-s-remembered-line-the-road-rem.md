@@ -3,11 +3,13 @@ id: T0492
 title: "The claim's remembered line: the road-remembers run says how often the leakers came back"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0473]
 attempts: 0
 created: 2026-11-03T11:18:16Z
+claimed_at: 2026-11-03T11:46:40Z
 epic: E27
+designer: desktop
 ---
 
 ## Goal
