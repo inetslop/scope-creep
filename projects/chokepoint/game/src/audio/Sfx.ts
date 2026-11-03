@@ -281,6 +281,11 @@ export class Sfx {
     this.tone(330, 0.07, 'sine', 0.05, undefined, 0.04);
   }
 
+  /** The Ward's deny, at its ring's moment (systems/enemyHooks/wardDenyNote.ts): one 60 ms sine, C5 falling to A4 (523.25 to 440 Hz), 0.08 pre-master, the run's quietest class, under the hit blip. */
+  wardDeny(): void {
+    this.tone(523.25, 0.06, 'sine', 0.08, 440);
+  }
+
   /** A tower's own milestone heard at its base: one quiet two-note rise, E4 then G4 (330 then 392 Hz), 60 ms sines ~30 ms apart, 0.06 pre-master, the Leech sip's soft class. */
   towerMilestone(): void {
     this.tone(330, 0.06, 'sine', 0.06);

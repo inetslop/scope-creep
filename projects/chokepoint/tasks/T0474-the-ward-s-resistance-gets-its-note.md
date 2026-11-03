@@ -4,11 +4,12 @@ title: "The Ward's resistance gets its note"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T05:21:43Z
 claimed_at: 2026-11-03T05:45:53Z
+finished_at: 2026-11-03T06:02:13Z
 ---
 
 ## Goal
@@ -79,3 +80,17 @@ Doc comment for `wardDenyNote.ts` (model the style on `leechDrinkNote.ts`): "The
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The Ward's resistance now gets its note — when a Push gust, Anchor root, or Frost slow fails on a Ward, one soft 60 ms sine blip (C5→A4, 0.08, the run's quietest class) plays at the exact moment the resist ring paints. Added `src/systems/enemyHooks/wardDenyNote.ts` (a display-free trigger that reads the one-frame `deny` flag and rides the ring's 0.5 s throttle, one blip per ring), a `wardDeny()` method in `src/audio/Sfx.ts` beside the Leech sip, and registered the hook directly above `wardDeny` in `ENEMY_HOOKS` so it reads the flag before `wardDeny` clears it. Silent with the sound toggle off; ring look, Ward behavior, and all other visuals are unchanged.
+
+- Self-review: APPROVE
+- Time: 16.3 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          |  5 ++++
+ .../game/src/systems/enemyHooks/index.ts           |  2 ++
+ .../game/src/systems/enemyHooks/wardDenyNote.ts    | 30 ++++++++++++++++++++++
+ 3 files changed, 37 insertions(+)
+```

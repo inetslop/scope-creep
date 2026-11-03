@@ -19,6 +19,7 @@ import { flySpawn } from './flySpawn';
 import { skyNote } from './skyNote';
 import { leechDrinkNote } from './leechDrinkNote';
 import { muteNote } from './muteNote';
+import { wardDenyNote } from './wardDenyNote';
 import { wardDeny } from './wardDeny';
 import { bulwarkPlate } from './bulwarkPlate';
 import { nameTag } from './nameTag';
@@ -96,6 +97,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   skyNote,
   leechDrinkNote,
   muteNote,
+  wardDenyNote,
   wardDeny,
   bulwarkPlate,
   mintRing,
