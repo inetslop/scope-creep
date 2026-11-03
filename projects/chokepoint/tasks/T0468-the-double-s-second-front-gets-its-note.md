@@ -1,12 +1,14 @@
 ---
 id: T0468
 title: "The double's second front gets its note"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T03:26:12Z
+claimed_at: 2026-11-03T04:10:12Z
 epic: E22
 ---
 
