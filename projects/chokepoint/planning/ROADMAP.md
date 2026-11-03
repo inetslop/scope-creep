@@ -122,13 +122,13 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the tag's haptic: a non-quiet tagged wave gets one 30 ms guarded buzz on mobile at the banner (the quiet breather never buzzes) — **done as T0449 (S, 2026-11-02)**
 - the next tag, whose answer is the move: **tasked as T0461 (M, in the pool, 2026-11-03)** — the halt: the walkers stop 3 s at the middle of their own road, the middle becomes the wave's choke, and the move re-points an old tower at it
 
-### E23 — The draft: nodes for how the run's cards come (active — reworked 2026-11-03)
+### E23 — The draft: nodes for how the run's cards come (active — fully tasked 2026-11-03, closing on the pool's landings)
 **Goal:** the tech tree's "The draft" branch (the tech screen's existing 2nd row — the Slot II and fourth-card nodes in `content/tech/draft.ts`) covers the hand's slots and cards, but not how the offer comes: three more nodes on that branch let between-run coins buy how the run's cards come.
 **When done:** the branch carries three more nodes, each bought once and on for every run after: The early odds (the tier-odds shift starts at wave 1 instead of wave 5), A cheaper roll (the reroll's cost curve starts 25 lower) and Opening wild (the first draft always offers a Rare or Epic alongside its Common Bolt floor).
 **Breakdown:**
 - The early odds: the branch's depth-4 node at 80 coins by the branch's own depth rule (base 10 — 30 at depth 2, 80 at depth 4), the tier-odds shift (T0011) starts at wave 1 instead of wave 5 — **tasked as T0458 (M, in the pool, 2026-11-03)** (the T0450 re-file: a node on the branch's existing row, not a new eighth row)
 - A cheaper roll: the reroll's curve starts 25 lower — today's reroll is unlimited on a 50, 70, 100, … curve, so the node makes it 25, 45, 65, … (T0451's "second reroll for 25 gold" premise was stale); priced one depth deeper than The early odds — depth 5, 110 coins by the branch's depth rule — **tasked as T0459 (M, in the pool, 2026-11-03)** (the T0451 re-file)
-- Opening wild: the branch's third new node at its depth price, the first draft always offers a Rare or Epic alongside its Common Bolt floor (T0048) — the next slice once the branch's nodes land
+- Opening wild: the branch's third new node, 145 coins by the branch's depth rule (depth 6), the first draft always offers a Rare or Epic alongside its Common Bolt floor (T0048) — the floor is on one non-Bolt slot of the pre-wave-1 offer and its rerolls, no run state (a resumed run never re-rolls the opening draft) — **tasked as T0462 (M, in the pool, 2026-11-03)**
 
 ## Enemy queue (non-epic)
 
