@@ -4,11 +4,12 @@ title: "The milestone: the kill branch's third node, the chain's milestone pay �
 assignee: inet-racing
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T05:56:47Z
 claimed_at: 2026-11-03T06:40:39Z
+finished_at: 2026-11-03T06:56:35Z
 epic: E25
 ---
 
@@ -77,3 +78,18 @@ export function milestoneMul(owned: readonly string[]): number {
 
 ### Tests
 - `tests/core/tech.test.ts`: 3-node kill-row shape (ids/names/lines/prices/bounty/chainWindowSec/milestoneMul) + `nodeCost === 155`; `milestoneMul` (no/other-branch/unknown → 1, owned → 2, dedupe); buy-refusal (`withCoins(154)` refuses, `withCoins(155)` buys and coins hit 0). No test changes to `core/comboGold.ts`.
+
+## Result (attempt 1, inet-racing)
+
+Added the kill branch's third tech node, "The milestone" (src/content/tech/kill.ts): a new `milestoneMul` field and a node entry with base price 30, which the branch's depth rule prices at 155 coins on the tech screen with no scene changes. A new `milestoneMul(owned)` reader in src/core/tech.ts (biggest-owned pattern, dedupe, unknown ids ignored) feeds the kill-chain hook in src/systems/enemyHooks/comboGold.ts, which now multiplies the milestone bonus by it — the 5th/10th chain kills pay +4/+8 gold instead of +2/+4 while owned, and every gold pop and total reads the one doubled value. Without the node the multiplier is 1 and all chain pays are byte-identical; the window, ×N counter, ComboBar, Feast and milestone look are untouched. Tests in tests/core/tech.test.ts cover the 3-node row shape, the 155 price, the ×2 multiplier (with dedupe and unknown ids) and the buy refusal at 154 coins; npm run check and npm run smoke are green.
+
+- Self-review: APPROVE
+- Time: 16.0 min
+
+```
+projects/chokepoint/game/src/content/tech/kill.ts  |  5 ++++-
+ projects/chokepoint/game/src/core/tech.ts          | 14 ++++++++++++
+ .../game/src/systems/enemyHooks/comboGold.ts       |  5 +++--
+ projects/chokepoint/game/tests/core/tech.test.ts   | 26 +++++++++++++++++-----
+ 4 files changed, 42 insertions(+), 8 deletions(-)
+```

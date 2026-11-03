@@ -186,6 +186,20 @@ export function chainWindowBonus(owned: readonly string[]): number {
   return sec;
 }
 
+/** The multiplier on the chain's milestone gold for the owned kill nodes: the biggest owned node's milestoneMul, 1 when none has one; each node counts once, unknown ids count for nothing. */
+export function milestoneMul(owned: readonly string[]): number {
+  let mul = 1;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = KILL_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    if (node.milestoneMul !== undefined && node.milestoneMul > mul) mul = node.milestoneMul;
+  }
+  return mul;
+}
+
 /** A branch's first-node price scaled by depth^1.5 and rounded to the nearest multiple of 5 (halves up). */
 export function nodePrice(base: number, depth: number): number {
   return Math.round((base * Math.pow(depth, 1.5)) / 5) * 5;
