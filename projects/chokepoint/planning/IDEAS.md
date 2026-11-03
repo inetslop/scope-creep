@@ -113,6 +113,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - The exit count — **built as T0106, removed by hand 2026-10-29** (repeated the next-wave button's number); cleanup T0166 — don't re-propose a count above the exit
 - ~~Pulse augment~~ — tasked as T0089, then Pulse: **dropped** 2026-10-29 (by hand, while in progress). As a first augment it was Splash without the 3-enemy cap and with other numbers (a ring around the tower every 2 s, weaker per hit), and its added form (+0.5 cells range) was Reach's. Fails the content bar; don't re-task it or a variant of it.
 - Ward enemy — built (T0111, 2026-10-29)
+- The Ward's resistance gets its note — the failed control (T0335's ring: a Push gust, an Anchor root or a slow that does not take) is seen at the Ward, not heard at the tower: one quiet blip at the ring's moment, one per resist, T0419's softest class, no HUD — **tasked as T0474 (S, non-epic, 2026-11-03)**
 - Haste augment (Epic only) — **built as T0152 (2026-10-30, desktop); its tech node T0153 is done**: a 2-cell support — enemies +30% speed, towers +30% attack speed (added: +15% to both per copy) — gated behind its tech node (25 coins)
 - The coins line says why — **built as T0075 (2026-10-28, yoga)**: a small muted coin-recipe line under the claim card's "+N coins" (waves +N · stopped +N · clean +N)
 - Toll augment (Epic only) — **built as T0234 (M, E4, 2026-10-30)**: the first augment that turns a loss into income; **retired by Chill's registration (the 16-cap's sixth removal — ROADMAP is canonical)**
