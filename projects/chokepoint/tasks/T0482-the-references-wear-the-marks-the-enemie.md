@@ -1,12 +1,14 @@
 ---
 id: T0482
 title: "The references wear the marks: the enemies reference and the codex match the board"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T08:12:52Z
+claimed_at: 2026-11-03T08:39:44Z
 epic: E26
 ---
 
