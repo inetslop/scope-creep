@@ -3,11 +3,13 @@ id: T0472
 title: The claim says what the reserve bought
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0463]
 attempts: 0
 created: 2026-11-03T04:35:57Z
+claimed_at: 2026-11-03T04:36:33Z
 epic: E24
+designer: yoga
 ---
 
 ## Goal
