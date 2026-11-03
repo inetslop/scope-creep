@@ -20,7 +20,7 @@ The PO adds ideas here. Good ones become tasks. The bar: a new enemy needs a beh
 - Interest — **built as T0363 (2026-11-01)**; the "bank +N" line as T0374; the first-pay chip dropped (T0380); the coin blip already played (T0381); the pay's gold pop done (T0395, 2026-11-02); the trail stays parked
 - Fast-forward (2x) for the wave phase — **built as T0019 (2026-10-28)**: the SpeedButton, one scaled clock for the whole wave phase
 - Daily shareable result — **dropped with E8 by hand 2026-10-30; do not re-task**
-- Colorblind mode: patterns on the shapes, not just color — **now E26 (active, 2026-11-03); the first slice (the pause toggle + the enemy tokens' marks) tasked as T0465 (L, in the pool)** (ROADMAP is canonical)
+- Colorblind mode: patterns on the shapes, not just color — **now E26 (active); the first slice done as T0465, the towers' marks tasked as T0469 (M, in the pool, 2026-11-03)** (ROADMAP is canonical)
 - Map modifiers chosen in the draft instead of an augment (e.g. "the next wave comes from both ends")
 - Haptics on mobile for builds and leaks — **built as T0265 (S, non-epic, 2026-10-30, yoga)**: one guarded navigator.vibrate, two patterns (place 20 ms, leak 80 ms), no HUD or toggle
 - The boss death gets its haptic — the run's loudest kill (T0273's burst and horn) earns a longer, heavier buzz than the leak's on mobile (T0265's guarded pattern, once per boss) — **done as T0428 (2026-11-02, yoga)**

@@ -153,8 +153,8 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Goal:** shape and color carry meaning (Pillar 3); a player who can't trust color can't read the board: a "Patterns" toggle beside the pause screen's Sound row (off by default, remembered) paints a small muted-ink mark on every enemy token and every tower — the mark's shape distinct per enemy type and per first augment — so the board reads by shape alone.
 **When done:** with the toggle on, every enemy token and every tower wears one small muted-ink mark (one color for all, the shape is the information): the 10 regulars, the 16 first augments, the bosses and the split pieces each read apart without color; the mark replaces color as the identity channel, nothing else on screen changes, and with the toggle off the board is byte-identical to today.
 **Breakdown:**
-- the toggle and the enemy tokens: the pause row (the Sound row's pattern, T0035), the profile flag, the pattern module, the 10 regular marks — **tasked as T0465 (L, in the pool, 2026-11-03)**
-- the towers: a tower wears its first augment's mark on its barrel (the 16 marks, the same vocabulary; the tier pips untouched) — parked (tasked once the tokens land)
+- the toggle and the enemy tokens: the pause row (the Sound row's pattern, T0035), the profile flag, the pattern module, the 10 regular marks — **done as T0465**
+- the towers: a tower wears its first augment's mark on its barrel (the 16 marks, the same vocabulary; the tier pips untouched) — **tasked as T0469 (M, in the pool, 2026-11-03)**
 - the rest of the board and the references: the bosses' own 8 marks, the Shard and the Splinter wearing the parent's mark smaller, the enemies reference and the codex's tokens matching — parked
 
 ## Enemy queue (non-epic)
