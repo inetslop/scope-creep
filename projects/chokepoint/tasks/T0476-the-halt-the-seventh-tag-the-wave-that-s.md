@@ -3,14 +3,14 @@ id: T0476
 title: "The halt: the seventh tag — the wave that stops at the road's middle (the T0461 re-file)"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-03T06:43:18Z
 claimed_at: 2026-11-03T09:03:54Z
+finished_at: 2026-11-03T11:03:59Z
 epic: E22
-design_attempts: 1
-designer: inet-racing
+design_attempts: 2
 ---
 
 ## Goal
@@ -30,3 +30,11 @@ The wave's tag set grows a seventh march — the halt: a wave whose walkers stop
 - [ ] Unit: on the same seed, the same wave's walkers each stand 3 s (simulation time) at their route's middle when the halt tag is on the plan than when it is off, and no other wave is changed by the tag's presence.
 - [ ] The chip row wears the halt's bar glyph in a hue no other tag uses, and every line fits its card at 412x915 and 1280x720.
 - [ ] A wave without the halt tag is byte-identical to today (walk, preview, banner, reference); npm run check is green.
+
+## Architect could not design it (inet-racing)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+
+```
