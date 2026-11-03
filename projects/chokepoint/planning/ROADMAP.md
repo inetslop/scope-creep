@@ -121,7 +121,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the double: the fifth tag, two fronts with a 6 s lull — **done as T0447**
 - the clumps: the sixth tag, clumps of 2–3 with 4 s gaps — **done as T0448**
 - the tag's haptic: one 30 ms buzz on mobile at the banner (never quiet) — **done as T0449**
-- the next tag, whose answer is the move: **tasked as T0461 (M, in the pool, 2026-11-03)** — the halt: the walkers stop 3 s at the middle of their own road, the middle becomes the wave's choke, and the move re-points an old tower at it
+- the next tag, whose answer is the move: **tasked as T0476 (M, in the pool, 2026-11-03)** — the halt: the walkers stop 3 s at the middle of their own road, the middle becomes the wave's choke, and the move re-points an old tower at it (the T0461 re-file: the build-phase board mark dropped, the chip and the teach carry the read)
 - the double's second front: one quiet note when the lull ends and the faster front starts — **done as T0468**
 
 ### E23 — The draft: nodes for how the run's cards come (active — fully tasked 2026-11-03, closing on the pool's landings)
@@ -165,6 +165,14 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the teach: a one-time chip under the preview when a remembered wave is first planned, naming what came back — parked (S)
 - the deep memory: a type that leaked in each of the last two waves adds +2 instead of +1 (the cap unchanged) — parked
 - the claim's line: a muted "remembered · N" line on the claim card when the memory fired at least once (the last page's pattern, E12) — parked
+
+### E28 — The strike: a tech branch for how strong a tower is (active — opened 2026-11-03)
+**Goal:** the tech tree has covered run start, board, pool, claim, wave, tower management, exit, draft and kill — but not the tower's own strength: a tenth branch lets between-run coins buy the tower's raw power.
+**When done:** the tree's "The strike" branch has three nodes, each bought once and on for every run after: The long arm (every tower's range +10%), The heavy hand (every tower's damage +10%) and The quick draw (every tower attacks 10% faster).
+**Breakdown:**
+- The long arm: the branch and a 30-coin node, every tower's range +10% — **tasked as T0477 (M, in the pool, 2026-11-03)**
+- The heavy hand: 85 coins by the depth rule, every tower's damage +10% — parked
+- The quick draw: 155 coins by the depth rule, every tower attacks 10% faster — parked
 
 ## Enemy queue (non-epic)
 
