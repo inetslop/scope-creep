@@ -3,13 +3,11 @@ id: T0482
 title: "The references wear the marks: the enemies reference and the codex match the board"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-03T08:12:52Z
-claimed_at: 2026-11-03T08:13:41Z
 epic: E26
-designer: yoga
 ---
 
 ## Goal
@@ -25,3 +23,39 @@ A Patterns player opens the enemies reference (pause) or the codex (menu) to che
 - [ ] With Patterns on, every row of the enemies reference shows its token wearing the same muted-ink mark the type wears on the board; with it off the reference is unchanged.
 - [ ] With Patterns on, every codex entry's token wears that augment's barrel mark; with it off the codex is unchanged.
 - [ ] Both references still fit their card at 412x915 and 1280x720 — the mark sits inside the token, no row grows.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/scenes/EnemiesScene.ts` - regular-enemy rows wear their type mark when Patterns is on
+- edit `src/scenes/CodexScene.ts` - every entry's token wears its augment's barrel mark when Patterns is on
+
+### Interfaces
+No new or changed types or signatures. Both scenes read the existing global flag `this.registry.get('patterns') === true` (set by `BootScene`, flipped on the pause). Uses existing exports `markTexture(id)` and `barrelMarkTexture(id)` from `../art/textures`.
+
+### Steps
+1. `EnemiesScene.ts`: change the import to `import { artScale, enemyTexture, markTexture } from '../art/textures';`. In `build()`, before the `for (const row of rows)` loop add `const patterns = this.registry.get('patterns') === true;`. Right after the row's token `parts.push(...)` (the `artScale(..., 16 / (row.def.look.size * CELL))` image), add:
+   ```ts
+   if (row.def.spawnOnly === undefined && patterns) {
+     // The type mark the board wears (the Patterns toggle): the same texture and scale as the token, so it overlays exactly.
+     parts.push(artScale(this.add.image(-this.panelW / 2 + PAD + TOKEN / 2, rowTop + row.h / 2, markTexture(row.def.id)), 16 / (row.def.look.size * CELL)));
+   }
+   ```
+2. `CodexScene.ts`: change the import to `import { artScale, augmentTexture, barrelMarkTexture } from '../art/textures';`. In `build()`, before `entries.forEach` add `const patterns = this.registry.get('patterns') === true;`. Right after the entry's token `parts.push(artScale(this.add.image(lx + 26, ty + 30, augmentTexture(def.id)), 1.3));` add:
+   ```ts
+   if (patterns) {
+     // The first augment's barrel mark (the Patterns toggle): the board's own mark at its own size, centred on the token.
+     parts.push(artScale(this.add.image(lx + 26, ty + 30, barrelMarkTexture(def.id))));
+   }
+   ```
+
+The `markTexture` is painted the same size and face offset as `enemyTexture`, so step 1's mark sits exactly on the board token. `barrelMarkTexture` is painted for all 16 augments; at `artScale` default (the board's own scale, Tower.ts) it sits inside the codex token.
+
+### Pitfalls
+- Gate the enemy mark on `spawnOnly === undefined` — the mark texture is painted only for the 10 regular types; boss/spawn-only rows have no texture and must stay plain (they get T0481's boss marks in the separate bosses reference).
+- Both marks are extra `parts` drawn after the token image, so they render on top; they share the token's centre so the enemy one aligns pixel-for-pixel and the codex one sits inside (sub-px off the raised face is invisible).
+- No layout change: row/entry heights come from the text, not the images, so "no row grows" and the cards still fit at 412x915 and 1280x720. With Patterns off, nothing is added — references are byte-identical to today.
+- Read `patterns` once per `build()` (the codex's `rebuild()` re-reads it on width-class flips); the toggle is unreachable while a reference is open, so this is stable.
+
+### Tests
+none
