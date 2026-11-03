@@ -1,12 +1,14 @@
 ---
 id: T0485
 title: "The high rate: the bank branch's second node, the rate 5% to 8%"
+assignee: cachyos-x8664
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T10:07:19Z
+claimed_at: 2026-11-03T10:35:57Z
 epic: E29
 ---
 
