@@ -3,12 +3,10 @@ id: T0456
 title: "Chill: the augment that slows what it hits"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-03T00:11:22Z
-claimed_at: 2026-11-03T00:51:12Z
-designer: desktop
 ---
 
 ## Goal
@@ -56,3 +54,69 @@ Chill is a pool card (Common, Rare or Epic at the normal odds) and `opening: tru
 - [ ] On registration, if the index is over 16, Toll is removed from the draft index and the codex; a tower that already has a Toll keeps it and works as before; the other removals (Rally, Mint, Mark, Anchor) are untouched as they land.
 - [ ] A chilled enemy wears the thin green base ring while its stacks live, clearing on the fade — nothing above the enemy; a held Chill shows its what-if marker.
 - [ ] The game is playable menu to game over with a Chill card in the draft, on desktop and mobile.
+
+## Design (architect, desktop)
+
+### Files
+- create `src/core/chill.ts` - pure chill rules (LiveChill, apply/step/pct, constants)
+- create `src/content/augments/chill.ts` - the augment def
+- create `src/systems/ChillSystem.ts` - per-frame fade tick (owned by GameScene)
+- create `tests/core/chill.test.ts` - unit tests
+- edit `src/content/types.ts` - `Chill` interface, `FirstForm.chill`, `AddedForm.chill`, `TierValues.chillStacks`
+- edit `src/content/augments/index.ts` - register chill, retire toll (RETIRED + KNOWN_AUGMENTS)
+- edit `src/core/tiers.ts` - tier replacements for `chill.stacks`
+- edit `src/core/augments.ts` - `TowerSpec.chillStacks` + its combination loop
+- edit `src/entities/Enemy.ts` - `chill` field, spawn reset, speed factor, `chill()` method
+- edit `src/systems/EnemySystem.ts` - `HitPayload.chill`, apply in `strike()`
+- edit `src/systems/TowerSystem.ts` - one payload line
+- edit `src/systems/ProjectileSystem.ts` - pierce aim lead accounts for chill
+- edit `src/systems/ChillSystem.ts` (created) / `src/scenes/GameScene.ts` - wiring
+- edit `src/systems/enemyMarks.ts` - green base ring mark
+- edit `src/systems/towerGhost.ts` - what-if marker branch
+- edit `src/core/saveRun.ts`, `src/art/icons.ts`, `src/art/entities.ts`, `src/debug/runChecks.ts` - retirement plumbing (accept/keep retired augments)
+- edit `tests/content.test.ts`, `tests/core/augments.test.ts` - two caps the task's stated lines/numbers exceed (see Steps)
+
+### Interfaces
+```ts
+// core/chill.ts
+export const CHILL_STACK_PCT = 0.1, CHILL_MAX_STACKS = 5, CHILL_FADE_SEC = 2;
+export interface LiveChill { stacks: number; left: number; } // stacks 0: not chilled
+export function chillPct(c: LiveChill): number;        // min(stacks,5) * 0.1
+export function applyChill(c: LiveChill, stacks: number): boolean; // add (cap 5), left = 2, true if fresh
+export function chillStep(c: LiveChill, dt: number): void;         // left -= dt; at 0: stacks = 0, left = 0
+// content/types.ts (next to `Burn` / `slow` / `burnDps`)
+export interface Chill { stacks: number; }
+// FirstForm & AddedForm: `chill?: Chill;`  TierValues: `chillStacks?: number;` (replaces stacks in both forms)
+// TowerSpec: `chillStacks: number;` (0 = none)  HitPayload: `chill: number;`
+// Enemy: `chill: LiveChill = { stacks: 0, left: 0 };`  and `chill(stacks: number): void`
+// systems/ChillSystem.ts: `export class ChillSystem { constructor(enemies: EnemySystem); update(dt: number): void; }`
+```
+Chill def (`content/augments/chill.ts`): `id 'chill'`, `name 'Chill'`, `description` the task's codex line verbatim, `look: { shape: 'circle', color: 'green', size: 0.2 }`, `first: { kind: 'shot', damage: 8, range: 2.6, rate: 1, projectileSpeed: 10, chill: { stacks: 1 } }`, `added: { chill: { stacks: 1 } }`, `opening: true`, and the task's six card lines verbatim with `tiers: { rare: { damageMul: 1.3, cooldownMul: 0.85, chillStacks: 2, asTower: '...20%...', asAdded: '...20%...' }, epic: { damageMul: 1.7, cooldownMul: 0.7, chillStacks: 3, asTower: '...30%...', asAdded: '...30%...' } }`. No `tier`/`minTier`/`tech` fields. No Sfx, no DECORATIONS, no barrel field: the green body and its one standard barrel come from the existing look code (barrels paint in the tower color); a Chill added to another tower shows its card line in the panel, like added Rally.
+
+### Steps
+1. Create `src/core/chill.ts` exactly as in Interfaces (mirror `core/burn.ts`'s comment style).
+2. `content/types.ts`: add `Chill` after `Burn`; `chill?: Chill` in `FirstForm` (after `slow`) and `AddedForm` (after `slow`); `chillStacks?: number` in `TierValues` (after `burnDps`), doc: "Replaces this copy's chill stacks per hit in both forms (Chill)."
+3. Create `src/content/augments/chill.ts` (above).
+4. `content/augments/index.ts`: add `import { chill } from './chill';`; in `AUGMENTS` replace the `toll,` line (slot 7) with `chill,` + comment "T0456's registration retires toll (E4's protocol keeps the pool at 16)" — do NOT insert before slot 4 (`tests/core/augments.test.ts:443` slices the first 4 as bolt, lance, splash, spray). Below `AUGMENTS` add: `export const RETIRED: readonly AugmentDef[] = [ toll, // retired by Chill's registration (T0456) ];` and `export const KNOWN_AUGMENTS: readonly AugmentDef[] = [...AUGMENTS, ...RETIRED];`; build `byId` from `KNOWN_AUGMENTS`. If another registration's retirement already landed here, add `toll` to that existing retired list and use that known-export instead of creating a parallel one.
+5. `core/tiers.ts`: in `tierFirst` common case add `chill: f.chill ? { ...f.chill } : undefined,`; in the tier case add `chill: f.chill ? { ...f.chill, stacks: t.chillStacks ?? f.chill.stacks } : undefined,`; same two lines in `tierAdded` for `a.chill`.
+6. `core/augments.ts`: import `chill` (next to the `anchor` import); add `chillStacks: number` to `TowerSpec` (after `burnCount`), `chillStacks: 0` in `EMPTY` and in `towerSpec`'s spec init; after the Embers loop add: `for (let i = 0; i < augments.length; i++) { const c = augments[i]!; if (getAugment(c.id).id !== chill.id) continue; spec.chillStacks += (i === 0 ? f : tierAdded(getAugment(c.id), c.tier)).chill?.stacks ?? 0; }` (multiple Chills add: a Common over a Rare hits for 3).
+7. `entities/Enemy.ts`: import `applyChill, chillPct, type LiveChill` from `../core/chill`; field after `burnSource`; spawn reset `this.chill.stacks = 0; this.chill.left = 0;` (after the burnSource reset); line 246 becomes `const speed = this.rootLeft > 0 ? 0 : this.speed * (1 - this.slowPct) * (1 - chillPct(this.chill)) * (1 + this.hastePct);`; method after `slow()`: `chill(stacks: number): void { if (this.def.ignoresControl) { this.deny = true; return; } applyChill(this.chill, stacks); }` — no `noteControl` (chill has no fatigue/immunity window).
+8. `systems/EnemySystem.ts`: `HitPayload` field `chill: number` (after `burn`); in `strike()` after the `payload.slow` line: `if (payload.chill > 0) e.chill(payload.chill);`.
+9. `systems/TowerSystem.ts`: in `attack()`'s payload, after `burn: spec.burn,`: `chill: spec.chillStacks,`.
+10. `systems/ProjectileSystem.ts`: import `chillPct`; the pierce lead's final term becomes `target.speed * (1 - target.slowPct) * (1 - chillPct(target.chill))` so Lance+Chill bolts don't overlead chilled targets.
+11. Create `src/systems/ChillSystem.ts` (Interfaces). `scenes/GameScene.ts`: import (after `Building`), field `chill!: ChillSystem;` after `haste`, `this.chill = new ChillSystem(this.enemies);` after the haste construction, `this.chill.update(simDt);` after `this.haste.update(simDt);`.
+12. `systems/enemyMarks.ts`: after the "Slowed" mark add `// Chilled: a thin green ring at its base while its stacks live, gone the moment they fade.` with `(g, e) => { if (e.chill.left <= 0) return; fillRing(g, e.x, e.y + 2, e.def.look.size * 64 + 10, 2.5, 0, Math.PI * 2, PALETTE.green, 0.95); },` (radius +10: between frost's +7 and root's +12 so both can show).
+13. `systems/towerGhost.ts`: in `drawMarker`, after the `added.root` branch add `else if (added.chill) { fillRing(g, 0, y, 9, 2, 0, Math.PI * 2, color, 1); }` (before the generic `else`; the draft fit row reuses this, so it is covered too).
+14. Retirement plumbing: `saveRun.ts` line 89 and `runChecks.ts:218` check `KNOWN_AUGMENTS.some(...)` (swap their `AUGMENTS` imports); `art/icons.ts` and `art/entities.ts` loop `KNOWN_AUGMENTS` (a tower that still holds a Toll keeps its icon/body textures); `runChecks.ts`: extend `ward.control` with `|| e.chill.stacks > 0` (message: "a Ward is slowed, chilled, rooted or pushed") and add after `enemies.burn`: `['enemies.chill', (g) => (g.enemies.all.every((e) => !e.active || (e.chill.stacks >= 0 && e.chill.stacks <= 5 && e.chill.left >= -1e-9 && e.chill.left <= 2 + 1e-9 && (e.chill.left <= 1e-9 ? e.chill.stacks === 0 : e.chill.stacks > 0))) ? null : 'a broken chill')],`. The codex and draft pool iterate `AUGMENTS`, so Toll drops and Chill joins with no edit.
+15. Test caps: `tests/content.test.ts` tier `asTower` cap 56 → 70 (the task's 61-char tier tower lines share the card's 70 budget — same text slot, same wrap, as the base `asTower`; the card grows to fit: fullest state = Rare/Epic Chill with fit row, 4-card grid at 412x915, wrap ≈76px → H ≈ 313, two grid rows end ≈810, fits). `tests/core/augments.test.ts:61`: exclude chill from the wave-1 DPS floor (`a.id !== 'chill'`) with the comment that its hits slow and the slow is what holds wave 1 — the task's 8 @ 1.0 is deliberately under Bolt.
+
+### Pitfalls
+- Pooling: reset `chill` in `spawn()` or a recycled enemy walks slowed with a stale green ring.
+- Stated no-ops: do NOT wire chill into `BeamSystem`/`beamEffects`, `tickBurn`, `rally.ts` or `beamTick` — the payload/strike path alone covers every attack kind that has hits (shot, pierce, pellets, pulse, Push gust, Anchor root, Mark's strike).
+- Don't touch the Dasher's surge line (`Enemy.ts:272`) or the Blinker's step: fixed by design; they must not read `chillPct`.
+- `applyChill`/`chillStep` must use `dt` and clamp (`left` never negative, `stacks` never past 5) — the invariant checks it.
+- The what-if branch must precede the generic `else` in `drawMarker`, or Chill falls to the plain dot.
+- Inserting `chill` before `AUGMENTS` slot 4 breaks `tests/core/augments.test.ts:443`; use toll's slot.
+
+### Tests
+- `tests/core/chill.test.ts`: `applyChill` (fresh flag, refresh, cap at 5), `chillPct` (0.1/stack, 0.5 cap), `chillStep` (clears all at once at 2 s, dt > left, no-op at 0), `towerSpec` (chillStacks 1/2/3 by tier as first and added, sums with a second Chill, 0 without), `tierFirst`/`tierAdded` replace stacks by tier.
