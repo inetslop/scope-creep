@@ -1,12 +1,14 @@
 ---
 id: T0490
 title: "The last stand's vault: the bank branch's third node, the pay doubles at one life"
+assignee: inet-racing
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T11:18:16Z
+claimed_at: 2026-11-03T11:55:39Z
 epic: E29
 ---
 
