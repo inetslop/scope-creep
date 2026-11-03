@@ -81,6 +81,22 @@ function drawBoard(ctx: CanvasRenderingContext2D, map: GameMap, path: PathLine, 
   }
   ctx.restore();
 
+  // The slow stretch (core/slowStretch.ts): the three cells' soft blue on the road's own white — the
+  // road's surface, not a mark. No shadow (it is the road, after the road's restore).
+  const stretch = map.slowStretch;
+  if (stretch) {
+    const i = map.path.findIndex((c) => c.col === stretch.cells[0]!.col && c.row === stretch.cells[0]!.row);
+    const mid = (a: { x: number; y: number }, b: { x: number; y: number }): { x: number; y: number } => ({ x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 });
+    const seg = [mid(pts[i]!, pts[i + 1]!), pts[i + 1]!, pts[i + 2]!, pts[i + 3]!, mid(pts[i + 3]!, pts[i + 4]!)];
+    ctx.beginPath();
+    seg.forEach((p, k) => (k === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)));
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'butt';
+    ctx.lineWidth = CELL * 0.58;
+    ctx.strokeStyle = rgba(PALETTE.ice, 1);
+    ctx.stroke();
+  }
+
   // Gates: where enemies come in (grey, a white chevron) and the exit you defend (ink, a white ring).
   const dirIn = Math.atan2(second.y - first.y, second.x - first.x);
   const gate = (p: { x: number; y: number }, exit: boolean, dir = dirIn): void => {

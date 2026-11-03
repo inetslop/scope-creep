@@ -4,11 +4,12 @@ title: "The slow stretch: the board with a 3-cell slow run of road"
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T00:11:22Z
 claimed_at: 2026-11-03T00:24:48Z
+finished_at: 2026-11-03T03:01:46Z
 ---
 
 ## Goal
@@ -114,3 +115,30 @@ if (stretch) {
 
 ### Tests
 - `tests/core/slowStretch.test.ts`: over 1000 seeds × (14x8, 8x14) — determinism (`toEqual` on a fresh grow), stretch frequency between 1/15 and 1/4, at least one stretched fork board and one loop board; non-roll seeds carry none; shape: 3 consecutive `'path'` cells, middle three of the longest run (exactly-3 run taken whole) or around one bend, `stretchCovered` true; `boardHasSlowStretch` ≈ 1/4 of 4000 seeds; hand-built maps (twin.test.ts style): a rock on one side → `undefined`, the longest-run and tie rules, a no-straight-3 map taking the hash-picked bend and returning `undefined` when its flanks are blocked; `stretchBox` values; `boardFactMap('slowstretch')?.slowStretch` is defined (pins seed N).
+
+## Result (attempt 1, asus)
+
+Added the slow stretch board modifier: a new `src/core/slowStretch.ts` (seed-hash ~1/4 roll, middle-3-of-longest-run or hash-picked-bend cell choice with the both-sides buildable promise, walk factor, board-unit box) wired into `generateMap` as the last modifier, a 70% walk factor in `Enemy.advance()` (composing with thin road/Haste/ramp; Dasher surge, Flyer flight, blinks and gusts untouched), a soft-ice tint of the three road cells in `art/board.ts`, the facts/reference row with its committed seed 14 and a new `board.slowStretch` run invariant. The roll deliberately reads hash bits 2-3 instead of the architect's `% 4`: with bits 0-1 the stretch could mathematically never land on a loop board (0/439 measured), and the fact-row seed became 14; cove/loop test byte-identity premises now also exclude the stretch. Verified with a new 8-test core suite, full `npm run check`, and desktop+mobile smoke.
+
+- Self-review: NO VERDICT
+- Time: 157.0 min
+- Deleted tests/core/_t0455_findseed.test.ts, as the agent asked.
+- Deleted tests/core/_t0455_bend.test.ts, as the agent asked.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/scratch-t0455.ts          | 108 ++++++++++++
+ projects/chokepoint/game/src/art/board.ts          |  16 ++
+ projects/chokepoint/game/src/core/boardFacts.ts    |   9 +-
+ projects/chokepoint/game/src/core/map.ts           |  15 +-
+ projects/chokepoint/game/src/core/slowStretch.ts   | 114 ++++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |   9 +
+ projects/chokepoint/game/src/entities/Enemy.ts     |  15 +-
+ .../chokepoint/game/src/systems/EnemySystem.ts     |   5 +
+ projects/chokepoint/game/src/ui/boardFactMarks.ts  |   5 +
+ .../chokepoint/game/tests/core/boardFacts.test.ts  |   6 +-
+ projects/chokepoint/game/tests/core/cove.test.ts   |   4 +-
+ projects/chokepoint/game/tests/core/loop.test.ts   |   6 +-
+ .../chokepoint/game/tests/core/slowStretch.test.ts | 194 +++++++++++++++++++++
+ 13 files changed, 493 insertions(+), 13 deletions(-)
+```

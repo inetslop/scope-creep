@@ -10,8 +10,8 @@ import { BOARD_NODES } from '../../src/content/tech/board';
 import { WAVE_NODES } from '../../src/content/tech/wave';
 
 describe('the board facts', () => {
-  it('lists the twelve modifiers in order, each with its mark key', () => {
-    expect(BOARD_FACTS.map((r) => r.mark)).toEqual(['choke', 'bend', 'longway', 'twochokes', 'switchback', 'fargate', 'fork', 'loop', 'cove', 'twin', 'markedcell', 'dblmark']);
+  it('lists the thirteen modifiers in order, each with its mark key', () => {
+    expect(BOARD_FACTS.map((r) => r.mark)).toEqual(['choke', 'bend', 'longway', 'twochokes', 'switchback', 'fargate', 'fork', 'loop', 'cove', 'twin', 'slowstretch', 'markedcell', 'dblmark']);
   });
 
   it('the tech tags point at the tech tree\'s own node ids, read from its data', () => {
@@ -43,6 +43,7 @@ describe('the board facts', () => {
     expect(boardFactTag(BOARD_FACTS[6]!, [])).toBe('some boards');
     expect(boardFactTag(BOARD_FACTS[7]!, [])).toBe('some boards');
     expect(boardFactTag(BOARD_FACTS[8]!, [])).toBe('some boards');
+    expect(boardFactTag(BOARD_FACTS[10]!, [])).toBe('seed · 1 in 4'); // the slow stretch's row: its seed roll, dry
     // Unowned: the tree's own node name, never retyped.
     expect(boardFactTag(BOARD_FACTS[1]!, [])).toBe('One more bend');
     expect(boardFactTag(BOARD_FACTS[1]!, ['one-more-bend'])).toBe('owned');
@@ -84,6 +85,7 @@ describe('the boards reference\'s per-row seeds', () => {
         case 'loop': expect(m.loop).toBeDefined(); break;
         case 'cove': expect(m.cove).toBeDefined(); break;
         case 'twin': expect(m.twin).toBeDefined(); break;
+        case 'slowstretch': expect(m.slowStretch).toBeDefined(); break;
         case 'markedcell': {
           const s = BOARD_FACT_SEEDS.markedcell!;
           const c = markedCell(m, s.seed);

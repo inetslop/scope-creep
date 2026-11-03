@@ -16,6 +16,7 @@ import { pathLineForLane, type PathLine } from '../core/path';
 import { flyRouteFor, pickFlyLine } from '../core/flyRoute';
 import { shieldMul } from '../core/shield';
 import { CONTROL_WINDOW_SEC } from '../core/control';
+import { stretchBox, type StretchBox } from '../core/slowStretch';
 import { pickNearest } from '../core/targeting';
 import { bossId, quietGoldMul } from '../core/waves';
 import { hook } from '../debug/testHook';
@@ -74,6 +75,8 @@ export class EnemySystem {
   private readonly hooks: readonly EnemyHook[];
   /** The fork's two walking routes (core/fork.ts): lane 0 the road itself, lane 1 its lane B (the same line without a fork). */
   readonly routes: [PathLine, PathLine];
+  /** The slow stretch's box in board units (core/slowStretch.ts), set on each spawned enemy; undefined on a board without the stretch. */
+  readonly stretchBox?: StretchBox;
 
   constructor(scene: Phaser.Scene, board: Board, run: RunState, fx: FxSystem, sfx: Sfx | undefined) {
     this.scene = scene;
@@ -84,6 +87,7 @@ export class EnemySystem {
     this.blockLeakCost = blockLeakCost(run.techOwned); // the exit node softens the Block's leak (core/tech): 2 without it
     this.bars = scene.add.graphics().setDepth(DEPTH.bars);
     this.routes = [board.path, board.map.fork ? pathLineForLane(board.map, CELL, 1) : board.path];
+    this.stretchBox = board.map.slowStretch ? stretchBox(board.map.slowStretch, CELL) : undefined;
     const ctx = { scene, board, run, fx, sfx, enemies: this, towers: () => this.towers() };
     this.hooks = ENEMY_HOOKS.map((make) => make(ctx));
   }
@@ -115,6 +119,7 @@ export class EnemySystem {
     const fly = def.flies ? pickFlyLine(this.board.map, this.run.rng, CELL) : undefined;
     // A flyer always starts on its own edge — the far-gate distance (road units) never applies to it.
     enemy.spawn(def, hpMul, fly ? fly.line : this.routes[lane]!, speedMul, waveSpeedMul, walkMul, fly ? 0 : distance, lane);
+    enemy.stretchBox = this.stretchBox; // the board's slow stretch (core/slowStretch.ts); a flyer never slows
     // The boss Flyer lifts off on its own seeded crossing (core/flyRoute.ts): never the road, never through the entrance gate.
     if (def.behavior === 'fly') enemy.takeFlight(flyRouteFor(this.board.map, CELL));
     hook.stats.enemiesSpawned += 1;

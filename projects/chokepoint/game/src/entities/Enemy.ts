@@ -10,6 +10,7 @@ import { controlScale, noteControl, pushable, tickControl } from '../core/contro
 import { bankedLine, firstLine, type FlyRoute } from '../core/flyRoute';
 import { shieldMul } from '../core/shield';
 import { drinkLeg } from '../core/drink';
+import { SLOW_STRETCH_FACTOR, type StretchBox } from '../core/slowStretch';
 import type { LiveBurn } from '../core/burn';
 import type { Tower } from './Tower';
 
@@ -93,6 +94,8 @@ export class Enemy extends Phaser.GameObjects.Image {
   bankClock = -1;
   /** The road's length it spawned on (its `path`); the boss Flyer's flight line replaces it as its route. */
   roadLen = 0;
+  /** The slow stretch's box in board units (core/slowStretch.ts): while its center is inside, it walks at SLOW_STRETCH_FACTOR; undefined on a board without the stretch. */
+  stretchBox?: StretchBox;
   /** The burn on it (Ember): the burning tower's rate and damage multiplier, and the seconds left; left 0: not ablaze. */
   burn: LiveBurn = { dps: 0, mul: 1, acc: 0, left: 0 };
   /** The tower that lit the burn: when the tick kills, its mints pay like a normal kill. */
@@ -170,6 +173,7 @@ export class Enemy extends Phaser.GameObjects.Image {
     this.splitClock = -1;
     this.flyRoute = undefined;
     this.flyLine = undefined;
+    this.stretchBox = undefined; // a recycled slot must not keep the old run's stretch
     this.bankClock = -1;
     this.roadLen = path.length;
     this.setTexture(enemyTexture(def.id));
@@ -242,8 +246,17 @@ export class Enemy extends Phaser.GameObjects.Image {
       this.distance = Math.max(0, this.distance - pushed);
       this.pushLeft -= pushed;
     }
+    // The slow stretch (core/slowStretch.ts): while its center is on the three stretched cells it
+    // walks at 70% of whatever it would walk (after the slow and the haste); a dash or a flight
+    // never slows, and the Dasher's surge and the Blinker's step keep their own formulas.
+    const box = this.stretchBox;
+    let stretchMul = 1;
+    if (box !== undefined && this.flyLine === undefined && !this.def.flies) {
+      const p = this.path.pointAt(this.distance);
+      if (p.x >= box.minX && p.x < box.maxX && p.y >= box.minY && p.y < box.maxY) stretchMul = SLOW_STRETCH_FACTOR;
+    }
     // The slow first, then the haste aura (a 40% slow + 30% haste walks at 0.6 × 1.3 of base).
-    const speed = this.rootLeft > 0 ? 0 : this.speed * (1 - this.slowPct) * (1 + this.hastePct);
+    const speed = this.rootLeft > 0 ? 0 : this.speed * (1 - this.slowPct) * (1 + this.hastePct) * stretchMul;
     switch (this.def.behavior) {
       case 'walk':
         this.distance += speed * dt;

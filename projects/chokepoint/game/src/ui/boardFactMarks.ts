@@ -63,6 +63,11 @@ export function paintBoardFactMark(g: Phaser.GameObjects.Graphics, mark: BoardFa
       g.fillRoundedRect(-9, -3, 6, 6, 2);
       g.fillRoundedRect(3, -3, 6, 6, 2);
       break;
+    case 'slowstretch': // the road's straight, its middle cells in the stretch's own blue
+      road(g, 0, -10, 0, 10);
+      g.fillStyle(PALETTE.ice, 1);
+      g.fillRoundedRect(-2.5, -6, 5, 12, 1.5);
+      break;
     case 'markedcell': // a build cell with a small dot on it
       g.fillRoundedRect(-5, -5, 10, 10, 3);
       g.fillStyle(PALETTE.card, 1);

@@ -9,6 +9,7 @@ import { FEAST_CHAIN_BASE_MS } from '../core/feast';
 import { chokeCells } from '../core/choke';
 import { MARKED_DMG_MUL } from '../core/markedCell';
 import { switchbackFold } from '../core/switchback';
+import { stretchCovered } from '../core/slowStretch';
 import { TIER_ORDER } from '../core/tiers';
 import { CLUMPS_GAP_SEC, DOUBLE_LULL_SEC, DOUBLE_SPEED_MUL, bossId, clumpBoundaries, doubleSplitAt, waveSpeedMul } from '../core/waves';
 import { DraftScene } from '../scenes/DraftScene';
@@ -73,6 +74,14 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
     const mid = { col: (twin.a.col + twin.b.col) / 2, row: (twin.a.row + twin.b.row) / 2 };
     if (g.board.map.kinds[mid.row]![mid.col] !== 'path') return `the twin's midpoint is not road`;
     return null;
+  }],
+  ['board.slowStretch', (g) => {
+    const s = g.board.map.slowStretch;
+    if (!s) return null;
+    if (s.cells.length !== 3) return `the slow stretch has ${s.cells.length} cells, expected 3`;
+    for (const c of s.cells) if (g.board.map.kinds[c.row]![c.col] !== 'path') return `a stretch cell is not road at (${c.col}, ${c.row})`;
+    for (let i = 1; i < s.cells.length; i++) if (Math.abs(s.cells[i]!.col - s.cells[i - 1]!.col) + Math.abs(s.cells[i]!.row - s.cells[i - 1]!.row) !== 1) return `the stretch jumps at (${s.cells[i]!.col}, ${s.cells[i]!.row})`;
+    return stretchCovered(g.board.map, s.cells) ? null : 'the stretch has no build cell on a side of the road';
   }],
   ['board.doubleMark', (g) => {
     const m = g.board.marked;

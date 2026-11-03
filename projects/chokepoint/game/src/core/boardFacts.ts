@@ -12,8 +12,8 @@ import { Rng } from './rng';
  * sibling references. Pure: read once from the live profile, no state.
  */
 
-export type BoardFactMark = 'choke' | 'bend' | 'longway' | 'twochokes' | 'switchback' | 'fargate' | 'fork' | 'loop' | 'cove' | 'twin' | 'markedcell' | 'dblmark';
-export type BoardFactTag = { kind: 'always' } | { kind: 'some' } | { kind: 'tech'; node: string } | { kind: 'someTech'; node: string };
+export type BoardFactMark = 'choke' | 'bend' | 'longway' | 'twochokes' | 'switchback' | 'fargate' | 'fork' | 'loop' | 'cove' | 'twin' | 'slowstretch' | 'markedcell' | 'dblmark';
+export type BoardFactTag = { kind: 'always' } | { kind: 'some' } | { kind: 'seed'; odds: string } | { kind: 'tech'; node: string } | { kind: 'someTech'; node: string };
 export interface BoardFactRow {
   mark: BoardFactMark;
   name: string;
@@ -32,6 +32,7 @@ export const BOARD_FACTS: readonly BoardFactRow[] = [
   { mark: 'loop', name: 'The loop', meaning: 'the road circles the island once; the cells inside cover the most road', tag: { kind: 'some' } },
   { mark: 'cove', name: 'The cove', meaning: "a bay in the island's edge beside a curve; the pocket's cells cover it from both sides", tag: { kind: 'some' } },
   { mark: 'twin', name: 'The twin', meaning: 'a mirror pair of cells on the longest straight', tag: { kind: 'some' } },
+  { mark: 'slowstretch', name: 'The slow stretch', meaning: 'three road cells walked at 70% of speed', tag: { kind: 'seed', odds: '1 in 4' } },
   { mark: 'markedcell', name: 'The marked cell', meaning: 'one build cell that makes its tower stronger', tag: { kind: 'some' } },
   { mark: 'dblmark', name: 'The double mark', meaning: 'a second marked cell, the same mark and the same buff', tag: { kind: 'some' } },
 ];
@@ -58,6 +59,7 @@ export const BOARD_FACT_SEEDS: Partial<Record<BoardFactMark, BoardFactSeed>> = {
   loop: { seed: 7 },
   cove: { seed: 13 },
   twin: { seed: 11 },
+  slowstretch: { seed: 14 },
   markedcell: { seed: 9 },
   dblmark: { seed: 15 },
 };
@@ -69,11 +71,12 @@ export function boardFactMap(mark: BoardFactMark): GameMap | undefined {
   return generateMap(new Rng(s.seed), GRID.short, GRID.long, ROCKS, s.extraBends ?? 0, s.lengthMul ?? 1, 2, s.chokes ?? 1, s.fold ?? false, s.farGate ?? false, s.seed);
 }
 
-/** "always", "some boards", "tech · the node" while its node is owned, the tree's own node name, or "owned" while the profile owns it. */
+/** "always", "some boards", "seed · the odds", "tech · the node" while its node is owned, the tree's own node name, or "owned" while the profile owns it. */
 export function boardFactTag(row: BoardFactRow, purchased: readonly string[]): string {
   const tag = row.tag;
   if (tag.kind === 'always') return 'always';
   if (tag.kind === 'some') return 'some boards';
+  if (tag.kind === 'seed') return `seed · ${tag.odds}`;
   if (tag.kind === 'someTech') return purchased.includes(tag.node) ? `tech · ${techName(tag.node)}` : 'some boards';
   if (purchased.includes(tag.node)) return 'owned';
   return techName(tag.node);
