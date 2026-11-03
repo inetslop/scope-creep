@@ -157,6 +157,15 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the towers: a tower wears its first augment's mark on its barrel (the 16 marks, the same vocabulary; the tier pips untouched) — **tasked as T0469 (M, in the pool, 2026-11-03)**
 - the rest of the board and the references: the bosses' own 8 marks, the Shard and the Splinter wearing the parent's mark smaller, the enemies reference and the codex's tokens matching — parked
 
+### E27 — The road remembers: the leakers come back (active — opened 2026-11-03)
+**Goal:** a leak costs a life and nothing else: the waves are fully decided by the seed and the number, so a run's worst moments pass without a trace; now the run's play shapes the run's next wave — what leaked comes back, one at a time, so holding the road is worth more than a life.
+**When done:** a wave's regular leakers come back in the next wave — one per different type, at most 3, on top of the planned wave (the boss and the split pieces never return; a quiet or boss wave never takes them, so the breather stays a breather); the preview shows them as it shows everything else, the first remembered wave says once what it is, and the deeper memory and the claim's line ride on behind.
+**Breakdown:**
+- the memory's rule: the run's per-type leak ledger, the +1 per different regular leaker folded into the next plan (cap 3, most-leaked first, on top of the planned threat, spawnOnly never; quiet and boss waves drop them) — **tasked as T0473 (M, 2026-11-03)**
+- the teach: a one-time chip under the preview when a remembered wave is first planned, naming what came back — parked (S)
+- the deep memory: a type that leaked in each of the last two waves adds +2 instead of +1 (the cap unchanged) — parked
+- the claim's line: a muted "remembered · N" line on the claim card when the memory fired at least once (the last page's pattern, E12) — parked
+
 ## Enemy queue (non-epic)
 
 New enemies land one at a time: each new-enemy task chains behind the one before it so the enemy system, the wave mix and the art settle between additions.
