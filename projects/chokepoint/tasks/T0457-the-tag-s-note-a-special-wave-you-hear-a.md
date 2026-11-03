@@ -3,12 +3,10 @@ id: T0457
 title: "The tag's note: a special wave you hear at the banner"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-03T00:51:09Z
-claimed_at: 2026-11-03T00:51:46Z
-designer: yoga
 ---
 
 ## Goal
@@ -26,3 +24,40 @@ A special wave is heard before it happens, on every platform: the march tags alr
 - [ ] A quiet wave, a plain untagged wave and a boss wave play no note.
 - [ ] With the pause's Sound toggle off, the note is silent.
 - [ ] No new HUD element, chip or text; the banner, its chip and T0449's haptic are unchanged.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/audio/Sfx.ts` - add `tagNote()` method after `comboChime()` (before `deny()`, ~line 324)
+- edit `src/systems/WaveSystem.ts` - add `Sfx` type import, `sfx` field + constructor param, one call in `start()` next to the T0449 haptic line
+- edit `src/scenes/GameScene.ts` - one line: pass `sfx` to the `WaveSystem` constructor (line 149)
+### Interfaces
+```ts
+// Sfx.ts, inserted after the comboChime() method (exact code):
+/** A march wave's banner lands: a quiet two-note fall, A4 then G4 (440 then 392 Hz), 70 ms sines 70 ms apart, the near-miss note's quiet class. */
+tagNote(): void {
+  this.tone(440, 0.07, 'sine', 0.09);
+  this.tone(392, 0.07, 'sine', 0.09, undefined, 0.07);
+}
+```
+### Steps
+1. `src/audio/Sfx.ts`: insert the `tagNote()` method from Interfaces between `comboChime()` (ends line 323) and `deny()` (line 325). Do not touch `comboChime()` or `deny()`.
+2. `src/systems/WaveSystem.ts`:
+   a. Add as the first import line: `import type { Sfx } from '../audio/Sfx';`
+   b. Add field after `private livesAtStart = 0;` (line 28): `private readonly sfx: Sfx | undefined;`
+   c. Constructor becomes: `constructor(run: RunState, enemies: EnemySystem, farGateDistance = 0, hasFork = false, sfx: Sfx | undefined)` and assign `this.sfx = sfx;` as its last assignment.
+   d. In `start()`, add after the `tagHaptic()` line (line 65):
+   ```ts
+   // The five march tags play the tag's note (Sfx.tagNote) as the banner lands, T0449's pair: the quiet breather and the boss's own horn (T0268) never do.
+   if (this.plan && this.plan.tags.some((t) => ['tight', 'rush', 'short cut', 'double', 'clums'.slice(0, 5) && 'clumps'].includes(t))) this.sfx?.tagNote();
+   ```
+   (replace the broken literal with exactly `['tight', 'rush', 'short cut', 'double', 'clumps']` — five strings, `t` is `string`, `Array<string>.includes(t)` typechecks.)
+3. `src/scenes/GameScene.ts` line 149: `this.waves = new WaveSystem(this.run, this.enemies, farGateDistance(map), map.fork !== undefined, sfx);` (`sfx` is already in scope from `getSfx(this)` at line 98.)
+### Pitfalls
+- Do not reuse T0449's `t !== 'quiet'` test: it also matches the boss tag `['boss']` and would stack the note on the boss arrival horn (T0268). The five-tag list is exact.
+- Do not edit or gate the `tagHaptic()` line; the note is a separate line so a quiet wave still buzzes-but-stays-silent as T0449 intends.
+- `tone()` early-returns when `this.muted` — the pause Sound toggle is covered, no extra mute handling.
+- Once per wave: `start()` runs once per wave; no per-frame call, no pooling, no listeners, `dt` untouched.
+- T0403 (in progress) also lists `src/systems/WaveSystem.ts`; the runner serializes same-file work from this Files list — no DEPENDS_ON, this task uses nothing T0403 adds.
+### Tests
+- none
