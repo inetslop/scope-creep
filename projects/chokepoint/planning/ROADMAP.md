@@ -122,7 +122,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the clumps: the sixth tag, clumps of 2–3 with 4 s gaps — **done as T0448**
 - the tag's haptic: one 30 ms buzz on mobile at the banner (never quiet) — **done as T0449**
 - the next tag, whose answer is the move: **tasked as T0461 (M, in the pool, 2026-11-03)** — the halt: the walkers stop 3 s at the middle of their own road, the middle becomes the wave's choke, and the move re-points an old tower at it
-- the double's second front: one quiet note when the lull ends and the faster front starts — **tasked as T0468 (S, in the pool)**
+- the double's second front: one quiet note when the lull ends and the faster front starts — **done as T0468**
 
 ### E23 — The draft: nodes for how the run's cards come (active — fully tasked 2026-11-03, closing on the pool's landings)
 **Goal:** the tech tree's "The draft" branch (the tech screen's existing 2nd row — the Slot II and fourth-card nodes in `content/tech/draft.ts`) covers the hand's slots and cards, but not how the offer comes: three more nodes on that branch let between-run coins buy how the run's cards come.
@@ -141,13 +141,13 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the harvest: the reserve's third entry, 50 gold, the next wave's kills pay 2× gold (the gold pop reads the doubled number, the last stand's look) — parked
 - the claim's line: the claim card's muted "reserve" line naming the heavy cards bought (no line when none was bought) — **tasked as T0472 (S, 2026-11-03, waits on T0463)**
 
-### E25 — The kill: a tech branch for how a kill pays (active — opened 2026-11-03)
+### E25 — The kill: a tech branch for how a kill pays (active — fully tasked 2026-11-03, closing on the pool's landings)
 **Goal:** the tech tree has covered run start, board, pool, claim, wave, tower, exit and the draft — but not the kill itself: a branch on the tech screen's next row lets between-run coins buy how a kill pays.
 **When done:** the tree's "The kill" branch has three nodes, each bought once and on for every run after: The bounty (every kill pays +1 gold, doubled by the quiet ×2 and the last stand ×2), The window (the kill-chain window +0.5 s, 1.5 s → 2.0 s, additive with Feast's +0.4 s per copy) and The milestone (the chain's milestone pay ×2: the 5th and 10th kill of a chain pay +4 and +8).
 **Breakdown:**
 - the branch and its first node, The bounty: the tech screen's next row (after The exit) plus a 30-coin node, every kill +1 gold on the bounty before the quiet and last-stand ×2 — **done as T0466**
-- The window: 85 coins by the depth rule, the kill-chain window +0.5 s — **tasked as T0470 (M, in the pool, 2026-11-03)**
-- The milestone: 155 coins by the depth rule, the chain's milestone pay ×2 (the 5th and 10th kill of a chain pay +4 and +8) — parked
+- The window: 85 coins by the depth rule, the kill-chain window +0.5 s — **done as T0470**
+- The milestone: 155 coins by the depth rule, the chain's milestone pay ×2 (the 5th and 10th kill of a chain pay +4 and +8) — **tasked as T0475 (M, 2026-11-03)**
 
 ### E26 — The patterns: the board reads without color (active — opened 2026-11-03)
 **Goal:** shape and color carry meaning (Pillar 3); a player who can't trust color can't read the board: a "Patterns" toggle beside the pause screen's Sound row (off by default, remembered) paints a small muted-ink mark on every enemy token and every tower — the mark's shape distinct per enemy type and per first augment — so the board reads by shape alone.
@@ -191,6 +191,6 @@ Ideas that may become epics or tasks of one.
 - More augments with new attacks and changes — the IDEAS backlog holds the list
 - Enemies with new behaviors — the enemy queue holds the live list
 - Bosses every 10 waves, each with its own mechanic — the wave-10 to wave-90 bosses all landed; the Fracture (T0435, the wave-100 boss, splits when it dies) is in the pool, the Tide (wave 110, IDEAS) parked behind it
-- Board modifiers — the slow stretch (T0455) and the long straight (T0453) are in the pool
+- Board modifiers — the long straight (T0453) is in the pool; the slow stretch landed as T0455
 - The gauntlet: a fourth mode off the menu — exactly 10 waves, each the boss of its slot (the wave-10 to wave-100 ladder), the game's first win and its own claim line; opened once the run's files settle (a mode flag is the run's core; T0403's storm is ahead in the pool)
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
