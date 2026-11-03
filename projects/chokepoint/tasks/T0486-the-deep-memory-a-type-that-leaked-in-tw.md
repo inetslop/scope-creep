@@ -3,11 +3,13 @@ id: T0486
 title: "The deep memory: a type that leaked in two waves in a row comes back doubled"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: [T0473]
 attempts: 0
 created: 2026-11-03T10:07:19Z
+claimed_at: 2026-11-03T10:30:02Z
 epic: E27
+designer: desktop
 ---
 
 ## Goal
