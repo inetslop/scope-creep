@@ -3,11 +3,13 @@ id: T0470
 title: "The window: the kill branch's second node, the chain's window +0.5 s"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T04:20:47Z
+claimed_at: 2026-11-03T05:01:15Z
 epic: E25
+designer: desktop
 ---
 
 ## Goal
