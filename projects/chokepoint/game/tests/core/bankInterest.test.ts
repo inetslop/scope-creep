@@ -27,4 +27,14 @@ describe('bankInterest', () => {
     expect(bankInterest(100, 20)).toBe(5); // the cap never binds below 200
     expect(bankInterest(200, 20)).toBe(10);
   });
+
+  it('takes its rate from the argument: with The high rate (8), +8 at 100 where +5 used to pay, the old cap binds at 200', () => {
+    expect(bankInterest(100, 10, 8)).toBe(8);
+    expect(bankInterest(101, 10, 8)).toBe(8); // floor, not round
+    expect(bankInterest(13, 10, 8)).toBe(1); // the +1-up floor
+    expect(bankInterest(12, 10, 8)).toBe(0); // 96 cents: nothing, not one
+    expect(bankInterest(200, 10, 8)).toBe(10); // the old cap binds
+    expect(bankInterest(200, 20, 8)).toBe(16);
+    expect(bankInterest(250, 20, 8)).toBe(20); // the deep cap binds
+  });
 });

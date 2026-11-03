@@ -4,7 +4,7 @@ import { PALETTE } from '../content/palette';
 import type { AugmentCopy } from '../content/types';
 import { draftPool, rollOffer } from '../core/augments';
 import { bankInterest } from '../core/bankInterest';
-import { bankPayCap } from '../core/tech';
+import { bankPayCap, bankRate } from '../core/tech';
 import { farGateSplit } from '../core/farGate';
 import type { Point } from '../core/path';
 import type { RunState } from '../core/run';
@@ -122,7 +122,7 @@ export class RunFlow {
   /** The bank's pay at the wave start (core/bankInterest): 5% of the run's gold, at the bank's cap (core/tech's bankPayCap), exactly once
    *  per wave — both starts pass it here. Run gold, never coins: the tally and the claim recipe never see it. */
   private bankPay(): void {
-    const pay = bankInterest(this.run.gold, bankPayCap(this.run.techOwned));
+    const pay = bankInterest(this.run.gold, bankPayCap(this.run.techOwned), bankRate(this.run.techOwned));
     if (pay <= 0) return;
     this.run.gold += pay; // like tollLeak: run gold only, goldEarned stays "kill gold + wave bonuses"
     this.scene.registry.set('bankPay', pay); // the "+N" pop at the stats card's gold number (ui/hud/StatsCard.ts)

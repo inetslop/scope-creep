@@ -8,7 +8,7 @@ import { EXIT_NODES } from '../../src/content/tech/exit';
 import { KILL_NODES } from '../../src/content/tech/kill';
 import { BANK_NODES } from '../../src/content/tech/bank';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { bankPayCap, blockLeakCost, boardBends, boardChokes, boardFarGate, boardLengthMul, buyBankNode, buyBoardNode, buyClaimNode, buyExitNode, buyKillNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, chainWindowBonus, killBounty, leakWarnLead, milestoneMul, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES, waveWalkFactor } from '../../src/core/tech';
+import { bankPayCap, bankRate, blockLeakCost, boardBends, boardChokes, boardFarGate, boardLengthMul, buyBankNode, buyBoardNode, buyClaimNode, buyExitNode, buyKillNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, chainWindowBonus, killBounty, leakWarnLead, milestoneMul, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES, waveWalkFactor } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -424,11 +424,13 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'long-watch', 'bounty']);
   });
 
-  it("the bank row is one node, The deep vault at 30: the bank's pay capped at +20, not +10", () => {
-    expect(BANK_NODES.map((n) => [n.id, n.name, n.line, n.price, n.payCap])).toEqual([
-      ['deep-vault', 'The deep vault', "the bank's pay is capped at +20, not +10", 30, 20],
+  it("the bank row is two nodes: The deep vault at 30 (the pay capped at +20, not +10) and The high rate at 85 (the rate 8%, not 5%)", () => {
+    expect(BANK_NODES.map((n) => [n.id, n.name, n.line, n.price, n.payCap, n.rate])).toEqual([
+      ['deep-vault', 'The deep vault', "the bank's pay is capped at +20, not +10", 30, 20, undefined],
+      ['high-rate', 'The high rate', "the bank's rate is 8%, not 5%", 85, undefined, 8],
     ]);
     expect(nodeCost(BANK_NODES, 'deep-vault')).toBe(30);
+    expect(nodeCost(BANK_NODES, 'high-rate')).toBe(85);
   });
 
   it('bankPayCap is 10 with no, other-branch or unknown ids, 20 while The deep vault is owned; duplicates count once', () => {
@@ -436,6 +438,13 @@ describe('tech', () => {
     expect(bankPayCap(['gold-1', 'bounty', 'nope'])).toBe(10);
     expect(bankPayCap(['deep-vault'])).toBe(20);
     expect(bankPayCap(['deep-vault', 'deep-vault', 'bounty'])).toBe(20);
+  });
+
+  it('bankRate is 5 with no, other-branch or unknown ids, 8 while The high rate is owned; duplicates count once', () => {
+    expect(bankRate([])).toBe(5);
+    expect(bankRate(['gold-1', 'deep-vault', 'nope'])).toBe(5);
+    expect(bankRate(['high-rate'])).toBe(8);
+    expect(bankRate(['high-rate', 'high-rate', 'deep-vault'])).toBe(8);
   });
 
   it('a bank node buys only when it is known, unowned and affordable', () => {
@@ -450,6 +459,19 @@ describe('tech', () => {
     expect(buyBankNode(store, 'deep-vault')).toBe(true);
     expect(loadProfile(store).coins).toBe(30);
     expect(loadProfile(store).purchased).toEqual(['bounty', 'deep-vault']);
+  });
+
+  it('The high rate buys at 85 with deep-vault owned; 84 refuses', () => {
+    const broke = withCoins(84, ['deep-vault']);
+    expect(buyBankNode(broke, 'high-rate')).toBe(false); // unaffordable: 84 < 85
+    expect(loadProfile(broke).coins).toBe(84);
+    const owned = withCoins(200, ['deep-vault', 'high-rate']);
+    expect(buyBankNode(owned, 'high-rate')).toBe(false); // already owned
+    expect(loadProfile(owned).coins).toBe(200);
+    const store = withCoins(200, ['deep-vault']);
+    expect(buyBankNode(store, 'high-rate')).toBe(true);
+    expect(loadProfile(store).coins).toBe(115); // 85, its depth-2 price
+    expect(loadProfile(store).purchased).toEqual(['deep-vault', 'high-rate']);
   });
 
   it('nodePrice rounds base × depth^1.5 to the nearest multiple of 5 (halves up)', () => {

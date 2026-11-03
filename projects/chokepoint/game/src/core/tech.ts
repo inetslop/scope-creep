@@ -215,6 +215,20 @@ export function bankPayCap(owned: readonly string[]): number {
   return cap;
 }
 
+/** The bank's rate for a run: 5, or the biggest owned node's rate (The high rate: 8); each node counts once, unknown ids count for nothing. */
+export function bankRate(owned: readonly string[]): number {
+  let rate = 5;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = BANK_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    if (node.rate !== undefined && node.rate > rate) rate = node.rate;
+  }
+  return rate;
+}
+
 /** A branch's first-node price scaled by depth^1.5 and rounded to the nearest multiple of 5 (halves up). */
 export function nodePrice(base: number, depth: number): number {
   return Math.round((base * Math.pow(depth, 1.5)) / 5) * 5;

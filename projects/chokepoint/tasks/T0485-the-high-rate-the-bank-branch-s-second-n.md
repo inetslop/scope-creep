@@ -4,11 +4,12 @@ title: "The high rate: the bank branch's second node, the rate 5% to 8%"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T10:07:19Z
 claimed_at: 2026-11-03T10:35:57Z
+finished_at: 2026-11-03T11:03:11Z
 epic: E29
 ---
 
@@ -68,3 +69,21 @@ export function bankInterest(gold: number, cap: number = 10, rate: number = 5): 
 ### Tests
 - `tests/core/tech.test.ts`: bank row row/price/buy refusal + `bankRate` owned/unowned (as above).
 - `tests/core/bankInterest.test.ts`: pay at 8% under caps 10 and 20.
+
+## Result (attempt 1, cachyos-x8664)
+
+Added "The high rate" (85 coins) as the bank branch's second node — `rate?: number` on `BankNode` and the node entry in `src/content/tech/bank.ts`, `bankRate()` beside `bankPayCap()` in `src/core/tech.ts` (8 with the node, 5 without), a default-5 `rate` parameter on `bankInterest` in `src/core/bankInterest.ts`, and the live rate passed from `RunFlow.bankPay` and `StatsCard.update` (one line + import each). Extended `tests/core/tech.test.ts` (two-node row, `nodeCost` 85, high-rate buy/refusal, `bankRate` owned/unowned) and `tests/core/bankInterest.test.ts` (8% pay under caps 10 and 20, including the +1-up floor and floor-not-round); unowned runs stay byte-identical since `bankRate([]) = 5`.
+
+- Self-review: APPROVE
+- Time: 27.2 min
+
+```
+projects/chokepoint/game/src/content/tech/bank.ts  |  3 +++
+ projects/chokepoint/game/src/core/bankInterest.ts  |  6 ++---
+ projects/chokepoint/game/src/core/tech.ts          | 14 ++++++++++
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  4 +--
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts   |  4 +--
+ .../game/tests/core/bankInterest.test.ts           | 10 ++++++++
+ projects/chokepoint/game/tests/core/tech.test.ts   | 30 +++++++++++++++++++---
+ 7 files changed, 60 insertions(+), 11 deletions(-)
+```
