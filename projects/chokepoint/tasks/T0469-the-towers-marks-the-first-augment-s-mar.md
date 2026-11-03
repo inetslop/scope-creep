@@ -3,13 +3,11 @@ id: T0469
 title: "The towers' marks: the first augment's mark on every barrel"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-03T03:56:29Z
-claimed_at: 2026-11-03T04:16:34Z
 epic: E26
-designer: cachyos-x8664
 ---
 
 ## Goal
@@ -32,3 +30,55 @@ The Patterns toggle (T0465) made the enemy tokens read by shape; this slice give
 - [ ] The mark reads at the default zoom on all 16 barrel colors at the token scale, on 412x915 and 1280x720, and stays on the barrel through the placement drop-in and the fire kick.
 - [ ] A unit test pins the tower marks' registry: one entry per first augment, 16 entries, all shapes distinct.
 - [ ] No new HUD element, input, profile field or sound; the pause's Patterns row is unchanged from T0465.
+
+## Design (architect, cachyos-x8664)
+
+### Files
+
+- `src/art/barrelMarks.ts` (NEW) — the barrel-marks concern:
+  - `BarrelMarkShape` — a union of the 16 shape ids: `'bar' | 'dot' | 'chevron' | 'x' | 'two-bars' | 'triangle' | 'square' | 'diamond' | 'ring' | 'arc' | 'cross' | 'crescent' | 'two-dots' | 'zigzag' | 'hollow-square' | 'bar-and-dot'`.
+  - `BARREL_MARKS: Record<string, BarrelMarkShape>` — keyed by first augment id, one entry per first augment (16), each a distinct shape (no two share). Exported for the test.
+  - `paintBarrelMark(ctx, firstId, cx, cy, r)` — looks up `BARREL_MARKS[firstId]` (no-op if absent), else draws that shape centered at (cx, cy) in `PALETTE.muted` ink.
+  - `paintBarrelMarkShape(ctx, shape, cx, cy, r)` — a switch on the shape id with all 16 snippets (the 10 enemy shapes re-implemented from `paintTypeMark` + 6 new: cross, crescent, two-dots, zigzag, hollow-square, bar-and-dot).
+- `src/art/entities.ts` — in `paintEntityTextures` (the boot pass), add a loop over `AUGMENTS` painting each first augment's barrel-mark texture (keyed by `a.id`), calling `paintBarrelMark` (imported from `art/barrelMarks.ts`).
+- `src/art/textures.ts` — add `barrelMarkTexture(id: string): string` → `tower:barrel-mark-${id}` (mirrors `markTexture`).
+- `src/entities/Tower.ts` — the per-tower barrel mark: a `barrelMark` field (a child of `this.gun`); created in `buildGun` at gun-space (0, −barrelLength/2) keyed by `spec.firstId`, hidden initially; a `preUpdate()` that sets its visibility from `this.scene.registry.get('patterns')`.
+- `tests/towerMarks.test.ts` (NEW) — pins `BARREL_MARKS`.
+
+### Interfaces
+
+- `BarrelMarkShape` — `art/barrelMarks.ts`. The 16 shape ids (union type).
+- `BARREL_MARKS: Record<string, BarrelMarkShape>` — `art/barrelMarks.ts`. Maps each first augment id to one of the 16 shapes; 16 entries, all distinct.
+- `paintBarrelMark(ctx, firstId, cx, cy, r)` — `art/barrelMarks.ts`. Draws `firstId`'s mark centered at (cx, cy), ~ a quarter of the barrel face's width, in `PALETTE.muted` ink; no-op if `firstId` has no entry.
+- `barrelMarkTexture(id: string): string` — `art/textures.ts`. The barrel-mark texture key (`tower:barrel-mark-${id}`), painted at boot per first augment.
+- `Tower.preUpdate(): void` — `entities/Tower.ts`. Per frame, shows the barrel mark iff `this.scene.registry.get('patterns') === true`.
+
+### Steps
+
+1. `art/textures.ts`: add `export const barrelMarkTexture = (id: string): string => `tower:barrel-mark-${id}`;` next to `markTexture`.
+2. `art/barrelMarks.ts` (new):
+   - `export type BarrelMarkShape = 'bar' | 'dot' | 'chevron' | 'x' | 'two-bars' | 'triangle' | 'square' | 'diamond' | 'ring' | 'arc' | 'cross' | 'crescent' | 'two-dots' | 'zigzag' | 'hollow-square' | 'bar-and-dot';`
+   - `export const BARREL_MARKS: Record<string, BarrelMarkShape> = { /* 16 entries, one per first augment, all distinct */ };`
+   - `export function paintBarrelMark(ctx: CanvasRenderingContext2D, firstId: string, cx: number, cy: number, r: number): void` — `const shape = BARREL_MARKS[firstId]; if (!shape) return; paintBarrelMarkShape(ctx, shape, cx, cy, r);`
+   - `function paintBarrelMarkShape(ctx, shape, cx, cy, r): void` — a switch on `shape` (16 cases), all in `rgba(PALETTE.muted, 1)`; the 10 enemy shapes re-implemented from `paintTypeMark` (in `art/entities.ts`) + the 6 new.
+3. `art/entities.ts` `paintEntityTextures`: add the boot-time loop painting each first augment's barrel-mark texture (keyed by `a.id`), sized ~ a quarter of the barrel face's width, calling `paintBarrelMark`.
+4. `entities/Tower.ts`:
+   - `private barrelMark?: Phaser.GameObjects.Image;`
+   - `buildGun`: after the barrels (when `count > 0`), `this.barrelMark = artScale(this.scene.add.image(0, -this.barrelLength / 2, barrelMarkTexture(spec.firstId))); this.barrelMark.setVisible(false); this.gun.add(this.barrelMark);`
+   - `preUpdate(): void { this.barrelMark?.setVisible(this.scene.registry.get('patterns') === true); }`
+5. `tests/towerMarks.test.ts` (new): assert `BARREL_MARKS` has 16 entries, one per first augment, all shapes distinct.
+
+### Pitfalls
+
+- The mark is a child of `this.gun` (so it rotates with the barrels and stays on the barrel's face); never a child of the tower (it would stay put as the barrels turn). It is recreated in `buildGun` (called on every `refresh()`), keyed by `spec.firstId`, so a first-augment swap swaps the texture.
+- The mark is shown/hidden per frame from `this.scene.registry.get('patterns')` (the pause card's toggle), NOT from board input (T0038) — mirror the enemy mark's `setVisible(this.scene.registry.get('patterns') === true)` (Enemy.ts line 399).
+- The mark is ~ a quarter of the barrel face's width, centered on the barrel's face (gun-space (0, −barrelLength/2)), so it is never on the plinth/pips (≈9 board units above the plinth's center vs the pips at +22 below) and never tints the barrel (a separate flat muted texture, never painted into the barrel image).
+- `BARREL_MARKS` has exactly one entry per first augment (16), all shapes distinct: the 10 enemy shapes (bar, dot, chevron, x, two-bars, triangle, square, diamond, ring, arc) + 6 new (cross, crescent, two-dots, zigzag, hollow-square, bar-and-dot). No two first augments share a shape; no shape is a tall rounded rect (the barrel's own silhouette — the T0465 rule).
+- The 16 snippets live in `paintBarrelMarkShape` (`art/barrelMarks.ts`); the 10 enemy shapes are re-implemented there (`paintTypeMark` in `art/entities.ts` keeps its own — not refactored, that's T0465's concern).
+- `r` in `paintBarrelMark` is the body radius (TOWER_BODY·CELL); the mark's size ~ r/7 (a quarter of the barrel face's width ≈ 0.6r). Paint the texture at `ART` (3×); show it with `artScale` (never a bare `setScale`).
+- `preUpdate` is a new method on `Tower` (it currently has none); `Tower extends Phaser.GameObjects.Image` and is added via `scene.add.existing`, so Phaser calls `preUpdate` every frame.
+
+### Tests
+
+- `tests/towerMarks.test.ts` (new): import `BARREL_MARKS` (`art/barrelMarks.ts`) and `AUGMENTS` (`content/augments`); assert: (a) `Object.keys(BARREL_MARKS).length === 16` (one per first augment); (b) for each first augment `AUGMENTS.filter(a => a.first.kind !== 'none')`, `BARREL_MARKS[a.id]` is defined; (c) `new Set(Object.values(BARREL_MARKS)).size === 16` (all shapes distinct).
+- `npm run check` (typecheck + lint + unit tests) and `npm run smoke` must pass.
