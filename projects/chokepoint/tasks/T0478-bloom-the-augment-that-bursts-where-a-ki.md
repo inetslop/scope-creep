@@ -3,11 +3,13 @@ id: T0478
 title: "Bloom: the augment that bursts where a kill lands"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T07:13:15Z
+claimed_at: 2026-11-03T08:49:44Z
 design_attempts: 1
+designer: cachyos-x8664
 ---
 
 ## Goal
