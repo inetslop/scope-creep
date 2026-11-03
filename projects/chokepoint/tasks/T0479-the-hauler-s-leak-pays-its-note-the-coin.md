@@ -1,12 +1,14 @@
 ---
 id: T0479
 title: "The Hauler's leak pays its note: the coin blip when its 5 gold is taken"
+assignee: yoga
 size: S
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T07:13:15Z
+claimed_at: 2026-11-03T07:38:02Z
 ---
 
 ## Goal
