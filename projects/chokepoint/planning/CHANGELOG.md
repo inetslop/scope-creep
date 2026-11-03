@@ -310,3 +310,4 @@ the PO reads this instead of the code.
 - T0446 Blind: the level whose run has no wave preview (cachyos-x8664, 2026-11-02): Added the sixth level "Blind" to the level set (size M, attempt 1).
 - T0449 The tag's haptic: a special wave you feel before it happens (yoga, 2026-11-02): T0449: a tagged wave's haptic.
 - T0448 The clumps: the wave that walks in clumps (inet-racing, 2026-11-03): Added the sixth wave tag "clumps": from wave 26 every 11th non-quiet/tight/rush/short-cut/double/boss wave (26, 59, 103, …) walks in clumps of 2 and 3 with a 4 s simulation-time gap between clumps (`isClumpsWave`, `CLUMP
+- T0457 The tag's note: a special wave you hear at the banner (yoga, 2026-11-03): A march wave (tight, rush, short cut, double, clumps) now plays one quiet falling note — A4 (440 Hz) then G4 (392 Hz), 70 ms sines, 70 ms apart, volume 0.09 — at the wave banner's moment, next to T0449's haptic buzz, so 
