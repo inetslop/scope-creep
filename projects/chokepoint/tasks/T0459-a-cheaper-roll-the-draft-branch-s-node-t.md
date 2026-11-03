@@ -3,11 +3,13 @@ id: T0459
 title: "A cheaper roll: the draft branch's node that starts the reroll 25 lower"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T01:27:12Z
+claimed_at: 2026-11-03T01:48:10Z
 epic: E23
+designer: cachyos-x8664
 ---
 
 ## Goal
