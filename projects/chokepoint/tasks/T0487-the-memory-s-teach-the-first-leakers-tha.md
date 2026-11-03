@@ -3,11 +3,13 @@ id: T0487
 title: "The memory's teach: the first leakers that come back say why"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0473]
 attempts: 0
 created: 2026-11-03T10:07:19Z
+claimed_at: 2026-11-03T10:08:03Z
 epic: E27
+designer: yoga
 ---
 
 ## Goal
