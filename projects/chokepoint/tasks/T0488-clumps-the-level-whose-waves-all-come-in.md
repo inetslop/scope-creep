@@ -3,11 +3,13 @@ id: T0488
 title: "Clumps: the level whose waves all come in clumps"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T10:58:13Z
+claimed_at: 2026-11-03T11:18:20Z
 epic: E21
+designer: desktop
 ---
 
 ## Goal
