@@ -19,4 +19,12 @@ describe('bankInterest', () => {
     expect(bankInterest(500)).toBe(10);
     expect(bankInterest(10000)).toBe(10);
   });
+
+  it('takes its cap from the argument: with The deep vault (20), +15 at 300, +20 at 400 and past, unchanged below the old cap', () => {
+    expect(bankInterest(300, 20)).toBe(15);
+    expect(bankInterest(400, 20)).toBe(20);
+    expect(bankInterest(500, 20)).toBe(20);
+    expect(bankInterest(100, 20)).toBe(5); // the cap never binds below 200
+    expect(bankInterest(200, 20)).toBe(10);
+  });
 });

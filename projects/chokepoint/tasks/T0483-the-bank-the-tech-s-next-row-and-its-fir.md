@@ -4,11 +4,12 @@ title: "The bank: the tech's next row and its first node, The deep vault"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T08:53:31Z
 claimed_at: 2026-11-03T09:33:46Z
+finished_at: 2026-11-03T09:45:32Z
 epic: E29
 ---
 
@@ -83,3 +84,22 @@ export function bankInterest(gold: number, cap: number = 10): number; // body: M
 ### Tests
 - `tests/core/tech.test.ts`: import `BANK_NODES` (from `../../src/content/tech/bank`) plus `bankPayCap, buyBankNode` into the `../core/tech` import. Add after the kill buy test (~line 424): (a) row shape — `BANK_NODES.map((n) => [n.id, n.name, n.line, n.price, n.payCap])` toEqual `[['deep-vault', 'The deep vault', "the bank's pay is capped at +20, not +10", 30, 20]]` and `nodeCost(BANK_NODES, 'deep-vault')` toBe 30; (b) `bankPayCap` — 10 for `[]`, `['gold-1', 'bounty', 'nope']`; 20 for `['deep-vault']` and `['deep-vault', 'deep-vault', 'bounty']`; (c) buy — `buyBankNode(withCoins(60), 'nope')` false; `withCoins(29)` refuses and stays 29; `withCoins(60, ['deep-vault'])` refuses and stays 60; `withCoins(60, ['bounty'])` buys, leaves 30 coins, purchased `['bounty', 'deep-vault']`. Also append `expect(nodeCost(BANK_NODES, 'deep-vault')).toBe(30);` to the nodeCost test (after the KILL_NODES line, ~446) and `...BANK_NODES` to both spreads in the nodeInReach test (~462-463).
 - `tests/core/bankInterest.test.ts`: add a test — with cap 20: `bankInterest(300, 20)` 15, `bankInterest(400, 20)` 20, `bankInterest(500, 20)` 20, and unchanged below the old cap: `bankInterest(100, 20)` 5, `bankInterest(200, 20)` 10.
+
+## Result (attempt 1, desktop)
+
+Added the tech tree's tenth branch, "The bank" (src/content/tech/bank.ts): one node, The deep vault at 30 coins, that raises the bank's pay cap from +10 to +20 in every run after the buy. The new read bankPayCap() in src/core/tech.ts feeds both bank pays — RunFlow.bankPay() and the stats card's "bank +N" line — and bankInterest() now takes a cap parameter defaulting to today's 10, so unowned runs are byte-identical. The TechScene shows the new row at the end of the branch list, buys through a new buyBankNode, and the menu's Tech dot lights via nodeInReach; unit tests cover the row, the price, the cap read and the buy refusal, and check + smoke are green. Note: T0431's one-time teach actually reads "bank pays 5% at wave start · up to +10" (it names the cap, contrary to the task's description) and was left untouched per the explicit instruction — a possible one-line follow-up.
+
+- Self-review: APPROVE
+- Time: 11.8 min
+
+```
+projects/chokepoint/game/src/content/tech/bank.ts  | 13 ++++++++
+ projects/chokepoint/game/src/core/bankInterest.ts  |  6 ++--
+ projects/chokepoint/game/src/core/tech.ts          | 38 +++++++++++++++++++++-
+ projects/chokepoint/game/src/scenes/TechScene.ts   | 21 +++++++-----
+ projects/chokepoint/game/src/systems/RunFlow.ts    |  5 +--
+ projects/chokepoint/game/src/ui/hud/StatsCard.ts   |  3 +-
+ .../game/tests/core/bankInterest.test.ts           |  8 +++++
+ projects/chokepoint/game/tests/core/tech.test.ts   | 36 ++++++++++++++++++--
+ 8 files changed, 112 insertions(+), 18 deletions(-)
+```

@@ -6,8 +6,9 @@ import { WAVE_NODES } from '../../src/content/tech/wave';
 import { TOWER_NODES } from '../../src/content/tech/tower';
 import { EXIT_NODES } from '../../src/content/tech/exit';
 import { KILL_NODES } from '../../src/content/tech/kill';
+import { BANK_NODES } from '../../src/content/tech/bank';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { blockLeakCost, boardBends, boardChokes, boardFarGate, boardLengthMul, buyBoardNode, buyClaimNode, buyExitNode, buyKillNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, chainWindowBonus, killBounty, leakWarnLead, milestoneMul, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES, waveWalkFactor } from '../../src/core/tech';
+import { bankPayCap, blockLeakCost, boardBends, boardChokes, boardFarGate, boardLengthMul, buyBankNode, buyBoardNode, buyClaimNode, buyExitNode, buyKillNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, chainWindowBonus, killBounty, leakWarnLead, milestoneMul, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES, waveWalkFactor } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -423,6 +424,34 @@ describe('tech', () => {
     expect(loadProfile(store).purchased).toEqual(['gold-1', 'long-watch', 'bounty']);
   });
 
+  it("the bank row is one node, The deep vault at 30: the bank's pay capped at +20, not +10", () => {
+    expect(BANK_NODES.map((n) => [n.id, n.name, n.line, n.price, n.payCap])).toEqual([
+      ['deep-vault', 'The deep vault', "the bank's pay is capped at +20, not +10", 30, 20],
+    ]);
+    expect(nodeCost(BANK_NODES, 'deep-vault')).toBe(30);
+  });
+
+  it('bankPayCap is 10 with no, other-branch or unknown ids, 20 while The deep vault is owned; duplicates count once', () => {
+    expect(bankPayCap([])).toBe(10);
+    expect(bankPayCap(['gold-1', 'bounty', 'nope'])).toBe(10);
+    expect(bankPayCap(['deep-vault'])).toBe(20);
+    expect(bankPayCap(['deep-vault', 'deep-vault', 'bounty'])).toBe(20);
+  });
+
+  it('a bank node buys only when it is known, unowned and affordable', () => {
+    expect(buyBankNode(withCoins(60), 'nope')).toBe(false);
+    const broke = withCoins(29);
+    expect(buyBankNode(broke, 'deep-vault')).toBe(false); // unaffordable: 29 < 30
+    expect(loadProfile(broke).coins).toBe(29);
+    const owned = withCoins(60, ['deep-vault']);
+    expect(buyBankNode(owned, 'deep-vault')).toBe(false); // already owned
+    expect(loadProfile(owned).coins).toBe(60);
+    const store = withCoins(60, ['bounty']);
+    expect(buyBankNode(store, 'deep-vault')).toBe(true);
+    expect(loadProfile(store).coins).toBe(30);
+    expect(loadProfile(store).purchased).toEqual(['bounty', 'deep-vault']);
+  });
+
   it('nodePrice rounds base × depth^1.5 to the nearest multiple of 5 (halves up)', () => {
     expect(nodePrice(10, 1)).toBe(10);
     expect(nodePrice(10, 2)).toBe(30);
@@ -444,6 +473,7 @@ describe('tech', () => {
     expect(nodeCost(TOWER_NODES, 'soft-sell')).toBe(30); // the tower branch's first node, at depth one
     expect(nodeCost(EXIT_NODES, 'one-life-block')).toBe(85); // 30 at the exit branch's depth 2
     expect(nodeCost(KILL_NODES, 'bounty')).toBe(30); // the kill branch's first node, at depth one
+    expect(nodeCost(BANK_NODES, 'deep-vault')).toBe(30); // the bank branch's first node, at depth one
   });
 
   it('a later node buys at its depth price, deducted from the coins', () => {
@@ -459,8 +489,8 @@ describe('tech', () => {
     expect(nodeInReach([], 0)).toBe(false);
     expect(nodeInReach([], 5)).toBe(true); // gold-1, the run-start branch's cheapest node
     expect(nodeInReach([], 4)).toBe(false); // a balance that reaches no unowned node
-    expect(nodeInReach([...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES, ...WAVE_NODES, ...TOWER_NODES, ...EXIT_NODES, ...KILL_NODES].map((n) => n.id), 99999)).toBe(false); // every node owned
-    const allButTwo = [...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES.filter((n) => n.id !== 'two-chokes'), ...WAVE_NODES, ...TOWER_NODES, ...EXIT_NODES, ...KILL_NODES].map((n) => n.id);
+    expect(nodeInReach([...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES, ...WAVE_NODES, ...TOWER_NODES, ...EXIT_NODES, ...KILL_NODES, ...BANK_NODES].map((n) => n.id), 99999)).toBe(false); // every node owned
+    const allButTwo = [...TECH_NODES, ...POOL_NODES, ...CLAIM_NODES, ...BOARD_NODES.filter((n) => n.id !== 'two-chokes'), ...WAVE_NODES, ...TOWER_NODES, ...EXIT_NODES, ...KILL_NODES, ...BANK_NODES].map((n) => n.id);
     expect(nodeInReach(allButTwo, 49)).toBe(false); // the last unowned node costs 50 at its depth
     expect(nodeInReach(allButTwo, 50)).toBe(true);
   });

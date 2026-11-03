@@ -7,6 +7,7 @@ import { WAVE_NODES } from '../content/tech/wave';
 import { TOWER_NODES } from '../content/tech/tower';
 import { EXIT_NODES } from '../content/tech/exit';
 import { KILL_NODES } from '../content/tech/kill';
+import { BANK_NODES } from '../content/tech/bank';
 import { PROFILE_KEY, loadProfile, type KeyValueStore } from './profile';
 
 /** One buyable node: what it costs, what it needs before it unlocks, and what it adds to every new run. */
@@ -200,6 +201,20 @@ export function milestoneMul(owned: readonly string[]): number {
   return mul;
 }
 
+/** The bank's pay cap for a run: 10, or the biggest owned node's payCap (The deep vault: 20); each node counts once, unknown ids count for nothing. */
+export function bankPayCap(owned: readonly string[]): number {
+  let cap = 10;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = BANK_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    if (node.payCap !== undefined && node.payCap > cap) cap = node.payCap;
+  }
+  return cap;
+}
+
 /** A branch's first-node price scaled by depth^1.5 and rounded to the nearest multiple of 5 (halves up). */
 export function nodePrice(base: number, depth: number): number {
   return Math.round((base * Math.pow(depth, 1.5)) / 5) * 5;
@@ -257,7 +272,7 @@ export function buyPoolNode(store: KeyValueStore | undefined, id: string): boole
  * branch node lists are the ones the tech screen's rows read (TechScene's `rows`).
  */
 export function nodeInReach(purchased: readonly string[], coins: number): boolean {
-  for (const branch of [TECH_NODES, POOL_NODES, CLAIM_NODES, BOARD_NODES, WAVE_NODES, TOWER_NODES, EXIT_NODES, KILL_NODES]) {
+  for (const branch of [TECH_NODES, POOL_NODES, CLAIM_NODES, BOARD_NODES, WAVE_NODES, TOWER_NODES, EXIT_NODES, KILL_NODES, BANK_NODES]) {
     for (const node of branch) {
       if (!purchased.includes(node.id) && coins >= nodeCost(branch, node.id)) return true;
     }
@@ -381,6 +396,27 @@ export function buyKillNode(store: KeyValueStore | undefined, id: string): boole
   const node = KILL_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
   const price = nodeCost(KILL_NODES, id);
+  if (profile.coins < price) return false;
+  profile.coins -= price;
+  profile.purchased.push(id);
+  try {
+    store?.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    /* private mode or full storage: the purchase just isn't kept */
+  }
+  return true;
+}
+
+/**
+ * Buys a bank node from the saved profile's coins. Refuses an unknown or already owned id and
+ * a price the coins don't cover (they never go below zero); a bank node has no prerequisites
+ * and no gate — its effect is in every run the moment it is bought.
+ */
+export function buyBankNode(store: KeyValueStore | undefined, id: string): boolean {
+  const profile = loadProfile(store);
+  const node = BANK_NODES.find((n) => n.id === id);
+  if (!node || profile.purchased.includes(id)) return false;
+  const price = nodeCost(BANK_NODES, id);
   if (profile.coins < price) return false;
   profile.coins -= price;
   profile.purchased.push(id);

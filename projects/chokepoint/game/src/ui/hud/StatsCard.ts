@@ -4,6 +4,7 @@ import { cssColor, PALETTE } from '../../content/palette';
 import { cleanWavePay, flawlessPay, heldPay } from '../../content/tech/claim';
 import { artScale, COIN_TEXTURE, LIFE_TEXTURE } from '../../art/textures';
 import { bankInterest } from '../../core/bankInterest';
+import { bankPayCap } from '../../core/tech';
 import { coinsForRun, loadProfile } from '../../core/profile';
 import { isLastStand } from '../../core/lastStand';
 import { isQuietWave } from '../../core/waves';
@@ -77,7 +78,7 @@ export class StatsCard implements HudPart {
     const pay = this.scene.registry.pop('bankPay') as number | undefined; // the bank's pay, from RunFlow this frame
     if (pay !== undefined && pay > 0) this.popGold(pay);
     this.goldTagRow(game.run.phase === 'wave' && isQuietWave(game.run.wave) && isLastStand(game.run));
-    const interest = bankInterest(game.run.gold);
+    const interest = bankInterest(game.run.gold, bankPayCap(game.run.techOwned));
     this.bankRow(game.run.phase === 'build' && !game.scene.isPaused() && interest >= 1, interest);
     const n = coinsForRun({ waves: game.run.wavesCleared, stopped: game.run.kills, clean: game.run.cleanWaves, seed: game.run.seed, bgen: game.run.bgen, held: game.run.heldLives }, this.cleanPay, game.run.mode === 'iron' ? 2 : 1, game.run.levelHpMul, this.flawlessPay, this.heldPay);
     this.coins.setText(`+${n} coins`);
