@@ -4,11 +4,12 @@ title: "The tag's note: a special wave you hear at the banner"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T00:51:09Z
 claimed_at: 2026-11-03T01:03:44Z
+finished_at: 2026-11-03T01:11:37Z
 ---
 
 ## Goal
@@ -63,3 +64,17 @@ tagNote(): void {
 - T0403 (in progress) also lists `src/systems/WaveSystem.ts`; the runner serializes same-file work from this Files list — no DEPENDS_ON, this task uses nothing T0403 adds.
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+A march wave (tight, rush, short cut, double, clumps) now plays one quiet falling note — A4 (440 Hz) then G4 (392 Hz), 70 ms sines, 70 ms apart, volume 0.09 — at the wave banner's moment, next to T0449's haptic buzz, so desktop players get the same heads-up on a special wave. New `Sfx.tagNote()` sits after `comboChime()` in `src/audio/Sfx.ts`; `WaveSystem` takes an optional `Sfx` (wired from `GameScene`'s existing `sfx`) and calls it once per wave in `start()`, gated to the exact five march tags so quiet, plain and boss waves stay silent (the boss keeps only its own arrival horn). The note respects the pause's Sound toggle via `tone()`'s existing mute check, and no HUD, chip or text was added.
+
+- Self-review: APPROVE
+- Time: 7.9 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          | 6 ++++++
+ projects/chokepoint/game/src/scenes/GameScene.ts   | 2 +-
+ projects/chokepoint/game/src/systems/WaveSystem.ts | 7 ++++++-
+ 3 files changed, 13 insertions(+), 2 deletions(-)
+```

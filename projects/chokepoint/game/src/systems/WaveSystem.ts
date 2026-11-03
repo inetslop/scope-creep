@@ -1,3 +1,4 @@
+import type { Sfx } from '../audio/Sfx';
 import { ENEMIES, getEnemy } from '../content/enemies';
 import { forkLane } from '../core/fork';
 import { isFarGateSpawn } from '../core/farGate';
@@ -26,13 +27,15 @@ export class WaveSystem {
   /** What the wave that just ended cost in lives (0 until a wave ends, 0 for a clean wave). The wave card wears it. */
   heldLost = 0;
   private livesAtStart = 0;
+  private readonly sfx: Sfx | undefined;
 
-  constructor(run: RunState, enemies: EnemySystem, farGateDistance = 0, hasFork = false) {
+  constructor(run: RunState, enemies: EnemySystem, farGateDistance = 0, hasFork = false, sfx: Sfx | undefined) {
     this.run = run;
     this.enemies = enemies;
     this.farGateDistance = farGateDistance;
     this.hasFork = hasFork;
     this.walkMul = waveWalkFactor(run.techOwned);
+    this.sfx = sfx;
   }
 
   /** The wave the build phase leads to (the HUD's preview reads it; it is planned once at build start). */
@@ -63,6 +66,8 @@ export class WaveSystem {
     this.timer = 0;
     // A tagged wave (anything but the quiet breather) buzzes once, so a phone player feels it coming (T0449).
     if (this.plan && this.plan.tags.some((t) => t !== 'quiet')) tagHaptic();
+    // The five march tags play the tag's note (Sfx.tagNote) as the banner lands, T0449's pair: the quiet breather and the boss's own horn (T0268) never do.
+    if (this.plan && this.plan.tags.some((t) => ['tight', 'rush', 'short cut', 'double', 'clumps'].includes(t))) this.sfx?.tagNote();
     hook.stats.wavesStarted += 1;
   }
 

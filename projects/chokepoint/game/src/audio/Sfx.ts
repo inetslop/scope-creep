@@ -322,6 +322,12 @@ export class Sfx {
     this.tone(784, 0.08, 'sine', 0.1, undefined, 0.09);
   }
 
+  /** A march wave's banner lands: a quiet two-note fall, A4 then G4 (440 then 392 Hz), 70 ms sines 70 ms apart, the near-miss note's quiet class. */
+  tagNote(): void {
+    this.tone(440, 0.07, 'sine', 0.09);
+    this.tone(392, 0.07, 'sine', 0.09, undefined, 0.07);
+  }
+
   deny(): void {
     this.tone(200, 0.1, 'square', 0.15, 150);
   }

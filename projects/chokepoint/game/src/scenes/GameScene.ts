@@ -146,7 +146,7 @@ export class GameScene extends Phaser.Scene {
     this.music = new MusicBed(sfx);
     this.buildBed = new BuildBed(sfx);
     this.leakCost = new LeakCost(this.run, this.fx, this.board);
-    this.waves = new WaveSystem(this.run, this.enemies, farGateDistance(map), map.fork !== undefined);
+    this.waves = new WaveSystem(this.run, this.enemies, farGateDistance(map), map.fork !== undefined, sfx);
     this.flyTelegraph = new FlyTelegraph(this, this.board, this.run, this.waves);
     this.projectiles = new ProjectileSystem(this, this.enemies);
     this.towers = new TowerSystem(this, this.board, this.run, this.enemies, this.projectiles, this.fx, sfx);
