@@ -3,11 +3,13 @@ id: T0491
 title: "The vault's first pay says what it is: the last-stand doubling taught once"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: [T0490]
 attempts: 0
 created: 2026-11-03T11:18:16Z
+claimed_at: 2026-11-03T11:18:26Z
 epic: E29
+designer: yoga
 ---
 
 ## Goal
