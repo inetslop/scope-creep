@@ -1,5 +1,5 @@
 import { PALETTE } from '../content/palette';
-import { isBossWave, isClumpsWave, isDoubleWave, isQuietWave, isRushWave, isShortCutWave, isTightWave } from './waves';
+import { isBossWave, isClumpsWave, isDoubleWave, isQuietWave, isRushWave, isScreenWave, isShortCutWave, isTightWave } from './waves';
 
 export interface WaveTagRow {
   tag: string;
@@ -25,6 +25,7 @@ export const WAVE_TAG_ROWS: WaveTagRow[] = [
   { tag: 'double', chip: PALETTE.yellowDeep, name: 'double', meaning: 'it comes in two fronts, the second faster', when: 'every 8th, from 21', rule: isDoubleWave },
   { tag: 'clumps', chip: PALETTE.greenDeep, name: 'clumps', meaning: 'they come in clumps, the gaps break the chain', when: 'every 11th, from 26', rule: isClumpsWave },
   { tag: 'short cut', chip: PALETTE.tealDeep, name: 'short cut', meaning: 'they come in mid-road', when: 'every 9th, from 16', rule: isShortCutWave },
+  { tag: 'screen', chip: PALETTE.pinkDeep, name: 'screen', meaning: 'the whole wave walks as one front', when: 'every 11th, from 18', rule: isScreenWave },
 ];
 
 /** The chip fill a tag's row wears (the preview's and the banner's chips read it); faint when the row is unknown. */

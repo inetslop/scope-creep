@@ -63,10 +63,13 @@ export class TopBanner {
     let cursor = this.text.width / 2 + CHIP_GAP; // right of the number, 6 px of air
     for (const tag of tags) {
       const label = this.scene.add.text(0, 0, tag, textStyle(11, PALETTE.card, { fontStyle: 'bold' })).setOrigin(0.5);
-      const w = Math.ceil(label.width) + 14;
+      const glyph = tag === 'screen' ? 7 : 0; // the screen's three-dot column widens the chip
+      const w = Math.ceil(label.width) + 14 + glyph;
       const g = this.scene.add.graphics();
       g.fillStyle(tagChip(tag), 1);
       g.fillRoundedRect(-w / 2, -9, w, 18, 9);
+      if (glyph) for (const dy of [-4, 0, 4]) { g.fillStyle(PALETTE.card, 1); g.fillCircle(-w / 2 + 7.5, dy, 1.5); }
+      label.x = glyph / 2;
       const c = this.scene.add.container(w / 2, 0, [g, label]);
       c.setPosition(cursor + w / 2, 0);
       cursor += w + CHIP_GAP;

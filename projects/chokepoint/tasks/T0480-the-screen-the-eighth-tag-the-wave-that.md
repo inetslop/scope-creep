@@ -4,11 +4,12 @@ title: "The screen: the eighth tag — the wave that walks as one front"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T07:54:13Z
 claimed_at: 2026-11-03T08:25:50Z
+finished_at: 2026-11-03T08:37:51Z
 ---
 
 ## Goal
@@ -101,3 +102,26 @@ The chip's glyph (identical shape in all three chip sites, drawn on the chip's o
 ### Tests
 - `tests/core/screenWaves.test.ts` (new, as listed in step 7) pins the cadence/yields, the 1.5 s window, order preservation and every wave 1–100's tags, so a later change to the chain or the transform is caught.
 - Updated: the three tag-chain tests (clumps/double/shortCut) and `waveTags.test.ts` (row list, firsts, `nextTaggedWave(0, isScreenWave)` = 51, `nextTaggedWave(51, isScreenWave)` = 73).
+
+## Result (attempt 1, desktop)
+
+Added the eighth wave tag, the screen (T0480): from wave 18 every 11th eligible wave (51, 73, ...) collapses its whole spawn span into the first 1.5 s so the wave walks the road as one thick front (`isScreenWave`/`SCREEN_WINDOW_SEC`/`screenFront` in `core/waves.ts`, applied in `WaveSystem.start()`). The chip wears a three-dot column in the free pinkDeep hue on the preview, the banner and the waves reference, with a one-time muted teach line on the first screen preview; a `waves.screenPlan` invariant guards the window. New unit tests pin the cadence, the yields, the 1.5 s window and order preservation, and the full tag chain for waves 1–100; the three existing tag-chain tests and the reference test were extended.
+
+- Self-review: APPROVE
+- Time: 12.0 min
+
+```
+projects/chokepoint/game/src/core/waveTags.ts      |  3 +-
+ projects/chokepoint/game/src/core/waves.ts         | 30 +++++++-
+ projects/chokepoint/game/src/debug/runChecks.ts    |  3 +-
+ projects/chokepoint/game/src/scenes/WavesScene.ts  |  5 +-
+ projects/chokepoint/game/src/systems/WaveSystem.ts | 10 +--
+ .../chokepoint/game/src/ui/hud/NextWavePreview.ts  |  6 +-
+ projects/chokepoint/game/src/ui/hud/topBanner.ts   |  5 +-
+ .../chokepoint/game/tests/core/clumpsWaves.test.ts |  3 +-
+ .../chokepoint/game/tests/core/doubleWaves.test.ts |  3 +-
+ .../chokepoint/game/tests/core/screenWaves.test.ts | 87 ++++++++++++++++++++++
+ .../game/tests/core/shortCutWaves.test.ts          |  4 +-
+ .../chokepoint/game/tests/core/waveTags.test.ts    | 10 ++-
+ 12 files changed, 150 insertions(+), 19 deletions(-)
+```

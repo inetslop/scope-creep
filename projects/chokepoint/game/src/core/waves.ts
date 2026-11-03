@@ -205,6 +205,34 @@ export function clumpsGap(plan: WavePlan): WavePlan {
 }
 
 /**
+ * Every 11th wave from wave 18 is the screen (51, 73, 139, ... — 18 is the rush wave's slot, 29 the
+ * double wave's and 40 the boss wave's, 62 tight, 84 quiet, 95 the rush wave's, 106 the short
+ * cut's and 117 the double's): the whole wave walks in as one front, every spawn within the
+ * wave's first 1.5 s. It yields to a quiet, tight, rush, short cut, double, clumps or boss wave,
+ * which keeps its own tag.
+ */
+export function isScreenWave(wave: number): boolean {
+  return wave >= 18 && (wave - 18) % 11 === 0 && !isQuietWave(wave) && !isTightWave(wave) && !isRushWave(wave) && !isShortCutWave(wave) && !isDoubleWave(wave) && !isClumpsWave(wave) && !isBossWave(wave);
+}
+
+/** The window a screen wave's whole spawn span collapses into: every spawn lands within the wave's first this many seconds. */
+export const SCREEN_WINDOW_SEC = 1.5;
+
+/**
+ * A screen wave's plan: the same enemies in the same order, but the wave's whole spawn span rescaled
+ * so its last spawn lands at SCREEN_WINDOW_SEC — the wave walks the road as one thick front and only
+ * stretches into a stream as its walkers' own speeds differ. Off (a one-spawn plan, span 0) it
+ * returns the plan unchanged.
+ */
+export function screenFront(plan: WavePlan): WavePlan {
+  let t = 0;
+  for (const s of plan.spawns) t += s.delaySec;
+  if (t <= 0) return plan;
+  const k = SCREEN_WINDOW_SEC / t;
+  return { ...plan, spawns: plan.spawns.map((s, i) => ({ enemy: s.enemy, delaySec: i === 0 ? 0 : s.delaySec * k })) };
+}
+
+/**
  * Which enemies a wave sends, in order, and when. A boss wave is exactly one boss — the Colossus,
  * the Guard and the Titan on wave 20, the Orb on wave 30, the Hive on wave 40, the Flyer on wave 50,
  * the Blinker on wave 60, the Wards and the Mender on wave 70, the Haulers and the Leech on wave 80,
@@ -306,7 +334,7 @@ function planNormalWave(wave: number, rng: Rng, enemies: readonly EnemyDef[]): W
   if (wave >= 12 && (wave - 12) % 4 === 0 && !finalSpawns.some((s) => s.enemy === 'bulwark')) finalSpawns = [{ enemy: 'bulwark', delaySec: 0 }, ...finalSpawns];
   // A Ward wave always sends its Ward, even when the halving would drop it: it walks in first (wave 20 is the boss's slot).
   if (wave >= 15 && wave % 5 === 0 && wave !== 20 && !finalSpawns.some((s) => s.enemy === 'ward')) finalSpawns = [{ enemy: 'ward', delaySec: 0 }, ...finalSpawns];
-  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : isShortCutWave(wave) ? ['short cut'] : isDoubleWave(wave) ? ['double'] : isClumpsWave(wave) ? ['clumps'] : [] };
+  return { number: wave, spawns: finalSpawns, hpMul: waveHpMul(wave), tags: isQuietWave(wave) ? ['quiet'] : isTightWave(wave) ? ['tight'] : isRushWave(wave) ? ['rush'] : isShortCutWave(wave) ? ['short cut'] : isDoubleWave(wave) ? ['double'] : isClumpsWave(wave) ? ['clumps'] : isScreenWave(wave) ? ['screen'] : [] };
 }
 
 /**

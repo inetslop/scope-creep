@@ -5,7 +5,7 @@ import { isFarGateSpawn } from '../core/farGate';
 import { levelCountMul, levelSpeedMul } from '../core/levels';
 import type { RunState } from '../core/run';
 import { waveWalkFactor } from '../core/tech';
-import { DOUBLE_SPEED_MUL, clumpsGap, doubleLull, doubleSplitAt, isClumpsWave, isDoubleWave, planWave, planWithLevel, shortCutSpawnDistance, type WavePlan, waveSpeedMul } from '../core/waves';
+import { DOUBLE_SPEED_MUL, clumpsGap, doubleLull, doubleSplitAt, isClumpsWave, isDoubleWave, isScreenWave, planWave, planWithLevel, screenFront, shortCutSpawnDistance, type WavePlan, waveSpeedMul } from '../core/waves';
 import { hook } from '../debug/testHook';
 import { tagHaptic } from '../input/haptics';
 import type { EnemySystem } from './EnemySystem';
@@ -59,15 +59,15 @@ export class WaveSystem {
     this.livesAtStart = this.run.lives;
     this.heldLost = 0;
     const plan0 = this.planned ?? planWithLevel(planWave(this.run.wave, this.run.rng, ENEMIES), levelCountMul(this.run.level));
-    // The double and the clumps (core/waves.ts) ride the plan actually sent: their lulls and gaps are cut here, after the level's extras.
-    this.plan = isDoubleWave(plan0.number) ? doubleLull(plan0) : isClumpsWave(plan0.number) ? clumpsGap(plan0) : plan0;
+    // The double, the clumps and the screen (core/waves.ts) ride the plan actually sent: their lulls, gaps and front are cut here, after the level's extras.
+    this.plan = isDoubleWave(plan0.number) ? doubleLull(plan0) : isClumpsWave(plan0.number) ? clumpsGap(plan0) : isScreenWave(plan0.number) ? screenFront(plan0) : plan0;
     this.planned = undefined;
     this.next = 0;
     this.timer = 0;
     // A tagged wave (anything but the quiet breather) buzzes once, so a phone player feels it coming (T0449).
     if (this.plan && this.plan.tags.some((t) => t !== 'quiet')) tagHaptic();
-    // The five march tags play the tag's note (Sfx.tagNote) as the banner lands, T0449's pair: the quiet breather and the boss's own horn (T0268) never do.
-    if (this.plan && this.plan.tags.some((t) => ['tight', 'rush', 'short cut', 'double', 'clumps'].includes(t))) this.sfx?.tagNote();
+    // The six march tags play the tag's note (Sfx.tagNote) as the banner lands, T0449's pair: the quiet breather and the boss's own horn (T0268) never do.
+    if (this.plan && this.plan.tags.some((t) => ['tight', 'rush', 'short cut', 'double', 'clumps', 'screen'].includes(t))) this.sfx?.tagNote();
     hook.stats.wavesStarted += 1;
   }
 

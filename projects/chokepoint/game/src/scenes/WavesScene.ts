@@ -75,10 +75,13 @@ export class WavesScene extends Phaser.Scene {
     const rows = WAVE_TAG_ROWS.map((row) => {
       const tokenW = row.tag === 'boss' && bossDef ? TOKEN_R * 2 + GAP : 0;
       const label = this.add.text(0, 0, row.tag, textStyle(11, PALETTE.card, { fontStyle: 'bold' })).setOrigin(0.5);
-      const chipW = Math.ceil(label.width) + 14; // the preview's exact chip
+      const glyph = row.tag === 'screen' ? 7 : 0; // the screen's three-dot column widens the chip
+      const chipW = Math.ceil(label.width) + 14 + glyph; // the preview's exact chip
       const chip = this.add.graphics();
       chip.fillStyle(row.chip, 1);
       chip.fillRoundedRect(-chipW / 2, -9, chipW, CHIP_H, 9);
+      if (glyph) for (const dy of [-4, 0, 4]) { chip.fillStyle(PALETTE.card, 1); chip.fillCircle(-chipW / 2 + 7.5, dy, 1.5); }
+      label.x = glyph / 2;
       const chipBox = this.add.container(0, 0, [chip, label]);
       const name = this.add.text(0, 0, row.name, titleStyle(14)).setOrigin(0, 0.5);
       const when = this.add.text(0, 0, `${row.when} · next: wave ${nextTaggedWave(run.wave, row.rule)}`, textStyle(12, PALETTE.muted));

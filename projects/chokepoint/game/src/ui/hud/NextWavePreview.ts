@@ -30,6 +30,7 @@ const TEACH: { tag: string; first: number; text: string }[] = [
   { tag: 'double', first: 21, text: 'double — the wave comes twice, the second front walks faster' },
   { tag: 'clumps', first: 26, text: 'clumps — the wave comes in clumps, the gaps break the chain' },
   { tag: 'short cut', first: 34, text: 'short cut — they come in mid-road' },
+  { tag: 'screen', first: 51, text: 'screen — the whole wave walks as one front' },
 ];
 
 /** The one-time teach for the run's first build phase: the big button's "+N" pill banks the seconds left as gold. Shown while `wavesCleared` is 0, re-derived from the run, never stored. */
@@ -134,10 +135,13 @@ export class NextWavePreview implements HudPart {
     if (tag) {
       // The tag's own chip, in its own muted color (never the red leak warning), on its own line under the row.
       const label = scene.add.text(0, 0, tag, textStyle(11, PALETTE.card, { fontStyle: 'bold' })).setOrigin(0.5);
-      chipW = Math.ceil(label.width) + 14;
+      const glyph = tag === 'screen' ? 7 : 0; // the screen's three-dot column widens the chip
+      chipW = Math.ceil(label.width) + 14 + glyph;
       const chipBg = scene.add.graphics();
       chipBg.fillStyle(tagChip(tag), 1);
       chipBg.fillRoundedRect(-chipW / 2, -9, chipW, 18, 9);
+      if (glyph) for (const dy of [-4, 0, 4]) { chipBg.fillStyle(PALETTE.card, 1); chipBg.fillCircle(-chipW / 2 + 7.5, dy, 1.5); }
+      label.x = glyph / 2;
       chip = scene.add.container(0, 0, [chipBg, label]);
     }
     counts.forEach((c, i) => {
