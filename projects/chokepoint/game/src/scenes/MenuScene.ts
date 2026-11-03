@@ -136,6 +136,10 @@ export class MenuScene extends Phaser.Scene {
       this.scene.launch(SCENES.how);
       this.scene.pause();
     }, { width: 220, height: 60, fontSize: 24, radius: 30 });
+    const levels = makeButton(this, 0, 0, 'Levels', () => {
+      this.scene.launch(SCENES.levels);
+      this.scene.pause();
+    }, { width: 220, height: 60, fontSize: 24, radius: 30 });
     // The last twelve runs; only once there is a run to list (same as resume/boards/ghost).
     const history = p.recent.length ? makeButton(this, 0, 0, 'History', () => {
       this.scene.launch(SCENES.history);
@@ -161,6 +165,7 @@ export class MenuScene extends Phaser.Scene {
     fadeIn.push(techLine);
     fadeIn.push(augments.container);
     fadeIn.push(howRow.container);
+    fadeIn.push(levels.container);
     if (history) fadeIn.push(history.container);
     if (boards) fadeIn.push(boards.container);
     if (ghost && ghostLine) {
@@ -188,6 +193,7 @@ export class MenuScene extends Phaser.Scene {
       if (resume) below += BUTTON_H + GAP;
       below += BUTTON_H + GAP + IRON_H + GAP + BUTTON_H + CAPTION_GAP + techLine.height + GAP + BUTTON_H;
       below += GAP + BUTTON_H; // the How row
+      below += GAP + BUTTON_H; // the Levels row
       if (history) below += GAP + BUTTON_H; // the History row
       if (boards) below += GAP + BUTTON_H;
       if (ghost && ghostLine) below += GAP + BUTTON_H + CAPTION_GAP + ghostLine.height + GAP;
@@ -248,6 +254,9 @@ export class MenuScene extends Phaser.Scene {
       gap(GAP);
       howRow.container.setScale(s);
       howRow.container.setPosition(cx, put(BUTTON_H));
+      gap(GAP);
+      levels.container.setScale(s);
+      levels.container.setPosition(cx, put(BUTTON_H));
       if (history) {
         gap(GAP);
         history.container.setScale(s);

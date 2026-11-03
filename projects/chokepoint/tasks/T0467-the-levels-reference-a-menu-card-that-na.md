@@ -4,11 +4,12 @@ title: "The levels reference: a menu card that names every level"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T03:26:12Z
 claimed_at: 2026-11-03T04:06:35Z
+finished_at: 2026-11-03T04:16:44Z
 epic: E21
 ---
 
@@ -181,3 +182,19 @@ export class LevelsScene extends Phaser.Scene {
 
 ### Tests
 none (UI scene reading existing `LEVEL_AUGMENTS` and `levelMultiplierLabel`; no new `src/core` rule).
+
+## Result (attempt 1, desktop)
+
+Added the Levels reference: a new `src/scenes/LevelsScene.ts` (white rounded card listing every level from `LEVEL_AUGMENTS` in data order, each with its name, its own one-liner and its coin multiplier from `levelMultiplierLabel`, shade-tap or round-ink back, returns to the menu or the paused run, scales to fit). Registered it in `SCENES`/`main.ts` after HowScene, added the "Levels" button to the menu's How/Tech column, and added the pause-screen Controls line + Levels button (opening with `from: pause`). Verified with `npm run check` and `npm run smoke`, both passing.
+
+- Self-review: APPROVE
+- Time: 10.2 min
+
+```
+projects/chokepoint/game/src/main.ts               |   3 +-
+ projects/chokepoint/game/src/scenes/LevelsScene.ts | 107 +++++++++++++++++++++
+ projects/chokepoint/game/src/scenes/MenuScene.ts   |   9 ++
+ projects/chokepoint/game/src/scenes/PauseScene.ts  |  13 ++-
+ projects/chokepoint/game/src/scenes/keys.ts        |   1 +
+ 5 files changed, 130 insertions(+), 3 deletions(-)
+```

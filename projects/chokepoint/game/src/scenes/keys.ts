@@ -12,6 +12,7 @@ export const SCENES = {
   tech: 'Tech',
   codex: 'Codex',
   how: 'How',
+  levels: 'Levels',
   history: 'History',
   boards: 'Boards',
   name: 'Name',
