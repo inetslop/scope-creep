@@ -3,13 +3,11 @@ id: T0468
 title: "The double's second front gets its note"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-03T03:26:12Z
-claimed_at: 2026-11-03T03:27:05Z
 epic: E22
-designer: yoga
 ---
 
 ## Goal
@@ -28,3 +26,37 @@ The double tag (T0447) is two fronts with a 6 s lull between them, and the secon
 - [ ] The note plays on every platform and is silent with Sound off.
 - [ ] The banner note (T0457) and the double's haptic (T0449) are unchanged, and no other tag, wave or sound changes.
 - [ ] No new HUD element, chip or haptic.
+
+## Design (architect, yoga)
+
+### Files
+- edit `src/audio/Sfx.ts` - add the `secondFront()` method (the double's second-front note), right after `tagNote()`.
+- edit `src/systems/WaveSystem.ts` - in `update()`, play the note the moment the split spawn is sent.
+
+### Interfaces
+```ts
+// src/audio/Sfx.ts — new method, inserted after tagNote() (line 342), before deny():
+/** The double wave's second front: one quiet two-note rise, E4 then G4 (330 then 392 Hz), 60 ms sines ~30 ms apart, the tag note's volume (T0457). */
+secondFront(): void {
+  this.tone(330, 0.06, 'sine', 0.09);
+  this.tone(392, 0.06, 'sine', 0.09, undefined, 0.03);
+}
+```
+The note is T0464's shape (two short sines ~30 ms apart, rising: E4→G4, 60 ms, delay 0.03) at T0457's volume (0.09, never above a hit blip). `tone()` already no-ops when `this.muted`, so the pause's Sound toggle silences it with no extra check.
+
+### Steps
+1. In `src/audio/Sfx.ts`, insert the `secondFront()` method (exact code above) after the `tagNote()` method (which ends at line 342) and before `deny()`.
+2. In `src/systems/WaveSystem.ts`, in `update()`, inside the `while` loop, immediately after `this.timer -= spawn.delaySec;` (line 99) and before the fork-lane comment, add:
+```ts
+      // The double's second front (core/waves.ts): its first spawn is the lull's end — the note plays here, once per double wave.
+      if (this.next === doubleAt) this.sfx?.secondFront();
+```
+
+### Pitfalls
+- Once per double wave: `this.next` strictly increases through the plan's indices, so `this.next === doubleAt` fires exactly once per wave. On a non-double wave `doubleAt` is `Infinity`, so it never matches. No extra state, so nothing to reset between runs.
+- The trigger is the split spawn's send, which is exactly the lull's end (the split spawn's `delaySec` is `DOUBLE_LULL_SEC`): the faster front walks in from that spawn on. It scales with 2× fast-forward because it is tied to the simulation-time lull, not real time.
+- Do not touch the banner note (`this.sfx?.tagNote()` in `start()`) or the haptic (`tagHaptic()` in `start()`) — they stay byte-identical. Do not change `doubleAt`'s computation or any other tag/wave/sound.
+- No new HUD, chip, or haptic: the change is one `Sfx` method and one `WaveSystem` line only.
+
+### Tests
+- none
