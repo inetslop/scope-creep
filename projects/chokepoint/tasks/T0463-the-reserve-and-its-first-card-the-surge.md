@@ -3,13 +3,12 @@ id: T0463
 title: "The reserve and its first card, the surge: the next wave's towers attack 50% faster"
 size: M
 priority: 2
-status: designing
+status: design
 depends_on: []
 attempts: 0
 created: 2026-11-03T02:24:38Z
-claimed_at: 2026-11-03T02:45:19Z
 epic: E24
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
