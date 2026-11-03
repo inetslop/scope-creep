@@ -9,7 +9,7 @@ import { killGold } from '../core/lastStand';
 import { leanBounty } from '../core/levels';
 import { mintGoldBonus } from '../core/mint';
 import { burnRate, burnStep } from '../core/burn';
-import { blockLeakCost, killBounty } from '../core/tech';
+import { blockLeakCost, chainWindowBonus, killBounty } from '../core/tech';
 import { TICK_SEC } from '../config';
 import { plateMul } from '../core/plate';
 import { pathLineForLane, type PathLine } from '../core/path';
@@ -280,8 +280,8 @@ export class EnemySystem {
     const baseGold = killGold(this.run, (leanBounty(e.def.gold, this.run.level) + killBounty(this.run.techOwned)) * quietGoldMul(this.run.wave));
     const paid = this.run.addKill(baseGold + (source ? mintGoldBonus(this.towers(), e, source) : 0));
     const mint = paid - baseGold; // one per Mint bonus, each pays exactly +1 (T0021)
-    // The Feast copies on the board set the window this kill lives by, before the counter reads it (core/feast.ts).
-    this.fx.comboWindowMs = feastChainWindowMs(this.feastCopies());
+    // The Feast copies on the board and the window node set the window this kill lives by, before the counter reads it (core/feast.ts, core/tech.ts).
+    this.fx.comboWindowMs = feastChainWindowMs(this.feastCopies()) + 1000 * chainWindowBonus(this.run.techOwned);
     const milestone = this.fx.killCount(e.x, e.y);
     this.run.noteCombo(this.fx.chain);
     // A boss kill (the plan's own boss, core/waves.ts) is its moment: 24 chips in its own color,

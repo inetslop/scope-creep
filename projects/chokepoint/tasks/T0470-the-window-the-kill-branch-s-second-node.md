@@ -4,11 +4,12 @@ title: "The window: the kill branch's second node, the chain's window +0.5 s"
 assignee: desktop
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T04:20:47Z
 claimed_at: 2026-11-03T05:32:20Z
+finished_at: 2026-11-03T05:38:12Z
 epic: E25
 ---
 
@@ -111,3 +112,18 @@ export function chainWindowBonus(owned: readonly string[]): number {
 
 ### Tests
 - `tests/core/tech.test.ts`: the two-node row shape + `nodeCost(KILL_NODES, 'window') === 85`, `chainWindowBonus` (0 / other-branch / unknown / 0.5 / dedupe), and the 85-vs-84 buy refusal — as written in step 4.
+
+## Result (attempt 1, desktop)
+
+The kill branch's second tech node, "The window" (85 coins by the branch depth rule), is in: buying it extends the kill chain's window from 1.5 s to 2.0 s, additive with Feast's per-copy +0.4 s, joined at the single place the window is already computed (EnemySystem's kill), so the ×N counter, ComboBar, Feast buff and combo milestone pays all follow the one live window. Data lives in `content/tech/kill.ts` (new node + optional `chainWindowSec`), the pure math in `core/tech.ts` (`chainWindowBonus`), and unit tests in `tests/core/tech.test.ts` cover the row shape, the 85 price, the bonus (incl. dedupe and unknown ids) and the buy refusal; without the node the window is byte-identical to before.
+
+- Self-review: APPROVE
+- Time: 5.9 min
+
+```
+projects/chokepoint/game/src/content/tech/kill.ts  |  5 ++++-
+ projects/chokepoint/game/src/core/tech.ts          | 14 +++++++++++++
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  6 +++---
+ projects/chokepoint/game/tests/core/tech.test.ts   | 24 ++++++++++++++++++----
+ 4 files changed, 41 insertions(+), 8 deletions(-)
+```

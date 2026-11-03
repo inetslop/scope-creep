@@ -172,6 +172,20 @@ export function killBounty(owned: readonly string[]): number {
   return bounty;
 }
 
+/** The extra seconds the kill chain's window gets for the owned kill nodes: the sum of the owned nodes' chainWindowSec, 0 when none has one; each node counts once, unknown ids count for nothing. */
+export function chainWindowBonus(owned: readonly string[]): number {
+  let sec = 0;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = KILL_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    sec += node.chainWindowSec ?? 0;
+  }
+  return sec;
+}
+
 /** A branch's first-node price scaled by depth^1.5 and rounded to the nearest multiple of 5 (halves up). */
 export function nodePrice(base: number, depth: number): number {
   return Math.round((base * Math.pow(depth, 1.5)) / 5) * 5;

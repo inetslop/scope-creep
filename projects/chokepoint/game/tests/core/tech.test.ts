@@ -7,7 +7,7 @@ import { TOWER_NODES } from '../../src/content/tech/tower';
 import { EXIT_NODES } from '../../src/content/tech/exit';
 import { KILL_NODES } from '../../src/content/tech/kill';
 import { loadProfile, type KeyValueStore } from '../../src/core/profile';
-import { blockLeakCost, boardBends, boardChokes, boardFarGate, boardLengthMul, buyBoardNode, buyClaimNode, buyExitNode, buyKillNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, killBounty, leakWarnLead, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES, waveWalkFactor } from '../../src/core/tech';
+import { blockLeakCost, boardBends, boardChokes, boardFarGate, boardLengthMul, buyBoardNode, buyClaimNode, buyExitNode, buyKillNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, chainWindowBonus, killBounty, leakWarnLead, nodeCost, nodeInReach, nodePrice, startBonuses, TECH_NODES, waveWalkFactor } from '../../src/core/tech';
 
 const memory = (): KeyValueStore => {
   const data = new Map<string, string>();
@@ -364,10 +364,12 @@ describe('tech', () => {
     expect(loadProfile(store).coins).toBe(15);
   });
 
-  it('the kill row is one node for now, The bounty at 30: every kill pays +1 gold', () => {
-    expect(KILL_NODES.map((n) => [n.id, n.name, n.line, n.price, n.bounty])).toEqual([
-      ['bounty', 'The bounty', 'every kill pays +1 gold', 30, 1],
+  it('the kill row is two nodes, The bounty at 30 and The window at 85 by the branch depth: +1 gold per kill, +0.5 s of chain window', () => {
+    expect(KILL_NODES.map((n) => [n.id, n.name, n.line, n.price, n.bounty, n.chainWindowSec])).toEqual([
+      ['bounty', 'The bounty', 'every kill pays +1 gold', 30, 1, undefined],
+      ['window', 'The window', "the kill chain's window +0.5 s", 30, 0, 0.5],
     ]);
+    expect(nodeCost(KILL_NODES, 'window')).toBe(85);
   });
 
   it('killBounty is 0 with no, other-branch or unknown ids, 1 while The bounty is owned; duplicates count once', () => {
@@ -375,6 +377,20 @@ describe('tech', () => {
     expect(killBounty(['gold-1', 'long-watch', 'nope'])).toBe(0);
     expect(killBounty(['bounty'])).toBe(1);
     expect(killBounty(['bounty', 'bounty', 'gold-1'])).toBe(1);
+  });
+
+  it('chainWindowBonus is 0 with no, other-branch or unknown ids, 0.5 while The window is owned; duplicates count once', () => {
+    expect(chainWindowBonus([])).toBe(0);
+    expect(chainWindowBonus(['bounty', 'gold-1', 'nope'])).toBe(0);
+    expect(chainWindowBonus(['window'])).toBe(0.5);
+    expect(chainWindowBonus(['window', 'window', 'bounty'])).toBe(0.5);
+  });
+
+  it('the kill depth-2 node buys at 85 coins; 84 refuses', () => {
+    expect(buyKillNode(withCoins(84), 'window')).toBe(false);
+    const store = withCoins(100);
+    expect(buyKillNode(store, 'window')).toBe(true);
+    expect(loadProfile(store).coins).toBe(15);
   });
 
   it('a kill node buys only when it is known, unowned and affordable', () => {
