@@ -1,12 +1,14 @@
 ---
 id: T0455
 title: "The slow stretch: the board with a 3-cell slow run of road"
+assignee: asus
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T00:11:22Z
+claimed_at: 2026-11-03T00:24:48Z
 ---
 
 ## Goal
