@@ -1,12 +1,14 @@
 ---
 id: T0452
 title: "Plain: the level whose board carries no marked cell or choke"
+assignee: asus
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-02T23:41:13Z
+claimed_at: 2026-11-03T07:06:48Z
 epic: E21
 ---
 
