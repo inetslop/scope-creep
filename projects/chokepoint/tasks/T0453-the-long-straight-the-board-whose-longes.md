@@ -4,11 +4,12 @@ title: "The long straight: the board whose longest straight is 7+ cells (the T04
 assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 2
 created: 2026-11-02T23:41:13Z
 claimed_at: 2026-11-03T04:29:37Z
+finished_at: 2026-11-03T07:06:04Z
 design_attempts: 1
 ---
 
@@ -101,4 +102,23 @@ error: cannot lock ref 'refs/remotes/origin/main': is at 23416ff987497f58ad7f064
     at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:260:5)
     at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
     at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
+
+## Result (attempt 2, asus)
+
+Added the "long straight" board trait: ~1-in-5 boards now carry a road whose longest straight run is at least LONG_STRAIGHT_MIN, read from the seed's grown road (src/core/longStraight.ts), exclusive with fork/loop and reshaping nothing, so runs resume byte-identically. The boards reference gains its row with committed seed 16 (src/core/boardFacts.ts, no scene change needed), a board.longStraight invariant runs live (src/debug/runChecks.ts), and tests/core/longStraight.test.ts pins the rate, exclusivity and seed. One measured deviation: the spec's constant 7 is unreachable — the generator makes no 7+ straight off the fork/loop (verified over 4000 boards), so the constant is the measured 6 (867/4000 = 21.7%, the value ~1-in-5 boards reach, per the spec's own measure-and-pin rule); the boards-facts test count goes 13→14 because the design's list omitted the existing slowstretch row.
+
+- Self-review: APPROVE
+- Time: 156.5 min
+- Deleted tests/core/_tmp_ls_probe.test.ts, as the agent asked.
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/core/boardFacts.ts    |  5 +-
+ projects/chokepoint/game/src/core/longStraight.ts  | 32 ++++++++++
+ projects/chokepoint/game/src/debug/runChecks.ts    |  2 +
+ .../game/tests/core/_tmp_ls_review.test.ts         | 71 ++++++++++++++++++++++
+ .../chokepoint/game/tests/core/boardFacts.test.ts  |  6 +-
+ .../game/tests/core/longStraight.test.ts           | 54 ++++++++++++++++
+ 6 files changed, 167 insertions(+), 3 deletions(-)
 ```

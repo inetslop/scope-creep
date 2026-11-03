@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { chokeCells } from '../../src/core/choke';
 import { GRID, ROCKS } from '../../src/config';
 import { generateMap, kindAt, mapExtraBends, type GameMap } from '../../src/core/map';
+import { boardHasLongStraight } from '../../src/core/longStraight';
 import { boardHasDoubleMark, markedCell, markedCells } from '../../src/core/markedCell';
 import { Rng } from '../../src/core/rng';
 import { switchbackFold } from '../../src/core/switchback';
@@ -10,8 +11,8 @@ import { BOARD_NODES } from '../../src/content/tech/board';
 import { WAVE_NODES } from '../../src/content/tech/wave';
 
 describe('the board facts', () => {
-  it('lists the thirteen modifiers in order, each with its mark key', () => {
-    expect(BOARD_FACTS.map((r) => r.mark)).toEqual(['choke', 'bend', 'longway', 'twochokes', 'switchback', 'fargate', 'fork', 'loop', 'cove', 'twin', 'slowstretch', 'markedcell', 'dblmark']);
+  it('lists the fourteen modifiers in order, each with its mark key', () => {
+    expect(BOARD_FACTS.map((r) => r.mark)).toEqual(['choke', 'bend', 'longway', 'twochokes', 'switchback', 'fargate', 'fork', 'loop', 'cove', 'twin', 'slowstretch', 'markedcell', 'dblmark', 'longstraight']);
   });
 
   it('the tech tags point at the tech tree\'s own node ids, read from its data', () => {
@@ -100,6 +101,7 @@ describe('the boards reference\'s per-row seeds', () => {
           for (const c of cs) expect(kindAt(m, c.col, c.row)).toBe('open');
           break;
         }
+        case 'longstraight': expect(boardHasLongStraight(m)).toBe(true); break;
         default: throw new Error(`no board facts for the row's mark: ${String(mark)}`);
       }
     };

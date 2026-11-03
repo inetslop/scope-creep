@@ -7,6 +7,7 @@ import { waveWalkFactor } from '../core/tech';
 import { draftCardCount } from '../core/augments';
 import { FEAST_CHAIN_BASE_MS } from '../core/feast';
 import { chokeCells } from '../core/choke';
+import { boardHasLongStraight, LONG_STRAIGHT_MIN, longestStraight } from '../core/longStraight';
 import { MARKED_DMG_MUL } from '../core/markedCell';
 import { switchbackFold } from '../core/switchback';
 import { stretchCovered } from '../core/slowStretch';
@@ -83,6 +84,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
     for (let i = 1; i < s.cells.length; i++) if (Math.abs(s.cells[i]!.col - s.cells[i - 1]!.col) + Math.abs(s.cells[i]!.row - s.cells[i - 1]!.row) !== 1) return `the stretch jumps at (${s.cells[i]!.col}, ${s.cells[i]!.row})`;
     return stretchCovered(g.board.map, s.cells) ? null : 'the stretch has no build cell on a side of the road';
   }],
+  ['board.longStraight', (g) => (boardHasLongStraight(g.board.map) && longestStraight(g.board.map.path) < LONG_STRAIGHT_MIN ? `a long-straight board has no straight of ${LONG_STRAIGHT_MIN}` : null)],
   ['board.doubleMark', (g) => {
     const m = g.board.marked;
     if (m.length < 1 || m.length > 2) return `the board's ${m.length} marked cells`;
