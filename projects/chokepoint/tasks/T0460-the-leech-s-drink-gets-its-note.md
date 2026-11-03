@@ -3,10 +3,12 @@ id: T0460
 title: "The Leech's drink gets its note"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T01:27:12Z
+claimed_at: 2026-11-03T01:28:04Z
+designer: yoga
 ---
 
 ## Goal
