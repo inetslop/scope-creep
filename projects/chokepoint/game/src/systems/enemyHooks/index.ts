@@ -9,6 +9,7 @@ import { titanShield } from './titanShield';
 import { leechDrink } from './leechDrink';
 import { shieldDown } from './shieldDown';
 import { comboGold } from './comboGold';
+import { haulerLeakNote } from './haulerLeakNote';
 import { haulerLeak } from './haulerLeak';
 import { haulerTeach } from './haulerTeach';
 import { blockTeach } from './blockTeach';
@@ -87,6 +88,7 @@ export const ENEMY_HOOKS: readonly MakeEnemyHook[] = [
   waveClose,
   nearMiss,
   nearMissNote,
+  haulerLeakNote,
   haulerLeak,
   haulerTeach,
   blockTeach,

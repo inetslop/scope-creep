@@ -4,11 +4,12 @@ title: "The Hauler's leak pays its note: the coin blip when its 5 gold is taken"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T07:13:15Z
 claimed_at: 2026-11-03T07:38:02Z
+finished_at: 2026-11-03T07:53:25Z
 ---
 
 ## Goal
@@ -64,3 +65,17 @@ export const haulerLeakNote: MakeEnemyHook = ({ run, sfx }) => ({
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+A Hauler's leak now pays its note: when its 5-gold cost actually takes gold, one soft falling two-note coin blip (G4→E4, 60 ms sines 0.04 s apart, 0.08 pre-master — the Ward-note class) plays at the exit, once per leak. New display-free hook `systems/enemyHooks/haulerLeakNote.ts` rides `onLeak` directly above `haulerLeak` in `ENEMY_HOOKS`, so it reads the run's gold before the 5 is taken — a leak at 0 gold (or any other leaker) plays nothing. Added `Sfx.haulerLeak()` beside `wardDeny()`; silent with the sound toggle off, and the leak's thud, jolt, echo and teach chip are untouched.
+
+- Self-review: APPROVE
+- Time: 15.4 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts                |  8 ++++++++
+ .../game/src/systems/enemyHooks/haulerLeakNote.ts        | 16 ++++++++++++++++
+ projects/chokepoint/game/src/systems/enemyHooks/index.ts |  2 ++
+ 3 files changed, 26 insertions(+)
+```

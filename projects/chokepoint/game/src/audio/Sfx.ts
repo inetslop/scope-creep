@@ -286,6 +286,14 @@ export class Sfx {
     this.tone(523.25, 0.06, 'sine', 0.08, 440);
   }
 
+  /** The Hauler's leak pays its note, the moment its 5-gold cost takes gold (systems/enemyHooks/haulerLeakNote.ts):
+   *  one soft falling two-note coin blip at the exit, G4 then E4 (392 then 330 Hz), 60 ms sines ~40 ms
+   *  apart, 0.08 pre-master, the Ward note's class, the run's quietest, under the hit blip. */
+  haulerLeak(): void {
+    this.tone(392, 0.06, 'sine', 0.08);
+    this.tone(330, 0.06, 'sine', 0.08, undefined, 0.04);
+  }
+
   /** A tower's own milestone heard at its base: one quiet two-note rise, E4 then G4 (330 then 392 Hz), 60 ms sines ~30 ms apart, 0.06 pre-master, the Leech sip's soft class. */
   towerMilestone(): void {
     this.tone(330, 0.06, 'sine', 0.06);
