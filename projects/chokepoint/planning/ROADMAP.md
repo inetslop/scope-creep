@@ -114,13 +114,13 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the board's face, the other way: a level whose board always carries the long straight (7+ cells; never fork, never loop) — **tasked as T0489 (M, 2026-11-03)**
 - the ranks: Tough I/II/III once the set outgrows the run's slots — parked
 
-### E22 — The march: the wave walks in more than one way (active — fully tasked 2026-11-03, closing on the pool's landings)
+### E22 — The march: the wave walks in more than one way (done — 2026-11-03)
 **Goal:** the wave's tag set is four (quiet, tight, rush, short cut); it grows with a new march each time — a new rhythm the wave takes, with its own chip, its own answer and its own line in the waves reference — and on mobile a special wave is felt before it happens.
 **Breakdown:**
 - the double: the fifth tag, two fronts with a 6 s lull — **done as T0447**
 - the clumps: the sixth tag, clumps of 2–3 with 4 s gaps — **done as T0448**
 - the tag's haptic: one 30 ms buzz on mobile at the banner (never quiet) — **done as T0449**
-- the next tag, whose answer is the move: **tasked as T0476 (M, in the pool, 2026-11-03)** — the halt: the walkers stop 3 s at the middle of their own road, the middle becomes the wave's choke, and the move re-points an old tower at it (the T0461 re-file: the build-phase board mark dropped, the chip and the teach carry the read)
+- the next tag, whose answer is the move: **dropped 2026-11-03** (T0476, the halt — the walkers stop 3 s at the road's middle — failed at design twice; the idea is parked in IDEAS for a smaller re-file, the pause and the choke only)
 - the double's second front: one quiet note when the lull ends and the faster front starts — **done as T0468**
 
 ### E23 — The draft: nodes for how the run's cards come (active — fully tasked 2026-11-03, closing on the pool's landings)
@@ -155,7 +155,7 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the memory's rule: the run's per-type leak ledger, the +1 per different regular leaker folded into the next plan (cap 3, most-leaked first, on top of the planned threat, spawnOnly never; quiet and boss waves drop them) — **tasked as T0473 (M, 2026-11-03)**
 - the teach: a one-time chip under the preview when a remembered wave is first planned, naming what came back — **tasked as T0487 (S, waits on T0473, 2026-11-03)** (it never shows in a Blind run — its text would name what the level hides)
 - the deep memory: a type that leaked in each of the last two waves adds +2 instead of +1 (the cap unchanged) — **tasked as T0486 (M, waits on T0473, 2026-11-03)**
-- the claim's line: a muted "remembered · N" line on the claim card when the memory fired at least once (the last page's pattern, E12) — parked
+- the claim's line: a muted "remembered · N" line on the claim card when the memory fired at least once (N the waves the memory fired) — **tasked as T0492 (M, waits on T0473, 2026-11-03)**
 
 ### E28 — The strike: a tech branch for how strong a tower is (active — opened 2026-11-03)
 **Goal:** the tech tree has covered run start, board, pool, claim, wave, tower management, exit, draft and kill — but not the tower's own strength: a tenth branch lets between-run coins buy the tower's raw power.
@@ -169,8 +169,8 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 **Goal:** the tech tree has covered run start, board, pool, claim, wave, tower management, exit, draft, kill and strike — but not the run's own bank: an eleventh branch lets between-run coins buy how the gold the run banks pays at each wave start.
 **Breakdown:**
 - The deep vault: the branch and a 30-coin node, the bank's pay cap +10 → +20 (the 5% rate and the +1-up floor untouched) — **done as T0483 (2026-11-03)**
-- The high rate: 85 coins by the depth rule, the bank's rate 5% → 8% — **tasked as T0485 (M, in the pool, 2026-11-03)** (T0431 now waits on it and reads the live rate, so the teach rewords itself)
-- The last stand's vault: 155 coins by the depth rule, the bank's pay ×2 while the run is at 1 life — parked
+- The high rate: 85 coins by the depth rule, the bank's rate 5% → 8% — **done as T0485 (2026-11-03)** (T0431 now reads the live rate, so the teach rewords itself)
+- The last stand's vault: 155 coins by the depth rule, the bank's pay ×2 while the run is at 1 life — **tasked as T0490 (M, in the pool, 2026-11-03)**; its first last-stand pay's one-time chip as **T0491 (S, waits on T0490)**
 
 ## Enemy queue (non-epic)
 
