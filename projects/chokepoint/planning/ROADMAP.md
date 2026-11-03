@@ -84,7 +84,6 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E18 — The history: every run, on the menu (active — fully tasked 2026-11-02, closing on the pool's landings)
 **Goal:** the menu shows the last four runs at a glance; a history card lists the last twelve, so the whole climb is one tap away and the trend the last-four line hints at is readable.
-**When done:** the menu has a History button in the Tech/How row; its card lists the last twelve runs, most recent first — wave, coins, a muted "iron" mark on Iron runs, the yellow star on the best-wave run — and the profile card's last-four line has moved into it (one in, one out), the card keeping its coins, best wave and runs · avg wave line.
 **Breakdown:**
 - the history card: the menu's History button and the last-twelve card (iron mark, best star); the profile's last-four line moved into it — **done as T0410**
 - the records block: a muted "Records" line at the card's foot — best combo ×N, longest clean streak, most clean waves in one run (the run ledger's own values) — **tasked as T0415 (M, in the pool)**
@@ -99,7 +98,6 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E20 — The exit: a tech branch for surviving the leak (fully tasked 2026-11-02, closing on the pool's landings)
 **Goal:** the tech tree has covered run start, board, pool, claim, wave and tower — but not surviving a leak: a seventh branch lets between-run coins buy how the run withstands the exit.
-**When done:** the tree's "The exit" branch has three nodes, each bought once and on for every run after: The long watch (the leak warning starts 5 s out instead of 3 s), One life a Block (a Block that leaks costs 1 life instead of 2) and The first pass (the run's first leak costs no life).
 **Breakdown:**
 - The long watch: the branch and a 30-coin node, the leak warning from 5 s — **done as T0423**
 - One life a Block: 85 coins, a Block that leaks costs 1 life instead of 2 — **done as T0429**
@@ -116,7 +114,6 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E22 — The march: the wave walks in more than one way (active — fully tasked 2026-11-03, closing on the pool's landings)
 **Goal:** the wave's tag set is four (quiet, tight, rush, short cut); it grows with a new march each time — a new rhythm the wave takes, with its own chip, its own answer and its own line in the waves reference — and on mobile a special wave is felt before it happens.
-**When done:** the set has six tags: the double (two fronts, a 6 s lull, the second at 1.2×) — done as T0447 — and the clumps (clumps of 2–3 with 4 s gaps that break the chain); the preview and the banner wear each chip, the waves reference names each, and a non-quiet tagged wave buzzes once on mobile at the banner (the quiet breather stays silent).
 **Breakdown:**
 - the double: the fifth tag, two fronts with a 6 s lull — **done as T0447**
 - the clumps: the sixth tag, clumps of 2–3 with 4 s gaps — **done as T0448**
@@ -126,7 +123,6 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E23 — The draft: nodes for how the run's cards come (active — fully tasked 2026-11-03, closing on the pool's landings)
 **Goal:** the tech tree's "The draft" branch (the tech screen's existing 2nd row — the Slot II and fourth-card nodes in `content/tech/draft.ts`) covers the hand's slots and cards, but not how the offer comes: three more nodes on that branch let between-run coins buy how the run's cards come.
-**When done:** the branch carries three more nodes, each bought once and on for every run after: The early odds (the tier-odds shift starts at wave 1 instead of wave 5), A cheaper roll (the reroll's cost curve starts 25 lower) and Opening wild (the first draft always offers a Rare or Epic alongside its Common Bolt floor).
 **Breakdown:**
 - The early odds: 80 coins, the tier-odds shift (T0011) starts at wave 1 instead of wave 5 — **tasked as T0458 (M)** (the T0450 re-file)
 - A cheaper roll: 110 coins, the reroll curve starts 25 lower (25, 45, 65, …) — **tasked as T0459 (M)** (the T0451 re-file)
@@ -143,7 +139,6 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E25 — The kill: a tech branch for how a kill pays (active — fully tasked 2026-11-03, closing on the pool's landings)
 **Goal:** the tech tree has covered run start, board, pool, claim, wave, tower, exit and the draft — but not the kill itself: a branch on the tech screen's next row lets between-run coins buy how a kill pays.
-**When done:** the tree's "The kill" branch has three nodes, each bought once and on for every run after: The bounty (every kill pays +1 gold, doubled by the quiet ×2 and the last stand ×2), The window (the kill-chain window +0.5 s, 1.5 s → 2.0 s, additive with Feast's +0.4 s per copy) and The milestone (the chain's milestone pay ×2: the 5th and 10th kill of a chain pay +4 and +8).
 **Breakdown:**
 - the branch and its first node, The bounty: the tech screen's next row (after The exit) plus a 30-coin node, every kill +1 gold on the bounty before the quiet and last-stand ×2 — **done as T0466**
 - The window: 85 coins by the depth rule, the kill-chain window +0.5 s — **done as T0470**
@@ -151,7 +146,6 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E26 — The patterns: the board reads without color (active — opened 2026-11-03)
 **Goal:** shape and color carry meaning (Pillar 3); a player who can't trust color can't read the board: a "Patterns" toggle beside the pause screen's Sound row (off by default, remembered) paints a small muted-ink mark on every enemy token and every tower — the mark's shape distinct per enemy type and per first augment — so the board reads by shape alone.
-**When done:** with the toggle on, every enemy token and every tower wears one small muted-ink mark (one color for all, the shape is the information): the 10 regulars, the 16 first augments, the bosses and the split pieces each read apart without color; the mark replaces color as the identity channel, nothing else on screen changes, and with the toggle off the board is byte-identical to today.
 **Breakdown:**
 - the toggle and the enemy tokens: the pause row (the Sound row's pattern, T0035), the profile flag, the pattern module, the 10 regular marks — **done as T0465**
 - the towers: a tower wears its first augment's mark on its barrel (the 16 marks, the same vocabulary; the tier pips untouched) — **tasked as T0469 (M, in the pool, 2026-11-03)**
@@ -159,7 +153,6 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 
 ### E27 — The road remembers: the leakers come back (active — opened 2026-11-03)
 **Goal:** a leak costs a life and nothing else: the waves are fully decided by the seed and the number, so a run's worst moments pass without a trace; now the run's play shapes the run's next wave — what leaked comes back, one at a time, so holding the road is worth more than a life.
-**When done:** a wave's regular leakers come back in the next wave — one per different type, at most 3, on top of the planned wave (the boss and the split pieces never return; a quiet or boss wave never takes them, so the breather stays a breather); the preview shows them as it shows everything else, the first remembered wave says once what it is, and the deeper memory and the claim's line ride on behind.
 **Breakdown:**
 - the memory's rule: the run's per-type leak ledger, the +1 per different regular leaker folded into the next plan (cap 3, most-leaked first, on top of the planned threat, spawnOnly never; quiet and boss waves drop them) — **tasked as T0473 (M, 2026-11-03)**
 - the teach: a one-time chip under the preview when a remembered wave is first planned, naming what came back — parked (S)
@@ -191,6 +184,7 @@ New augments land one at a time, the enemy queue's way: each registration keeps 
 
 - Herd (T0361, M) — **in the pool (2026-11-01)**: the first augment that scales with the crowd — +5%/+8% (Rare/Epic) damage per enemy within 2 cells, cap 5; its registration retires Anchor (the fifth removal, after E4's four).
 - Chill (the T0391 re-file) — **tasked as T0456 (M, in the pool)**: chill stacks slow 10% per hit, up to 5 (50%), fading 2 s; Rare +2, Epic +3; works on the Flyer, the Ward ignores; retires Toll (the sixth removal).
+- Bloom — **tasked as T0478 (M, 2026-11-03)**: a shot that bursts where the kill lands — 10 to the 2 nearest within 1 cell (Rare 15, Epic 20 to 3); added, this tower's kills burst +1 enemy/+5 (Rare +10, Epic +2/+10); retires Rapid (the seventh removal).
 
 ## Later
 
