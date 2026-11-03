@@ -4,11 +4,12 @@ title: "The double's second front gets its note"
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T03:26:12Z
 claimed_at: 2026-11-03T04:10:12Z
+finished_at: 2026-11-03T04:21:28Z
 epic: E22
 ---
 
@@ -62,3 +63,16 @@ The note is T0464's shape (two short sines ~30 ms apart, rising: E4→G4, 60 ms,
 
 ### Tests
 - none
+
+## Result (attempt 1, yoga)
+
+The double wave's second front now has its note: when a double-tagged wave's 6 s lull ends and its first faster spawn is sent from the split, `WaveSystem.update()` plays one quiet two-note rise (E4→G4, 60 ms sines ~30 ms apart, the tag note's 0.09 volume) via a new `Sfx.secondFront()` method added after `tagNote()`. It fires exactly once per double wave — the trigger is the split spawn's send (`this.next === doubleAt`, where `doubleAt` is `Infinity` on non-double waves), so no state is added and nothing resets between runs — and it is silent with the pause's Sound toggle off via `tone()`'s existing mute check. The banner note (T0457) and the double's haptic (T0449) are byte-identical, and no HUD, chip or haptic was added.
+
+- Self-review: APPROVE
+- Time: 11.3 min
+
+```
+projects/chokepoint/game/src/audio/Sfx.ts          | 6 ++++++
+ projects/chokepoint/game/src/systems/WaveSystem.ts | 2 ++
+ 2 files changed, 8 insertions(+)
+```

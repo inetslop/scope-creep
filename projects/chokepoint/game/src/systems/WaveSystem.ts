@@ -97,6 +97,8 @@ export class WaveSystem {
     while (this.next < plan.spawns.length && this.timer >= plan.spawns[this.next]!.delaySec) {
       const spawn = plan.spawns[this.next]!;
       this.timer -= spawn.delaySec;
+      // The double's second front (core/waves.ts): its first spawn is the lull's end — the note plays here, once per double wave.
+      if (this.next === doubleAt) this.sfx?.secondFront();
       // The fork's lane is the spawn's (seed, wave, index) hash (core/fork.ts), never a draw on the run's rng.
       const lane = this.hasFork ? forkLane(this.run.seed, this.run.wave, this.next) : 0;
       // The short cut (core/waves.ts): the wave's road walkers come in 40% down the path they walk, from the entrance they walk in from.

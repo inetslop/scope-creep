@@ -341,6 +341,12 @@ export class Sfx {
     this.tone(392, 0.07, 'sine', 0.09, undefined, 0.07);
   }
 
+  /** The double wave's second front: one quiet two-note rise, E4 then G4 (330 then 392 Hz), 60 ms sines ~30 ms apart, the tag note's volume (T0457). */
+  secondFront(): void {
+    this.tone(330, 0.06, 'sine', 0.09);
+    this.tone(392, 0.06, 'sine', 0.09, undefined, 0.03);
+  }
+
   deny(): void {
     this.tone(200, 0.1, 'square', 0.15, 150);
   }
