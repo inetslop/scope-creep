@@ -3,13 +3,11 @@ id: T0478
 title: "Bloom: the augment that bursts where a kill lands"
 size: M
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-03T07:13:15Z
-claimed_at: 2026-11-03T08:49:44Z
 design_attempts: 1
-designer: cachyos-x8664
 ---
 
 ## Goal
@@ -50,3 +48,106 @@ The draft's queue lands its third augment, Bloom: a shot whose second strike is 
 - [ ] Bloom added to a damage tower: every kill it causes pops the burst at +1 enemy/+5 (Common), +1/+10 (Rare), +2/+10 (Epic); on a Beam tower the burst pops when the beamed enemy dies; on a pure support tower it does nothing.
 - [ ] A burst kill is a normal kill: it pays its gold, extends the combo chain, pays Mint auras and counts for the tower's milestones.
 - [ ] Rapid is out of the draft, the hand and the codex; the codex shows 16 cards; a save holding a Rapid tower loads; a full run plays end to end on the new 16.
+
+## Design (architect, cachyos-x8664)
+
+Bloom is the draft pool's third augment, replacing Rapid (the 16-cap). Two forms, same mechanic: first form is a shot that bursts on kill; added form makes the tower's kills burst. The burst goes through the normal damage path (Mark's +25% applies, Spray's crit can double it, a burst kill is a normal kill). The 16-cap: Rapid out of draft/hand/codex; codex shows 16 cards; a save holding a Rapid tower still loads.
+
+### Files
+
+**NEW** `src/content/augments/bloom.ts`:
+- `id: 'bloom'`, `name: 'Bloom'`, `look: { shape: 'hexagon', color: 'pink', size: 0.22 }`.
+- `first`: `{ kind: 'shot', damage: 10, range: 2.6, rate: 1.5, projectileSpeed: 10, killBurst: { count: 2, damage: 10 } }`.
+- `added`: `{ killBurst: { count: 1, damage: 5 } }`.
+- `tiers.rare`: `{ damageMul: 1.3, cooldownMul: 0.85, killBurstCount: 2, killBurstDamage: 15, addedKillBurstCount: 1, addedKillBurstDamage: 10, asTower: 'When it kills: 15 to the 2 nearest within 1 cell.', asAdded: "This tower's kills burst: +1 enemy, +10 damage." }`.
+- `tiers.epic`: `{ damageMul: 1.7, cooldownMul: 0.7, killBurstCount: 3, killBurstDamage: 20, addedKillBurstCount: 2, addedKillBurstDamage: 10, asTower: 'When it kills: 20 to the 3 nearest within 1 cell.', asAdded: "This tower's kills burst: +2 enemies, +10 damage." }`.
+- `description`: 'Shoots the furthest, and every kill it makes bursts at the spot.'
+- `asTower`: 'Shoots the furthest. When it kills: 10 to the 2 nearest within 1 cell.'
+- `asAdded`: "This tower's kills burst: +1 enemy, +5 damage."
+
+**`src/content/augments/index.ts`**:
+- Remove `rapid` from `AUGMENTS` (the import and the array entry).
+- Add `bloom` to `AUGMENTS` (the import and the array entry).
+- Add `const RETIRED: readonly AugmentDef[] = [rapid];`.
+- Update `getAugment`:
+```ts
+export function getAugment(id: string): AugmentDef {
+  const def = byId.get(id) ?? RETIRED.find((a) => a.id === id);
+  if (!def) throw new Error(`unknown augment "${id}"`);
+  return def;
+}
+```
+
+**`src/core/saveRun.ts`**:
+- Import `getAugment` from `../content/augments`.
+- Update `isCopy`:
+```ts
+function isCopy(v: unknown): v is AugmentCopy {
+  if (!v || typeof v !== 'object') return false;
+  const { id, tier } = v as { id?: unknown; tier?: unknown };
+  if (typeof id !== 'string' || typeof tier !== 'string') return false;
+  try { getAugment(id); return TIER_ORDER.includes(tier as Tier); } catch { return false; }
+}
+```
+
+**`src/content/types.ts`**:
+- `FirstForm`: add `killBurst?: { count: number; damage: number }`.
+- `AddedForm`: add `killBurst?: { count: number; damage: number }`.
+- `TierValues`: add `killBurstCount?`, `killBurstDamage?`, `addedKillBurstCount?`, `addedKillBurstDamage?`.
+
+**`src/core/tiers.ts`**:
+- `tierFirst`: add `killBurst: f.killBurst ? { ...f.killBurst, damage: t.killBurstDamage ?? f.killBurst.damage, count: t.killBurstCount ?? f.killBurst.count } : undefined,`.
+- `tierAdded`: add `killBurst: a.killBurst ? { ...a.killBurst, damage: t.addedKillBurstDamage ?? a.killBurst.damage, count: t.addedKillBurstCount ?? a.killBurst.count } : undefined,`.
+
+**`src/core/augments.ts`**:
+- `TowerSpec`: add `killBurstCount: number` and `killBurstDamage: number`.
+- `EMPTY`: add `killBurstCount: 0` and `killBurstDamage: 0`.
+- `towerSpec`: add `spec.killBurstCount = f.killBurst?.count ?? 0;` and `spec.killBurstDamage = f.killBurst?.damage ?? 0;`.
+- In the loop: add `spec.killBurstCount += e.killBurst?.count ?? 0;` and `spec.killBurstDamage += e.killBurst?.damage ?? 0;`.
+
+**NEW** `src/systems/enemyHooks/bloomBurst.ts`:
+```ts
+import { CELL } from '../../config';
+import { PALETTE } from '../../content/palette';
+import { pickNearest } from '../../core/targeting';
+import type { EnemyHookContext, KillEvent, MakeEnemyHook } from './hook';
+
+export const bloomBurst: MakeEnemyHook = (ctx): EnemyHook => {
+  const onKill = (kill: KillEvent): void => {
+    const spec = kill.source.spec;
+    if (!spec.killBurstCount || !spec.killBurstDamage) return;
+    const targets = pickNearest(kill.enemy, 1 * CELL, ctx.enemies.all, spec.killBurstCount);
+    for (const t of targets) {
+      ctx.enemies.strike(t, { damage: spec.killBurstDamage * kill.source.cellMul, source: kill.source });
+    }
+    ctx.fx.ring(kill.enemy.x, kill.enemy.y, CELL, PALETTE.pink);
+  };
+  return { onKill };
+};
+```
+
+**`src/systems/enemyHooks/index.ts`**:
+- Add `import { bloomBurst } from './bloomBurst';`.
+- Add `bloomBurst` to `ENEMY_HOOKS`.
+
+**`src/art/barrelMarks.ts`**:
+- Remove `rapid: 'square'` from `BARREL_MARKS`.
+- Add `bloom: 'square'` to `BARREL_MARKS`.
+
+**`tests/core/augments.test.ts`**, **`tests/core/saveRun.test.ts`**, **`tests/core/towerDps.test.ts`**, **`tests/core/ember.test.ts`**:
+- Swap `rapid` for `bloom` in the imports and the tests.
+- Update the tests' expected values to match Bloom's behavior.
+
+**`debug/runChecks.ts`**:
+- Add the invariant: `if (spec.damage === 0 && (spec.killBurstCount > 0 || spec.killBurstDamage > 0)) throw new Error('...')`.
+
+### Pitfalls
+- The first copy's added form does NOT add to its own base (a Common Bloom tower is 2/10, not 3/15).
+- The burst damage (10/15/20) does NOT equal `shot damage × damageMul` (10/13/17).
+- A 0-damage tower never deals the killing blow, so "on a pure support tower it does nothing" holds naturally.
+- Removing `rapid` from `AUGMENTS` makes a save holding a Rapid tower fail; the `RETIRED` fallback in `getAugment` handles this.
+- `isCopy` must use try/catch because `getAugment` throws on unknown ids.
+
+### Tests
+- `npm run check` must pass.
+- `npm run smoke` must pass.
