@@ -1,12 +1,14 @@
 ---
 id: T0467
 title: "The levels reference: a menu card that names every level"
+assignee: desktop
 size: M
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T03:26:12Z
+claimed_at: 2026-11-03T04:06:35Z
 epic: E21
 ---
 
