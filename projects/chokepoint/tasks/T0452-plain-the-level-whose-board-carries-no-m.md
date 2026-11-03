@@ -3,11 +3,13 @@ id: T0452
 title: "Plain: the level whose board carries no marked cell or choke"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-02T23:41:13Z
+claimed_at: 2026-11-03T00:02:08Z
 epic: E21
+designer: inet-racing
 ---
 
 ## Goal
