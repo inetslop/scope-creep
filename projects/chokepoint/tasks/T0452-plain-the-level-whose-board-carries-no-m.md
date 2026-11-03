@@ -4,11 +4,12 @@ title: "Plain: the level whose board carries no marked cell or choke"
 assignee: asus
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-02T23:41:13Z
 claimed_at: 2026-11-03T07:06:48Z
+finished_at: 2026-11-03T09:23:04Z
 epic: E21
 ---
 
@@ -89,3 +90,32 @@ export function dailyOrder(seed: number): string[] {
 - `npm run check` (typecheck + lint + units incl. the four new/updated test files).
 - `npm run smoke`.
 - Manual: pick step at 412x915 and 1280x720 — Plain listed with its line, chip row fits; start a run whose level includes Plain (its card names it): no mark on the ground, no panel line, no first-build chip, no double mark, board playable; HUD chip row shows a name-only "Plain" chip; menu/coin tally/pause read ×1.40 with no new readout; pause → "Boards" shows the Plain row; pause → resume keeps the board plain.
+
+## Result (attempt 1, asus)
+
+Added the Plain level (bonus 0.40, ×1.40, "no marked cell, no guaranteed choke"): a new `content/levels/plain.ts` data file registered in the level set, `dailyOrder` inserts it at a seed-picked position (filter-then-insert, so boards without Plain keep today's exact six-level order), and `ensureChokes(count 0)` is a no-op so a Plain run's board grows without the guarantee or any marked cell (new and resumed runs alike, from `saved.level`/`pick.level` before the board grows). The pick step's previews grow plain boards plain and drop the "one cell · +25%" line while it's on; the pause's Boards reference gains the dry Plain row (its board painted unmarked, tag "level"); two invariants exempt Plain boards. One deviation from the design: it asked for a fact seed whose chokes-0 board has zero choke cells, but a 3000-seed scan shows every grown board already carries 3+ natural choke cells (the guarantee never fires today), so the committed seed is unused seed 10 with `chokes: 0, noMarked: true` and the test asserts the seed's parameters instead. `npm run check` (672 tests) and `npm run smoke` (desktop + mobile) both pass; a run without Plain is byte-identical.
+
+- Self-review: NO VERDICT
+- Time: 136.3 min
+- Deleted tests/core/plainSeedScratch.test.ts, as the agent asked.
+- Self-review made fixes (kept; checks pass).
+
+```
+.../chokepoint/game/src/content/levels/index.ts    |  3 +-
+ .../chokepoint/game/src/content/levels/plain.ts    | 13 ++++++
+ projects/chokepoint/game/src/core/boardFacts.ts    | 10 ++++-
+ projects/chokepoint/game/src/core/choke.ts         |  1 +
+ projects/chokepoint/game/src/core/daily.ts         | 11 ++++-
+ projects/chokepoint/game/src/core/saveRun.ts       |  6 +--
+ projects/chokepoint/game/src/debug/runChecks.ts    |  3 +-
+ .../chokepoint/game/src/scenes/BoardFactsScene.ts  |  2 +-
+ projects/chokepoint/game/src/scenes/GameScene.ts   |  7 +++-
+ projects/chokepoint/game/src/scenes/PickScene.ts   | 24 +++++++----
+ .../chokepoint/game/tests/core/boardFacts.test.ts  | 13 +++++-
+ .../game/tests/core/chokeGuarantee.test.ts         | 49 +++++++++++++++++++++-
+ projects/chokepoint/game/tests/core/daily.test.ts  | 22 ++++++++++
+ projects/chokepoint/game/tests/core/levels.test.ts |  3 ++
+ .../chokepoint/game/tests/core/plainBoard.test.ts  | 22 ++++++++++
+ .../chokepoint/game/tests/core/saveRun.test.ts     |  7 +++-
+ 16 files changed, 171 insertions(+), 25 deletions(-)
+```

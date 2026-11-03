@@ -49,6 +49,7 @@ export function ensureChoke(map: GameMap): GameMap {
  * board every time.
  */
 export function ensureChokes(map: GameMap, count: number): GameMap {
+  if (count <= 0) return map; // Plain: no guarantee; the board stands as grown
   if (count <= 1) return ensureChoke(map);
   if (chokeCells(map).length >= count) return map;
   return foldTail(map, 2);

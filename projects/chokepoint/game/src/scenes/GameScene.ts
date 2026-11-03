@@ -126,15 +126,18 @@ export class GameScene extends Phaser.Scene {
     // gate (it is not saved: a resumed board regrows it from the seed); a resumed run keeps its
     // saved board (its own bends, length, chokes and fold), and a ghost run replays the best board
     // as generated (0 bends, length 1, the owned nodes' choke count and fold).
+    // A Plain run's board carries no marked cell and no guaranteed choke; a resumed run reads the
+    // saved level, because restore runs after the board is grown (run.level is still [] here).
+    const isPlain = (saved?.level ?? pick?.level ?? []).includes('plain');
     const bends = saved ? saved.bends : ghost === undefined ? boardBends(loadProfile(window.localStorage).purchased) : 0;
     const lengthMul = saved ? saved.lengthMul : ghost === undefined ? boardLengthMul(loadProfile(window.localStorage).purchased) : 1;
-    const chokes = saved ? saved.chokes : boardChokes(loadProfile(window.localStorage).purchased);
+    const chokes = saved ? saved.chokes : isPlain ? 0 : boardChokes(loadProfile(window.localStorage).purchased);
     const fold = saved ? saved.fold === 1 : boardFold(loadProfile(window.localStorage).purchased);
     const farGate = boardFarGate(loadProfile(window.localStorage).purchased);
     const view = viewSize(this);
     const portrait = saved ? saved.rows > saved.cols : view.height > view.width;
     const map = generateMap(this.run.rng, portrait ? GRID.short : GRID.long, portrait ? GRID.long : GRID.short, ROCKS, bends, lengthMul, this.run.bgen, chokes, fold, farGate, seed);
-    const marked = markedCells(map, seed); // the board's +25% cells, one per seed: from its own seed, never run.rng
+    const marked = isPlain ? [] : markedCells(map, seed); // the board's +25% cells, one per seed: from its own seed, never run.rng; Plain has none
     this.mapLengthMul = lengthMul;
     this.mapChokes = chokes;
     this.mapFold = fold ? 1 : 0;

@@ -11,8 +11,8 @@ import { BOARD_NODES } from '../../src/content/tech/board';
 import { WAVE_NODES } from '../../src/content/tech/wave';
 
 describe('the board facts', () => {
-  it('lists the fourteen modifiers in order, each with its mark key', () => {
-    expect(BOARD_FACTS.map((r) => r.mark)).toEqual(['choke', 'bend', 'longway', 'twochokes', 'switchback', 'fargate', 'fork', 'loop', 'cove', 'twin', 'slowstretch', 'markedcell', 'dblmark', 'longstraight']);
+  it('lists the fifteen modifiers in order, each with its mark key', () => {
+    expect(BOARD_FACTS.map((r) => r.mark)).toEqual(['choke', 'bend', 'longway', 'twochokes', 'switchback', 'fargate', 'fork', 'loop', 'cove', 'twin', 'slowstretch', 'markedcell', 'dblmark', 'plain', 'longstraight']);
   });
 
   it('the tech tags point at the tech tree\'s own node ids, read from its data', () => {
@@ -99,6 +99,15 @@ describe('the boards reference\'s per-row seeds', () => {
           const cs = markedCells(m, s.seed);
           expect(cs.length).toBe(2);
           for (const c of cs) expect(kindAt(m, c.col, c.row)).toBe('open');
+          break;
+        }
+        case 'plain': {
+          const s = BOARD_FACT_SEEDS.plain!;
+          expect(s.chokes).toBe(0); // grown without the guarantee
+          expect(s.noMarked).toBe(true); // the row's board carries no marked cell
+          // No guarantee: the board stands as grown — the guarantee (chokes 1) adds nothing to it.
+          const guaranteed = generateMap(new Rng(s.seed), GRID.short, GRID.long, ROCKS, 0, 1, 2, 1, false, false, s.seed);
+          expect(m.path).toEqual(guaranteed.path);
           break;
         }
         case 'longstraight': expect(boardHasLongStraight(m)).toBe(true); break;

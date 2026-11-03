@@ -109,7 +109,6 @@ describe('saveRun', () => {
   });
 
   it('rejects a broken choke count, but a save written without the key loads as 1', () => {
-    broken({ chokes: 0 });
     broken({ chokes: 3 });
     broken({ chokes: 1.5 });
     const store = memory();
@@ -123,6 +122,12 @@ describe('saveRun', () => {
     const store = memory();
     saveRun(store, sample({ chokes: 2 }));
     expect(loadSavedRun(store)).toEqual(sample({ chokes: 2 }));
+  });
+
+  it('round-trips a plain save: chokes 0 stays 0, the level says why', () => {
+    const store = memory();
+    saveRun(store, sample({ chokes: 0, level: ['plain'] }));
+    expect(loadSavedRun(store)).toEqual(sample({ chokes: 0, level: ['plain'] }));
   });
 
   it('round-trips a switchback save, and a save written without the key loads as 0', () => {

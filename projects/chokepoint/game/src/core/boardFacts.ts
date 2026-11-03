@@ -13,8 +13,8 @@ import { Rng } from './rng';
  * sibling references. Pure: read once from the live profile, no state.
  */
 
-export type BoardFactMark = 'choke' | 'bend' | 'longway' | 'twochokes' | 'switchback' | 'fargate' | 'fork' | 'loop' | 'cove' | 'twin' | 'slowstretch' | 'markedcell' | 'dblmark' | 'longstraight';
-export type BoardFactTag = { kind: 'always' } | { kind: 'some' } | { kind: 'seed'; odds: string } | { kind: 'tech'; node: string } | { kind: 'someTech'; node: string };
+export type BoardFactMark = 'choke' | 'bend' | 'longway' | 'twochokes' | 'switchback' | 'fargate' | 'fork' | 'loop' | 'cove' | 'twin' | 'slowstretch' | 'markedcell' | 'dblmark' | 'plain' | 'longstraight';
+export type BoardFactTag = { kind: 'always' } | { kind: 'some' } | { kind: 'seed'; odds: string } | { kind: 'tech'; node: string } | { kind: 'someTech'; node: string } | { kind: 'level' };
 export interface BoardFactRow {
   mark: BoardFactMark;
   name: string;
@@ -36,6 +36,7 @@ export const BOARD_FACTS: readonly BoardFactRow[] = [
   { mark: 'slowstretch', name: 'The slow stretch', meaning: 'three road cells walked at 70% of speed', tag: { kind: 'seed', odds: '1 in 4' } },
   { mark: 'markedcell', name: 'The marked cell', meaning: 'one build cell that makes its tower stronger', tag: { kind: 'some' } },
   { mark: 'dblmark', name: 'The double mark', meaning: 'a second marked cell, the same mark and the same buff', tag: { kind: 'some' } },
+  { mark: 'plain', name: 'Plain', meaning: 'no marked cell, no guaranteed choke', tag: { kind: 'level' } },
   { mark: 'longstraight', name: 'The long straight', meaning: `the road's longest straight is ${LONG_STRAIGHT_MIN}+ cells; the choke sits off it`, tag: { kind: 'some' } },
 ];
 
@@ -47,6 +48,7 @@ export interface BoardFactSeed {
   chokes?: number;     // the two chokes row: 2
   fold?: boolean;      // the switchback row: true
   farGate?: boolean;   // the far gate row: true
+  noMarked?: boolean;  // the plain row: the board carries no marked cell
 }
 
 /** One fixed seed per row's modifier (never a roll). A row added later without an entry shows text only. */
@@ -64,6 +66,9 @@ export const BOARD_FACT_SEEDS: Partial<Record<BoardFactMark, BoardFactSeed>> = {
   slowstretch: { seed: 14 },
   markedcell: { seed: 9 },
   dblmark: { seed: 15 },
+  // Grown with chokes 0: no guarantee, the board stands as grown (every board already carries its
+  // natural choke cells — none of them is promised). noMarked: the row's board is painted with no marked cell.
+  plain: { seed: 10, chokes: 0, noMarked: true },
   longstraight: { seed: 16 },
 };
 
@@ -80,6 +85,7 @@ export function boardFactTag(row: BoardFactRow, purchased: readonly string[]): s
   if (tag.kind === 'always') return 'always';
   if (tag.kind === 'some') return 'some boards';
   if (tag.kind === 'seed') return `seed · ${tag.odds}`;
+  if (tag.kind === 'level') return 'level';
   if (tag.kind === 'someTech') return purchased.includes(tag.node) ? `tech · ${techName(tag.node)}` : 'some boards';
   if (purchased.includes(tag.node)) return 'owned';
   return techName(tag.node);

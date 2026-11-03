@@ -24,9 +24,16 @@ export function dailySeeds(day: string): [number, number, number] {
   return [hash(`${day}:0`), hash(`${day}:1`), hash(`${day}:2`)];
 }
 
-/** The board's level-augment order: all level augments, shuffled by the board's seed. */
+/**
+ * The board's level-augment order: the six levels of before, shuffled by the board's seed exactly
+ * as today, with Plain inserted at a position the seed picks. Plain is filtered out before the
+ * shuffle (never a seventh entry: a longer list would move every seed's draws of the six) and
+ * added after, so a board without Plain on it plays today's exact order.
+ */
 export function dailyOrder(seed: number): string[] {
-  return new Rng(seed).shuffle(LEVEL_AUGMENTS.map((a) => a.id));
+  const six = new Rng(seed).shuffle(LEVEL_AUGMENTS.filter((a) => a.id !== 'plain').map((a) => a.id));
+  const at = new Rng(seed).int(0, six.length);
+  return [...six.slice(0, at), 'plain', ...six.slice(at)];
 }
 
 /** The board's level L: the first L of its order, so a higher level only adds augments to the same boards. */

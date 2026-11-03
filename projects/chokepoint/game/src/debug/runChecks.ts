@@ -33,7 +33,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   ['iron.lives', (g) => (g.run.mode !== 'iron' || (g.techLife === 0 && g.run.lives <= 2) ? null : `iron run at ${g.run.lives} lives with techLife ${g.techLife}`)],
   ['run.ledger', (g) => (Number.isInteger(g.run.goldEarned) && g.run.goldEarned >= 0 && g.run.cleanWaves >= 0 && g.run.cleanWaves <= g.run.wavesCleared ? null : 'ledger')],
   ['run.story', (g) => (g.run.story.every((r, i) => r.wave === i + 1) ? null : `story waves ${g.run.story.map((r) => r.wave).join(',')}`)],
-  ['board.choke', (g) => (g.run.bgen < 2 || chokeCells(g.board.map).length > 0 ? null : 'a gen-2 board has no choke cell')],
+  ['board.choke', (g) => (g.run.level.includes('plain') || g.run.bgen < 2 || chokeCells(g.board.map).length > 0 ? null : 'a gen-2 board has no choke cell')],
   ['board.fold', (g) => (g.mapFold === 0 || switchbackFold(g.board.map) !== null ? null : 'a switchback board has no fold in its road')],
   ['board.fork', (g) => {
     const fork = g.board.map.fork;
@@ -86,6 +86,7 @@ const INVARIANTS: readonly [string, (g: GameScene) => string | null | undefined]
   }],
   ['board.longStraight', (g) => (boardHasLongStraight(g.board.map) && longestStraight(g.board.map.path) < LONG_STRAIGHT_MIN ? `a long-straight board has no straight of ${LONG_STRAIGHT_MIN}` : null)],
   ['board.doubleMark', (g) => {
+    if (g.run.level.includes('plain')) return null; // Plain: no marked cell, so nothing to mark
     const m = g.board.marked;
     if (m.length < 1 || m.length > 2) return `the board's ${m.length} marked cells`;
     for (const c of m) if (g.board.map.kinds[c.row]![c.col] !== 'open') return `a marked cell is not buildable at (${c.col}, ${c.row})`;
