@@ -1,12 +1,14 @@
 ---
 id: T0465
 title: "The patterns: the toggle and the enemy tokens' marks"
+assignee: desktop
 size: L
 priority: 2
-status: todo
+status: in-progress
 depends_on: []
-attempts: 0
+attempts: 1
 created: 2026-11-03T02:48:20Z
+claimed_at: 2026-11-03T03:29:58Z
 epic: E26
 ---
 
