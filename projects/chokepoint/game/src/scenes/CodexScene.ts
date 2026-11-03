@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { artScale, augmentTexture } from '../art/textures';
+import { artScale, augmentTexture, barrelMarkTexture } from '../art/textures';
 import { AUGMENTS } from '../content/augments';
 import { PALETTE } from '../content/palette';
 import { flags } from '../debug/flags';
@@ -110,6 +110,7 @@ export class CodexScene extends Phaser.Scene {
     this.panelH = g.header + rowHeights.reduce((n, h) => n + h + g.rowGap, 0) - g.rowGap + g.bottom;
     const parts: Phaser.GameObjects.GameObject[] = [makeCard(this, 0, 0, this.panelW, this.panelH, 28)];
     parts.push(this.add.text(0, -this.panelH / 2 + 52, 'Augments', titleStyle(32)).setOrigin(0.5));
+    const patterns = this.registry.get('patterns') === true;
     entries.forEach((entry, i) => {
       const r = Math.floor(i / g.cols);
       const c = i % g.cols;
@@ -121,6 +122,10 @@ export class CodexScene extends Phaser.Scene {
       const def = AUGMENTS[i];
       parts.push(makeCard(this, x, y, g.entryW, entry.h, 14));
       parts.push(artScale(this.add.image(lx + 26, ty + 30, augmentTexture(def.id)), 1.3));
+      if (patterns) {
+        // The first augment's barrel mark (the Patterns toggle): the board's own mark at its own size, centred on the token.
+        parts.push(artScale(this.add.image(lx + 26, ty + 30, barrelMarkTexture(def.id))));
+      }
       const name = this.add.text(lx + 48, ty + 30, def.name, titleStyle(18)).setOrigin(0, 0.5);
       parts.push(name);
       if (def.tier === 'epic') {

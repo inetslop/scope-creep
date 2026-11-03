@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { artScale, enemyTexture } from '../art/textures';
+import { artScale, enemyTexture, markTexture } from '../art/textures';
 import { CELL } from '../config';
 import { ENEMIES } from '../content/enemies';
 import { PALETTE } from '../content/palette';
@@ -83,10 +83,15 @@ export class EnemiesScene extends Phaser.Scene {
     parts.push(this.add.text(0, -this.panelH / 2 + 42, 'Enemies', titleStyle(28)).setOrigin(0.5));
     const textX = -this.panelW / 2 + PAD + TOKEN + GAP_T;
     let rowTop = -this.panelH / 2 + HEADER;
+    const patterns = this.registry.get('patterns') === true;
     for (const row of rows) {
       const top = rowTop + (row.h - (row.name.height + 3 + row.desc.height)) / 2; // center the text block in its row
       // 2x the wave preview's 16 px icon: the token's radius is 16 px (~32 px), like NextWavePreview's scale doubled
       parts.push(artScale(this.add.image(-this.panelW / 2 + PAD + TOKEN / 2, rowTop + row.h / 2, enemyTexture(row.def.id)), 16 / (row.def.look.size * CELL)));
+      if (row.def.spawnOnly === undefined && patterns) {
+        // The type mark the board wears (the Patterns toggle): the same texture and scale as the token, so it overlays exactly.
+        parts.push(artScale(this.add.image(-this.panelW / 2 + PAD + TOKEN / 2, rowTop + row.h / 2, markTexture(row.def.id)), 16 / (row.def.look.size * CELL)));
+      }
       row.name.setPosition(textX, top + row.name.height / 2);
       row.wave.setPosition(-this.panelW / 2 + innerW - GAP_R, top + row.name.height / 2);
       row.desc.setPosition(textX, top + row.name.height + 3);

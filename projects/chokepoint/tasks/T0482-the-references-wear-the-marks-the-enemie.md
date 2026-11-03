@@ -4,11 +4,12 @@ title: "The references wear the marks: the enemies reference and the codex match
 assignee: yoga
 size: S
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T08:12:52Z
 claimed_at: 2026-11-03T08:39:44Z
+finished_at: 2026-11-03T09:32:29Z
 epic: E26
 ---
 
@@ -61,3 +62,16 @@ The `markTexture` is painted the same size and face offset as `enemyTexture`, so
 
 ### Tests
 none
+
+## Result (attempt 1, yoga)
+
+The two pattern references now wear the board's marks: the enemies reference (from pause) shows each regular enemy type's muted-ink type mark on its row token, and the augments codex (from menu) shows each augment's barrel mark on its entry token — both driven by the existing Patterns toggle on the pause, reading the same global flag and the same mark textures the board uses. With the toggle off, both references are byte-identical to before; no layout, cards, text, buttons, or sounds changed. `npm run check` and `npm run smoke` both pass.
+
+- Self-review: APPROVE
+- Time: 52.8 min
+
+```
+projects/chokepoint/game/src/scenes/CodexScene.ts   | 7 ++++++-
+ projects/chokepoint/game/src/scenes/EnemiesScene.ts | 7 ++++++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
+```
