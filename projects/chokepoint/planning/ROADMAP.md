@@ -139,6 +139,22 @@ Cancelled by the player: T0278 (the claim card's Copy) is dropped and the shared
 - the harvest: the reserve's third entry, 50 gold, the next wave's kills pay 2× gold (the gold pop reads the doubled number, the last stand's look) — parked
 - the claim's line: the claim card's muted "reserve" line naming the heavy cards bought (no line when none was bought) — parked
 
+### E25 — The kill: a tech branch for how a kill pays (active — opened 2026-11-03)
+**Goal:** the tech tree has covered run start, board, pool, claim, wave, tower, exit and the draft — but not the kill itself: a branch on the tech screen's next row lets between-run coins buy how a kill pays.
+**When done:** the tree's "The kill" branch has three nodes, each bought once and on for every run after: The bounty (every kill pays +1 gold, doubled by the quiet ×2 and the last stand ×2), The window (the kill-chain window +0.5 s, 1.5 s → 2.0 s, additive with Feast's +0.4 s per copy) and The milestone (the chain's milestone pay ×2: the 5th and 10th kill of a chain pay +4 and +8).
+**Breakdown:**
+- the branch and its first node, The bounty: the tech screen's next row (after The exit) plus a 30-coin node, every kill +1 gold on the bounty before the quiet and last-stand ×2 — **tasked as T0466 (M, in the pool, 2026-11-03)**
+- The window: 85 coins by the depth rule, the kill-chain window +0.5 s — parked (tasked once the row lands)
+- The milestone: 155 coins by the depth rule, the chain's milestone pay ×2 (the 5th and 10th kill of a chain pay +4 and +8) — parked
+
+### E26 — The patterns: the board reads without color (active — opened 2026-11-03)
+**Goal:** shape and color carry meaning (Pillar 3); a player who can't trust color can't read the board: a "Patterns" toggle beside the pause screen's Sound row (off by default, remembered) paints a small muted-ink mark on every enemy token and every tower — the mark's shape distinct per enemy type and per first augment — so the board reads by shape alone.
+**When done:** with the toggle on, every enemy token and every tower wears one small muted-ink mark (one color for all, the shape is the information): the 10 regulars, the 16 first augments, the bosses and the split pieces each read apart without color; the mark replaces color as the identity channel, nothing else on screen changes, and with the toggle off the board is byte-identical to today.
+**Breakdown:**
+- the toggle and the enemy tokens: the pause row (the Sound row's pattern, T0035), the profile flag, the pattern module, the 10 regular marks — **tasked as T0465 (L, in the pool, 2026-11-03)**
+- the towers: a tower wears its first augment's mark on its barrel (the 16 marks, the same vocabulary; the tier pips untouched) — parked (tasked once the tokens land)
+- the rest of the board and the references: the bosses' own 8 marks, the Shard and the Splinter wearing the parent's mark smaller, the enemies reference and the codex's tokens matching — parked
+
 ## Enemy queue (non-epic)
 
 New enemies land one at a time: each new-enemy task chains behind the one before it so the enemy system, the wave mix and the art settle between additions.
@@ -165,4 +181,5 @@ Ideas that may become epics or tasks of one.
 - Enemies with new behaviors — the enemy queue holds the live list
 - Bosses every 10 waves, each with its own mechanic — the wave-10 to wave-90 bosses all landed; the Fracture (T0435, the wave-100 boss, splits when it dies) is in the pool, the Tide (wave 110, IDEAS) parked behind it
 - Board modifiers — the slow stretch (T0455) and the long straight (T0453) are in the pool
+- The gauntlet: a fourth mode off the menu — a run of exactly 10 waves, each wave the boss of its slot (the wave-10 to wave-100 ladder), ending in the game's first win and its own claim line; opened once the run's files settle (a mode flag is the run's core, and T0403's storm is ahead of it in the pool)
 - Rare augments that change rules, not numbers (e.g. towers next to each other share their slows)
