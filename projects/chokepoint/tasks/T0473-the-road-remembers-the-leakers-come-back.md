@@ -3,11 +3,13 @@ id: T0473
 title: "The road remembers: the leakers come back in the next wave"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T05:01:11Z
+claimed_at: 2026-11-03T05:21:45Z
 epic: E27
+designer: desktop
 ---
 
 ## Goal
