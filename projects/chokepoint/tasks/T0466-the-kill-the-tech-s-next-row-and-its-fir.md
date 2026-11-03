@@ -3,11 +3,13 @@ id: T0466
 title: "The kill: the tech's next row and its first node, The bounty"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T02:48:20Z
+claimed_at: 2026-11-03T03:26:16Z
 epic: E25
+designer: desktop
 ---
 
 ## Goal
