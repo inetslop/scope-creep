@@ -4,11 +4,12 @@ title: "The kill: the tech's next row and its first node, The bounty"
 assignee: cachyos-x8664
 size: M
 priority: 2
-status: in-progress
+status: done
 depends_on: []
 attempts: 1
 created: 2026-11-03T02:48:20Z
 claimed_at: 2026-11-03T03:42:03Z
+finished_at: 2026-11-03T04:03:51Z
 epic: E25
 ---
 
@@ -77,3 +78,20 @@ export function buyKillNode(store: KeyValueStore | undefined, id: string): boole
 
 ### Tests
 - The five `tests/core/tech.test.ts` additions above (row shape, `killBounty` readout, buy/afford/deduct, the `nodeCost` line) and the two `nodeInReach` updates.
+
+## Result (attempt 1, cachyos-x8664)
+
+Added the "The kill" tech branch with its first node "The bounty" (30 coins): a new `KILL_NODES` content file, `killBounty()`/`buyKillNode()` in `core/tech.ts`, and the +1 gold per kill read live from `run.techOwned` inside `EnemySystem.kill()`'s base gold, before the quiet ×2 and last-stand ×2 doublings (Dot: 4→5→10→20), so every existing payout stays exact when the node is unowned. The tech screen gains the ninth row (label, cards, owned dot, buy dispatch to `buyKillNode`) and the menu's in-reach dot covers the new branch. `npm run check` passes (typecheck, lint, 658 tests including the new row-shape, `killBounty`, and buy tests) and `npm run smoke` passes on desktop and phone.
+
+- Self-review: APPROVE
+- Time: 21.8 min
+- Self-review made fixes (kept; checks pass).
+
+```
+projects/chokepoint/game/src/content/tech/kill.ts  | 14 ++++++++
+ projects/chokepoint/game/src/core/tech.ts          | 38 +++++++++++++++++++++-
+ projects/chokepoint/game/src/scenes/TechScene.ts   | 18 ++++++----
+ .../chokepoint/game/src/systems/EnemySystem.ts     |  7 ++--
+ projects/chokepoint/game/tests/core/tech.test.ts   | 35 ++++++++++++++++++--
+ 5 files changed, 98 insertions(+), 14 deletions(-)
+```

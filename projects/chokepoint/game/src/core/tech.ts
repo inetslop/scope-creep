@@ -6,6 +6,7 @@ import { DRAFT_NODES } from '../content/tech/draft';
 import { WAVE_NODES } from '../content/tech/wave';
 import { TOWER_NODES } from '../content/tech/tower';
 import { EXIT_NODES } from '../content/tech/exit';
+import { KILL_NODES } from '../content/tech/kill';
 import { PROFILE_KEY, loadProfile, type KeyValueStore } from './profile';
 
 /** One buyable node: what it costs, what it needs before it unlocks, and what it adds to every new run. */
@@ -157,6 +158,20 @@ export function blockLeakCost(owned: readonly string[]): number {
   return cost;
 }
 
+/** The extra gold every kill pays for the owned kill nodes: the sum of the owned nodes' bounty, 0 when none; each node counts once, unknown ids count for nothing. */
+export function killBounty(owned: readonly string[]): number {
+  let bounty = 0;
+  const seen = new Set<string>();
+  for (const id of owned) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    const node = KILL_NODES.find((n) => n.id === id);
+    if (!node) continue;
+    bounty += node.bounty;
+  }
+  return bounty;
+}
+
 /** A branch's first-node price scaled by depth^1.5 and rounded to the nearest multiple of 5 (halves up). */
 export function nodePrice(base: number, depth: number): number {
   return Math.round((base * Math.pow(depth, 1.5)) / 5) * 5;
@@ -214,7 +229,7 @@ export function buyPoolNode(store: KeyValueStore | undefined, id: string): boole
  * branch node lists are the ones the tech screen's rows read (TechScene's `rows`).
  */
 export function nodeInReach(purchased: readonly string[], coins: number): boolean {
-  for (const branch of [TECH_NODES, POOL_NODES, CLAIM_NODES, BOARD_NODES, WAVE_NODES, TOWER_NODES, EXIT_NODES]) {
+  for (const branch of [TECH_NODES, POOL_NODES, CLAIM_NODES, BOARD_NODES, WAVE_NODES, TOWER_NODES, EXIT_NODES, KILL_NODES]) {
     for (const node of branch) {
       if (!purchased.includes(node.id) && coins >= nodeCost(branch, node.id)) return true;
     }
@@ -317,6 +332,27 @@ export function buyExitNode(store: KeyValueStore | undefined, id: string): boole
   const node = EXIT_NODES.find((n) => n.id === id);
   if (!node || profile.purchased.includes(id)) return false;
   const price = nodeCost(EXIT_NODES, id);
+  if (profile.coins < price) return false;
+  profile.coins -= price;
+  profile.purchased.push(id);
+  try {
+    store?.setItem(PROFILE_KEY, JSON.stringify(profile));
+  } catch {
+    /* private mode or full storage: the purchase just isn't kept */
+  }
+  return true;
+}
+
+/**
+ * Buys a kill node from the saved profile's coins. Refuses an unknown or already owned id and
+ * a price the coins don't cover (they never go below zero); a kill node has no prerequisites
+ * and no gate — its effect is in every run the moment it is bought.
+ */
+export function buyKillNode(store: KeyValueStore | undefined, id: string): boolean {
+  const profile = loadProfile(store);
+  const node = KILL_NODES.find((n) => n.id === id);
+  if (!node || profile.purchased.includes(id)) return false;
+  const price = nodeCost(KILL_NODES, id);
   if (profile.coins < price) return false;
   profile.coins -= price;
   profile.purchased.push(id);

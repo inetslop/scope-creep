@@ -9,8 +9,9 @@ import { DRAFT_NODES } from '../content/tech/draft';
 import { WAVE_NODES } from '../content/tech/wave';
 import { TOWER_NODES } from '../content/tech/tower';
 import { EXIT_NODES } from '../content/tech/exit';
+import { KILL_NODES } from '../content/tech/kill';
 import { loadProfile, type Profile } from '../core/profile';
-import { buyBoardNode, buyClaimNode, buyExitNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, nodeCost, TECH_NODES } from '../core/tech';
+import { buyBoardNode, buyClaimNode, buyExitNode, buyKillNode, buyNode, buyPoolNode, buyTowerNode, buyWaveNode, nodeCost, TECH_NODES } from '../core/tech';
 import { hook } from '../debug/testHook';
 import { makeButton, type Button } from '../ui/button';
 import { makeCard } from '../ui/card';
@@ -19,13 +20,13 @@ import { textStyle, titleStyle } from '../ui/text';
 import { getSfx, onResize, SCENES } from './keys';
 
 /**
- * The tech tree: the coins runs earn become spendable here, on lasting changes. Eight branches,
+ * The tech tree: the coins runs earn become spendable here, on lasting changes. Nine branches,
  * one row each: "Run start" (new runs begin richer), "The draft" (a new run's second slot costs
  * less and its pre-wave-1 draft offers a fourth card), "The pool" (a new augment joins the
  * game's content), "The claim" (a run pays more for the same holding), "The board" (new runs'
  * roads wind further), "The wave" (how a run plays), "The tower" (how the run's towers are sold
- * back) and "The exit" (how long a leak is seen coming). The menu sits dimmed behind, and a
- * purchase is saved straight into the profile (the coins are spent, not moved).
+ * back), "The exit" (how long a leak is seen coming) and "The kill" (how a kill pays). The menu sits
+ * dimmed behind, and a purchase is saved straight into the profile (the coins are spent, not moved).
  */
 interface RowNode {
   id: string;
@@ -34,7 +35,7 @@ interface RowNode {
   price: number;
   requires: string | null;
   unlocks: string | null;
-  branch: 'start' | 'draft' | 'pool' | 'claim' | 'board' | 'wave' | 'tower' | 'exit';
+  branch: 'start' | 'draft' | 'pool' | 'claim' | 'board' | 'wave' | 'tower' | 'exit' | 'kill';
 }
 
 interface TechCard {
@@ -47,7 +48,7 @@ interface TechCard {
 }
 
 /** One muted label per card row, in row order. */
-const ROW_LABELS = ['Run start', 'The draft', 'The pool', 'The claim', 'The board', 'The wave', 'The tower', 'The exit'];
+const ROW_LABELS = ['Run start', 'The draft', 'The pool', 'The claim', 'The board', 'The wave', 'The tower', 'The exit', 'The kill'];
 
 // Each card is a column laid out top-down: the name, then the description (top-aligned, so it
 // only grows down), then the price line pinned to the bottom, the same padding top and bottom.
@@ -88,6 +89,7 @@ export class TechScene extends Phaser.Scene {
     WAVE_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: null, unlocks: null, branch: 'wave' })),
     TOWER_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: null, unlocks: null, branch: 'tower' })),
     EXIT_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: null, unlocks: null, branch: 'exit' })),
+    KILL_NODES.map((n) => ({ id: n.id, name: n.name, line: n.line, price: n.price, requires: null, unlocks: null, branch: 'kill' })),
   ];
   private dragOffset = 0;
   private dragging = false;
@@ -332,7 +334,9 @@ export class TechScene extends Phaser.Scene {
                 ? buyTowerNode(window.localStorage, node.id)
                 : node.branch === 'exit'
                   ? buyExitNode(window.localStorage, node.id)
-                  : buyBoardNode(window.localStorage, node.id);
+                  : node.branch === 'kill'
+                    ? buyKillNode(window.localStorage, node.id)
+                    : buyBoardNode(window.localStorage, node.id);
     if (!bought) return;
     this.profile = loadProfile(window.localStorage);
     getSfx(this)?.techBuy();
