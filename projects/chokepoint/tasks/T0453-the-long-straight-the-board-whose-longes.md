@@ -1,14 +1,14 @@
 ---
 id: T0453
 title: "The long straight: the board whose longest straight is 7+ cells (the T0438 re-file)"
-assignee: asus
 size: L
 priority: 2
-status: in-progress
+status: todo
 depends_on: []
 attempts: 1
 created: 2026-11-02T23:41:13Z
 claimed_at: 2026-11-03T03:02:32Z
+finished_at: 2026-11-03T04:29:33Z
 design_attempts: 1
 ---
 
@@ -82,3 +82,23 @@ No change (the pattern is data-driven / a property): `src/core/map.ts` (the road
 - `tests/core/boardFacts.test.ts` (modified): thirteen modifiers in order (marks array), each grown board carries its modifier (`case 'longstraight'`), every listed row has a committed seed, each row's board is identical every time it is grown.
 - `npm run check` passes (typecheck + lint + unit tests).
 - `npm run smoke` — a fresh run reaches the Boards reference (the new longstraight row, grown from S, shown with a visibly long longest straight) and closes cleanly; the `board.longStraight` invariant runs live.
+
+## Attempt 1 failed (asus)
+
+Runner error: git fetch --quiet --prune origin failed (exit 1):
+error: cannot lock ref 'refs/remotes/origin/main': is at 23416ff987497f58ad7f06433020d0998d30eec2 but expected 5d1b06536c054899a8ed5939458421d096dfb4c2
+
+- Deleted tests/core/_tmp_ls_probe.test.ts, as the agent asked.
+- Deleted tests/core/_ls_probe.txt, as the agent asked.
+- Self-review made fixes (kept; checks pass).
+
+```
+Error: git fetch --quiet --prune origin failed (exit 1):
+error: cannot lock ref 'refs/remotes/origin/main': is at 23416ff987497f58ad7f06433020d0998d30eec2 but expected 5d1b06536c054899a8ed5939458421d096dfb4c2
+
+    at Git.fetch (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/git.ts:134:29)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async integrate (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:260:5)
+    at async runDevTask (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/dev.ts:144:21)
+    at async main (file:///C:/Users/InetSpark/Documents/Repos/scope-creep/loop/runner.ts:154:9)
+```
