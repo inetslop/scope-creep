@@ -3,12 +3,11 @@ id: T0453
 title: "The long straight: the board whose longest straight is 7+ cells (the T0438 re-file)"
 size: L
 priority: 2
-status: designing
+status: design
 depends_on: []
 attempts: 0
 created: 2026-11-02T23:41:13Z
-claimed_at: 2026-11-02T23:41:55Z
-designer: cachyos-x8664
+design_attempts: 1
 ---
 
 ## Goal
