@@ -3,11 +3,13 @@ id: T0477
 title: "The strike: the tech's next row and its first node, The long arm"
 size: M
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T06:43:18Z
+claimed_at: 2026-11-03T07:13:19Z
 epic: E28
+designer: desktop
 ---
 
 ## Goal
