@@ -3,10 +3,12 @@ id: T0457
 title: "The tag's note: a special wave you hear at the banner"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T00:51:09Z
+claimed_at: 2026-11-03T00:51:46Z
+designer: yoga
 ---
 
 ## Goal
