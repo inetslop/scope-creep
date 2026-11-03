@@ -3,14 +3,14 @@ id: T0461
 title: "The halt: the seventh tag — the wave that stops at the road's middle"
 size: M
 priority: 2
-status: designing
+status: failed
 depends_on: []
 attempts: 0
 created: 2026-11-03T01:41:10Z
 claimed_at: 2026-11-03T03:46:46Z
+finished_at: 2026-11-03T05:46:49Z
 epic: E22
-design_attempts: 1
-designer: inet-racing
+design_attempts: 2
 ---
 
 ## Goal
@@ -32,3 +32,11 @@ The wave's tag set grows a seventh march — the halt: a wave whose walkers stop
 - [ ] Unit: on the same seed, the same wave's walkers each stand 3 s longer at their route's middle when the halt tag is on the plan than when it is off.
 - [ ] The build phase before a halt wave shows the muted bar on each route's middle cell; it is gone by the wave's banner.
 - [ ] The chip row wears the halt's bar glyph in a hue no other tag uses, and every line fits its card at 412x915 and 1280x720.
+
+## Architect could not design it (inet-racing)
+
+no "STATUS: READY" line after 2 attempt(s). Last output:
+
+```
+
+```
