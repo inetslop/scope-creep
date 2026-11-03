@@ -3,11 +3,13 @@ id: T0468
 title: "The double's second front gets its note"
 size: S
 priority: 2
-status: design
+status: designing
 depends_on: []
 attempts: 0
 created: 2026-11-03T03:26:12Z
+claimed_at: 2026-11-03T03:27:05Z
 epic: E22
+designer: yoga
 ---
 
 ## Goal
