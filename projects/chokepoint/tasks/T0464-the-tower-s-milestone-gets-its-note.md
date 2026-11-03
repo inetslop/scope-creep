@@ -3,12 +3,10 @@ id: T0464
 title: "The tower's milestone gets its note"
 size: S
 priority: 2
-status: designing
+status: todo
 depends_on: []
 attempts: 0
 created: 2026-11-03T02:24:38Z
-claimed_at: 2026-11-03T02:24:45Z
-designer: yoga
 ---
 
 ## Goal
@@ -26,3 +24,63 @@ The tower's milestone ring (T0270: a ring at a tower's base when its kills first
 - [ ] A second tower crossing a milestone plays its own note.
 - [ ] With the pause's Sound toggle off the milestone is silent.
 - [ ] No sound, HUD element or visual is added anywhere else.
+
+## Design (architect, yoga)
+
+### Files
+- create `src/systems/enemyHooks/towerMilestoneNote.ts` - per-run closure tracker that plays `sfx?.towerMilestone()` on the tower's 10th/25th/50th kill, the exact edge `killMilestone.ts` pops the ring on
+- edit `src/systems/enemyHooks/index.ts` - one import line + one `ENEMY_HOOKS` line, both next to killMilestone's (import after line 44, array entry after `killMilestone,` line 83)
+- edit `src/audio/Sfx.ts` - new `towerMilestone()` method directly under `leechDrink()` (after line 282)
+### Interfaces
+```ts
+// enemyHooks/towerMilestoneNote.ts
+export const towerMilestoneNote: MakeEnemyHook; // ({ sfx }) => ({ onKill })
+// Sfx.ts, beside leechDrink()
+/** A tower's own milestone heard at its base: one quiet two-note rise, E4 then G4 (330 then 392 Hz), 60 ms sines ~30 ms apart, 0.06 pre-master, the Leech sip's soft class. */
+towerMilestone(): void
+```
+### Steps
+1. Sfx.ts, directly under `leechDrink()`:
+```ts
+  /** A tower's own milestone heard at its base: one quiet two-note rise, E4 then G4 (330 then 392 Hz), 60 ms sines ~30 ms apart, 0.06 pre-master, the Leech sip's soft class. */
+  towerMilestone(): void {
+    this.tone(330, 0.06, 'sine', 0.06);
+    this.tone(392, 0.06, 'sine', 0.06, undefined, 0.03);
+  }
+```
+2. Create `src/systems/enemyHooks/towerMilestoneNote.ts` (mirror `killMilestone.ts` line-for-line, ring replaced by the note):
+```ts
+import type { Tower } from '../../entities/Tower';
+import type { MakeEnemyHook } from './hook';
+
+const MILESTONES = [10, 25, 50];
+
+/**
+ * A tower's own milestone is heard where it stands: at the same crossing the ring pops on
+ * (systems/enemyHooks/killMilestone.ts) it plays one quiet two-note rise — at most one per
+ * crossing, three per tower per run. The tracker lives in this closure, so it resets with
+ * every new run, exactly like the ring's.
+ */
+export const towerMilestoneNote: MakeEnemyHook = ({ sfx }) => {
+  const seen = new Map<Tower, number>(); // last checked kill count per tower
+  return {
+    onKill({ source }) {
+      if (!source) return;
+      const n = source.kills + 1; // EnemySystem counts this kill into source right after the hooks run
+      const prev = seen.get(source) ?? 0;
+      seen.set(source, n);
+      for (const m of MILESTONES) {
+        if (prev < m && m <= n) sfx?.towerMilestone();
+      }
+    },
+  };
+};
+```
+3. `index.ts`: `import { towerMilestoneNote } from './towerMilestoneNote';` after the `killMilestone` import; `towerMilestoneNote,` after `killMilestone,` in `ENEMY_HOOKS`.
+### Pitfalls
+- Copy the edge verbatim from killMilestone (`source.kills + 1`, `prev < m && m <= n`): any drift plays the note one kill early/late or on the 51st.
+- The second `tone` needs `undefined` in the `slideTo` slot before `delaySec`; the mute check is already in `Sfx.tone` (the pause Sound toggle is honored, no held oscillators to stop).
+- Do not touch `killMilestone.ts` or `leechDrink*`; no shared state with the ring hook — each hook owns its closure, and EnemySystem builds a fresh hook per run.
+- Two towers crossing the same frame each get their own `onKill`, so each plays its own note; per-tower `Map` is what keeps them apart.
+### Tests
+none
